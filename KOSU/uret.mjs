@@ -34,7 +34,10 @@ const SPECS = [
   ['01-elbise-duz-kol-bebe-yaka', 'elbise · duz kol · bebe yaka · A etek',
    { garment: 'dress', shaping: 'dart', fabric: 'woven', neckline: 'scoop', sleeveStyle: 'straight', sleeveLength: 'short', skirtStyle: 'aLine', skirtLength: 'midi', collarType: 'peterPan' }],
   ['02-elbise-balon-uzun-kol-dik-yaka', 'elbise · balon uzun kol · dik yaka · duz maxi etek',
-   { garment: 'dress', shaping: 'dart', fabric: 'woven', neckline: 'vNeck', sleeveStyle: 'balloon', sleeveLength: 'long', skirtStyle: 'straight', skirtLength: 'maxi', collarType: 'stand' }],
+   // neckline crew (2026-09-02 hakem karari 3): vNeck+stand kombosunda dik
+   // yaka V'yi ucuna kadar takip ediyordu — konvansiyonun dogru uygulamasi ama
+   // vitrinde garip; crew+stand durust vitrin. Kod degismedi, spec degisti.
+   { garment: 'dress', shaping: 'dart', fabric: 'woven', neckline: 'crew', sleeveStyle: 'balloon', sleeveLength: 'long', skirtStyle: 'straight', skirtLength: 'maxi', collarType: 'stand' }],
   ['03-elbise-kolsuz', 'elbise · kolsuz · yakasiz · A etek',
    { garment: 'dress', shaping: 'dart', fabric: 'woven', neckline: 'crew', sleeveStyle: 'none', skirtStyle: 'aLine', skirtLength: 'midi' }],
   ['04-elbise-uzun-kol-yatik-yaka-mini', 'elbise · uzun kol · yatik yaka · mini A etek',

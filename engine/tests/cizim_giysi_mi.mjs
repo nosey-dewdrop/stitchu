@@ -766,6 +766,90 @@ console.log('\n--- (j) flat poz konvansiyonu (sevkPoz): kol sarkik, omuz kisa+eg
                     'omuz ucu ilani cizili noktayla ozdes, yaka oranlari bandda');
 }
 
+// --------------------------------------------------------------- (k) YAKA PARCASI
+// G1-yaka (2026-09-02): yaka artik kalibin KENDI yaka parcasindan olculuyor
+// (boy = parca yaka kenari, derinlik = alan/boy), sekli konvansiyondan. Iki
+// hukum, ikisi de dosyanin kendi ilanindan + kendi geometrisinden:
+//   k1  TUTARLILIK: her yaka path'i data-yaka-parca-mm (parcanin yaka kenari)
+//       ve data-yaka-cizgi-mm (giysinin on+arka yarim yaka cizgisi, draft'tan)
+//       ilan eder; ikisi ±%5 icinde ayni olmak zorunda. Olculdu (EU38, bes
+//       yaka tipi): oran 0.9999-1.0001 — motor yakayi yaka cizgisine ciziyor,
+//       band genis.
+//   k2  KONTUR: hicbir yaka path'i kendini kesmez (2026-09-02 oncesi 09'un
+//       gomlek yakasi blob, 02'nin dik yakasi ucgen yildizdi — ikisi de
+//       kendini kesen konturdu).
+//   k2b AYNA CIFTI: sag yarim ile aynadaki esi (x -> -x, ayna cizgisi d
+//       koordinatlarinda x=0) birbirini KESEMEZ. Uc noktasi temasi serbest
+//       (yatik lobun CF'de bulusmasi tema, gecis degil). Hakem bulgusu
+//       2026-09-02: 09'un iki aynali yapragi CF'de kucuk X'le birbirinin
+//       ustunden geciyordu ve path-BASINA test bunu goremiyordu — kapi kor
+//       noktasiydi, genisletildi.
+console.log('\n--- (k) yaka: parca boyu <-> yaka cizgisi (±%5) + kontur kendini kesmiyor (ayna cifti dahil)');
+{
+  const segsOf = (P, kapali) => {
+    const pts2 = P.filter((p, i) => i === 0 || Math.hypot(p[0] - P[i - 1][0], p[1] - P[i - 1][1]) > 1e-6);
+    const n = pts2.length, out = [];
+    for (let i = 0; i + 1 < n; i++) out.push([pts2[i], pts2[i + 1]]);
+    if (kapali && n > 2) out.push([pts2[n - 1], pts2[0]]);
+    return out;
+  };
+  const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const kesiyorSeg = (s, t) => {
+    const [a, b] = s, [c, d] = t;
+    const d1 = cross(a, b, c), d2 = cross(a, b, d), d3 = cross(c, d, a), d4 = cross(c, d, b);
+    return ((d1 > 1e-9 && d2 < -1e-9) || (d1 < -1e-9 && d2 > 1e-9)) &&
+           ((d3 > 1e-9 && d4 < -1e-9) || (d3 < -1e-9 && d4 > 1e-9));
+  };
+  const kesisiyor = (P, kapali) => {
+    // ardisik olmayan kenar ciftlerinde GERCEK kesisme (uc noktasi teması degil)
+    const segs2 = segsOf(P, kapali);
+    const m = segs2.length;
+    for (let i = 0; i < m; i++) {
+      for (let j = i + 2; j < m; j++) {
+        if (i === 0 && j === m - 1 && kapali) continue;   // kapanis kenari ilk kenara komsu
+        if (kesiyorSeg(segs2[i], segs2[j])) return [i, j];
+      }
+    }
+    return null;
+  };
+  const kesisiyorAyna = (P, kapali) => {
+    const A = segsOf(P, kapali), B = segsOf(P.map((q) => [-q[0], q[1]]), kapali);
+    for (let i = 0; i < A.length; i++) {
+      for (let j = 0; j < B.length; j++) if (kesiyorSeg(A[i], B[j])) return [i, j];
+    }
+    return null;
+  };
+  const attrNum = (p, k) => { const m = new RegExp(`${k}="(-?[\\d.]+)"`).exec(p.attr); return m ? parseFloat(m[1]) : null; };
+  const TOL_ORAN = FLAT_LAW.sevkPoz.yakaParcasi.boyToleransOran;   // kanun, kopya degil
+  let bad = 0, yakali = 0;
+  for (const c of cizimler) {
+    if ((c.spec.collarType || 'none') === 'none') continue;
+    yakali++;
+    const yakalar = byRol(c.ps, 'yaka');
+    if (!yakalar.length) continue;   // yoklugu (c) zaten kirmizi yapar
+    for (const p of yakalar) {
+      const ad = `${c.ad}/${p.view}/${p.yan}`;
+      const parca = attrNum(p, 'data-yaka-parca-mm');
+      const cizgi = attrNum(p, 'data-yaka-cizgi-mm');
+      if (parca === null || cizgi === null) { FAIL(`(k1) ${ad}: data-yaka-parca-mm / data-yaka-cizgi-mm ilani YOK`); bad++; }
+      else if (!(cizgi > 1) || Math.abs(parca / cizgi - 1) > TOL_ORAN) {
+        FAIL(`(k1) ${ad}: yaka parcasi ${parca} mm, yaka cizgisi ${cizgi} mm — oran ${(parca / cizgi).toFixed(4)}, band ±%${TOL_ORAN * 100} disi`);
+        bad++;
+      }
+      const kapali = /z\s*$/i.test(p.d.trim());
+      const P = pts(p.d);
+      const kes = kesisiyor(P, kapali);
+      if (kes) { FAIL(`(k2) ${ad}: yaka konturu kendini kesiyor (kenar ${kes[0]} x kenar ${kes[1]})`); bad++; }
+      if (p.yan === 'sag') {   // sol zaten sag'in aynasi: cift bir kez olculur
+        const kesA = kesisiyorAyna(P, kapali);
+        if (kesA) { FAIL(`(k2b) ${ad}: aynali yaka cifti birbirini kesiyor (kenar ${kesA[0]} x ayna kenar ${kesA[1]})`); bad++; }
+      }
+    }
+  }
+  if (!yakali) FAIL('(k) hic yakali spec olculmedi');
+  else if (!bad) OK(`(k) ${yakali} yakali spec'te yaka parcasi boyu yaka cizgisiyle ±%5 icinde ve hicbir yaka konturu (ayna cifti dahil) kesismiyor`);
+}
+
 // --------------------------------------------------------------- OZET
 console.log('\n--- OZET');
 for (const c of cizimler) {
@@ -776,4 +860,4 @@ for (const c of cizimler) {
 }
 
 if (fails) { console.log(`\nFAIL cizim_giysi_mi — ${fails} ihlal`); process.exit(1); }
-console.log(`\nok cizim_giysi_mi — ${cizimler.length} spec, (a)-(i) + (g2) uc-cizgi mutabakati hepsi yesil`);
+console.log(`\nok cizim_giysi_mi — ${cizimler.length} spec, (a)-(k) + (g2) uc-cizgi mutabakati hepsi yesil`);

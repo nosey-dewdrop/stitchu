@@ -96,6 +96,8 @@ const ARKA_YAKA_MIN = 0.20;    // contract/flat-convention-v1.json sevkPoz.yaka.
 const ARKA_YAKA_MAX = 0.30;    // contract/flat-convention-v1.json sevkPoz.yaka.arkaDususOverOn.max
 const W_TOPSTITCH = 0.5;       // contract/flat-convention-v1.json sevkPoz.topstitch.width
 const DASH_TOPSTITCH = '4 2';  // contract/flat-convention-v1.json sevkPoz.topstitch.dash
+const YAKA_CF_ACIKLIK = 0.35;  // contract/flat-convention-v1.json sevkPoz.yakaParcasi.gomlekCFAciklikOverDerinlik
+const YAKA_STAND_GORUNUR = 0.5;// contract/flat-convention-v1.json sevkPoz.yakaParcasi.standGorunurOverDerinlik
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
@@ -175,7 +177,7 @@ function mankenWarp(half, bustY, waistPt) {
 import {
   add, sub, scale, norm, unit, lerp, rotAbout,
   segsFromCommands, polysFromCommands, samplePoly, polyLength, chainLength,
-  cumFrac, atFrac, nearestIdx, mapSegs, reverseSegs, mirrorSegs, rampSegs,
+  cumFrac, atFrac, nearestIdx, mapSegs, mirrorSegs, rampSegs,
   pathD, polyD, segsFromPoly, bbox, densifySegs,
 } from './flat-geom.js?v=143';
 
@@ -593,48 +595,136 @@ function sleeveGeometry(sleeve, S, U) {
 }
 
 // ---------------------------------------------------------------------------
-// 4. THE COLLAR — bent onto the neckline it was drafted for
+// 4. THE COLLAR — measured off the pattern's own collar piece, SHAPED by the
+//    convention (G1-yaka)
 // ---------------------------------------------------------------------------
-// A collar piece is drafted flat. On the garment it lies along the neckline. So
-// it is re-parameterised by arc length onto the neckline and offset along the
-// neckline's outward normal by its OWN width, sampled from its own two edges.
-// The width profile is the collar's; only the spine it hangs on is the
-// neckline's. A stand collar and a Peter Pan collar therefore come out with
-// different depths without either number being written here.
+// The old drawing re-sampled the collar piece's own outline onto the neckline
+// and offset by whatever "width" fell out. Measured on the shipped files, that
+// width was garbage — the piece's cap edges were counted into the outer edge,
+// so a 28 mm shirt-collar stand printed as an 80 mm blob hanging into the
+// chest (09), and a stand collar printed as a star of triangles (02). Damla:
+// "yaka parcalari cirkin", and she was right.
 //
-// `f0`..`f1` is the SHARE of the collar this view gets. It is not a guess: at
-// EU38 the drafted Peter Pan collar's neck edge is 205.3 mm and the front and
-// back half necklines are 131.7 and 73.6 mm — the collar is drafted for one
-// half of the garment, front plus back, and 131.7 + 73.6 = 205.3 exactly. So the
-// split is measured off the two panels every run, and a collar whose neck edge
-// does not match the neckline (a stand collar is 190.3 mm) is re-parameterised
-// with the ratio PRINTED on the path, not silently stretched.
-function collarOnNeck(collar, neckPts, hollow, f0, f1) {
-  const segs = segsFromCommands(collar.commands);
+// The split now is the one the FLAT-ESTETIK pose already uses everywhere else:
+// every MILLIMETRE comes from the drafted collar piece, every SHAPE from the
+// convention. Measured off the piece (collarMeasures): its neck-edge arc
+// length (at EU38 it matches the garment's front+back half neckline to 0.01%
+// on all five collar types — 205.3/205.3 peterPan, 220.7/220.7 stand ...),
+// its mean depth (outline area / neck-edge length — a rectangle's height, a
+// crescent's mean width), its deepest point, and WHICH SIDE of its neck edge
+// the cloth sits on (a stand is drafted above the attach edge, a lying collar
+// below it — the draft itself says whether the collar stands or lies).
+//
+// The convention shapes (vendor references, GIRDI/iyi-flat/adaylar):
+//   dik   (stand/mock/shirt-stand) — a constant-height band following the
+//          neckline on the HOLLOW side (it stands up around the neck).
+//   yatik (peterPan/flat)          — a band lying ON the garment, outer edge
+//          at the piece's mean depth, ROUNDED at the centre front: the width
+//          eases in over one depth of arc on a quarter-circle profile, which
+//          is what draws the classic bebe-yaka lobe.
+//   gomlek (shirt stand + blade)   — the fall lies on the garment and comes to
+//          a POINT one CF opening past the mirror line (a zero-width tip ON
+//          CF made the two mirrored flaps cross in a small X, 2026-09-02):
+//          width ramps linearly from the tip over the blade's own point
+//          length, so the flaps leave the classic V opening; the stand shows
+//          as a short arc behind the neck at HALF its measured height (the
+//          full height arched shoulder-to-shoulder read as a dome).
+function collarMeasures(piece) {
+  if (!piece) return null;
+  const segs = segsFromCommands(piece.commands);
   if (segs.length < 3) return null;
-  const all = segs.flatMap((s) => s.p);
-  const yTop = Math.min(...all.map((p) => p[1]));
-  const inner = segs.filter((s) => Math.abs(s.p[0][1] - yTop) < 1 && Math.abs(s.p[3][1] - yTop) < 1);
-  if (!inner.length) return null;
-  const outer = segs.filter((s) => !inner.includes(s));
-  if (!outer.length) return null;
-  const ip = samplePoly(inner, 24), op = samplePoly(reverseSegs(outer), 24);
-  const ic = cumFrac(ip), oc = cumFrac(op);
-
-  const nc = cumFrac(neckPts);
-  const N = 28, edge = [];
-  for (let k = 0; k <= N; k++) {
-    const g = k / N;                 // along THIS view's neckline
-    const f = f0 + (f1 - f0) * g;    // the matching place on the collar
-    const a = atFrac(ip, ic, f).p;
-    const b = atFrac(op, oc, f).p;
-    const w = norm(sub(b, a));
-    const on = atFrac(neckPts, nc, g);
-    let nrm = [-on.tan[1], on.tan[0]];
-    if (nrm[0] * (on.p[0] - hollow[0]) + nrm[1] * (on.p[1] - hollow[1]) < 0) nrm = scale(nrm, -1);
-    edge.push(add(on.p, scale(nrm, w)));
+  // The attach edge is drafted ON y = 0 starting at the origin — all five
+  // collar drafts share this frame (measured, see header).
+  const neckEdge = segs.filter((s) => Math.abs(s.p[0][1]) < 0.5 && Math.abs(s.p[3][1]) < 0.5);
+  if (!neckEdge.length) return null;
+  const boyMM = chainLength(neckEdge);
+  if (!(boyMM > 1)) return null;
+  const pts = samplePoly(segs, 60);
+  let A2 = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i], b = pts[(i + 1) % pts.length];
+    A2 += a[0] * b[1] - b[0] * a[1];
   }
-  return { edge, spine: neckPts, neckMM: polyLength(ip), payMM: polyLength(neckPts) };
+  const ys = pts.map((q) => q[1]);
+  return {
+    boyMM,
+    derinlikMM: Math.abs(A2) / 2 / boyMM,
+    ucMM: Math.max(Math.abs(Math.min(...ys)), Math.abs(Math.max(...ys))),
+    duruyor: Math.min(...ys) < -0.5,          // cloth above the attach edge = stands
+  };
+}
+
+/** The plan for one garment's collar: type from the pieces themselves, every
+ *  number from collarMeasures, the neckline length for the (k) gate's
+ *  piece-vs-neckline consistency published alongside. */
+function collarPlan(g, neckMM) {
+  const piece = g.collarBlade || g.collar;
+  const m = collarMeasures(piece);
+  if (!m) return null;
+  const stand = g.collarBlade ? collarMeasures(g.collar) : null;   // shirt: g.collar IS the stand
+  return {
+    tur: g.collarBlade ? 'gomlek' : (m.duruyor ? 'dik' : 'yatik'),
+    derinlikMM: m.derinlikMM, ucMM: m.ucMM,
+    standMM: stand ? stand.derinlikMM : 0,
+    parcaMM: m.boyMM, cizgiMM: neckMM,
+  };
+}
+
+/** The drawn collar for one view: an array of { pts, kapali } polylines in the
+ *  view's own frame, right half only (the mirror is derived like everything
+ *  else). `neckPts` runs centre -> shoulder; `hollow` is the neck hollow. */
+function yakaKonvansiyon(Y, neckPts, hollow, F) {
+  const nc = cumFrac(neckPts);
+  const L = polyLength(neckPts);
+  const D = Y.derinlikMM;
+  if (!(L > 5) || !(D > 0.5)) return null;
+  const yon = Y.tur === 'dik' ? -1 : 1;   // -1 toward the hollow (stands), +1 onto the garment (lies)
+  let wOf, g0 = 0;
+  if (Y.tur === 'dik' || !F) wOf = () => D;                       // back view: the collar runs unbroken across CB
+  else if (Y.tur === 'yatik') {
+    // rounded CF lobe: quarter-circle ease over one depth of arc
+    wOf = (t) => (t < D ? D * Math.sqrt(Math.max(0, 2 * (t / D) - (t / D) * (t / D))) : D);
+  } else {
+    // pointed CF flap: it STARTS one CF opening past the mirror line — a
+    // zero-width tip on CF itself made the two mirrored flaps cross in a small
+    // X (measured on the 2026-09-02 print of 09, judged then). The tip sits on
+    // the neckline, the width ramps linearly over the blade's own point length.
+    const uc = Math.max(Y.ucMM, D);
+    const gap = YAKA_CF_ACIKLIK * D;
+    g0 = Math.min(0.4, gap / L);
+    wOf = (t) => (t < gap ? 0 : (t - gap < uc ? D * ((t - gap) / uc) : D));
+  }
+  const N = 36, spine = [], edge = [];
+  for (let k = 0; k <= N; k++) {
+    const g = g0 + (k / N) * (1 - g0);
+    const o = atFrac(neckPts, nc, g);
+    let n = unit([-o.tan[1], o.tan[0]]);
+    if ((n[0] * (o.p[0] - hollow[0]) + n[1] * (o.p[1] - hollow[1])) * yon < 0) n = scale(n, -1);
+    const q = add(o.p, scale(n, wOf(g * L)));
+    spine.push(o.p);
+    // NOTHING crosses the mirror line in a half-frame drawing: a standing
+    // band's CF cap sits ON it, a lying collar's lobe at worst touches it
+    edge.push([Math.max(0, q[0]), q[1]]);
+  }
+  const shapes = [{ pts: spine.concat(edge.reverse()), kapali: true }];
+  if (Y.tur === 'gomlek' && F && Y.standMM > 1) {
+    // the stand, seen behind the neck: a short arc from the neck point up to
+    // the mirror line. Risen by HALF the measured stand height (convention
+    // constant, contract yakaParcasi.standGorunurOverDerinlik): the full
+    // height arched shoulder-to-shoulder read as a dome/hood, while in every
+    // vendor reference the stand shows as a small CB strip.
+    const NP = neckPts[neckPts.length - 1];                     // shoulder-side neck point
+    const h = Y.standMM * YAKA_STAND_GORUNUR, M = 12, arc = [];
+    const E = [0, NP[1] - h];                                    // CF top of the stand
+    const C = [NP[0] * 0.45, NP[1] - h * 1.15];                  // control, over the neck
+    for (let k = 0; k <= M; k++) {
+      const t = k / M, u = 1 - t;
+      arc.push([u * u * NP[0] + 2 * u * t * C[0] + t * t * E[0],
+                u * u * NP[1] + 2 * u * t * C[1] + t * t * E[1]]);
+    }
+    shapes.push({ pts: arc, kapali: false });
+  }
+  return shapes;
 }
 
 // ---------------------------------------------------------------------------
@@ -761,18 +851,25 @@ function buildView(P, which) {
     const mv = (p) => [p[0], p[1] + oy];
     const waistSide = mv(sewn.edgePts[sewn.edgePts.length - 1]);
     if (!bod) warpWaistPt = waistSide;   // a skirt's waist IS its top edge
+    let skirtSide = mapSegs(sewn.side, mv);
     if (out.notes.bodiceWaistSide) {
-      // The bodice waist and the skirt waist are one seam and they do not land
-      // on the same point: the residual is PRINTED (data-bel-kacigi-mm) rather
-      // than scaled away, because scaling one of two mating seams to fit the
-      // other is how a drawing stops being a measurement.
+      // The bodice waist and the skirt waist are ONE seam and, darts closed,
+      // they do not land on the same point. The residual is still MEASURED and
+      // PRINTED (the "bel dikis kacigi" comment, 29.4/39.8 mm on the shipped
+      // A-line dresses), but it is no longer drawn as an outline zigzag: that
+      // zigzag read as a fake dart-V at the waist on every dress (G1-yaka
+      // diagnosis — 01/02/09, both sides). On the garment the two side seams
+      // MEET, so the skirt's side seam is carried to the bodice's waist point
+      // by the same ramp a dart closure already uses (rampSegs: full at the
+      // waist, zero at the hem — the hem the (g)/(g2) gates measure does not
+      // move).
       const jog = norm(sub(waistSide, out.notes.bodiceWaistSide));
       out.notes.waistJogMM = jog;
-      if (jog > 0.2) half = half.concat(segsFromPoly([out.notes.bodiceWaistSide, waistSide]));
+      if (jog > 0.2) skirtSide = rampSegs(skirtSide, sub(out.notes.bodiceWaistSide, waistSide), true);
     } else {
       half = half.concat(segsFromPoly(sewn.edgePts.map(mv)));
     }
-    half = half.concat(mapSegs(sewn.side, mv), mapSegs(d.hem, mv));
+    half = half.concat(skirtSide, mapSegs(d.hem, mv));
     out.notes.hemPts = samplePoly(d.hem, 32).map(mv);
     out.notes.hemSA = skirtP.piece.seamAllowance;
     for (const leg of sewn.legs) interior.push(['pens', leg.map(mv), true]);
@@ -884,22 +981,22 @@ function buildView(P, which) {
          shape.map((p) => [-p[0], p[1]]));
   }
 
-  // The collar, bent onto this view's own neckline, taking its own share of the
-  // one collar piece.
-  if (P.collar && out.notes.neck && out.notes.neck.length > 1) {
-    // The collar's fraction 0 is the centre-front end, so the front runs
-    // centre -> shoulder and the back carries on shoulder -> centre back.
-    const spine = F ? out.notes.neck : out.notes.neck.slice().reverse();
-    const [f0, f1] = F ? [0, P.collarSplit] : [P.collarSplit, 1];
-    const c = collarOnNeck(P.collar, spine, out.notes.hollow, f0, f1);
-    if (c) {
-      const shape = c.spine.concat(c.edge.slice().reverse());
+  // The collar: sized by the pattern's own collar piece, shaped by the
+  // convention (section 4). The piece length and the drafted neckline length
+  // ride on every collar path so the (k) gate can hold them together.
+  if (P.yakaPlan && out.notes.neck && out.notes.neck.length > 1) {
+    const sh = yakaKonvansiyon(P.yakaPlan, out.notes.neck, out.notes.hollow, F);
+    if (sh) {
       const attr = (yan) => ` data-view="${F ? 'front' : 'back'}" data-yan="${yan}"` +
-        ` data-yaka-pay="${(c.neckMM / (c.payMM || 1)).toFixed(4)}"`;
-      push('yaka', polyD(shape, flipY, true), W_SEAM, attr('sag'), shape);
-      push('yaka', polyD(shape.map((p) => [-p[0], p[1]]), flipY, true), W_SEAM, attr('sol'),
-           shape.map((p) => [-p[0], p[1]]));
-    } else out.sebep.push(`${which} yaka: yaka parcasi bir ic/dis kenara ayrilamadi`);
+        ` data-yaka-tur="${P.yakaPlan.tur}"` +
+        ` data-yaka-parca-mm="${P.yakaPlan.parcaMM.toFixed(4)}"` +
+        ` data-yaka-cizgi-mm="${P.yakaPlan.cizgiMM.toFixed(4)}"`;
+      for (const s of sh) {
+        push('yaka', polyD(s.pts, flipY, s.kapali), W_SEAM, attr('sag'), s.pts);
+        const mir = s.pts.map((p) => [-p[0], p[1]]);
+        push('yaka', polyD(mir, flipY, s.kapali), W_SEAM, attr('sol'), mir);
+      }
+    } else out.sebep.push(`${which} yaka: yaka parcasindan olcu cikarilamadi`);
   }
 
   out.box = {
@@ -941,7 +1038,11 @@ function gather(pattern) {
     },
     sleeve: pick(ps, /(^|\s)Sleeve$/),
     cuff: pick(ps, /Cuff/),
+    // A shirt collar is TWO pieces: the stand (drafted above its attach edge)
+    // and the blade/fall. `collar` finds the first collar piece — for a shirt
+    // that is the stand — and `collarBlade` the fall, when there is one.
     collar: pick(ps, /Collar/),
+    collarBlade: pick(ps, /Collar Blade/),
     waistband: pick(ps, /^Waistband$/),
     neckFinish: pick(ps, /(Neck Facing|Bias binding)/),
   };
@@ -968,10 +1069,9 @@ export function renderFlatFromPattern(draft, meta = {}) {
     throw new Error('flat: kalipta parca yok');
   }
   const g = gather(draft.pattern);
-  // One collar spans front AND back. Its share of each view is the MEASURED
-  // arc-length share of that view's own half neckline — never a half-and-half
-  // assumption, which at EU38 would put 102.6 mm of collar on a 73.6 mm back
-  // neckline and buckle it.
+  // One collar spans front AND back: the drafted neckline (front + back half)
+  // is measured here so the collar piece's own length can be held against it —
+  // published on every collar path, judged by the (k) gate at ±5%.
   const neckLen = (w) => {
     const b = g.bodice[w];
     if (!b) return 0;
@@ -981,7 +1081,7 @@ export function renderFlatFromPattern(draft, meta = {}) {
   const lf = neckLen('on'), lb = neckLen('arka');
   // `poz` is the one cross-view channel: the front view publishes its posed
   // neck depth there and the back view reads it (back drop = 20-30% of front).
-  const P = { ...g, flipY: (y) => y, collarSplit: (lf + lb) > 0 ? lf / (lf + lb) : 0.5, poz: {} };
+  const P = { ...g, flipY: (y) => y, yakaPlan: collarPlan(g, lf + lb), poz: {} };
 
   const views = ['on', 'arka'].map((w) => buildView(P, w));
   const drawn = views.filter((v) => v.paths.length);
