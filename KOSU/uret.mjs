@@ -88,7 +88,18 @@ for (const [ad, baslik, spec] of SPECS) {
   const ms = Date.now() - t0;
   const svgPath = join(OUT, `${ad}.svg`);
   writeFileSync(svgPath, svg);
-  png(svgPath, join(OUT, `${ad}.png`), 760, 900);
+  // G2-goz (2026-09-02): the PNG was printed into a FIXED 760x900 window. The
+  // SVG is 1:1 mm (~900-1100 mm wide), so a 2 mm outline landed at ~1.5 px and
+  // a 1 mm seam under 1 px — hairlines a shopper can barely see next to any
+  // vendor flat — and the fixed height left a dead white band under every
+  // drawing whose aspect was wider than 760:900. The raster now follows the
+  // SVG's own declared mm frame: 1.6 px/mm (outline ~3.2 px, like the
+  // references), height from the drawing's own aspect, no dead band.
+  const dim = svg.match(/width="([\d.]+)mm" height="([\d.]+)mm"/);
+  const wmm = dim ? parseFloat(dim[1]) : 760, hmm = dim ? parseFloat(dim[2]) : 900;
+  const pxW = Math.min(1700, Math.round(wmm * 1.6));
+  const pxH = Math.round(pxW * hmm / wmm);
+  png(svgPath, join(OUT, `${ad}.png`), pxW, pxH);
   made.push({ ad, baslik, ms, yol: `${ad}.png` });
   console.log(`${ad}  ${ms} ms  ${(svg.match(/<path/g) || []).length} path`);
 }
