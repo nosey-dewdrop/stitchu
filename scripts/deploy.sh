@@ -158,7 +158,12 @@ fi
 # 4) commit: web/ is staged in FULL (ENV.md gotcha — staging only touched files
 # once shipped stale HTML live). Anything else already staged rides along.
 echo "== commit + push main =="
-git add web/
+# MEASURED (2026-09-04, ?v=148 deploy): staging only web/ shipped the bumped
+# pages WITHOUT the manifest that step 1b had just resealed, so the pushed main
+# was born RED on generated_ratchet_check ("bytes moved: 8"). The ratchet's own
+# rule is that the manifest lands in the SAME commit as the pages it describes —
+# so the file this script rewrites must be staged by this script.
+git add web/ contract/generated-paths.sha256
 if git diff --cached --quiet; then
   echo "nothing to commit (tree already committed), deploying HEAD"
 else
