@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="tr">
+<meta charset="utf-8">
+<title>M5 kapı — dikiş rehberi (EU38)</title>
+<style>
+  body { max-width: 760px; margin: 40px auto; padding: 0 22px;
+         font: 15px/1.6 -apple-system, system-ui, sans-serif; color: #1f3a5f; }
+  h1 { font-weight: 500; font-size: 27px; margin-bottom: 4px; }
+  h2 { font-weight: 600; font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+       margin-top: 34px; padding-bottom: 6px; border-bottom: 1px solid #e2e2de; color: #33506f; }
+  table { border-collapse: collapse; width: 100%; }
+  th { text-align: left; font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+       color: #6b7f97; padding: 4px 10px 4px 0; border-bottom: 1px solid #e2e2de; }
+  td { border-top: 1px solid #eeeeea; padding: 6px 10px 6px 0; vertical-align: top; }
+  tr.merkez td { background: #f7f1e2; font-weight: 600; }
+  ol li { margin: 8px 0; }
+  p.ad { margin: 12px 0 2px; }
+  .kaynak { color: #7d8794; font-size: 11.5px; margin: 0 0 14px; }
+  .sa { background: #f7f1e2; padding: 10px 14px; }
+  @media print { body { margin: 10mm auto; } h2 { page-break-after: avoid; } }
+</style>
+<h1>M5 kapı — dikiş rehberi</h1>
+<p class="kaynak">EU38 · 6 parça · 2 m kumaş (140 cm en)</p>
+
+<h2>Dikiş payı</h2>
+<p class="sa"><strong>dikiş payı 15 mm — kesim çizgisine DAHİL.</strong>
+DIŞ çizgiden kes, içteki ince çizgiden dik. Bu sayı kalıbın kendi geometrisinden okunur
+(her parçanın <code>seamAllowance</code> alanı), ayrı bir tablodan değil.</p>
+
+<h2>Kumaş</h2>
+<p class="ad" data-advice="fabric.band">Bu kalıp <strong>dokuma</strong> kumaş için kesildi: enine esneme %0.0, göğüste %11.0 rahatlık payı ile çizildi. Başka bir esneme sınıfı başka bir kesim ister — tahmin etme, yeniden çizdir.</p>
+<p class="kaynak">bu çizimin ölçtüğü: stretchPct=0.0 · band=woven · chestEasePct=11.0</p>
+<p class="ad" data-advice="fabric.stretchTest"><strong>10 cm esneme testi:</strong> kumaşın enine (kenardan kenara) 10 cm işaretle ve çek. Dokuma kumaş neredeyse hiç oynamaz — 10 cm'in 11 cm'i geçiyorsa o kumaşta bu kalıbın hesaba katmadığı bir esneme var ve giysi bol durur.</p>
+<p class="kaynak">bu çizimin ölçtüğü: testLenCM=10 · maxCM=11 · bandHighPct=0.0</p>
+<h2>Kesmeden önce</h2>
+<p class="ad" data-advice="prep.prewash"><strong>Kesmeden önce yıka.</strong> Bu kalıp 88.0 cm göğse çizildi ve grade edildiği beden çizelgesinin en küçük adımı 4.0 cm. Yani enine sadece %4.5 çekme (4.0 cm) bitmiş giysiyi <em>tam bir beden</em> aşağı indirir — bu kadar azı yetiyor. Kumaşı, bitmiş giysiyi nasıl yıkayacaksan tam öyle yıka ve kurut, ütüle, sonra kes. Kestikten sonra yapılacak bir şey yok.</p>
+<p class="kaynak">bu çizimin ölçtüğü: bustCM=88.0 · sizeStepCM=4.0 · oneSizeShrinkPct=4.5</p>
+<h2>Ne alacaksın</h2>
+<p class="ad" data-advice="cut.yardage"><strong>Kumaş:</strong> 2.0 m, 140 cm ende, boyuna katlanmış. Kumaşta hav ya da tek yönlü desen varsa biraz fazla al.</p>
+<p class="kaynak">bu çizimin ölçtüğü: fitsBolt=1 · fabricMeters140=2.0 · widthCM=140 · metersAtWidth=2.0 · refWidthCM=140 · widestPieceMM=633</p>
+<p class="ad" data-advice="sew.interfacing"><strong>Tela: yok</strong> — ve bu atlanmış değil, ölçülmüş. Bu kalıpta tela taşıyan cinsten (pervaz, yaka, bant, manşet, patlet, kemer) 0 parça var; buradaki formu dikişler ve pensler tutuyor. Tela satın alma.</p>
+<p class="kaynak">kaynak: contract/guide-sources.json → nmsu-c208 | bu çizimin ölçtüğü: facingPieces=0</p>
+<h2>İğne, dikiş, kenar</h2>
+<p class="ad" data-advice="sew.needle"><strong>İğne: universal, 60/8 – 70/10.</strong> Bu top 110.0 g/m2; ağırlığa göre hafif sınıfa düşüyor (150 g/m2 altı hafif, 350'e kadar orta) ve çizelgenin o sınıf için yayınladığı numara aralığı bu. Çizelge tek numara değil ARALIK veriyor, bu satır da öyle yapıyor — artık bir parçada ince uçtan başla, dikiş atlıyorsa bir numara yukarı çık.</p>
+<p class="kaynak">kaynak: contract/guide-sources.json → uof-needle-sizes+fabricuk-gsm-bands+schmetz-needle-types | bu çizimin ölçtüğü: needleLow=60/8 · needleHigh=70/10 · weightGSM=110.0 · weightClass=light · lightMaxGSM=150 · mediumMaxGSM=350 · birim=g/m2</p>
+<p class="ad" data-advice="sew.stitch"><strong>Dikiş:</strong> düz dikiş, ISO 4915 tip 301, yaklaşık 2.5 mm boyunda.</p>
+<p class="kaynak">kaynak: contract/guide-sources.json → coats-seams</p>
+<p class="ad" data-advice="sew.seamClass"><strong>Dikiş sınıfı:</strong> bu kalıptaki her düz birleşim üst üste bindirilmiş düz dikiştir: ISO 4916 dikiş 1.01.01 + ISO 4915 batış 301. Bu çifti bir imalathaneye söylersen ne istediğini tam olarak anlarlar.</p>
+<p class="kaynak">kaynak: contract/guide-sources.json → coats-seams</p>
+<p class="ad" data-advice="sew.edgeFinish"><strong>Kenar temizleme:</strong> overlok, ISO 4916 6.01.01. Ev makinesindeki karşılığı kenar üstünden zikzaktır.</p>
+<p class="kaynak">kaynak: contract/guide-sources.json → coats-seams</p>
+<p class="ad" data-advice="sew.boundEdge"><strong>Biye ile kapatılan kenar:</strong> 1 biye şeridi kenarı pervazlamıyor, <em>sarıyor</em> — bu ISO 4916 sınıf 3 (bound), sanayinin tişört yakasında kullandığı sınıfın aynısı. İç kavislerde şeridi çok hafif gererek yatır.</p>
+<p class="kaynak">kaynak: contract/guide-sources.json → coats-seams | bu çizimin ölçtüğü: bindingPieces=1</p>
+<h2>Bu giysinin bu kumaştaki zor noktaları</h2>
+<p class="ad" data-advice="zor.ozet">Bu kalıpta, bu kumaşta <strong>4 zorluk ölçüldü</strong>; en zor 3 tanesi aşağıda, her biri kendi sınırını ne kadar aştığına göre sıralı (1.00 = yapacak bir şey yok demek). Bunlar genel dikiş tavsiyesi değil, <em>bu giysinin bu kumaşta</em> direndiği yerler.</p>
+<p class="kaynak">bu çizimin ölçtüğü: candidates=4 · shown=3 · neutralRatio=1.00</p>
+<p class="ad" data-advice="zor.capEase"><strong>Kol kapağı / cap ease.</strong> Kol kapağı 439.8 mm, gireceği kol oyuğu 422.8 mm — arada 17.0 mm (%4.0) var. Bu bolluk kapak çentikleri arasında toplanıyor. Oraya iki sıra uzun dikiş at, kapak oyuğa eşitlenene kadar büz, ve <em>pimlemeden önce</em> dağıt — önce pimlersen pile olur.</p>
+<p class="kaynak">bu çizimin ölçtüğü: capMM=439.8 · armholeMM=422.8 · capEaseMM=17.0 · capEasePct=4.0 · capEdges=1 · armholeEdges=2</p>
+<p class="ad" data-advice="zor.clip"><strong>Çentikleme.</strong> Kalıptaki en dar kavis 'Sleeve' parçasında, yarıçapı 10.3 mm; içine yatırman gereken dikiş payı ise 15.0 mm. Pay, döndüğü kavisten GENİŞ — fiziksel olarak düz yatamaz. Parçayı çevirmeden önce payı çentikle (dikiş çizgisine 2 mm kala dur), yoksa dikiş büzülür ve hiçbir ütü bunu düzeltmez. Oran pay/yarıçap = 1.46.</p>
+<p class="kaynak">bu çizimin ölçtüğü: tightRadiusMM=10.3 · piece=Sleeve · seamAllowanceMM=15.0 · clipStopMM=2 · ratio=1.46</p>
+<p class="ad" data-advice="zor.boltRoom"><strong>Top eni.</strong> En geniş parça 'Skirt Front', kumaş enine 633 mm; topun 1397 mm. Geriye 764 mm boş en kalıyor. Yer var; yine de en geniş parçayı ilk yerleştir. Oran parça/top = 0.45.</p>
+<p class="kaynak">bu çizimin ölçtüğü: widestPieceMM=633 · widestPiece=Skirt Front · boltMM=1397 · spareMM=764 · tightSpareMM=100 · ratio=0.45</p>
+<h2>Püf noktalar</h2>
+<p class="ad" data-advice="cut.pieces"><strong>Kesim planı:</strong> 6 kalıp parçası, bunların 2 tanesi kumaş katında. Her parçanın kendi kesim notunu uygula.</p>
+<p class="kaynak">bu çizimin ölçtüğü: pieces=6 · onFold=2</p>
+<p class="ad" data-advice="tip.notches">Bu parçalarda <strong>78 çentik</strong> var ve bir tanesi bile süs değil — her biri iki kenarın buluşmak zorunda olduğu bir nokta. Keserken, kâğıdı yerinden oynatmadan önce dikiş payının içine 3 mm çentik at.</p>
+<p class="kaynak">bu çizimin ölçtüğü: notches=78 · snipMM=3</p>
+<p class="ad" data-advice="tip.seamAllowance">Her parçadaki <strong>dış çizgi KESİM</strong>, içteki <strong>DİKİŞ</strong> çizgisidir; aralarında 15.0 mm var. İçteki çizgiden dik, yoksa giysi her dikişte o kadar büyük çıkar.</p>
+<p class="kaynak">bu çizimin ölçtüğü: seamAllowanceMM=15.0</p>
+<p class="ad" data-advice="tip.longestPiece">En büyük parça '<strong>Skirt Front</strong>', 662 mm. Pimlemeye başlamadan önce masanın ve kumaş eninin bunu aldığını kontrol et.</p>
+<p class="kaynak">bu çizimin ölçtüğü: longestMM=662 · piece=Skirt Front</p>
+
+
+<h2>Kumaş sayıları</h2>
+<table>
+<tr><td>kumaş</td><td>viskon — %100 viskon challis (110 gsm)</td></tr>
+<tr><td>ağırlık</td><td>110 g/m²</td></tr>
+<tr><td>top eni</td><td>139.7 cm</td></tr>
+<tr><td>esneme</td><td>0 %</td></tr>
+<tr><td>gereken kumaş</td><td>2 m (140 cm ende, motorun kendi yerleşiminden)</td></tr>
+</table>
+<p class="kaynak">sayıların kaynağı: contract/fabric-catalog-v1.json → GIRDI/kumaslar.md (her sayının yanında yayınlayan satıcı sayfası; ölçülmemiş alan ÖLÇÜLMEDİ etiketi taşır)</p>
+<p><strong>Bu kesim ne ister?</strong> orta gramajlı, formunu tutan sert dokuma bir kumaş — oturan dikişler ve gövdeden duran form ancak kumaş şekli tutarsa temiz çizgi verir; akışkan kumaş sarkar ve oturan çizgiler dağılır.</p>
+<p><strong>Mağazada iste:</strong> orta gramaj, sert, katı tutan (yaklaşık 150-250 g/m2). Aileler: pamuklu poplin, keten, yün kumaş.</p>
+<p><strong>Bedeli:</strong> sert kumaş buruşur (özellikle keten) ve dikerken ütü ister.</p>
+<p class="kaynak">kaynak: web/data/sewing-guide.json (knowledge/sewing-guide.md. Deterministic, no runtime LLM cost. Fabric facts from web/data/fabrics.json (NMSU/SDSU/UKY Extension); construction order from Reader's Digest / Aldrich / Armstrong.)</p>
+
+
+<h2>Kesim planı</h2>
+<table>
+<tr><td>Bodice Front</td><td>cut 1 on fold</td></tr>
+<tr><td>Bodice Back</td><td>cut 2</td></tr>
+<tr><td>Bias binding (neckline)</td><td>cut 1 strip(s) 370 x 25 mm ON THE BIAS (45° to the grain), join end to end (total 370 mm = edge 350 mm + overlap), press in half, wrap the edge and trim the excess</td></tr>
+<tr><td>Skirt Front</td><td>cut 1 on fold</td></tr>
+<tr><td>Skirt Back</td><td>cut 2 (center back seam)</td></tr>
+<tr><td>Sleeve</td><td>cut 2</td></tr>
+</table>
+<p class="kaynak">kesim talimatları motorun kendi parça listesinden, kelimesi kelimesine.</p>
+
+<h2>İnşa sırası</h2>
+<ol>
+<li>Kesime başlamadan önce kalıbı yazdırın ve 3 cm'lik kalibrasyon karesini kontrol edin.</li>
+<li>This block uses standard assumptions for shoulder slope, underbust and arm width — sew a quick muslin (test version) from cheap fabric first and adjust before cutting your real fabric.</li>
+<li>Her parçayı etiketine göre kesin: 'katlı' işaretli parçalar kumaşın katına, '2 kez kes' işaretliler iki kez, kollar iki kez.</li>
+<li>Yaka oyuntusunu, çalışırken esnemesin diye dikiş çizgisinin hemen içinden ara dikişle (sabitleme dikişi) sabitleyin.</li>
+<li>Önce tüm pensleri dikin, ütüyü ortaya doğru yapın.</li>
+<li>Beden omuz dikişlerini dikin ve dikiş paylarını açık ütüleyin.</li>
+<li>Prepare the neckline bias strip: join the ends as needed and press it in half lengthwise along the marked fold line.</li>
+<li>Bind the neckline with the bias strip, right sides together and raw edges even, leaving the last 2 cm free at each center back edge (the zipper goes there later). Ease the strip gently around the curves. Trim to 6 mm, turn the folded edge to the inside and topstitch or slipstitch it down.</li>
+<li>Beden yan dikişlerini dikin.</li>
+<li>Etek dikişlerini dikin (fermuarın geleceği arka orta dikişi açık bırakın), sonra bedeni eteğe bel dikişinden birleştirin; yan dikişleri eşleyin.</li>
+<li>Arka ortaya, beden ve etek boyunca gizli fermuar takın: fermuarı, altındaki dikişi kapatMADAN ÖNCE takın, sonra dikişin geri kalanını kapatın.</li>
+<li>Serbest bıraktığınız biye uçlarını fermuar bandının üzerine katlayıp elle teyelleyin; böylece kenar fermuara temiz oturur.</li>
+<li>Her kol dikişini dikin. Kol başı çentikleri arasına büzgü dikişi atın, kol başını kol oyuntusuna gevşeklik payını esneterek oturtun ve kolları takın.</li>
+<li>Üzerinize prova edin, sonra 2 cm çift katlı baskıyla etek ucunu dikin.</li>
+</ol>
+<p class="kaynak">her adım motorun kendi dikiş talimatı (engine guideSteps), Türkçesi web/js/guide-tr.js tablosundan; tabloda olmayan adım UYDURULMAZ, İngilizce basılır.</p>
+</html>

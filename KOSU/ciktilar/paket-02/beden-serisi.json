@@ -1,0 +1,56 @@
+{
+  "_role": "BEDEN SERİSİ — seçilen beden ve ±3 komşusu, motorun kendi gradeJSON çıktısından. Pakette her beden AYRI bir A4 kalıp PDF'idir (kalip-A4-<beden>.pdf); tek dosyada PDF KATMANI değil — bugünkü PDF yazıcısı optional-content katmanı yazmıyor ve öyle demek yalan olurdu.",
+  "merkez": "EU38",
+  "komsu": 3,
+  "kirpildi": "alt uç 1 beden kırpıldı (çizelge EU34'te başlıyor)",
+  "bedenler": [
+    {
+      "size": "EU34",
+      "bust": 80,
+      "waist": 62,
+      "hip": 86,
+      "pieces": 6,
+      "meters": 2
+    },
+    {
+      "size": "EU36",
+      "bust": 84,
+      "waist": 66,
+      "hip": 90,
+      "pieces": 6,
+      "meters": 2
+    },
+    {
+      "size": "EU38",
+      "bust": 88,
+      "waist": 70,
+      "hip": 94,
+      "pieces": 6,
+      "meters": 2
+    },
+    {
+      "size": "EU40",
+      "bust": 92,
+      "waist": 74,
+      "hip": 98,
+      "pieces": 6,
+      "meters": 2
+    },
+    {
+      "size": "EU42",
+      "bust": 96,
+      "waist": 78,
+      "hip": 102,
+      "pieces": 6,
+      "meters": 2
+    },
+    {
+      "size": "EU44",
+      "bust": 100,
+      "waist": 82,
+      "hip": 106,
+      "pieces": 6,
+      "meters": 2
+    }
+  ]
+}
