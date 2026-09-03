@@ -16,7 +16,7 @@
 // ⛔ ÜÇÜNCÜ YOL YOK. Her kelime ya `eslendi` (bir eksen + o eksenin KATMAN 1
 // primitif demeti) ya `reddedildi` (adıyla, sebep + en yakın dikilebilir öneri)
 // çıkar. Sessizce düşen kelime = kullanıcıya söylenmeyen bir eksik.
-import { VISION_TASIMA, PRIMITIF_COZUM } from './contract.gen.js?v=144';
+import { VISION_TASIMA, PRIMITIF_COZUM } from './contract.gen.js?v=148';
 
 /**
  * Tek bir sözlük-dışı terim için karar.
