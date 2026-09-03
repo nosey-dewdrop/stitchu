@@ -503,6 +503,24 @@ std::vector<ValidationIssue> sleeveIssues(
 
 // MARK: Skirt helpers
 
+// A grown-on BUTTON STAND is an OVERLAP past the center front: the two fronts
+// lap over each other, so it adds CUT width and not one millimetre of body
+// circumference, and not one millimetre of sewn waist arc either. Every check
+// that compares a skirt piece against a bodice measurement must exclude it,
+// because BodiceBlock re-drafts the bodice side here WITHOUT the placket
+// (validator.cpp:1370) — otherwise the two sides are different frames.
+//
+// The amount is not a constant: it is the piece's OWN reach past the center
+// front, so a symmetric stand (18 mm) and an asymmetric one (18 + 55 mm) each
+// subtract exactly what they grew.
+double grownStand(const PatternPiece& piece) {
+    if (!contains(piece.closure, "button placket")) return 0;
+    double stand = 0;
+    for (const auto& c : piece.commands)
+        if (c.type != CmdType::Close) stand = std::max(stand, -c.to.x);
+    return stand;
+}
+
 double dartIntake(const PatternPiece& piece) {
     // Dart marking layout: move(legA), line(tip), line(legB).
     double intake = 0;
@@ -624,12 +642,7 @@ std::vector<ValidationIssue> skirtIssues(
         // Excluded amount is not a constant: it is the piece's own reach past
         // the center front, so a symmetric (18 mm) and an asymmetric (18 + 55 mm)
         // stand each subtract exactly what they grew.
-        double stand = 0;
-        if (contains(piece->closure, "button placket")) {
-            for (const auto& c : piece->commands)
-                if (c.type != CmdType::Close) stand = std::max(stand, -c.to.x);
-        }
-        sewnWaist += (*waist - dartIntake(*piece) - stand) * multiplier;
+        sewnWaist += (*waist - dartIntake(*piece) - grownStand(*piece)) * multiplier;
     }
 
     if (spec.skirtStyle == SkirtStyle::Gathered) {
@@ -705,7 +718,19 @@ std::vector<ValidationIssue> skirtIssues(
                     if (contains(piece->name, std::string("Center ") + (isFront ? "Front" : "Back"))) { center = piece; break; }
                 }
                 if (!center || center->commands.size() < 2 || center->commands[1].type != CmdType::Curve) continue;
-                const double skirtArc = pathLength({PathCommand::move(center->commands[0].to), center->commands[1]});
+                // Same two-frame trap the waist join above fell into: once the
+                // placket runs to the hem the skirt center panel is GROWN past
+                // the center front, so its waist edge starts at x = -stand and
+                // the arc reads long by exactly that overlap, while bodiceArc
+                // comes from a bodice drafted WITHOUT the placket. Measured on
+                // EU38 princess dress (2026-09-03): 114.4 vs 96.4 for a
+                // symmetric stand (+18.0) and 169.4 vs 96.4 for an asymmetric
+                // one (+73.0 = 18 + 55) — the overlap to the millimetre, not a
+                // real misalignment. The tolerance is NOT touched; the two
+                // sides are now the same measurement.
+                const double skirtArc =
+                    pathLength({PathCommand::move(center->commands[0].to), center->commands[1]}) -
+                    grownStand(*center);
                 if (std::fabs(skirtArc - bodiceArc) > princessSeamTolerance) {
                     issues.push_back({"waistalign", std::string("Skirt ") + (isFront ? "Front" : "Back"),
                         fmt("gore seam sits %.1f mm from the center edge, princess seam %.1f — off by %.1f",

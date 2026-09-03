@@ -52,7 +52,7 @@ inline constexpr ComposeRule kComposeHostRules[] = {
     {"top.cropped", "gather.drawstringSleeve", "honest"},
     {"top.cropped", "backSlit.vent", "excluded"},
     {"top.cropped", "cuff.button", "excluded"},
-    {"top.cropped", "hemShape.highLow", "validator"},
+    {"top.cropped", "hemShape.highLow", "allowed"},
     {"top.cropped", "ruffleHem", "excluded"},
     {"top.cropped", "bardot.plain", "validator"},
     {"top.cropped", "sleeveCap.puffed", "excluded"},

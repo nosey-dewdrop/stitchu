@@ -607,8 +607,8 @@
    {
     "host": "top.cropped",
     "feature": "hemShape.highLow",
-    "class": "validator",
-    "why": "[marking] marking point (95.5, 434.0) falls outside the piece"
+    "class": "allowed",
+    "why": "was 'validator' with '[marking] marking point falls outside the piece'. That was never a refusal, it was the hem lift dropping what is drawn on the piece: HemBlock reshaped the outline and left the markings at the old hem. Fixed at the root (hem.cpp: the same liftPoint now carries the markings), and the cell draws clean."
    },
    {
     "host": "top.cropped",

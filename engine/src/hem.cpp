@@ -189,6 +189,29 @@ void reshape(PatternPiece& p, double band, double sideRise, double centerDelta) 
                                          {s.c2.x, s.c2.y}));
     }
     p.commands = out;
+
+    // ⭐ WHAT IS DRAWN ON THE PIECE MOVES WITH THE PIECE. The lift is a
+    // point-wise deformation of the hem band, so every marking that reaches
+    // into that band has to ride it — otherwise a line drawn to the OLD hem
+    // hangs off the reshaped panel. Measured (compose_check, 2026-09-03): with
+    // the button front now running to the hem, `placket.standard +
+    // hemShape.highLow` left the fold line at (-0.0, 650.0) and the asymmetric
+    // one at (-55.0, 650.0), both outside a piece whose front hem had just been
+    // raised — "marking point falls outside the piece", twice. PlacketBlock
+    // draws at garment.cpp:1067 and HemBlock reshapes at :1274, so the markings
+    // were drawn against a hem that no longer existed.
+    //
+    // Same `liftPoint`, same band, same rises as the outline above: a marking
+    // above the band is untouched (dart legs at the waist do not move), and one
+    // that ran to the old hem now stops at the new one.
+    for (auto& m : p.markings) {
+        if (m.type == CmdType::Close) continue;
+        liftPoint(m.to, g, band, sideRise, centerDelta);
+        if (m.type == CmdType::Curve) {
+            liftPoint(m.cp1, g, band, sideRise, centerDelta);
+            liftPoint(m.cp2, g, band, sideRise, centerDelta);
+        }
+    }
 }
 
 } // namespace
