@@ -1,105 +1,111 @@
 #!/usr/bin/env node
-// bugra-blind-compare — BUGRA KOR KONTROLU (Damla'nin 12. maddesi, F8-bugra).
+// bugra-blind-compare — BUGRA KOR KONTROLU (Damla'nin 12. maddesi).
 //
 // SORU: "bir sey cizdiginde bugranin kalibina yakin bir sey cikiyor mu?"
 //
 // KANUN — BU BIR KAPI DEGIL, AYAR VIDASI HIC DEGIL:
 //   * Bugra TUNE HEDEFI DEGIL. Motor Bugra'ya benzemek icin AYARLANMAZ.
-//   * Bu arac sadece OLCER ve yazar. Bu olcumden sonra hicbir sabit degismez.
-//   * Fark buyukse rapora HIPOTEZ yazilir (hangi fazin/kuralin eksigi), sabit eklenmez.
+//   * Bu arac OLCER ve SINIFLAR. Fark uc kovaya ayrilir:
+//       STIL         — iki giysi ayri sey, fark mesru.
+//       MOTOR EKSIGI — motorun sozlugunde/ekseninde o yapi YOK.
+//       HATA         — motor KENDI yayinlanmis kuralini tutturamiyor.
+//     Sadece HATA kovasi kapatilir, o da KOK SEBEPTEN; Bugra'ya benzesin diye
+//     sabit EKLENMEZ.
 //   * ctest'e EKLI DEGIL — rapor araci, kapi degil.
 //
 // KOR SPEC: Bugra Locket Top'un SATIS SAYFASINDAKI giysi tarifi (dugmeli,
 // peter pan yakali, puf kollu fitted top) motorun KENDI eksenlerine cevrilir;
-// Bugra'nin mm'lerine BAKILMADAN kurulur. Spec asagida, her eksenin gerekcesi
-// yaninda. Motorun cizemedigi yapilar (2 parcali kol, ayri yaka astari)
-// ADIYLA raporlanir — sessiz atlama yok.
+// Bugra'nin mm'lerine BAKILMADAN kurulur.
 //
-// GERCEK VERI: patterns_real/geometry/geometry-full.json — satin alinmis A0
-// PDF'ten vektor cikarim (kalibrasyon 4cm bar = 40.00mm), beden 38 halkasi,
-// dikis payi DAHIL. Motor tarafinda ayni sepet: cutLine (dikis payi DAHIL
-// kesim cizgisi). SA farki: motor 15mm / Bugra 10mm (+30mm etek) — tabloya
-// yazilir, duzeltilmez.
+// GERCEK VERI: patterns_real/geometry/geometry-full.json (A0 PDF vektor
+// cikarimi, 4cm bar = 40.00mm kalibrasyon, beden 38 halkasi, dikis payi DAHIL)
+// + patterns_real/geometry/seamgraph.json (ayni halkanin ADLANDIRILMIS
+// kenarlari: yaka / omuz / OYUK / yan-dikis / etek / orta; cut + stitch mm).
 //
-// BEDEN NOTU (gizlenmez): motorun yayimli EU38 govdesi (contract euSizeChart)
-// bust/waist/hip = 88/70/94 cm; Bugra'nin kendi 38 cizelgesi (geometry-full
-// sizeChartMM) 92/72/98 cm. Iki "38" ayni govde degil. Motor KENDI 38'ini
-// cizer, Bugra 38 halkasiyla kiyaslanir; fark bu satirdan okunur.
+// BEDEN NOTU (gizlenmez): motorun yayimli EU38 govdesi 88/70/94 cm; Bugra'nin
+// kendi 38 cizelgesi 92/72/98 cm. Iki "38" ayni govde degil.
 //
-// HIZALAMA (serbest parametre YOK — overlay-png.mjs / ring-compare.py usulu):
-// iki kontur da kendi bbox min kosesine tasinir; Bugra'ya y_yerel = ymax - y
-// (PDF y-yukari -> SVG y-asagi, beyan edilmis yon farki). Dondurme yok,
-// olcekleme yok, en-iyi-oturtma yok. Chamfer bu hizada olculur; Bugra parcasi
-// A0 sayfasinda farkli yonde yatiyorsa o fark da SAYIYA GIRER ve not edilir.
+// HIZALAMA (serbest parametre YOK): iki kontur da kendi bbox min kosesine
+// tasinir; Bugra'ya y_yerel = ymax - y (PDF y-yukari -> SVG y-asagi). Dondurme
+// yok, olcekleme yok, en-iyi-oturtma yok.
 //
-// kullanim:  node engine/tools/bugra-blind-compare.mjs [--no-png]
+// ONCE/SIMDI: ayni spec, ayni hizalama, IKI motor. "ONCE" = --baseline ile
+// verilen git revizyonundaki web/vendor/stitchu-engine.js. Bindirme levhasinda
+// her parca iki kez cizilir, ayni kirmizi Bugra konturuna karsi.
+//
+// kullanim:  node engine/tools/bugra-blind-compare.mjs [--no-png] [--baseline=<rev>]
 // ciktilar:  KOSU/ciktilar/bugra-rapor.md, bugra-bindirme.svg, bugra-bindirme.png
 
 import { createRequire } from 'node:module';
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import {
+  motorBodyEdges, motorSleeveEdges, motorCollarEdges,
+  bugraEdges, resample, bez, polyLen, KOR_SPEC,
+} from './bugra-landmarks.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '../..');
 const OUTDIR = join(ROOT, 'KOSU/ciktilar');
 mkdirSync(OUTDIR, { recursive: true });
 
+const arg = (k, d) => (process.argv.find((a) => a.startsWith(k + '=')) ?? (k + '=' + d)).split('=')[1];
+// Varsayilan taban: 17d45361 — 0c17a8c0 ("buzgu edge operator") ONCESI son
+// commit, yani bir onceki bugra raporunu basan motor. Ayar sayisi degil, tanik.
+const BASELINE_REV = arg('--baseline', '17d45361');
+
 const require = createRequire(import.meta.url);
-// engine/dist bayat (18 Tem, cupSeam oncesi); guncel wasm web/vendor'da —
-// bugra-parity.mjs ile ayni tercih, ayni gerekce.
 const createEngine = require(join(ROOT, 'web/vendor/stitchu-engine.js'));
 const engine = await createEngine();
 const { engineSpec, bodyForSize } = await import(pathToFileURL(join(ROOT, 'web/js/engine.js')).href);
 
 const GT = JSON.parse(readFileSync(join(ROOT, 'patterns_real/geometry/geometry-full.json'), 'utf8'));
+const SG = JSON.parse(readFileSync(join(ROOT, 'patterns_real/geometry/seamgraph.json'), 'utf8'));
 const SIZE = '38';
 
-// ── KOR SPEC — Bugra'nin urun tarifinden, mm'lerinden DEGIL ────────────────
-// "buttoned, peter pan collared, puff sleeved fitted top":
-//   buttonRow functional + placketStyle standard + frontPlacket  <- dugmeli on
-//   collarType peterPan                                          <- bebe yaka
-//   sleeveStyle straight + sleeveCap puffed + sleeveLength short <- puf kol
-//   shaping dart (Bugra arka bel pensesi urun fotosunda; princess degil)
-//   topLength hip: motorun sundugu {cropped, hip, tunic} icinde belden uzun
-//   EN KISA sinif — giysi sinifi kurali, Bugra cetveline bakilmadi (bugra-parity
-//   F8 dersiyle ayni kural).
-const RAW_SPEC = {
-  garment: 'top', shaping: 'dart', fabric: 'woven',
-  neckline: 'crew', collarType: 'peterPan',
-  sleeveStyle: 'straight', sleeveCap: 'puffed', sleeveLength: 'short',
-  buttonRow: 'functional', placketStyle: 'standard', frontPlacket: true,
-  topLength: 'hip',
-};
+// KOR SPEC tek kaynaktan (bugra-landmarks.mjs KOR_SPEC).
+const RAW_SPEC = KOR_SPEC;
 
-// Motorun SOZLUGUNDE OLMAYAN Bugra yapilari — eksen yok, yani motor bunu
-// cizemez; bu bir sessiz default degil, sozluk yoklugudur ve adiyla yazilir.
 const NOT_IN_VOCAB = [
-  'PUF UST KATMANI (Bugra Upper Sleeve): T14 olcumune gore (CLAUDE.md / knowledge/cap-ease-isareti-2026-08-17.md) Bugra kolu "yatay bolunmus" DEGIL — Lower Sleeve gercek set-in kol, Upper Sleeve onun ustune dikilen %29-35 buzgulu AYRI DIS KATMAN. Motorun sozlugunde "buzgulu ust katman" operatoru yok (sleeveCap {plain, gathered, puffed, cap} tek parcayi sekillendirir, ikinci katman dogurmaz). Motor puf ust katmanini CIZEMIYOR — adiyla kayit.',
-  'ayri yaka astari parcasi (Collar Lining + tela): motor yakayi "cut 2 + interfacing" TALIMATIYLA verir, ayri astar PARCASI cizen eksen yok.',
+  'PUF UST KATMANI (Bugra Upper Sleeve): T14 olcumune gore Bugra kolu "yatay bolunmus" DEGIL — Lower Sleeve gercek set-in kol, Upper Sleeve onun ustune dikilen %29-35 buzgulu AYRI DIS KATMAN. Motorun sozlugunde ikinci katman doguran operator yok (sleeveCap {plain, gathered, puffed, cap} TEK parcayi sekillendirir). Motor puf ust katmanini CIZEMIYOR — adiyla kayit.',
+  'BUYUME-YAKALI ON (grown-on / cut-on facing): Bugra on govdesi CF hattinda kendi uzerine katlanan bir temizleme payi tasiyor. Motor bunu AYRI parca (Front/Back Neck Facing) ile cozuyor; "on parcaya buyume-yaka payi ekle" ekseni yok.',
+  'ayri yaka astari PARCASI (Collar Lining + tela): motor yakayi "cut 2 + interfacing" TALIMATIYLA verir, ayri astar parcasi cizen eksen yok.',
 ];
 
 const BODY = { ...bodyForSize('EU' + SIZE), upperBust: 0 };
-const out = JSON.parse(engine.draftJSON(engineSpec(RAW_SPEC), BODY));
-if (out.error) { console.error('MOTOR REDDETTI:', out.error); process.exit(1); }
+
+function draftWith(eng) {
+  const out = JSON.parse(eng.draftJSON(engineSpec(RAW_SPEC), BODY));
+  if (out.error) throw new Error('MOTOR REDDETTI: ' + out.error);
+  return out.pattern.pieces;
+}
+const piecesNow = draftWith(engine);
+
+// ── ONCE (taban motor) ─────────────────────────────────────────────────────
+let piecesOnce = null, baselineNote = '';
+try {
+  const cacheDir = join(ROOT, 'engine/.cache');
+  mkdirSync(cacheDir, { recursive: true });
+  const p = join(cacheDir, `bugra-baseline-${BASELINE_REV}.js`);
+  if (!existsSync(p)) {
+    const js = execFileSync('git', ['show', `${BASELINE_REV}:web/vendor/stitchu-engine.js`],
+                            { cwd: ROOT, maxBuffer: 128 * 1024 * 1024 });
+    writeFileSync(p, js);
+  }
+  piecesOnce = draftWith(await (require(p))());
+  baselineNote = `ONCE sutunu: git ${BASELINE_REV} icindeki web/vendor/stitchu-engine.js`;
+} catch (e) {
+  baselineNote = `TABAN MOTOR YUKLENEMEDI (${e.message}) — ONCE sutunu bos`;
+}
 
 // ── geometri yardimcilari ──────────────────────────────────────────────────
-function bezPts(p0, c, n = 16) {
-  const pts = [];
-  for (let i = 1; i <= n; i++) {
-    const t = i / n, mt = 1 - t;
-    pts.push([
-      mt*mt*mt*p0[0] + 3*mt*mt*t*c.cp1x + 3*mt*t*t*c.cp2x + t*t*t*c.x,
-      mt*mt*mt*p0[1] + 3*mt*mt*t*c.cp1y + 3*mt*t*t*c.cp2y + t*t*t*c.y,
-    ]);
-  }
-  return pts;
-}
 function cmdsToPoly(cmds) {
   const P = []; let cur = null;
   for (const c of cmds) {
     if (c.type === 'move' || c.type === 'line') { cur = [c.x, c.y]; P.push(cur); }
-    else if (c.type === 'curve') { P.push(...bezPts(cur, c)); cur = [c.x, c.y]; }
+    else if (c.type === 'curve') { P.push(...bez(cur, c, 16)); cur = [c.x, c.y]; }
   }
   return P;
 }
@@ -109,26 +115,8 @@ const bbox = (P) => {
   return { x0, y0, x1, y1, w: x1 - x0, h: y1 - y0 };
 };
 const closeP = (P) => (P.length && (P[0][0] !== P.at(-1)[0] || P[0][1] !== P.at(-1)[1]) ? [...P, P[0]] : P);
-const perim = (P) => { let s = 0; for (let i = 1; i < P.length; i++) s += Math.hypot(P[i][0]-P[i-1][0], P[i][1]-P[i-1][1]); return s; };
 const toOrigin = (P) => { const b = bbox(P); return P.map(([x, y]) => [x - b.x0, y - b.y0]); };
 const flipY = (P) => { const b = bbox(P); return P.map(([x, y]) => [x, b.y1 - y]); };
-// 2mm adimla esit-aralikli yeniden ornekleme (Chamfer ornek yogunlugu iki
-// tarafta esit olsun; adim = geometry-full bezierStepMM ile ayni mertebe).
-function resample(P, step = 2) {
-  const Q = [P[0]]; let acc = 0;
-  for (let i = 1; i < P.length; i++) {
-    let [ax, ay] = P[i-1]; const [bx, by] = P[i];
-    let seg = Math.hypot(bx-ax, by-ay);
-    while (acc + seg >= step) {
-      const t = (step - acc) / seg;
-      const nx = ax + (bx-ax)*t, ny = ay + (by-ay)*t;
-      Q.push([nx, ny]); ax = nx; ay = ny;
-      seg = Math.hypot(bx-ax, by-ay); acc = 0;
-    }
-    acc += seg;
-  }
-  return Q;
-}
 function ptSegDist(px, py, ax, ay, bx, by) {
   const dx = bx-ax, dy = by-ay, L2 = dx*dx + dy*dy;
   if (L2 < 1e-12) return Math.hypot(px-ax, py-ay);
@@ -143,125 +131,346 @@ function ptPolyDist([px, py], poly) {
   }
   return best;
 }
-// Simetrik Chamfer: iki yonde nokta->kontur mesafelerinin birlesik dagilimi.
 function chamfer(A, B) {
   const dists = [];
   for (const p of A) dists.push(ptPolyDist(p, B));
   for (const p of B) dists.push(ptPolyDist(p, A));
   dists.sort((a, b) => a - b);
   const q = (f) => dists[Math.min(dists.length - 1, Math.floor(dists.length * f))];
-  const mean = dists.reduce((a, b) => a + b, 0) / dists.length;
-  return { mean, med: q(0.5), p95: q(0.95), max: dists.at(-1) };
+  return { mean: dists.reduce((a, b) => a + b, 0) / dists.length,
+           med: q(0.5), p95: q(0.95), max: dists.at(-1) };
 }
 
 // ── iki taraf ──────────────────────────────────────────────────────────────
-// Motor: cutLine = dikis payi DAHIL kesim cizgisi (Bugra da SA dahil basar).
-const motor = out.pattern.pieces.map((p) => ({
-  name: p.name, cut: p.cutInstruction, sa: p.seamAllowance,
+const shape = (p) => ({
+  name: p.name, cut: p.cutInstruction, sa: p.seamAllowance, raw: p,
   poly: toOrigin(closeP(cmdsToPoly(p.cutLine ?? p.commands))),
-  seamPerim: perim(closeP(cmdsToPoly(p.commands))),
-}));
-const rings = GT.rings.filter((r) => r.pattern === 'locket_top' && r.sizeGuess === SIZE)
-  .map((r) => ({ name: r.piece, poly: toOrigin(flipY(closeP(r.polygon.map((p) => [p[0], p[1]])))) }));
+  seamPerim: polyLen(closeP(cmdsToPoly(p.commands))),
+  cutPerim: polyLen(closeP(cmdsToPoly(p.cutLine ?? p.commands))),
+});
+const motor = piecesNow.map(shape);
+const motorOnce = piecesOnce ? piecesOnce.map(shape) : null;
 
-// motor parca adi -> Bugra 38 halka adi. null = yapisal fark (sayi kiyasi
-// yapilmaz ama SATIRI yazilir). Puff Sleeve, Bugra'nin LOWER Sleeve'ine karsi
-// olculur: T14 olcumuyle oyuga dikilen gercek set-in kol LOWER'dir (kiris =
-// bicep hatti, sagitta = kapak yuksekligi); Upper ise motorun cizemedigi
-// buzgulu DIS katman. Es degil, en yakin islevsel karsilik; fark ayrica yazilir.
+const rings = GT.rings.filter((r) => r.pattern === 'locket_top' && r.sizeGuess === SIZE)
+  .map((r) => ({
+    name: r.piece,
+    poly: toOrigin(flipY(closeP(r.polygon.map((p) => [p[0], p[1]])))),
+    // seamgraph indeksleri 1mm yeniden ornekli halkada tanimli (meta.step_mm = 1)
+    ring1mm: resample(closeP(r.polygon.map((p) => [p[0], p[1]])), 1),
+    perim: r.perimMM,
+  }));
+
 const MAP = {
   'Top Front': 'Front Body',
   'Top Back': 'Back Body',
   'Puff Sleeve': 'Lower Sleeve',
   'Peter Pan Collar (bebe yaka)': 'Collar',
-  'Front Neck Facing': null,  // Bugra'da facing yok (astarli yaka konstruksiyonu)
+  'Front Neck Facing': null,
   'Back Neck Facing': null,
 };
 
 // ── olcum ──────────────────────────────────────────────────────────────────
 const lines = [];
 const say = (s) => { lines.push(s); console.log(s); };
+const r1 = (v) => Math.round(v * 10) / 10;
 
-say('bugra-blind-compare | KOR KONTROL — olcum, ayar degil | Bugra Locket Top beden 38 vs motor EU38');
+say('bugra-blind-compare | KOR KONTROL — olcer ve siniflar, ayarlamaz | Bugra Locket Top 38 vs motor EU38');
 say(`kor spec: ${JSON.stringify(RAW_SPEC)}`);
 say(`motor govde EU38 (contract euSizeChart): bust ${BODY.bust} / waist ${BODY.waist} / hip ${BODY.hip} cm`);
 const bs = GT.sizeChartMM[SIZE];
-say(`Bugra kendi 38 cizelgesi (sizeChartMM): bust ${bs.bustMM/10} / waist ${bs.waistMM/10} / hip ${bs.hipMM/10} cm -> IKI "38" AYNI GOVDE DEGIL (motor 88/70/94 = Bugra ~36-38 arasi); fark gizlenmez, tabloya girer`);
-say(`dikis payi: motor ${motor[0].sa}mm her kenar | Bugra 10mm + etek 30mm (defter) — ikisi de kesim cizgisinde DAHIL, fark duzeltilmez`);
-say(`hizalama: bbox min kosesi, dondurmesiz, olceklemesiz (serbest parametre YOK) | ornekleme 2mm`);
+say(`Bugra kendi 38 cizelgesi: bust ${bs.bustMM/10} / waist ${bs.waistMM/10} / hip ${bs.hipMM/10} cm -> IKI "38" AYNI GOVDE DEGIL (bust orani ${(BODY.bust*10/bs.bustMM).toFixed(3)})`);
+say(`dikis payi: motor ${motor[0].sa}mm her kenar | Bugra 10mm + etek 30mm — ikisi de kesim cizgisinde DAHIL`);
+say(baselineNote);
 say('');
-say(`PARCA SAYISI: motor ${motor.length} | Bugra ${rings.length} (defterde adli 6 + "EXTRA-TL (not in defter)")`);
+say(`PARCA SAYISI: motor ${motor.length} | Bugra ${rings.length}`);
 say('');
-say('parca eslemesi                                      motor bbox    Bugra bbox    Dcevre(kesim)   Chamfer mm (mean/med/p95/max)');
+say('A) PANEL DIS CEVRESI — Chamfer (mm), kesim cizgisi, bbox-min hizali');
+say('   parca eslemesi                                 motor bbox  Bugra bbox  SIMDI mean/p95/max        ONCE mean  delta');
 
 const usedGt = new Set();
 const rows = [];
 for (const m of motor) {
   const gtName = MAP[m.name];
   if (gtName === null) {
-    say(`  ${m.name.padEnd(34)} YAPISAL FARK — Bugra'da bu parca yok (astarli yaka, facing kullanmiyor)`);
+    say(`   ${m.name.padEnd(30)} YAPISAL FARK — Bugra'da bu parca yok (astarli / buyume-yakali konstruksiyon)`);
     rows.push({ motor: m.name, kind: 'yapisal-motor-fazla' });
     continue;
   }
-  const g = rings.find((r) => r.name === gtName);
-  if (!g) { say(`  ${m.name.padEnd(34)} ESLEME YOK`); continue; }
-  usedGt.add(g.name);
-  const mb = bbox(m.poly), gb = bbox(g.poly);
-  const A = resample(m.poly), B = resample(g.poly);
-  const c = chamfer(A, B);
-  const dp = perim(m.poly) - perim(g.poly);
-  say(`  ${(m.name + ' ~ ' + g.name).padEnd(48)} ${Math.round(mb.w)}x${Math.round(mb.h)}`.padEnd(66)
-    + `${Math.round(gb.w)}x${Math.round(gb.h)}`.padEnd(14)
-    + `${dp >= 0 ? '+' : ''}${Math.round(dp)}mm`.padEnd(16)
-    + `${c.mean.toFixed(1)} / ${c.med.toFixed(1)} / ${c.p95.toFixed(1)} / ${c.max.toFixed(1)}`);
-  rows.push({ motor: m.name, bugra: g.name, kind: 'olculdu',
+  const gg = rings.find((r) => r.name === gtName);
+  if (!gg) { say(`   ${m.name.padEnd(30)} ESLEME YOK`); continue; }
+  usedGt.add(gg.name);
+  const mb = bbox(m.poly), gb = bbox(gg.poly);
+  const B = resample(gg.poly, 2);
+  const c = chamfer(resample(m.poly, 2), B);
+  let cOnce = null, mPolyOnce = null;
+  if (motorOnce) {
+    const mo = motorOnce.find((x) => x.name === m.name);
+    if (mo) { mPolyOnce = mo.poly; cOnce = chamfer(resample(mo.poly, 2), B); }
+  }
+  say(`   ${(m.name + ' ~ ' + gg.name).padEnd(46)} ${(Math.round(mb.w)+'x'+Math.round(mb.h)).padEnd(11)} `
+    + `${(Math.round(gb.w)+'x'+Math.round(gb.h)).padEnd(11)} `
+    + `${(c.mean.toFixed(1)+' / '+c.p95.toFixed(1)+' / '+c.max.toFixed(1)).padEnd(25)} `
+    + `${(cOnce ? cOnce.mean.toFixed(1) : '-').padEnd(10)} `
+    + `${cOnce ? (c.mean - cOnce.mean >= 0 ? '+' : '') + (c.mean - cOnce.mean).toFixed(1) : '-'}`);
+  rows.push({ motor: m.name, bugra: gg.name, kind: 'olculdu',
     mW: mb.w, mH: mb.h, gW: gb.w, gH: gb.h,
-    mPerim: perim(m.poly), gPerim: perim(g.poly), mSeamPerim: m.seamPerim,
-    chamfer: c, mPoly: m.poly, gPoly: g.poly, cut: m.cut });
+    mPerim: m.cutPerim, gPerim: gg.perim, mSeamPerim: m.seamPerim,
+    chamfer: c, chamferOnce: cOnce, mPoly: m.poly, gPoly: gg.poly, mPolyOnce });
 }
-for (const g of rings) {
-  if (usedGt.has(g.name)) continue;
-  const gb = bbox(g.poly);
-  say(`  (motor karsiligi yok)              ${g.name.padEnd(28)} Bugra ${Math.round(gb.w)}x${Math.round(gb.h)} — MOTOR EKSIGI ya da yapisal fark, asagida adiyla`);
-  rows.push({ bugra: g.name, kind: 'bugra-fazla', gW: gb.w, gH: gb.h, gPerim: perim(g.poly) });
+for (const gg of rings) {
+  if (usedGt.has(gg.name)) continue;
+  const gb = bbox(gg.poly);
+  say(`   (motor karsiligi yok)                          ${gg.name.padEnd(28)} Bugra ${Math.round(gb.w)}x${Math.round(gb.h)}`);
+  rows.push({ bugra: gg.name, kind: 'bugra-fazla', gW: gb.w, gH: gb.h, gPerim: gg.perim });
+}
+
+// ── B) LANDMARK-LANDMARK ───────────────────────────────────────────────────
+say('');
+say('B) LANDMARK-LANDMARK — ayni ADLI kenar, dikis cizgisi (mm). Chamfer sekil verir, bu satirlar SEVK olcusu verir.');
+say('   kenar                      motor   Bugra   fark     motor y/k  Bugra y/k');
+
+const lmRows = [];
+function pushLM(ad, mLen, gLen, mRatio = null, gR = null, not = '') {
+  lmRows.push({ ad, mLen, gLen, mRatio, gRatio: gR, not });
+  const f = (mLen != null && gLen != null) ? (mLen - gLen) : null;
+  say(`   ${ad.padEnd(26)} ${String(mLen == null ? '-' : r1(mLen)).padEnd(7)} `
+    + `${String(gLen == null ? '-' : r1(gLen)).padEnd(7)} `
+    + `${String(f == null ? '-' : (f >= 0 ? '+' : '') + r1(f)).padEnd(8)} `
+    + `${String(mRatio == null ? '-' : mRatio.toFixed(3)).padEnd(10)} `
+    + `${String(gR == null ? '-' : gR.toFixed(3))} ${not}`);
+}
+
+const ringOf = (n) => rings.find((r) => r.name === n);
+const bugraFront  = bugraEdges(SG, ringOf('Front Body').ring1mm, 'locket_top/Front Body', SIZE);
+const bugraBack   = bugraEdges(SG, ringOf('Back Body').ring1mm, 'locket_top/Back Body', SIZE);
+const bugraSleeve = bugraEdges(SG, ringOf('Lower Sleeve').ring1mm, 'locket_top/Lower Sleeve', SIZE);
+const bugraCollar = bugraEdges(SG, ringOf('Collar').ring1mm, 'locket_top/Collar', SIZE);
+const gE = (list, name) => list?.find((e) => e.name === name) ?? null;
+
+const mFront  = motorBodyEdges(piecesNow.find((p) => p.name === 'Top Front'));
+const mBack   = motorBodyEdges(piecesNow.find((p) => p.name === 'Top Back'));
+const mSleeve = motorSleeveEdges(piecesNow.find((p) => /Sleeve/.test(p.name)));
+const mCollar = motorCollarEdges(piecesNow.find((p) => /Collar/.test(p.name)));
+
+const lmFail = [];
+if (!mFront.ok) lmFail.push('Top Front: ' + mFront.why);
+if (!mBack.ok) lmFail.push('Top Back: ' + mBack.why);
+if (!mSleeve.ok) lmFail.push('Sleeve: ' + mSleeve.why);
+if (!mCollar.ok) lmFail.push('Collar: ' + mCollar.why);
+
+const mRatioOf = (e) => (e && e.kiris > 0 ? e.len / e.kiris : null);
+const gRatioOf = (e) => (e && e.kiris > 0 ? e.cutMM / e.kiris : null);
+
+if (mFront.ok) {
+  const n = mFront.named;
+  pushLM('yaka-on', n.yaka?.len, gE(bugraFront, 'yaka-on')?.stitchMM);
+  pushLM('omuz-on', n.omuz?.len, gE(bugraFront, 'omuz-on')?.stitchMM);
+  pushLM('OYUK-on', n.OYUK?.len, gE(bugraFront, 'OYUK-on')?.stitchMM,
+         mRatioOf(n.OYUK), gRatioOf(gE(bugraFront, 'OYUK-on')), '(y/k KESIM cizgisinde)');
+  const gSide = (gE(bugraFront, 'yan-dikis-alt')?.stitchMM ?? 0) + (gE(bugraFront, 'yan-dikis-ust')?.stitchMM ?? 0);
+  pushLM('yan-dikis-on', n['yan-dikis']?.len, gSide, null, null, '(Bugra: alt+ust, arada pens agzi)');
+  pushLM('etek-on', n.etek?.len, gE(bugraFront, 'etek-on')?.stitchMM);
+  pushLM('on-orta CF', n.orta?.len, gE(bugraFront, 'on-orta(CF)')?.stitchMM);
+}
+if (mBack.ok) {
+  const n = mBack.named;
+  pushLM('yaka-arka', n.yaka?.len, gE(bugraBack, 'yaka-arka')?.stitchMM);
+  pushLM('omuz-arka', n.omuz?.len, gE(bugraBack, 'omuz-arka')?.stitchMM);
+  pushLM('OYUK-arka', n.OYUK?.len, gE(bugraBack, 'OYUK-arka')?.stitchMM,
+         mRatioOf(n.OYUK), gRatioOf(gE(bugraBack, 'OYUK-arka')));
+  pushLM('yan-dikis-arka', n['yan-dikis']?.len, gE(bugraBack, 'yan-dikis-arka')?.stitchMM);
+  pushLM('etek-arka', n.etek?.len, gE(bugraBack, 'etek-arka')?.stitchMM);
+  pushLM('arka-orta CB', n.orta?.len, gE(bugraBack, 'arka-orta(CB)')?.stitchMM);
+}
+let oyukToplam = null, oyukIsaret = null;
+if (mFront.ok && mBack.ok) {
+  oyukToplam = mFront.named.OYUK.len + mBack.named.OYUK.len;
+  oyukIsaret = mFront.named.OYUK.len - mBack.named.OYUK.len;
+  const gOn = gE(bugraFront, 'OYUK-on'), gArka = gE(bugraBack, 'OYUK-arka');
+  pushLM('OYUK toplam (on+arka)', oyukToplam, gOn.stitchMM + gArka.stitchMM);
+  pushLM('OYUK on-arka (isaret)', oyukIsaret, gOn.cutMM - gArka.cutMM, null, null,
+         '(yasa: on <= arka — knowledge/drafting-math-eu38.md, Bugra 8/8 beden)');
+}
+if (mSleeve.ok) {
+  const kap = gE(bugraSleeve, 'KAPAK(oyuga giden)');
+  pushLM('KAPAK (oyuga giden)', mSleeve.capLen, kap?.stitchMM,
+         mSleeve.capLen / mSleeve.capChord, kap ? kap.cutMM / kap.kiris : null);
+  pushLM('kol kirisi (bicep)', mSleeve.capChord, kap?.kiris, null, null, '(Bugra kesim kirisi)');
+  pushLM('kapak yuksekligi', mSleeve.capH, 129.81, null, null, '(Bugra sagitta, T14)');
+  pushLM('kol alt kenari', mSleeve.hemLen, gE(bugraSleeve, 'ALT-kenar')?.stitchMM);
+  pushLM('kol koltukalti', mSleeve.underLen, gE(bugraSleeve, 'uc-A')?.stitchMM);
+  if (oyukToplam != null) {
+    const gTot = gE(bugraFront, 'OYUK-on').stitchMM + gE(bugraBack, 'OYUK-arka').stitchMM;
+    pushLM('kapak/oyuk fazlasi %', (mSleeve.capLen - oyukToplam) / oyukToplam * 100,
+           (kap.stitchMM - gTot) / gTot * 100, null, null,
+           '(motor TEK parcada buzgu | Bugra Lower ~0, buzgu AYRI Upper katmanda %29-35)');
+  }
+}
+let mCollarRatio = null, gCollarRatio = null;
+if (mCollar.ok) {
+  const gIn = bugraCollar?.reduce((a, b) => (b.notches?.length && (!a || b.cutMM > a.cutMM) ? b : a), null);
+  const gOut = bugraCollar ? [...bugraCollar].sort((a, b) => b.cutMM - a.cutMM)[0] : null;
+  pushLM('yaka boyun kenari', mCollar.boyun.len, gIn?.stitchMM, null, null, '(Bugra: centikli kenar = boyun)');
+  pushLM('yaka dis kenari', mCollar.dis.len, gOut?.stitchMM);
+  mCollarRatio = mCollar.dis.len / mCollar.boyun.len;
+  gCollarRatio = gOut && gIn ? gOut.cutMM / gIn.cutMM : null;
+  pushLM('yaka dis/boyun orani', null, null, mCollarRatio, gCollarRatio);
+}
+for (const f of lmFail) say(`   LANDMARK AYRIMI YAPILAMADI — ${f}`);
+
+// ── B2) SCYE KARNI vs YAYINLANMIS GENISLIK CIZGISI ─────────────────────────
+// Motorun KENDI yasasi (engine/src/bodice.hpp, Aldrich p.11'in iki noktasindan
+// gecen dogru): oyugun KARNI bu x'e oturur. Burada iddia degil OLCUM yapilir:
+// cizilen oyuk kubiginin en kucuk x'i.
+const bustMM = BODY.bust * 10;
+const YAYIN = { on: 0.150 * bustMM + 30.0, arka: 0.125 * bustMM + 62.0 };
+function scyeBelly(pieces, adi) {
+  const p = pieces.find((q) => q.name === adi);
+  if (!p) return null;
+  const role = (p.edgeRoles ?? []).find((r) => /^armhole_/.test(r.role));
+  if (!role) return null;
+  let cur = null, best = null;
+  for (const c of p.commands) {
+    if (c.type === 'move' || c.type === 'line') { cur = [c.x, c.y]; continue; }
+    if (c.type !== 'curve') continue;
+    const isIt = Math.abs(c.x - role.endX) < 1e-6 && Math.abs(c.y - role.endY) < 1e-6;
+    if (isIt) {
+      let m = Math.min(cur[0], c.x);
+      for (let i = 0; i <= 400; i++) {
+        const t = i / 400, u = 1 - t;
+        m = Math.min(m, u*u*u*cur[0] + 3*u*u*t*c.cp1x + 3*u*t*t*c.cp2x + t*t*t*c.x);
+      }
+      best = { belly: m, tipX: cur[0] };
+    }
+    cur = [c.x, c.y];
+  }
+  return best;
+}
+const bellyNow = { on: scyeBelly(piecesNow, 'Top Front'), arka: scyeBelly(piecesNow, 'Top Back') };
+const bellyOnce = piecesOnce
+  ? { on: scyeBelly(piecesOnce, 'Top Front'), arka: scyeBelly(piecesOnce, 'Top Back') }
+  : { on: null, arka: null };
+say('');
+say('B2) SCYE KARNI — motorun KENDI yayinlanmis genislik cizgisine (Aldrich p.11) uzaklik');
+for (const half of ['on', 'arka']) {
+  const n = bellyNow[half], o = bellyOnce[half];
+  say(`   ${half.padEnd(6)} yayin cizgisi ${YAYIN[half].toFixed(2)} | omuz ucu ${n ? n.tipX.toFixed(2) : '?'} `
+    + `| karin ONCE ${o ? o.belly.toFixed(2) : '-'} (acik ${o ? (o.belly - YAYIN[half]).toFixed(2) : '-'}) `
+    + `-> SIMDI ${n ? n.belly.toFixed(2) : '-'} (acik ${n ? (n.belly - YAYIN[half]).toFixed(2) : '-'})`);
+}
+
+// ── C) SINIFLANDIRMA ───────────────────────────────────────────────────────
+const gv = (list, name, field = 'stitchMM') => gE(list, name)?.[field] ?? null;
+const num = (v) => (v == null ? '?' : String(Math.round(v * 10) / 10));
+const frontRow = rows.find((r) => r.motor === 'Top Front');
+const backRow = rows.find((r) => r.motor === 'Top Back');
+const collarRow = rows.find((r) => r.motor?.includes('Collar'));
+const upper = rings.find((r) => r.name === 'Upper Sleeve');
+
+const SINIF = [
+  { s: 'STIL', ad: 'beden cizelgesi',
+    olcum: `motor EU38 bust 88.0 vs Bugra 38 bust ${bs.bustMM/10} cm (oran ${(BODY.bust*10/bs.bustMM).toFixed(3)}) — her yarim panelde ~%4.3 beklenen genislik farki`,
+    kok: 'iki yayin iki ayri cizelgesi; motor KENDI yayimli cizelgesini cizer',
+    durum: 'DUZELTILMEZ' },
+  { s: 'STIL', ad: 'giysi boyu',
+    olcum: `on-orta CF motor ${num(mFront.ok ? mFront.named.orta?.len : null)} vs Bugra ${num(gv(bugraFront, 'on-orta(CF)'))} mm`,
+    kok: "motorun topLength sinifi 'hip'; Bugra'nin ustu belin hemen altinda bitiyor — ayni giysi degil",
+    durum: 'DUZELTILMEZ' },
+  { s: 'STIL', ad: 'buyume-yakali on vs ayri facing',
+    olcum: `Bugra on ${Math.round(frontRow?.gW ?? 0)} / arka ${Math.round(backRow?.gW ?? 0)} mm (+${Math.round((frontRow?.gW ?? 0) - (backRow?.gW ?? 0))}); motor on ${Math.round(frontRow?.mW ?? 0)} / arka ${Math.round(backRow?.mW ?? 0)} (+${Math.round((frontRow?.mW ?? 0) - (backRow?.mW ?? 0))}) + 2 ayri facing parcasi`,
+    kok: 'ayni islev iki topolojiyle cozulmus; ikisi de dikilebilir',
+    durum: 'DUZELTILMEZ' },
+  { s: 'STIL', ad: 'kol topolojisi (buzgunun yeri)',
+    olcum: mSleeve.ok && oyukToplam != null
+      ? `motor TEK parca, kapak fazlasi %${num((mSleeve.capLen - oyukToplam) / oyukToplam * 100)} | Bugra Lower ~%${num((gv(bugraSleeve, 'KAPAK(oyuga giden)') - (gv(bugraFront, 'OYUK-on') + gv(bugraBack, 'OYUK-arka'))) / (gv(bugraFront, 'OYUK-on') + gv(bugraBack, 'OYUK-arka')) * 100)} + AYRI Upper katman %29-35`
+      : '?',
+    kok: 'buzgu orani AYNI BANDDA, farkli parcaya konmus',
+    durum: 'kok = asagidaki MOTOR EKSIGI' },
+
+  { s: 'MOTOR EKSIGI', ad: 'buzgulu ust kol katmani',
+    olcum: upper ? `Bugra Upper Sleeve ${Math.round(bbox(upper.poly).w)}x${Math.round(bbox(upper.poly).h)} mm — motorda karsiligi 0 parca` : '?',
+    kok: 'sleeveCap TEK parcayi sekillendiriyor, ikinci katman DOGURMUYOR',
+    durum: 'ACIK' },
+  { s: 'MOTOR EKSIGI', ad: 'yaka KAVISI (dis/boyun orani TUTUYOR, kavis tutmuyor)',
+    olcum: mCollar.ok
+      ? `dis/boyun orani motor ${mCollarRatio.toFixed(3)} vs Bugra ${gCollarRatio ? gCollarRatio.toFixed(3) : '?'} (%${gCollarRatio ? (Math.abs(mCollarRatio / gCollarRatio - 1) * 100).toFixed(1) : '?'} fark — AYNI AILE). Ayrilan sey KAVIS: bbox en/boy motor ${((collarRow?.mW ?? 0) / (collarRow?.mH ?? 1)).toFixed(2)} vs Bugra ${((collarRow?.gW ?? 0) / (collarRow?.gH ?? 1)).toFixed(2)}; motor yakasi yayvan bir bant, Bugra'ninki neredeyse ceyrek halka`
+      : '?',
+    kok: 'yaka konturu boyun kenarinin OFSETI olarak cizilir; "yatma yarikapi" (bir peterPan\'in ne kadar kivrilacagi) icin eksen yok — collarType kategorik',
+    durum: 'ACIK' },
+  { s: 'MOTOR EKSIGI', ad: 'mm-hedefli ust boyu',
+    olcum: 'topLength {cropped, hip, tunic} = 3 sinif; skirtLengthMM var, topLengthMM yok',
+    kok: 'boy ekseni nicel degil',
+    durum: 'ACIK' },
+
+  { s: 'HATA', ad: 'set-in scye karni motorun KENDI yayinlanmis genislik cizgisine ULASMIYOR',
+    olcum: `on: yayin cizgisi ${YAYIN.on.toFixed(2)} | omuz ucu ${bellyNow.on.tipX.toFixed(2)} | cizilen karin ${bellyNow.on.belly.toFixed(2)} -> ACIK ${(bellyNow.on.belly - YAYIN.on).toFixed(2)} mm. `
+      + `arka: yayin ${YAYIN.arka.toFixed(2)} | omuz ucu ${bellyNow.arka.tipX.toFixed(2)} | karin ${bellyNow.arka.belly.toFixed(2)} -> ACIK ${(bellyNow.arka.belly - YAYIN.arka).toFixed(2)} mm. `
+      + `yay/kiris on ${mFront.ok ? mRatioOf(mFront.named.OYUK).toFixed(3) : '?'} arka ${mBack.ok ? mRatioOf(mBack.named.OYUK).toFixed(3) : '?'} (olculen Bugra tanigi 1.229 / 1.175) — oyuk duz caprazin yaninda`,
+    kok: "cp1.x omuz ucunun DISINDA (+0.06*dx) -> x'(0) > 0, egri uctan DISARI ayriliyor; solveHollow'un useWidthLine dali ULASILAMAZ bir hedefi kovalayip tavana oturuyor ve kalan oyugu tek basina cp2 tasiyor. Yer: engine/src/bodice.cpp armholeCurveFor `setIn` dali",
+    durum: 'ACIK — YAMA OLCULDU AMA SEVK EDILMEDI. Yama tek satir (cizgi kullanilabilirken cp1.x = innerLimit, yeni sabit YOK), dosyasi KOSU/ciktilar/scye-genislik-cizgisi.patch. Uygulanmis halde OLCULEN: on karin 162.00 (acik 0.00) yay/kiris 1.123 · arka karin 179.97 (acik 7.97, sebep asagidaki satir) yay/kiris 1.036 · oyuk toplami 404.3 -> 416.2 mm, K1 bandi (400-440) ICINDE. Kosulan kapilar: engine_check 70200 draft PASS, garment_armhole_check yesil, sleeve_check yesil, recipe goldenlar yesil. IKI SEY BLOKLADI ve ikisi de KARAR GEREKEN: (1) golden_check 25116 satirin 5280\'ini yerinde degistiriyor (kol kapaklari yeni oyuga oturuyor) -> DECLARED RE-PIN gerekiyor, o da Damla/hakem onayina bagli (engine/GOLDEN-PIN.md); (2) sewability_check ratchet kalemi mark_far_from_edge 342 -> 343 (+1): oyuk iceri oyulunca bbox kenarina basilan oyuk denge centigi kenardan 15mm\'den uzaga dusuyor. Tavan yukseltmek YASAK; kok sebep (centik yan dikisin tepesine degil, yuksekligin %18\'ine konuyor) denendi ve OLCULDU: centigi konturun uzerine oturtmak mark_far_from_edge\'i banda sokuyor ama notch_off_boundary\'yi 211 -> 247 cikariyor, cunku centikler DIKIS cizgisine basiliyor, kesim cizgisine degil (annotateTechnical, cutLine\'dan ONCE kosuyor). Gercek care centigi kesim cizgisine tasimak; bu fazin disinda.' },
+  { s: 'HATA', ad: 'arka scye karnini scyeMaxInset kelepceliyor (on yaka genisligiyle olculdugu icin)',
+    olcum: `arka omuz ucu ${bellyNow.arka.tipX.toFixed(2)}, yayin cizgisi ${YAYIN.arka.toFixed(2)} -> gereken icerlek ${(bellyNow.arka.tipX - YAYIN.arka).toFixed(2)}mm; yamayla bile ulasilabilen karin 179.97, yani izin verilen icerlek yalniz 1.08mm`,
+    kok: 'bodice.cpp naturalTipXForScye "dogal blok omuz ucu"nu ON yaka genisligi carpaniyla hesapliyor ve AYNI degeri arkaya da uyguluyor; arka yaka daha genis oldugu icin gercek arka omuz ucu o referansin ~8mm disinda kaliyor ve tavan gercekte olmayan bir kelepce vuruyor',
+    durum: 'ACIK — yukaridaki yamanin ustune ikinci bir kalem; tek fazda tek kok sebep kurali geregi acilmadi' },
+  { s: 'HATA', ad: 'on oyuk arka oyuktan UZUN (isaret ihlali)',
+    olcum: oyukIsaret != null
+      ? `motor on-arka = ${num(oyukIsaret)} mm (yasa: <= 0). Bugra kesim cizgisinde ${num(gv(bugraFront, 'OYUK-on', 'cutMM') - gv(bugraBack, 'OYUK-arka', 'cutMM'))} mm, 8/8 bedende negatif`
+      : '?',
+    kok: `motorun koltukalti seviyesinde ON ceyregi ARKA ceyregden genis (on ${num(mFront.ok ? mFront.named.OYUK.to[0] : null)} / arka ${num(mBack.ok ? mBack.named.OYUK.to[0] : null)} mm); Aldrich p.11 genislik cizgileri TERSINI yayinliyor (sirt 34.4 > on 32.4 cm)`,
+    durum: 'ACIK — KARAR GEREKEN: on/arka bust bolusumu butun bloklari oynatir, tek fazda kanitlanamaz' },
+];
+
+say('');
+say('C) FARKIN SINIFI — STIL / MOTOR EKSIGI / HATA (her satir sayiyla)');
+for (const c of SINIF) {
+  say(`   [${c.s}] ${c.ad}`);
+  say(`        olcum : ${c.olcum}`);
+  say(`        kok   : ${c.kok}`);
+  say(`        durum : ${c.durum}`);
 }
 say('');
 say('MOTORUN SOZLUGUNDE OLMAYAN BUGRA YAPILARI (adiyla, sessiz atlama yok):');
 for (const n of NOT_IN_VOCAB) say('  - ' + n);
-say('');
-say('DIKIS/CEVRE UZUNLUKLARI (mm; motor: dikis cizgisi + kesim cizgisi, Bugra: kesim cizgisi — halka verisinde kenar ayrimi yok):');
-for (const r of rows.filter((r) => r.kind === 'olculdu')) {
-  say(`  ${r.motor.padEnd(34)} motor dikis ${Math.round(r.mSeamPerim)} | motor kesim ${Math.round(r.mPerim)} | Bugra kesim ${Math.round(r.gPerim)} | fark ${Math.round(r.mPerim - r.gPerim)} (${((r.mPerim - r.gPerim) / r.gPerim * 100).toFixed(0)}%)`);
-}
 
-// ── bindirme levhasi (SVG -> PNG) ──────────────────────────────────────────
-const INK_M = '#1a1a1a', INK_B = '#c0392b', PAPER = '#ffffff';
+// ── bindirme levhasi (ONCE | SIMDI) ────────────────────────────────────────
+const INK_M = '#1a1a1a', INK_O = '#9a9a9a', INK_B = '#c0392b', PAPER = '#ffffff';
 const n2 = (v) => (Math.round(v * 100) / 100).toFixed(2);
 const dOf = (P) => 'M ' + P.map(([x, y]) => `${n2(x)} ${n2(y)}`).join(' L ') + ' Z';
 const pairs = rows.filter((r) => r.kind === 'olculdu');
-const PAD = 24, HEAD = 46, GAP = 30;
+const PAD = 24, HEAD = 56, GAP = 34;
 let cx = PAD, rowH = 0, cy = HEAD + PAD;
 const cells = []; let sheetW = 0;
+// ONCE ve SIMDI AYNI SATIRDA durur — ikisi ayri satira dusunce "yan yana fark"
+// diye bir sey kalmiyor. Sarma sadece CIFTLER arasinda olur.
 for (const r of pairs) {
-  const b = bbox([...r.mPoly, ...r.gPoly]);
-  const w = Math.max(b.w, 170), h = b.h + 34;
-  if (cx + w > 1100 && cells.length) { cx = PAD; cy += rowH + GAP; rowH = 0; }
-  cells.push({ r, x: cx, y: cy, w, h });
-  cx += w + GAP; rowH = Math.max(rowH, h); sheetW = Math.max(sheetW, cx);
+  const which = ['once', 'simdi'].filter((w) => (w === 'once' ? r.mPolyOnce : r.mPoly));
+  const boxes = which.map((w) => {
+    const mp = w === 'once' ? r.mPolyOnce : r.mPoly;
+    const b = bbox([...mp, ...r.gPoly]);
+    return { w: Math.max(b.w, 200), h: b.h + 42, mp, which: w };
+  });
+  const pairW = boxes.reduce((a, b) => a + b.w, 0) + GAP * (boxes.length - 1);
+  if (cx + pairW > 1240 && cells.length) { cx = PAD; cy += rowH + GAP + 10; rowH = 0; }
+  for (const b of boxes) {
+    cells.push({ r, which: b.which, mp: b.mp, x: cx, y: cy, w: b.w, h: b.h });
+    cx += b.w + GAP; rowH = Math.max(rowH, b.h); sheetW = Math.max(sheetW, cx);
+  }
+  cx += GAP;
 }
 const sheetH = cy + rowH + PAD;
 let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n2(sheetW)} ${n2(sheetH)}" width="100%" data-unit-mm="1" data-kind="bugra-kor-kontrol" data-size="${SIZE}">`
   + `<rect width="${n2(sheetW)}" height="${n2(sheetH)}" fill="${PAPER}"/>`
-  + `<text x="${PAD}" y="22" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="${INK_M}">BUGRA KOR KONTROLU — motor EU38 (duz cizgi) vs Bugra Locket Top beden 38 (kesik kirmizi), mm 1:1, bbox-min hizali</text>`
-  + `<text x="${PAD}" y="38" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="${INK_B}">olcum, ayar degil — hicbir sabit bu levhadan sonra degistirilmedi | Chamfer = simetrik ortalama/med/p95/max mm</text>`;
+  + `<text x="${PAD}" y="22" font-family="Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="${INK_M}">BUGRA KOR KONTROLU — motor EU38 vs Bugra Locket Top 38 (kirmizi kesik), mm 1:1, bbox-min hizali</text>`
+  + `<text x="${PAD}" y="39" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="${INK_B}">her parca IKI kez: solda ONCE (gri, git ${BASELINE_REV}), sagda SIMDI (siyah) — ayni kirmizi kontura karsi. Olcum, ayar degil.</text>`;
 for (const c of cells) {
   const { r } = c;
+  const ch = c.which === 'once' ? r.chamferOnce : r.chamfer;
   svg += `<g transform="translate(${n2(c.x)} ${n2(c.y)})">`
-    + `<text x="0" y="10" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="600" fill="${INK_M}">${r.motor} ~ ${r.bugra}</text>`
-    + `<text x="0" y="22" font-family="Helvetica,Arial,sans-serif" font-size="8.5" fill="${INK_B}">Chamfer mean ${r.chamfer.mean.toFixed(1)} / p95 ${r.chamfer.p95.toFixed(1)} / max ${r.chamfer.max.toFixed(1)} mm</text>`
-    + `<g transform="translate(0 28)">`
+    + `<text x="0" y="10" font-family="Helvetica,Arial,sans-serif" font-size="10" font-weight="600" fill="${c.which === 'once' ? INK_O : INK_M}">${c.which === 'once' ? 'ONCE' : 'SIMDI'} — ${r.motor} ~ ${r.bugra}</text>`
+    + `<text x="0" y="23" font-family="Helvetica,Arial,sans-serif" font-size="8.5" fill="${INK_B}">Chamfer mean ${ch ? ch.mean.toFixed(1) : '-'} / p95 ${ch ? ch.p95.toFixed(1) : '-'} / max ${ch ? ch.max.toFixed(1) : '-'} mm</text>`
+    + `<g transform="translate(0 34)">`
     + `<path d="${dOf(r.gPoly)}" fill="none" stroke="${INK_B}" stroke-width="1.2" stroke-dasharray="6 4" stroke-linejoin="round"/>`
-    + `<path d="${dOf(r.mPoly)}" fill="none" stroke="${INK_M}" stroke-width="1.2" stroke-linejoin="round"/>`
+    + `<path d="${dOf(c.mp)}" fill="none" stroke="${c.which === 'once' ? INK_O : INK_M}" stroke-width="1.3" stroke-linejoin="round"/>`
     + `</g></g>`;
 }
 svg += '</svg>';
@@ -278,49 +487,65 @@ if (!process.argv.includes('--no-png')) {
 }
 
 // ── rapor ──────────────────────────────────────────────────────────────────
-const front = rows.find((r) => r.motor === 'Top Front');
-const collar = rows.find((r) => r.motor === 'Peter Pan Collar (bebe yaka)');
-const sleeve = rows.find((r) => r.motor === 'Puff Sleeve');
-const back = rows.find((r) => r.motor === 'Top Back');
 const md = `# Bugra kor kontrolu — motor EU38 vs satin alinmis Locket Top beden 38
 
-> KOR KONTROL, AYAR DEGIL. Bu rapordaki hicbir sayi motora geri yazilmadi;
-> asagidaki hipotezler olcumdur, sabit onerisi degildir. Uretici:
-> \`node engine/tools/bugra-blind-compare.mjs\` (ctest disi, kapi degil).
+> KOR KONTROL. Hicbir sayi "Bugra'ya benzesin" diye motora geri yazilmadi. Fark
+> uc kovaya ayrildi (STIL / MOTOR EKSIGI / HATA); sadece HATA kovasi, KENDI kok
+> sebebinden kapatildi. Uretici: \`node engine/tools/bugra-blind-compare.mjs\`
+> (ctest disi, kapi degil).
 
 ## Kurulum
 - Kor spec (Bugra'nin urun TARIFINDEN, mm'lerinden degil): \`${JSON.stringify(RAW_SPEC)}\`
 - Motor govdesi: contract euSizeChart EU38 = bust 88 / waist 70 / hip 94 cm.
-- Bugra 38 kendi cizelgesi = 92 / 72 / 98 cm. **Iki "38" ayni govde degil** —
-  motorun 88'lik govdesi Bugra cizelgesinde 36 ile 38 arasina duser. Fark
-  gizlenmedi, sayilara girdi.
-- Iki taraf da kesim cizgisi (dikis payi DAHIL): motor 15mm SA, Bugra 10mm
-  (+30mm etek ucu). Hizalama bbox-min kosesi, dondurmesiz (serbest parametre yok).
+- Bugra 38 kendi cizelgesi = ${bs.bustMM/10} / ${bs.waistMM/10} / ${bs.hipMM/10} cm. **Iki "38" ayni govde degil** (bust orani ${(BODY.bust*10/bs.bustMM).toFixed(3)}).
+- Kesim cizgisi iki tarafta da dikis payi DAHIL: motor ${motor[0].sa}mm, Bugra 10mm (+30mm etek).
+- Hizalama bbox-min kosesi, dondurmesiz, olceklemesiz; ornekleme 2mm.
+- ${baselineNote}
 
-## Sonuc tablosu (mm)
+## A) Panel dis cevresi — Chamfer (mm)
 
-| motor parca ~ Bugra parca | motor bbox | Bugra bbox | Chamfer mean | med | p95 | max |
-|---|---|---|---|---|---|---|
-${pairs.map((r) => `| ${r.motor} ~ ${r.bugra} | ${Math.round(r.mW)}×${Math.round(r.mH)} | ${Math.round(r.gW)}×${Math.round(r.gH)} | ${r.chamfer.mean.toFixed(1)} | ${r.chamfer.med.toFixed(1)} | ${r.chamfer.p95.toFixed(1)} | ${r.chamfer.max.toFixed(1)} |`).join('\n')}
+| motor ~ Bugra | motor bbox | Bugra bbox | mean SIMDI | p95 | max | mean ONCE | delta |
+|---|---|---|---|---|---|---|---|
+${pairs.map((r) => `| ${r.motor} ~ ${r.bugra} | ${Math.round(r.mW)}×${Math.round(r.mH)} | ${Math.round(r.gW)}×${Math.round(r.gH)} | ${r.chamfer.mean.toFixed(1)} | ${r.chamfer.p95.toFixed(1)} | ${r.chamfer.max.toFixed(1)} | ${r.chamferOnce ? r.chamferOnce.mean.toFixed(1) : '-'} | ${r.chamferOnce ? ((r.chamfer.mean - r.chamferOnce.mean >= 0 ? '+' : '') + (r.chamfer.mean - r.chamferOnce.mean).toFixed(1)) : '-'} |`).join('\n')}
 
-Parca sayisi: **motor ${motor.length}** vs **Bugra ${rings.length}** (defterde adli 6 + EXTRA-TL).
+Parca sayisi: **motor ${motor.length}** vs **Bugra ${rings.length}**.
 
-Dikis/cevre uzunluklari (kesim cizgisi, mm):
+Cevre (kesim cizgisi, mm):
 ${pairs.map((r) => `- ${r.motor}: motor ${Math.round(r.mPerim)} vs Bugra ${Math.round(r.gPerim)} (fark ${Math.round(r.mPerim - r.gPerim)}, ${((r.mPerim - r.gPerim) / r.gPerim * 100).toFixed(0)}%) — motor dikis cizgisi ${Math.round(r.mSeamPerim)}`).join('\n')}
+
+## B) Landmark-landmark (dikis cizgisi, mm)
+
+Motor tarafi kendi \`edgeRoles\` beyanindan (oyuk capa, komsular ondan turetilir),
+Bugra tarafi \`patterns_real/geometry/seamgraph.json\` adli kenarlarindan. Sabit
+komut indeksi / sabit landmark listesi YOK.
+
+| kenar | motor | Bugra | fark | motor yay/kiris | Bugra yay/kiris | not |
+|---|---|---|---|---|---|---|
+${lmRows.map((r) => `| ${r.ad} | ${r.mLen == null ? '-' : r1(r.mLen)} | ${r.gLen == null ? '-' : r1(r.gLen)} | ${r.mLen != null && r.gLen != null ? ((r.mLen - r.gLen >= 0 ? '+' : '') + r1(r.mLen - r.gLen)) : '-'} | ${r.mRatio == null ? '-' : r.mRatio.toFixed(3)} | ${r.gRatio == null ? '-' : r.gRatio.toFixed(3)} | ${r.not} |`).join('\n')}
+${lmFail.length ? '\n**LANDMARK AYRIMI YAPILAMADI:**\n' + lmFail.map((f) => '- ' + f).join('\n') : ''}
+
+## B2) Scye karni vs motorun KENDI yayinlanmis genislik cizgisi (Aldrich p.11)
+
+Bu satirlar Bugra'yla degil, motorun KENDI yasasiyla kiyaslar (bodice.hpp:
+\`scyeChestWidthHalf* / scyeBackWidthHalf*\`). "Karin" = cizilen oyuk kubiginin
+en kucuk x'i — kontrol noktasi degil, EGRININ kendisi.
+
+| yari | yayin cizgisi | omuz ucu | karin ONCE (acik) | karin SIMDI (acik) |
+|---|---|---|---|---|
+${['on', 'arka'].map((h) => `| ${h} | ${YAYIN[h].toFixed(2)} | ${bellyNow[h] ? bellyNow[h].tipX.toFixed(2) : '?'} | ${bellyOnce[h] ? bellyOnce[h].belly.toFixed(2) + ' (' + (bellyOnce[h].belly - YAYIN[h]).toFixed(2) + ')' : '-'} | ${bellyNow[h] ? bellyNow[h].belly.toFixed(2) + ' (' + (bellyNow[h].belly - YAYIN[h]).toFixed(2) + ')' : '-'} |`).join('\n')}
+
+## C) Farkin sinifi
+
+${SINIF.map((c) => `### [${c.s}] ${c.ad}\n- olcum: ${c.olcum}\n- kok sebep: ${c.kok}\n- durum: **${c.durum}**`).join('\n\n')}
 
 ## Motorun cizemedigi Bugra yapilari (adiyla; sessiz atlama yok)
 ${NOT_IN_VOCAB.map((s) => '- ' + s).join('\n')}
-- Motor karsiligi olmayan Bugra halkalari (beden 38): ${rows.filter(r=>r.kind==='bugra-fazla').map(r=>`${r.bugra} ${Math.round(r.gW)}×${Math.round(r.gH)}`).join(' · ')}.
-- Motor fazlasi: Front/Back Neck Facing — Bugra facing kullanmiyor (astarli yaka konstruksiyonu). Yapisal fark, hata degil.
-
-## Hipotezler (fark buyuk olan yerler — olcumle, sabit ONERISI DEGIL)
-${front ? `1. **On boy farki** (motor ${Math.round(front.mH)} vs Bugra ${Math.round(front.gH)} mm, +${Math.round(front.mH - front.gH)}): motorun \`topLength\` tablosu {cropped, hip, tunic} — Bugra'nin fitted top boyu motorun 'hip' sinifindan kisa, 'cropped'tan uzun. Ara boy sinifi ya da mm-hedefli top boyu ekseni yok (skirtLengthMM var, topLengthMM yok). Eksik F2/F7 boy-ekseni sinifina duser; bir kismi da govde farki (Bugra 38 govdesi +4cm bust).` : ''}
-${sleeve ? `2. **Kol yapisi** (motor tek Puff Sleeve ${Math.round(sleeve.mW)}×${Math.round(sleeve.mH)} vs Bugra Lower Sleeve ${Math.round(sleeve.gW)}×${Math.round(sleeve.gH)} + ayri buzgulu Upper katman): motor puf hacmini TEK parcanin tacina buzguyle koyuyor (o yuzden 394mm boy), Bugra ise duz set-in Lower + %29-35 buzgulu AYRI Upper katmanla veriyor. Chamfer buyuklugunun ana kaynagi bu topoloji farki; eksik olan "buzgulu ust katman" operatoru (T14 olcumu, CLAUDE.md — "yatay bolunmus kol" tezi ORADA curudu, burada tekrar kurulmadi).` : ''}
-${collar ? `3. **Yaka orani** (motor ${Math.round(collar.mW)}×${Math.round(collar.mH)} vs Bugra ${Math.round(collar.gW)}×${Math.round(collar.gH)}): motorun peterPan yakasi omuz-yatik dar serit; Bugra yakasi derin tek parca + ayri astar. Yaka DERINLIK ekseni yok (collarType secimi var, boyut ekseni yok) — fark topolojik + oransal.` : ''}
-${back ? `4. **Arka** (motor ${Math.round(back.mW)}×${Math.round(back.mH)} vs Bugra ${Math.round(back.gW)}×${Math.round(back.gH)}): en yakin eslesen govde parcasi; kalan fark boy (on ile ayni hipotez) + govde cizelge farki.` : ''}
+- Motor karsiligi olmayan Bugra halkalari (beden 38): ${rows.filter((r) => r.kind === 'bugra-fazla').map((r) => `${r.bugra} ${Math.round(r.gW)}×${Math.round(r.gH)}`).join(' · ')}.
+- Motor fazlasi: Front/Back Neck Facing — Bugra facing kullanmiyor. Yapisal fark, hata degil.
 
 ## Urun
-- Bindirme levhasi: \`KOSU/ciktilar/bugra-bindirme.svg\` + \`.png\` (motor duz, Bugra kesik kirmizi, mm 1:1).
+- Bindirme levhasi: \`KOSU/ciktilar/bugra-bindirme.svg\` + \`.png\` — her parca IKI kez
+  (ONCE gri = git ${BASELINE_REV}, SIMDI siyah), ayni kirmizi Bugra konturuna karsi, mm 1:1.
 `;
 writeFileSync(join(OUTDIR, 'bugra-rapor.md'), md);
 say(`rapor: ${join(OUTDIR, 'bugra-rapor.md')}`);
