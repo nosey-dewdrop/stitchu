@@ -161,6 +161,17 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .gloss { border-bottom: 1px dotted var(--accent); cursor: help; }
 .gloss:hover, .gloss:focus { color: var(--accent); outline: none; }
 .issues-box { border: 1px dashed var(--thread-rose); border-radius: var(--radius); padding: 14px 16px; margin: 20px 0; max-width: 640px; font-size: var(--size-small); }
+/* M5-band: the accepted measurement range, stated under the field BEFORE
+   the user is refused. Quiet weight — it is a boundary, not a warning. */
+.measure-band { font-size: 12px; opacity: .7; margin-top: 6px; }
+/* M5-ret: the engine's own refusal lines, printed where the buyer reads them.
+   Each line is a machine judgement ([rule] Piece: detail), so it is set apart
+   by SIZE and indent, not by a font of its own: contract/design-tokens.json
+   publishes three stacks and none of them is a mono, and inventing a fourth
+   here is exactly what ios_zemin_check exists to stop (it caught this). */
+.issues-list { margin: 10px 0 0 0; padding-left: 18px; font-size: 12px; line-height: 1.6; letter-spacing: .2px; }
+.issues-list li { margin-bottom: 4px; }
+.issues-next { margin-top: 12px; }
 
 /* closet */
 .closet-list { margin-top: 30px; max-width: 720px; }
