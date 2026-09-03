@@ -221,16 +221,96 @@ for (const [ad, k] of komp) {
   // yoldan bulundu: roba bolmesinde elbise ETEK olarak, kup dikisinde bustiyer
   // yalniz SIRT olarak basiliyordu, bardot bedende cizim TypeError ile
   // patliyordu. Ilk ikisi artik adiyla ret, ucuncusu duzeltildi.)
-  let flatTaban = null, flatTam = null, flatRet = null;
-  try { flatTaban = sha((await flatSVG(taban, { size: 'EU38' })).svg); } catch (e) { flatTaban = `RED:${e.message}`; }
-  try { flatTam = sha((await flatSVG(tam, { size: 'EU38' })).svg); } catch (e) { flatRet = e.message; }
-  if (flatRet) {
-    if (!/^flat:/.test(flatRet)) fail(`${ad}: flat cizimi ADIYLA degil, beklenmedik bir hatayla dustu — ${flatRet}`);
-    else console.log(`      ${ad} flat: ADIYLA RET — ${flatRet.slice(0, 150)}`);
-  } else if (flatTam === flatTaban) {
-    fail(`${ad}: FLAT taban ile bayt-ayni — kompozisyon kalipta var, cizimde YOK (sessiz dusme).`);
+  //
+  // ⛔ ESIK DEGISTI (2026-09-03, hakem maddesi 1). Bu blok once TEK bir gorsel
+  // sart koyuyordu: "flat taban ile BAYT-AYNI olmasin". O bir kanit degildi —
+  // tek piksel oynasa yesil yanardi, ve gercekten de yaniyordu: cizilen alti
+  // kompozisyonun DORDUNDE giysinin ADINI veren ozellik (K1 buzgu, K3 katman,
+  // K7 fermuar+manset, K8 cep) cizimde HIC YOKKEN kapi 6/6 "ok" diyordu.
+  // Bugunden itibaren her kompozisyon, contract'ta `cizim_kaniti` altinda,
+  // adini veren ozelligin cizimde ARANACAGI olcumu tasimak zorunda ve iki hal
+  // vardir, ucuncu yoktur: ya ozellik cizilir ve SAYILIR, ya flat o sinifi
+  // cizemedigini soyleyip ADIYLA reddeder.
+  let flatTaban = null, flatTamSvg = null, flatRet = null;
+  try { flatTaban = (await flatSVG(taban, { size: 'EU38' })).svg; } catch (e) { flatTaban = null; }
+  try { flatTamSvg = (await flatSVG(tam, { size: 'EU38' })).svg; } catch (e) { flatRet = e.message; }
+  const kanit = k.cizim_kaniti;
+  if (!kanit) {
+    fail(`${ad}: contract'ta cizim_kaniti YOK — giysinin adini veren ozellik cizimde ARANMIYOR. ` +
+         'Ya `aranan` listesi ya `cizilemiyor` gerekcesi yazilmak zorunda.');
+  } else if (kanit.cizilemiyor) {
+    if (!flatRet) {
+      fail(`${ad}: contract "cizilemiyor" diyor ama flat CIZILDI — ikisinden biri yalan. ` +
+           'Cizilebiliyorsa gerekce silinip `aranan` yazilir.');
+    } else if (!/^flat:/.test(flatRet)) {
+      fail(`${ad}: flat ADIYLA degil, beklenmedik bir hatayla dustu — ${flatRet}`);
+    } else {
+      console.log(`      ${ad} flat: ADIYLA RET — ${flatRet.slice(0, 130)}`);
+    }
+  } else if (flatRet) {
+    fail(`${ad}: flat cizilemedi (${flatRet.slice(0, 120)}) ama contract onu cizilebilir sayiyor.`);
   } else {
-    console.log(`      ${ad} flat: cizildi ve tabandan farkli`);
+    // (e1) ADINI VEREN OZELLIK CIZIMDE SAYILIYOR MU
+    const say = (o) => (flatTamSvg.match(new RegExp(`data-ozellik="${o}"`, 'g')) || []).length;
+    const rapor = [];
+    for (const a of (kanit.aranan || [])) {
+      const n = say(a.ozellik);
+      rapor.push(`${a.ozellik}=${n}`);
+      if (n < a.en_az) {
+        fail(`${ad}: FLAT'te "${a.ozellik}" ${n} adet, en az ${a.en_az} olmali — ` +
+             `giysinin adini veren ozellik (${a._ne}) cizimde YOK. Ya cizilecek ya ` +
+             '`cizim_kaniti.cizilemiyor` ile ADIYLA reddedilecek.');
+      }
+    }
+    // (e2) TABANDA YOK, KOMPOZISYONDA VAR — ozellik gercekten kompozisyondan
+    // geliyor mu, yoksa her cizimde zaten duruyor mu?
+    if (flatTaban) {
+      for (const a of (kanit.aranan || [])) {
+        const t = (flatTaban.match(new RegExp(`data-ozellik="${a.ozellik}"`, 'g')) || []).length;
+        if (t >= say(a.ozellik)) {
+          fail(`${ad}: "${a.ozellik}" tabanda ${t}, kompozisyonda ${say(a.ozellik)} — ozellik kompozisyondan GELMIYOR.`);
+        }
+      }
+    }
+    // (e3) YAZILI KURALLAR (cizimin kendi geometrisinden olculur)
+    for (const kr of (kanit.kural || [])) {
+      if (kr.tip === 'bel-dikisi-on-ortayi-gecmez') {
+        let enSol = 0;
+        for (const m of flatTamSvg.matchAll(/<path[^>]*data-rol="bel-dikisi"[^>]*data-yan="sag"[^>]*d="([^"]+)"/g)) {
+          const xs = [...m[1].matchAll(/(-?\d+\.\d+) (-?\d+\.\d+)/g)].map((q) => parseFloat(q[1]));
+          if (xs.length) enSol = Math.min(enSol, Math.min(...xs));
+        }
+        if (enSol < -0.5) fail(`${ad}: bel dikisi on ortayi ${(-enSol).toFixed(1)} mm asiyor — aynalaninca belde PAPYON basar.`);
+        else rapor.push(`bel-dikisi-min-x=${enSol.toFixed(2)}`);
+      } else if (kr.tip === 'kapama-merkezde-degil') {
+        const xs = [...flatTamSvg.matchAll(/data-kapama-x-mm="(-?\d+\.\d+)"/g)].map((q) => Math.abs(parseFloat(q[1])));
+        const en = xs.length ? Math.max(...xs) : 0;
+        if (en < kr.en_az_mm) {
+          fail(`${ad}: kapama on ortadan en fazla ${en.toFixed(1)} mm kayik (en az ${kr.en_az_mm} mm bekleniyor) — ` +
+               '"asimetrik" adi ile cizim celisiyor. Ya cizim asimetrik olacak ya giysinin adi degisecek.');
+        } else rapor.push(`kapama-kacikligi=${en.toFixed(1)}mm`);
+      } else {
+        fail(`${ad}: cizim_kaniti.kural tipi "${kr.tip}" bu kapida tanimli degil — yargilanmamis kural.`);
+      }
+    }
+    // (e4) SUREKLI OLCU: sayilacak parca yok, olculecek geometri var.
+    for (const o of (kanit.olcum || [])) {
+      if (o.tip === 'siluet-yukseklik-farki') {
+        const boy = (svg) => {
+          const m = /viewBox="0 0 [\d.]+ ([\d.]+)"/.exec(svg || '');
+          return m ? parseFloat(m[1]) : NaN;
+        };
+        const f = Math.abs(boy(flatTamSvg) - boy(flatTaban));
+        if (!(f >= o.en_az_mm)) fail(`${ad}: cizilen siluetin boyu tabandan ${f.toFixed(1)} mm farkli, en az ${o.en_az_mm} mm bekleniyor.`);
+        else rapor.push(`boy-farki=${f.toFixed(1)}mm`);
+      } else {
+        fail(`${ad}: cizim_kaniti.olcum tipi "${o.tip}" bu kapida tanimli degil — yargilanmamis olcum.`);
+      }
+    }
+    if (sha(flatTamSvg) === sha(flatTaban || '')) {
+      fail(`${ad}: FLAT taban ile bayt-ayni — kompozisyon kalipta var, cizimde YOK.`);
+    }
+    console.log(`      ${ad} flat: ${rapor.join('  ')}`);
   }
 }
 

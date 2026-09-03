@@ -823,7 +823,33 @@
         {
           "cozum": "gatherZone.waist"
         }
-      ]
+      ],
+      "cizim_kaniti": {
+        "_law": "Giysinin ADINI veren ozellik CIZIMDE aranir. 'Taban ile bayt-ayni degil' bir kanit degildir (hakem, 2026-09-03): tek piksel oynasa yesil yanardi. Asagidaki her kalem sevk edilen SVG'de data-ozellik ile sayilir.",
+        "aranan": [
+          {
+            "ozellik": "buzgu-pano",
+            "en_az": 2,
+            "_ne": "belde buzgu panosunun alt siniri (on + arka)"
+          },
+          {
+            "ozellik": "buzgu-sira",
+            "en_az": 4,
+            "_ne": "panonun kendi lastik dikis satirlari"
+          },
+          {
+            "ozellik": "buzgu-tarak",
+            "en_az": 8,
+            "_ne": "buzgu taragi tikleri"
+          }
+        ],
+        "kural": [
+          {
+            "tip": "bel-dikisi-on-ortayi-gecmez",
+            "_ne": "kruvaze on beden kenari on ortayi 116.4 mm asiyordu; aynalaninca belde PAPYON basiyordu"
+          }
+        ]
+      }
     },
     "K2-prenses-roba": {
       "baslik": "prenses dikis + yatay roba (yoke)",
@@ -853,7 +879,11 @@
         {
           "cozum": "yoke.plain"
         }
-      ]
+      ],
+      "cizim_kaniti": {
+        "cizilemiyor": "flat: prenses + roba bolmesinde beden panelleri 'Front Yoke Center / Front Body Center / Front Yoke Side / Front Body Side' diye adlandiriliyor ve web/lib/flat-from-pattern.js gather() tablosunun hicbir deseni tutmuyor. Cizim hatti bu SINIFI cizemiyor ve ADIYLA reddediyor. Sonraki adim: sekiz panelli roba topolojisini gather() tablosuna ve decompose()/composite() birlesimine baglamak (dikey prenses bolmesi yatay roba bolmesinin iki tarafinda ayri ayri sureklilik istiyor).",
+        "_ret_zorunlu": true
+      }
     },
     "K3-katmanli-etek": {
       "baslik": "kademeli firfir + ayrica etek ucu volani = katmanli etek",
@@ -885,7 +915,26 @@
         {
           "cozum": "hemFlounce.gathered"
         }
-      ]
+      ],
+      "cizim_kaniti": {
+        "aranan": [
+          {
+            "ozellik": "katman-kontur",
+            "en_az": 4,
+            "_ne": "asili katmanlarin kendi konturu"
+          },
+          {
+            "ozellik": "katman-dikis",
+            "en_az": 4,
+            "_ne": "her katmanin baglandigi dikis"
+          },
+          {
+            "ozellik": "katman-buzgu",
+            "en_az": 8,
+            "_ne": "katman buzgu taragi"
+          }
+        ]
+      }
     },
     "K4-asimetrik-kapama-shirttail": {
       "baslik": "asimetrik dugme kapamasi + shirttail etek ucu + arka yirtmac",
@@ -921,7 +970,28 @@
         {
           "cozum": "backSlit.vent"
         }
-      ]
+      ],
+      "cizim_kaniti": {
+        "aranan": [
+          {
+            "ozellik": "kapama",
+            "en_az": 2,
+            "_ne": "pata katlama cizgisi + tela/pata kenari"
+          },
+          {
+            "ozellik": "kapama-dugme",
+            "en_az": 4,
+            "_ne": "dugme/ilik isaretleri"
+          }
+        ],
+        "kural": [
+          {
+            "tip": "kapama-merkezde-degil",
+            "en_az_mm": 10,
+            "_ne": "'asimetrik' adli giysinin kapamasi ON ORTADA duruyordu; ad ile cizim celisiyordu"
+          }
+        ]
+      }
     },
     "K5-kup-korse": {
       "baslik": "yatay kup dikisi + korse bagcikli sirt",
@@ -949,7 +1019,11 @@
         {
           "cozum": "laceUpBack.corset"
         }
-      ]
+      ],
+      "cizim_kaniti": {
+        "cizilemiyor": "flat: kup dikisli korse bustiyerde on beden panelleri 'Upper Cup Center Front / Lower Cup Center Front / Front Body Center Front' diye adlandiriliyor; cizim tablosu ON gorunumde ne beden ne etek parcasi buluyor ve gorunum ADIYLA reddediliyor. Sonraki adim: yatay kup bolmesini (Upper/Lower Cup) tek bir on beden yuzeyinde birlestiren bir panel toplayici yazmak.",
+        "_ret_zorunlu": true
+      }
     },
     "K6-surekli-olcu": {
       "baslik": "menude adi olmayan olculer: etek 673 mm, yaka 23 mm derin, kol 37 mm uzun",
@@ -985,7 +1059,16 @@
         {
           "primitif": "op.sleeveExtend"
         }
-      ]
+      ],
+      "cizim_kaniti": {
+        "_ne": "Bu kompozisyonun ozelligi bir PARCA degil, uc surekli olcunun birlikte uygulanmasi. Kaniti da bir sayim degil olcum: cizilen siluetin boyu tabandan olculebilir bicimde farkli olmak zorunda.",
+        "olcum": [
+          {
+            "tip": "siluet-yukseklik-farki",
+            "en_az_mm": 20
+          }
+        ]
+      }
     },
     "K7-raglan-manset-fermuar": {
       "baslik": "raglan omuz + dugmeli manset + gorunur on fermuar",
@@ -1020,7 +1103,21 @@
         {
           "cozum": "exposedZip.centerFront"
         }
-      ]
+      ],
+      "cizim_kaniti": {
+        "aranan": [
+          {
+            "ozellik": "fermuar",
+            "en_az": 4,
+            "_ne": "gorunur fermuarin omurgasi + disleri"
+          },
+          {
+            "ozellik": "manset",
+            "en_az": 2,
+            "_ne": "manset bandinin birlesim dikisi"
+          }
+        ]
+      }
     },
     "K8-dusuk-omuz-kutu-pili-cep": {
       "baslik": "dusuk (dropped) omuz + orta ters kutu pili + yan dikis cebi",
@@ -1056,7 +1153,22 @@
         {
           "cozum": "pocketStyle.sideSeam"
         }
-      ]
-    }
+      ],
+      "cizim_kaniti": {
+        "aranan": [
+          {
+            "ozellik": "pili",
+            "en_az": 2,
+            "_ne": "ters kutu pilinin iki katlama cizgisi"
+          },
+          {
+            "ozellik": "cep",
+            "en_az": 2,
+            "_ne": "yan dikis cebinin agzi"
+          }
+        ]
+      }
+    },
+    "_cizim_kaniti_law": "HER KOMPOZISYON, ADINI VEREN OZELLIGI CIZIMDE KANITLAR. Iki hal vardir, ucuncu yoktur: (a) `cizim_kaniti.aranan` — sevk edilen SVG'de o data-ozellik'ten en az N tane olacak; (b) `cizim_kaniti.cizilemiyor` — cizim hatti o SINIFI cizemiyor ve flat ADIYLA reddedilecek (kok sebep + sonraki adim burada yazili). Kapi ikisini de olcer: (a) sayar, (b) reddin gerceklestigini sart kosar. 'Taban ile bayt-ayni degil' bir kanit DEGILDIR — hakem 2026-09-03'te bunu odul avciligi olarak adlandirdi."
   }
 }
