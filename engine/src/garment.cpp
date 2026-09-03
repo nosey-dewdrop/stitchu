@@ -1401,10 +1401,11 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // as a discarded return value, i.e. the user asked, the engine said no, and
     // nobody heard the no. Only a declared edit writes the field, so a no-edit
     // draft's JSON stays byte-identical.
-    {
-        const EditProgram editProg = runEditProgram(pattern, spec, m);
-        if (!editProg.steps.empty()) pattern.editProgramJSON = editJSON(editProg);
-    }
+    // The program's GEOMETRY lands here; its own NOTCHES are stamped after
+    // annotateTechnical below, so the edit layer's mark is the piece's last
+    // mark whatever the annotation pass adds. The report is written after that
+    // stamp, not here, so what it counts is what is on the piece.
+    EditProgram editProg = runEditProgram(pattern, spec, m);
 
     // CUTTING LINES (last, so every post-pass piece is covered): each real
     // piece gets its sewing line offset outward by its seam allowance — cut on
@@ -1433,6 +1434,13 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // Geometriye dokunmaz: `commands` ve `cutLine` bu çağrıdan etkilenmez, yalnız
     // `notches`/`grainline`/`closure` yazılır.
     annotateTechnical(pattern, dressZipperHere, pattern.cbZipperGerekce);
+
+    // THE EDIT LAYER'S OWN MARKS, LAST. See patternedit.hpp EditStep for the
+    // measurement that moved them here (attach_check read a balance notch as
+    // the attach tick once the annotation pass ran behind the edit layer).
+    // No-op when no edit was declared, so a plain draft stays byte-identical.
+    stampDeferredEditNotches(pattern, editProg);
+    if (!editProg.steps.empty()) pattern.editProgramJSON = editJSON(editProg);
 
     // NAMED EDGES, RE-ADDRESSED (V7-D) — after every post-pass has finished
     // rewriting outlines and BEFORE any consumer reads a name. One choke point

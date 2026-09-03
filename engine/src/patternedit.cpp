@@ -88,6 +88,10 @@ void crossNotch(std::vector<PathCommand>& into, Point at) {
     into.push_back(PathCommand::move({at.x, at.y - 6}));
     into.push_back(PathCommand::line({at.x, at.y + 6}));
 }
+// How many commands ONE cross tick costs. Read off crossNotch above, not
+// typed: the deferred stamp reports the host's after-count before the tick is
+// physically down, and a glyph that grew a fifth stroke must move this line.
+constexpr int kCrossNotchCommands = 4;
 
 }  // namespace
 
@@ -582,7 +586,12 @@ EditProgram runEditProgram(DraftedPattern& pattern, const GarmentSpec& spec,
                 // one on the component at ITS attaching edge's own arc midpoint.
                 // Two measurements on two different outlines: if this file
                 // measured once and copied, the pair would match by typing.
-                crossNotch(pattern.pieces[hi].notches, anchor);
+                // The HOST tick is OWED, not stamped here: annotateTechnical
+                // runs after this pass now, so a tick stamped here stops being
+                // the piece's last mark. Recorded and paid by
+                // stampDeferredEditNotches() (patternedit.hpp).
+                st.hostPieceIndex = static_cast<int>(hi);
+                st.hostNotchPending = true;
                 const int bh = hemCommandIndex(bow);
                 double bowEdge = 0.0, bowAt = 0.0;
                 const Point bowAnchor =
@@ -602,7 +611,10 @@ EditProgram runEditProgram(DraftedPattern& pattern, const GarmentSpec& spec,
                 pattern.fabricMeters140 =
                     roundToPlaces(pattern.fabricMeters140 + box.height / 1000.0, 1);
                 st.metersAfter = pattern.fabricMeters140;
-                st.hostNotchesAfter = static_cast<int>(pattern.pieces[hi].notches.size());
+                // The owed tick's arithmetic, not a wish: crossNotch costs
+                // exactly kCrossNotchCommands and stampDeferredEditNotches
+                // re-checks this count against the vector it actually grew.
+                st.hostNotchesAfter = st.hostNotchesBefore + kCrossNotchCommands;
 
                 pattern.guideSteps.push_back(
                     "Bow (fiyonk): cut the bow rectangle as labelled, fold it in half "
@@ -633,6 +645,32 @@ EditProgram runEditProgram(DraftedPattern& pattern, const GarmentSpec& spec,
 
     prog.piecesAfter = pattern.pieces.size();
     return prog;
+}
+
+void stampDeferredEditNotches(DraftedPattern& pattern, EditProgram& prog) {
+    for (auto& st : prog.steps) {
+        if (!st.hostNotchPending) continue;
+        if (st.hostPieceIndex < 0 ||
+            static_cast<std::size_t>(st.hostPieceIndex) >= pattern.pieces.size()) {
+            // The host went away between the two passes. Say it in the step's
+            // own reason rather than dropping a mark silently (RULES 1).
+            st.hostNotchPending = false;
+            st.hostNotchesAfter = st.hostNotchesBefore;
+            st.reason += " ⚠ EV SAHIBI PARCA KAYBOLDU: centik basilamadi (parca indeksi " +
+                         std::to_string(st.hostPieceIndex) + ", parca sayisi " +
+                         std::to_string(pattern.pieces.size()) + ").";
+            continue;
+        }
+        auto& notches = pattern.pieces[st.hostPieceIndex].notches;
+        const std::size_t before = notches.size();
+        crossNotch(notches, st.anchor);
+        st.hostNotchPending = false;
+        // The count the reason string already published, re-derived from the
+        // vector that actually grew. If the glyph ever changes size this is
+        // where the two numbers stop agreeing.
+        st.hostNotchesAfter = st.hostNotchesBefore +
+                              static_cast<int>(notches.size() - before);
+    }
 }
 
 std::string editJSON(const EditProgram& prog) {

@@ -50,9 +50,9 @@
     "sleeveLenToGarment": {
       "eksen": "sleeveLength",
       "tip": "sinif",
-      "esiklerMM": [283.5, 448.4],
+      "esiklerMM": [285.33, 449.31],
       "siniflar": ["short", "elbow", "long"],
-      "kaynak": "motorun kendi cizimi (vision-esik-olc.mjs, EU38 duz kol): short parca boyu 227.0mm, elbow 340.0mm, long 556.8mm; esikler ardil orta noktalar. measure.js v1 bu orani durustce null verir (sleeve_not_separable_from_silhouette_v1) — kablo, oran OLCULEBILDIGI gun icin haziri bekler ve fixture okumalarla test edilir"
+      "kaynak": "motorun kendi cizimi (vision-esik-olc.mjs, EU38 duz kol): short parca boyu 228.83mm, elbow 341.83mm, long 556.8mm; esikler ardil orta noktalar. TASIMA KUNYESI (2026-09-03, M2-bugra): onceki kayit 283.5/448.4 idi ve short 227.0 / elbow 340.0 okumasindan geliyordu. K1 kol oyugunu kendi yayinlanmis Aldrich genislik cizgisine oturttu (bodice.cpp, scye), oyuk cevresi 404.3 -> 422.9 mm buyudu, kol basi onunla birlikte 1.83 mm uzadi. Sayilar SESSIZ degismedi: kaynak kaydi ureticinin bugunku okumasina tasindi, esik GEVSETILMEDI (tolerans 0.6 mm ayni). measure.js v1 bu orani durustce null verir (sleeve_not_separable_from_silhouette_v1) — kablo, oran OLCULEBILDIGI gun icin haziri bekler ve fixture okumalarla test edilir"
     }
   },
   "oovEsleme": {

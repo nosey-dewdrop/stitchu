@@ -108,6 +108,21 @@ struct EditStep {
     double metersBefore = 0.0, metersAfter = 0.0;
     int hostNotchesBefore = 0, hostNotchesAfter = 0;
     int componentNotches = 0;
+
+    // THE HOST'S TICK IS STAMPED LAST, NOT INSIDE runEditProgram (2026-09-03).
+    // MEASURED CAUSE, not a guess: annotateTechnical moved to AFTER the cutting
+    // lines (garment.cpp) so a notch that is CUT could see the line it is cut
+    // on — that fix put the cutting room's marks BEHIND the edit layer's mark
+    // in `notches`. attach_check identifies the host's new tick as "the
+    // commands past the un-edited count" and was handed a balance notch
+    // instead: it read (231.1921, -7.3234) where the walk says (150.2401,
+    // 647.1705). NOTHING ABOUT THE ANCHOR MOVED — the ORDER did (4ef6487f
+    // attach_check 16/0, e51fdc77 16/1, same anchor printed in both).
+    // So the ordering is now a stated law instead of an accident: the user's
+    // own edit marks the piece after every drafting and annotation pass has
+    // finished. These two fields carry the owed tick across that gap.
+    int hostPieceIndex = -1;        // which piece the tick is owed to
+    bool hostNotchPending = false;  // stampDeferredEditNotches() has not run yet
 };
 
 struct EditProgram {
@@ -135,6 +150,12 @@ Point edgeMidpointByArc(Point from, const PathCommand& edge, double* edgeLenMM, 
 // declares no edit.
 EditProgram runEditProgram(DraftedPattern& pattern, const GarmentSpec& spec,
                            const BodyMeasurementsSnapshot& body);
+
+// Stamp the edit layer's own marks, AFTER every drafting and annotation pass.
+// Call site: immediately after annotateTechnical() in draft(). Idempotent —
+// a step whose tick is already down clears its pending flag. See EditStep's
+// hostNotchPending comment for the measurement that forced the split.
+void stampDeferredEditNotches(DraftedPattern& pattern, EditProgram& prog);
 
 // The program as a product surface, for the gates and for the download screen.
 std::string editJSON(const EditProgram& prog);

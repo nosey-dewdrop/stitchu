@@ -389,7 +389,7 @@ const SINIF = [
 
   { s: 'MOTOR EKSIGI', ad: 'tuketici sozlugunden erisilebilen GENEL iki-katman buzgu operatoru',
     olcum: upper ? `Bugra Upper Sleeve ${Math.round(bbox(upper.poly).w)}x${Math.round(bbox(upper.poly).h)} mm; bu kor kiyasta motorda karsiligi 0 parca` : '?',
-    kok: 'IKI KATMANI DOGURAN EKSEN VAR VE CALISIYOR: locketTop=\'bugra\'. Bu kor spec onu BILEREK set etmiyor (kor kiyasin Bugra\'nin ezberlenmis degerlerini secmesini engellemek icin, bkz. KOR_SPEC). Yani parca yok cunku SORULMADI — motor cizemedigi icin degil. Bagimsiz tanik AYNI AGACTA: engine/tests/buzgu_katman_check.mjs (e) "iki katman cizildi: Upper 444.1 mm > Lower 329.2 mm (buzgu payi x1.349)". Gercek acik cok daha DAR: sleeveCap {plain,gathered,puffed,cap} tek parcayi sekillendirir, yani tuketici sozlugunden (sleeveCap) erisilen GENEL bir iki-katman operatoru yok; ikinci katman bugun yalniz locketTop adli YAPI-OZGU eksenden dogar.',
+    kok: 'Iki katmani doguran YAPI-OZGU Locket ekseni var ve calisiyor; bu kor spec onu bilerek set etmiyor (bkz. KOR_SPEC). Parca yok cunku SORULMADI, motor cizemedigi icin degil. Tanik ayni agacta: engine/tests/buzgu_katman_check.mjs (e), Upper 444.1 mm > Lower 329.2 mm (buzgu payi x1.349). Gercek acik daha dar: sleeveCap {plain,gathered,puffed,cap} tek parcayi sekillendirir, yani tuketici sozlugunden erisilen GENEL bir iki-katman operatoru yok.',
     durum: 'ACIK (dar hali) — "motor iki katmanli pufu CIZEMIYOR" cumlesi GERI CEKILDI, olcumle curudu' },
   { s: 'MOTOR EKSIGI', ad: 'yaka KAVISI (dis/boyun orani TUTUYOR, kavis tutmuyor)',
     olcum: mCollar.ok
