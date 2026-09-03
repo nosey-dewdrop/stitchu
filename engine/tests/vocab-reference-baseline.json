@@ -9,7 +9,7 @@
     "Sayi dustugunde kapi YESIL kalir ama bu dosya KENDILIGINDEN guncellenmez \u2014 dususu sabitlemek ayri, bilincli bir commit'tir (--baseline).",
     "Bu bir kullanim analizi DEGIL, bir imzadir: yorum satiri da uretilmis tablo da sayilir. Sart dogruluk degil, KARARLILIK."
   ],
-  "tabanCommit": "74c3e28efe6efa1198d634e19cf675b5a4c021f1",
+  "tabanCommit": "b806adfe7cf863c441e925e88bd8ec1d23ac73e9",
   "sayimKomutu": {
     "eksenAdi": "grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe --exclude-dir=.rabadon --exclude-dir=.wrangler -w <AXIS> <SCOPE> | wc -l",
     "enumDegeri": "grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe --exclude-dir=.rabadon --exclude-dir=.wrangler -F \"\\\"<VALUE>\\\"\" <SCOPE> | wc -l",
@@ -17,8 +17,8 @@
     "yeniden_uret": "engine/tests/vocab_reference_check.sh --baseline <commit>",
     "kirli_agaci_denetle": "engine/tests/vocab_reference_check.sh --tree ."
   },
-  "toplam": 10904,
-  "toplamEksenAdi": 7847,
+  "toplam": 10906,
+  "toplamEksenAdi": 7849,
   "toplamEnumDegeri": 3057,
   "eksenSayisi": 37,
   "paylasim1KelimeSayisi": 92,
@@ -36,11 +36,11 @@
     "edgeFinish": 66,
     "exposedZip": 52,
     "fabric": 673,
-    "garment": 1203,
+    "garment": 1204,
     "gatherType": 187,
     "gatherZone": 164,
     "hemFlounce": 38,
-    "hemShape": 78,
+    "hemShape": 79,
     "laceUpBack": 44,
     "locketTop": 28,
     "neckline": 974,
