@@ -19,7 +19,7 @@
 // (contract/primitives-v1.json). parse() returns the arithmetic
 // (hesap.toplam === eslesen + stop + anlasilmayan) so a gate can prove the
 // zero-silence property instead of trusting it.
-import { VOCAB, canonical } from './vocab.gen.js?v=144';
+import { VOCAB, canonical } from './vocab.gen.js?v=148';
 // ⭐ M3-primitif — SÖZLÜK-DIŞI KELİMEYE PRİMİTİF CEVABI.
 // Anlaşılmayan bir kelime bugüne kadar yalnızca "en yakın primitif: op.gather"
 // diye bir İSİM alıyordu; bu bir cevap değil bir işaretti. Aynı kelime fotoğraf
@@ -27,7 +27,7 @@ import { VOCAB, canonical } from './vocab.gen.js?v=144';
 // bağlanıyor ya adıyla reddedilip en yakın dikilebilir öneriyi alıyordu. İki
 // hat aynı kelimeye iki ayrı şey söylüyordu. Yargı artık tek yerde
 // (web/js/oov-resolve.js) ve prompt hattı da onu çağırıyor.
-import { oovKarariVer, oovAdaylari } from './oov-resolve.js?v=144';
+import { oovKarariVer, oovAdaylari } from './oov-resolve.js?v=148';
 
 // Axes create.js holds that predate the generated vocabulary (see
 // backend/spec-core.js ENUMS — the same two conveniences, same values).
