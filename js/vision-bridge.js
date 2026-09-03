@@ -585,7 +585,7 @@ const OLCUM_RED_ADIM = {
                             en: 'the garment fills the whole frame and its edges are cut off. Next step: step back so the entire garment is in frame.' },
   ambiguous_foreground: { tr: 'karede tek bir giysi ayırt edilemedi (birden fazla parça ya da giysiyle aynı tonda zemin). Sonraki adım: tek parça bırak ve zıt renkli bir zemin kullan.',
                           en: 'a single garment could not be separated (more than one piece, or a ground the same tone as the garment). Next step: leave one piece in frame on a contrasting ground.' },
-  garment_too_small: { tr: 'giysi karede çok küçük kaldı. Sonraki adım: daha yakından, daha yüksek çözünürlükte çek.',
+  garment_too_small: { tr: 'giysi karede çok küçük kaldı. Sonraki adım: daha yakın bir kadrajla, daha yüksek çözünürlükte çek.',
                        en: 'the garment is too small in the frame. Next step: shoot closer and at a higher resolution.' },
   worn_on_model_legs: { tr: 'giysi bir insanın üstünde görünüyor (etek ucunun altında bacaklar var). Sonraki adım: giysiyi çıkarıp düz sererek ya da askıda çek — oranlar ancak o zaman giysinin kendi oranları olur.',
                         en: 'the garment appears to be worn (legs below the hem). Next step: photograph it flat or on a hanger — only then are the proportions the garment’s own.' },
