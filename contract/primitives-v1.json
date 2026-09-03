@@ -851,40 +851,6 @@
         ]
       }
     },
-    "K2-prenses-roba": {
-      "baslik": "prenses dikis + yatay roba (yoke)",
-      "gerekce": "Prenses DIKEY, roba YATAY bir bolmedir. Sozlukte ikisi ayri eksende ve \"prenses roba\" diye bir deger yok. Birlestiginde bedende dort degil SEKIZ panel doguyor ve dikey bolme yatay bolmenin iki tarafinda ayri ayri sureklilik istiyor — bu, iki ismin toplami degil, uzerlerinde tanimli bir kesisimdir.",
-      "taban": {
-        "garment": "dress",
-        "shaping": "dart",
-        "fabric": "woven",
-        "neckline": "scoop",
-        "sleeveStyle": "straight",
-        "sleeveLength": "short",
-        "skirtStyle": "aLine",
-        "skirtLength": "midi"
-      },
-      "eksenler": [
-        {
-          "shaping": "princess"
-        },
-        {
-          "yoke": "plain"
-        }
-      ],
-      "demet": [
-        {
-          "cozum": "shaping.princess"
-        },
-        {
-          "cozum": "yoke.plain"
-        }
-      ],
-      "cizim_kaniti": {
-        "cizilemiyor": "flat: prenses + roba bolmesinde beden panelleri 'Front Yoke Center / Front Body Center / Front Yoke Side / Front Body Side' diye adlandiriliyor ve web/lib/flat-from-pattern.js gather() tablosunun hicbir deseni tutmuyor. Cizim hatti bu SINIFI cizemiyor ve ADIYLA reddediyor. Sonraki adim: sekiz panelli roba topolojisini gather() tablosuna ve decompose()/composite() birlesimine baglamak (dikey prenses bolmesi yatay roba bolmesinin iki tarafinda ayri ayri sureklilik istiyor).",
-        "_ret_zorunlu": true
-      }
-    },
     "K3-katmanli-etek": {
       "baslik": "kademeli firfir + ayrica etek ucu volani = katmanli etek",
       "gerekce": "Sozlukte \"katmanli etek\" yok. Kademeli firfir eteğin KENDI ucundan asagi iniyor, volan ise bitmis hemden AYRI bir seride asiliyor; ikisi ayni giyside olunca kumas UC katmanda iniyor ve her katmanin kendi buzgu orani var. ⚠ OLCULEN AYRI BULGU: kademeli firfirin sozlukte KARSILIGI YOK. engine/vocab.json 37 eksenin hicbirinde `ruffle` diye bir alan yok; alicinin sectigi `ruffle: tiered` web/js/engine.js:218-219'da iki SOZLUK-DISI alana (ruffleHem bool + ruffleTiers int) cevriliyor. Yani bu katman sozlugun 132 degerinden hicbiriyle ADLANDIRILAMAZ — kompozisyon iddiasini guclendiriyor ama ayni zamanda bir sicil acigi: alan sozlukte olmadigi icin contract/vocab-resolution-v1.json'da da cozumu yok. Demet bu yuzden dogrudan primitiflerden kuruldu. ⚠ IKINCI OLCULEN ACIK, GIZLENMEDI: KALIP dort ek parca ciziyor (Hem Flounce + Ruffle tier 1/2/3) ama FLAT cizimi bu katmanlarin hicbirini gostermiyor — cizim tabandan farkli cikiyor (kapi bunu olcuyor) ama fark etek ucu cizgisinde kaliyor, katmanlar goze gorunmuyor. Kok sebep: web/lib/flat-from-pattern.js gather() tablosu yalniz beden/etek/kol/yaka/manset parcalarini taniyor; asili katman parcalarinin (volan, firfir, peplum, pelerin) cizimde karsiligi YOK. Sonraki adim: bu parcalari hem cizgisinin altina asan bir katman cizici.",
@@ -991,38 +957,6 @@
             "_ne": "'asimetrik' adli giysinin kapamasi ON ORTADA duruyordu; ad ile cizim celisiyordu"
           }
         ]
-      }
-    },
-    "K5-kup-korse": {
-      "baslik": "yatay kup dikisi + korse bagcikli sirt",
-      "gerekce": "Kup dikisi ONU yatay boler, korse bagcigi ARKAYI acar; sozlukte \"korse bustiyer\" diye tek bir deger yok ve olsaydi da her ikisini birden kilitlerdi. Ayri ayri kaldiklarinda biri fermuarli bir bustiyer, digeri prenses dikisli bir sirt verir; birlikte giydirme acikligi CB fermuarindan bagciga geciyor ve fermuar dusuyor.",
-      "taban": {
-        "garment": "top",
-        "shaping": "princess",
-        "fabric": "woven",
-        "neckline": "sweetheart",
-        "sleeveStyle": "none",
-        "topLength": "hip"
-      },
-      "eksenler": [
-        {
-          "cupSeam": "horizontal"
-        },
-        {
-          "laceUpBack": "corset"
-        }
-      ],
-      "demet": [
-        {
-          "cozum": "cupSeam.horizontal"
-        },
-        {
-          "cozum": "laceUpBack.corset"
-        }
-      ],
-      "cizim_kaniti": {
-        "cizilemiyor": "flat: kup dikisli korse bustiyerde on beden panelleri 'Upper Cup Center Front / Lower Cup Center Front / Front Body Center Front' diye adlandiriliyor; cizim tablosu ON gorunumde ne beden ne etek parcasi buluyor ve gorunum ADIYLA reddediliyor. Sonraki adim: yatay kup bolmesini (Upper/Lower Cup) tek bir on beden yuzeyinde birlestiren bir panel toplayici yazmak.",
-        "_ret_zorunlu": true
       }
     },
     "K6-surekli-olcu": {
@@ -1170,5 +1104,72 @@
       }
     },
     "_cizim_kaniti_law": "HER KOMPOZISYON, ADINI VEREN OZELLIGI CIZIMDE KANITLAR. Iki hal vardir, ucuncu yoktur: (a) `cizim_kaniti.aranan` — sevk edilen SVG'de o data-ozellik'ten en az N tane olacak; (b) `cizim_kaniti.cizilemiyor` — cizim hatti o SINIFI cizemiyor ve flat ADIYLA reddedilecek (kok sebep + sonraki adim burada yazili). Kapi ikisini de olcer: (a) sayar, (b) reddin gerceklestigini sart kosar. 'Taban ile bayt-ayni degil' bir kanit DEGILDIR — hakem 2026-09-03'te bunu odul avciligi olarak adlandirdi."
+  },
+  "dusen_kompozisyonlar": {
+    "_law": "DUSEN KOMPOZISYON. Hakem kurali (2026-09-03): bir kompozisyon EN FAZLA bir faz boyunca 'cizilemiyor' kalabilir; sonraki fazda ya cizilir ya listeden duser — ucuncu hal yok. Asagidakiler CIZILEMEDI ve listeden DUSTU. Silinmediler: kalibi hala uretiliyor ve dogru, dusen sey CIZIM. Her kalem olculmus bir kok sebep ve tek bir sonraki adim tasimak zorunda; kapi (engine/tests/primitif_ifade_check.mjs) bunu sart kosuyor.",
+    "K2-prenses-roba": {
+      "baslik": "prenses dikis + yatay roba (yoke)",
+      "gerekce": "Prenses DIKEY, roba YATAY bir bolmedir. Sozlukte ikisi ayri eksende ve \"prenses roba\" diye bir deger yok. Birlestiginde bedende dort degil SEKIZ panel doguyor ve dikey bolme yatay bolmenin iki tarafinda ayri ayri sureklilik istiyor — bu, iki ismin toplami degil, uzerlerinde tanimli bir kesisimdir.",
+      "taban": {
+        "garment": "dress",
+        "shaping": "dart",
+        "fabric": "woven",
+        "neckline": "scoop",
+        "sleeveStyle": "straight",
+        "sleeveLength": "short",
+        "skirtStyle": "aLine",
+        "skirtLength": "midi"
+      },
+      "eksenler": [
+        {
+          "shaping": "princess"
+        },
+        {
+          "yoke": "plain"
+        }
+      ],
+      "demet": [
+        {
+          "cozum": "shaping.princess"
+        },
+        {
+          "cozum": "yoke.plain"
+        }
+      ],
+      "dusme_tarihi": "2026-09-03",
+      "kok_sebep": "OLCULDU, 2026-09-03. Kok sebep gather() isim tablosu DEGIL (o bir belirti): yoke.cpp splitOnePanel() ve cupseam.cpp band parcalarini duz bir POLIGONDAN yeniden kuruyor (yoke.cpp:138 bandPiece -> outlineFromLoop) ve kaynak panelin `edgeRoles` adlandirmasini TASIMIYOR. Ustelik tasisaydi da tek basina yetmezdi: roba dikisi omuz-etek dususunun 0.28'inde duruyor (yoke.hpp:70) ve EU38'de 445 mm'lik on bedeni y=124.6'da kesiyor — kol OYUGU tam o cizgiyi asiyor, yani ne Yoke ne Body parcasi oyugun IKI ucunu birden tasiyor, reanchorEdgeRoles (geometry.cpp:233) ikisinde de adi DUSURUR. `armhole_*` adi olmayinca flat-from-pattern.js decompose() oyugu bulamiyor, poseBodice() calisamiyor ve giysi konvansiyon pozunda cizilemiyor.",
+      "sonraki_adim": "Roba/kup bolmesi kol oyugunu KESIYORSA, adi da kesilecek: bandPiece kaynak rolun bir ucunu kendi kesim noktasina (cutL/cutR) baglayip her iki parcaya PARCALI bir `armhole_*` rolu stamplayacak; sonra flat tarafinda dikey yigin birlestiricisi (ust parcanin hem kenarini alt parcanin top kenarina oturtan rijit donusum) yazilip armhole = ust.armhole + alt.armhole olarak birlestirilecek. O zaman poseBodice degismeden calisir. Bu is bu fazin disinda; kapali kalmasin diye BURAYA yazildi."
+    },
+    "K5-kup-korse": {
+      "baslik": "yatay kup dikisi + korse bagcikli sirt",
+      "gerekce": "Kup dikisi ONU yatay boler, korse bagcigi ARKAYI acar; sozlukte \"korse bustiyer\" diye tek bir deger yok ve olsaydi da her ikisini birden kilitlerdi. Ayri ayri kaldiklarinda biri fermuarli bir bustiyer, digeri prenses dikisli bir sirt verir; birlikte giydirme acikligi CB fermuarindan bagciga geciyor ve fermuar dusuyor.",
+      "taban": {
+        "garment": "top",
+        "shaping": "princess",
+        "fabric": "woven",
+        "neckline": "sweetheart",
+        "sleeveStyle": "none",
+        "topLength": "hip"
+      },
+      "eksenler": [
+        {
+          "cupSeam": "horizontal"
+        },
+        {
+          "laceUpBack": "corset"
+        }
+      ],
+      "demet": [
+        {
+          "cozum": "cupSeam.horizontal"
+        },
+        {
+          "cozum": "laceUpBack.corset"
+        }
+      ],
+      "dusme_tarihi": "2026-09-03",
+      "kok_sebep": "OLCULDU, 2026-09-03. Kok sebep gather() isim tablosu DEGIL (o bir belirti): yoke.cpp splitOnePanel() ve cupseam.cpp band parcalarini duz bir POLIGONDAN yeniden kuruyor (yoke.cpp:138 bandPiece -> outlineFromLoop) ve kaynak panelin `edgeRoles` adlandirmasini TASIMIYOR. Ustelik tasisaydi da tek basina yetmezdi: roba dikisi omuz-etek dususunun 0.28'inde duruyor (yoke.hpp:70) ve EU38'de 445 mm'lik on bedeni y=124.6'da kesiyor — kol OYUGU tam o cizgiyi asiyor, yani ne Yoke ne Body parcasi oyugun IKI ucunu birden tasiyor, reanchorEdgeRoles (geometry.cpp:233) ikisinde de adi DUSURUR. `armhole_*` adi olmayinca flat-from-pattern.js decompose() oyugu bulamiyor, poseBodice() calisamiyor ve giysi konvansiyon pozunda cizilemiyor.",
+      "sonraki_adim": "Roba/kup bolmesi kol oyugunu KESIYORSA, adi da kesilecek: bandPiece kaynak rolun bir ucunu kendi kesim noktasina (cutL/cutR) baglayip her iki parcaya PARCALI bir `armhole_*` rolu stamplayacak; sonra flat tarafinda dikey yigin birlestiricisi (ust parcanin hem kenarini alt parcanin top kenarina oturtan rijit donusum) yazilip armhole = ust.armhole + alt.armhole olarak birlestirilecek. O zaman poseBodice degismeden calisir. Bu is bu fazin disinda; kapali kalmasin diye BURAYA yazildi."
+    }
   }
 }

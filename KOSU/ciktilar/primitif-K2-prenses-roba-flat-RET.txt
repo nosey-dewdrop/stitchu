@@ -1,6 +1,0 @@
-prenses dikis + yatay roba (yoke)
-
-CIZIM HATTI BU SINIFI CIZEMEDI VE ADIYLA REDDETTI:
-flat: hicbir gorunum cizilemedi — on: kalipta beden parcasi var ama cizim tablosuna oturmadi (Front Yoke Center, Front Body Center, Front Yoke Side, Front Body Side, Back Yoke Center, Back Body Center, Back Yoke Side, Back Body Side) — etek tek basina cizilseydi giysi yanlis gorunurdu; sonraki adim: bu parca adlarini web/lib/flat-from-pattern.js gather() tablosuna bagla; arka: kalipta beden parcasi var ama cizim tablosuna oturmadi (Front Yoke Center, Front Body Center, Front Yoke Side, Front Body Side, Back Yoke Center, Back Body Center, Back Yoke Side, Back Body Side) — etek tek basina cizilseydi giysi yanlis gorunurdu; sonraki adim: bu parca adlarini web/lib/flat-from-pattern.js gather() tablosuna bagla
-
-Kok sebep + sonraki adim: contract/primitives-v1.json -> kompozisyonlar.K2-prenses-roba.cizim_kaniti.cizilemiyor

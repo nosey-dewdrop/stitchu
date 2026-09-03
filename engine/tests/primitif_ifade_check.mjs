@@ -157,6 +157,28 @@ const komp = Object.entries(PRIM.kompozisyonlar).filter(([k]) => !k.startsWith('
 if (komp.length < 5) fail(`kompozisyon sayisi ${komp.length} — kart EN AZ 5 istiyor`);
 else ok(`${komp.length} kompozisyon giysisi tanimli`);
 
+// DUSEN KOMPOZISYONLAR sessizce silinmez. Hakem karari 1 (2026-09-03): cizilemeyen
+// kalem listeden duser, ama dusme SEBEBI ve tek bir SONRAKI ADIM yazili kalir —
+// yoksa "kapiyi gecmeyeni sil" en ucuz reward hack olurdu. Dusen kalemin kalibi
+// hala uretilebilir olmak zorunda: dusen sey CIZIM, giysi degil.
+{
+  const dusen = Object.entries(PRIM.dusen_kompozisyonlar || {}).filter(([k]) => !k.startsWith('_'));
+  for (const [ad, e] of dusen) {
+    for (const alan of ['baslik', 'taban', 'eksenler', 'kok_sebep', 'sonraki_adim', 'dusme_tarihi']) {
+      if (!e[alan]) fail(`dusen ${ad}: "${alan}" alani YOK — sessiz silme.`);
+    }
+    if (e.cizim_kaniti) fail(`dusen ${ad}: cizim_kaniti hala duruyor — dusen kalem cizim iddiasi tasiyamaz.`);
+    if (PRIM.kompozisyonlar[ad]) fail(`${ad}: hem dusen hem canli listede.`);
+    // Dusen sey CIZIM: kalip hala cikmak zorunda. Cikmiyorsa dusme gerekcesi de yalan.
+    const j = JSON.parse(draftText(engineSpec(Object.assign({}, e.taban, ...(e.eksenler || [])))));
+    const n = (j.pattern && j.pattern.pieces || []).length;
+    if (j.error) fail(`dusen ${ad}: KALIP da cikmiyor — ${j.error}`);
+    else if (n < 3) fail(`dusen ${ad}: kalip ${n} parca — giysi degil.`);
+    else console.log(`      dusen ${ad}: kalip ${n} parca UREtiliyor, cizilemeyen sey FLAT`);
+  }
+  if (dusen.length) ok(`${dusen.length} dusen kompozisyon, hepsi kok sebep + sonraki adim tasiyor`);
+}
+
 for (const [ad, k] of komp) {
   const taban = k.taban;
   const tabanText = draftText(engineSpec(taban));
@@ -239,14 +261,13 @@ for (const [ad, k] of komp) {
     fail(`${ad}: contract'ta cizim_kaniti YOK — giysinin adini veren ozellik cizimde ARANMIYOR. ` +
          'Ya `aranan` listesi ya `cizilemiyor` gerekcesi yazilmak zorunda.');
   } else if (kanit.cizilemiyor) {
-    if (!flatRet) {
-      fail(`${ad}: contract "cizilemiyor" diyor ama flat CIZILDI — ikisinden biri yalan. ` +
-           'Cizilebiliyorsa gerekce silinip `aranan` yazilir.');
-    } else if (!/^flat:/.test(flatRet)) {
-      fail(`${ad}: flat ADIYLA degil, beklenmedik bir hatayla dustu — ${flatRet}`);
-    } else {
-      console.log(`      ${ad} flat: ADIYLA RET — ${flatRet.slice(0, 130)}`);
-    }
+    // ⛔ KACAMAK KAPISI KAPANDI (hakem karari 1, 2026-09-03): bir kompozisyon EN
+    // FAZLA bir faz boyunca "cizilemiyor" kalabilir. Bu faz o sonraki fazdir,
+    // yani `kompozisyonlar` altinda artik hicbir kalem "cizilemiyor" diyemez;
+    // cizilemeyen `dusen_kompozisyonlar` blogunda kok sebep + sonraki adimla
+    // durur ve levhaya girmez.
+    fail(`${ad}: "cizilemiyor" kacamagi ARTIK YOK — ya cizilecek ya ` +
+         '`dusen_kompozisyonlar` blogunda kok sebep + sonraki adimla dusecek.');
   } else if (flatRet) {
     fail(`${ad}: flat cizilemedi (${flatRet.slice(0, 120)}) ama contract onu cizilebilir sayiyor.`);
   } else {

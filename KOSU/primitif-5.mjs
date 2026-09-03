@@ -72,12 +72,29 @@ for (const [ad, k] of Object.entries(PRIM.kompozisyonlar)) {
     // (2) Reddedilen giysinin flat'i klasorde DURMAZ; yerine reddin kendisi.
     writeFileSync(join(OUT, `primitif-${ad}-flat-RET.txt`),
       `${k.baslik}\n\nCIZIM HATTI BU SINIFI CIZEMEDI VE ADIYLA REDDETTI:\n${flatRet}\n\n` +
-      `Kok sebep + sonraki adim: contract/primitives-v1.json -> kompozisyonlar.${ad}.cizim_kaniti.cizilemiyor\n`);
+      `Bu kalem canli listede duruyorsa kapi KIRMIZI yanar: contract/primitives-v1.json\n` +
+      `-> ya cizilecek ya dusen_kompozisyonlar blogunda kok sebep + sonraki adimla dusecek.\n`);
   }
   const eksenAdlari = k.eksenler.map((e) => Object.entries(e).map(([a, v]) => `${a}=${v}`).join(' '));
   kartlar.push({ ad, baslik: k.baslik, eksenler: eksenAdlari, kalip, flat, flatRet,
     parca: drafted.pattern.pieces.length, ms: Date.now() - t0 });
   console.log(`${ad}  ${drafted.pattern.pieces.length} parca  ${Date.now() - t0} ms  flat: ${flat ? 'cizildi' : 'ADIYLA RET'}`);
+}
+
+// ------------------------------------------------------- DUSEN KOMPOZISYONLAR
+// Hakem karari 1 (2026-09-03): cizilemeyen kompozisyon listeden duser. Sessizce
+// silinmez — kalibi burada YINE uretilir (dusen sey CIZIM, giysi degil) ve
+// dusme sebebi klasorde yazili durur.
+for (const [ad, k] of Object.entries(PRIM.dusen_kompozisyonlar || {})) {
+  if (ad.startsWith('_')) continue;
+  const spec = Object.assign({}, k.taban, ...k.eksenler);
+  const drafted = JSON.parse(engine.draftJSON(engineSpec(spec), M));
+  if (drafted.error) { console.log(`DUSEN ${ad}  MOTOR REDDETTI: ${drafted.error}`); continue; }
+  writeFileSync(join(OUT, `primitif-DUSEN-${ad}-kalip.svg`), patternSVG(drafted.pattern));
+  writeFileSync(join(OUT, `primitif-DUSEN-${ad}.txt`),
+    `${k.baslik}\n\nDUSTU (${k.dusme_tarihi}) — KALIP CIKIYOR (${drafted.pattern.pieces.length} parca), ` +
+    `CIZILEMEYEN SEY FLAT.\n\nKOK SEBEP:\n${k.kok_sebep}\n\nSONRAKI ADIM:\n${k.sonraki_adim}\n`);
+  console.log(`DUSEN ${ad}  ${drafted.pattern.pieces.length} parca kalip yazildi, flat YOK`);
 }
 
 // ---------------------------------------------------------------- LEVHA

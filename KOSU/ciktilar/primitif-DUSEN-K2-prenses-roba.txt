@@ -1,0 +1,9 @@
+prenses dikis + yatay roba (yoke)
+
+DUSTU (2026-09-03) — KALIP CIKIYOR (14 parca), CIZILEMEYEN SEY FLAT.
+
+KOK SEBEP:
+OLCULDU, 2026-09-03. Kok sebep gather() isim tablosu DEGIL (o bir belirti): yoke.cpp splitOnePanel() ve cupseam.cpp band parcalarini duz bir POLIGONDAN yeniden kuruyor (yoke.cpp:138 bandPiece -> outlineFromLoop) ve kaynak panelin `edgeRoles` adlandirmasini TASIMIYOR. Ustelik tasisaydi da tek basina yetmezdi: roba dikisi omuz-etek dususunun 0.28'inde duruyor (yoke.hpp:70) ve EU38'de 445 mm'lik on bedeni y=124.6'da kesiyor — kol OYUGU tam o cizgiyi asiyor, yani ne Yoke ne Body parcasi oyugun IKI ucunu birden tasiyor, reanchorEdgeRoles (geometry.cpp:233) ikisinde de adi DUSURUR. `armhole_*` adi olmayinca flat-from-pattern.js decompose() oyugu bulamiyor, poseBodice() calisamiyor ve giysi konvansiyon pozunda cizilemiyor.
+
+SONRAKI ADIM:
+Roba/kup bolmesi kol oyugunu KESIYORSA, adi da kesilecek: bandPiece kaynak rolun bir ucunu kendi kesim noktasina (cutL/cutR) baglayip her iki parcaya PARCALI bir `armhole_*` rolu stamplayacak; sonra flat tarafinda dikey yigin birlestiricisi (ust parcanin hem kenarini alt parcanin top kenarina oturtan rijit donusum) yazilip armhole = ust.armhole + alt.armhole olarak birlestirilecek. O zaman poseBodice degismeden calisir. Bu is bu fazin disinda; kapali kalmasin diye BURAYA yazildi.
