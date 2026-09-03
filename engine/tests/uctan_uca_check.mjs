@@ -187,8 +187,13 @@ check('rehber dikiş payını mm ile veriyor', rehber.includes(`dikiş payı ${s
 check('rehber inşa sırasını motorun adımlarından basıyor',
   (rehber.match(/<li>/g) || []).length === (pattern.guideSteps || []).length,
   `${(rehber.match(/<li>/g) || []).length}/${(pattern.guideSteps || []).length} adım`);
-check('rehber iğne/dikiş bölümü taşıyor (kaynaklı ya da adıyla KAYNAK-YOK)',
-  rehber.includes('İğne ve dikiş tipi') && (/KAYNAK-YOK/.test(rehber) || /UNL Extension/.test(rehber)));
+// M5-rehber: the needle section is no longer this page's own paragraph, it is
+// the ENGINE's `sew.needle` advice printed with its basis. So the gate asks for
+// the engine's advice by its id — a heading string could survive an empty
+// section, a rendered advice id cannot.
+check('rehber iğne/dikiş bölümünü MOTORUN kaynaklı tavsiyesinden basıyor',
+  /data-advice="sew\.needle"/.test(rehber) && /data-advice="sew\.stitch"/.test(rehber) &&
+  /guide-sources\.json/.test(rehber));
 check('rehber kesim planını parça parça veriyor',
   pattern.pieces.every((p) => rehber.includes(p.name)), `${pattern.pieces.length} parça`);
 check('rehber kumaş sayılarını kaynağıyla veriyor',

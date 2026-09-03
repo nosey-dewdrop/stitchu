@@ -1347,6 +1347,27 @@ add_test(NAME indir_check COMMAND ${NODE_EXECUTABLE}
 add_test(NAME uctan_uca_check COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/uctan_uca_check.mjs)
 
+# rehber_kaynak_check (M5-rehber — 2026-09-03): SATIN ALINAN PAKET.
+# Damla madde 10: "sadece kalıp ve flat alıp gitmeyecekler; rehber, püf noktalar
+# da bulunacak." Bu kapı SAYFAYA bakar (guide_completeness_check yalnız C++
+# tarafına bakıyordu, ve tam o yüzden şunu göremedi: basılan Türkçe rehber
+# motorun KAYNAKLI iğne cümlesi dururken her dokuma için "KAYNAK-YOK" yazıyordu).
+#   1  motorun ürettiği HER tavsiye sayfada, her tavsiyenin altında kaynak satırı
+#      (kayıtsız cümle = 0);
+#   2  Türkçe sayfadaki HER sayı ya bu çizimin hesapladığı ya kayıtlı kaynağın
+#      taşıdığı sayı (guide_completeness_check leg 4'ün sayfa üstündeki hali);
+#   3  beş kumaşın beşi için AYRI iğne/dikiş cevabı (numara sayısı raporlanır —
+#      üç hafif dokuma çizelgede aynı banda düşer, o bant uydurma alt-kuralla
+#      bölünmez);
+#   4  en az üç ZOR NOKTA ve her biri ölçülmüş sayı taşır;
+#   5  beden serisi: seçilen beden ±3, motorun kendi gradeJSON'undan, katman
+#      tablosu olarak rehberde;
+#   6  paket tam: A4 + A0 kalıp PDF, flat SVG, rehber, kesim planı, beden serisi.
+# Sıfır API çağrısı. PAKET_DIR env verilirse paketi oraya da yazar
+# (KOSU/ciktilar/paket-02 bu yoldan üretilir).
+add_test(NAME rehber_kaynak_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/rehber_kaynak_check.mjs)
+
 # arka_koken_check (F3-arka — 2026-09-01): ARKA YÜZ NEREDEN GELDİ, SÖYLENİYOR MU?
 # Damla'nın cümlesi: arka fotoğraf VARSA okunur ve tasarlanır; SADECE ön varsa
 # sistem arkayı UYDURUR ve uydurduğunu İLAN eder — en sade dikilebilir arka
