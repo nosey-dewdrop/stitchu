@@ -1077,8 +1077,8 @@
    {
     "a": "cuff.button",
     "b": "shoulder.raglan",
-    "class": "honest",
-    "why": "Cuff: skipped — this garment has no full-length sleeve hem to carry"
+    "class": "allowed",
+    "why": "2026-09-03: BU CIFT ARTIK CALISIYOR. Onceki sinifi \"honest\" idi ve gerekcesi motorun kendi ciktisiydi: \"Cuff: skipped — this garment has no full-length sleeve hem to carry a cuff (sleeveless, cap, or short sleeve)\". O cumle YANLISTI: sikayet edilen kol ne kolsuz ne kisa, uzun bir RAGLAN kolu. Kok sebep engine/src/cuff.cpp isCuffableSleeve() listesinde \"Raglan Sleeve\" adinin bulunmamasiydi; raglan set-in koldan OMUZDA ayrilir, bilekte degil, ve ayni iki max-y kosesi arasinda ayni hem cizgisiyle cizilir (hemWidthOf onun disinda bir sey okumuyor). Ad listeye eklendi, cift artik gercek bir Button Cuff parcasi uretiyor."
    },
    {
     "a": "hemShape.highLow",

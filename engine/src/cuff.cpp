@@ -23,7 +23,16 @@ constexpr double knitFullness = 1.20;   // knit sleeve eases into rib with less 
 // The full-length sleeve pieces the cuff can attach to. Balloon already carries
 // its OWN cuff band (drawn in the sleeve block); a cap/short sleeve has no wrist.
 bool isCuffableSleeve(const std::string& name) {
-    return name == "Sleeve" || name == "Puff Sleeve" || name == "Gathered-Head Sleeve";
+    // ⭐ "Raglan Sleeve" ADDED 2026-09-03. It was missing, and the omission was
+    // not a decision: a raglan differs from a set-in sleeve at the SHOULDER, not
+    // at the wrist — it is drafted with the same hem line between the same two
+    // max-y corners, which is all `hemWidthOf` reads. With it absent, a
+    // long-sleeved raglan asked for a button cuff got the honest-but-wrong skip
+    // "this garment has no full-length sleeve hem to carry a cuff (sleeveless,
+    // cap, or short sleeve)" — measured on the K7 composition, whose sleeve is
+    // neither sleeveless nor cap nor short.
+    return name == "Sleeve" || name == "Puff Sleeve" || name == "Gathered-Head Sleeve" ||
+           name == "Raglan Sleeve";
 }
 
 // The drafted sleeve HEM width: the horizontal span between the two lowest

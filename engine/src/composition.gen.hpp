@@ -133,7 +133,7 @@ inline constexpr ComposePair kComposePairRules[] = {
     {"pocket.patch", "shoulder.dropped", "validator"},
     {"pocket.sideSeam", "shoulder.dropped", "validator"},
     {"cuff.button", "sleeveCap.cap", "honest"},
-    {"cuff.button", "shoulder.raglan", "honest"},
+    {"cuff.button", "shoulder.raglan", "allowed"},
     {"hemShape.highLow", "shoulder.dropped", "validator"},
     {"ruffleHem", "shoulder.dropped", "validator"},
     {"bardot.plain", "backDetail.cape", "validator"},
