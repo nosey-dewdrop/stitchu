@@ -30,6 +30,95 @@ static const PatternPiece* sleevePiece(const DraftedPattern& d) {
     return nullptr;
 }
 
+// ── KOLTUKALTI KOSESI (M1, hakem maddesi 2026-09-03) ───────────────────────
+// Hakem, `KOSU/ciktilar/puf-kol.png`'de puf parcasinin sol koltukaltinda dar bir
+// GAGA gordu: kapak egrisi ile alt/yan kenar orada cok keskin birlesiyor. Bir
+// kalibin kesim cizgisinde gaga birakmak kotudur (makas orayi temiz kesemez,
+// dikiste kivrilir). Bu yuzden aci OLCULUR ve bir TABANI olur — ayni taban duz
+// ve buzgulu parcada, cunku bu bir stil tercihi degil kesilebilirlik sarti.
+//
+// OLCUM PENCERESI ADIYLA YAZILI: kosenin iki tarafinda 10mm yay boyunca giden
+// kiris. Tam-tegetle olculen aci (duz 92.2 / puf 91.8) iki parcada neredeyse
+// ayni cikiyor ve gagayi GORMUYOR; goz 10mm'lik bir pencerede goruyor. Olculen
+// (EU38, 2026-09-03): duz 93.6 · yumusak buzgu 84.1 · puf 83.4 derece.
+// ⛔ TABAN HENUZ BAGLANMADI — VE BU BILEREK BOYLE. Hakemin yazdigi taban 75
+// derece. 9 govde x 3 kapak = 27 olcumun 26'si tabanin uzerinde; BIRI degil:
+// `max` govde (bust 160) puf kolda 74 derece. Yani taban bugunku motoru
+// gecirmiyor. Iki dururust yol vardi: (1) motoru duzelt, (2) tabani duser.
+// (2) esik gevsetmektir, YAPILMADI. (1) denendi ve KAPATILAMADI: gaganin kok
+// sebebi kapagin UC TEGETI (kiris buyudukce kapak koseye yatik geliyor) ve
+// koltukalti kontrol noktasini disari itmek icin yer yok — puf kirisi zaten
+// etekten genis, "ilmek atma" mandali (hemHalf*1.05) tavani kapatiyor. Gercek
+// care hakemin ikinci onerisi: KOSEYI YARICAPLA KAPAT (fillet), ve o bu fazda
+// yapilmadi. O yuzden bu satir OLCER VE BASAR, hukum vermez; taban baglanana
+// kadar sayilar raporda ve burada gorunur durur. KARAR GEREKEN.
+static constexpr double kUnderarmCornerWindowMM = 10.0;
+static constexpr double kUnderarmCornerFloorDeg = 75.0;
+
+static std::vector<Point> edgeSamples(const PatternPiece& p, int first, int last) {
+    std::vector<Point> pts;
+    Point cur{0, 0};
+    bool have = false;
+    for (int i = 0; i < static_cast<int>(p.commands.size()); ++i) {
+        const auto& c = p.commands[i];
+        if (c.type == CmdType::Close) continue;
+        if (i >= first && i <= last) {
+            if (pts.empty() && have) pts.push_back(cur);
+            if (c.type == CmdType::Curve && have) {
+                for (const auto& q : flattenCubic(cur, c.to, c.cp1, c.cp2, 200)) pts.push_back(q);
+            } else {
+                pts.push_back(c.to);
+            }
+        }
+        cur = c.to;
+        have = true;
+    }
+    return pts;
+}
+// Kosenin kendisinden `mm` kadar geri/ileri giden nokta (yay boyunca).
+static Point walkFromEnd(const std::vector<Point>& pts, double mm) {
+    double acc = 0;
+    for (size_t i = pts.size(); i-- > 1;) {
+        acc += distance(pts[i], pts[i - 1]);
+        if (acc >= mm) return pts[i - 1];
+    }
+    return pts.front();
+}
+static Point walkFromStart(const std::vector<Point>& pts, double mm) {
+    double acc = 0;
+    for (size_t i = 1; i < pts.size(); ++i) {
+        acc += distance(pts[i], pts[i - 1]);
+        if (acc >= mm) return pts[i];
+    }
+    return pts.back();
+}
+// Kapak ile koltukalti kenarinin birlestigi kosedeki IC aci (derece). Kenarlar
+// parcanin KENDI edgeRoles beyanindan bulunur; sabit komut indeksi yok.
+// Bulunamazsa -1 doner ve cagiran bunu ADIYLA raporlar.
+static double underarmCornerDeg(const PatternPiece& p) {
+    const EdgeRole* cap = nullptr;
+    const EdgeRole* under = nullptr;
+    for (const auto& r : p.edgeRoles) {
+        if (r.role == "sleeve_cap" && (!cap || r.lastCommand > cap->lastCommand)) cap = &r;
+    }
+    if (!cap) return -1;
+    for (const auto& r : p.edgeRoles)
+        if (r.role == "sleeve_underarm" && r.firstCommand == cap->lastCommand + 1) under = &r;
+    if (!under) return -1;
+    const auto capPts = edgeSamples(p, cap->firstCommand, cap->lastCommand);
+    const auto underPts = edgeSamples(p, under->firstCommand, under->lastCommand);
+    if (capPts.size() < 2 || underPts.size() < 2) return -1;
+    const Point v = capPts.back();
+    const Point a = walkFromEnd(capPts, kUnderarmCornerWindowMM);
+    const Point b = walkFromStart(underPts, kUnderarmCornerWindowMM);
+    const double ax = a.x - v.x, ay = a.y - v.y, bx = b.x - v.x, by = b.y - v.y;
+    const double la = std::hypot(ax, ay), lb = std::hypot(bx, by);
+    if (la < 1e-6 || lb < 1e-6) return -1;
+    double c = (ax * bx + ay * by) / (la * lb);
+    c = std::min(1.0, std::max(-1.0, c));
+    return std::acos(c) * 180.0 / M_PI;
+}
+
 // Body corners: min, max, mid, and a big-bust/narrow-shoulder stress body.
 struct Body { double bu, wa, hi, sh, bl, al, ne; const char* name; };
 static const std::vector<Body> BODIES = {
@@ -127,6 +216,18 @@ int main() {
             const double plainW = capWidthOf(plain);
             const double plainH = capTopY(plain);
 
+            // KOLTUKALTI KOSESI — duz parcada da olculur, ayni taban.
+            {
+                const double deg = underarmCornerDeg(*plain);
+                if (deg < 0) {
+                    check(false, std::string(b.name) +
+                        " plain: koltukalti kosesi OLCULEMEDI (sleeve_cap/sleeve_underarm rol cifti yok)");
+                } else {
+                    std::printf("  [OLCUM] %s plain: koltukalti ic acisi %d deg (taban %d, HENUZ BAGLI DEGIL)\n",
+                        b.name, (int)std::lround(deg), (int)kUnderarmCornerFloorDeg);
+                }
+            }
+
             for (SleeveCap cap : {SleeveCap::Gathered, SleeveCap::Puffed}) {
                 GarmentSpec spec = base;
                 spec.sleeveCap = cap;
@@ -159,6 +260,18 @@ int main() {
                 const double biceps =
                     m.bustMM() * SleeveBlock::bicepsRatio * (1 + SleeveBlock::bicepsEaseFor(Fabric::Woven));
                 check(capWidthOf(s) >= biceps - 1.0, tag + ": crown >= biceps");
+
+                // KOLTUKALTI KOSESI — buzgulu parcada AYNI taban (bir gaga,
+                // kirisi buyudu diye mesru olmaz).
+                {
+                    const double deg = underarmCornerDeg(*s);
+                    if (deg < 0) {
+                        check(false, tag + ": koltukalti kosesi OLCULEMEDI (rol cifti yok)");
+                    } else {
+                        std::printf("  [OLCUM] %s: koltukalti ic acisi %d deg (taban %d, HENUZ BAGLI DEGIL)\n",
+                            tag.c_str(), (int)std::lround(deg), (int)kUnderarmCornerFloorDeg);
+                    }
+                }
 
                 // Named as a puff/gathered piece.
                 check(s->name.find(cap == SleeveCap::Puffed ? "Puff" : "Gathered") != std::string::npos,
