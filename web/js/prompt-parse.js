@@ -20,6 +20,14 @@
 // (hesap.toplam === eslesen + stop + anlasilmayan) so a gate can prove the
 // zero-silence property instead of trusting it.
 import { VOCAB, canonical } from './vocab.gen.js?v=144';
+// ⭐ M3-primitif — SÖZLÜK-DIŞI KELİMEYE PRİMİTİF CEVABI.
+// Anlaşılmayan bir kelime bugüne kadar yalnızca "en yakın primitif: op.gather"
+// diye bir İSİM alıyordu; bu bir cevap değil bir işaretti. Aynı kelime fotoğraf
+// hattında ise contract'ın eşleme tablosundan geçip ya bir PRİMİTİF DEMETİNE
+// bağlanıyor ya adıyla reddedilip en yakın dikilebilir öneriyi alıyordu. İki
+// hat aynı kelimeye iki ayrı şey söylüyordu. Yargı artık tek yerde
+// (web/js/oov-resolve.js) ve prompt hattı da onu çağırıyor.
+import { oovKarariVer, oovAdaylari } from './oov-resolve.js?v=144';
 
 // Axes create.js holds that predate the generated vocabulary (see
 // backend/spec-core.js ENUMS — the same two conveniences, same values).
@@ -217,7 +225,7 @@ const GAP = 2; // a phrase may skip up to 2 tokens ("long FITTED sleeves")
 export function parsePrompt(text) {
   const tokens = fold(text).match(/[a-z0-9]+/g) || [];
   if (!tokens.length) {
-    return { eksenler: {}, anlasilmadi: [], hesap: { toplam: 0, eslesen: 0, stop: 0, anlasilmayan: 0 }, bos: true };
+    return { eksenler: {}, anlasilmadi: [], oovKarar: [], hesap: { toplam: 0, eslesen: 0, stop: 0, anlasilmayan: 0 }, bos: true };
   }
   const used = new Array(tokens.length).fill(false);
   const eksenler = {};
@@ -268,9 +276,25 @@ export function parsePrompt(text) {
       ? { kelime: tokens[i], oneri: `'${owner.field}' ekseni zaten '${eksenler[owner.field].value}' okundu; '${tokens[i]}' uygulanmadı` }
       : { kelime: tokens[i], oneri: `en yakın primitif: ${enYakinPrimitif(tokens[i])} (contract/primitives-v1.json)` });
   }
+  // ⭐ SÖZLÜK-DIŞI KELİMELER, CONTRACT'IN KENDİ TABLOSUNDAN GEÇİRİLİYOR.
+  // `anlasilmadi` bir kelimenin en yakın PRİMİTİF ADINI söylüyor; bu, kullanıcı
+  // için bir cevap değil. `oovKarar` aynı kelimelere fotoğraf hattının verdiği
+  // cevabın AYNISINI verir: ya bir primitif demeti (op.split + seam …) ya adıyla
+  // bir ret + en yakın dikilebilir öneri. Adaylar hem tek kelime hem KOMŞU İKİLİ
+  // olarak üretilir, çünkü tablonun kurallarının çoğu iki kelimelik ('welt
+  // pocket'); yalnız tek kelimeye bakan bir çağrı onları hiç göremezdi.
+  const bilinmeyenIdx = [];
+  for (let i = 0; i < tokens.length; i++) {
+    if (used[i] === 'matched' || STOP.has(tokens[i])) continue;
+    bilinmeyenIdx.push(i);
+  }
+  const oovTokens = tokens.map((w) => (STOP.has(w) ? null : w));
+  const oovKarar = oovAdaylari(oovTokens, bilinmeyenIdx).map((t) => oovKarariVer(t, null));
+
   return {
     eksenler,
     anlasilmadi,
+    oovKarar,
     hesap: { toplam: tokens.length, eslesen, stop, anlasilmayan },
     bos: false,
   };

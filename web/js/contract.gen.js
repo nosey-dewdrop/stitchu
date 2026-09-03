@@ -1287,3 +1287,744 @@ export const EDIT_LOCALITY = {
     ]
   }
 };
+
+// M3-primitif: KATMAN 3 -> KATMAN 1 cozumu. Bir sozluk-disi kelime bir eksene
+// eslendiginde cevap bir EKSEN ADI degil, bir PRIMITIF DEMETI olsun diye burada.
+// Kaynak contract/vocab-resolution-v1.json; kopya degil, uretim.
+export const PRIMITIF_COZUM = {
+  "gatherType.shirred": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "op.gather",
+        "params": {
+          "edge": "zoneEdge",
+          "ratio": 1.9,
+          "mode": "shirred"
+        }
+      },
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "zoneEdge"
+          ],
+          "cutCount": 1
+        }
+      }
+    ],
+    "note": "Ayni ratio, elastik dikisle sabitlenmis."
+  },
+  "collarType.peterPan": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "neckEdgeCopy",
+            "outerEdge"
+          ],
+          "cutCount": 2
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "neckEdge",
+          "panel": "collar",
+          "position": "neck",
+          "standHeightMM": 3,
+          "ratio": 1
+        }
+      }
+    ],
+    "note": "flat ile arasindaki fark 3mm stand + kenar profili (round)."
+  },
+  "backOpening.round": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "edge",
+        "params": {
+          "kind": "curve",
+          "label": "backCutout"
+        }
+      },
+      {
+        "op": "edge",
+        "params": {
+          "label": "backCutout",
+          "subdivideLen": [
+            0.3
+          ]
+        }
+      },
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "backCutout"
+          ],
+          "cutCount": 1
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "backCutout",
+          "panel": "facing",
+          "position": "centerBack"
+        }
+      }
+    ],
+    "note": "Arka panelde IC KESIM (ASTM katman 11) + derinlik orani."
+  },
+  "laceUpBack.corset": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "op.extend",
+        "params": {
+          "edge": "centerBackEdge",
+          "direction": "in",
+          "deltaMM": -45
+        }
+      },
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "cbFacing"
+          ],
+          "cutCount": 2
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "centerBackEdge",
+          "panel": "cbFacing",
+          "position": "centerBack"
+        }
+      },
+      {
+        "op": "seam",
+        "params": {
+          "a": [
+            "cbLeft"
+          ],
+          "b": [
+            "cbRight"
+          ],
+          "ratio": 1,
+          "notchFractions": [
+            0.1,
+            0.3,
+            0.5,
+            0.7,
+            0.9
+          ]
+        }
+      }
+    ],
+    "note": "Bagcik = iki kenar arasinda ACIK bir seam + notchFractions'a oturan kopcalar."
+  },
+  "wrapFront.surplice": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "op.extend",
+        "params": {
+          "edge": "centerFrontEdge",
+          "direction": "out",
+          "deltaMM": 160
+        }
+      },
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "wrapEdge"
+          ],
+          "cutCount": 2,
+          "mirrorAxis": "y"
+        }
+      }
+    ],
+    "note": "CF kenari merkezin OTESINE uzatilir, panel aynali 2 kesilir. Kruvaze bir isim degil, bir uzatma. F5-parca gecis kurali: wrap bir giydirme acikligidir, referans elbisenin gizli CB fermuari duser ve fermuarsiz etek tek kaliba birlesir ('Skirt Front & Back') — parca listesi degisir, olculen etki newPanel."
+  },
+  "backSlit.slit": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "op.split",
+        "params": {
+          "panel": "back",
+          "axis": "vertical"
+        }
+      },
+      {
+        "op": "seam",
+        "params": {
+          "a": [
+            "cbLeft"
+          ],
+          "b": [
+            "cbRight"
+          ],
+          "ratio": 1,
+          "sewnToFraction": 0.6
+        }
+      }
+    ],
+    "note": "vent ile AYNI operator, tek fark seam.sewnToFraction. Ara degerler gecerli. ⭐ K41 / F5-D IS 0b: kesir op.split.atFraction'dan TASINDI."
+  },
+  "ruffledStraps.ruffled": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "strapEdge"
+          ],
+          "cutCount": 2
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "shoulderEdge",
+          "panel": "strap",
+          "position": "shoulder",
+          "ratio": 2.2
+        }
+      },
+      {
+        "op": "op.extend",
+        "params": {
+          "edge": "strapEdge",
+          "direction": "out",
+          "deltaMM": 45
+        }
+      }
+    ],
+    "note": "Aski = panel + genislik + ratio. Uc isim, iki sayi."
+  },
+  "ruffledStraps.spaghetti": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "strapEdge"
+          ],
+          "cutCount": 2
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "shoulderEdge",
+          "panel": "strap",
+          "position": "shoulder",
+          "ratio": 1
+        }
+      },
+      {
+        "op": "op.extend",
+        "params": {
+          "edge": "strapEdge",
+          "direction": "out",
+          "deltaMM": 10
+        }
+      }
+    ],
+    "note": "Ayni panel, genislik kucuk."
+  },
+  "ruffledStraps.wide": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "strapEdge"
+          ],
+          "cutCount": 2
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "shoulderEdge",
+          "panel": "strap",
+          "position": "shoulder",
+          "ratio": 1
+        }
+      },
+      {
+        "op": "op.extend",
+        "params": {
+          "edge": "strapEdge",
+          "direction": "out",
+          "deltaMM": 60
+        }
+      }
+    ],
+    "note": "Ayni panel, ratio 1.0 (duz), genislik buyuk."
+  },
+  "peplum.full": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "peplumInner",
+            "peplumOuter"
+          ],
+          "cutCount": 2
+        }
+      },
+      {
+        "op": "op.flare",
+        "params": {
+          "edge": "peplumInner",
+          "sweepDeg": 360,
+          "hemFactor": 2
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "waistRing",
+          "panel": "peplum",
+          "position": "waist"
+        }
+      }
+    ],
+    "note": "Peplum = bel Interface'inden asilan flare paneli; sweep acisi."
+  },
+  "hemFlounce.gathered": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "flounceEdge"
+          ],
+          "cutCount": 2
+        }
+      },
+      {
+        "op": "op.gather",
+        "params": {
+          "edge": "flounceEdge",
+          "ratio": 2,
+          "mode": "free"
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "hem",
+          "panel": "flounce",
+          "position": "hem",
+          "ratio": 2
+        }
+      }
+    ],
+    "note": "Etek ucu volani: peplum ile AYNI iki primitif, farkli host kenar (hem vs waist)."
+  },
+  "pocketStyle.patch": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "pocketEdge"
+          ],
+          "cutCount": 2
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "frontPanelEdge",
+          "panel": "pocket",
+          "position": "centerFront"
+        }
+      }
+    ],
+    "note": "Ustten dikilen panel."
+  },
+  "cuffStyle.button": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "cuffEdge"
+          ],
+          "cutCount": 2
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "wristEdge",
+          "panel": "cuff",
+          "position": "wrist",
+          "ratio": 1.15
+        }
+      },
+      {
+        "op": "op.gather",
+        "params": {
+          "edge": "wristEdge",
+          "ratio": 1.15,
+          "mode": "free"
+        }
+      }
+    ],
+    "note": "Manset = bant paneli + toplama orani."
+  },
+  "hemShape.shirttail": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "edge",
+        "params": {
+          "kind": "curve",
+          "label": "hem"
+        }
+      },
+      {
+        "op": "op.extend",
+        "params": {
+          "edge": "hem",
+          "fromLandmark": "hem",
+          "direction": "up",
+          "deltaMM": 45
+        }
+      }
+    ],
+    "note": "Yan uc yukari kalkiyor: tek sayi (yan yukselme mm)."
+  },
+  "placketStyle.asymmetric": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "op.extend",
+        "params": {
+          "edge": "centerFrontEdge",
+          "direction": "out",
+          "deltaMM": 32
+        }
+      },
+      {
+        "op": "edge",
+        "params": {
+          "kind": "line",
+          "label": "foldLine"
+        }
+      },
+      {
+        "op": "op.extend",
+        "params": {
+          "edge": "centerFrontEdge",
+          "direction": "in",
+          "deltaMM": -45
+        }
+      }
+    ],
+    "note": "Ayni uzatma, merkezden kaydirilmis. Kayma miktari surekli bir sayi."
+  },
+  "buttonRow.decorative": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "edge",
+        "params": {
+          "label": "centerFrontEdge",
+          "subdivideLen": [
+            0.1,
+            0.3,
+            0.5,
+            0.7,
+            0.9
+          ]
+        }
+      }
+    ],
+    "note": "Ayni kesir dizisi, uzatma YOK. Tek fark bir primitifin varligi."
+  },
+  "backDetail.cape": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "detailEdge"
+          ],
+          "cutCount": 1
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "backNeckEdge",
+          "panel": "backDetail",
+          "position": "neck",
+          "ratio": 1
+        }
+      },
+      {
+        "op": "op.flare",
+        "params": {
+          "edge": "detailEdge",
+          "sweepDeg": 90,
+          "hemFactor": 1.25
+        }
+      }
+    ],
+    "note": "Ayni asma, ratio 1 ve sweep buyuk."
+  },
+  "exposedZip.centerBack": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "op.split",
+        "params": {
+          "panel": "back",
+          "atFraction": 0,
+          "axis": "vertical"
+        }
+      },
+      {
+        "op": "seam",
+        "params": {
+          "a": [
+            "cbLeft"
+          ],
+          "b": [
+            "cbRight"
+          ],
+          "ratio": 1,
+          "easeMM": 0
+        }
+      }
+    ],
+    "note": "Ayni demet, baska landmark. F5-parca gecis kurali: gizli CB fermuar duser, etek tek kaliba birlesir — olculen etki newPanel."
+  },
+  "bardotStyle.plain": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "op.extend",
+        "params": {
+          "edge": "neckEdge",
+          "fromLandmark": "shoulder",
+          "direction": "down",
+          "deltaMM": 70
+        }
+      },
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "casingEdge"
+          ],
+          "cutCount": 1
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "neckEdge",
+          "panel": "casing",
+          "position": "neck",
+          "ratio": 1
+        }
+      }
+    ],
+    "note": "Ust kenarin omzun ALTINA indirilmesi (tek sayi) + lastik kasnak."
+  },
+  "cupSeam.horizontal": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "op.split",
+        "params": {
+          "panel": "frontPrincess",
+          "atFraction": 0.5,
+          "axis": "horizontal",
+          "seamRatio": 1
+        }
+      },
+      {
+        "op": "seam",
+        "params": {
+          "a": [
+            "upperCup"
+          ],
+          "b": [
+            "lowerCup"
+          ],
+          "ratio": 1,
+          "notchFractions": [
+            0.5
+          ]
+        }
+      }
+    ],
+    "note": "Kup dikisi = on panelin gogus apex'inden YATAY bolunmesi."
+  },
+  "yoke.plain": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "op.split",
+        "params": {
+          "panel": "bodice",
+          "atFraction": 0.22,
+          "axis": "horizontal",
+          "seamRatio": 1
+        }
+      },
+      {
+        "op": "seam",
+        "params": {
+          "a": [
+            "yokeLower"
+          ],
+          "b": [
+            "bodyUpper"
+          ],
+          "ratio": 1
+        }
+      }
+    ],
+    "note": "Roba = govdenin gogus ustunden YATAY bolunmesi. atFraction surekli."
+  },
+  "boxPleat.centerInverted": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "op.extend",
+        "params": {
+          "edge": "centerFrontEdge",
+          "direction": "out",
+          "deltaMM": 60
+        }
+      },
+      {
+        "op": "op.gather",
+        "params": {
+          "edge": "centerFrontEdge",
+          "ratio": 1,
+          "mode": "free"
+        }
+      },
+      {
+        "op": "edge",
+        "params": {
+          "kind": "line",
+          "label": "pleatFoldLine"
+        }
+      }
+    ],
+    "note": "LOKAL fazlalik: dagitilmis gather'in tek noktaya toplanmis hali."
+  },
+  "tieClosure.backWaistBow": {
+    "status": "absent",
+    "bundle": [],
+    "note": ""
+  },
+  "neckline.cowl": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "edge",
+        "params": {
+          "kind": "curve",
+          "label": "neckEdge"
+        }
+      },
+      {
+        "op": "edge",
+        "params": {
+          "label": "neckEdge",
+          "subdivideLen": [
+            0.24
+          ]
+        }
+      },
+      {
+        "op": "op.gather",
+        "params": {
+          "edge": "neckEdge",
+          "ratio": 1.45,
+          "mode": "free"
+        }
+      },
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "neckEdge"
+          ],
+          "grainAngleDeg": 45,
+          "cutCount": 1
+        }
+      }
+    ],
+    "note": "Boyun kenarinda ratio>1 (dokme kivrim) + 45 derece grain."
+  },
+  "neckline.pussyBow": {
+    "status": "resolved",
+    "bundle": [
+      {
+        "op": "edge",
+        "params": {
+          "kind": "curve",
+          "label": "neckEdge"
+        }
+      },
+      {
+        "op": "edge",
+        "params": {
+          "label": "neckEdge",
+          "subdivideLen": [
+            0.1
+          ]
+        }
+      },
+      {
+        "op": "panel",
+        "params": {
+          "edges": [
+            "tieEdge"
+          ],
+          "cutCount": 2
+        }
+      },
+      {
+        "op": "op.attach",
+        "params": {
+          "hostEdge": "neckEdge",
+          "panel": "bowTie",
+          "position": "neck"
+        }
+      }
+    ],
+    "note": "crew kenari + ayri bag paneli (op.attach). Yaka degil, ASILAN parca."
+  }
+};
