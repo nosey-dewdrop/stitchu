@@ -10,6 +10,9 @@
 // value rides). Numbers in it are the engine's own drafted mm (provenance in
 // each entry); no threshold is invented in this file.
 import { VISION_TASIMA } from './contract.gen.js?v=144';
+// M3-primitif: sozluk-disi kelimenin yargisi TEK yerde (web/js/oov-resolve.js);
+// prompt hatti da ayni fonksiyonu cagirir, iki hat ayri cevap veremez.
+import { oovKarariVer } from './oov-resolve.js?v=144';
 
 // Map the vision's yoke / straps / closure / oov terms to a drawable gathering
 // (Loop 8). The engine draws a SEPARATE gathered panel (+ a drawstring cord)
@@ -755,20 +758,7 @@ export function applyRatioAxes(spec, seen, body) {
 export function resolveOutOfVocab(seen, spec) {
   const terms = Array.isArray(seen && seen.outOfVocab)
     ? seen.outOfVocab.filter((s) => typeof s === 'string' && s.trim()) : [];
-  const tbl = VISION_TASIMA.oovEsleme;
-  return terms.map((term) => {
-    for (const rule of tbl.kurallar) {
-      if (!new RegExp(rule.ara, 'i').test(term)) continue;
-      if (rule.durum === 'eslendi') {
-        const drawn = !!(spec && spec[rule.eksen] && spec[rule.eksen] !== 'none' &&
-          spec[rule.eksen] !== 'straight' && spec[rule.eksen] !== false);
-        return { term, durum: 'eslendi', kural: rule.ad, eksen: rule.eksen,
-          deger: rule.deger, cozum: rule.cozum, cizildi: drawn };
-      }
-      return { term, durum: 'reddedildi', kural: rule.ad, sebep: rule.sebep, oneri: rule.oneri };
-    }
-    return { term, durum: 'reddedildi', kural: 'bilinmeyen', sebep: tbl.bilinmeyen.sebep, oneri: tbl.bilinmeyen.oneri };
-  });
+  return terms.map((term) => oovKarariVer(term, spec));
 }
 
 // ── DÜRÜSTLÜK BAYRAKLARI (F-I, 2026-08-23) ─────────────────────────────────
