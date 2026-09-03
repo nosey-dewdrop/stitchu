@@ -7,7 +7,7 @@ kullanıcının yapabileceği **sonraki adım** durur. Sessiz çöküş 0, sessi
 çıkmaz sokak 0. Canlı LLM çağrısı YOK — fotoğraf tarafı sentetik piksel fikstürleri,
 etiket tarafı bankalı okuma JSON'ları, kalıp tarafı sevk edilen wasm baytı.
 
-**1297 yargı · 0 FAIL**
+**1325 yargı · 0 FAIL**
 
 | bölüm | vaka | sonuç | kullanıcının gördüğü / kanıt |
 |---|---|---|---|
@@ -19,9 +19,12 @@ etiket tarafı bankalı okuma JSON'ları, kalıp tarafı sevk edilen wasm baytı
 | foto | aşırı karanlık kare | ADIYLA RED: no_garment_found | karede zeminden ayrışan bir giysi şekli bulunamadı — ya giysi kadrajda çok küçük kalmış ya da ışık/kontrast onu zeminden ayırmaya yetmiyor (çok karanlık, çok parlak ya da bulanık kare). Sonraki adım: iyi ışıkta, zeminle zıt renkli ve giysinin kareyi dolduracağı net bir kare çek; ya da aşağıdan giysiyi kendin seç. |
 | foto | aşırı parlak / kontrastsız kare | ADIYLA RED: no_garment_found | karede zeminden ayrışan bir giysi şekli bulunamadı — ya giysi kadrajda çok küçük kalmış ya da ışık/kontrast onu zeminden ayırmaya yetmiyor (çok karanlık, çok parlak ya da bulanık kare). Sonraki adım: iyi ışıkta, zeminle zıt renkli ve giysinin kareyi dolduracağı net bir kare çek; ya da aşağıdan giysiyi kendin seç. |
 | foto | bulanık + gürültülü kare | ADIYLA RED: no_garment_found | karede zeminden ayrışan bir giysi şekli bulunamadı — ya giysi kadrajda çok küçük kalmış ya da ışık/kontrast onu zeminden ayırmaya yetmiyor (çok karanlık, çok parlak ya da bulanık kare). Sonraki adım: iyi ışıkta, zeminle zıt renkli ve giysinin kareyi dolduracağı net bir kare çek; ya da aşağıdan giysiyi kendin seç. |
-| foto | giysi karede çok küçük | ADIYLA RED: no_garment_found | karede zeminden ayrışan bir giysi şekli bulunamadı — ya giysi kadrajda çok küçük kalmış ya da ışık/kontrast onu zeminden ayırmaya yetmiyor (çok karanlık, çok parlak ya da bulanık kare). Sonraki adım: iyi ışıkta, zeminle zıt renkli ve giysinin kareyi dolduracağı net bir kare çek; ya da aşağıdan giysiyi kendin seç. |
+| foto | karede nokta kadar leke (giysi yok sayılır) | ADIYLA RED: no_garment_found | karede zeminden ayrışan bir giysi şekli bulunamadı — ya giysi kadrajda çok küçük kalmış ya da ışık/kontrast onu zeminden ayırmaya yetmiyor (çok karanlık, çok parlak ya da bulanık kare). Sonraki adım: iyi ışıkta, zeminle zıt renkli ve giysinin kareyi dolduracağı net bir kare çek; ya da aşağıdan giysiyi kendin seç. |
+| foto | uzaktan çekilmiş dar giysi (ayrışıyor ama ölçülemeyecek kadar ince) | ADIYLA RED: garment_too_small | giysi karede çok küçük kaldı. Sonraki adım: daha yakın bir kadrajla, daha yüksek çözünürlükte çek. |
+| foto | düşük kontrast: lekeli zemin + yanda rakip gölge | ADIYLA RED: low_confidence | fotoğraf ölçüm için fazla belirsiz (bulanık, düşük çözünürlüklü ya da düşük kontrastlı). Sonraki adım: net ve iyi ışıklı bir kare çek. |
 | foto | bozuk / boş görüntü nesnesi | ADIYLA RED: bad_input | fotoğraf okunamadı (bozuk/boş dosya). Sonraki adım: fotoğrafı JPG/PNG olarak yeniden kaydedip tekrar yükle, ya da aşağıdan giysiyi kendin seç. |
 | foto | measure.js'in 11 ret sebebi | HEPSİ CÜMLELİ + ADIMLI | ambiguous_foreground, background_not_separable, bad_input, foreground_fills_frame, garment_too_small, hem_tapers_like_legs, low_confidence, no_garment_found, profile_incomplete, worn_on_model_head, worn_on_model_legs |
+| foto | koşarak ateşlenen 7 ret sebebi | FİKSTÜRLE KANITLI | ambiguous_foreground, background_not_separable, bad_input, garment_too_small, low_confidence, no_garment_found, worn_on_model_legs |
 | prompt | boş prompt | BOŞ İLAN EDİLDİ |  |
 | prompt | sadece boşluk | BOŞ İLAN EDİLDİ |  |
 | prompt | sadece emoji | BOŞ İLAN EDİLDİ |  |
@@ -34,7 +37,7 @@ etiket tarafı bankalı okuma JSON'ları, kalıp tarafı sevk edilen wasm baytı
 | prompt | çok uzun prompt (280 token) | okunan 5 eksen | neckline=square sleeveLength=long garment=dress skirtStyle=pleated skirtLength=midi |
 | prompt | Türkçe ek: "kare yakalı puf kollu elbise" | okunan 3 eksen | neckline=square sleeveCap=puffed garment=dress |
 | prompt | Türkçe+İngilizce karışık | okunan 4 eksen | sleeveCap=puffed garment=dress skirtLength=mini pocketStyle=sideSeam · ANLAŞILMADI: square → 'square' bilinen bir kelime ama tek başına bir eksen belirtmiyor; şöyle yaz: square neckline / square neck \| yakali → 'yakali' bilinen bir kelime ama tek başına bir eksen belirtmiyor; şöyle yaz: bisiklet yaka / oval yaka / v yaka |
-| prompt | sayılı edit ("yakayı 2cm derinleştir") | BOŞ İLAN EDİLDİ | EDIT: editNeckDeepenMM=20mm |
+| prompt | sayılı edit ("yakayı 2cm derinleştir") | EDIT OKUNDU (1 alan) | EDIT: editNeckDeepenMM=20mm |
 | foto+prompt | fotoğraf kollu, prompt "kolsuz" | PROMPT KAZANDI | sleeveStyle straight → none · rapor ["sleeveStyle","straight","none"] |
 | foto+prompt | sadece arka fotoğraf / arka fotoğraf yok | UYDURMA İLAN EDİLDİ | uydurulan alanlar: backDetail, backOpening, backSlit, laceUpBack |
 | beden | EU34 | KALIP 6 parça | issues 0 |

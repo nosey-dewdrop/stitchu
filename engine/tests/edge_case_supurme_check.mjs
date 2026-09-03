@@ -111,23 +111,46 @@ function gurultulu(seed = 12345) {
   }
   return img;
 }
+/** Bir kareyi başka bir karenin içine yapıştırır (uzaktan çekilmiş giysi kurmak için). */
+function yapistir(dst, src, ox, oy) {
+  for (let y = 0; y < src.height; y++) {
+    for (let x = 0; x < src.width; x++) {
+      const s = (y * src.width + x) * 4;
+      const o = ((y + oy) * dst.width + (x + ox)) * 4;
+      dst.data[o] = src.data[s]; dst.data[o + 1] = src.data[s + 1]; dst.data[o + 2] = src.data[s + 2];
+    }
+  }
+}
+/** Kenar halkasına blok blok leke: zemin ÖLÇÜLEBİLİR ama tekdüzeliği düşük. */
+function lekeliKenar(img, yogunluk, seed = 7) {
+  let s = seed;
+  const rnd = () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; };
+  const mx = Math.round(0.04 * img.width), my = Math.round(0.04 * img.height);
+  for (let by = 0; by < img.height; by += 10) {
+    for (let bx = 0; bx < img.width; bx += 10) {
+      const kenarda = bx < mx || bx >= img.width - mx || by < my || by >= img.height - my;
+      if (kenarda && rnd() < yogunluk) box(img, bx, by, bx + 10, by + 10, [168, 168, 175]);
+    }
+  }
+  return img;
+}
 
 const FOTO_VAKALARI = [
   { ad: 'mankensiz düz serilmiş giysi (SAĞLIKLI HAT)', beklenen: 'olculdu', img: () => duzSerilmis() },
-  { ad: 'giysi olmayan fotoğraf — manzara', beklenen: 'red', img: () => {
+  { ad: 'giysi olmayan fotoğraf — manzara', beklenen: 'red', sebep: 'background_not_separable', img: () => {
       const i = blank(600, 400, [135, 180, 235]);
       box(i, 0, 240, 600, 400, [90, 140, 70]);
       box(i, 60, 150, 180, 250, [120, 110, 100]);
       return i;
     } },
-  { ad: 'giysi olmayan fotoğraf — boş duvar', beklenen: 'red', img: () => blank(600, 800, [250, 250, 250]) },
-  { ad: 'birden fazla giysi tek karede', beklenen: 'red', img: () => {
+  { ad: 'giysi olmayan fotoğraf — boş duvar', beklenen: 'red', sebep: 'no_garment_found', img: () => blank(600, 800, [250, 250, 250]) },
+  { ad: 'birden fazla giysi tek karede', beklenen: 'red', sebep: 'ambiguous_foreground', img: () => {
       const i = blank(800, 700, [245, 245, 245]);
       box(i, 80, 80, 360, 620, [40, 40, 60]);
       box(i, 440, 80, 720, 620, [50, 40, 50]);
       return i;
     } },
-  { ad: 'giysi bir insanın üstünde (baş + bacaklar)', beklenen: 'red', img: () => {
+  { ad: 'giysi bir insanın üstünde (baş + bacaklar)', beklenen: 'red', sebep: 'worn_on_model_legs', img: () => {
       const i = duzSerilmis(600, 900);
       box(i, 255, 740, 290, 890, [40, 40, 60]);
       box(i, 310, 740, 345, 890, [40, 40, 60]);
@@ -135,18 +158,33 @@ const FOTO_VAKALARI = [
       box(i, 270, 20, 330, 110, [40, 40, 60]);
       return i;
     } },
-  { ad: 'aşırı karanlık kare', beklenen: 'red', img: () => duzSerilmis(600, 800, [12, 12, 14], [6, 6, 7]) },
-  { ad: 'aşırı parlak / kontrastsız kare', beklenen: 'red', img: () => duzSerilmis(600, 800, [250, 250, 250], [255, 255, 255]) },
-  { ad: 'bulanık + gürültülü kare', beklenen: 'red', img: () => gurultulu() },
-  { ad: 'giysi karede çok küçük', beklenen: 'red', img: () => {
+  { ad: 'aşırı karanlık kare', beklenen: 'red', sebep: 'no_garment_found', img: () => duzSerilmis(600, 800, [12, 12, 14], [6, 6, 7]) },
+  { ad: 'aşırı parlak / kontrastsız kare', beklenen: 'red', sebep: 'no_garment_found', img: () => duzSerilmis(600, 800, [250, 250, 250], [255, 255, 255]) },
+  { ad: 'bulanık + gürültülü kare', beklenen: 'red', sebep: 'no_garment_found', img: () => gurultulu() },
+  { ad: 'karede nokta kadar leke (giysi yok sayılır)', beklenen: 'red', sebep: 'no_garment_found', img: () => {
       const i = blank(800, 800, [245, 245, 245]);
       box(i, 390, 390, 410, 430, [30, 30, 40]);
       return i;
     } },
-  { ad: 'bozuk / boş görüntü nesnesi', beklenen: 'red', img: () => ({ data: new Uint8ClampedArray(4), width: 0, height: 0 }) },
+  // Bu iki vaka, aynı cümleyi basan "no_garment_found" kümesinden AYRI iki sebebi
+  // gerçekten ateşlesin diye var: 11 sebep kaynaktan sayılmakla kalmıyor, koşuluyor.
+  { ad: 'uzaktan çekilmiş dar giysi (ayrışıyor ama ölçülemeyecek kadar ince)',
+    beklenen: 'red', sebep: 'garment_too_small', img: () => {
+      const i = blank(1200, 1200, [245, 245, 245]);
+      yapistir(i, duzSerilmis(90, 620), 560, 300);
+      return i;
+    } },
+  { ad: 'düşük kontrast: lekeli zemin + yanda rakip gölge', beklenen: 'red', sebep: 'low_confidence', img: () => {
+      const i = blank(1000, 1000, [240, 240, 240]);
+      yapistir(i, duzSerilmis(230, 330), 290, 330);
+      box(i, 790, 430, 830, 700, [60, 60, 80]);
+      return lekeliKenar(i, 0.31);
+    } },
+  { ad: 'bozuk / boş görüntü nesnesi', beklenen: 'red', sebep: 'bad_input', img: () => ({ data: new Uint8ClampedArray(4), width: 0, height: 0 }) },
 ];
 
 console.log('── A. FOTOĞRAF HATTI (measure.js, sentetik piksel fikstürleri) ──');
+const ATESLENEN_SEBEPLER = new Set();
 for (const v of FOTO_VAKALARI) {
   let m;
   try { m = measureGarment(v.img()); }
@@ -165,6 +203,11 @@ for (const v of FOTO_VAKALARI) {
   }
   // RED: adı var mı, kullanıcıya taşındı mı, sonraki adımı var mı?
   check(`foto '${v.ad}' reddi ADIYLA geldi`, typeof m.reason === 'string' && m.reason.length > 0);
+  ATESLENEN_SEBEPLER.add(m.reason);
+  if (v.sebep) {
+    check(`foto '${v.ad}' BEKLENEN sebebi verdi`, m.reason === v.sebep,
+      `beklenen ${v.sebep}, gelen ${m.reason}`);
+  }
   check(`foto '${v.ad}' reddi KULLANICIYA taşındı (sessiz default yok)`, red !== null,
     `applyMeasuredRatios '${durum}' döndürdü ve olcumRedCumlesi null`);
   if (red) {
@@ -192,6 +235,21 @@ for (const v of FOTO_VAKALARI) {
     check(`ret sebebi '${s}' İNGİLİZCESİ de sonraki adım taşıyor`, en && sonrakiAdimVarMi(en.metin), en && en.metin);
   }
   row('foto', `measure.js'in ${uniq.length} ret sebebi`, 'HEPSİ CÜMLELİ + ADIMLI', uniq.join(', '));
+
+  // ⚠ Yukarıdaki döngü sebep listesini KAYNAKTAN türetiyor; bir sebebin cümlesi
+  // olması, o sebebin gerçekten ateşlenebildiğini KANITLAMAZ. Aşağısı koşturarak
+  // ateşlenenleri sayar. Hakem notu (M4-edge): dört ayrı fikstür aynı
+  // no_garment_found cümlesini basıyordu, garment_too_small ve low_confidence'ı
+  // hiçbiri ateşlemiyordu — o yüzden bu ikisi ADIYLA aranıyor.
+  const ates = [...ATESLENEN_SEBEPLER].sort();
+  for (const s of ['garment_too_small', 'low_confidence', 'no_garment_found',
+                   'background_not_separable', 'ambiguous_foreground',
+                   'worn_on_model_legs', 'bad_input']) {
+    check(`ret sebebi '${s}' KOŞARAK ateşlendi (kaynaktan sayılmadı)`,
+      ATESLENEN_SEBEPLER.has(s), `ateşlenenler: ${ates.join(',')}`);
+  }
+  row('foto', `koşarak ateşlenen ${ates.length} ret sebebi`,
+    'FİKSTÜRLE KANITLI', ates.join(', '));
 }
 
 // ── B. PROMPT HATTI ─────────────────────────────────────────────────────────
@@ -260,7 +318,10 @@ for (const v of PROMPT_VAKALARI) {
   }
   const okunan = Object.entries(p.eksenler).map(([f, e]) => `${f}=${e.value}`).join(' ');
   row('prompt', v.ad,
-    p.bos ? 'BOŞ İLAN EDİLDİ' : `okunan ${Object.keys(p.eksenler).length} eksen`,
+    // "BOŞ" yalnız hiçbir şey okunmadıysa doğrudur: sayılı edit taşıyan bir cümle
+    // eksen açmasa da OKUNMUŞTUR (hakem notu, M4-edge).
+    (p.bos && !editList.length) ? 'BOŞ İLAN EDİLDİ'
+      : (p.bos ? `EDIT OKUNDU (${editList.length} alan)` : `okunan ${Object.keys(p.eksenler).length} eksen`),
     [okunan, konaksiz.length ? `KONAKSIZ: ${konaksiz.map((k) => k.oneri).join(' | ')}` : '',
      p.anlasilmadi.length ? `ANLAŞILMADI: ${p.anlasilmadi.map((u) => `${u.kelime} → ${u.oneri}`).join(' | ')}` : '',
      editList.length ? `EDIT: ${editList.map(([f, e]) => `${f}=${e.mm}mm`).join(' ')}` : '']
