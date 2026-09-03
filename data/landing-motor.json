@@ -36,5 +36,69 @@
   "kumas": {
     "sayi": 5,
     "kaynak": "web/js/fabric-catalog.js (contract/fabric-catalog-v1.json)"
+  },
+  "puf": {
+    "duz": {
+      "kapakYayiMM": 439.9,
+      "isaret": 4,
+      "adimlar": 14
+    },
+    "puf": {
+      "kapakYayiMM": 545.5,
+      "isaret": 10,
+      "adimlar": 15
+    },
+    "kapakArtisMM": 105.6,
+    "kaynak": "draftJSON pattern.pieces[Sleeve].edgeRoles[sleeve_cap] yay uzunlugu"
+  },
+  "kompozisyon": {
+    "kaynak": "contract/primitives-v1.json kompozisyonlar",
+    "liste": [
+      {
+        "ad": "K1-kruvaze-buzgulu-bel",
+        "baslik": "kruvaze (surplice) on + belde buzgulu pano",
+        "eksenler": "wrapFront=surplice + gatherType=shirred gatherZone=waist",
+        "parcalar": 5
+      },
+      {
+        "ad": "K7-raglan-manset-fermuar",
+        "baslik": "raglan omuz + dugmeli manset + gorunur on fermuar",
+        "eksenler": "shoulderStyle=raglan + cuffStyle=button + exposedZip=centerFront",
+        "parcalar": 4
+      },
+      {
+        "ad": "K8-dusuk-omuz-kutu-pili-cep",
+        "baslik": "dusuk (dropped) omuz + orta ters kutu pili + yan dikis cebi",
+        "eksenler": "shoulderStyle=dropped + boxPleat=centerInverted + pocketStyle=sideSeam",
+        "parcalar": 6
+      }
+    ],
+    "sayi": 3,
+    "eksenSayisi": 8
+  },
+  "kumasFarki": {
+    "kaynak": "ayni spec, tek fark fabric; draftJSON parca listesi",
+    "dokuma": {
+      "parcalar": 4,
+      "kumasM": 1.6
+    },
+    "orme": {
+      "parcalar": 3,
+      "kumasM": 1.6
+    },
+    "parcaFarki": 1
+  },
+  "edit": {
+    "istenenMM": 20,
+    "toplamPanel": 6,
+    "degisenPanel": 2,
+    "degisenAdlar": "Bodice Front · Bias binding (neckline)",
+    "sabitPanel": 4,
+    "cfOnceMM": 74.5,
+    "cfSonraMM": 94.5,
+    "yayOnceMM": 101.6,
+    "yaySonraMM": 117.8,
+    "biasUzatmaMM": 32.3,
+    "kaynak": "draftJSON pattern.edit.adimlar[op.neckDeepen] + panel bayt kiyasi (spec-diff.mjs pieceBytes)"
   }
 }
