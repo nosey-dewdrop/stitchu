@@ -1,0 +1,6 @@
+yatay kup dikisi + korse bagcikli sirt
+
+CIZIM HATTI BU SINIFI CIZEMEDI VE ADIYLA REDDETTI:
+flat: ON gorunum cizilemedi — on: ne beden ne etek parcasi bulundu
+
+Kok sebep + sonraki adim: contract/primitives-v1.json -> kompozisyonlar.K5-kup-korse.cizim_kaniti.cizilemiyor
