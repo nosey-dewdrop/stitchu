@@ -14,9 +14,20 @@ namespace ButtonRowBlock {
 namespace {
 
 // The front center piece carries the CF edge at x = 0 in every block.
+// ★ "Front Body" DE BIR ON GOVDEDIR (duzeltildi 2026-09-03).
+// Bu liste uc yazimi biliyordu; Bugra Locket hatti (locket.cpp:277) on paneli
+// "Front Body" diye adlandiriyor, o yuzden `frontCenter` NULL donuyor ve
+// buttonRow=functional olan bir spec sessizce dugmesiz ciziliyordu. Olculdu:
+// KOSU/ciktilar/bugra-spec-giysi.svg icinde 97 path, 0 circle — sayfanin kendi
+// basligi "dugmeli" derken. Motorun dugmeyi CIZEMEDIGI iddiasi YANLISTI
+// (buttonrow.cpp buttonCircle dort kubik ceyrek yayla ciziyor ve calisiyor);
+// kopan sey AD ESLESMESIYDI. Ayni sinif hata annotateTechnical'da 2026-08-23'te
+// bulunmustu ("Body ucuncu yazim, stil istisnasi degil ROL adi") — orada
+// duzeltilmis, burada duzeltilmemisti.
 PatternPiece* frontCenter(DraftedPattern& pattern) {
     for (const char* name : {"Bodice Center Front", "Bodice Front",
-                             "Top Center Front", "Top Front"}) {
+                             "Top Center Front", "Top Front",
+                             "Front Center Body", "Front Body"}) {
         for (auto& piece : pattern.pieces)
             if (piece.name == name) return &piece;
     }

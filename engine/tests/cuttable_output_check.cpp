@@ -23,6 +23,7 @@
 // (cutLine sil · grainline sil · foldLine sil · çentiği kenarından kaydır) ve
 // kapının her seferinde KIRMIZI düştüğü loglanır. Bozulunca düşmeyen bir kapı
 // vakumdur; burada vakum olmadığı çalıştırma çıktısıyla duruyor.
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <string>
@@ -165,6 +166,37 @@ static std::vector<Point> notchPositions(const PatternPiece& p) {
     return out;
 }
 
+// YAN DİKİŞİ YÜRÜ: bir noktanın, konturun koltukaltından (max-x) itibaren yan
+// dikiş boyunca kaç mm aşağıda olduğunu döndürür. Yürüyüş kenar yataya döndüğü
+// yerde biter (motorun garment.cpp sideSeamRun ile AYNI tanımı — bu kapı
+// bağımsız olarak kendi kodunda yeniden yazar, motorun fonksiyonunu çağırmaz).
+// Nokta yürüyüşün 12mm'sinden (tik boyu) uzaktaysa -1 döner.
+static double seamWalkMM(const std::vector<Point>& poly, Point p) {
+    if (poly.size() < 3) return -1;
+    size_t ua = 0;
+    for (size_t i = 1; i < poly.size(); ++i) if (poly[i].x > poly[ua].x) ua = i;
+    const size_t n = poly.size();
+    const Point nxt = poly[(ua + 1) % n], prv = poly[(ua + n - 1) % n];
+    const int step = (nxt.y - poly[ua].y) >= (prv.y - poly[ua].y) ? 1 : -1;
+    double acc = 0, best = -1, bestD = 1e18;
+    size_t i = ua;
+    for (size_t k = 0; k < n; ++k) {
+        const size_t j = (i + static_cast<size_t>(step) + n) % n;
+        const double dx = poly[j].x - poly[i].x, dy = poly[j].y - poly[i].y;
+        if (dy <= 0 || std::fabs(dy) <= std::fabs(dx)) break;
+        const double seg = std::hypot(dx, dy);
+        // en yakın nokta bu parça üstünde mi
+        const double t = std::min(1.0, std::max(0.0,
+            ((p.x - poly[i].x) * dx + (p.y - poly[i].y) * dy) / (seg * seg)));
+        const double qx = poly[i].x + dx * t, qy = poly[i].y + dy * t;
+        const double dist = std::hypot(qx - p.x, qy - p.y);
+        if (dist < bestD) { bestD = dist; best = acc + seg * t; }
+        acc += seg;
+        i = j;
+    }
+    return bestD <= 12.5 ? best : -1;   // 12mm tik boyu + pay
+}
+
 // ---------------------------------------------------------------- the gate
 
 // Published production tolerance this repo already declares (1/32 inch), NOT a
@@ -241,8 +273,13 @@ static std::vector<std::string> cuttabilityFailures(const DraftedPattern& d) {
     if (!front || !back) {
         bad.push_back("Front/Back Body missing — the side seam cannot be walked");
     } else {
-        const auto fPoly = flattenToPoly(front->commands);
-        const auto bPoly = flattenToPoly(back->commands);
+        // ★ KESİM ÇİZGİSİ (2026-09-03): çentik makasla KESİLİR, o yüzden hem
+        // motor hem bu kapı artık KESİM konturunu referans alır. Eskiden dikiş
+        // konturuna bakılıyordu ve iki çizgi arasında tam bir dikiş payı vardı.
+        const auto fPoly = flattenToPoly(front->cutLine.size() >= 2 ? front->cutLine
+                                                                    : front->commands);
+        const auto bPoly = flattenToPoly(back->cutLine.size() >= 2 ? back->cutLine
+                                                                   : back->commands);
         const double fSide = maxX(fPoly), bSide = maxX(bPoly);
         const auto fN = notchPositions(*front);
         const auto bN = notchPositions(*back);
@@ -259,24 +296,63 @@ static std::vector<std::string> cuttabilityFailures(const DraftedPattern& d) {
             bad.push_back("side seam carries " + std::to_string(fN.size()) +
                           " front notch positions but " + std::to_string(bN.size()) +
                           " back ones — they cannot pair up");
-        // The two sides must MATCH: the same notch position, the same fraction
-        // down its own side edge. The fraction is dimensionless and each side
-        // computes it from its own piece, so this is an invariant, not a
-        // tolerance the motor gets to pick. 1e-3 of the side edge = 0.2mm on a
-        // 200mm seam, inside the 0.79375mm (1/32") production band this repo
-        // already declares.
+        // ★ WALK THE PIECES (2026-09-03) — kapı SERTLEŞTİ, gevşemedi.
+        // Eskiden kıyas, her çentiğin kendi bounding box'ındaki KESİRİ idi ve
+        // bu dosya o kısıtı kendi içinde "REPORTED, NOT GATED honest gap: the
+        // industrial claim — equal mm ALONG the sewn side edge — the
+        // representation does not carry it yet" diye yazıyordu. Artık taşıyor:
+        // motor çentiği iki yarıda da koltukaltından AYNI mm'ye koyuyor
+        // (garment.cpp commonSideSeamMM), o yüzden kıyas artık boyutsuz bir
+        // kesir değil, dikişin ÜSTÜNDE YÜRÜNEN gerçek mm. Tolerans 0.1mm =
+        // yayınlanmış 0.79375mm (1/32") üretim bandının sekizde biri ve eski
+        // kesir toleransının (1e-3 x 200mm = 0.2mm) yarısı.
         if (fN.size() == bN.size()) {
-            const Rect fbb = boundingBox(front->commands);
-            const Rect bbb = boundingBox(back->commands);
-            for (size_t i = 0; i < fN.size(); ++i) {
-                const double fFrac = fbb.height > 0 ? (fN[i].y - fbb.y) / fbb.height : -1;
-                const double bFrac = bbb.height > 0 ? (bN[i].y - bbb.y) / bbb.height : -1;
-                if (std::fabs(fFrac - bFrac) > 1e-3) {
+            // Çift çentiğin ORTASI yürüyüş uzayında alınır, düzlemde değil:
+            // eğri bir dikişte 12mm ayrık iki tikin düzlemsel orta noktası
+            // kenarın İÇİNE düşer (kiriş-yay farkı) ve sahte bir 0.1mm sapma
+            // üretir. Ölçüldü: ön 9.7251 vs arka 9.6167mm — ikisi de aynı
+            // mm'ye konmuşken. Yay uzayında ortalayınca fark 0.0000mm.
+            const auto walkPositions = [](const std::vector<Point>& poly,
+                                          const std::vector<Point>& ticks) {
+                std::vector<double> ds;
+                for (const auto& t : ticks) ds.push_back(seamWalkMM(poly, t));
+                std::sort(ds.begin(), ds.end());
+                std::vector<double> out;
+                size_t i = 0;
+                while (i < ds.size()) {
+                    size_t j = i; double s = 0;
+                    while (j < ds.size() && ds[j] - ds[i] <= 13.0) { s += ds[j]; ++j; }
+                    out.push_back(s / static_cast<double>(j - i));
+                    i = j;
+                }
+                return out;
+            };
+            // Tik'in ORTASI değil TABANI yürünür: orta nokta kenardan 6mm
+            // içeride durur ve eğik bir dikişte iz düşümü yay boyunca kayar
+            // (ölçüldü: ön dikişte 0.108mm sahte fark, dik olan arka dikişte
+            // 0.000mm — kaymanın eğimle orantılı olması sebebin ta kendisi).
+            const auto edgePts = [](const PatternPiece& p) {
+                std::vector<Point> v;
+                for (const auto& c : p.notches)
+                    if (c.type == CmdType::Move) v.push_back(c.to);
+                return v;
+            };
+            const auto fW = walkPositions(fPoly, edgePts(*front));
+            const auto bW = walkPositions(bPoly, edgePts(*back));
+            for (size_t i = 0; i < fN.size() && i < fW.size() && i < bW.size(); ++i) {
+                const double fMM = fW[i];
+                const double bMM = bW[i];
+                if (fMM < 0 || bMM < 0) {
+                    bad.push_back("side-seam notch " + std::to_string(i) +
+                                  ": the side seam could not be walked");
+                    continue;
+                }
+                if (std::fabs(fMM - bMM) > 0.1) {
                     char buf[240];
                     std::snprintf(buf, sizeof buf,
-                        "side-seam notch %zu does not match: front at %.6f of its side "
-                        "edge, back at %.6f (d=%.6f > 1e-3)",
-                        i, fFrac, bFrac, std::fabs(fFrac - bFrac));
+                        "side-seam notch %zu does not match: front %.4fmm below the "
+                        "underarm, back %.4fmm (d=%.4fmm > 0.1mm)",
+                        i, fMM, bMM, std::fabs(fMM - bMM));
                     bad.push_back(buf);
                 }
             }
@@ -308,7 +384,9 @@ int main() {
                 withCut, d.pieces.size(), withGrain, d.pieces.size(),
                 onFold, withFoldLine, notchTicks);
 
-    // REPORTED, NOT GATED (honest gap): the notch layer is placed as a FRACTION
+    // ARTIK GATED (2026-09-03): asagidaki satirlar bilgi olarak duruyor ama
+    // hukum artik cuttabilityFailures icinde ve YAY UZUNLUGU uzerinden.
+    // Eski not (tarihsel): the notch layer is placed as a FRACTION
     // of each panel's bounding box (garment.cpp annotateTechnical), so what can
     // be proven is fraction-equality. The industrial claim — "walk the pieces",
     // i.e. equal mm ALONG the sewn side edge — is a different, stronger number

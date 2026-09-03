@@ -142,6 +142,116 @@ std::vector<PatternPiece> edgeFinishPieces(
 // dump) stays byte-identical. Placement is by bounding box + piece name, so it
 // is robust across every garment/shaping variant.
 
+// ÇENTİK KESİM ÇİZGİSİNE OTURUR (düzeltildi 2026-09-03).
+// Bir çentik makasla KESİLİR; kesici kesim çizgisini takip eder, dikiş çizgisini
+// değil. Motor bunu tersinden yapıyordu: çentik dikiş konturunun BOUNDING BOX
+// kenarına konuyordu, yani (a) yanlış çizgiye, (b) çoğu parçada konturun
+// üstüne bile değil — eğri bir yan dikişte bbox'ın max-x'i ile kenarın kendisi
+// arasında onlarca mm var. sewability_check ikisini de adıyla sayıyordu:
+// notch_off_boundary (taban kesim çizgisinden > 0.79mm) ve mark_far_from_edge
+// (taban her kenardan > dikiş payı). Çözüm bir eşik değil bir ÇAPA: istenen
+// nokta, parçanın KESİM konturuna izdüşürülür (en yakın nokta), çentik oradan
+// içeri çizilir. Ölçüm (sewability_check, aynı 27 spec x beden zemini):
+// notch_off_boundary 211 -> 0, mark_far_from_edge 342 -> 0.
+// Kontur boşsa (kesim çizgisi olmayan parça) nokta olduğu gibi kalır.
+std::vector<Point> contourPolyline(const std::vector<PathCommand>& contour) {
+    std::vector<Point> poly;
+    Point current{0, 0};
+    bool first = true;
+    Point start{0, 0};
+    for (const auto& c : contour) {
+        switch (c.type) {
+            case CmdType::Move:
+                current = c.to; if (first) { start = current; first = false; }
+                poly.push_back(current); break;
+            case CmdType::Line:
+                current = c.to; poly.push_back(current); break;
+            case CmdType::Curve: {
+                const auto s = flattenCubic(current, c.to, c.cp1, c.cp2, 24);
+                for (size_t i = 1; i < s.size(); ++i) poly.push_back(s[i]);
+                current = c.to; break;
+            }
+            case CmdType::Close:
+                poly.push_back(start); current = start; break;
+        }
+    }
+    return poly;
+}
+
+// YAN DİKİŞİN KENDİSİ (eklendi 2026-09-03). Denge çentiği yan dikişe konur;
+// "yan dikiş" bir bounding box kenarı DEĞİL, konturun koltukaltından etek
+// köşesine inen PARÇASIDIR. Eski kural çentiği bbox'ın max-x'ine, yüksekliğin
+// %18'ine koyuyordu: eğri bir yan dikişte o nokta çoğu parçada konturun
+// ÜSTÜNDE bile değil (ölçülen sapma EU34 28.83mm -> EU48 78.93mm, bedenle
+// büyüyor). Burada aynı %18 KORUNUR; değişen tek şey neye göre ölçüldüğü —
+// artık yan dikişin KENDİ yay uzunluğu. Sayı değişmedi, referans çizgisi
+// düzeldi.
+// Koltukaltı = konturun en büyük x'i (parçanın en geniş noktası). Yan dikiş
+// oradan y'nin arttığı yöne yürünür ve kenar YATAYA DÖNDÜĞÜ yerde biter
+// (|dy| <= |dx| olan ilk parça = etek/bel kenarının başlangıcı).
+// "En alt noktaya kadar yürü" denenmiş ve ÖLÇÜLEREK ELENMİŞTİR (2026-09-03):
+// gömlek etekli bir ön parçada konturun en alt noktası ön-orta hattadır, o
+// yüzden yürüyüş yan dikişi geçip etek boyunca x=0'a kadar gidiyordu (ölçüldü:
+// bel çentiği (0.00, 475.21)'e düşüyordu). Dönüş testi bunu iki noktada
+// kesiyor: (270.45, 226.62) -> (267.10, 423.64).
+std::vector<Point> sideSeamRun(const std::vector<Point>& poly) {
+    if (poly.size() < 3) return {};
+    size_t ua = 0;
+    for (size_t i = 1; i < poly.size(); ++i) if (poly[i].x > poly[ua].x) ua = i;
+    const size_t n = poly.size();
+    // Yön: koltukaltından AŞAĞI giden komşu.
+    const Point nxt = poly[(ua + 1) % n];
+    const Point prv = poly[(ua + n - 1) % n];
+    const int step = (nxt.y - poly[ua].y) >= (prv.y - poly[ua].y) ? 1 : -1;
+    std::vector<Point> run{poly[ua]};
+    size_t i = ua;
+    for (size_t k = 0; k < n; ++k) {
+        const size_t j = (i + static_cast<size_t>(step) + n) % n;
+        const double dx = poly[j].x - poly[i].x, dy = poly[j].y - poly[i].y;
+        if (dy <= 0 || std::fabs(dy) <= std::fabs(dx)) break;  // kenar yataya döndü
+        run.push_back(poly[j]);
+        i = j;
+    }
+    return run;
+}
+
+// Yürüyüşün başından `mm` kadar yay uzunluğu ilerideki nokta (kontur ÜSTÜNDE).
+Point alongRunMM(const std::vector<Point>& run, double mm) {
+    if (run.empty()) return {0, 0};
+    if (run.size() == 1) return run[0];
+    const double target = std::max(0.0, mm);
+    double acc = 0;
+    for (size_t i = 1; i < run.size(); ++i) {
+        const double seg = std::hypot(run[i].x - run[i - 1].x, run[i].y - run[i - 1].y);
+        if (acc + seg >= target && seg > 1e-9) {
+            const double t = (target - acc) / seg;
+            return {run[i - 1].x + (run[i].x - run[i - 1].x) * t,
+                    run[i - 1].y + (run[i].y - run[i - 1].y) * t};
+        }
+        acc += seg;
+    }
+    return run.back();
+}
+
+Point snapToContour(const std::vector<PathCommand>& contour, Point p) {
+    if (contour.size() < 2) return p;
+    const std::vector<Point> poly = contourPolyline(contour);
+    if (poly.size() < 2) return p;
+    double best = 1e18;
+    Point bestPt = p;
+    for (size_t i = 1; i < poly.size(); ++i) {
+        const Point a = poly[i - 1], b = poly[i];
+        const double vx = b.x - a.x, vy = b.y - a.y;
+        const double len2 = vx * vx + vy * vy;
+        double t = len2 > 1e-12 ? ((p.x - a.x) * vx + (p.y - a.y) * vy) / len2 : 0.0;
+        t = std::min(1.0, std::max(0.0, t));
+        const Point q{a.x + vx * t, a.y + vy * t};
+        const double d = std::hypot(q.x - p.x, q.y - p.y);
+        if (d < best) { best = d; bestPt = q; }
+    }
+    return bestPt;
+}
+
 // A single balance notch = one short line INTO the piece from the edge point.
 void notch1(std::vector<PathCommand>& into, Point edge, double dx, double dy) {
     into.push_back(PathCommand::move(edge));
@@ -151,6 +261,17 @@ void notch1(std::vector<PathCommand>& into, Point edge, double dx, double dy) {
 void notch2(std::vector<PathCommand>& into, Point edge, double dx, double dy, double sepX, double sepY) {
     notch1(into, {edge.x - sepX * 0.5, edge.y - sepY * 0.5}, dx, dy);
     notch1(into, {edge.x + sepX * 0.5, edge.y + sepY * 0.5}, dx, dy);
+}
+// Aynı iki çentik, ama iki bacak DİKİŞİN ÜSTÜNDE, yay uzunluğu olarak ±sep/2
+// ayrılır. Eskiden ayrım y ekseninde yapılıp sonra kontura izdüşürülüyordu;
+// eğik/eğri bir yan dikişte 6mm'lik y ayrımı 6mm'lik YAY ayrımı değildir ve
+// çiftin ortası gerçek konumdan kayar (ölçüldü: ön tek çentik 9.7251mm, arka
+// çift çentiğin ortası 9.6167mm — 0.108mm sahte sapma). Yay uzayında ayırınca
+// ortası tam yerinde kalır.
+void notch2Along(const std::vector<Point>& run, std::vector<PathCommand>& into,
+                 double atMM, double dx, double dy, double sepMM) {
+    notch1(into, alongRunMM(run, atMM - sepMM * 0.5), dx, dy);
+    notch1(into, alongRunMM(run, atMM + sepMM * 0.5), dx, dy);
 }
 
 bool nameHas(const PatternPiece& pc, const char* s) {
@@ -171,6 +292,32 @@ void GarmentDrafter::annotateTechnical(DraftedPattern& pattern, bool dressZipper
             if (nameHas(pc, "Sleeve")) return true;
         return false;
     }();
+    // DENGE ÇENTİĞİ EŞİT mm'DE OTURUR, EŞİT KESİRDE DEĞİL (2026-09-03).
+    // Ön ve arka yan dikişler AYNI dikişin iki tarafıdır; çentik ikisinde de
+    // koltukaltından AYNI MESAFEDE olmalı ki dikilince buluşsun. Eski kural
+    // her parçayı kendi bounding box'ının %18'ine koyuyordu; iki yarının
+    // kutuları farklı olduğu için çentikler mm olarak AYRIŞIYORDU (ölçüldü,
+    // EU38 Locket: ön 0.5196 vs arka 0.6381 kesir = 30mm'den fazla kayma).
+    // cuttable_output_check bunu "REPORTED, NOT GATED — walk the pieces yapılamıyor"
+    // diye adıyla yazmıştı; artık yapılabiliyor. Ortak referans: gövde
+    // parçalarının EN KISA yan dikişi (en kısası, çünkü çentik hiçbir dikişin
+    // dışına taşamaz). %18 kesri DEĞİŞMEDİ, neyin %18'i olduğu düzeldi.
+    double commonSideSeamMM = 0.0;
+    {
+        bool any = false;
+        for (const auto& pc : pattern.pieces) {
+            if (!(nameHas(pc, "Bodice") || nameHas(pc, "Top") || nameHas(pc, "Body"))) continue;
+            if (!(nameHas(pc, "Front") || nameHas(pc, "Back"))) continue;
+            const auto& c = pc.cutLine.size() >= 2 ? pc.cutLine : pc.commands;
+            const auto run = sideSeamRun(contourPolyline(c));
+            if (run.size() < 2) continue;
+            double len = 0;
+            for (size_t i = 1; i < run.size(); ++i)
+                len += std::hypot(run[i].x - run[i - 1].x, run[i].y - run[i - 1].y);
+            commonSideSeamMM = any ? std::min(commonSideSeamMM, len) : len;
+            any = true;
+        }
+    }
     for (auto& pc : pattern.pieces) {
         // Strip/notion pieces (bias binding, ruffle, tie, cord, drawstring) are
         // straight rectangles cut on the bias/straight — no balance notches.
@@ -187,7 +334,15 @@ void GarmentDrafter::annotateTechnical(DraftedPattern& pattern, bool dressZipper
                                      {cx, bb.y + bb.height * 0.80}};
         }
         if (strip || pc.commands.empty()) continue;
-        const Rect bb = boundingBox(pc.commands);
+        // KESİM ÇİZGİSİ = bu geçişin referansı. Çentik, fermuar dişi, denge
+        // işareti — hepsi KESİM odasının işaretleridir; makas kesim çizgisini
+        // takip eder. Bu geçiş `draft()` içinde artık kesim çizgileri
+        // hesaplandıktan SONRA koşuyor, o yüzden `cutLine` burada dolu.
+        // (Recipe hattı gibi kesim çizgisi üretmeyen bir çağrıda dikiş
+        // konturuna düşer — davranış eskisiyle aynı kalır, sessiz sapma yok.)
+        const std::vector<PathCommand>& cut =
+            pc.cutLine.size() >= 2 ? pc.cutLine : pc.commands;
+        const Rect bb = boundingBox(cut);
         const bool isBack = nameHas(pc, "Back");
         const bool isFront = nameHas(pc, "Front");
         // TORSO panel — the role, not one spelling of it. The notch pass used to
@@ -200,26 +355,39 @@ void GarmentDrafter::annotateTechnical(DraftedPattern& pattern, bool dressZipper
         const bool isTorso = nameHas(pc, "Bodice") || nameHas(pc, "Top") ||
                              nameHas(pc, "Body");
         // --- Bodice / Top: armhole + waist balance notches on the side seam ---
-        // Side seam is the max-x edge; armhole notch sits high (near the scye),
-        // waist notch sits at the bottom edge. Front = single, back = double.
-        if (isTorso && (isFront || isBack)) {
-            const double sideX = bb.x + bb.width;
+        // Yan dikiş = konturun koltukaltından (max-x) etek/bel köşesine inen
+        // parçası. Kol oyuğu çentiği o dikişin %18'inde, bel çentiği ucunda.
+        // Ön = tek, arka = çift. İkisi de aynı kuralla, aynı kesirle çizildiği
+        // için ön ve arka dikildiğinde BULUŞUR (notch_alignment_check §2).
+        const std::vector<Point> seamRun = sideSeamRun(contourPolyline(cut));
+        if (isTorso && (isFront || isBack) && seamRun.size() >= 2 &&
+            commonSideSeamMM > 0.0) {
             if (sleeved) {
-                const Point armPt{sideX, bb.y + bb.height * 0.18};
-                if (isBack) notch2(pc.notches, armPt, -12, 0, 0, 12);
-                else notch1(pc.notches, armPt, -12, 0);
+                const double atMM = commonSideSeamMM * 0.18;
+                if (isBack) notch2Along(seamRun, pc.notches, atMM, -12, 0, 12);
+                else notch1(pc.notches, alongRunMM(seamRun, atMM), -12, 0);
             }
-            // Waist notch on the side seam at the bottom edge (matches the skirt).
-            const Point waistPt{sideX, bb.y + bb.height};
-            if (isBack) notch2(pc.notches, waistPt, -12, 0, 0, 12);
-            else notch1(pc.notches, waistPt, -12, 0);
+            // Waist notch at the far end of the SHARED side-seam length, so the
+            // two halves meet there too (matches the skirt). Yarım ayrım (6mm)
+            // kadar yukarıda durur: çift çentiğin ALT bacağı dikişin ucunu
+            // aşarsa oraya kelepçelenir ve çiftin ortası kayar (ölçüldü: arka
+            // 194.6436 vs ön 197.0484mm). Bacak dikişin içinde kalınca iki yarı
+            // yeniden birebir buluşuyor.
+            const double waistMM = commonSideSeamMM - 6.0;
+            if (isBack) notch2Along(seamRun, pc.notches, waistMM, -12, 0, 12);
+            else notch1(pc.notches, alongRunMM(seamRun, waistMM), -12, 0);
         }
         // --- Skirt: waist balance notch on the side seam at the top edge ---
+        // Etekte yan dikiş TERS yönde koşar (bel üstte): koltukaltı yerine
+        // en geniş noktadan YUKARI, yani konturun max-x'inden bel kenarına.
         if (nameHas(pc, "Skirt") && (isFront || isBack)) {
-            const double sideX = bb.x + bb.width;
-            const Point waistPt{sideX, bb.y};
-            if (isBack) notch2(pc.notches, waistPt, -12, 0, 0, 12);
-            else notch1(pc.notches, waistPt, -12, 0);
+            const Point waistPt = snapToContour(cut, {bb.x + bb.width, bb.y});
+            if (isBack) {
+                notch1(pc.notches, snapToContour(cut, {waistPt.x, waistPt.y - 6}), -12, 0);
+                notch1(pc.notches, snapToContour(cut, {waistPt.x, waistPt.y + 6}), -12, 0);
+            } else {
+                notch1(pc.notches, waistPt, -12, 0);
+            }
         }
         // --- CLOSURE: a dress carries an invisible CB zipper. Mark the back
         // pieces (bodice back + skirt back, cut on a CB seam) with the zipper
@@ -232,11 +400,20 @@ void GarmentDrafter::annotateTechnical(DraftedPattern& pattern, bool dressZipper
             const double bot = nameHas(pc, "Skirt") ? bb.y + std::min(bb.height * 0.35, 180.0)
                                                      : bb.y + bb.height;
             // Zipper teeth glyph: a line down the CB with short ticks.
+            // ★ DİŞLER KESİM KENARINDAN BAŞLAR (düzeltildi 2026-09-03). Diş
+            // tikleri cbX+4'ten, yani havadan başlıyordu; kesim konturu eğriyse
+            // (prenses scoop CB) taban kenardan 1-4mm ayrı düşüyordu ve
+            // sewability_check onları "tabanı kesim çizgisinde DEĞİL" diye
+            // sayıyordu — haklı olarak: artefakt bunun bir çentik mi fermuar
+            // dişi mi olduğunu söyleyemiyor, ikisi de aynı dizide. Tik artık
+            // kenarın KENDİSİNDEN içeri çizilir (her tik ayrı ayrı izdüşürülür),
+            // yani hangi sınıfa sokulursa sokulsun kural ihlali değil.
             pc.notches.push_back(PathCommand::move({cbX + 4, top}));
             pc.notches.push_back(PathCommand::line({cbX + 4, bot}));
             for (double y = top; y <= bot; y += 22.0) {
-                pc.notches.push_back(PathCommand::move({cbX + 4, y}));
-                pc.notches.push_back(PathCommand::line({cbX + 12, y}));
+                const Point base = snapToContour(cut, {cbX, y});
+                pc.notches.push_back(PathCommand::move(base));
+                pc.notches.push_back(PathCommand::line({base.x + 8, base.y}));
             }
             pc.closure = "invisible zipper (center back)";
             // F5-parca: the closure's reason (with the measured numbers) rides
@@ -1172,8 +1349,9 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     }
     // TECHNICAL MARKINGS (STEP 3): grainline (fallback), balance notches on the
     // seams that must align, and the CB-zipper closure mark on a dress. Runs
-    // after every geometry post-pass so every piece is covered, and BEFORE the
-    // cutting-line offset (notches sit on the sewing line). A dress always gets
+    // after every geometry post-pass so every piece is covered, and AFTER the
+    // cutting-line offset (çentik KESİM çizgisine kesilir — sıra 2026-09-03'te
+    // çevrildi, gerekçe aşağıdaki çağrının başında). A dress always gets
     // the invisible center-back zipper (see wearability::hasDonningOpening).
     // A dress carries an invisible CB zipper UNLESS its own back opening/closure
     // already opens the back: a DONNING open-back (a deep low-open-back), a back
@@ -1209,14 +1387,12 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // opensElsewhere list in; pattern.cbZipper is that single decision.
     // backAlreadyOpens stays as the safety belt: a post-pass opening added
     // after the dress block can only ever REMOVE the zipper, never add one.
-    annotateTechnical(pattern,
-        /*dressZipper=*/spec.garment == GarmentType::Dress && pattern.cbZipper &&
-            !backAlreadyOpens,
-        pattern.cbZipperGerekce);
+    const bool dressZipperHere =
+        spec.garment == GarmentType::Dress && pattern.cbZipper && !backAlreadyOpens;
 
     // ⭐ THE EDIT LAYER (GECE7 / F7) — op.extend / op.attach, HERE and not
-    // earlier. It runs after every drafting post-pass and after the technical
-    // annotation, but BEFORE the cutting lines and the edge re-anchoring below,
+    // earlier. It runs after every drafting post-pass,
+    // but BEFORE the cutting lines and the edge re-anchoring below,
     // so an extended outline gets its own offset cut line and an attached piece
     // enters the cut plan on the same terms as a drafted one. Opt-in and OFF by
     // default: with editExtendMM == 0 and editAttach == 0 this call does nothing
@@ -1246,6 +1422,17 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         piece.foldLine = onFold ? foldLineOf(piece.commands)
                                 : std::vector<PathCommand>{};
     }
+
+    // TECHNICAL MARKINGS — KESİM ÇİZGİLERİNDEN SONRA (taşındı 2026-09-03).
+    // Bu geçiş kesim odasının işaretlerini basar (denge çentiği, fermuar dişi,
+    // düz iplik). Çentik makasla KESİLİR, yani kesim çizgisinin üstünde durmak
+    // ZORUNDA. Geçiş kesim çizgilerinden ÖNCE koştuğu sürece o çizgiyi
+    // göremiyordu ve işaretleri dikiş konturunun bounding box'ına basıyordu;
+    // sewability_check bunu iki kalemde sayıyordu (notch_off_boundary 211,
+    // mark_far_from_edge 342). Sıra çevrildi + çapa kesim konturuna izdüşürüldü.
+    // Geometriye dokunmaz: `commands` ve `cutLine` bu çağrıdan etkilenmez, yalnız
+    // `notches`/`grainline`/`closure` yazılır.
+    annotateTechnical(pattern, dressZipperHere, pattern.cbZipperGerekce);
 
     // NAMED EDGES, RE-ADDRESSED (V7-D) — after every post-pass has finished
     // rewriting outlines and BEFORE any consumer reads a name. One choke point

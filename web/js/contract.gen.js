@@ -17,7 +17,7 @@ export const CONTRACT = {
       "smocked": 3,
       "sleeveCapPuffed": 1.29,
       "sleeveCapGathered": 1.235,
-      "sleeveCapPuffedLift": 1.095
+      "sleeveCapPuffedLift": 1.08
     },
     "euSizes": [
       "EU34",

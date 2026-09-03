@@ -1096,11 +1096,8 @@ Result<DraftedPattern> draftRecipe(
         // shoulder points itself, stamps the placement notches, adds the strap
         // piece + its guide step + its fabric share (strap.cpp).
         StrapBlock::apply(pattern, doc.strapStyle);
-        // technical annotations: grainline fallback + balance notches, the
-        // same pass every motor draft runs; a top carries no CB zipper.
-        GarmentDrafter::annotateTechnical(pattern, /*dressZipper=*/false);
         }
-        // cutting lines: the motor's final pass verbatim (garment.cpp:1040-1046).
+        // cutting lines: the motor's final pass verbatim (garment.cpp).
         for (auto& piece : pattern.pieces) {
             if (piece.name.find("Ruffle") != std::string::npos ||
                 piece.name.find("Bias binding") != std::string::npos) continue;
@@ -1110,6 +1107,13 @@ Result<DraftedPattern> draftRecipe(
             piece.foldLine = onFold ? foldLineOf(piece.commands)
                                     : std::vector<PathCommand>{};
         }
+        // technical annotations: grainline fallback + balance notches, the same
+        // pass every motor draft runs; a top carries no CB zipper.
+        // SIRA (2026-09-03): motor hattinda oldugu gibi KESIM CIZGILERINDEN
+        // SONRA. Centik kesim cizgisine oturur; iki hat ayni sirayi kosmazsa
+        // recipe_dress_check'in birebir paritesi kirilir (ve kirildi: 'Top
+        // Front geometry DIFFERS').
+        GarmentDrafter::annotateTechnical(pattern, /*dressZipper=*/false);
         // F5-parca: the recipe path's pieces carry a gerekce too — same pass,
         // same law as the motor path (kosulsuz parca 0).
         GarmentDrafter::fillGerekce(pattern);

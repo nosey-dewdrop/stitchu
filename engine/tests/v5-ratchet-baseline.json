@@ -17,18 +17,18 @@
       "basanKomut": "node engine/tests/sewability_check.mjs",
       "olcumZemini": "16 draft (2 sevk edilen spec x 8 beden EU34..EU48), 112 parca, 96 kapali kontur; motor web/vendor/stitchu-engine.js",
       "tavanlar": {
-        "notch_off_boundary": 211,
+        "notch_off_boundary": 0,
         "mark_over_seam_allowance": 32,
-        "mark_far_from_edge": 342,
+        "mark_far_from_edge": 0,
         "unclosed_contour": 0,
         "self_intersection": 0,
         "turn_out_of_band": 0,
         "engine_error": 0
       },
       "tavanKunyesi": {
-        "notch_off_boundary": "[E1 0.79375mm] Tabani kesim cizgisinde OLMAYAN kenar centigi. Kok teshis GECE/V5-A.md §KOK: centik isaretleri parcanin kendi sinirindan bagimsiz bir x'e basiliyor, sapma bedenle BUYUYOR (EU34 28.83mm -> EU48 78.93mm). Cozum adayi (UYGULANIP OLCULMEDI): centigi kesim cizgisi uzerindeki en yakin noktadan baslat -> sayacin insaat geregi 211 -> 0 OLMASI BEKLENIR. DIKKAT: bu bir akil yurutmedir, OLCUM DEGIL — aday uygulanmadi ve kapi o halde kosturulmadi. 'Olculmus cozum adayi' nitelemesi 2026-08-25'te GERI CEKILDI (kart V5-I md.2). Kaynak degistirmek bu kartin disindaydi.",
+        "notch_off_boundary": "[E1 0.79375mm] Tabani kesim cizgisinde OLMAYAN kenar centigi. TAVAN 211 -> 0 INDIRILDI (2026-09-03, AYRI ve BILINCLI commit; ratchet yasasi md.3'un ongordugu yon). 2026-08-25'te 'UYGULANIP OLCULMEDI' diye kayitli olan cozum adayi bu fazda UYGULANDI ve OLCULDU: (1) annotateTechnical artik draft() icinde KESIM CIZGILERINDEN SONRA kosuyor (garment.cpp), yani isaret geciSi kendi referans cizgisini gorebiliyor; (2) her centik capasi kesim konturuna izdusuruluyor (garment.cpp snapToContour); (3) fermuar disi tikleri havadan degil kesim kenarindan basliyor. OLCULEN: notch_off_boundary 211 -> 0, mark_far_from_edge 342 -> 0, mark_over_seam_allowance 32 (degismedi). Basan komut: node engine/tests/sewability_check.mjs",
         "mark_over_seam_allowance": "[E2] Uzunlugu dikis payindan (bugun 15mm) BUYUK isaret: ya katlama/ic cizgi ya seam blowout. Artefaktta TUR ALANI YOK, o yuzden ayrilamiyor; ayrilamayan SAYILIYOR ve tavanlaniyor.",
-        "mark_far_from_edge": "[E2b] Her kenardan dikis payindan uzak duran isaret (en uzagi 78.93mm): ya IC isaret ya HAVADA duran centik. Ayni TUR ALANI boslugu. 342'nin izdusumle kurtarilamayacagi V5-A.md §KOK'te olculdu.",
+        "mark_far_from_edge": "[E2b] Her kenardan dikis payindan uzak duran isaret. TAVAN 342 -> 0 INDIRILDI (2026-09-03, ayni kok sebep ve ayni commit — yukaridaki notch_off_boundary kunyesine bak). 2026-08-25 kaydi '342'nin izdusumle kurtarilamayacagi V5-A.md §KOK'te olculdu' diyordu; BU CURUDU: izdusum TEK BASINA yetmiyordu (342 -> 80), yetiren sey izdusum + gecis SIRASININ cevrilmesi + fermuar disinin kenardan baslatilmasi oldu (342 -> 80 -> 0). Basan komut: node engine/tests/sewability_check.mjs",
         "unclosed_contour": "Bugun SIFIR. Kapali kontur bir kalibin tanimidir; bu kalem asla artmamali.",
         "self_intersection": "Bugun SIFIR. selfcross mutasyonu 44 gercek kesisme basiyor -> ratchet isiriyor.",
         "turn_out_of_band": "[E3 Hopf Umlaufsatz, +-1 derece] Bugun SIFIR, max |toplam donme - 360| = 0.0000 derece.",

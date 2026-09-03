@@ -8,6 +8,75 @@ required for behavior changes).
 
 ## Pin history
 
+### 2026-09-03 — 25116 lines, md5 da98352aa171231a8a7bb5f6f04a4b92 (DECLARED RE-PIN, hakem K2 ONAYLI, M2-bugra)
+- Label: "M2-bugra: set-in scye karni yayinlanmis Aldrich p.11 genislik cizgisine
+  oturdu (on/arka acik 11.08/9.05 -> 0.00mm); arka kelepce ON yaka genisligiyle
+  olculmekten cikti; puf kapak tavani ayni yayinlanmis 150mm banda yeniden
+  turetildi (1.095 -> 1.080)".
+- ONAY: hakem karari K2, "DECLARED RE-PIN olarak ONAYLANDI" (bu fazin hakem
+  raporu). Sart: kok sebep + once/sonra sayilari + etkilenen parca listesi
+  burada yazili olacak. Uc sart da asagida.
+
+- (a) KOK SEBEP — uc kalem, ucu de motorun KENDI yayinlanmis yasasina karsi
+  olculdu, Bugra'ya benzesin diye DEGIL:
+  1. `engine/src/bodice.cpp armholeCurveFor` set-in dali: kubigin BASLANGIC
+     tegeti disari bakiyordu (`cp1.x = shoulder.x + dx*setInArmholeCp1OutShare`,
+     yani x'(0) > 0). Egri omuz ucundan DISARI ayrildigi icin cizilen oyugun en
+     kucuk x'i omuz ucunun TA KENDISI oluyordu ve `solveHollow`'un useWidthLine
+     dali ULASILAMAZ bir hedefi kovalayip tavana oturuyordu. Yayinlanmis
+     genislik cizgisi (bodice.hpp scyeChestWidthHalf*/scyeBackWidthHalf*,
+     Aldrich p.11) hic kullanilmiyordu. Duzeltme TEK SATIR ve YENI SABIT YOK:
+     cizgi kullanilabilirken `cp1.x = innerLimit`.
+  2. `engine/src/bodice.cpp draft()` `naturalTipXForScye`: tek bir "dogal omuz
+     ucu" ON yaka genisligiyle (frontNeckWidthFactor 0.17) hesaplanip AYNI deger
+     arkaya da uygulaniyordu. Arka yaka daha genis (0.197), yani gercek arka
+     omuz ucu o referansin disinda kaliyor ve `scyeMaxInset` arkada GERCEKTE
+     OLMAYAN bir kelepce vuruyordu. Duzeltme: capa yariya gore ayri hesaplaniyor
+     (`naturalTipXFront` / `naturalTipXBack`), yeni sabit YOK.
+  3. `contract/tables.json sleeveCapPuffedLift`: bu tavan "yayinlanmis bandin
+     tepesi / motorun KENDI cizdigi duz kapak" olarak turetilmis bir ORAN.
+     (1) ve (2) oyugu uzattigi icin PAYDA degisti (duz kapak 136.98 -> 138.83mm,
+     `engine/tools/puf-probe.cpp`). PAY degismedi (Aldrich EU38 bandinin tepesi
+     150.0mm). Oran yeniden turetildi: 150.00/138.83 = 1.0805 -> asagi yuvarlanmis
+     1.080. Bu bir GEVSETME DEGIL: tavan hala ayni yayinlanmis 150mm.
+
+- (b) ONCE / SONRA (hepsi calistirilmis olcum):
+  | olcu | ONCE | SONRA |
+  |---|---|---|
+  | on scye karni (yayin cizgisi 162.00) | 173.08 (acik 11.08) | 162.00 (acik 0.00) |
+  | arka scye karni (yayin cizgisi 172.00) | 181.05 (acik 9.05) | 172.00 (acik 0.00) |
+  | on oyuk yay/kiris (Bugra tanigi 1.229) | 1.066 | 1.123 |
+  | arka oyuk yay/kiris (Bugra tanigi 1.175) | 1.033 | 1.072 |
+  | oyuk toplami EU38 (K1 bandi 400-440) | 404.3 | 422.9 |
+  | duz kapak yuksekligi EU38 (Aldrich 130-150) | 136.98 | 138.83 |
+  | puf kapak yuksekligi EU38 (tavan 150) | 149.99 | 149.94 |
+  | puf/duz kapak orani (ilan) | 1.095 | 1.080 |
+
+- (c) ETKILENEN PARCALAR — 25116 satirin 5432'si yerinde degisti, satir sayisi
+  DEGISMEDI (topoloji ayni, koordinat farkli):
+  | parca | katman | degisen satir |
+  |---|---|---|
+  | Balloon Sleeve | outline | 1261 |
+  | Balloon Sleeve | marking | 1260 |
+  | Sleeve | outline | 1246 |
+  | Sleeve | marking | 840 |
+  | Bodice Front | outline | 240 |
+  | Bodice Back | outline | 232 |
+  | Top Front | outline | 180 |
+  | Top Back | outline | 174 |
+  | Sleeve Cuff | outline | 2 |
+  Kol parcalari en cok etkilenen: oyuk uzayinca kapak ona oturuyor. `notches`
+  katmani golden dump'a GIRMEZ, o yuzden bu fazin centik islerinin pin uzerinde
+  SIFIR etkisi var (dogrulandi: diff'te yalniz outline/marking satirlari).
+
+- (d) KANIT — kosulan kapilar (hepsi bu agacta, bu commit'te):
+  engine_check 70200/70200 draft PASS · garment_armhole_check YESIL ·
+  sleeve_check YESIL (569 hukum) · locket_check YESIL (42 hukum) ·
+  buzgu_katman_check hepsi yesil · sewability_check PASS (notch_off_boundary
+  211 -> 0, mark_far_from_edge 342 -> 0, ikisi de TAVAN INDIRILDI) ·
+  cuttable_output_check PASS · notch_alignment_check PASS ·
+  recipe/dxf/wasm parity hepsi PASS · sewable_census PASS · wearable_check PASS.
+
 ### 2026-09-02 — 25116 lines, md5 e98bdbede2a6a8d43e97c434810f9168 (HAKEM/DAMLA ONAYI BEKLIYOR, F5-parca)
 - Label: "f5-parca: kosullu fermuar (gecis kurali contract/parca-gecis-v1.json),
   pens eskalasyonu (iki pens >3cm, prenses >6cm), birlesik etek kalibi

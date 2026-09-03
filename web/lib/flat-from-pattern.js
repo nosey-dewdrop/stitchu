@@ -578,7 +578,14 @@ function poliUzunluk(pts) {
   return L;
 }
 
-function buzguIsaretleri(pts, adet, uzunlukMM) {
+// `yon`: null ise tik dikişi ORTALAR (iki yana eşit). Bir işaret verilirse tik
+// dikişin ÜSTÜNDEN başlar ve o yöne gider. Konvansiyon (contract
+// flat-convention-v1 sevkPoz.buzgu.tarak, referans 04/06/09): büzgü tarağı
+// BÜZÜLEN parçanın kenarında durur — kol kapağı büzülüyorsa tarak KOLUN
+// üstündedir, gövdenin kol oyuğunda değil. Ortalanmış tik bunu ihlal ediyordu:
+// yarısı gövdeye taşıyordu (gözle doğrulandı, KOSU/ciktilar/bugra-spec-giysi.png
+// FRONT figürü, oyuk hattı).
+function buzguIsaretleri(pts, adet, uzunlukMM, yon = null) {
   if (!Array.isArray(pts) || pts.length < 2 || adet < 1) return [];
   const kum = [0];
   for (let i = 1; i < pts.length; i++) kum.push(kum[i - 1] + norm(sub(pts[i], pts[i - 1])));
@@ -593,8 +600,9 @@ function buzguIsaretleri(pts, adet, uzunlukMM) {
     const u = span > EPS ? (hedef - kum[i - 1]) / span : 0;
     const p = lerp(pts[i - 1], pts[i], u);
     const t = unit(sub(pts[i], pts[i - 1]));
-    const nrm = [-t[1], t[0]];
-    out.push([add(p, scale(nrm, uzunlukMM / 2)), sub(p, scale(nrm, uzunlukMM / 2))]);
+    let nrm = [-t[1], t[0]];
+    if (yon === 'disari') { if (nrm[0] < 0) nrm = [-nrm[0], -nrm[1]]; out.push([p, add(p, scale(nrm, uzunlukMM))]); }
+    else out.push([add(p, scale(nrm, uzunlukMM / 2)), sub(p, scale(nrm, uzunlukMM / 2))]);
   }
   return out;
 }
@@ -1278,6 +1286,44 @@ function buildView(P, which) {
        ` data-view="${F ? 'front' : 'back'}"${mkAttr}${out.notes.pozAttr || ''}`,
        closed.flatMap((s) => s.p));
 
+  // ⭐ DÜĞMELER — ön görünüşte, ön orta hattın üstünde, kalıptan okunarak.
+  // Ön ortadaki derinlik kesri kalıbın kendi düğme y'sinden; flat'teki karşılığı
+  // aynı kesir, silüetin ön orta (x=0) açıklığında. Mirror YOK: düğme ön ortada
+  // TEK sıradır, `interior` listesine konulsa iki kez üst üste çizilirdi.
+  if (F && P.bodice && P.bodice.on && P.bodice.on.piece) {
+    const dug = dugmeleriOku(P.bodice.on.piece);
+    if (dug.length) {
+      const kb = P.bodice.on.piece.commands.filter((c) => c.type !== 'close');
+      const kY0 = Math.min(...kb.map((c) => c.y));
+      const kY1 = Math.max(...kb.map((c) => c.y));
+      const cf = closed.flatMap((s) => s.p).filter((q) => Math.abs(q[0]) <= 2.0);
+      if (kY1 > kY0 && cf.length >= 2) {
+        const fY0 = Math.min(...cf.map((q) => q[1]));
+        const fY1 = Math.max(...cf.map((q) => q[1]));
+        for (const b of dug) {
+          // KESIRSEL esleme: kalibin ON ORTA acikligindaki derinlik orani,
+          // flat'in ON ORTA acikligina. 1:1 mm de denendi ve ELENDI (olculdu):
+          // flat'in on orta acikligi manken donusumundan sonra kalibin panel
+          // boyundan KISA, o yuzden mutlak mm son iki dugmeyi ust uste yigiyor.
+          // Oran, iki uzayda da AYNI seyi (yakadan etege giden yol) olcer.
+          const t = (b.y - kY0) / (kY1 - kY0);
+          const y = fY0 + t * (fY1 - fY0);
+          const r = b.r;
+          const k = 0.5522847498 * r;
+          const Y = flipY;   // P.flipY bir FONKSIYON (flat-geom polyD imzasi), bayrak degil
+          const d = `M ${r.toFixed(3)} ${Y(y).toFixed(3)}` +
+            ` C ${r.toFixed(3)} ${Y(y + k).toFixed(3)} ${k.toFixed(3)} ${Y(y + r).toFixed(3)} 0 ${Y(y + r).toFixed(3)}` +
+            ` C ${(-k).toFixed(3)} ${Y(y + r).toFixed(3)} ${(-r).toFixed(3)} ${Y(y + k).toFixed(3)} ${(-r).toFixed(3)} ${Y(y).toFixed(3)}` +
+            ` C ${(-r).toFixed(3)} ${Y(y - k).toFixed(3)} ${(-k).toFixed(3)} ${Y(y - r).toFixed(3)} 0 ${Y(y - r).toFixed(3)}` +
+            ` C ${k.toFixed(3)} ${Y(y - r).toFixed(3)} ${r.toFixed(3)} ${Y(y - k).toFixed(3)} ${r.toFixed(3)} ${Y(y).toFixed(3)} Z`;
+          out.paths.push({ rol: 'dugme', d, w: W_TOPSTITCH,
+            extra: ` data-view="front" data-dugme-r-mm="${r.toFixed(2)}"`, dash: null });
+        }
+        out.notes.dugmeSayisi = dug.length;
+      }
+    }
+  }
+
   for (const [rol, geom, isPoly] of interior) {
     const dRight = isPoly ? polyD(geom, flipY) : pathD(geom, flipY);
     const mir = isPoly ? geom.map((p) => [-p[0], p[1]]) : mirrorSegs(geom);
@@ -1418,7 +1464,7 @@ function buildView(P, which) {
       }
     };
     if (bz.kapak && out.notes.armholePts) {
-      bzPush(buzguIsaretleri(out.notes.armholePts, isaretAdet, tikMM), 'kapak', bz.kapak.oran,
+      bzPush(buzguIsaretleri(out.notes.armholePts, isaretAdet, tikMM, 'disari'), 'kapak', bz.kapak.oran,
              poliUzunluk(out.notes.armholePts));
     }
     if (bz.etek && depth > 0) {
@@ -1455,6 +1501,43 @@ function buildView(P, which) {
     y0: Math.min(...boxPts.map((p) => p[1])), y1: Math.max(...boxPts.map((p) => p[1])),
   };
   return out;
+}
+
+
+// ---------------------------------------------------------------------------
+// DÜĞMELER — ÇİZİLEN KALIBIN KENDİ DÜĞMELERİ (2026-09-03, hakem K7)
+// ---------------------------------------------------------------------------
+// Motor düğmeyi ÇİZİYOR: engine/src/buttonrow.cpp `buttonCircle` her düğmeyi
+// dört kübik çeyrek yayla bir kapalı daire olarak `markings`e basar (ölçüldü,
+// EU38 Bugra spec'i: Top Front markings 110 komut, 7 düğme). Ama teknik çizim
+// o katmanı HİÇ OKUMUYORDU: `buttonRow: 'functional'` diyen bir sayfa düğmesiz
+// bir giysi basıyordu ve sayfanın kendi başlığı "düğmeli" diyordu. Bu bir motor
+// eksiği değil, iki katman arasındaki KOPUKLUKTU.
+//
+// Burada hiçbir sayı uydurulmaz: düğme SAYISI, YARIÇAPI ve ön ortadaki DERİNLİK
+// KESRİ üçü de kalıp parçasının kendi işaretlerinden okunur; flat sadece onları
+// kendi ön-orta hattına izdüşürür (flat = kalıbın izdüşümü).
+function dugmeleriOku(piece) {
+  const cs = [];
+  const m = (piece && piece.markings) || [];
+  for (let i = 0; i + 5 < m.length; i++) {
+    if (m[i].type !== 'move' || m[i + 5].type !== 'close') continue;
+    let dortYay = true;
+    for (let k = 1; k <= 4; k++) if (m[i + k].type !== 'curve') dortYay = false;
+    if (!dortYay) continue;
+    // Dört yayın uç noktaları dairenin dört ana yönü: ortalaması merkez,
+    // merkeze uzaklıkları yarıçap. Bir buttonCircle'ın tanımı budur.
+    const q = [m[i + 1], m[i + 2], m[i + 3], m[i + 4]].map((c) => [c.x, c.y]);
+    const cx = q.reduce((a, b) => a + b[0], 0) / 4;
+    const cy = q.reduce((a, b) => a + b[1], 0) / 4;
+    const r = q.reduce((a, b) => a + Math.hypot(b[0] - cx, b[1] - cy), 0) / 4;
+    // Bir daire olduğunun mandalı: dört uç merkeze EŞİT uzaklıkta.
+    if (!(r > 0.5)) continue;
+    if (q.some((b) => Math.abs(Math.hypot(b[0] - cx, b[1] - cy) - r) > 0.05 * r)) continue;
+    cs.push({ y: cy, r });
+    i += 5;
+  }
+  return cs;
 }
 
 // ---------------------------------------------------------------------------

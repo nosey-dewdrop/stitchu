@@ -386,8 +386,18 @@ PathCommand armholeCurveFor(double shoulderHalf, double shoulderDrop,
         // sleeve cap covers it. Deeper hollow than the sleeveless/tangent scye.
         // No tangent lock (that lock is what a single cubic could not reconcile
         // with a set-in scye — the measured 20.6 mm structural residual).
+        // ★ OLCULDU 2026-09-03 (bugra-blind-compare B2): kubigin BASLANGIC
+        // TEGETI disari bakiyordu (cp1.x omuz ucunun +0.06*dx disinda), yani
+        // x'(0) > 0. Sonuc: cizilen oyugun en kucuk x'i omuz ucunun TA KENDISI
+        // (on 173.08 / arka 181.05); yayinlanmis genislik cizgisine (on 162.0 /
+        // arka 172.0, Aldrich p.11) 11.08 / 9.05 mm acik. useWidthLine dali
+        // ulasilamaz hedefi kovalayip tavana oturuyor, oyugu tek basina cp2
+        // tasiyor ve yay/kiris 1.066 / 1.033'te kaliyor.
+        // Kok sebep cp1'in YONU. Set-in scye omuz ucunda KIRILIR ve oyuga dalar;
+        // dalacagi yer bir ayar sayisi degil, yayinlanmis cizginin kendisidir.
         const Point cp1In{
-            shoulder.x + dx * BodiceBlock::setInArmholeCp1OutShare,
+            useWidthLine ? innerLimit
+                         : shoulder.x + dx * BodiceBlock::setInArmholeCp1OutShare,
             shoulder.y + dy * BodiceBlock::setInArmholeUpperDropShare};
         const double cp2YIn = shoulder.y + dy * BodiceBlock::setInArmholeLowerDropShare;
         const double seedIn = (isFront ? BodiceBlock::setInArmholeHollowShareFront
@@ -974,16 +984,28 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // KAYNAKLI bir kolona bağlıdırlar (kaynaksız beden kolonlarına değil).
     // Doğal blok omuz ucu: yaka çarpanı 1.0 (crew) ve düşük-omuz uzatması YOK.
     // Sadece scyeMaxInset için kullanılır, çizime girmez.
-    const double naturalTipXForScye =
-        std::min(neck * frontNeckWidthFactor, naturalShoulderHalf * maxNeckShoulderShare) +
-        (m.bustMM() * BodiceBlock::shoulderSeamPerBust + BodiceBlock::shoulderSeamInterceptMM) *
-            std::cos(BodiceBlock::shoulderSlopeDeg * M_PI / 180.0);
+    // ★ YARIYA GÖRE AYRI (düzeltildi 2026-09-03, bugra-blind-compare C/[HATA]):
+    // tek bir "doğal omuz ucu" ÖN yaka genişliğiyle (frontNeckWidthFactor 0.17)
+    // hesaplanıp AYNI değer arkaya da uygulanıyordu. Arka yaka daha geniştir
+    // (backNeckWidthFactor 0.197), yani gerçek ARKA omuz ucu o referansın
+    // neck*(0.197-0.17) kadar DIŞINDA kalır. Sonuç: arkada, gerçekte olmayan bir
+    // kelepçe. ÖLÇÜLDÜ (EU38): arka omuz ucu 181.05, yayınlanan çizgi 172.00,
+    // yani gereken içerlek 9.05mm; kelepçenin izin verdiği içerlek yalnız 1.08mm.
+    // Omuz dikişi uzunluğu iki yarıda ortaktır; ayrışan tek terim yaka genişliği.
+    const auto naturalTipXFor = [&](double neckWidthFactor) {
+        return std::min(neck * neckWidthFactor, naturalShoulderHalf * maxNeckShoulderShare) +
+               (m.bustMM() * BodiceBlock::shoulderSeamPerBust +
+                BodiceBlock::shoulderSeamInterceptMM) *
+                   std::cos(BodiceBlock::shoulderSlopeDeg * M_PI / 180.0);
+    };
+    const double naturalTipXFront = naturalTipXFor(frontNeckWidthFactor);
+    const double naturalTipXBack  = naturalTipXFor(backNeckWidthFactor);
     const double backScyeInnerX  = m.bustMM() * BodiceBlock::scyeBackWidthHalfPerBust +
                                    BodiceBlock::scyeBackWidthHalfInterceptMM;
     const double frontScyeInnerX = m.bustMM() * BodiceBlock::scyeChestWidthHalfPerBust +
                                    BodiceBlock::scyeChestWidthHalfInterceptMM;
-    const double backScyeMaxInset  = std::max(0.0, naturalTipXForScye - backScyeInnerX);
-    const double frontScyeMaxInset = std::max(0.0, naturalTipXForScye - frontScyeInnerX);
+    const double backScyeMaxInset  = std::max(0.0, naturalTipXBack  - backScyeInnerX);
+    const double frontScyeMaxInset = std::max(0.0, naturalTipXFront - frontScyeInnerX);
     const double bicepsGirth = m.bustMM() * BodiceBlock::bicepsRatioForArmscye;
     const double armholeDepthForArm = bicepsGirth * armscyeArmFactor + shoulderDrop;
     double armholeDepthCap = backLength * armscyeMaxDepthShare + shoulderDrop;

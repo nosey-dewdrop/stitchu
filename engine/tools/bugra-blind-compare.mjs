@@ -387,10 +387,10 @@ const SINIF = [
     kok: 'buzgu orani AYNI BANDDA, farkli parcaya konmus',
     durum: 'kok = asagidaki MOTOR EKSIGI' },
 
-  { s: 'MOTOR EKSIGI', ad: 'buzgulu ust kol katmani',
-    olcum: upper ? `Bugra Upper Sleeve ${Math.round(bbox(upper.poly).w)}x${Math.round(bbox(upper.poly).h)} mm — motorda karsiligi 0 parca` : '?',
-    kok: 'sleeveCap TEK parcayi sekillendiriyor, ikinci katman DOGURMUYOR',
-    durum: 'ACIK' },
+  { s: 'MOTOR EKSIGI', ad: 'tuketici sozlugunden erisilebilen GENEL iki-katman buzgu operatoru',
+    olcum: upper ? `Bugra Upper Sleeve ${Math.round(bbox(upper.poly).w)}x${Math.round(bbox(upper.poly).h)} mm; bu kor kiyasta motorda karsiligi 0 parca` : '?',
+    kok: 'IKI KATMANI DOGURAN EKSEN VAR VE CALISIYOR: locketTop=\'bugra\'. Bu kor spec onu BILEREK set etmiyor (kor kiyasin Bugra\'nin ezberlenmis degerlerini secmesini engellemek icin, bkz. KOR_SPEC). Yani parca yok cunku SORULMADI — motor cizemedigi icin degil. Bagimsiz tanik AYNI AGACTA: engine/tests/buzgu_katman_check.mjs (e) "iki katman cizildi: Upper 444.1 mm > Lower 329.2 mm (buzgu payi x1.349)". Gercek acik cok daha DAR: sleeveCap {plain,gathered,puffed,cap} tek parcayi sekillendirir, yani tuketici sozlugunden (sleeveCap) erisilen GENEL bir iki-katman operatoru yok; ikinci katman bugun yalniz locketTop adli YAPI-OZGU eksenden dogar.',
+    durum: 'ACIK (dar hali) — "motor iki katmanli pufu CIZEMIYOR" cumlesi GERI CEKILDI, olcumle curudu' },
   { s: 'MOTOR EKSIGI', ad: 'yaka KAVISI (dis/boyun orani TUTUYOR, kavis tutmuyor)',
     olcum: mCollar.ok
       ? `dis/boyun orani motor ${mCollarRatio.toFixed(3)} vs Bugra ${gCollarRatio ? gCollarRatio.toFixed(3) : '?'} (%${gCollarRatio ? (Math.abs(mCollarRatio / gCollarRatio - 1) * 100).toFixed(1) : '?'} fark — AYNI AILE). Ayrilan sey KAVIS: bbox en/boy motor ${((collarRow?.mW ?? 0) / (collarRow?.mH ?? 1)).toFixed(2)} vs Bugra ${((collarRow?.gW ?? 0) / (collarRow?.gH ?? 1)).toFixed(2)}; motor yakasi yayvan bir bant, Bugra'ninki neredeyse ceyrek halka`
@@ -402,26 +402,44 @@ const SINIF = [
     kok: 'boy ekseni nicel degil',
     durum: 'ACIK' },
 
-  { s: 'HATA', ad: 'set-in scye karni motorun KENDI yayinlanmis genislik cizgisine ULASMIYOR',
-    olcum: `on: yayin cizgisi ${YAYIN.on.toFixed(2)} | omuz ucu ${bellyNow.on.tipX.toFixed(2)} | cizilen karin ${bellyNow.on.belly.toFixed(2)} -> ACIK ${(bellyNow.on.belly - YAYIN.on).toFixed(2)} mm. `
-      + `arka: yayin ${YAYIN.arka.toFixed(2)} | omuz ucu ${bellyNow.arka.tipX.toFixed(2)} | karin ${bellyNow.arka.belly.toFixed(2)} -> ACIK ${(bellyNow.arka.belly - YAYIN.arka).toFixed(2)} mm. `
-      + `yay/kiris on ${mFront.ok ? mRatioOf(mFront.named.OYUK).toFixed(3) : '?'} arka ${mBack.ok ? mRatioOf(mBack.named.OYUK).toFixed(3) : '?'} (olculen Bugra tanigi 1.229 / 1.175) — oyuk duz caprazin yaninda`,
-    kok: "cp1.x omuz ucunun DISINDA (+0.06*dx) -> x'(0) > 0, egri uctan DISARI ayriliyor; solveHollow'un useWidthLine dali ULASILAMAZ bir hedefi kovalayip tavana oturuyor ve kalan oyugu tek basina cp2 tasiyor. Yer: engine/src/bodice.cpp armholeCurveFor `setIn` dali",
-    durum: 'ACIK — YAMA OLCULDU AMA SEVK EDILMEDI. Yama tek satir (cizgi kullanilabilirken cp1.x = innerLimit, yeni sabit YOK), dosyasi KOSU/ciktilar/scye-genislik-cizgisi.patch. Uygulanmis halde OLCULEN: on karin 162.00 (acik 0.00) yay/kiris 1.123 · arka karin 179.97 (acik 7.97, sebep asagidaki satir) yay/kiris 1.036 · oyuk toplami 404.3 -> 416.2 mm, K1 bandi (400-440) ICINDE. Kosulan kapilar: engine_check 70200 draft PASS, garment_armhole_check yesil, sleeve_check yesil, recipe goldenlar yesil. IKI SEY BLOKLADI ve ikisi de KARAR GEREKEN: (1) golden_check 25116 satirin 5280\'ini yerinde degistiriyor (kol kapaklari yeni oyuga oturuyor) -> DECLARED RE-PIN gerekiyor, o da Damla/hakem onayina bagli (engine/GOLDEN-PIN.md); (2) sewability_check ratchet kalemi mark_far_from_edge 342 -> 343 (+1): oyuk iceri oyulunca bbox kenarina basilan oyuk denge centigi kenardan 15mm\'den uzaga dusuyor. Tavan yukseltmek YASAK; kok sebep (centik yan dikisin tepesine degil, yuksekligin %18\'ine konuyor) denendi ve OLCULDU: centigi konturun uzerine oturtmak mark_far_from_edge\'i banda sokuyor ama notch_off_boundary\'yi 211 -> 247 cikariyor, cunku centikler DIKIS cizgisine basiliyor, kesim cizgisine degil (annotateTechnical, cutLine\'dan ONCE kosuyor). Gercek care centigi kesim cizgisine tasimak; bu fazin disinda.' },
-  { s: 'HATA', ad: 'arka scye karnini scyeMaxInset kelepceliyor (on yaka genisligiyle olculdugu icin)',
-    olcum: `arka omuz ucu ${bellyNow.arka.tipX.toFixed(2)}, yayin cizgisi ${YAYIN.arka.toFixed(2)} -> gereken icerlek ${(bellyNow.arka.tipX - YAYIN.arka).toFixed(2)}mm; yamayla bile ulasilabilen karin 179.97, yani izin verilen icerlek yalniz 1.08mm`,
-    kok: 'bodice.cpp naturalTipXForScye "dogal blok omuz ucu"nu ON yaka genisligi carpaniyla hesapliyor ve AYNI degeri arkaya da uyguluyor; arka yaka daha genis oldugu icin gercek arka omuz ucu o referansin ~8mm disinda kaliyor ve tavan gercekte olmayan bir kelepce vuruyor',
-    durum: 'ACIK — yukaridaki yamanin ustune ikinci bir kalem; tek fazda tek kok sebep kurali geregi acilmadi' },
+  { s: 'KAPANDI', ad: 'set-in scye karni motorun KENDI yayinlanmis genislik cizgisine ULASMIYORDU',
+    olcum: `on: yayin cizgisi ${YAYIN.on.toFixed(2)} | omuz ucu ${bellyNow.on.tipX.toFixed(2)} | cizilen karin ${bellyNow.on.belly.toFixed(2)} -> ACIK ${(bellyNow.on.belly - YAYIN.on).toFixed(2)} mm (ONCE 11.08). `
+      + `arka: yayin ${YAYIN.arka.toFixed(2)} | omuz ucu ${bellyNow.arka.tipX.toFixed(2)} | karin ${bellyNow.arka.belly.toFixed(2)} -> ACIK ${(bellyNow.arka.belly - YAYIN.arka).toFixed(2)} mm (ONCE 9.05). `
+      + `yay/kiris on ${mFront.ok ? mRatioOf(mFront.named.OYUK).toFixed(3) : '?'} (ONCE 1.066) arka ${mBack.ok ? mRatioOf(mBack.named.OYUK).toFixed(3) : '?'} (ONCE 1.033); olculen Bugra tanigi 1.229 / 1.175`,
+    kok: "cp1.x omuz ucunun DISINDA (+0.06*dx) idi -> x'(0) > 0, egri uctan DISARI ayriliyordu ve solveHollow'un useWidthLine dali ULASILAMAZ bir hedefi kovalayip tavana oturuyordu. Yer: engine/src/bodice.cpp armholeCurveFor `setIn` dali. Duzeltme TEK SATIR, YENI SABIT YOK: cizgi kullanilabilirken cp1.x = innerLimit.",
+    durum: 'KAPANDI 2026-09-03 (hakem K1). Oyuk toplami 404.3 -> 422.9 mm, K1 bandi (400-440) ICINDE. Golden pin DECLARED RE-PIN ile tasindi (engine/GOLDEN-PIN.md 2026-09-03, 5432 satir yerinde degisti). Kapilar: engine_check 70200 PASS, garment_armhole_check / sleeve_check / locket_check / buzgu_katman_check / sewability_check / cuttable_output_check / notch_alignment_check hepsi YESIL.' },
+  { s: 'KAPANDI', ad: 'arka scye karnini scyeMaxInset kelepceliyordu (ON yaka genisligiyle olculdugu icin)',
+    olcum: `arka omuz ucu ${bellyNow.arka.tipX.toFixed(2)}, yayin cizgisi ${YAYIN.arka.toFixed(2)} -> gereken icerlek ${(bellyNow.arka.tipX - YAYIN.arka).toFixed(2)}mm; ulasilan karin ${bellyNow.arka.belly.toFixed(2)} (ACIK ${(bellyNow.arka.belly - YAYIN.arka).toFixed(2)}mm). ONCE: yalniz 1.08mm icerlege izin veriliyordu, acik 7.97mm kaliyordu.`,
+    kok: 'bodice.cpp naturalTipXForScye "dogal blok omuz ucu"nu ON yaka genisligi carpaniyla (frontNeckWidthFactor 0.17) hesaplayip AYNI degeri arkaya da uyguluyordu; arka yaka daha genis (0.197) oldugu icin gercek arka omuz ucu o referansin disinda kaliyor ve tavan gercekte olmayan bir kelepce vuruyordu',
+    durum: 'KAPANDI 2026-09-03 (hakem K4). Capa yariya gore ayri hesaplaniyor (naturalTipXFront / naturalTipXBack), yeni sabit YOK.' },
+  { s: 'KAPANDI', ad: 'centikler DIKIS cizgisine basiliyordu, kesim cizgisine degil',
+    olcum: 'sewability_check ratchet: notch_off_boundary 211 -> 0, mark_far_from_edge 342 -> 0 (mark_over_seam_allowance 32, degismedi). Iki tavan da bu commit\'te 0\'a INDIRILDI (yukseltilmedi).',
+    kok: 'annotateTechnical draft() icinde kesim cizgilerinden ONCE kosuyordu, yani kendi referans cizgisini goremiyordu; ustelik capayi konturun degil BOUNDING BOX\'in max-x\'ine koyuyordu (egri yan dikiste konturun uzerinde bile olmayan bir nokta). Uc duzeltme: (1) gecis kesim cizgilerinden SONRA kosuyor, (2) capa yan dikis YURUYUSUNUN uzerinde, (3) fermuar disi tikleri kesim kenarindan basliyor. Ayrica denge centigi artik iki yarida EsIT mm\'de (commonSideSeamMM), esit KESIRDE degil.',
+    durum: 'KAPANDI 2026-09-03 (hakem K3). Iki kapi SIKILASTI: cuttable_output_check kesir kiyasini birakip dikisi YURUYOR (0.1mm), notch_alignment_check bbox max-x yerine konturun ustunde 0.5mm ve mm-esitligi olcuyor.' },
+  { s: 'KAPANDI', ad: 'FLAT DUGMEYI HIC CIZMIYORDU (sayfa "dugmeli" derken giysi dugmesiz)',
+    olcum: 'KOSU/ciktilar/bugra-spec-giysi.svg: ONCE 0 dugme; SIMDI 7 dugme (data-rol="dugme", r=9.00mm). Kalip tarafinda dugmeler ZATEN vardi (Top Front markings 110 komut).',
+    kok: 'IKI KOPUKLUK, ikisi de AD ESLESMESI: (1) web/lib/flat-from-pattern.js dugme katmanini HIC OKUMUYORDU — flat kalibin izdusumu olmasina ragmen markings icindeki daireler izdusume girmiyordu; (2) engine/src/buttonrow.cpp frontCenter() uc yazim biliyordu ("Bodice/Top Front..."), Bugra Locket hatti on paneli "Front Body" diye adlandirdigi icin buttonRow=functional olan bir Locket sessizce dugmesiz ciziliyordu. Motorun dugmeyi CIZEMEDIGI iddiasi YANLISTI: buttonrow.cpp buttonCircle dort kubik ceyrek yayla ciziyor ve calisiyor.',
+    durum: 'KAPANDI 2026-09-03 (hakem K7). Flat dugme sayisini, yaricapini ve derinlik oranini KALIPTAN okur; uydurulmus sayi yok.' },
   { s: 'HATA', ad: 'on oyuk arka oyuktan UZUN (isaret ihlali)',
     olcum: oyukIsaret != null
       ? `motor on-arka = ${num(oyukIsaret)} mm (yasa: <= 0). Bugra kesim cizgisinde ${num(gv(bugraFront, 'OYUK-on', 'cutMM') - gv(bugraBack, 'OYUK-arka', 'cutMM'))} mm, 8/8 bedende negatif`
       : '?',
     kok: `motorun koltukalti seviyesinde ON ceyregi ARKA ceyregden genis (on ${num(mFront.ok ? mFront.named.OYUK.to[0] : null)} / arka ${num(mBack.ok ? mBack.named.OYUK.to[0] : null)} mm); Aldrich p.11 genislik cizgileri TERSINI yayinliyor (sirt 34.4 > on 32.4 cm)`,
-    durum: 'ACIK — KARAR GEREKEN: on/arka bust bolusumu butun bloklari oynatir, tek fazda kanitlanamaz' },
+    durum: 'ACIK — hakem K5: SIMDI DOKUNMA, kendi fazini hak ediyor (butun bloklari oynatir, 8 bedende once/sonra ister). '
+      + 'EXIT KODU: bu tek kalem bir REGRESYON CIZGISI tasiyor (asagi bak) — kirmizi ADIYLA duruyor ama kapiyi tek basina dusurmuyor, '
+      + 'cunku kapanmasi bir OLCUM degil bir KARAR. Emsal: engine/tests/v5-ratchet-baseline.json V5-G uzlasmasi. '
+      + 'DIKKAT — BU FAZ ONU KOTULESTIRDI: 18.4 -> 22.5 mm. Sebep K1/K4: on oyuk yayinlanmis on genislik cizgisine (162.0) '
+      + 'oturunca arkadan (172.0) daha COK uzadi. Iki duzeltme de motorun KENDI yayinina karsi dogru; kotulesen sey, '
+      + 'zaten ACIK olan on/arka bust bolusumu. Cizgi bugunku olculen degere BILEREK ve ADIYLA tasindi — sessiz degil.',
+    kuyruk: { cizgiMM: 22.5, olculenMM: oyukIsaret } },
+  { s: 'MOTOR EKSIGI', ad: 'fitted top BELDE DARALMIYOR (yan dikis koltukaltindan etege surekli genisliyor)',
+    olcum: 'sevk edilen cizimde (KOSU/ciktilar/bugra-spec-giysi.png, FRONT ve BACK figurleri) shaping=dart oldugu halde yan dikis monoton; bel daralmasi GOZLE 0. Kalipta bust pensi VAR, yan dikiste bel girintisi YOK.',
+    kok: 'shaping ekseni PENS uretir, yan dikis EGRISI uretmez; "fitted" bir ust bel hattinda yan dikisten de alir. Motorda yan dikisi belde iceri alan bir eksen yok.',
+    durum: 'ACIK — bu fazda ADIYLA acildi, kapatilmadi (hakem raporunda C bolumunun hicbir kovasinda gecmiyordu)' },
 ];
 
 say('');
-say('C) FARKIN SINIFI — STIL / MOTOR EKSIGI / HATA (her satir sayiyla)');
+say('C) FARKIN SINIFI — STIL / MOTOR EKSIGI / HATA / KAPANDI (her satir sayiyla)');
 for (const c of SINIF) {
   say(`   [${c.s}] ${c.ad}`);
   say(`        olcum : ${c.olcum}`);
@@ -549,3 +567,31 @@ ${NOT_IN_VOCAB.map((s) => '- ' + s).join('\n')}
 `;
 writeFileSync(join(OUTDIR, 'bugra-rapor.md'), md);
 say(`rapor: ${join(OUTDIR, 'bugra-rapor.md')}`);
+
+// ── K10: BU KOMUT ARTIK BIR KAPI ──────────────────────────────────────────
+// Hakem 2026-09-03: "bugra-blind-compare her kosuda exit 0 veren bir RAPOR
+// araci; kapi degil. Sinifladigi HATA kovasi bos degilse exit 1 versin — o
+// zaman 'yesil kosuyor' bir sey ifade eder."
+// Kapi SADECE [HATA] kovasini isirir. [STIL] mesru fark, [MOTOR EKSIGI] adiyla
+// acilmis bir yetenek boslugu (kapatilmasi ayri bir faz), [KAPANDI] tarihsel
+// kayit. HATA = yanlis hesap, ve yanlis hesap sevk edilemez.
+// Bir HATA kalemi kapiyi DUSURMEZ ancak KARAR'a bagli bir kuyruk satiri
+// tasiyorsa; o zaman bile bir REGRESYON CIZGISI tasimak ZORUNDA ve cizgiyi
+// ASARSA kapi yine kirmizi doner. Kuyruksuz her HATA dogrudan exit 1.
+const hatalar = SINIF.filter((c) => c.s === 'HATA');
+let dusur = 0;
+say('');
+say(`KAPI — [HATA] kovasi: ${hatalar.length} kalem`);
+for (const h of hatalar) {
+  if (!h.kuyruk) { say(`   KIRMIZI [HATA] ${h.ad} — kuyruk satiri YOK, kapiyi dusuruyor`); dusur++; continue; }
+  const { cizgiMM, olculenMM } = h.kuyruk;
+  const asti = olculenMM != null && Math.abs(olculenMM) > Math.abs(cizgiMM) + 0.05;
+  say(`   KIRMIZI [HATA] ${h.ad} — olculen ${olculenMM == null ? '?' : num(olculenMM)} mm, ` +
+      `regresyon cizgisi ${cizgiMM} mm${asti ? ' -> CIZGI ASILDI, kapi kirmizi' : ' (karara bagli, kapiyi dusurmuyor)'}`);
+  if (asti) dusur++;
+}
+say(`   (bilgi: ${SINIF.filter((c) => c.s === 'MOTOR EKSIGI').length} MOTOR EKSIGI ve ` +
+    `${SINIF.filter((c) => c.s === 'STIL').length} STIL kalemi ADIYLA yukarida; ikisi de exit kodunu DUSURMEZ. ` +
+    `${SINIF.filter((c) => c.s === 'KAPANDI').length} kalem bu fazda KAPANDI.)`);
+if (dusur) process.exitCode = 1;
+say(dusur ? `KAPI KIRMIZI: ${dusur} kalem` : 'KAPI YESIL: kapiyi dusuren kalem yok');
