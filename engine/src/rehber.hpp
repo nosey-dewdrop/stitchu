@@ -248,13 +248,83 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
     // length for the same pieces, which is arithmetic, not a table.
     const double widthCM = axis.widthDeclared() ? axis.widthCM : FabricBand::kRefWidthCM;
     const double meters = FabricBand::metersAtWidth(pattern.fabricMeters140, axis);
-    add("cut.yardage",
-        "Fabric: " + num(meters, 1) + " m at " + num(widthCM, 0) +
-            " cm wide, folded lengthwise. Buy a little over if your fabric has "
-            "a nap or a one-way print.",
-        "computed:fabricMeters140=" + num(pattern.fabricMeters140, 1) + ";widthCM=" +
-            num(widthCM, 0) + ";metersAtWidth=" + num(meters, 1) + ";refWidthCM=" +
-            num(FabricBand::kRefWidthCM, 0));
+
+    // ⭐ M4-edge — DAR TOP ENİ + BÜYÜK PARÇA. THE METRE COUNT ABOVE IS PURE
+    // ARITHMETIC (metersAtWidth = m140 * 140/width): it scales LENGTH and has
+    // never once asked whether a piece FITS ACROSS the bolt. Measured
+    // 2026-09-03 over the five shipped bolts (web/js/fabric-catalog.js) x
+    // 4 sizes x 6 skirt styles x 3 lengths: **37 combinations draft a piece
+    // WIDER THAN THE BOLT** and the guide printed a metre count anyway —
+    // e.g. cotton-velveteen (106.7 cm, a real catalog entry) + EU48 pleated
+    // skirt = a 1492 mm front panel on a 1067 mm bolt. The buyer buys the
+    // fabric, lays out the paper, and finds out at the cutting table.
+    //
+    // The PATTERN is not wrong and is NOT blocked — it sews perfectly from a
+    // wider bolt. What was wrong is the SENTENCE. So the sentence refuses BY
+    // NAME and carries the next step (RULES invariant 1 + M4-edge: no silent
+    // default, no dead end).
+    //
+    // Cross-grain extent, conservatively: the CUT line (falls back to the sewing
+    // line only when a strip piece carries none), control points included (the
+    // control polygon contains the curve, so this can over- but never
+    // under-report). An on-fold piece is mirrored about its fold line, so it
+    // needs TWICE its distance from that fold.
+    double widestMM = 0.0;
+    std::string widestName;
+    for (const PatternPiece& p : pattern.pieces) {
+        const std::vector<PathCommand>& path = p.cutLine.empty() ? p.commands : p.cutLine;
+        if (path.empty()) continue;
+        double lo = 0, hi = 0;
+        bool seen = false;
+        const auto eat = [&](const Point& q) {
+            if (!seen) { lo = hi = q.x; seen = true; return; }
+            lo = std::min(lo, q.x); hi = std::max(hi, q.x);
+        };
+        for (const PathCommand& c : path) {
+            if (c.type == CmdType::Close) continue;
+            eat(c.to);
+            if (c.type == CmdType::Curve) { eat(c.cp1); eat(c.cp2); }
+        }
+        if (!seen) continue;
+        double need = hi - lo;
+        if (p.onFold) {
+            // The fold line is the mirror edge; without an explicit one the
+            // convention is x = 0 (geometry.hpp foldLine).
+            double foldX = 0.0;
+            if (!p.foldLine.empty()) foldX = p.foldLine.front().to.x;
+            need = 2.0 * std::max(hi - foldX, foldX - lo);
+        }
+        if (need > widestMM) { widestMM = need; widestName = p.name; }
+    }
+    // ⛔ ONE ID, TWO SENTENCES — ON PURPOSE. `cut.yardage` is a REQUIRED section
+    // (guide_completeness_check kRequired): a draft that simply DROPPED it when
+    // the bolt is too narrow would trade a wrong sentence for a missing one.
+    // The subject is the same ("what fabric do I buy"), so the id is the same
+    // and the ANSWER changes. `fitsBolt=0` in the basis is how a machine (and
+    // edge_case_supurme_check) tells a refusal from an advice.
+    const double boltMM = widthCM * 10.0;
+    const bool fitsBolt = !axis.widthDeclared() || widestMM <= boltMM;
+    if (!fitsBolt) {
+        add("cut.yardage",
+            "I cannot give you a metre count for this bolt: the widest piece (" +
+                widestName + ") is " + num(widestMM, 0) + " mm across the grain and your "
+                "fabric is only " + num(boltMM, 0) + " mm wide, so that piece does not fit "
+                "on it at any length. Next step: use a bolt at least " +
+                num(widestMM / 10.0, 0) + " cm wide, or pick a narrower skirt/bodice style "
+                "— the pattern itself is sewable, only this fabric is too narrow for it.",
+            "computed:fitsBolt=0;widestPieceMM=" + num(widestMM, 0) + ";widestPiece=" +
+                widestName + ";boltMM=" + num(boltMM, 0) + ";neededWidthCM=" +
+                num(widestMM / 10.0, 0));
+    } else {
+        add("cut.yardage",
+            "Fabric: " + num(meters, 1) + " m at " + num(widthCM, 0) +
+                " cm wide, folded lengthwise. Buy a little over if your fabric has "
+                "a nap or a one-way print.",
+            "computed:fitsBolt=1;fabricMeters140=" + num(pattern.fabricMeters140, 1) +
+                ";widthCM=" + num(widthCM, 0) + ";metersAtWidth=" + num(meters, 1) +
+                ";refWidthCM=" + num(FabricBand::kRefWidthCM, 0) +
+                ";widestPieceMM=" + num(widestMM, 0));
+    }
     add("cut.pieces",
         "Cut plan: " + num(static_cast<int>(pattern.pieces.size())) + " pattern piece(s), " +
             num(onFold) + " of them on the fabric fold. Follow each piece's own cut note.",

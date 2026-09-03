@@ -456,6 +456,20 @@ add_test(NAME vision_tasima_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests
 # döner (sessiz düşme 0); /api/analyze'in metin hali (backend/analyze-core.js)
 # lokal doğrulanır ve foto istemi tek kaynaktan, bayt bayt korunur.
 add_test(NAME prompt_spec_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/prompt_spec_check.mjs)
+# edge_case_supurme_check (M4-edge, 2026-09-03): "TÜM EDGE CASELERE RAĞMEN".
+# 1291 yargı, tek yasa: her vaka ya geçerli çıktı verir ya ADIYLA reddedilir ve
+# reddin yanında kullanıcının yapabileceği SONRAKİ ADIM durur. Kapsam: 10
+# fotoğraf vakası (sentetik piksel fikstürleri — manzara, iki giysi, insan
+# üstünde, karanlık, kontrastsız, bulanık, çok küçük, bozuk dosya) + measure.js'in
+# KENDİ ret sebeplerinin kaynaktan çıkarılıp her birinin iki dilde cümlesi
+# olduğunun ölçülmesi · 13 prompt vakası (boş/emoji/anlamsız/çelişkili/280
+# token/TR eki/TR+EN karışık/sayılı edit) · fotoğraf+çelişkili promptta promptun
+# kazanması · 10 bedende kalıp + uç bedenlerde flat · bilinmeyen beden ve uydurma
+# eksen değerinin adıyla reddi · 360 kumaş×beden×etek×boy kombinasyonunda top
+# eninin parça enine yetip yetmediği. SIFIR CANLI LLM ÇAĞRISI.
+# Ürün: KOSU/ciktilar/edge-case-tablosu.md
+add_test(NAME edge_case_supurme_check
+         COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/edge_case_supurme_check.mjs)
 
 # sizechart_source_check: KAYNAK BEYANI KAPISI (TUR 18B, 2026-08-17). The 70
 # numbers of contract/tables.json draft.euSizeChart are the whole body of the

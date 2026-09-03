@@ -12,7 +12,7 @@ import {
   MEASUREMENTS, loadMeasurements, saveMeasurements, saveToCloset,
   loadProfiles, saveProfile, deleteProfile,
 } from './store.js?v=144';
-import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord, applyRatioAxes, uncertainRatioNames } from './vision-bridge.js?v=144';
+import { pickGather, pickTiePlacement, pickCollar, pickBackOpening, pickLaceUpBack, pickWrapFront, pickHemSlit, pickRuffledStraps, pickPeplum, pickHemFlounce, pickPocket, pickCuff, pickHemShape, pickPlacket, pickBackDetail, pickExposedZip, pickBardot, pickCupSeam, pickYoke, pickBoxPleat, refreshSkirtLengthMM, applyMeasuredRatios, pickSkirtFullness, buildSeenRecord, applyRatioAxes, uncertainRatioNames, olcumRedCumlesi } from './vision-bridge.js?v=144';
 import { measureGarment } from './measure.js?v=144';
 // F-İNDİR: the take-it-home path. Measured 26 Aug — this file had ZERO lines
 // matching `download` or `dxf`, so a shopper could see a pattern and carry
@@ -26,7 +26,7 @@ import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js
 // parser'la aynı spec eksenlerine iner — LLM yok, ağ yok. Anlaşılmayan kelime
 // ADIYLA ekrana düşer (sessiz düşme 0), en yakın Edge/Panel/Stitch primitifine
 // işaret eder. Öncelik kuralı: prompt, fotoğraf okumasını EZER (madde 3).
-import { parsePrompt, parseEditPrompt, birlestir } from './prompt-parse.js?v=144';
+import { parsePrompt, parseEditPrompt, birlestir, konaksizEksenler } from './prompt-parse.js?v=144';
 // F3-arka: ARKA YÜZÜN KÖKENİ (Damla'nın cümlesi): arka fotoğraf VARSA okunur
 // ve tasarlanır; SADECE ön varsa sistem arkayı UYDURUR ve uydurduğunu İLAN
 // eder — en sade dikilebilir arka, akış DURMAZ. Mantık web/lib/arka-koken.js'te
@@ -188,10 +188,18 @@ let arkaFotoVar = false;
 /** Apply the stored prompt onto the spec + origin record. Priority rule F1/3. */
 function uygulaPrompt() {
   if (!promptParsed) return;
-  const { zorunlu } = birlestir(spec, promptParsed);
+  const { zorunlu, konaksiz } = birlestir(spec, promptParsed);
   for (const f of Object.keys(promptParsed.eksenler)) isaretle(koken, f, 'soruldu');
   for (const f of zorunlu) {
     isaretle(koken, f, 'zorunlu', 'bilinmiyor', 'kol başı/boyu istendi, taşıyacak kol gerekti');
+  }
+  // ⭐ M4-edge: "kolsuz uzun kollu" — the user's own two words contradict each
+  // other, so one of them cannot be honoured. It is NOT labelled `soruldu`
+  // (nothing was granted) and it is not left silent either: the origin record
+  // says the axis is host-derived and WHY, in the user's words. The sentence
+  // the user reads is printed by the prompt button below (konaksiz).
+  for (const k of konaksiz) {
+    isaretle(koken, k.alan, 'zorunlu', 'bilinmiyor', k.oneri);
   }
   // A written length is an explicit order, same latch as a hand-picked one:
   // drop the photo-measured mm so mini/midi/maxi does exactly what it says.
@@ -835,7 +843,13 @@ function showSpec() {
       // — the pattern used the standard table for them, and saying so is the
       // difference between a fallback and a silent lie.
       const belirsizler = oranDurum === 'belirsiz' ? uncertainRatioNames(seen) : [];
+      // ⭐ M4-edge: a photo the MEASUREMENT refused (landscape, worn on a body,
+      // two garments, too dark, too blurry) used to fall through as the silent
+      // word 'standard'. The refusal is named on screen with its next step; the
+      // flow does NOT stop, because the standard chart is a real answer.
+      const red = olcumRedCumlesi(seen, getLang());
       status.textContent = (seen.details ? seen.details + ', ' : '') +
+        (red ? red.metin + ' ' : '') +
         (belirsizler.length ? t('create.spec.ratiobelirsiz') + ' ' + belirsizler.join(', ') + '. ' : '') +
         // F3-arka İLANI, adıyla: uydurulan arka ekranda söylenir, akış durmaz.
         (arkaUydurulan.length ? t('create.spec.arkauydurma') + ' ' : '') +
@@ -900,8 +914,14 @@ function showSpec() {
       // mm alanlari dogrudan spec'e yazilir; draft aninda patternedit.cpp kosar
       // ve cevabini (uygulanan/reddedilen) kendi cumlesiyle sonuc ekranina basar.
       for (const [f, e] of editList) spec[f] = e.mm;
+      // ⭐ M4-edge: an axis the SAME sentence killed the host of ("kolsuz uzun
+      // kollu") must not be listed as READ — that is the silent default this
+      // fix exists to remove. It gets its own red line with the next step.
+      const konaksiz = konaksizEksenler(parsed);
+      const olu = new Set(konaksiz.map((k) => k.alan));
       const okList = [
-        ...Object.entries(parsed.eksenler).map(([f, e]) => `${e.kelime} → ${f}: ${e.value}`),
+        ...Object.entries(parsed.eksenler).filter(([f]) => !olu.has(f))
+          .map(([f, e]) => `${e.kelime} → ${f}: ${e.value}`),
         ...editList.map(([f, e]) => `${e.kelime} → ${f}: ${e.mm}mm`),
       ].join(' · ');
       if (okList) pStatus.appendChild(el('div', '', t('create.spec.promptok', { what: okList })));
@@ -910,7 +930,14 @@ function showSpec() {
         line.style.color = '#8f2038';
         pStatus.appendChild(line);
       }
-      if (!okList && !parsed.anlasilmadi.length) pStatus.textContent = t('create.spec.promptempty');
+      for (const k of konaksiz) {
+        const line = el('div', '', t('create.spec.promptunknown', { word: k.kelime, hint: k.oneri }));
+        line.style.color = '#8f2038';
+        pStatus.appendChild(line);
+      }
+      if (!okList && !parsed.anlasilmadi.length && !konaksiz.length) {
+        pStatus.textContent = t('create.spec.promptempty');
+      }
       rebuild();
     });
     promptBlock.appendChild(ta);
