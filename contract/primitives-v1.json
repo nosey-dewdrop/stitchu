@@ -124,6 +124,31 @@
             "aralik": "-360..360"
           }
         }
+      },
+      "motorda_kapi": "primitif_kapi_check",
+      "motorda_fonksiyon": "engine/src/geometry.hpp:pathLength",
+      "motorda_not": "Kenar motorda bagimsiz bir SINIF degil, PathCommand dizisi + onu ADRESLEYEN EdgeRole (geometry.hpp:40-146) olarak duruyor: firstCommand..lastCommand kapali araligi kenari adresler, edgePathOf/edgeLengthOf onu geri kurar, pathLength yay uzunlugunu olcer. Sozlesmenin `turetilen` iki kalemi (length, midpoint) bu ikisidir. Operator kapilari asagida AYRI AYRI yaziliyor cunku hepsi ayni testte olculmuyor.",
+      "operatorler_kapisi": {
+        "subdivideLen": {
+          "motorda_fonksiyon": "engine/src/geometry.hpp:splitCubic",
+          "motorda_kapi": "primitif_kapi_check",
+          "not": "De Casteljau bolme; kapi bolme noktasinin cubicPoint(t) ile AYNI nokta oldugunu ve iki yarinin toplam yayinin butunden ancak duzlestirme hatasi kadar buyuk oldugunu olcer."
+        },
+        "shiftTowards": {
+          "motorda_fonksiyon": "engine/src/geometry.hpp:cubicPoint",
+          "motorda_kapi": "primitif_kapi_check",
+          "not": "FreeSewing shiftFractionTowards karsiligi: kenar uzerinde kesirle yuruyus. Duz kenarda kesir birebir dogrusal interpolasyondur, kapi 0.25 -> %25 esitligini olcer."
+        },
+        "reverse": {
+          "motorda_fonksiyon": "engine/src/geometry.hpp:reverseCubic",
+          "motorda_kapi": "primitif_kapi_check",
+          "not": "Kapi iki seyi ayri olcer: ters cevrilmis kenar orijinal baslangicta biter, ve yay uzunlugu ters cevirme altinda DEGISMEZ (involution)."
+        },
+        "rotate": {
+          "motorda_fonksiyon": "engine/src/dartrotate.hpp:rotateDart",
+          "motorda_kapi": "rotate_check",
+          "not": "Kenar donusu motorda bagimsiz bir cagri olarak degil, pensin apeks etrafinda dondurulmesi olarak var; olculen nicelik orada."
+        }
       }
     },
     "panel": {
@@ -167,6 +192,41 @@
         "bbox": "mm",
         "isSelfIntersecting": "bool",
         "area": "mm^2"
+      },
+      "motorda_kapi": "cuttable_output_check",
+      "motorda_fonksiyon": "engine/src/geometry.hpp:PatternPiece",
+      "motorda_not": "Panel = PatternPiece: kapali kontur (`commands`) + kesim talimati + grainline. ASTM 1 (kesim) ile 14 (dikis) ayrimi cutLine/outline ikilisiyle korunuyor. Parametre kapilari ayri, cunku bir paneli \"var\" saymak icin bes ayri niceligin bes ayri testte olculmesi gerekiyor.",
+      "parametre_kapisi": {
+        "edges": {
+          "motorda_fonksiyon": "engine/src/geometry.hpp:PatternPiece",
+          "motorda_kapi": "edgemono_check",
+          "not": "Kapali halka + kendini kesmeme, 8 bedende; teget geri katlama dahil (halka testinin kacirdigi hal)."
+        },
+        "cutCount": {
+          "motorda_fonksiyon": "engine/src/geometry.hpp:cutInstruction",
+          "motorda_kapi": "cuttable_output_check",
+          "not": "Kac kez kesilecegi kesim talimatinin kendi metnidir ve kesim planina girer."
+        },
+        "onFold": {
+          "motorda_fonksiyon": "engine/src/geometry.hpp:foldLineOf",
+          "motorda_kapi": "cuttable_output_check",
+          "not": "ASTM 6 ayna cizgisi; katlama kenarinin CIZILI oldugu olculuyor, etiketten okunmuyor."
+        },
+        "grainAngleDeg": {
+          "motorda_fonksiyon": "engine/src/bodice.hpp:biasBinding",
+          "motorda_kapi": "bias_check",
+          "not": "45 = bias. Motorda BIAS KESIM GERCEK: biye seridi 45 derece nota + katlama cizgisiyle ciziliyor ve uzunlugu cizilmis kenara true ediliyor. Diger paneller grainline dikey."
+        },
+        "seamAllowanceMM": {
+          "motorda_fonksiyon": "engine/src/geometry.hpp:offsetOutline",
+          "motorda_kapi": "cutline_check",
+          "not": "Kesim cizgisi = dikis cizgisinin disa ofseti; kapi her kesim-cizgisi kosesinin SA ile miterCap*SA arasinda oldugunu ORNEKLEYEREK olcer."
+        },
+        "mirrorAxis": {
+          "motorda_fonksiyon": "engine/pattern-bridge/cutplan.py:mirror_distance_cm",
+          "motorda_kapi": "cutplan_check",
+          "not": "Es paneller \"aynali cift\" olarak tek cizime birlesiyor; ad ile kontur celisirse (name_disagreement) kapi kirmizi yanar. 8 bedende olculuyor."
+        }
       }
     },
     "seam": {
@@ -204,7 +264,37 @@
           "not": "ASTM katman 4/80/81/82/83; iki tarafta AYNI kesirlere dusen hizalama isaretleri"
         }
       },
-      "not_esik": "Gecerlilik esigi bu dosyada TANIMLI DEGIL. GarmentCode'un tol=0.05'i onlarin yayinlanmis bandidir, referans; bizim kapimizin esigi Damla'nin karari (GECE-KOSUSU-v5 SSC)."
+      "not_esik": "Gecerlilik esigi bu dosyada TANIMLI DEGIL. GarmentCode'un tol=0.05'i onlarin yayinlanmis bandidir, referans; bizim kapimizin esigi Damla'nin karari (GECE-KOSUSU-v5 SSC).",
+      "motorda_kapi": "sewability_check",
+      "motorda_fonksiyon": "engine/src/seamplan.hpp:SeamPlan",
+      "motorda_not": "Dikis motorda iki kenar KUMESI arasinda bir kayit (SeamPlan) olarak duruyor ve gecerliligi iki tarafin olculen uzunluklarinin karsilastirilmasidir (walk pieces). Parametre kapilari ayri: bir dikisi \"var\" saymak icin oran, pay ve hizalama isaretleri AYRI olculur.",
+      "parametre_kapisi": {
+        "a/b": {
+          "motorda_fonksiyon": "engine/src/seamplan.hpp:SeamPlan",
+          "motorda_kapi": "sewability_check",
+          "not": "Iki kenar kumesinin uzunluk esitligi; ihlaller ADIYLA basiliyor, tavan v5-ratchet-baseline.json."
+        },
+        "ratio": {
+          "motorda_fonksiyon": "engine/src/buzgu.hpp:gatherEdge",
+          "motorda_kapi": "gather_check",
+          "not": "Buzgu bir stil adi degil, bu dikisin uzunluk ORANI. Motorda buzgulu kenar orana gore uzun kesiliyor."
+        },
+        "easeMM": {
+          "motorda_fonksiyon": "engine/src/sleeve.hpp:draft",
+          "motorda_kapi": "sleeve_cap_ease_check",
+          "not": "Oran disi mutlak fazlalik; kol kapagi ease'i olculen tek ornegi."
+        },
+        "sewnToFraction": {
+          "motorda_fonksiyon": null,
+          "motorda_kapi": "yok",
+          "motorda_yok_sebep": "Alanin motorda TUKETICISI yok (kalemin kendi `motorda_tuketilmiyor: true` notu) ve dayanagi YAYIN BULUNAMADI. Yirtmac derinligi bugun `slit.cpp` icinde kendi sabitinden dusuyor, bu kesirden degil. Sonraki adim: slit.cpp'in derinligini bu alandan okumasi + backSlit presetlerinin kesirlerinin bir kaynaga baglanmasi."
+        },
+        "notchFractions": {
+          "motorda_fonksiyon": "engine/src/geometry.hpp:notches",
+          "motorda_kapi": "notch_alignment_check",
+          "not": "Iki tarafta AYNI kesirlere dusen hizalama isaretleri; kapi cifti mm cinsinden olcer."
+        }
+      }
     },
     "op.suppress": {
       "tanim": "Fazlaligi bir kenardan iceri alma: pens, kup, kesme. Pens bir STIL degil, bir kenara uygulanan operatordur. ⭐ ACISI PARAMETRE DEGIL: motorda suppressPanel() aciyi panelin KENDI olculen develop-deficit'inden (SurfacePanel::developDeficitDeg) okur ve deficit esigin altindaysa REDDEDER. Bir aci parametresi, pensi formule geri cevirirdi.",
@@ -243,7 +333,9 @@
       "korunmayan": {
         "alan": "KORUNMAZ, ve korunur demek yanlis bir kapi olurdu: BASTIRMA KUMAS GOTURUR. Olculen EU38 left_ftorso: 44878.9541 mm2 gitti.",
         "sektor_kiyasi": "0.5*L^2*theta kamayi L yaricapli bir daire dilimi sayar, supurulen sinir ise panelin kendi kenaridir. Aradaki fark turetilmemis bir SEKIL terimi (ol. %3.40 on, %10.06 arka) — RAPOR, kapi DEGIL; uydurma esik kapisizliktan kotudur (K29)."
-      }
+      },
+      "motorda_fonksiyon": "engine/src/dartsuppress.hpp:suppressPanel",
+      "motorda_not": "Aci parametresi YOK: kama panelin kendi develop-deficit\"inden dusuyor, esik altindaysa operator REDDEDIYOR."
     },
     "op.rotate": {
       "tanim": "Bir pensi APEKS etrafinda baska bir kenara tasima: pens transferi / pivot. Bastirma miktari sabit kalir, yalnizca NEREDEN cikacagi degisir. Klasik kalipciligin ANA islemi (KOSU-v7 §4A).",
@@ -279,7 +371,9 @@
       "korunmayan": {
         "cevre": "KORUNMAZ ve korunur demek YANLIS bir kapi olurdu. Kimlik: cevre_sonra = cevre_once - 2*Lold + 2*Lnew. Belde duran bir gogus pensi kol oyugundaki ayni pensten uzundur (olculen EU38: bacak 289.1484 -> 206.8872 / 123.8691 / 107.9265 mm)."
       },
-      "motorda_kapi": "rotate_check"
+      "motorda_kapi": "rotate_check",
+      "motorda_fonksiyon": "engine/src/dartrotate.hpp:rotateDart",
+      "motorda_not": "Pens apeks etrafinda donuyor; bastirma miktari sabit, yalnizca cikis kenari degisiyor."
     },
     "op.gather": {
       "tanim": "Bir kenari kendinden kisa bir kenara toplama. Tek sayi: oran.",
@@ -304,7 +398,9 @@
           "not": "mode BITIRME teknigidir; toplama miktari her zaman ratio'dur"
         }
       },
-      "motorda_kapi": null
+      "motorda_kapi": "gather_check",
+      "motorda_fonksiyon": "engine/src/gather.hpp:apply",
+      "motorda_not": "Buzgu = seam.ratio > 1. Motorda ayri bir BUZGULU PANEL parcasi doguyor ve buzgulu kenar hedef kenardan orana gore uzun kesiliyor; ikinci tanik engine/src/buzgu.cpp (kapi buzgu_katman_check)."
     },
     "op.flare": {
       "tanim": "Bir kenari daire diliminin yayina acma: kloş. Etek, peplum, volan hepsi bu.",
@@ -325,7 +421,9 @@
           "not": "dis yayin ic yaya orani; sweepDeg ile birlikte fazlalik"
         }
       },
-      "motorda_kapi": null
+      "motorda_kapi": "flare_check",
+      "motorda_fonksiyon": "engine/src/peplum.hpp:apply",
+      "motorda_not": "Flare = ic (takilan) kenari sabit tutup DIS kenari uzatmak. Motorda UC ayri yerde gerceklesiyor: peplum.cpp (duz dairesel/kismi-dairesel parca), skirt.cpp (gore / halfCircle etek ucu), hemflounce.cpp. flare_check operatorun KENDI kimligini ucunde birden olcuyor ve fazlaligin bloklarin KENDI ilan ettigi derinlikten dustugunu gosteriyor; peplum_check ise yalniz bir uygulamayi yargilar (K35: var olan kapinin adi odunc alinamaz). Slash-spread genel hali HENUZ YOK, _eksik_operatorler.op.slash-spread altinda duruyor."
     },
     "op.extend": {
       "tanim": "Bir kenari/paneli bir yon boyunca uzatma ya da kisaltma. SUREKLI eksen — mini/midi/maxi gibi dondurulmus isimlerin yerine gecen sey budur.",
@@ -371,7 +469,9 @@
         "bolge_disi": "Etek ucu kenarindan ONCEKI ve SONRAKI her komut BAYT-AYNI (extend_check LEG 4, komut komut). Kol (ev sahibi olmayan parca) bayt-ayni (LEG 6).",
         "opt_in": "editExtendMM == 0 iken patternedit.cpp hic kosmaz; golden bayt-birebir (LEG 1 + golden_check).",
         "mutasyon": "M1: hem.to.y += mm -> mm*0.5 (ikili 10ef9565 -> 40717b22) => extend_check EXIT 1."
-      }
+      },
+      "motorda_fonksiyon": "engine/src/patternedit.cpp:extendOne",
+      "motorda_not": "Etek ucuna GRAIN yonunde mm ekleniyor; hem yayi degismiyor, cevre +2*mm, bbox yuksekligi +mm."
     },
     "op.shorten": {
       "tanim": "Etek ucundan bir grain-paraleli bant CIKARMA — op.extend'in negatifi DEGIL: uzatma etek ucunun altina kumas ekler (hicbir landmark kimildamaz), kisaltma ise iki komsu dikisi KENDI CIZILI dogrultusunda geri kirpar ve etek ucunu iki kirpma noktasina tasiyan afin haritayla yukari alir. Sonuc kagit uzerindeki lengthen/shorten cizgisini katlamakla ayni: A-line'in aci/klosu korunur, etek agzi kendiliginden daralir. Komsu kenar duz cizgi degilse (egri) kirpma noktasi cozulmeden kisaltma YAPILMAZ, ret ADIYLA doner.",
@@ -389,7 +489,9 @@
         "bolge_disi": "Etek ucu ve ona biten komsu kenar DISINDA her komut bayt-ayni; kol bayt-ayni (shorten_check, komut komut).",
         "opt_in": "editShortenMM == 0 iken hic kosmaz; golden bayt-birebir.",
         "ret": "negatif mm ('kisaltma uzatma degildir') ve olculen siniri asan mm, kalibi OYNATMADAN adiyla reddedilir ve rapor drafta 'edit' anahtariyla biner (shorten_check bunu olcer)"
-      }
+      },
+      "motorda_fonksiyon": "engine/src/patternedit.cpp:op.shorten",
+      "motorda_not": "Negatif uzatma DEGIL: iki komsu dikis cizgisi kendi cizili yonlerinde budaniyor, kenarlar duz degilse ADIYLA reddediliyor."
     },
     "op.sleeveExtend": {
       "tanim": "op.extend'in grain-dususu, KOL parcasinin kendi en alt kenarina (kol agzi/bilek) uygulanir. Ayni yasa: kenar TASINIR (yay uzunlugu degismez), iki dikey mm parcasi eklenir, kol agzindan onceki/sonraki her komut bayt-ayni kalir.",
@@ -407,7 +509,9 @@
         "bolge_disi": "Govde + etek bayt-ayni (sleeveExtend_check).",
         "opt_in": "editSleeveExtendMM == 0 iken hic kosmaz; golden bayt-birebir.",
         "ret": "kolsuz kalipta 'bu kalipta kol YOK — once sleeveStyle secin' cumlesiyle, kalibi oynatmadan reddedilir (sonraki adim cumlenin icinde)"
-      }
+      },
+      "motorda_fonksiyon": "engine/src/patternedit.hpp:runEditProgram",
+      "motorda_not": "op.extend\"in grain-dusumu kol parcasinin kendi en alt kenarina (bilek) uygulaniyor; kol yoksa adiyla ret."
     },
     "op.neckDeepen": {
       "tanim": "CF yaka noktasini kumas katinda mm kadar asagi alma. Nokta konturun KENDI MOVE ankrajidir (on govde CF yaka noktasindan cizilmeye baslar ve CF kenari ayni noktaya kapanir — ikisi de motorda OLCULUR, varsayilmaz). Yaka egrisinin CF tegeti noktayla birlikte tasinir, omuz ucu HIC kimildamaz. Bias yaka seridi OLCULEN yeni yay kadar uzatilir ve kesim notuna uzatildigi yazilir; yakali/pervazli (Collar / Neck Facing) kalipta eski egriye kesilmis ikinci parca dikilemez kalacagi icin ret ADIYLA doner.",
@@ -425,7 +529,9 @@
         "bolge_disi": "Yaka egrisi + CF kenari DISINDA govdenin her komutu, etek ve kol bayt-ayni (neckDeepen_check, komut komut).",
         "opt_in": "editNeckDeepenMM == 0 iken hic kosmaz; golden bayt-birebir.",
         "ret": "yakali/pervazli kalipta parca adiyla ('yakada X parcasi var ... once collarType/edgeFinish kapatin') ve negatif mm'de reddedilir, kalip oynamaz"
-      }
+      },
+      "motorda_fonksiyon": "engine/src/patternedit.cpp:op.neckDeepen",
+      "motorda_not": "CF yaka noktasi kat boyunca mm asagi iniyor; biye seridi OLCULEN yeni yayla uzuyor."
     },
     "op.split": {
       "tanim": "Bir paneli bir cizgi boyunca iki panele bolme ve arada dikis birakma. Roba, kup dikisi, prenses, raglan hepsi bu. ⭐ BOLME YERI PARAMETRE DEGIL: motorda splitPanel() kesim sutununu panelin KENDI olculen sutun-deficit profilinden (SurfacePanel::deficitColumnDeg) argmin ile okur ve profil duzse REDDEDER. Bir atFraction parametresi bolmeyi bir KADRANA geri cevirirdi; suppressPanel()'in aci parametresi olmamasi emsaldir.",
@@ -473,7 +579,9 @@
       "korunmayan": {
         "cevre": "KORUNMAZ ve korunur demek YANLIS bir kapi olurdu (K29'un rotate'teki dersi). Kimlik: cevre_a + cevre_b = cevre_butun + 2*kesik. Olculen EU38 left_ftorso (skim OFF): 986.2984 + 843.1977 = 1829.4961 = 1088.4765 + 2*370.5098.",
         "panel_sayisi": "1 -> 2; bolmenin tanimi bu"
-      }
+      },
+      "motorda_fonksiyon": "engine/src/panelsplit.hpp:splitPanel",
+      "motorda_not": "Bolme YERI bir kesirden degil, panelin kendi olculen sutun-deficit profilinden dusuyor."
     },
     "op.overlay": {
       "tanim": "Var olan bir panelin uzerine, ayni bolgeye, fazlalikli ikinci bir KATMAN. Bugra Locket'in Upper Sleeve'i tam olarak budur (yatay bolunmus kol DEGIL, buzgulu ust katman).",
@@ -502,7 +610,9 @@
           "tip": "edgeRef[]"
         }
       },
-      "motorda_kapi": null
+      "motorda_kapi": "overlay_check",
+      "motorda_fonksiyon": "engine/src/backdetail.hpp:apply",
+      "motorda_not": "Overlay = ev sahibinin kenarini DEGISTIRMEDEN uzerine ikinci bir KESILEN parca asmak. overlay_check operatorun kimligini IKI bagimsiz uygulamada olcuyor (backdetail.cpp pelerin/firfir, hemflounce.cpp etek ucu volani): yeni parcanin kendi kesim talimati + grain'i var, ev sahibinin butun konturlari BAYT-AYNI kaliyor, takilan kenar ev sahibinin kenarina blogun kendi oraniyla bagli, ve ev sahibine yerlestirme isareti dusuyor. Ucuncu tanik locket.cpp'nin buzgulu ust kol katmani (kapi locket_check)."
     },
     "op.attach": {
       "tanim": "Ana govdeye AYRI bir parca asma: yaka, manset, bant, cep, volan, kordon. Yeni panel + onu tutan seam.",
@@ -549,7 +659,9 @@
         "ev_sahibi_konturu": "DOKUNULMADI (attach_check LEG 7). Asmak bir parca asar, giysiyi yeniden cizmez.",
         "opt_in": "editAttach == 0 iken hic kosmaz; golden bayt-birebir (LEG 1 + golden_check).",
         "mutasyon": "M2: capa yay-ortasi yerine KUTU ortasina yazildi (ikili f590ef5b -> 53c8f5da) => attach_check EXIT 1."
-      }
+      },
+      "motorda_fonksiyon": "engine/src/patternedit.hpp:AttachComponent",
+      "motorda_not": "Yeni PARCA + eslesen CENTIK CIFTI + metraja giren kendi kumas kosusu; capa host kenarinin yay uzunlugunun yarisinda OLCULUYOR."
     }
   },
   "bilesenler": {
@@ -560,7 +672,10 @@
         "op.suppress",
         "seam"
       ],
-      "aciklama": "gogus-bel arasi govde kabugu; fazlalik op.suppress ile alinir"
+      "aciklama": "gogus-bel arasi govde kabugu; fazlalik op.suppress ile alinir",
+      "motorda_kapi": "sloper_check",
+      "motorda_fonksiyon": "engine/src/bodice.hpp:draft",
+      "motorda_not": "Govde kabugu + pens; kapi blogun kendi olculen bel/gogus halkalarini yargiliyor."
     },
     "sleeve": {
       "primitifler": [
@@ -569,7 +684,10 @@
         "op.gather",
         "op.extend"
       ],
-      "aciklama": "kol oyuguna dikilen kapak + kol govdesi; kapak fazlaligi seam.easeMM"
+      "aciklama": "kol oyuguna dikilen kapak + kol govdesi; kapak fazlaligi seam.easeMM",
+      "motorda_kapi": "sleeve_check",
+      "motorda_fonksiyon": "engine/src/sleeve.hpp:draft",
+      "motorda_not": "Kol kapagi + kol govdesi; koltukalti kosesi duz ve buzgulu parcalarda ayri olculuyor."
     },
     "skirt": {
       "primitifler": [
@@ -578,14 +696,20 @@
         "op.gather",
         "op.extend"
       ],
-      "aciklama": "belden asagi kabuk"
+      "aciklama": "belden asagi kabuk",
+      "motorda_kapi": "skirtlen_check",
+      "motorda_fonksiyon": "engine/src/skirt.hpp:draft",
+      "motorda_not": "Belden asagi kabuk; boy sinifi ve surekli mm hedefi ayni parcadan olculuyor."
     },
     "collar": {
       "primitifler": [
         "panel",
         "op.attach"
       ],
-      "aciklama": "boyun kenarinin kopyasi + stand yuksekligi + kenar profili"
+      "aciklama": "boyun kenarinin kopyasi + stand yuksekligi + kenar profili",
+      "motorda_kapi": "collar_check",
+      "motorda_fonksiyon": "engine/src/collar.hpp:apply",
+      "motorda_not": "Boyun kenarinin kopyasi + stand yuksekligi + kenar profili; yatma kapisi ayrica collar_lies_flat_check."
     },
     "cuff": {
       "primitifler": [
@@ -593,53 +717,346 @@
         "op.attach",
         "op.gather"
       ],
-      "aciklama": "kol agzi bandi"
+      "aciklama": "kol agzi bandi",
+      "motorda_kapi": "cuff_check",
+      "motorda_fonksiyon": "engine/src/cuff.hpp:apply",
+      "motorda_not": "Kol agzi bandi; kol hemi banda buzgu/pili ile giriyor."
     },
     "band": {
       "primitifler": [
         "panel",
         "op.attach"
       ],
-      "aciklama": "kemer / patlet / bias serit / kasnak"
+      "aciklama": "kemer / patlet / bias serit / kasnak",
+      "motorda_kapi": "placket_check",
+      "motorda_fonksiyon": "engine/src/placket.hpp:apply",
+      "motorda_not": "Patlet = govdeye buyumus band + katlama cizgisi + dugme/ilik isaretleri. Kemer bandi engine/src/skirt.hpp:waistbandPiece, biye seridi engine/src/bodice.hpp:biasBinding (kapi bias_check)."
     },
     "overlay": {
       "primitifler": [
         "op.overlay",
         "op.gather"
       ],
-      "aciklama": "ikinci katman"
+      "aciklama": "ikinci katman",
+      "motorda_kapi": "backdetail_check",
+      "motorda_fonksiyon": "engine/src/backdetail.hpp:apply",
+      "motorda_not": "Ikinci katman ayri kesilen parca olarak doguyor ve boyun kenarina true ediliyor."
     }
   },
-  "_operator_kapisi": "Her op.* kaleminin `motorda_kapi` alani, o operatorun MOTORDA gercekten var oldugunu kanitlayan ctest testinin adidir; null = bu sozlesmede TANIMLI ama C++'ta YOK. engine/tests/expressability_check.mjs bu alani engine/CMakeLists.txt'teki add_test kayitlariyla karsilastirir: var olmayan bir teste isaret eden bir kalem kapiyi KIRMIZI yakar. Sebep §0B: uygulanmis operator kumesini sisirmek, H8-ifadeyi tek satir kod yazmadan dusurmenin en ucuz yoludur.",
+  "_operator_kapisi": "Her op.* kaleminin `motorda_kapi` alani, o operatorun MOTORDA gercekten var oldugunu kanitlayan ctest testinin adidir; null = bu sozlesmede TANIMLI ama C++'ta YOK. engine/tests/expressability_check.mjs bu alani engine/CMakeLists.txt'teki add_test kayitlariyla karsilastirir: var olmayan bir teste isaret eden bir kalem kapiyi KIRMIZI yakar. Sebep §0B: uygulanmis operator kumesini sisirmek, H8-ifadeyi tek satir kod yazmadan dusurmenin en ucuz yoludur.\n\nM3-primitif (2026-09-03): alan artik UC degerden birini alir ve ucu de ACIKTIR — (a) kayitli bir ctest adi = motorda VAR ve OLCULUYOR; (b) \"yok\" = motorda YOK, yaninda `motorda_yok_sebep` zorunlu ve sebep KOK SEBEP + SONRAKI ADIM tasir; (c) null + `motorda_yok_sebep` = ayni sey, ama `_eksik_operatorler` bolumunde: orada expressability_check K35 alanin null OLMASINI sart kosuyor (null olmayan her deger \"motorda var\" iddiasi sayiliyor), o yuzden acik ret oraya kendi alaninda yazilir. (d) null VE sebepsiz = henuz yargilanmadi, engine/tests/primitif_ifade_check.mjs bunu KIRMIZI yakar. ⚠ K35 ayrica su tuzagi kapatir: bir operatorun kapisi ADINI TASIMAK zorundadir (op.X -> X_check); var olan bir kapinin adini odunc almak (op.flare icin peplum_check, op.overlay icin locket_check) operatoru uygulamadan uygulanmis saymanin yoludur ve bu fazda tam olarak bu hata yapildi, kapi yakaladi, iki gercek test yazilarak duzeltildi. `motorda_fonksiyon` alani kalemin motordaki karsiligini dosya:sembol olarak adlandirir ve ayni kapi o dosyanin var oldugunu ve sembolun icinde gectigini DOGRULAR — yani bu alana var olmayan bir ad yazilamaz.",
   "_eksik_operatorler": {
     "_not": "KOSU-v7 §4A operator tablosunun HENUZ TANIMLANMAMIS kalemleri. Burada durmalari bir uygulama iddiasi DEGILDIR: hepsinin `motorda_kapi` alani null'dir ve engine/tests/expressability_check.mjs onlari eksik sayar. §4A md.3'un kuyrugu bir isme yazilabilsin diye ADLARI kayitli; parametreleri, o operatorun kendi alt-kartinda tanimlanir (uydurulmaz).",
     "op.slash-spread": {
       "tanim": "Paneli bir hat boyunca kesip acma/kapatma. flare ve gather bunun ozel halleri (§4A).",
-      "motorda_kapi": null
+      "motorda_kapi": null,
+      "motorda_yok_sebep": "Motorda paneli bir HAT boyunca kesip acan genel bir cagri yok; yalnizca iki OZEL hali var (op.flare -> peplum/gore/hemflounce, op.gather -> gather/buzgu) ve ikisi de kendi parcasini bastan cizer, mevcut paneli kesip acmaz. Sonraki adim: panelsplit.hpp:splitPanel zaten paneli kesiyor — eksik olan iki yarinin arasina ACI/GENISLIK sokup halkayi yeniden kapatmak."
     },
     "op.pleat": {
       "tanim": "Ayrik, yonlu kat (knife / box / inverted) — uzunlugu korur. gather surekli buzgudur, pili degildir (§4A).",
-      "motorda_kapi": null
+      "motorda_kapi": null,
+      "motorda_yok_sebep": "Motorda yalnizca TEK, YEREL bir kat var: boxpleat.cpp orta ters kutu pilisi (kapi boxpleat_check). Dagitik bicak/akordeon pilisi YOK ve contract/vision-tasima-v1.json bicakPili kurali onu ADIYLA reddediyor. Sonraki adim: kutu pilisinin sabit underlay genisligini kenar boyunca n kez tekrarlayan bir dagitim."
     },
     "op.fold": {
       "tanim": "Kenari geri katlayan uzatma; kumas yonu ters doner. Manset, apolet, patlet (§4A).",
-      "motorda_kapi": null
+      "motorda_kapi": null,
+      "motorda_yok_sebep": "Kenari geri katlayan genel bir uzatma yok. Uc yerde ELDE cizilmis karsiligi var (placket.cpp buyumus pervaz, cuff.cpp band, geometry.hpp:foldLineOf katlama cizgisi) ama hicbiri cagrilabilir bir operator degil. Sonraki adim: foldLineOf + offsetOutline ikilisini kenar-referansli tek bir cagriya toplamak."
     },
     "op.merge": {
       "tanim": "split'in tersi: iki komsu paneli tek panele indirir. EN AZ PARCA garantisi bir kural degil bir islem olmali (§4A).",
-      "motorda_kapi": null
+      "motorda_kapi": null,
+      "motorda_yok_sebep": "split.cpp\"in tersi motorda YOK. EN AZ PARCA bugun bir ISLEM degil, bir POLITIKA: measurements.hpp\"in `shaping = Dart` varsayilani panelleri bastan bolmuyor. Sonraki adim: iki komsu panelin ortak kenarini silip halkalari birlestiren bir cagri."
     },
     "op.derive": {
       "tanim": "Bir panel bolgesinden turev panel uretme: astar, tela, pervaz. Bugra'nin Collar Lining'i (§4A).",
-      "motorda_kapi": null
+      "motorda_kapi": null,
+      "motorda_yok_sebep": "Bir panel bolgesinden turev panel (astar/tela/pervaz) ureten genel cagri YOK. Locket\"in Collar Lining\"i locket.cpp icinde ELLE ciziliyor, turetilmiyor. Sonraki adim: kaynak panelin konturunu ic ofsetle daraltip yeni parca olarak kaydeden cagri."
     },
     "op.asymmetry": {
       "tanim": "Sol/sag simetri varsayimini kirma: tek omuz, capraz kruvaze, tek tarafli volan (§4A).",
-      "motorda_kapi": null
+      "motorda_kapi": null,
+      "motorda_yok_sebep": "Sol/sag simetri varsayimini kiran genel bir operator YOK. Iki OZEL hal var ve ikisi de kendi dosyasinda: placket.cpp asimetrik pat (kapi placket_asym_check) ve wrapfront.cpp kruvaze on (kapi wrapfront_check). Ikisi de \"bu parcayi asimetrik ciz\" der, \"su paneli asimetriklestir\" demez. Sonraki adim: on-fold panelin katlanmis yarisini acip iki yariyi bagimsiz duzenlenebilir kilan cagri (wrapfront.cpp bunu ZATEN bir kez yapiyor, genellestirilmedi)."
     },
     "op.ease-region": {
       "tanim": "Bolgesel pozitif/negatif pay. Kumasa gore yalniz gogsunde daralan kalip (§4A).",
-      "motorda_kapi": null
+      "motorda_kapi": null,
+      "motorda_yok_sebep": "Bolgesel pay YOK; pay motorda KUSAK bazinda tanimli (fabricease.hpp FabricBand::easeAt, Gogus/Bel/Kalca/Biceps/Kapak). Bir bolgeye ozel pozitif/negatif pay verilemiyor. Sonraki adim: easeAt\"in kusak enum\"unu bir kenar-araligi referansina cevirmek."
+    }
+  },
+  "_kompozisyon_yasasi": [
+    "Madde 9 (Damla): 'sozlugu bust/kol/heartneck gibi seylerden yapmayalim, DIKIS TARZIYLA ilerleyelim, boyle olursa SINIRSIZ kalip cikar.' Bu blok o cumlenin OLCUMUDUR.",
+    "Bir kompozisyon, sozlukteki HICBIR TEK degerin ifade edemedigi bir giysidir. Kanit bir cumle degil bir taramadir: engine/tests/primitif_ifade_check.mjs tabandan tek eksen oynatarak sozlugun 132 degerinin HEPSINI cizdirir ve kompozisyonun cizimi o 132'nin hicbiriyle ayni cikmazsa kalem gecer.",
+    "Kompozisyon SOZLUGE DEGER EKLEMEZ. engine/vocab.json bayt-ayni kalir ve kapi onun sha256'sini olcer; yeni bir menu ismi eklemek kapiyi kirmizi yakar (madde 9'un tersine kacis yolu budur).",
+    "Her kompozisyonun demeti Katman 1 primitiflerinden kurulur: ya contract/vocab-resolution-v1.json'daki bir cozum anahtari uzerinden (`cozum`), ya dogrudan bir primitif adiyla (`primitif`, surekli mm alanlari icin). Demet KOPYALANMAZ, referansla durur.",
+    "Katkida bulunan her eksen TEK BASINA da cizimi oynatmak zorundadir. Oynatmayan eksen sus'tur ve kapi onu adiyla kirmizi yakar."
+  ],
+  "kompozisyonlar": {
+    "_not": "Taban spec'ler yalnizca MEVCUT enum degerlerini tasir. Kompozisyonu doguran sey `eksenler` listesinin BIRLIKTE uygulanmasidir. `beden`: EU38 (contract/mannequin-chart-v1.json yayinlanmis govde).",
+    "K1-kruvaze-buzgulu-bel": {
+      "baslik": "kruvaze (surplice) on + belde buzgulu pano",
+      "gerekce": "Sozlukte \"kruvaze\" bir kapama, \"buzgu\" bir dolgunluk. Ikisinin bir arada oldugu bir MENU ISMI yok: kruvaze tek basina duz belli bir on verir, buzgu tek basina simetrik bir on verir. Bel panosu kruvaze on kenariyla ayni giyside bulusunca parca listesi de geometri de ucuncu bir sey olur.",
+      "taban": {
+        "garment": "dress",
+        "shaping": "dart",
+        "fabric": "woven",
+        "neckline": "vNeck",
+        "sleeveStyle": "straight",
+        "sleeveLength": "short",
+        "skirtStyle": "straight",
+        "skirtLength": "midi"
+      },
+      "eksenler": [
+        {
+          "wrapFront": "surplice"
+        },
+        {
+          "gatherType": "shirred",
+          "gatherZone": "waist"
+        }
+      ],
+      "demet": [
+        {
+          "cozum": "wrapFront.surplice"
+        },
+        {
+          "cozum": "gatherType.shirred"
+        },
+        {
+          "cozum": "gatherZone.waist"
+        }
+      ]
+    },
+    "K2-prenses-roba": {
+      "baslik": "prenses dikis + yatay roba (yoke)",
+      "gerekce": "Prenses DIKEY, roba YATAY bir bolmedir. Sozlukte ikisi ayri eksende ve \"prenses roba\" diye bir deger yok. Birlestiginde bedende dort degil SEKIZ panel doguyor ve dikey bolme yatay bolmenin iki tarafinda ayri ayri sureklilik istiyor — bu, iki ismin toplami degil, uzerlerinde tanimli bir kesisimdir.",
+      "taban": {
+        "garment": "dress",
+        "shaping": "dart",
+        "fabric": "woven",
+        "neckline": "scoop",
+        "sleeveStyle": "straight",
+        "sleeveLength": "short",
+        "skirtStyle": "aLine",
+        "skirtLength": "midi"
+      },
+      "eksenler": [
+        {
+          "shaping": "princess"
+        },
+        {
+          "yoke": "plain"
+        }
+      ],
+      "demet": [
+        {
+          "cozum": "shaping.princess"
+        },
+        {
+          "cozum": "yoke.plain"
+        }
+      ]
+    },
+    "K3-katmanli-etek": {
+      "baslik": "kademeli firfir + ayrica etek ucu volani = katmanli etek",
+      "gerekce": "Sozlukte \"katmanli etek\" yok. Kademeli firfir eteğin KENDI ucundan asagi iniyor, volan ise bitmis hemden AYRI bir seride asiliyor; ikisi ayni giyside olunca kumas UC katmanda iniyor ve her katmanin kendi buzgu orani var. ⚠ OLCULEN AYRI BULGU: kademeli firfirin sozlukte KARSILIGI YOK. engine/vocab.json 37 eksenin hicbirinde `ruffle` diye bir alan yok; alicinin sectigi `ruffle: tiered` web/js/engine.js:218-219'da iki SOZLUK-DISI alana (ruffleHem bool + ruffleTiers int) cevriliyor. Yani bu katman sozlugun 132 degerinden hicbiriyle ADLANDIRILAMAZ — kompozisyon iddiasini guclendiriyor ama ayni zamanda bir sicil acigi: alan sozlukte olmadigi icin contract/vocab-resolution-v1.json'da da cozumu yok. Demet bu yuzden dogrudan primitiflerden kuruldu. ⚠ IKINCI OLCULEN ACIK, GIZLENMEDI: KALIP dort ek parca ciziyor (Hem Flounce + Ruffle tier 1/2/3) ama FLAT cizimi bu katmanlarin hicbirini gostermiyor — cizim tabandan farkli cikiyor (kapi bunu olcuyor) ama fark etek ucu cizgisinde kaliyor, katmanlar goze gorunmuyor. Kok sebep: web/lib/flat-from-pattern.js gather() tablosu yalniz beden/etek/kol/yaka/manset parcalarini taniyor; asili katman parcalarinin (volan, firfir, peplum, pelerin) cizimde karsiligi YOK. Sonraki adim: bu parcalari hem cizgisinin altina asan bir katman cizici.",
+      "taban": {
+        "garment": "dress",
+        "shaping": "dart",
+        "fabric": "woven",
+        "neckline": "crew",
+        "sleeveStyle": "none",
+        "skirtStyle": "straight",
+        "skirtLength": "midi"
+      },
+      "eksenler": [
+        {
+          "ruffle": "tiered"
+        },
+        {
+          "hemFlounce": "gathered"
+        }
+      ],
+      "demet": [
+        {
+          "primitif": "op.gather"
+        },
+        {
+          "primitif": "op.flare"
+        },
+        {
+          "cozum": "hemFlounce.gathered"
+        }
+      ]
+    },
+    "K4-asimetrik-kapama-shirttail": {
+      "baslik": "asimetrik dugme kapamasi + shirttail etek ucu + arka yirtmac",
+      "gerekce": "Uc ayri eksenin ayni giyside bulusmasi: kapama merkezden KAYIYOR, etek ucu yanlardan yukari kivriliyor, ve arka orta dikise bir yurume acikligi giriyor. Uc eksen de ayni parcalari (on beden, arka etek) yeniden sekillendirdigi icin sonuc hicbirinin tek basina cizdigi sey degil — ve parca SAYISI degismiyor, yani ayrim yalnizca geometride goruluyor. ⚠ OLCULEN KUSUR, GIZLENMEDI: bu kalem once hemShape=highLow ile kuruldu ve KALIP dogru cikti ama FLAT hatti onu yanlis cizdi — on gorunum aynalanmayan tek-tarafli bir capraz olarak, arka gorunum sivri bir V olarak basildi (yeniden uretim: hemShape=highLow tek basina, KOSU/ciktilar/tmp-a-highlow.svg ilk basimi). Kusur hemShape=highLow\"un CIZIM tarafindadir ve bu fazda duzeltilmedi; kompozisyon, cizimi dogru olan shirttail ile kuruldu ve kusur rapora ADIYLA yazildi.",
+      "taban": {
+        "garment": "dress",
+        "shaping": "dart",
+        "fabric": "woven",
+        "neckline": "crew",
+        "sleeveStyle": "straight",
+        "sleeveLength": "long",
+        "skirtStyle": "aLine",
+        "skirtLength": "midi"
+      },
+      "eksenler": [
+        {
+          "placketStyle": "asymmetric"
+        },
+        {
+          "hemShape": "shirttail"
+        },
+        {
+          "backSlit": "vent"
+        }
+      ],
+      "demet": [
+        {
+          "cozum": "placketStyle.asymmetric"
+        },
+        {
+          "cozum": "hemShape.shirttail"
+        },
+        {
+          "cozum": "backSlit.vent"
+        }
+      ]
+    },
+    "K5-kup-korse": {
+      "baslik": "yatay kup dikisi + korse bagcikli sirt",
+      "gerekce": "Kup dikisi ONU yatay boler, korse bagcigi ARKAYI acar; sozlukte \"korse bustiyer\" diye tek bir deger yok ve olsaydi da her ikisini birden kilitlerdi. Ayri ayri kaldiklarinda biri fermuarli bir bustiyer, digeri prenses dikisli bir sirt verir; birlikte giydirme acikligi CB fermuarindan bagciga geciyor ve fermuar dusuyor.",
+      "taban": {
+        "garment": "top",
+        "shaping": "princess",
+        "fabric": "woven",
+        "neckline": "sweetheart",
+        "sleeveStyle": "none",
+        "topLength": "hip"
+      },
+      "eksenler": [
+        {
+          "cupSeam": "horizontal"
+        },
+        {
+          "laceUpBack": "corset"
+        }
+      ],
+      "demet": [
+        {
+          "cozum": "cupSeam.horizontal"
+        },
+        {
+          "cozum": "laceUpBack.corset"
+        }
+      ]
+    },
+    "K6-surekli-olcu": {
+      "baslik": "menude adi olmayan olculer: etek 673 mm, yaka 23 mm derin, kol 37 mm uzun",
+      "gerekce": "Bu kompozisyonda hicbir eksen ISIM degil SAYI. Etek boyu mini/midi/maxi sinifinin ARASINDA bir yerde, yaka acikligi hicbir yaka isminin vermedigi bir derinlikte, kol hicbir kol boyu isminin vermedigi bir uzunlukta. \"Sinirsiz olcu\" iddiasinin en cikplak hali budur: sozlugun 132 degerinin hicbiri bu giysiyi vermez cunku giysi bir sayi araliginda yasiyor, bir kelimede degil.",
+      "taban": {
+        "garment": "dress",
+        "shaping": "dart",
+        "fabric": "woven",
+        "neckline": "scoop",
+        "sleeveStyle": "straight",
+        "sleeveLength": "long",
+        "skirtStyle": "aLine",
+        "skirtLength": "midi"
+      },
+      "eksenler": [
+        {
+          "skirtLengthMM": 673
+        },
+        {
+          "editNeckDeepenMM": 23
+        },
+        {
+          "editSleeveExtendMM": 37
+        }
+      ],
+      "demet": [
+        {
+          "primitif": "op.extend"
+        },
+        {
+          "primitif": "op.neckDeepen"
+        },
+        {
+          "primitif": "op.sleeveExtend"
+        }
+      ]
+    },
+    "K7-raglan-manset-fermuar": {
+      "baslik": "raglan omuz + dugmeli manset + gorunur on fermuar",
+      "gerekce": "Raglan omuz dikisini YOK EDIP kolu boyuna kadar goturur; manset kol agzini ayri bir banda baglar; gorunur fermuar on ortayi bir dikise cevirir. Uc eksen de KOL/OMUZ bolgesinin ayni dugumune dokunuyor ve sozlukte ucunu birden adlandiran bir deger yok. Sonuc dort parcalik, kol oyugu OLMAYAN bir tunik.",
+      "taban": {
+        "garment": "top",
+        "shaping": "dart",
+        "fabric": "woven",
+        "neckline": "crew",
+        "sleeveStyle": "straight",
+        "sleeveLength": "long",
+        "topLength": "tunic"
+      },
+      "eksenler": [
+        {
+          "shoulderStyle": "raglan"
+        },
+        {
+          "cuffStyle": "button"
+        },
+        {
+          "exposedZip": "centerFront"
+        }
+      ],
+      "demet": [
+        {
+          "cozum": "shoulderStyle.raglan"
+        },
+        {
+          "cozum": "cuffStyle.button"
+        },
+        {
+          "cozum": "exposedZip.centerFront"
+        }
+      ]
+    },
+    "K8-dusuk-omuz-kutu-pili-cep": {
+      "baslik": "dusuk (dropped) omuz + orta ters kutu pili + yan dikis cebi",
+      "gerekce": "Dusuk omuz omuz dikisini kola dogru KAYDIRIP oyugu alcaltir, kutu pili on ortaya YEREL bir dolgunluk sokar (dagitik buzgu degil), yan dikis cebi yan dikisi bir ACIKLIGA cevirir. Ucu de ayni giysinin uc ayri yerinde ve sozlukte hicbir tek deger ucunu birden vermiyor.",
+      "taban": {
+        "garment": "dress",
+        "shaping": "dart",
+        "fabric": "woven",
+        "neckline": "square",
+        "sleeveStyle": "straight",
+        "sleeveLength": "elbow",
+        "skirtStyle": "straight",
+        "skirtLength": "midi"
+      },
+      "eksenler": [
+        {
+          "shoulderStyle": "dropped"
+        },
+        {
+          "boxPleat": "centerInverted"
+        },
+        {
+          "pocketStyle": "sideSeam"
+        }
+      ],
+      "demet": [
+        {
+          "cozum": "shoulderStyle.dropped"
+        },
+        {
+          "cozum": "boxPleat.centerInverted"
+        },
+        {
+          "cozum": "pocketStyle.sideSeam"
+        }
+      ]
     }
   }
 }

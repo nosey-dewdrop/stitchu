@@ -66,6 +66,35 @@ add_executable(test_geometry tests/test_geometry.cpp)
 target_link_libraries(test_geometry PRIVATE engine)
 add_test(NAME geometry COMMAND test_geometry)
 
+# primitif_kapi_check (M3-primitif): contract/primitives-v1.json'un `edge`
+# operatorlerinin KAPISI. subdivideLen / shiftTowards / reverse motorda GERCEK
+# fonksiyonlardi (geometry.hpp splitCubic / cubicPoint / reverseCubic) ama
+# hicbir kayitli test onlari IZOLE olcmuyordu — olculdu, `grep -l` uc sembol
+# icin de engine/tests/ altinda BOS donuyordu. Yani sozlesmenin `motorda_kapi`
+# alanina yazilacak bir ad yoktu ve alan null kaliyordu. Etiket yerine OLCUM:
+# her operator kendi korunan niceligiyle sinaniyor (bolme noktasi ==
+# cubicPoint(t), yay uzunlugu ters cevirme altinda DEGISMEZ, iki yarinin
+# toplami butunden ancak duzlestirme hatasi kadar buyuk).
+add_executable(primitif_kapi_check tests/primitif_kapi_check.cpp)
+target_link_libraries(primitif_kapi_check PRIVATE engine)
+add_test(NAME primitif_kapi_check COMMAND primitif_kapi_check)
+
+# flare_check / overlay_check (M3-primitif, K35: `op.X -> X_check`).
+# contract/primitives-v1.json'un op.flare ve op.overlay kalemleri kapisiz
+# duruyordu ve ikisinin de motorda GERCEK karsiligi vardi (peplum.cpp /
+# skirt.cpp / hemflounce.cpp; locket.cpp / backdetail.cpp) — ama var olan bir
+# kapinin adini odunc almak (peplum_check, locket_check) expressability_check'in
+# K35 satirinin ADIYLA yasakladigi sey. Bu iki test operatorlerin KENDI
+# kimligini olcer ve onu HER uygulamada ayni cumleyle sorar; sayilar bloklarin
+# kendi sabitlerinden okunur, testte yazili degildir.
+add_executable(flare_check tests/flare_check.cpp)
+target_link_libraries(flare_check PRIVATE engine)
+add_test(NAME flare_check COMMAND flare_check)
+
+add_executable(overlay_check tests/overlay_check.cpp)
+target_link_libraries(overlay_check PRIVATE engine)
+add_test(NAME overlay_check COMMAND overlay_check)
+
 add_executable(engine_check tests/engine_check.cpp)
 target_link_libraries(engine_check PRIVATE engine)
 add_test(NAME engine_check COMMAND engine_check)
@@ -316,6 +345,24 @@ add_test(NAME op_program_check
 
 add_test(NAME expressability_check
          COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/expressability_check.mjs)
+
+# primitif_ifade_check (M3-primitif): MADDE 9'UN KAPISI. expressability_check
+# "hangi ADLI kalibi yazamiyoruz" diye sorar (H8-IFADE); bu kapi ters yonden
+# sorar: SOZLUGE TEK BIR DEGER EKLEMEDEN kac giysi cikabiliyor. Dordu de
+# kirilabilir olcum: (1) engine/vocab.json bayt-ayni + 37/132; (2) her Edge/
+# Panel/Seam/op/bilesen kaleminin motorda_kapi'si ya KAYITLI bir add_test adi
+# ya acikca "yok" + kok sebep — null KIRMIZI, ve motorda_fonksiyon'daki
+# dosya:sembol gercekten var olmak zorunda; (3) her kompozisyon giysisi icin
+# sozlugun 132 degeri tek tek cizdirilir ve hicbiri ayni cizimi vermemelidir
+# (mutasyonla dogrulandi: kompozisyonu tek eksene indirmek kapiyi kirmizi
+# yakiyor); (4) sozluk-disi kelime ya PRIMITIF DEMETINE eslenir ya adiyla
+# reddedilir + oneri — ucuncu yol yok, ve yargi tek yerde (web/js/oov-resolve.js),
+# tablo contract'ta veri.
+#
+# ⚠ Kapinin kendisi motoru cagirir (web/vendor/stitchu-engine.js, 6 kompozisyon
+# x 130 tek-deger cizimi ~ 800 taslak) — olculdu, 1.4 sn.
+add_test(NAME primitif_ifade_check
+         COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/primitif_ifade_check.mjs)
 
 # sewability_check (V5-A) ve draft_math_check (V5-D), ctest'e V5-E'de BAĞLANDI.
 # İkisi de RATCHET'li: eşikler (Aldrich/Threads bantları, çentik kesim-çizgisi
