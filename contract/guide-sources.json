@@ -21,7 +21,7 @@
         "plain straight stitch (seams pop; use narrow zigzag 1-1.5mm)",
         "regular needle (use ballpoint 75/11-80/12)"
       ],
-      "values": ["75", "11", "80", "12", "1", "1.5", "500", "12.5", "30", "50", "4"],
+      "values": ["75", "11", "80", "12", "90", "14", "1", "1.5", "500", "12.5", "30", "50", "4"],
       "note": "Mirrored in knowledge/stitchu.db, table `fabrics`, row 'jersey' (columns stretch / common_mistakes). ⚠ UNL's band edges are NOT the band this engine drafts on — see fabricease.hpp: the F-H card's band is implemented and UNL is recorded as the cross-reference, not averaged in.",
       "iso4915Class500": "overlock class, ISO 4915 §2 (knowledge/DIKIS-SOZLUGU-ISO-2026-08-23.md)"
     },
@@ -43,6 +43,66 @@
       ],
       "values": ["4915", "500", "1", "1.5"],
       "note": "One advice legitimately needs both: the millimetres come from UNL, the class number from ISO 4915."
+    },
+    "uof-needle-sizes": {
+      "title": "University of Fashion — Sewing Machine Needle Sizes & Diameters (needle size by fabric weight)",
+      "url": "https://www.universityoffashion.com/wp-content/uploads/2018/11/Sewing-Machine-Needle-by-Fabric-Weight-Size-Chart.pdf",
+      "quotes": [
+        "60 / 8 / 60 / .0245 / Light Weight ... 70 / 10 / 70 / .028 / Light Weight",
+        "75 / 11 / 75 / .030 / Medium Weight ... 95 / 15 / 95 / .038 / Medium Weight",
+        "100 / 16 / 100 / .040 / Heavy Weight ... 110 / 18 / 110 / .044 / Heavy Weight & Leather"
+      ],
+      "values": ["55", "6", "60", "7", "8", "65", "9", "70", "10", "75", "11", "80", "12", "85", "13", "90", "14", "95", "15", "100", "16", "105", "17", "110", "18"],
+      "note": "Read verbatim from the PDF with pdftotext -layout on 2026-09-03 (M5-rehber). The chart gives a BAND per weight class, never one number, and the engine prints the band it gives. It does NOT publish the g/m2 edges of 'Light'/'Medium'/'Heavy' — those come from `fabricuk-gsm-bands` and the composition of the two is declared in engine/src/rehber.hpp."
+    },
+    "fabricuk-gsm-bands": {
+      "title": "Fabric UK — Understanding Fabric Weight (g/m2 weight classes, ISO 3801 measurement)",
+      "url": "https://blog.fabricuk.com/understanding-fabric-weight/",
+      "quotes": [
+        "Under 150 GSM is lightweight, 150 to 350 GSM is medium-weight, and over 350 GSM is heavyweight.",
+        "Testing follows the ISO 3801 methodology, a recognised international standard."
+      ],
+      "values": ["150", "350", "3801"],
+      "note": "⚠ WEAK SOURCE, DECLARED: this is a retailer's guide, not a standard. ISO 3801 defines how g/m2 is MEASURED and publishes no weight CLASSES — the class edges are this page's, and no standards body publishing them was found (searched 2026-09-03: ASTM D3776 and ISO 3801 are both mass-per-area METHODS, same shape as the D3107/D2594 finding in fabric-catalog-v1.json). Used for ONE thing: which row of `uof-needle-sizes` to read. Nothing in the drafted geometry reads it."
+    },
+    "schmetz-needle-types": {
+      "title": "SCHMETZ (needle manufacturer) — Sewing Machine Needle Guide, point type by fabric",
+      "url": "https://www.schmetzneedles.com/pages/sewing-machine-needle-guide",
+      "quotes": [
+        "Universal: General sewing of knit and woven fabrics.",
+        "Jersey/Ball Point: Designed for sewing on knits and some stretch fabrics.",
+        "Choose needle size according to thread thickness and needle type according to fabric application."
+      ],
+      "values": ["60", "8", "65", "9", "70", "10", "75", "11", "80", "12", "90", "14", "100", "16", "110", "18", "120", "19"],
+      "note": "The manufacturer's own page, read 2026-09-03. Carries the POINT TYPE (universal vs ballpoint) only; SCHMETZ explicitly ties size to thread thickness and type to application, and publishes no fabric-weight-to-size table — which is why the size comes from `uof-needle-sizes` / `unl-knits` and not from here."
+    },
+    "uof-needle-sizes+fabricuk-gsm-bands+schmetz-needle-types": {
+      "title": "Needle for a WOVEN — three documents composed (M5-rehber, 2026-09-03)",
+      "url": "https://www.universityoffashion.com/wp-content/uploads/2018/11/Sewing-Machine-Needle-by-Fabric-Weight-Size-Chart.pdf",
+      "quotes": [
+        "weight class <- g/m2 (fabricuk-gsm-bands) -> size band (uof-needle-sizes) -> point type (schmetz-needle-types)"
+      ],
+      "values": ["55", "6", "60", "7", "8", "65", "9", "70", "10", "75", "11", "80", "12", "85", "13", "90", "14", "95", "15", "100", "16", "105", "17", "110", "18", "150", "350", "3801"],
+      "note": "No ONE publication answers 'which needle for this bolt'. Three do, in a chain, and the chain is written here rather than hidden in the sentence: the weight in g/m2 picks a class, the class picks a SIZE BAND, the knit/woven word picks the POINT. The engine never narrows the band further — see engine/src/rehber.hpp section 3."
+    },
+    "unl-knits+fabricuk-gsm-bands+schmetz-needle-types": {
+      "title": "Needle for a KNIT — UNL sizes, gsm class, SCHMETZ point (M5-rehber, 2026-09-03)",
+      "url": "https://digitalcommons.unl.edu/extensionhist/1186",
+      "quotes": [
+        "For lightweight knits use 75/11, medium weight use 80/12 and heavy weight, 90/14."
+      ],
+      "values": ["75", "11", "80", "12", "90", "14", "150", "350", "3801"],
+      "note": "A knit-specific table beats a general one, so the SIZE here is UNL's single number per class, not the University of Fashion band. The class edge in g/m2 is still fabricuk-gsm-bands (weak, declared there) and the point type is SCHMETZ."
+    },
+    "nmsu-c208": {
+      "title": "New Mexico State University extension C-208, Selecting Interfacings, Underlinings, and Linings",
+      "url": "https://pubs.nmsu.edu/_c/C208/index.html",
+      "quotes": [
+        "Consider the weight of the garment fabric and select an interfacing that is the same weight or lighter.",
+        "usually used for the front opening edges, especially where there are buttons and buttonholes, collars, cuffs, waistbands, and pocket flaps"
+      ],
+      "values": [],
+      "note": "Read 2026-09-03 (M5-rehber). The publication states the RULE and the AREAS but no numbers, so `values` is empty on purpose: the g/m2 ceiling the engine prints is this bolt's own catalog weight (a computed number), the source only says which direction the ceiling points."
     },
     "nmsu-g401": {
       "title": "New Mexico State University extension G-401, Selecting Fabrics",

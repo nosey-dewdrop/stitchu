@@ -1456,7 +1456,7 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // exists, because the advice counts pieces, notches and fold edges off the
     // FINISHED draft. Metadata only: no geometry is touched here, so the golden
     // dump is unaffected. Damla: kalıp + flat + REHBER, all three in the output.
-    pattern.rehber = rehber::build(pattern, spec.fabric);
+    pattern.rehber = rehber::build(pattern, spec.fabric, m);
     // F5-parca: gerekcesiz parca kalmaz (rol tabanli doldurma; ozgul sayili
     // gerekceler kaynaklarinda yazildi). Kapi: parca_sayisi_check.
     fillGerekce(pattern);

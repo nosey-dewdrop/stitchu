@@ -19,6 +19,7 @@
 // missing. printpack's "KUMAS SECIMI" page (NMSU G-401 / SDSU / UNL) is likewise
 // not overwritten: this extends it with the numbers only the draft knows.
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -26,6 +27,7 @@
 #include "fabricease.hpp"
 #include "geometry.hpp"
 #include "measurements.hpp"
+#include "sizechart.hpp"
 
 namespace stitchu {
 
@@ -43,6 +45,15 @@ inline std::string num(int v) { return std::to_string(v); }
 inline bool nameHas(const PatternPiece& p, const char* needle) {
     return p.name.find(needle) != std::string::npos;
 }
+
+// ── FABRIC WEIGHT CLASS (M5-rehber) ─────────────────────────────────────────
+// g/m2 is measured by ISO 3801; the class EDGES below are a published trade
+// band (contract/guide-sources.json `fabricuk-gsm-bands`), not a standard. They
+// are the only weight bands that were found written down anywhere, and they are
+// used for ONE thing: choosing which row of the needle chart to read. Nothing
+// in the drafted geometry touches them.
+inline constexpr double kLightMaxGSM = 150.0;
+inline constexpr double kMediumMaxGSM = 350.0;
 
 // ── THE 10 cm STRETCH TEST ──────────────────────────────────────────────────
 // The buyer cannot know their fabric's stretch class from the bolt end, so the
@@ -63,7 +74,68 @@ inline StretchWindow windowFor(const FabricAxis& f) {
     return {FabricBand::kStretchyMaxPct, 100.0};
 }
 
-inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const FabricAxis& axis) {
+// The SMALLEST bust step the EU chart takes anywhere in its run. Read off the
+// chart itself (contract/tables.json draft.euSizeChart, burda "Damen
+// Maßtabellen") rather than written down here: the chart steps 4 cm up to EU46
+// and 6 cm above it, and the smallest step is the conservative one to compare a
+// shrink against.
+inline double smallestBustStepCM() {
+    const auto& chart = euSizeChart();
+    double best = -1.0;
+    for (size_t i = 1; i < chart.size(); ++i) {
+        const double d = chart[i].body.bustCM - chart[i - 1].body.bustCM;
+        if (d > 0.0 && (best < 0.0 || d < best)) best = d;
+    }
+    return best;
+}
+
+// Minimum RADIUS OF CURVATURE along a path, in mm, with the command index it
+// occurred at. A cubic's curvature is k = |x'y'' - y'x''| / (x'^2+y'^2)^1.5 and
+// R = 1/k; straight segments have infinite R and are skipped. Sampled, not
+// solved: 21 stations per curve is far finer than any seam allowance decision.
+// Returns -1 when the path has no curvature at all (an all-straight piece).
+inline double minCurveRadiusMM(const std::vector<PathCommand>& path) {
+    double best = -1.0;
+    Point cur{0, 0};
+    for (const PathCommand& c : path) {
+        if (c.type == CmdType::Curve) {
+            const Point p0 = cur, p1 = c.cp1, p2 = c.cp2, p3 = c.to;
+            for (int i = 0; i <= 20; ++i) {
+                const double t = i / 20.0, u = 1.0 - t;
+                const double dx = 3 * u * u * (p1.x - p0.x) + 6 * u * t * (p2.x - p1.x) +
+                                  3 * t * t * (p3.x - p2.x);
+                const double dy = 3 * u * u * (p1.y - p0.y) + 6 * u * t * (p2.y - p1.y) +
+                                  3 * t * t * (p3.y - p2.y);
+                const double ddx = 6 * u * (p2.x - 2 * p1.x + p0.x) + 6 * t * (p3.x - 2 * p2.x + p1.x);
+                const double ddy = 6 * u * (p2.y - 2 * p1.y + p0.y) + 6 * t * (p3.y - 2 * p2.y + p1.y);
+                const double sp = std::sqrt(dx * dx + dy * dy);
+                if (sp < 1e-6) continue;               // a stationary point carries no radius
+                const double cross = std::fabs(dx * ddy - dy * ddx);
+                if (cross < 1e-9) continue;            // locally straight
+                const double r = sp * sp * sp / cross;
+                if (r < 1e-3) continue;                // a cusp is not a sewing radius
+                if (best < 0.0 || r < best) best = r;
+            }
+        }
+        if (c.type != CmdType::Close) cur = c.to;
+    }
+    return best;
+}
+
+// One measured place where THIS pattern will fight the sewer. `ratio` is the
+// point's own limit ratio — how far the measurement has gone past the number
+// that makes it hard — and it is DIMENSIONLESS on purpose, so four different
+// difficulties can be put in one order and the order can be printed and argued
+// with. 1.0 always means "nothing to do here".
+struct HardPoint {
+    double ratio = 0.0;
+    std::string id, text, basis;
+};
+
+inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const FabricAxis& axis,
+                                      const BodyMeasurementsSnapshot& body) {
+    const double bustCM = body.bustCM;
+    const double sizeStepCM = smallestBustStepCM();
     std::vector<GuideAdvice> out;
     const auto add = [&out](const char* id, std::string text, std::string basis) {
         out.push_back({id, std::move(text), std::move(basis)});
@@ -171,17 +243,77 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
                 num(blen, 1) + ";bendingRigidityUNm=" + num(rigid, 3) + ";fast=2");
     }
 
-    // 3 — NEEDLE. UNL "Sewing With Knits" (knowledge/stitchu.db fabrics row 5).
-    if (knit) {
+    // 3 — NEEDLE, KEYED TO THIS BOLT'S OWN WEIGHT (M5-rehber, 2026-09-03).
+    //
+    // ⚠ WHAT WAS WRONG BEFORE. This section printed ONE frozen sentence per
+    // fabric WORD: every woven got "universal 80/12 for a medium woven" and
+    // every knit got "75/11 to 80/12". The catalog carries a MEASURED weight
+    // for all five shipped bolts (87 / 110 / 140 / 200 / 230 g/m2) and the
+    // sentence ignored it — an 87 g/m2 cotton lawn was being told to use the
+    // medium-woven needle. The number was there and the advice did not read it.
+    //
+    // WHAT IT DOES NOW. Two published tables, composed:
+    //   weight class  <- g/m2, ISO 3801 bands (Fabric UK, `fabricuk-gsm-bands`)
+    //   size band     <- weight class (University of Fashion needle chart)
+    //   point type    <- knit vs woven (SCHMETZ needle guide)
+    // and for a knit the SIZE comes from UNL "Sewing With Knits", which
+    // publishes knit sizes directly (75/11 light, 80/12 medium, 90/14 heavy) —
+    // a knit-specific table beats a general one.
+    //
+    // ⛔ WHAT IT REFUSES TO DO. Inside a weight class the chart gives a BAND
+    // (light = 60/8 .. 70/10), not one number. Three of the five shipped bolts
+    // (lawn 87, challis 110, crepe 140) land in the SAME band, so they get the
+    // SAME needle band — and that is printed as it stands. Splitting the band
+    // finer to make five bolts look like five answers would be an invented
+    // sub-rule, which is the one thing this file is not allowed to do.
+    // A bolt with NO declared weight gets no size at all: the refusal names
+    // itself and hands over the next step (weigh a 10x10 cm swatch).
+    if (!(gsm > 0.0)) {
         add("sew.needle",
-            "Needle: ballpoint / stretch, 75/11 to 80/12. A sharp needle cuts the knit "
-            "loops and the seam runs like a ladder.",
-            "source:unl-knits");
+            std::string("Needle: I cannot name a size. The published chart keys needle size to "
+                        "fabric WEIGHT and this fabric was chosen without one, so any number here "
+                        "would be invented. Point type is safe to name: ") +
+                (knit ? "ballpoint / jersey, because a sharp point cuts the knit loops and the "
+                        "seam ladders."
+                      : "universal, the general woven point.") +
+                " Next step: read the g/m2 off the bolt end, or cut a 10 cm x 10 cm swatch, "
+                "weigh it in grams and multiply by 100 — then come back and pick the size for "
+                "that weight.",
+            std::string("source:schmetz-needle-types;computed:weightDeclared=0;swatchCM=10;"
+                        "gsmFactor=100;birim=g/m2;cls=") +
+                (knit ? "knit" : "woven"));
     } else {
-        add("sew.needle",
-            "Needle: universal 80/12 for a medium woven; go finer for a light silk or "
-            "satin and heavier for a canvas.",
-            "source:nmsu-g401");
+        const char* wclass = gsm < kLightMaxGSM    ? "light"
+                             : gsm < kMediumMaxGSM ? "medium"
+                                                   : "heavy";
+        const std::string classBasis = ";weightGSM=" + num(gsm, 1) + ";weightClass=" + wclass +
+                                       ";lightMaxGSM=" + num(kLightMaxGSM, 0) +
+                                       ";mediumMaxGSM=" + num(kMediumMaxGSM, 0) + ";birim=g/m2";
+        if (knit) {
+            // UNL publishes the knit sizes one per class — a single number, not a band.
+            const char* pick = gsm < kLightMaxGSM ? "75/11" : gsm < kMediumMaxGSM ? "80/12" : "90/14";
+            add("sew.needle",
+                std::string("Needle: ballpoint / jersey, size ") + pick + ". This bolt weighs " +
+                    num(gsm, 1) + " g/m2, which is a " + wclass +
+                    "-weight knit, and the extension table gives 75/11 light, 80/12 medium, "
+                    "90/14 heavy. Use the ballpoint point, not a sharp one: a sharp needle cuts "
+                    "the loops and the seam runs like a ladder.",
+                "source:unl-knits+fabricuk-gsm-bands+schmetz-needle-types;computed:needle=" +
+                    std::string(pick) + classBasis);
+        } else {
+            // The needle chart gives a BAND per weight class. Printed as a band.
+            const char* lo = gsm < kLightMaxGSM ? "60/8" : gsm < kMediumMaxGSM ? "75/11" : "100/16";
+            const char* hi = gsm < kLightMaxGSM ? "70/10" : gsm < kMediumMaxGSM ? "95/15" : "110/18";
+            add("sew.needle",
+                std::string("Needle: universal, size ") + lo + " to " + hi + ". This bolt weighs " +
+                    num(gsm, 1) + " g/m2, so by weight it is a " + wclass +
+                    "-weight cloth (light under " + num(kLightMaxGSM, 0) + " g/m2, medium up to " +
+                    num(kMediumMaxGSM, 0) + "), and that is the size band the chart publishes for "
+                    "it. The chart gives a band and not one number, so this does too — start at "
+                    "the fine end on a scrap and go up only if the stitch skips.",
+                "source:uof-needle-sizes+fabricuk-gsm-bands+schmetz-needle-types;computed:needleLow=" +
+                    std::string(lo) + ";needleHigh=" + hi + classBasis);
+        }
     }
 
     // 4 — STITCH. ISO 4915 class, plus the millimetres UNL publishes for knits.
@@ -234,13 +366,64 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
                 "the strip very slightly on inner curves so it lies flat.",
             "source:coats-seams;computed:bindingPieces=" + num(bindingPieces));
     }
+    // ⭐ M5-rehber — TELA IS NOW ANSWERED IN EVERY DRAFT, AND IT CARRIES A CEILING.
+    // Before: the section appeared only when a shaped piece existed, so "do I
+    // need interfacing?" simply went unanswered on the most common draft of all
+    // (a plain dress). "No" is an answer and it saves the buyer a purchase.
+    // The ceiling is NMSU C208's rule ("select an interfacing that is the same
+    // weight or lighter") turned into this bolt's own number.
     if (facingPieces > 0) {
         add("sew.interfacing",
             "Tela / interfacing: this draft has " + num(facingPieces) +
                 " shaped piece(s) that hold a shape (facing, collar, band or cuff). Fuse "
-                "a lightweight interfacing to each one — without it they roll to the "
-                "outside no matter how well they are sewn.",
-            "computed:facingPieces=" + num(facingPieces));
+                "an interfacing to each one — without it they roll to the outside no matter "
+                "how well they are sewn." +
+                (gsm > 0.0
+                     ? " Weight ceiling: the same as the cloth or lighter, so at most " +
+                           num(gsm, 1) +
+                           " g/m2. A heavier interfacing takes the garment over and the piece "
+                           "stops looking like the fabric you chose."
+                     : std::string(" Weight ceiling: the same as the cloth or lighter — this "
+                                   "fabric has no declared g/m2, so weigh a 10 cm x 10 cm swatch "
+                                   "(grams x 100 = g/m2) and stay at or under that number.")),
+            "source:nmsu-c208;computed:facingPieces=" + num(facingPieces) +
+                (gsm > 0.0 ? ";weightGSM=" + num(gsm, 1) + ";birim=g/m2"
+                           : std::string(";weightDeclared=0;swatchCM=10;gsmFactor=100;birim=g/m2")));
+    } else {
+        add("sew.interfacing",
+            "Tela / interfacing: none, and that is measured, not skipped. This draft has " +
+                num(facingPieces) +
+                " pieces of the kind that carry interfacing (facing, collar, band, cuff, "
+                "placket, waistband) — the shapes are held by seams and darts here. Do not "
+                "buy any.",
+            "source:nmsu-c208;computed:facingPieces=" + num(facingPieces));
+    }
+
+    // ⭐ M5-rehber — ÖN YIKAMA. The number is not borrowed from a shrinkage
+    // table (none was found with a citation for these five bolts): it is this
+    // pattern's OWN arithmetic. The draft knows the bust it was cut to and the
+    // chart knows its own smallest step, so the question "how much shrink costs
+    // me a whole size" has an exact answer for THIS garment, and it is small.
+    if (bustCM > 0.0 && sizeStepCM > 0.0) {
+        const double pct = 100.0 * sizeStepCM / bustCM;
+        add("prep.prewash",
+            "Prewash before you cut. This pattern was drafted to a " + num(bustCM, 1) +
+                " cm bust, and the smallest step in the size chart it grades on is " +
+                num(sizeStepCM, 1) + " cm. So a crosswise shrink of just " + num(pct, 1) +
+                "% (" + num(sizeStepCM, 1) +
+                " cm) puts the finished garment a whole size down — that is how little it "
+                "takes. Wash and dry the cloth exactly the way you will wash the finished "
+                "garment, then press it, then cut. After cutting there is nothing to do "
+                "about it.",
+            "computed:bustCM=" + num(bustCM, 1) + ";sizeStepCM=" + num(sizeStepCM, 1) +
+                ";oneSizeShrinkPct=" + num(pct, 1));
+    } else {
+        add("prep.prewash",
+            "Prewash before you cut: wash and dry the cloth the way you will wash the "
+            "finished garment. I cannot tell you how much shrink costs you a size here, "
+            "because this draft came without a bust measurement to compare against. Next "
+            "step: draft to a size from the chart and this sentence gets its number.",
+            "computed:bustCM=" + num(bustCM, 1) + ";sizeStepCM=" + num(sizeStepCM, 1));
     }
 
     // 8 — CUT PLAN + YARDAGE, straight off the draft's own estimate. F6: the
@@ -368,6 +551,185 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
                 "shaping. This engine does not remove it yet; if you are using a super-"
                 "stretch knit, sew the dart shallower or leave it out and check the fit.",
             "computed:superMinPct=" + num(FabricBand::kSuperMinPct, 0));
+    }
+
+    // ── 10 — BU GİYSİNİN BU KUMAŞTAKİ ZOR NOKTALARI (M5-rehber) ─────────────
+    //
+    // Damla, madde 10: "bu giysinin bu kumaştaki üç zor noktası — ölçülen
+    // sayıyla." Not tips in general: the places where THIS draft, on THIS bolt,
+    // has already gone past the number that makes a step hard. Every candidate
+    // below is measured off the finished pieces and carries a dimensionless
+    // limit ratio, so they can be ordered and the order can be checked. Only
+    // the ones that are MEASURABLE on this draft are built (a skirt has no
+    // sleeve cap, so it has no cap-ease point — an absent measurement is
+    // absent, never filled in).
+    {
+        std::vector<HardPoint> hp;
+
+        // (a) CAP EASE — the classic one. The sleeve head is longer than the
+        // hole it goes into, and the difference has to be eased in without a
+        // pleat. Measured: the sleeve_cap edge against the armhole edges of the
+        // bodice, both on the SEWING line, both from the drafted geometry.
+        double capMM = 0.0, armMM = 0.0;
+        int capEdges = 0, armEdges = 0;
+        for (const PatternPiece& p : pattern.pieces) {
+            for (const EdgeRole& r : p.edgeRoles) {
+                if (r.role == "sleeve_cap") { capMM += edgeLengthOf(p, r); capEdges++; }
+                else if (r.role.rfind("armhole", 0) == 0) { armMM += edgeLengthOf(p, r); armEdges++; }
+            }
+        }
+        if (capEdges > 0 && armEdges > 0 && armMM > 1.0) {
+            const double easeMM = capMM - armMM;
+            const double easePct = 100.0 * easeMM / armMM;
+            hp.push_back({1.0 + std::fabs(easeMM) / armMM, "zor.capEase",
+                          "Zor nokta — kol kapağı / cap ease: the sleeve cap measures " +
+                              num(capMM, 1) + " mm and the armhole it goes into measures " +
+                              num(armMM, 1) + " mm, so " + num(std::fabs(easeMM), 1) + " mm (" +
+                              num(std::fabs(easePct), 1) + "%) " +
+                              (std::fabs(easeMM) < 1.0
+                                   ? "apart: they MATCH. Nothing to ease in — pin notch to notch "
+                                     "and sew. If you find fullness at the machine, you have "
+                                     "stretched one of the two curves handling it; press it back "
+                                     "rather than pleating it away."
+                                   : (easeMM > 0
+                                          ? "of cap has to disappear into the armhole. That "
+                                            "fullness collects between the cap notches: run two "
+                                            "rows of long stitches there, draw them up until the "
+                                            "cap matches the armhole, and distribute it before you "
+                                            "pin — pinned first, it becomes a pleat."
+                                          : "of armhole is LONGER than the cap. Do not stretch the "
+                                            "cap to reach: ease the ARMHOLE onto it between the "
+                                            "notches, or the shoulder will pull.")),
+                          "computed:capMM=" + num(capMM, 1) + ";armholeMM=" + num(armMM, 1) +
+                              ";capEaseMM=" + num(std::fabs(easeMM), 1) + ";capEasePct=" +
+                              num(std::fabs(easePct), 1) + ";capEdges=" + num(capEdges) +
+                              ";armholeEdges=" + num(armEdges)});
+        }
+
+        // (b) CLIPPING — the tightest curve on the paper against the seam
+        // allowance that has to lie flat inside it. Ratio > 1 means the
+        // allowance is wider than the radius it is turning through: it CANNOT
+        // lie flat unclipped. This is geometry, not taste.
+        //
+        // ⚠ MEASURED ON `commands`, THE SEWING LINE — NOT on cutLine. The cut
+        // line is emitted already FLATTENED to straight segments, so it carries
+        // no curvature at all and the first version of this point silently
+        // never fired (candidates=3, and the clipping one was missing from all
+        // five bolts). The allowance is folded inside the SEWN curve anyway, so
+        // the sewing line is also the right line to ask.
+        double tightR = -1.0, tightSA = 0.0;
+        std::string tightName;
+        for (const PatternPiece& p : pattern.pieces) {
+            if (p.cutLine.empty()) continue;   // a strip cut to a note has no drafted curve
+            const double r = minCurveRadiusMM(p.commands);
+            if (r > 0.0 && (tightR < 0.0 || r < tightR)) {
+                tightR = r; tightName = p.name; tightSA = p.seamAllowance;
+            }
+        }
+        const double saMM = pattern.pieces.empty() ? 0.0 : pattern.pieces.front().seamAllowance;
+        if (tightR > 0.0 && tightSA > 0.0) {
+            const double saCurve = tightSA;
+            hp.push_back({saCurve / tightR, "zor.clip",
+                          "Zor nokta — çentikleme / clipping: the tightest curve in this pattern "
+                          "is on '" + tightName + "', radius " + num(tightR, 1) +
+                              " mm, and the seam allowance you have to fold inside it is " +
+                              num(saCurve, 1) + " mm. " +
+                              (saCurve / tightR >= 1.0
+                                   ? "The allowance is WIDER than the curve it turns through, so it "
+                                     "physically cannot lie flat: clip into it (stopping 2 mm short "
+                                     "of the stitch line) before you turn the piece, or the seam "
+                                     "will pucker and no amount of pressing will fix it."
+                                   : "The allowance still fits inside the curve, but only just — "
+                                     "clip it if the pressed seam pulls.") +
+                              " Ratio allowance/radius = " + num(saCurve / tightR, 2) + ".",
+                          "computed:tightRadiusMM=" + num(tightR, 1) + ";piece=" + tightName +
+                              ";seamAllowanceMM=" + num(saCurve, 1) + ";clipStopMM=2;ratio=" +
+                              num(saCurve / tightR, 2)});
+        }
+
+        // (c) BOLT ROOM — how much spare width is left across the grain once
+        // the widest piece is laid down. This is the difference between a calm
+        // cutting table and finding out at the fold.
+        if (axis.widthDeclared() && widestMM > 0.0) {
+            const double sparMM = boltMM - widestMM;
+            hp.push_back({widestMM / boltMM, "zor.boltRoom",
+                          "Zor nokta — top eni: the widest piece is '" + widestName + "' at " +
+                              num(widestMM, 0) + " mm across the grain and your bolt is " +
+                              num(boltMM, 0) + " mm wide, which leaves " + num(sparMM, 0) +
+                              " mm of spare width" +
+                              (sparMM < 0.0
+                                   ? " — that is NEGATIVE, the piece does not fit and no layout "
+                                     "saves it."
+                                   : (sparMM < 100.0
+                                          ? " — under 100 mm, so lay this piece FIRST and square "
+                                            "the fabric before anything else; a crooked grain here "
+                                            "costs you the piece."
+                                          : ". There is room; lay the widest piece first anyway.")) +
+                              " Ratio piece/bolt = " + num(widestMM / boltMM, 2) + ".",
+                          "computed:widestPieceMM=" + num(widestMM, 0) + ";widestPiece=" +
+                              widestName + ";boltMM=" + num(boltMM, 0) + ";spareMM=" +
+                              num(sparMM, 0) + ";tightSpareMM=100;ratio=" +
+                              num(widestMM / boltMM, 2)});
+        }
+
+        // (d) SMALL PIECES — when two seam allowances on opposite sides of a
+        // piece are together wider than the piece, there is no flat middle left
+        // and the piece has to be handled differently. Ratio = 2*SA / smallest
+        // dimension.
+        double smallDim = -1.0, smallSA = 0.0;
+        std::string smallName;
+        for (const PatternPiece& p : pattern.pieces) {
+            // A binding/strip piece is cut to a WRITTEN note (its cutInstruction
+            // carries every allowance already) and is not laid out as a shape,
+            // so it is not a "small piece" difficulty. It also carries its own
+            // 6 mm allowance, not the bodice's 15 mm -- charging it the bodice
+            // number made a bias binding look like the hardest thing in the box
+            // on all five bolts.
+            if (p.bitirme || p.cutLine.empty()) continue;
+            const Rect box = boundingBox(p.commands);
+            const double d = std::min(box.width, box.height);
+            if (d > 0.1 && (smallDim < 0.0 || d < smallDim)) {
+                smallDim = d; smallName = p.name; smallSA = p.seamAllowance;
+            }
+        }
+        if (smallDim > 0.0 && smallSA > 0.0) {
+            const double saSmall = smallSA;
+            hp.push_back({2.0 * saSmall / smallDim, "zor.smallPiece",
+                          "Zor nokta — küçük parça: the smallest cut piece is '" + smallName +
+                              "', " + num(smallDim, 0) + " mm across its narrow side, and it "
+                              "carries a " + num(saSmall, 1) +
+                              " mm allowance on each side — " + num(2.0 * saSmall, 1) +
+                              " mm of the " + num(smallDim, 0) + " mm is allowance. " +
+                              (2.0 * saSmall / smallDim >= 1.0
+                                   ? "That leaves NO fabric between the two stitch lines: sew this "
+                                     "piece to its neighbour before you trim, never after."
+                                   : "Keep the paper on it until the moment you sew — small pieces "
+                                     "are the ones that get cut a size off.") +
+                              " Ratio allowances/width = " + num(2.0 * saSmall / smallDim, 2) + ".",
+                          "computed:smallestDimMM=" + num(smallDim, 0) + ";piece=" + smallName +
+                              ";seamAllowanceMM=" + num(saSmall, 1) + ";allowancesMM=" +
+                              num(2.0 * saSmall, 1) + ";ratio=" + num(2.0 * saSmall / smallDim, 2)});
+        }
+
+        // Hardest first, by each point's own limit ratio. THREE are printed —
+        // the card asks for three, and a list of everything is a list of
+        // nothing. The summary says how many were measured, so a fourth one
+        // that lost is not hidden, it is counted.
+        std::stable_sort(hp.begin(), hp.end(),
+                         [](const HardPoint& a, const HardPoint& b) { return a.ratio > b.ratio; });
+        const int shown = static_cast<int>(std::min<size_t>(3, hp.size()));
+        if (!hp.empty()) {
+            add("zor.ozet",
+                "Üç zor nokta: " + num(static_cast<int>(hp.size())) +
+                    " difficulties were measured on this pattern in this fabric and the " +
+                    num(shown) +
+                    " hardest are printed below, ordered by how far each one has gone past its "
+                    "own limit (1.00 would mean nothing to do). They are the places this "
+                    "particular garment fights back — not general sewing advice.",
+                "computed:candidates=" + num(static_cast<int>(hp.size())) + ";shown=" + num(shown) +
+                    ";neutralRatio=1.00");
+        }
+        for (int i = 0; i < shown; ++i) add(hp[i].id.c_str(), hp[i].text, hp[i].basis);
     }
 
     return out;
