@@ -43,6 +43,7 @@ export const STRINGS = {
   'create.measure.privacy': { en: 'Stored in this browser only. Nothing is uploaded.', tr: 'Yalnızca bu tarayıcıda saklanır. Hiçbir şey yüklenmez.' },
   'create.measure.numerror': { en: 'Enter a number in centimeters.', tr: 'Santimetre cinsinden bir sayı gir.' },
   'create.measure.rangeerror': { en: "That doesn't look like a {label} in cm (expected {min}–{max}).", tr: 'Bu cm cinsinden bir {label} gibi durmuyor ({min}–{max} arası bekleniyor).' },
+  'create.measure.band': { en: 'accepted range: {min}–{max} cm', tr: 'kabul edilen aralık: {min}–{max} cm' },
   'create.back': { en: 'Back', tr: 'Geri' },
   'create.next': { en: 'Next, {label}', tr: 'Sıradaki, {label}' },
   'create.skip': { en: 'Skip, pick your garment', tr: 'Atla, kıyafetini seç' },
@@ -207,7 +208,8 @@ export const STRINGS = {
   'result.fabric.avoid': { en: 'avoid {name} here, ', tr: 'burada {name} kullanma, ' },
   'result.fabric.avoidnote': { en: 'works against this shape ({drape}).', tr: 'bu forma ters çalışır ({drape}).' },
   'result.legend': { en: 'How to read the pieces: OUTER solid line = cutting line (seam allowance included) · inner fine line = sewing line · dashed burgundy = darts and fold lines (they are drawn dashed on purpose) · arrow = grainline, align it with the fabric grain.', tr: 'Parçalar nasıl okunur: DIŞ kalın çizgi = kesim hattı (dikiş payı dahil) · içteki ince çizgi = dikiş hattı · kesikli vişne = pens ve katlama yerleri (bilerek kesiklidir) · ok = boy iplik yönü, kumaşın boyuna hizalanır.' },
-  'result.blocked': { en: 'This draft did not pass the safety checks, so it cannot be printed. The most common cause is a measurement typo (a waist larger than the bust, a hip smaller than the waist), please re-check the seven measurements you entered. If they are right, the fault is ours: the combination has been logged in your browser console.', tr: 'Bu çizim güvenlik kontrollerinden geçemedi, o yüzden yazdırılamaz. En sık neden bir ölçü yazım hatası (belin göğüsten büyük, kalçanın belden küçük girilmesi), lütfen yedi ölçünü tekrar kontrol et. Ölçüler doğruysa hata bizde: kombinasyon tarayıcı konsoluna kaydedildi.' },
+  'result.blocked': { en: 'The engine refused this draft and will not print it. Here is exactly which check it failed, in the engine\u2019s own words:', tr: 'Motor bu çizimi reddetti ve yazdırmayacak. Hangi kontrolden geçemediği, motorun kendi cümlesiyle, aşağıda:' },
+  'result.blocked.next': { en: 'Next step: if a measurement above is wrong, go back and fix that one \u2014 a waist larger than the bust or a hip smaller than the waist is the usual cause. If every measurement is right, this is our gap, not yours: the body is outside what the engine can draft today.', tr: 'Sonraki adım: yukarıdaki ölçülerden biri yanlışsa geri dönüp onu düzelt — belin göğüsten büyük ya da kalçanın belden küçük olması en sık sebep. Ölçülerin hepsi doğruysa eksik bizde, sende değil: bu gövde motorun bugün çizebildiğinin dışında.' },
 
   // sewing companion (web/js/sewing.js): why this fabric + construction order.
   'sew.whyfabric': { en: 'Why this fabric', tr: 'Neden bu kumaş' },

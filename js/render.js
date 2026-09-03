@@ -166,11 +166,33 @@ export function renderResult(container, result) {
   const p = result.pattern;
 
   if (result.issues.length) {
+    // ⭐ M5-ret — RET GEREKÇESİ EKRANDA, KONSOLDA DEĞİL.
+    //
+    // MEASURED 2026-09-04 (hakem turu 1, ek bulgu). Uç bir gövdede çizim
+    // reddedilince alıcının gördüğü TEK cümle "en sık neden bir ölçü yazım
+    // hatası" idi; motorun kendi hükümleri ("[sideseam] Bodice: ...") sadece
+    // console.error'a basılıyordu. Bir alıcı tarayıcı konsolunu açmaz. Sonuç:
+    // ret suçu kullanıcıya atan, gerekçesiz ve çıkışsız bir ekrandı — üstelik
+    // bu reponun kendi ilan ettiği "adıyla reddet" kültürünün tam tersi.
+    // Motor gerekçeyi ZATEN üretiyor ve wire'da taşıyor (bindings.cpp:344,
+    // issues[] = "[kural] Parça: ayrıntı"); tek eksik onu basmaktı.
     const box = document.createElement('div');
     box.className = 'issues-box';
     const head = document.createElement('p');
     head.textContent = t('result.blocked');
     box.appendChild(head);
+    const list = document.createElement('ul');
+    list.className = 'issues-list';
+    for (const iss of result.issues) {
+      const li = document.createElement('li');
+      li.textContent = String(iss);
+      list.appendChild(li);
+    }
+    box.appendChild(list);
+    const next = document.createElement('p');
+    next.className = 'issues-next';
+    next.textContent = t('result.blocked.next');
+    box.appendChild(next);
     console.error('stitchu validation issues:', result.issues);
     container.appendChild(box);
     return;

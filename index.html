@@ -35,17 +35,39 @@
   #silk{position:fixed;inset:0;width:100%;height:100vh;display:block;z-index:0}
   /* Canonical header floats over the hero canvas on the landing only; the bar's
      own height/padding/font come from shared-header.css (one source, no drift). */
-  .sh-header{position:fixed;top:0;left:0;z-index:6}
+  /* MEASURED 2026-09-04: the shared header is background:transparent, which is
+     right on the 15 white pages and wrong on the ONE page that has wallpaper.
+     Over the gingham the nav (Create · Closet · Benchmark · API · EN · TR) had
+     no ground of its own and dissolved into the checks. The bar gets the same
+     white + 1px bb-line the footer already wears — no new idea, the page's own
+     rule applied to the top edge too. */
+  .sh-header{position:fixed;top:0;left:0;z-index:6;background:#fff;border-bottom:1px solid var(--bb-line)}
 
-  .hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:44px 48px 56px}
-  .col{max-width:76ch;text-align:center}
+  .hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:104px 48px 56px}
+  /* ⭐ OKUMA KATMANI — DESENİN ÜSTÜNDE METİN OKUNMAZ.
+     MEASURED 2026-09-04 (headless Chrome, 1440x1000, live site): the hero copy
+     sat DIRECTLY on the fixed gingham canvas. Every contrast number this page
+     was designed against (#1f3a5f / #2b4a6b) is an AA figure computed against
+     WHITE; on a #8fbfe8 check the same ink has no guaranteed ratio at all,
+     because half the glyph area lands on a dark square. 'WHAT IS IT?' and
+     'UNDER THE HOOD' were the worst hit. The fix is not a darker ink (that
+     would fight the wallpaper) but an OPAQUE ground, which restores the very
+     assumption the AA numbers were computed under. The card is the page's own
+     .paper/.card signature (white, 1px --bb-line, same shadow), so the entry
+     now wears what the rest of the site already wears. The wallpaper is not
+     removed: it frames the card instead of running under the words. */
+  .col{position:relative;z-index:3;max-width:76ch;text-align:center;
+    background:#fff;border:1px solid var(--bb-line);
+    box-shadow:0 16px 40px rgba(63,116,168,.2);
+    padding:34px 40px 38px}
+  @media (max-width:560px){ .hero{padding:92px 18px 40px} .col{padding:24px 20px 26px} }
   h1{font-family:'Didot','Bodoni 72',Georgia,serif;font-size:44px;line-height:1.1;font-weight:400;margin:0 auto 18px;max-width:22ch;color:var(--navy)}
   h1 em{font-style:italic}
-  .lead{font-size:14.5px;line-height:1.5;max-width:62ch;margin:0 auto 20px;color:#2b4a6b}
+  .lead{font-size:15px;line-height:1.6;max-width:62ch;margin:0 auto 20px;color:var(--navy)}
   .lead b{font-weight:700}
   .items{max-width:66ch;margin:4px auto 0;text-align:left}
-  .item{font-size:13px;line-height:1.5;margin-bottom:13px;color:#2b4a6b}
-  .item .lbl{display:block;color:var(--bb-deep);font-weight:700;text-transform:uppercase;letter-spacing:1.6px;font-size:10px;margin-bottom:3px}
+  .item{font-size:14px;line-height:1.6;margin-bottom:14px;color:var(--navy)}
+  .item .lbl{display:block;color:#2f5f8c;font-weight:700;text-transform:uppercase;letter-spacing:1.6px;font-size:11px;margin-bottom:4px}
   .item b{font-weight:700}
   /* CTA look lives in css/shared-button.css (.sb-btn). Here: layout only. */
   .cta{margin-top:22px}
@@ -62,7 +84,11 @@
   .betamsg{min-height:20px;font-size:13px;color:var(--navy);margin-top:4px}
   .apiwait{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
 
-  .btn{position:absolute;z-index:2;filter:drop-shadow(0 6px 12px rgba(63,116,168,.4))}
+  /* MEASURED 2026-09-04: z-index:2 put every strawberry/button ON TOP of the
+     headline and the body copy — decoration collided with the sentence and the
+     sentence lost. Ornament goes UNDER the reading layer (.col is z-index:3);
+     it is also pointer-events:none so it can never eat a click on the form. */
+  .btn{position:absolute;z-index:1;pointer-events:none;filter:drop-shadow(0 6px 12px rgba(63,116,168,.4))}
   .t1{top:5%;right:6%;width:66px;transform:rotate(-10deg)}
   .t2{top:15%;right:13%;width:50px;transform:rotate(12deg)}
   .t3{top:4%;right:17%;width:44px;transform:rotate(6deg)}

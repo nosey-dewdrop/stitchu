@@ -52,14 +52,14 @@ T('garment', 'dress', 'dress', 'gown', 'elbise');
 T('garment', 'skirt', 'skirt', 'etek');
 T('garment', 'top', 'top', 'blouse', 'bluz', 'ust');
 
-T('neckline', 'crew', ['crew', 'neck'], 'crew', ['bisiklet', 'yaka']);
-T('neckline', 'scoop', 'scoop', ['oval', 'yaka']);
+T('neckline', 'crew', ['crew', 'neck'], ['crew', 'neckline'], 'crew', ['bisiklet', 'yaka']);
+T('neckline', 'scoop', 'scoop', ['scoop', 'neckline'], ['oval', 'yaka']);
 T('neckline', 'vNeck', 'vneck', ['v', 'neck'], ['v', 'neckline'], ['v', 'yaka']);
 T('neckline', 'square', ['square', 'neckline'], ['square', 'neck'], ['kare', 'yaka']);
-T('neckline', 'boat', ['boat', 'neck'], 'boat', 'bateau', ['kayik', 'yaka']);
-T('neckline', 'sweetheart', 'sweetheart', ['kalp', 'yaka']);
-T('neckline', 'halter', 'halter', ['boyundan', 'bagli']);
-T('neckline', 'cowl', 'cowl', ['dokumlu', 'yaka']);
+T('neckline', 'boat', ['boat', 'neck'], ['boat', 'neckline'], 'boat', 'bateau', ['kayik', 'yaka']);
+T('neckline', 'sweetheart', ['sweetheart', 'neckline'], 'sweetheart', ['kalp', 'yaka']);
+T('neckline', 'halter', ['halter', 'neckline'], 'halter', ['boyundan', 'bagli']);
+T('neckline', 'cowl', ['cowl', 'neckline'], 'cowl', ['dokumlu', 'yaka']);
 T('neckline', 'pussyBow', ['pussy', 'bow'], ['fiyonk', 'yaka']);
 
 T('sleeveStyle', 'none', 'sleeveless', 'kolsuz', 'strapless', 'straplez',
@@ -150,6 +150,10 @@ T('bardotStyle', 'plain', ['off', 'shoulder'], ['omuz', 'acik'], 'bardot');
 T('hemShape', 'shirttail', 'shirttail', ['shirt', 'tail'], ['gomlek', 'etegi']);
 T('hemShape', 'highLow', ['high', 'low']);
 T('exposedZip', 'centerFront', ['gorunur', 'fermuar'], ['exposed', 'zip'], ['exposed', 'zipper']);
+// "gathered (empire) waist" on a dress = the skirt is gathered into the waist
+// seam. skirtStyle:'gathered' already exists and is already named below by
+// 'gathered skirt'; this is the second NAME of the same value, not a new one.
+T('skirtStyle', 'gathered', ['gathered', 'waist'], ['buzgulu', 'bel']);
 
 // LOAD-TIME LOCK: every table value must exist in the vocabulary (or the two
 // documented conveniences). This is what makes "the parser cannot invent a
@@ -267,6 +271,75 @@ function tokenEsler(tok, want) {
   return govdeler(tok).includes(want);
 }
 
+// ⭐ M5-yon — YÖN KELİMESİ SERBEST KELİME DEĞİL, EKSENİN DEĞERİDİR.
+//
+// MEASURED 2026-09-04, before this function existed:
+//   parsePrompt('... exposed zip at center back')
+//     -> eksenler.exposedZip = 'centerFront'
+//        anlasilmadi ['center' → en yakın primitif: edge,
+//                     'back'   → tek başına bir eksen belirtmiyor]
+// The user wrote the direction OUT LOUD, the axis has a `centerBack` value in
+// engine/vocab.json, and the engine drew the zip on the FRONT while announcing
+// the read as a SUCCESS. That is the worst class of bug in this repo: a silent
+// default wearing the user's own words. A back-zip dress sewn with a front zip
+// is a ruined garment, not a mis-render.
+//
+// ⛔ NOT MENU GROWTH (madde 9). No value and no phrase is added: `centerBack`
+// is already in the vocabulary, it simply had no way to be spoken. The rule is
+// structural and axis-agnostic: IF a matched axis landed on a value whose only
+// difference from a sibling value in the SAME vocabulary enum is the direction
+// word Front/Back, THEN an unconsumed direction token in the sentence is that
+// axis's business, not a free word. It binds, it is consumed, and the read is
+// reported with the user's own words in it.
+const YON = [
+  { yon: 'Front', tokens: ['front', 'onden', 'onde'] },
+  { yon: 'Back', tokens: ['back', 'arka', 'arkada', 'arkadan', 'sirt', 'sirtta'] },
+];
+// 'center'/'orta' rides along with the direction when the value is center-*.
+// It is never a direction on its own, so it can only be consumed as a partner.
+const ORTA = ['center', 'centre', 'orta'];
+
+/** Value in `values` that is `value` with its direction word swapped, or null. */
+function yonKardesi(values, value, yon) {
+  for (const y of YON) {
+    if (y.yon === yon || !value.endsWith(y.yon)) continue;
+    const kardes = value.slice(0, -y.yon.length) + yon;
+    if (values.includes(kardes)) return kardes;
+  }
+  return null;
+}
+
+/** Bind a loose front/back token to the axis whose value it qualifies. */
+function yonNiteleyiciBagla(tokens, used, eksenler) {
+  for (const [field, e] of Object.entries(eksenler)) {
+    const values = (VOCAB[field] && VOCAB[field].values) || [];
+    // Only axes that actually carry a Front/Back pair are eligible.
+    if (!YON.some((y) => e.value.endsWith(y.yon))) continue;
+    let best = -1, bestYon = null, bestD = Infinity;
+    for (let i = 0; i < tokens.length; i++) {
+      if (used[i]) continue;
+      const y = YON.find((v) => v.tokens.some((w) => tokenEsler(tokens[i], w)));
+      if (!y) continue;
+      const d = Math.min(...e.idx.map((j) => Math.abs(j - i)));
+      if (d < bestD) { bestD = d; best = i; bestYon = y.yon; }
+    }
+    if (best === -1) continue;
+    const kardes = e.value.endsWith(bestYon) ? e.value : yonKardesi(values, e.value, bestYon);
+    if (!kardes) continue; // the axis has no sibling in that direction: leave the word loose.
+    const alinan = [best];
+    // A neighbouring 'center'/'orta' belongs to the same phrase.
+    if (kardes.startsWith('center')) {
+      for (let j = Math.max(0, best - 1 - GAP); j <= Math.min(tokens.length - 1, best + 1 + GAP); j++) {
+        if (!used[j] && ORTA.some((w) => tokenEsler(tokens[j], w))) { alinan.push(j); break; }
+      }
+    }
+    for (const j of alinan) used[j] = 'matched';
+    e.value = kardes;
+    e.idx = e.idx.concat(alinan);
+    e.kelime = `${e.kelime} ${alinan.sort((a, b) => a - b).map((j) => tokens[j]).join(' ')}`;
+  }
+}
+
 /**
  * Deterministic parse: free text -> existing spec axes + the honest remainder.
  * Returns { eksenler, anlasilmadi, hesap, bos }.
@@ -308,9 +381,11 @@ export function parsePrompt(text) {
         continue;
       }
       for (const j of picks) used[j] = 'matched';
-      if (!onceki) eksenler[entry.field] = { value: entry.value, kelime };
+      if (!onceki) eksenler[entry.field] = { value: entry.value, kelime, idx: picks.slice() };
     }
   }
+
+  yonNiteleyiciBagla(tokens, used, eksenler);
 
   let eslesen = 0, stop = 0, anlasilmayan = 0;
   for (let i = 0; i < tokens.length; i++) {

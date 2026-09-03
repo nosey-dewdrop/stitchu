@@ -406,9 +406,23 @@ function showMeasurement(index) {
   input.inputMode = 'decimal';
   input.value = initial;
   input.setAttribute('aria-label', `${mLabel} (cm)`);
+  // ⭐ M5-band — KABUL EDİLEN ARALIK, REDDEDİLDİKTEN SONRA DEĞİL ÖNCE SÖYLENİR.
+  // MEASURED 2026-09-04 (hakem turu 1, ek bulgu): alan hiçbir sınır ilan
+  // etmiyordu — ne HTML'de (min/max/type yoktu), ne ekranda. Sihirbaza kol boyu
+  // 185 yazan bir kullanıcı sınırı ancak "İleri"ye bastıktan sonra, bir hata
+  // satırından öğreniyordu; hakem bu yüzden sihirbazın sonuna vardığını sanıp
+  // ölçülerinin kaydedilmediğini gördü. Sayılar YENİ DEĞİL: store.js
+  // MEASUREMENTS tablosunun kendi min/max'ı, tek kaynak, aynı sayı hem ekranda
+  // hem doğrulamada.
+  input.type = 'number';
+  input.min = String(m.min);
+  input.max = String(m.max);
+  input.step = '0.1';
   row.appendChild(input);
   row.appendChild(el('span', 'unit', 'cm'));
   block.appendChild(row);
+  block.appendChild(el('div', 'measure-band',
+    t('create.measure.band', { min: m.min, max: m.max })));
   const error = el('div', 'field-error', '');
   block.appendChild(error);
   block.appendChild(el('p', 'privacy-note', t('create.measure.privacy')));
