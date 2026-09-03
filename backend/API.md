@@ -195,8 +195,19 @@ a size run should drop those, exactly as the web app does.
 ### Errors
 
 Same shape and codes as `/api/draft`. `422 missing_spec` if `spec.garment` is
-absent; `422 invalid_value` if a spec field is outside its vocabulary. Rate
-limits are tighter than draft (one grade fans out to up to ten drafts).
+absent; `422 invalid_value` if a spec field is outside its vocabulary.
+
+### Auth & tiers
+
+| Caller | Header | Limit |
+|--------|--------|-------|
+| Public (web app) | none | 6/min, 60/day per IP |
+| API customer | `x-app-token: <token>` | 20/min per IP (un-capped daily) |
+
+Tighter than draft because one grade fans out to up to ten drafts. Both draft
+and grade sleep behind `PUBLIC_DRAFT=on` for the public tier and answer `403
+draft_closed`; if the rate-limit KV is unbound the public tier fails **closed**
+with `503 draft_closed` rather than serving un-throttled.
 
 ### Example
 
@@ -205,3 +216,135 @@ curl -s https://stitchu-api.<account>.workers.dev/api/grade \
   -H 'content-type: application/json' \
   -d '{"spec":{"garment":"dress","neckline":"sweetheart","shaping":"princess"},"from":"EU34","to":"EU52"}'
 ```
+
+## POST /api/analyze
+
+Read a garment out of a **photo**, a **written description**, or both, and get
+back the reading you then map onto a `/api/draft` spec. This is the only
+endpoint with a per-call cost (it calls Claude vision), so it is the only one
+gated three ways.
+
+### Auth & tiers
+
+| Caller | Header | Extra requirement | Limit |
+|--------|--------|-------------------|-------|
+| Public (web app) | none | `Origin` must be a stitchu page **and** the body must carry a valid `turnstileToken` | 3/min, 15/day per IP |
+| App / API customer | `x-app-token: <token>` | none | 20/min per IP |
+
+Both tiers also pass a single global daily spend cap (`DAILY_ANALYZE_CAP`,
+default 300 analyses); when it is spent the endpoint answers `429
+analysis_paused` for everyone, including the token tier. The public tier is off
+unless the deploy sets `PUBLIC_ANALYZE=on`.
+
+**Native apps (iOS) must use the `x-app-token` path.** The public tier's first
+gate is an `Origin` allow-list of the two web origins, and a request with no
+`Origin` header is refused (`403 forbidden_origin`) — a native URLSession sends
+none. The second gate is a Turnstile browser challenge an app cannot solve.
+Ship the token as a build-time secret (see `App/Stitchu/Secrets.example.txt`,
+which becomes a gitignored `Secrets.swift`), never in the repo.
+
+### Request
+
+```json
+{
+  "image": "<base64 JPEG bytes, no data: prefix>",
+  "mediaType": "image/jpeg",
+  "text": "uzun kollu, dizaltı, düğmeli midi elbise",
+  "turnstileToken": "<public tier only>"
+}
+```
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `image` | base64 string | Optional. Strip the `data:image/jpeg;base64,` prefix. The web client downscales to a 1024 px longest edge at JPEG q0.8 first. |
+| `mediaType` | string | Optional, default `image/jpeg`. One of `image/jpeg`, `image/png`, `image/webp`, `image/gif`; anything else falls back to `image/jpeg`. |
+| `text` | string | Optional, trimmed, **max 500 characters**. |
+| `turnstileToken` | string | Required on the public tier only. |
+
+`image` or `text` must be present — **at least one**. When both arrive, the
+words outrank the photo for any field the words actually state; fields the
+words do not mention are still read from the picture.
+
+### Response `200`
+
+The endpoint returns the Anthropic Messages response **verbatim**, with
+Anthropic's own status code. The garment reading is a JSON object inside the
+first text block:
+
+```json
+{
+  "id": "msg_...",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-opus-4-8",
+  "content": [{ "type": "text", "text": "{\"garment\":\"dress\",\"neckline\":\"sweetheart\", ...}" }],
+  "stop_reason": "end_turn",
+  "usage": { "input_tokens": 1620, "output_tokens": 380 }
+}
+```
+
+So a client does `JSON.parse(data.content[0].text)`; the web client slices from
+the first `{` to the last `}` before parsing, which survives a stray prose
+wrapper, and an iOS client should do the same. The parsed object's fields —
+`garment`, `neckline`, `sleeveStyle`, `sleeveLength`, `skirtStyle`, `length`,
+`topLength`, `shaping`, `waistline`, `fabric`, `hemRuffle`, `keyhole`,
+`fabricName`, `closure`, `collar`, `straps`, `cupSeams`, `sleeveHead`, `yoke`,
+`backDetail`, `ratios`, `outOfVocab`, `details` — are the vision reading. The
+exact schema the model is held to lives in `backend/analyze-core.js` and is
+locked by `engine/tests/prompt_spec_check.mjs`. `garment` is never null;
+anything a dress/skirt/top pattern cannot start from comes back as `other`.
+
+Mapping that reading onto a `/api/draft` spec is the caller's job: `length` maps
+to `skirtLength`, `hemRuffle` to `ruffle`, `keyhole` true/false to
+`"keyhole"`/`"none"`, and `garment: "other"` is not draftable.
+
+### Errors
+
+Two error shapes exist on this endpoint and a client must handle both: the
+newer `{ "error": "<code>", "detail": "<message>" }` and the older
+`{ "error": "<human sentence>" }`. Branch on the HTTP status first.
+
+| Status | Body | When |
+|--------|------|------|
+| `400` | `{"error":"Invalid request"}` | Body is not valid JSON |
+| `400` | `{"error":"invalid_request","detail":"send an image, a text description, or both"}` | Neither `image` nor `text` |
+| `401` | `{"error":"Unauthorized"}` | `x-app-token` sent but wrong, or `APP_TOKEN` unset |
+| `403` | `{"error":"forbidden_origin"}` | No app token and the `Origin` is not a stitchu page |
+| `403` | `{"error":"Photo analysis is not open yet"}` | `PUBLIC_ANALYZE` is off |
+| `403` | `{"error":"verification_failed","detail":"Could not verify this request came from a browser."}` | Turnstile refused (public tier) |
+| `413` | `{"error":"Image too large"}` | `content-length` over 2,800,000 bytes (public tier) |
+| `413` | `{"error":"text_too_long","detail":"text is limited to 500 characters"}` | `text` over 500 characters |
+| `429` | `{"error":"Rate limit exceeded. Please wait."}` | Per-IP fuse (3/min or 15/day public; 20/min token) |
+| `429` | `{"error":"analysis_paused","detail":"..."}` | The global daily spend cap is spent — retrying sooner will not help |
+| other | Anthropic's body | Upstream failures are passed through with Anthropic's status |
+
+A `429` therefore means two different things and they need two different
+sentences to the user: "slow down" for the fuse, "closed until tomorrow" for
+`analysis_paused`.
+
+### Example
+
+```bash
+curl -s https://stitchu-api.<account>.workers.dev/api/analyze \
+  -H 'content-type: application/json' \
+  -H "x-app-token: $STITCHU_APP_TOKEN" \
+  -d "{\"image\":\"$(base64 -i dress.jpg | tr -d '\n')\",\"mediaType\":\"image/jpeg\"}"
+```
+
+Text only, no photo:
+
+```bash
+curl -s https://stitchu-api.<account>.workers.dev/api/analyze \
+  -H 'content-type: application/json' \
+  -H "x-app-token: $STITCHU_APP_TOKEN" \
+  -d '{"text":"sweetheart yaka, prenses dikişli, midi A kesim elbise"}'
+```
+
+## Endpoints this document does not cover
+
+`/api/wall`, `/api/wall/stitch`, `/api/wall/note` (the public stitch wall, off
+unless `PUBLIC_WALL=on`) and `/api/waitlist` are internal to the website and are
+not part of the app/API contract. They are declared in
+`contract/design-tokens.json` under `api.undocumented`, so the gate
+`engine/tests/ios_zemin_check.mjs` can tell "deliberately unpublished" apart
+from "somebody opened an undocumented endpoint".

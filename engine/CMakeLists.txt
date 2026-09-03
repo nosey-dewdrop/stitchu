@@ -428,6 +428,15 @@ add_test(NAME wallet_fuse_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/w
 # api_wire_check: skirtLengthMM API yolunda motora ULAŞIR (backend normalize
 # spec taşır, web=backend aynı mm, 353!=1100 kalıp, 0/atlanmış default aynı).
 add_test(NAME api_wire_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/api_wire_check.mjs)
+
+# iOS ZEMİNİ (2026-09-03). Uygulama web ile aynı arkaplan/fontu kullanacak ve
+# aynı Worker'ı çağıracak. İki sessiz çatlak burada kilitlenir: (1) renk/font
+# değerleri contract/design-tokens.json'dan ÜRETİLİR — web/css/tokens.css bayt
+# bayt aynı, App/Stitchu/Tokens.swift swiftc -parse'tan geçer, CSS'te ilansız
+# elle yazılmış renk/font yığını yok (çırçır sadece aşağı döner); (2) API.md'nin
+# belgelediği her uç worker.js'te GERÇEKTEN var ve worker'daki her /api/ ucu ya
+# belgeli ya da contract.api.undocumented'ta ilan edilmiş.
+add_test(NAME ios_zemin_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/ios_zemin_check.mjs)
 # collar_bridge_check: şema enum'unun HER collar tipi ya köprüde çizilir ya
 # missing.js kartına düşer — peterPan camelCase sessiz-düşme sınıfı ölü.
 add_test(NAME collar_bridge_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/collar_bridge_check.mjs)
