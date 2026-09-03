@@ -787,3 +787,30 @@ hakem notu: `secim.html` hakemin kendi elinde `file://` üzerinden çalıştı �
 `GIRDI/iyi-flat/secim.json` yok. H4'ün manken çizelgesinin tek kaynağı o dosya; uydurma bir çizelgeyle devam etmek §0.7 gereği yasak.
 
 **Damla'nın işi:** `GIRDI/iyi-flat/secim.html` dosyasını çift tıkla, beş flat işaretle, düğmeye bas. İnen `secim.json`'u `GIRDI/iyi-flat/` içine koy. Başka bir şey yok.
+
+---
+
+## M2-bugra kapanışı — bu ağaçta duran ÜÇ KIRMIZI (2026-09-03, `d819d983`)
+
+Bu satır, "ctest yeşil" cümlesinin bir daha kurulamaması için var. M2-bugra
+kapanışında beş kapı kırmızıdan yeşile döndü (`generated_ratchet_check`,
+`vitrin_gercek_check`, `vision_tasima_check`, `vocab_reference_check`,
+`attach_check`). Geriye ADIYLA duran dört kırmızı var:
+
+| kapı | ne diyor | kim kırdı |
+|---|---|---|
+| `flat_artifact_census` | 2 nokta teğet farkı 1°'yi aşıyor: front/back ham, z=1039.800, span bust→waist | `0c1d6b60` — bilerek kırmızı bırakıldı, bedeli commit gövdesinde ölçülü (bel halkası 725.0000 → 737.7779 mm), karar hakemde. **Omuz scye'si DEĞİL, bel halkası** — K1'in kasıtlı set-in kırığıyla ilgisi ölçümle çürütüldü. |
+| `style_check` | STYLE-PIN yok/boş | M2-bugra öncesi, dokunulmadı (hakem K-F) |
+| `sizechart_source_check` | 4 kaynaksız kolon | M2-bugra öncesi, dokunulmadı (hakem K-F) |
+| `figure_check` | `dress_bandeau_circle` pinsiz | M2-bugra öncesi, dokunulmadı (hakem K-F) |
+
+Ayrıca kapıyı düşürmeyen, ama kayıtta duran tek regresyon çizgisi:
+`bugra-blind-compare.mjs` `[HATA]` ön/arka oyuk işaret ihlali **22.5 mm**
+(K1/K4'ten önce 18.4 mm). Hakem K-G: çizgi bir kez ve son kez bu değerde
+duruyor, bir daha YUKARI taşınmaz — sonraki fazın işi onu AŞAĞI indirmek.
+
+Vitrin görselleri hakkında iki kalem, ikisi de M2-bugra ÖNCESİNDEN geliyor ve
+yeniden basımda aynen duruyor (önce/sonra PNG'ler `KOSU/ciktilar/vitrin/`):
+`pattern-dress-eu38.svg` Bodice Front'u sol kenardan kırpıyor, ve bias binding
+şeridinin uzun etiketi sayfanın yarısını kat ederek diğer parçaların üstünden
+geçiyor. Kalıp doğru, YERLEŞİM çirkin. Kapatılmadı, adıyla duruyor.
