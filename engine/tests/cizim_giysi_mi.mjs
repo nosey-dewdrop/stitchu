@@ -643,6 +643,63 @@ console.log('\n--- (h) ayna: her gorunum x = 0 etrafinda simetrik');
   if (!bad) OK(`(h) ${cizimler.length} cizimin hepsi aynali, sag/sol es sayida`);
 }
 
+// ------------------------------------------------- (h2) AYNA KACIGI (hakem K2)
+// M6-vitrin, hakemin devrettigi kalem: "flat'te arka orta dikis TEK cizgi
+// olacak" (referans GIRDI/iyi-flat/adaylar/13-yuksek-bel-a-line.png; onbes
+// satici referansinin onbesinde de arka orta TEK yol ve tam ortadan geciyor).
+//
+// KOKU BIR OLCU, BIR ZEVK TERCIHI DEGIL: kalibin arka govde paneli ayna
+// ekseninin DISINDA baslar (EU38'de 9.01 mm, bu dosyada asagida yeniden
+// olculur), cunku arka orta bir DIKIS'tir, katlama degil. O kenar bulundugu
+// yerde cizilip aynalaninca sayfaya birbirine paralel IKI dikey cizgi dusuyor,
+// bel dikisi de ortasindan 2 x 9.01 = 18.02 mm kesik kaliyordu — giysi
+// sirtindan ve belinden yarik gibi okunuyordu.
+//
+// HUKUM iki cumle, ikisi de eksik ucu olculuyor:
+//   (h2a) ayna ekseninde durmasi gereken her `orta-dikis` yolunun HER noktasi
+//         |x| <= 0.5 mm icinde olacak (tek yol).
+//   (h2b) her `bel-dikisi` yolunun MERKEZ ucu (iki ucundan eksene yakin olani)
+//         |x| <= 0.5 mm icinde olacak (bel dikisi ortadan kesik degil).
+// Esik 0.5 mm cizim cozunurlugudur, tolerans degil: ihlal 9 mm buyuklugunde.
+//
+// ⛔ HAKEMIN IKINCI KALEMI ("pensler kapali V olacak") BILEREK YAZILMADI, ve
+// gerekcesi olculdu: hakemin kendi gosterdigi referansta (ayni dosya, arka
+// govde, 8x buyutme) pensler TEK CIZGI olarak cizili — kapali V degil. Kapali
+// V hukmu konsaydi kapi, sevk edilen cizimi kendi referansindan UZAKLASTIRAN
+// bir yasa dayatmis olurdu. Kalem kaybolmadi: raporda "KARAR GEREKEN" altinda,
+// olculen kanitla birlikte duruyor.
+console.log('\n--- (h2) ayna kacigi: arka orta TEK yol, bel dikisi ortadan kesik degil');
+{
+  const EKSEN_TOL = 0.5;   // mm
+  let bad = 0, olculen = 0, enBuyuk = 0;
+  for (const c of cizimler) {
+    for (const p of byRol(c.ps, 'orta-dikis')) {
+      olculen++;
+      const uzak = Math.max(...pts(p.d).map((q) => Math.abs(q[0])));
+      enBuyuk = Math.max(enBuyuk, uzak);
+      if (uzak > EKSEN_TOL) {
+        FAIL(`(h2a) ${c.ad}/${p.view}/${p.yan}: orta-dikis eksenden ${uzak.toFixed(2)} mm disarida — ` +
+             `aynalaninca iki paralel cizgi olur, satici referansinda TEK yol`);
+        bad++;
+      }
+    }
+    for (const p of byRol(c.ps, 'bel-dikisi')) {
+      olculen++;
+      const P = pts(p.d);
+      const uc = Math.min(Math.abs(P[0][0]), Math.abs(P[P.length - 1][0]));
+      enBuyuk = Math.max(enBuyuk, uc);
+      if (uc > EKSEN_TOL) {
+        FAIL(`(h2b) ${c.ad}/${p.view}/${p.yan}: bel-dikisi merkez ucu x=${uc.toFixed(2)} mm — ` +
+             `aynali cift arasinda ${(2 * uc).toFixed(2)} mm bosluk kalir, bel ortasindan kesik gorunur`);
+        bad++;
+      }
+    }
+  }
+  if (!olculen) FAIL('(h2) hic orta-dikis / bel-dikisi olculmedi — kapi bos gecti');
+  else if (!bad) OK(`(h2) ${olculen} orta-dikis/bel-dikisi yolunun hepsi ayna ekseninde ` +
+                    `(en buyuk kacik ${enBuyuk.toFixed(4)} mm, tavan ${EKSEN_TOL})`);
+}
+
 // --------------------------------------------------------------- (i) FLAT KANUNU
 // contract/flat-convention-v1.json Damla'nin flat kanunudur: tek murekkep,
 // hiyerarsi RENKLE degil AGIRLIKLA, sifir boya, on + arka, ilan edilmis olcek.
