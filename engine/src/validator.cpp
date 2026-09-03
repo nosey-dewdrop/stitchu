@@ -612,7 +612,24 @@ std::vector<ValidationIssue> skirtIssues(
         const double multiplier = (spec.skirtStyle == SkirtStyle::Gore)
                                       ? static_cast<double>(SkirtBlock::goreCount)
                                       : (contains(piece->name, "Front & Back") ? 4.0 : 2.0);
-        sewnWaist += (*waist - dartIntake(*piece)) * multiplier;
+        // A grown-on BUTTON STAND is an OVERLAP past the center front: the two
+        // fronts lap over each other, so the stand adds cut width but not one
+        // millimetre of body circumference. It is excluded exactly like dart
+        // intake. Without this the waist join compared two different frames —
+        // the skirt measured off the GROWN geometry against a bodice waist that
+        // BodiceBlock re-drafts here WITHOUT the placket (validator.cpp:1370),
+        // and a correct shirtdress read "skirt waist 783.6 vs bodice 746.0,
+        // differ by 37.6 mm" (measured, EU38 boat-neck dress, 2026-09-03). The
+        // tolerance was NOT touched; the two sides are now the same measurement.
+        // Excluded amount is not a constant: it is the piece's own reach past
+        // the center front, so a symmetric (18 mm) and an asymmetric (18 + 55 mm)
+        // stand each subtract exactly what they grew.
+        double stand = 0;
+        if (contains(piece->closure, "button placket")) {
+            for (const auto& c : piece->commands)
+                if (c.type != CmdType::Close) stand = std::max(stand, -c.to.x);
+        }
+        sewnWaist += (*waist - dartIntake(*piece) - stand) * multiplier;
     }
 
     if (spec.skirtStyle == SkirtStyle::Gathered) {

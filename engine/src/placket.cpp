@@ -25,6 +25,20 @@ PatternPiece* frontCenter(DraftedPattern& pattern) {
 // Shift a point's x outward (negative = away from the fold, into the stand).
 inline Point outward(Point p, double dx) { return {p.x + dx, p.y}; }
 
+// The skirt front of a DRESS, when the draft has one. A button front that stops
+// at the waist seam is not a button front: the wearer cannot get into the skirt
+// through it and, drawn, it reads as a half-length zip. Measured on K4 (EU38):
+// the closure ran y = 133.14 .. 424.76 on a garment 1205 mm tall (referee,
+// 2026-09-03). So the placket continues onto the skirt front, which grows the
+// same stand and carries the same fold/facing/button run.
+PatternPiece* skirtFront(DraftedPattern& pattern) {
+    for (const char* name : {"Skirt Center Front", "Skirt Front"}) {
+        for (auto& piece : pattern.pieces)
+            if (piece.name == name) return &piece;
+    }
+    return nullptr;
+}
+
 } // namespace
 
 bool apply(DraftedPattern& pattern, double bustApexY, double offsetMM) {
@@ -206,6 +220,71 @@ bool apply(DraftedPattern& pattern, double bustApexY, double offsetMM) {
     if (asymmetric) {
         front->markings.push_back(PathCommand::move({0, neckY}));
         front->markings.push_back(PathCommand::line({0, cfBottom}));
+    }
+
+    // ⭐ THE PLACKET REACHES THE HEM (referee, 2026-09-03). Up to here the stand
+    // lived on the BODICE only, so a dress buttoned from the neck to the waist
+    // seam and no further — unwearable through the front, and drawn it read as a
+    // half-length opening. If the draft has a separate skirt front, it grows the
+    // SAME stand, gets the SAME fold/facing lines and the button run CONTINUES
+    // across the waist seam at the same spacing (no new number is chosen: the
+    // step and the phase both come from the bodice run computed above).
+    if (PatternPiece* skirt = skirtFront(pattern)) {
+        std::vector<PathCommand> sg;
+        sg.reserve(skirt->commands.size());
+        for (const auto& c0 : skirt->commands) {
+            PathCommand c = c0;
+            if (c.type == CmdType::Close) { sg.push_back(c); continue; }
+            if (c.type == CmdType::Curve) {
+                if (std::abs(c.cp1.x) < kCfEps) c.cp1 = outward(c.cp1, -edgeGrow);
+                if (std::abs(c.cp2.x) < kCfEps) c.cp2 = outward(c.cp2, -edgeGrow);
+            }
+            if (std::abs(c.to.x) < kCfEps) c.to = outward(c.to, -edgeGrow);
+            sg.push_back(c);
+        }
+        skirt->commands = sg;
+        openCF(skirt->cutInstruction);
+        skirt->closure = front->closure;
+        double sTop = sg.empty() ? 0.0 : sg[0].to.y, sBottom = sTop;
+        for (const auto& c : sg) {
+            if (c.type == CmdType::Close) continue;
+            sTop = std::min(sTop, c.to.y);
+            if (c.to.x < 20) sBottom = std::max(sBottom, c.to.y);
+        }
+        skirt->markings.push_back(PathCommand::move({foldX, sTop}));
+        skirt->markings.push_back(PathCommand::line({foldX, sBottom}));
+        const double sFacingX = foldX + standWidth;
+        skirt->markings.push_back(PathCommand::move({sFacingX, sTop + 4}));
+        skirt->markings.push_back(PathCommand::line({sFacingX, sBottom - 4}));
+        // Carry the run across the seam: the gap left over from the last bodice
+        // button to the waist is spent first, then the same step continues.
+        const double kalan = ys.empty() ? step : (cfBottom - ys.back());
+        for (double y = sTop + (step - kalan); y <= sBottom - hemClearance; y += step) {
+            skirt->markings.push_back(PathCommand::move({foldX - 4, y}));
+            skirt->markings.push_back(PathCommand::line({foldX + 4, y}));
+            const double holeStart = foldX - buttonholeOffset;
+            skirt->markings.push_back(PathCommand::move({holeStart, y}));
+            skirt->markings.push_back(PathCommand::line({holeStart - buttonholeLength, y}));
+        }
+        if (asymmetric) {
+            skirt->markings.push_back(PathCommand::move({0, sTop}));
+            skirt->markings.push_back(PathCommand::line({0, sBottom}));
+        }
+        pattern.guideSteps.push_back(
+            "The button front runs the WHOLE length: the skirt front carries the same "
+            "grown-on stand, fold line and facing as the bodice, and the buttons keep "
+            "their spacing across the waist seam. Cut the skirt front as TWO fronts.");
+    } else if (PatternPiece* merged = [&]() -> PatternPiece* {
+                   for (auto& p : pattern.pieces)
+                       if (p.name == "Skirt Front & Back" || p.name == "Front & Back") return &p;
+                   return nullptr;
+               }()) {
+        (void)merged;
+        pattern.guideSteps.push_back(
+            "Front placket: it stops at the waist seam — this draft merges the skirt "
+            "front and back into ONE piece (\"Skirt Front & Back\"), which cannot open "
+            "down the front. To button to the hem, draft the skirt front separately "
+            "(give the skirt its own front/back split).");
     }
 
     // The front now OPENS at the closure (openCF flipped it to cut 2 above);
