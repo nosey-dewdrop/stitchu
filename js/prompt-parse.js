@@ -218,6 +218,55 @@ export function fold(s) {
 
 const GAP = 2; // a phrase may skip up to 2 tokens ("long FITTED sleeves")
 
+// ⭐ M4-edge — TÜRKÇE EKİ, YENİ KELİME DEĞİLDİR.
+//
+// MEASURED 2026-09-03: `kare yakalı puf kollu elbise` — the single most ordinary
+// Turkish way to order this garment — read the puff sleeve and the dress and
+// then told the user, twice, "bunu henüz dikemiyorum, kelime kalıp motorunun
+// sözlüğü dışında" about `kare` and `yakalı`. The engine draws a square
+// neckline. The table carries ['kare','yaka']; the typed token was `yakali`.
+// A whole axis was lost to one agglutinative suffix, and the user was told a
+// FALSE sentence about the engine's ability — which is worse than silence.
+//
+// ⛔ THIS IS NOT MENU GROWTH (madde 9). No value, no phrase and no axis is
+// added: `engine/vocab.json` and the table above stay byte-identical. What
+// changes is that ONE TOKEN may lose a closed set of Turkish inflectional
+// suffixes before it is compared. A stem is only tried when the token itself
+// matched nothing, and the READ WORD reported back to the user is the token the
+// user actually typed, so nothing is read behind their back.
+//
+// The set is deliberately the SMALL productive one for garment features:
+//   -lı/-li/-lu/-lü  (folded: li, lu)  "yakalı, cepli, düğmeli, pileli"
+//   -lar/-ler                          "cepler, kollar"
+//   -ları/-leri                        "kolları"
+// -sız/-siz (kolSUZ) is ABSENT ON PURPOSE: it negates, so stripping it would
+// turn "sleeveless" into "sleeve" — the exact silent inversion this file exists
+// to prevent.
+const TR_EKLER = ['lari', 'leri', 'lar', 'ler', 'li', 'lu'];
+
+/** Stems to try for one token, most specific first. Always starts with the
+ *  token itself, so an exact table hit can never be beaten by a stem. */
+function govdeler(tok) {
+  const out = [tok];
+  for (const ek of TR_EKLER) {
+    if (!tok.endsWith(ek) || tok.length - ek.length < 3) continue;
+    const stem = tok.slice(0, tok.length - ek.length);
+    out.push(stem);
+    // Turkish consonant doubling: kol + lu -> kollu, so the stripped stem can
+    // end in a doubled consonant that the dictionary form does not have.
+    if (stem.length >= 4 && stem[stem.length - 1] === stem[stem.length - 2]) {
+      out.push(stem.slice(0, -1));
+    }
+  }
+  return out;
+}
+
+/** Does `tok` speak the table token `want`, allowing a Turkish suffix? */
+function tokenEsler(tok, want) {
+  if (tok === want) return true;
+  return govdeler(tok).includes(want);
+}
+
 /**
  * Deterministic parse: free text -> existing spec axes + the honest remainder.
  * Returns { eksenler, anlasilmadi, hesap, bos }.
@@ -233,7 +282,7 @@ export function parsePrompt(text) {
 
   for (const entry of P) {
     for (let i = 0; i < tokens.length; i++) {
-      if (used[i] || tokens[i] !== entry.tokens[0]) continue;
+      if (used[i] || !tokenEsler(tokens[i], entry.tokens[0])) continue;
       // Try to complete the phrase from i, allowing small gaps.
       const picks = [i];
       let pos = i;
@@ -241,7 +290,7 @@ export function parsePrompt(text) {
       for (let k = 1; k < entry.tokens.length; k++) {
         let found = -1;
         for (let j = pos + 1; j <= Math.min(tokens.length - 1, pos + 1 + GAP); j++) {
-          if (!used[j] && tokens[j] === entry.tokens[k]) { found = j; break; }
+          if (!used[j] && tokenEsler(tokens[j], entry.tokens[k])) { found = j; break; }
         }
         if (found === -1) { okTokens = false; break; }
         picks.push(found); pos = found;
@@ -272,9 +321,38 @@ export function parsePrompt(text) {
     // A leftover token that belongs to a phrase of an already-set axis gets the
     // conflict sentence; anything else gets the nearest primitive.
     const owner = P.find((e) => e.tokens.includes(tokens[i]) && eksenler[e.field]);
-    anlasilmadi.push(owner
-      ? { kelime: tokens[i], oneri: `'${owner.field}' ekseni zaten '${eksenler[owner.field].value}' okundu; '${tokens[i]}' uygulanmadı` }
-      : { kelime: tokens[i], oneri: `en yakın primitif: ${enYakinPrimitif(tokens[i])} (contract/primitives-v1.json)` });
+    if (owner) {
+      anlasilmadi.push({ kelime: tokens[i], oneri: `'${owner.field}' ekseni zaten '${eksenler[owner.field].value}' okundu; '${tokens[i]}' uygulanmadı` });
+      continue;
+    }
+    // ⭐ M4-edge — "BU KELİME SÖZLÜĞÜN DIŞINDA" DEMEK, KELİME SÖZLÜKTEYKEN, YALAN.
+    //
+    // MEASURED 2026-09-03 on the mixed TR/EN sentence a Turkish user actually
+    // types — `square yakali puf kollu mini dress` — the word `square` came back
+    // as "bunu henüz dikemiyorum, kelime kalıp motorunun sözlüğü dışında". The
+    // engine draws neckline:'square'. The word is IN the table; what was missing
+    // was its partner token (the table carries `square neckline`, not
+    // `square` + a Turkish `yaka`). Telling a buyer the engine cannot do
+    // something it does is worse than saying nothing, and it is a dead end: the
+    // sentence offers no way forward.
+    //
+    // ⛔ NOTHING IS ADDED TO THE TABLE to fix this (madde 9): the answer is to
+    // say WHICH COMPLETION the known word needs. Zero new values, zero new
+    // phrases, engine/vocab.json untouched.
+    // ANY position, not just the first: `yakali` ('yaka') is the SECOND token of
+    // every Turkish neckline phrase, so a first-token-only lookup left the most
+    // common Turkish garment word in the repo pointing at "en yakın primitif".
+    const yarim = P.filter((e) => e.tokens.length > 1 &&
+      e.tokens.some((w) => tokenEsler(tokens[i], w)));
+    if (yarim.length) {
+      const tamam = [...new Set(yarim.map((e) => e.tokens.join(' ')))].slice(0, 3);
+      anlasilmadi.push({
+        kelime: tokens[i],
+        oneri: `'${tokens[i]}' bilinen bir kelime ama tek başına bir eksen belirtmiyor; şöyle yaz: ${tamam.join(' / ')}`,
+      });
+      continue;
+    }
+    anlasilmadi.push({ kelime: tokens[i], oneri: `en yakın primitif: ${enYakinPrimitif(tokens[i])} (contract/primitives-v1.json)` });
   }
   // ⭐ SÖZLÜK-DIŞI KELİMELER, CONTRACT'IN KENDİ TABLOSUNDAN GEÇİRİLİYOR.
   // `anlasilmadi` bir kelimenin en yakın PRİMİTİF ADINI söylüyor; bu, kullanıcı
@@ -283,9 +361,15 @@ export function parsePrompt(text) {
   // bir ret + en yakın dikilebilir öneri. Adaylar hem tek kelime hem KOMŞU İKİLİ
   // olarak üretilir, çünkü tablonun kurallarının çoğu iki kelimelik ('welt
   // pocket'); yalnız tek kelimeye bakan bir çağrı onları hiç göremezdi.
+  // ⭐ M4-edge: A TOKEN THE TABLE CARRIES IS NOT OUT OF VOCABULARY, whatever
+  // else went wrong with it. `square` in "square yakali" failed to complete its
+  // phrase; sending it down this channel made the engine say "the word is
+  // outside the pattern engine's vocabulary" about a word it drafts. The
+  // incomplete-phrase sentence above is that token's honest answer.
   const bilinmeyenIdx = [];
   for (let i = 0; i < tokens.length; i++) {
     if (used[i] === 'matched' || STOP.has(tokens[i])) continue;
+    if (P.some((e) => e.tokens.some((w) => tokenEsler(tokens[i], w)))) continue;
     bilinmeyenIdx.push(i);
   }
   const oovTokens = tokens.map((w) => (STOP.has(w) ? null : w));
@@ -365,5 +449,59 @@ export function birlestir(spec, parsed) {
     spec.sleeveStyle = 'straight';
     zorunlu.push('sleeveStyle');
   }
-  return { degisen, zorunlu };
+  return { degisen, zorunlu, konaksiz: konaksizEksenler(parsed) };
+}
+
+// ⭐ M4-edge — ÇELİŞKİLİ PROMPT SESSİZCE ÇÖZÜLÜYORDU.
+//
+// MEASURED 2026-09-03, before this function existed:
+//   parsePrompt('kolsuz uzun kollu elbise')
+//     -> eksenler { sleeveStyle:'none', sleeveLength:'long', garment:'dress' }
+//        anlasilmadi []   hesap.anlasilmayan 0
+// Four tokens, four matched, zero reported. The conflict guard above this one
+// only fires when TWO WORDS LAND ON THE SAME AXIS ('mini' + 'midi'); a
+// contradiction spread ACROSS two axes was invisible, and `uzun kollu` — half
+// the user's sentence — was applied to an axis that a sleeveless garment does
+// not have and then dropped without a word. That is a silent default with the
+// user's own text in it.
+//
+// The host rules below are NOT a new table: they are the three `for(s)` gates
+// create.js already draws its pickers with (web/js/create.js SPEC_GROUPS —
+// `!isSkirt(s)`, `!isTop(s)`, `s.sleeveStyle !== 'none'`), stated once here so
+// the PROMPT path says out loud what the picker path shows by hiding a row.
+// A dead axis is REPORTED with the next step, never silently kept.
+const KONAK_KURALLARI = [
+  { konak: 'garment', konakDeger: 'skirt',
+    olenler: ['neckline', 'sleeveStyle', 'sleeveLength', 'sleeveCap', 'cuffStyle',
+              'collarType', 'collarEdge', 'topLength', 'keyhole', 'wrapFront',
+              'backOpening', 'laceUpBack', 'backDetail', 'bardotStyle',
+              'peplum', 'placketStyle', 'edgeFinish'],
+    sonraki: "etek seçildi; üst gövde ekseni yok — bu kelimeyi kullanmak için 'elbise' ya da 'bluz' yaz" },
+  { konak: 'garment', konakDeger: 'top',
+    olenler: ['skirtStyle', 'skirtLength', 'ruffle', 'backSlit', 'waistline'],
+    sonraki: "üst seçildi; etek ekseni yok — bu kelimeyi kullanmak için 'elbise' ya da 'etek' yaz" },
+  { konak: 'sleeveStyle', konakDeger: 'none',
+    olenler: ['sleeveLength', 'sleeveCap', 'cuffStyle'],
+    sonraki: "kolsuz seçildi; kol ekseni yok — kol istiyorsan 'kolsuz' kelimesini çıkar" },
+];
+
+/** The axes this parse SET whose own host the same parse killed. Each entry is
+ *  named with the user's own word plus the next step they can take. */
+export function konaksizEksenler(parsed) {
+  const out = [];
+  const e = parsed && parsed.eksenler;
+  if (!e) return out;
+  for (const k of KONAK_KURALLARI) {
+    if (!e[k.konak] || e[k.konak].value !== k.konakDeger) continue;
+    for (const alan of k.olenler) {
+      if (!e[alan]) continue;
+      out.push({
+        alan,
+        kelime: e[alan].kelime,
+        konak: `${e[k.konak].kelime} → ${k.konak}: ${k.konakDeger}`,
+        oneri: `'${e[k.konak].kelime}' okundu, ${k.sonraki}; '${e[alan].kelime}' uygulanmadı`,
+      });
+    }
+  }
+  return out;
 }

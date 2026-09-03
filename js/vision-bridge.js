@@ -540,7 +540,78 @@ export function applyMeasuredRatios(seen, measured) {
   }
   seen.ratiosUncertain = null;
   seen.ratiosUncertainConfidence = null;
+  // ⭐ M4-edge — THE REFUSAL REASON WAS BEING THROWN AWAY.
+  //
+  // measure.js REFUSES by name: `no_garment_found` (a landscape), `worn_on_
+  // model_legs` / `worn_on_model_head` (a person wearing it), `ambiguous_
+  // foreground` (two garments in frame, or a pale garment that shattered),
+  // `background_not_separable` (a busy/very dark room), `low_confidence` (a
+  // blurry or tiny photo), `bad_input`. Each of those is a whole sentence, and
+  // MEASURED 2026-09-03 not one of them reached the screen: `fail()` returns
+  // ratios:null, `ran` is therefore false, and this function returned the plain
+  // word 'standard' — the same word it returns for a photo that was never
+  // measured at all. The user got a pattern drawn from the standard table and
+  // NOTHING said the photograph had been refused. That is the silent default.
+  //
+  // The refusal is now CARRIED (seen.olcumRed) and the caller prints it. The
+  // draft is unchanged — the standard table is still the most constraining
+  // value and still drives — but it stops being invisible.
+  seen.olcumRed = (measured && measured.ok === false && measured.reason)
+    ? { sebep: measured.reason, guven: measured.confidence } : null;
   return trusted ? 'measured' : 'standard';
+}
+
+// ⭐ M4-edge — HER RED, BİR SONRAKİ ADIMLA. A named refusal with no next step is
+// a dead end, and a dead end is a bug (M4-edge md.2). Each key below is a
+// reason measure.js actually emits (web/js/measure.js `fail(...)` call sites —
+// grep-checked, and edge_case_supurme_check re-derives the list from that file
+// so a new reason with no sentence here goes red instead of falling through).
+const OLCUM_RED_ADIM = {
+  bad_input: { tr: 'fotoğraf okunamadı (bozuk/boş dosya). Sonraki adım: fotoğrafı JPG/PNG olarak yeniden kaydedip tekrar yükle, ya da aşağıdan giysiyi kendin seç.',
+               en: 'the photo could not be read (empty or corrupt file). Next step: re-save it as JPG/PNG and upload again, or pick the garment below.' },
+  background_not_separable: { tr: 'arka plan giysiden ayrılamadı (kalabalık ya da çok karanlık kare). Sonraki adım: giysiyi düz ve açık renkli bir zemine serip tek başına çek.',
+                              en: 'the background could not be separated from the garment (a busy or very dark frame). Next step: lay the garment alone on a plain, light surface and shoot again.' },
+  // ⚠ BU CÜMLE İKİ SEBEBİ BİRDEN SÖYLÜYOR, ÇÜNKÜ ÖLÇÜM İKİSİNİ AYIRMIYOR.
+  // MEASURED 2026-09-03 (KOSU/ciktilar/edge-case-tablosu.md): aşırı karanlık
+  // kare, kontrastsız kare, bulanık kare ve "giysi karede çok küçük"
+  // vakalarının DÖRDÜ DE bu tek sebeple dönüyor — measure.js bu noktada eşik
+  // ayrımı yapmıyor (areaFrac < minAreaFrac, sebebi ne olursa olsun). Cümleyi
+  // tek sebebe ("daha yakın çek") daraltmak, karanlık bir kare yükleyen
+  // kullanıcıya YANLIŞ yol tarif etmek olurdu; sebebi bölmüş gibi yapmak da
+  // uydurma olurdu. Cümle bu yüzden iki olasılığı da adıyla söylüyor.
+  no_garment_found: { tr: 'karede zeminden ayrışan bir giysi şekli bulunamadı — ya giysi kadrajda çok küçük kalmış ya da ışık/kontrast onu zeminden ayırmaya yetmiyor (çok karanlık, çok parlak ya da bulanık kare). Sonraki adım: iyi ışıkta, zeminle zıt renkli ve giysinin kareyi dolduracağı net bir kare çek; ya da aşağıdan giysiyi kendin seç.',
+                      en: 'no garment shape could be separated from the ground — either the garment is too small in the frame, or the light/contrast is not enough to separate it (too dark, too bright, or blurry). Next step: shoot sharp, in good light, on a contrasting ground, with the garment filling the frame; or pick the garment below.' },
+  foreground_fills_frame: { tr: 'giysi kareyi tamamen dolduruyor, kenarları görünmüyor. Sonraki adım: bir adım geri çekilip giysinin tamamını kadraja al.',
+                            en: 'the garment fills the whole frame and its edges are cut off. Next step: step back so the entire garment is in frame.' },
+  ambiguous_foreground: { tr: 'karede tek bir giysi ayırt edilemedi (birden fazla parça ya da giysiyle aynı tonda zemin). Sonraki adım: tek parça bırak ve zıt renkli bir zemin kullan.',
+                          en: 'a single garment could not be separated (more than one piece, or a ground the same tone as the garment). Next step: leave one piece in frame on a contrasting ground.' },
+  garment_too_small: { tr: 'giysi karede çok küçük kaldı. Sonraki adım: daha yakından, daha yüksek çözünürlükte çek.',
+                       en: 'the garment is too small in the frame. Next step: shoot closer and at a higher resolution.' },
+  worn_on_model_legs: { tr: 'giysi bir insanın üstünde görünüyor (etek ucunun altında bacaklar var). Sonraki adım: giysiyi çıkarıp düz sererek ya da askıda çek — oranlar ancak o zaman giysinin kendi oranları olur.',
+                        en: 'the garment appears to be worn (legs below the hem). Next step: photograph it flat or on a hanger — only then are the proportions the garment’s own.' },
+  worn_on_model_head: { tr: 'karede giysinin üstünde bir baş/omuz var. Sonraki adım: giysiyi tek başına, düz sererek ya da askıda çek.',
+                        en: 'there is a head/shoulder above the garment. Next step: photograph the garment alone, flat or on a hanger.' },
+  hem_tapers_like_legs: { tr: 'etek ucu bele göre aşırı daralıyor — bu bir giysi silueti değil, bacak silueti. Sonraki adım: giysiyi düz sererek çek.',
+                          en: 'the hem tapers far below the waist width — that is a leg silhouette, not a garment one. Next step: photograph the garment laid flat.' },
+  profile_incomplete: { tr: 'siluetin büst/bel/etek ucu hatlarından biri okunamadı. Sonraki adım: giysinin tamamı (omuzdan etek ucuna) kadrajda ve kırışıksız olsun.',
+                        en: 'one of the bust/waist/hem lines could not be read. Next step: get the whole garment (shoulder to hem) in frame and smooth it out.' },
+  low_confidence: { tr: 'fotoğraf ölçüm için fazla belirsiz (bulanık, düşük çözünürlüklü ya da düşük kontrastlı). Sonraki adım: net ve iyi ışıklı bir kare çek.',
+                    en: 'the photo is too uncertain to measure (blurry, low resolution or low contrast). Next step: take a sharp, well-lit shot.' },
+};
+
+/** The sentence + next step for a carried measurement refusal. Returns null
+ *  when nothing was refused. An UNKNOWN reason is not swallowed: it comes back
+ *  named, with the honest generic next step. */
+export function olcumRedCumlesi(seen, lang = 'tr') {
+  const r = seen && seen.olcumRed;
+  if (!r) return null;
+  const bilinen = OLCUM_RED_ADIM[r.sebep];
+  const metin = bilinen
+    ? bilinen[lang === 'en' ? 'en' : 'tr']
+    : (lang === 'en'
+      ? `the measurement refused with the reason '${r.sebep}', which this screen has no sentence for. Next step: pick the garment below — the pattern uses the standard size chart.`
+      : `ölçüm '${r.sebep}' sebebiyle reddetti, bu ekranda bu sebebin cümlesi yok. Sonraki adım: aşağıdan giysiyi kendin seç — kalıp standart beden tablosunu kullanır.`);
+  return { sebep: r.sebep, guven: r.guven, metin, bilinen: !!bilinen };
 }
 
 // The ratio names of a 'belirsiz' carry, for the screen sentence ("bu oranı
