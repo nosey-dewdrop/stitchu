@@ -50,8 +50,8 @@ etiket tarafı bankalı okuma JSON'ları, kalıp tarafı sevk edilen wasm baytı
 | beden | EU48 | KALIP 6 parça | issues 0 |
 | beden | EU50 | KALIP 6 parça | issues 0 |
 | beden | EU52 | KALIP 6 parça | issues 0 |
-| beden | flat EU34 | ÇİZİLDİ | 26480 bayt · düğüm 9297ded75dec84a0 |
-| beden | flat EU52 | ÇİZİLDİ | 26566 bayt · düğüm 4eb5b4db63d05f56 |
+| beden | flat EU34 | ÇİZİLDİ | 26480 bayt · düğüm 4135ddc5027ef47f |
+| beden | flat EU52 | ÇİZİLDİ | 26566 bayt · düğüm 11fb10040374154b |
 | beden | EU99 (tabloda yok) | ADIYLA RED | unknown size 'EU99' (valid: EU34, EU36, EU38, EU40, EU42, EU44, EU46, EU48, EU50, EU52) |
 | motor | neckline='uydurma-yaka' | ADIYLA RED | invalid neckline 'uydurma-yaka' (valid: crew, scoop, vNeck, square, boat, sweetheart, halter, cowl, pussyBow) |
 | kumaş | 360 kombinasyon (5 kumaş × 4 beden × 6 etek × 3 boy) | 323 SIĞDI · 37 ADIYLA RED | taşan hiçbirinde metraj sayısı basılmadı |
