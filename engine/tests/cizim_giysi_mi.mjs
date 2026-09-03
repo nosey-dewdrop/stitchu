@@ -698,6 +698,59 @@ console.log('\n--- (h2) ayna kacigi: arka orta TEK yol, bel dikisi ortadan kesik
   if (!olculen) FAIL('(h2) hic orta-dikis / bel-dikisi olculmedi — kapi bos gecti');
   else if (!bad) OK(`(h2) ${olculen} orta-dikis/bel-dikisi yolunun hepsi ayna ekseninde ` +
                     `(en buyuk kacik ${enBuyuk.toFixed(4)} mm, tavan ${EKSEN_TOL})`);
+
+  // (h2c) AYNI KUSUR SINIFININ ZOR YARISI — HAKEM KIRMIZI 2, ADIYLA:
+  // "(h2b) sadece merkez ucun X'ine bakiyor, TEGETIN eksene dik olup olmadigina
+  // BAKMIYOR. Kapi, yapilan duzeltmeye gore yazilmis, kusur SINIFINA gore
+  // degil." Dogruydu: (h2b) yesilken flat-kumas-dokuma-eu38.svg on bel
+  // dikisinde eksendeki teget yataya 9.55 derece duruyordu, aynalaninca on
+  // ortada 19.1 derecelik SIVRI V ve yan bele gore 16.78 mm centik.
+  //
+  // OLCULEN BUYUKLUK BIR ACI DEGIL, MILIMETRE: ayna ekseninden 10 mm yay boyu
+  // uzakta, kenarin kendi y'si merkez ucun y'sinden ne kadar sapiyor. Teget
+  // eksene dikse bu sapma sifira gider; degilse aynalanan cift orada 2 x sapma
+  // kadar kirilir. 10 mm OLCU CUBUGUDUR, tolerans degil; tolerans (h2a/h2b) ile
+  // AYNI 0.5 mm cizim cozunurlugudur — yani "kirilma murekkep kaliniginin
+  // altinda kalacak". Gercek bir kavisli bel bu kapidan rahat gecer: yaricapi
+  // 1250 mm olan sevk edilen bel egrisinde sapma 0.04 mm.
+  const OLCU_CUBUGU = 10;  // mm, tegetin olculdugu yay boyu
+  let bad2 = 0, olculen2 = 0, enBuyuk2 = 0, enBuyukAd = '';
+  for (const c of cizimler) {
+    for (const p of byRol(c.ps, 'bel-dikisi')) {
+      const P = pts(p.d);
+      if (P.length < 3) continue;
+      const bas = Math.abs(P[0][0]) <= Math.abs(P[P.length - 1][0]) ? P : P.slice().reverse();
+      if (Math.abs(bas[0][0]) > EKSEN_TOL) continue;   // (h2b) zaten yargiladi
+      // merkez uctan OLCU_CUBUGU kadar yay boyu yuru
+      let s = 0, q = null;
+      for (let i = 1; i < bas.length; i++) {
+        const d0 = Math.hypot(bas[i][0] - bas[i - 1][0], bas[i][1] - bas[i - 1][1]);
+        if (s + d0 >= OLCU_CUBUGU) {
+          const t = (OLCU_CUBUGU - s) / d0;
+          q = [bas[i - 1][0] + t * (bas[i][0] - bas[i - 1][0]),
+               bas[i - 1][1] + t * (bas[i][1] - bas[i - 1][1])];
+          break;
+        }
+        s += d0;
+      }
+      if (!q) continue;                                 // 10 mm'den kisa yol
+      olculen2++;
+      const sapma = Math.abs(q[1] - bas[0][1]);
+      const aci = Math.abs(Math.atan2(q[1] - bas[0][1], q[0] - bas[0][0]) * 180 / Math.PI);
+      if (sapma > enBuyuk2) { enBuyuk2 = sapma; enBuyukAd = `${c.ad}/${p.view}/${p.yan}`; }
+      if (sapma > EKSEN_TOL) {
+        FAIL(`(h2c) ${c.ad}/${p.view}/${p.yan}: bel-dikisi ayna eksenine DIK bitmiyor — ` +
+             `eksenden ${OLCU_CUBUGU} mm otede kenar ${sapma.toFixed(2)} mm sapiyor ` +
+             `(teget yataya ${(aci > 90 ? 180 - aci : aci).toFixed(2)} derece), aynalaninca ` +
+             `on ortada ${(2 * sapma).toFixed(2)} mm'lik SIVRI bir V kosesi basar; ` +
+             'motor "V bel" ilan etmiyorsa bu bir artefakttir');
+        bad2++;
+      }
+    }
+  }
+  if (!olculen2) FAIL('(h2c) hic bel-dikisi tegeti olculmedi — kapi bos gecti');
+  else if (!bad2) OK(`(h2c) ${olculen2} bel-dikisi yolunun hepsi ayna eksenine dik bitiyor ` +
+                     `(en buyuk sapma ${enBuyuk2.toFixed(4)} mm @ ${enBuyukAd}, tavan ${EKSEN_TOL})`);
 }
 
 // --------------------------------------------------------------- (i) FLAT KANUNU

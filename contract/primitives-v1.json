@@ -828,6 +828,11 @@
         "_law": "Giysinin ADINI veren ozellik CIZIMDE aranir. 'Taban ile bayt-ayni degil' bir kanit degildir (hakem, 2026-09-03): tek piksel oynasa yesil yanardi. Asagidaki her kalem sevk edilen SVG'de data-ozellik ile sayilir.",
         "aranan": [
           {
+            "ozellik": "kruvaze-kenar",
+            "en_az": 1,
+            "_ne": "kruvazenin GORUNEN capraz kenari: ustte kalan onun (sag on sola biner) on orta yaka noktasindan bel wrap kosesine inen tek cizgi. HAKEM KIRMIZI 1 (M6-vitrin): landing 'surplice front' yaziyordu, cizimde simetrik V yaka + duz dikey on orta vardi. Kalip kruvazeyi ZATEN ciziyordu (on panel on ortayi EU38'de 110.0 mm asiyor, cut 2 mirror wrap), okumayan cizimdi."
+          },
+          {
             "ozellik": "buzgu-pano",
             "en_az": 2,
             "_ne": "belde buzgu panosunun alt siniri (on + arka)"
