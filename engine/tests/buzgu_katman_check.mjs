@@ -393,12 +393,36 @@ console.log('\n--- (f) MOTORUN KENDI C++ KAPILARI: sleeve_check + locket_check')
     const c = p.commands.filter((x) => x.type !== 'close');
     return p.commands[0].y - Math.min(...c.map((x) => x.y));
   };
-  for (const [ad, p, band] of [['duz', duz, true], ['puffed', puf, true], ['gathered', yum, true]]) {
-    void band;
-    const h = capH(p);
-    if (!(h >= 130 && h <= 150))
-      FAIL(`(f) ${ad} EU38 kapak yuksekligi ${h.toFixed(1)} mm — yayinlanmis Aldrich bandi 130-150 mm disinda`);
-    else OK(`(f) ${ad} EU38 kapak yuksekligi ${h.toFixed(1)} mm, Aldrich bandi 130-150 mm icinde`);
+  // ★ 2026-09-03 (M2-bugra, hakem maddesi): bu uc satir TOTOLOJIKTI. Puf
+  // kapak yuksekligi TANIMI GEREGI "duz kapak x ilan edilen tavan" ve tavanin
+  // kendisi "150.0 / duz kapak" diye turetilmis; yani "puf 150.0, band 130-150
+  // icinde" hukmu kendi kendini soyluyordu. Kirilabilir hale getirildi:
+  //   1. DUZ kapak banda EMNIYET PAYIYLA girer (131..149) — bu bagimsiz
+  //      olculen taraf, hicbir tavandan turemiyor.
+  //   2. PUF kapak, ilan edilen TAVANIN kendisine oturur (150.0 +-0.5) ve onu
+  //      SIKI olarak asamaz (< 150.0). Tavan bayatlarsa (paydasi degisirse)
+  //      bu satir kirmizi yanar — bugun tam olarak oyle oldu: oyuk buyudu,
+  //      duz kapak 136.98 -> 138.83 oldu, eski 1.095 tavani 152.02 verdi.
+  //   3. PUF/DUZ orani = contract'ta ILAN EDILEN tavan, %1 icinde. Iki AYRI
+  //      olculen yukseklik karsilastirilir; hicbir skaler kendine esitlenmez.
+  const BAND_TOP = 150.0, BAND_LO = 130.0, EMNIYET = 1.0;
+  const hDuz = capH(duz), hPuf = capH(puf), hYum = capH(yum);
+  for (const [ad, h] of [['duz', hDuz], ['gathered', hYum]]) {
+    if (!(h >= BAND_LO + EMNIYET && h <= BAND_TOP - EMNIYET))
+      FAIL(`(f) ${ad} EU38 kapak yuksekligi ${h.toFixed(2)} mm — yayinlanmis Aldrich bandinin ${EMNIYET} mm emniyet payli icinde degil (${BAND_LO + EMNIYET}..${BAND_TOP - EMNIYET})`);
+    else OK(`(f) ${ad} EU38 kapak yuksekligi ${h.toFixed(2)} mm, bandin ${EMNIYET} mm emniyet payli icinde`);
+  }
+  if (!(hPuf < BAND_TOP))
+    FAIL(`(f) puffed EU38 kapak yuksekligi ${hPuf.toFixed(2)} mm — yayinlanmis bandin TEPESINI (${BAND_TOP}) asiyor (siki esitsizlik)`);
+  else if (Math.abs(hPuf - BAND_TOP) > 0.5)
+    FAIL(`(f) puffed EU38 kapak yuksekligi ${hPuf.toFixed(2)} mm — ilan edilen tavan bandin tepesi (${BAND_TOP}) olmasina ragmen ${(BAND_TOP - hPuf).toFixed(2)} mm altinda kaldi; tavan tutmuyor`);
+  else OK(`(f) puffed EU38 kapak yuksekligi ${hPuf.toFixed(2)} mm — bandin tepesine (${BAND_TOP}) oturdu ve asmadi`);
+  {
+    const ilan = TABLES.draft.gatherRatios.sleeveCapPuffedLift;
+    const olculen = hPuf / hDuz;
+    if (!(Math.abs(olculen / ilan - 1) <= 0.01))
+      FAIL(`(f) puf/duz kapak yukseklik orani ${olculen.toFixed(4)} — contract'ta ilan edilen tavan ${ilan} ile %1 icinde degil`);
+    else OK(`(f) puf/duz kapak yukseklik orani ${olculen.toFixed(4)} = ilan edilen tavan ${ilan} (%${(Math.abs(olculen / ilan - 1) * 100).toFixed(2)} sapma)`);
   }
 }
 
