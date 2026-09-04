@@ -183,6 +183,9 @@ P.sort((a, b) => b.tokens.length - a.tokens.length);
 const STOP = new Set([
   'a', 'an', 'the', 'and', 'or', 'with', 'in', 'of', 'for', 'to', 'on', 'at',
   'is', 'it', 'i', 'my', 'me', 'want', 'like', 'please', 'some', 'very',
+  // 'that'/'this' are relative/demonstrative words ("a dress THAT zips up the
+  // front"); no table entry carries them, so nothing semantic hides here.
+  'that', 'this',
   've', 'ile', 'bir', 'icin', 'olsun', 'istiyorum', 'lutfen', 'biraz', 'cok',
   'gibi', 'olan', 'tarz', 'tarzi', 'seklinde',
 ]);
@@ -257,6 +260,21 @@ const GAP = 2; // a phrase may skip up to 2 tokens ("long FITTED sleeves")
 // to prevent.
 const TR_EKLER = ['lari', 'leri', 'lar', 'ler', 'li', 'lu'];
 
+// ⭐ M7-cogul — İNGİLİZCE ÇOĞUL EKİ DE YENİ KELİME DEĞİLDİR.
+//
+// ÖLÇÜLDÜ 2026-09-04: `gathered dress with puff sleeves`
+//   -> anlasilmadi ['sleeves' → "sleeveCap was already read as 'puffed'"]
+// Tablo `['puff','sleeve']` taşıyor, kullanıcı `sleeves` yazdı ve İNGİLİZCE
+// satan bir sitede "sleeves" kelimesi kırmızıya boyandı. Türkçe eki soyan kural
+// (M4-edge) yukarıda beş haftadır duruyor; İngilizce çoğul eki için aynı kural
+// yoktu. `zips` de aynı sebeple hiçbir şeye bağlanmıyordu.
+//
+// ⛔ MENÜ BÜYÜTME DEĞİL (madde 9): tek bir değer/ifade/eksen eklenmiyor,
+// engine/vocab.json bayt bayt aynı. Bir token, tablodaki hâliyle eşleşmediyse
+// kapalı bir çekim eki kümesini kaybedebiliyor. `-less` (sleeveLESS) burada da
+// YOK: olumsuzlar, soyulursa "kolsuz" -> "kol" olur.
+const EN_EKLER = ['es', 's'];
+
 /** Stems to try for one token, most specific first. Always starts with the
  *  token itself, so an exact table hit can never be beaten by a stem. */
 function govdeler(tok) {
@@ -270,6 +288,10 @@ function govdeler(tok) {
     if (stem.length >= 4 && stem[stem.length - 1] === stem[stem.length - 2]) {
       out.push(stem.slice(0, -1));
     }
+  }
+  for (const ek of EN_EKLER) {
+    if (!tok.endsWith(ek) || tok.length - ek.length < 3) continue;
+    out.push(tok.slice(0, tok.length - ek.length));
   }
   return out;
 }
@@ -363,13 +385,29 @@ const NITELEYICI = [
   { token: 'fitted', field: 'sleeveStyle', aile: ['sleeveStyle', 'sleeveLength', 'sleeveCap', 'cuffStyle'] },
 ];
 
+// ⭐ M7-mesafe — SIFAT, CÜMLEDE BİR YERDE DEĞİL, NİTELEDİĞİ ŞEYİN YANINDA DURUR.
+//
+// ÖLÇÜLDÜ 2026-09-04:
+//   'a fitted midi dress with gathered puff sleeves and a zipper at the back'
+//     -> BAŞARI satırı: "fitted -> sleeveStyle: straight"
+// Kullanıcı PUF kol istedi; uygulama düz kol okuduğunu okundu diye yazdı, üstelik
+// aynı ekranda sleeveCap: puffed de duruyordu — iki çelişen okuma yan yana.
+// Sebep: kural, cümlede kol ailesinden HERHANGİ bir eksen varsa bağlıyordu;
+// oysa buradaki `fitted` `dress`in sıfatı (indeks 1), kolun kelimeleri indeks
+// 5-7'de. Aynı dosyanın ifade eşleştiricisi zaten bir MESAFE bütçesiyle çalışır
+// (GAP): sıfat da o bütçeye uyar. `long fitted sleeves` bağlanmaya devam eder,
+// çünkü orada sıfat gerçekten kolun yanındadır.
+const NITELEYICI_MESAFE = 1 + GAP;
+
 function niteleyiciBagla(tokens, used, eksenler) {
   for (const n of NITELEYICI) {
     const hedef = canonical(n.field, n.token);
     if (hedef === undefined) continue; // the synonym left the vocabulary: bind nothing.
-    if (!n.aile.some((f) => eksenler[f])) continue;
+    const aileIdx = n.aile.flatMap((f) => (eksenler[f] ? eksenler[f].idx : []));
+    if (!aileIdx.length) continue;
     for (let i = 0; i < tokens.length; i++) {
       if (used[i] || !tokenEsler(tokens[i], n.token)) continue;
+      if (Math.min(...aileIdx.map((j) => Math.abs(j - i))) > NITELEYICI_MESAFE) continue;
       used[i] = 'matched';
       const onceki = eksenler[n.field];
       if (onceki) { onceki.idx.push(i); onceki.kelime += ` ${tokens[i]}`; }
@@ -401,6 +439,20 @@ const ZATEN = [
     id: 'cbZip',
     kanit: 'engine/src/garment.cpp annotateTechnical: closure "invisible zipper (center back)"',
     tokens: ['zipper', 'zip', 'fermuar'],
+    // ⭐ M7-yon — "ZATEN VAR" CEVABI, KULLANICININ YAZDIĞI YÖNE BAKMADAN
+    // VERİLEMEZ. Motorun koşulsuz çizdiği fermuar ARKA ortadadır (`yon`).
+    // ÖLÇÜLDÜ 2026-09-04: 'dress with a front zipper' -> ekran "you already
+    // have it: invisible CENTER-BACK zipper" dedi ve 'front' kelimesine
+    // "not understood" bastı. ÖNDEN isteyene ARKADAN verip "zaten var" demek,
+    // sessiz default'un en kötü hâli: kullanıcının kendi kelimesi inkâr
+    // ediliyor. Oysa motor önden çizebiliyor — exposedZip'in sözlüğünde
+    // `centerFront` DEĞERİ ZATEN VAR (vocab.json ExposedZip) ve
+    // 'exposed zip at center front' cümlesi bugün de çalışıyor; eksik olan tek
+    // şey, o değerin sıradan bir cümleyle söylenebilmesiydi.
+    // ⛔ Menü büyütme değil: yeni değer/ifade/eksen yok, yalnız var olan
+    // `exposedZip: centerFront` konuşulabilir hâle geliyor.
+    yon: 'Back',
+    yonEkseni: 'exposedZip',
     // Komşu nitelikler aynı ifadeye aittir; ayrı ayrı kırmızı satır olamazlar.
     nitelik: ['invisible', 'hidden', 'concealed', 'gizli', 'normal',
       'back', 'arka', 'arkada', 'arkadan', 'sirt', 'sirtta',
@@ -440,6 +492,34 @@ function zatenOku(tokens, used, eksenler) {
       if (z.tokens.some((w) => tokenEsler(tokens[i], w))) anchor = i;
     }
     if (anchor === -1) continue;
+    // M7-yon: does the sentence name a direction this engine fact does NOT have?
+    // If so, the fact is not an answer — the axis that carries that direction is.
+    if (z.yon && z.yonEkseni && !eksenler[z.yonEkseni]) {
+      const values = (VOCAB[z.yonEkseni] && VOCAB[z.yonEkseni].values) || [];
+      let karsi = -1, karsiYon = null;
+      for (let j = 0; j < tokens.length; j++) {
+        if (used[j] || Math.abs(j - anchor) > 1 + GAP) continue;
+        const y = YON.find((v) => v.tokens.some((w) => tokenEsler(tokens[j], w)));
+        if (!y || y.yon === z.yon) continue;
+        karsi = j; karsiYon = y.yon; break;
+      }
+      const deger = karsiYon && values.find((v) => v.endsWith(karsiYon) && v !== 'none');
+      if (deger) {
+        const alinan = [anchor, karsi];
+        for (let j = Math.max(0, karsi - 1 - GAP); j <= Math.min(tokens.length - 1, karsi + 1 + GAP); j++) {
+          if (!used[j] && !alinan.includes(j) && deger.startsWith('center') &&
+              ORTA.some((w) => tokenEsler(tokens[j], w))) { alinan.push(j); break; }
+        }
+        alinan.sort((a, b) => a - b);
+        for (const j of alinan) used[j] = 'matched';
+        eksenler[z.yonEkseni] = {
+          value: deger,
+          kelime: alinan.map((j) => tokens[j]).join(' '),
+          idx: alinan,
+        };
+        continue;
+      }
+    }
     const alinan = [anchor];
     for (let j = 0; j < tokens.length; j++) {
       if (used[j] || j === anchor || Math.abs(j - anchor) > 1 + GAP) continue;
@@ -523,7 +603,19 @@ export function parsePrompt(text) {
     anlasilmayan++;
     // A leftover token that belongs to a phrase of an already-set axis gets the
     // conflict sentence; anything else gets the nearest primitive.
-    const owner = P.find((e) => e.tokens.includes(tokens[i]) && eksenler[e.field]);
+    // ⭐ M7-sahip — BİR KELİME İKİ EKSENDE YAŞIYORSA, "O EKSEN ZATEN OKUNDU"
+    // CÜMLESİ YANLIŞ EKSENİ SUÇLAR.
+    // ÖLÇÜLDÜ 2026-09-04: 'gathered dress with puff sleeves' -> 'gathered' için
+    // ekran "sleeveCap was already read as 'puffed'" dedi. Kullanıcı BÜZGÜLÜ
+    // ETEK istiyordu; kelime tabloda hem skirtStyle'da hem sleeveCap'te yaşıyor
+    // ve `find` sırf listede önce geldiği için kolu suçladı. Başlık sessizce
+    // "A-line puff-sleeve dress" oldu. Çakışma cümlesi ancak kelimenin TEK bir
+    // ekseni varsa doğrudur; birden çok eksende yaşıyorsa doğru cevap, hangi
+    // tamamlamayı beklediğini söylemektir (aşağıdaki yarım-ifade cümlesi).
+    const sahipler = [...new Set(P.filter((e) => e.tokens.some((w) => tokenEsler(tokens[i], w)))
+      .map((e) => e.field))];
+    const owner = sahipler.length === 1 && eksenler[sahipler[0]]
+      ? { field: sahipler[0] } : null;
     if (owner) {
       anlasilmadi.push(rapor(tokens[i],
         `'${owner.field}' ekseni zaten '${eksenler[owner.field].value}' okundu; '${tokens[i]}' uygulanmadı`,
