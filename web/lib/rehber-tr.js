@@ -33,9 +33,9 @@
 // than a paraphrase (the same law web/js/guide-tr.js already lives under: a
 // paraphrase would be a sentence with no source).
 
-import { GUIDE_TR } from '../js/guide-tr.js?v=148';
-import { FABRIC_CATALOG } from '../js/fabric-catalog.js?v=148';
-import { fabricProfile } from '../js/sewing.js?v=148';
+import { GUIDE_TR } from '../js/guide-tr.js?v=152';
+import { FABRIC_CATALOG } from '../js/fabric-catalog.js?v=152';
+import { fabricProfile } from '../js/sewing.js?v=152';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 

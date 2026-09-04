@@ -9,10 +9,10 @@
 // (embedded here through the same generated module every other cross-layer
 // value rides). Numbers in it are the engine's own drafted mm (provenance in
 // each entry); no threshold is invented in this file.
-import { VISION_TASIMA } from './contract.gen.js?v=148';
+import { VISION_TASIMA } from './contract.gen.js?v=152';
 // M3-primitif: sozluk-disi kelimenin yargisi TEK yerde (web/js/oov-resolve.js);
 // prompt hatti da ayni fonksiyonu cagirir, iki hat ayri cevap veremez.
-import { oovKarariVer } from './oov-resolve.js?v=148';
+import { oovKarariVer } from './oov-resolve.js?v=152';
 
 // Map the vision's yoke / straps / closure / oov terms to a drawable gathering
 // (Loop 8). The engine draws a SEPARATE gathered panel (+ a drawstring cord)

@@ -189,9 +189,9 @@ import {
   segsFromCommands, polysFromCommands, samplePoly, polyLength, chainLength,
   cumFrac, atFrac, nearestIdx, mapSegs, mirrorSegs, rampSegs,
   pathD, polyD, segsFromPoly, bbox, densifySegs,
-} from './flat-geom.js?v=148';
+} from './flat-geom.js?v=152';
 // The büzgü / ease threshold is a MEASURED contract value, not a local constant.
-import { CONTRACT } from '../js/contract.gen.js?v=148';
+import { CONTRACT } from '../js/contract.gen.js?v=152';
 
 // ---------------------------------------------------------------------------
 // 1. PANEL DECOMPOSITION — which drafted edge is which garment edge

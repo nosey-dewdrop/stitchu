@@ -1,6 +1,6 @@
 // Photo -> garment spec via the Worker (Claude vision behind our proxy).
 // Downscales client-side so no full-resolution photo ever leaves the device.
-import { BACKEND_URL, TURNSTILE_SITE_KEY } from './config.js?v=148';
+import { BACKEND_URL, TURNSTILE_SITE_KEY } from './config.js?v=152';
 
 // Both halves must be configured. Without a Turnstile site key the Worker will
 // refuse the call anyway (G1), so offering the button would be a lie — the
