@@ -19,7 +19,7 @@
 // (contract/primitives-v1.json). parse() returns the arithmetic
 // (hesap.toplam === eslesen + stop + anlasilmayan) so a gate can prove the
 // zero-silence property instead of trusting it.
-import { VOCAB, canonical } from './vocab.gen.js?v=148';
+import { VOCAB, canonical } from './vocab.gen.js?v=150';
 // ⭐ M3-primitif — SÖZLÜK-DIŞI KELİMEYE PRİMİTİF CEVABI.
 // Anlaşılmayan bir kelime bugüne kadar yalnızca "en yakın primitif: op.gather"
 // diye bir İSİM alıyordu; bu bir cevap değil bir işaretti. Aynı kelime fotoğraf
@@ -27,7 +27,7 @@ import { VOCAB, canonical } from './vocab.gen.js?v=148';
 // bağlanıyor ya adıyla reddedilip en yakın dikilebilir öneriyi alıyordu. İki
 // hat aynı kelimeye iki ayrı şey söylüyordu. Yargı artık tek yerde
 // (web/js/oov-resolve.js) ve prompt hattı da onu çağırıyor.
-import { oovKarariVer, oovAdaylari } from './oov-resolve.js?v=148';
+import { oovKarariVer, oovAdaylari } from './oov-resolve.js?v=150';
 
 // Axes create.js holds that predate the generated vocabulary (see
 // backend/spec-core.js ENUMS — the same two conveniences, same values).
@@ -497,8 +497,8 @@ const ZATEN = [
     // yalnız elbisede bir CB dikişi var; etek/üstte motor fermuar çizmiyor.
     kosul: (e) => (e.garment ? e.garment.value : 'dress') === 'dress',
     evet: {
-      tr: 'zaten çiziliyor: elbise arka ortada gizli fermuarla kapanıyor; gerekli mi diye motor senin ölçünle karar veriyor ve sonuç sayfasında sebebini yazıyor',
-      en: 'already drawn: the dress closes with an invisible center-back zipper; whether you need one is decided from your own measurements and the reason is printed on the result page',
+      tr: 'zaten çiziliyor: elbise arka ortada gizli fermuarla kapanıyor; gerekli mi diye motor seçtiğin bedenin ölçüsüyle karar veriyor ve sonuç sayfasında sebebini yazıyor',
+      en: 'already drawn: the dress closes with an invisible center-back zipper; whether you need one is decided from the measurements of the size you picked and the reason is printed on the result page',
     },
     hayir: {
       tr: 'bu giysinin fermuarı yok — etek ve üst baştan/belden geçerek giyiliyor; fermuar istiyorsan "elbise" yaz',
