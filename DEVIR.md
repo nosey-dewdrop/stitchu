@@ -301,6 +301,22 @@ Doğru iddia "herkes bantlamaktan nefret ediyor" DEĞİL; doğrusu: **bantlama b
 bir kesimi eliyor** — yazıcısı olmayan, sadece iPad'i olan, vakti dar, ve
 30 sayfayı aşan büyük giysiler. Hedef kitle o kesim.
 
+### ★ KAMA CÜMLE — alıcının kendi kurduğu çerçeve
+Dört ayrı kaynakta, birbirinden bağımsız insanlar aynı şeyi söylüyor:
+**"Bir ürüne para verdim, sonra imalatını kendim tamamlamak zorunda kaldım."**
+- *"Satıcı kendi ürününü bitirmeyi bana yıkmış gibi hissettiriyor."* (Becky)
+- *"Kızım bana güldü: kalıba PARA vermişim, sonra dikebileceğim bir kalıp elde
+  etmek için önce bir el işi projesi yapıyorum."* (mmcp)
+- *"Kalıp tasarımcılarının bu maliyeti tüketiciye yıkması hiç hoşuma gitmiyor."*
+  (alexmasson)
+Konumlandırmayı "bantlamak sıkıcı" üzerine değil **bu cümle** üzerine kur.
+
+**İki yan bulgu:** (1) kimsenin konuşmadığı bir dert — bantlanmış kalıbın
+SAKLANMASI ("katlanınca bozuluyor, yer kaplıyor"); 93 yorumun ~8'i bunu diyor.
+(2) Talep arzı aşmış durumda: İngiltere'deki Patternsy copyshop baskı servisi
+yeni müşteriye kapandı — *"yakın zamanda (belki hiç) yeni müşteriye
+açılmamız çok olası değil."*
+
 ### BANTLAMA VERGİSİNİN GERÇEK SAYILARI (9 marka, 70+ kalıp, satıcının kendi ilanından)
 Rakiplerin ürün sayfalarından çekildi, tahmin değil: basit üst/etek **20-40
 sayfa**, elbise/pantolon **40-60**, kaban/blazer/kot **65-115**. Bulunan en
