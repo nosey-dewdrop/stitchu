@@ -76,7 +76,7 @@ const doc = `<?xml version="1.0" encoding="UTF-8"?>\n`
   + `<rect width="1200" height="${H.toFixed(0)}" fill="#ffffff"/>\n`
   + `<text x="20" y="30" font-family="Helvetica" font-size="20" fill="#1f3a5f">Bugra'nin tarifi, motorun kalemiyle: dugmeli \u00b7 yuvarlak yatik yaka \u00b7 puf kollu ust \u00b7 EU38</text>\n`
   + `<text x="20" y="86" font-family="Helvetica" font-size="11" fill="#b03030">ETIKET DURUSTLUGU (hakem K8): bu yaka "peter pan" DIYE ETIKETLENMIYOR \u2014 bir bebe yakanin ne kadar yatacagini soyleyen "yatma yarikapi" ekseni motorda YOK</text>\n`
-  + `<text x="20" y="100" font-family="Helvetica" font-size="11" fill="#b03030">(olculen bbox en/boy: motor 2.70, Bugra 1.11). Ayni sebeple "fitted" de yazmiyor: shaping=dart pens uretiyor ama yan dikis belde daralmiyor. Ikisi de bugra-rapor.md'de MOTOR EKSIGI olarak ACIK.</text>\n`
+  + `<text x="20" y="100" font-family="Helvetica" font-size="11" fill="#b03030">(olculen bbox en/boy: motor 2.70, Bugra 1.11) — bugra-rapor.md'de MOTOR EKSIGI olarak ACIK. KAPANDI 2026-09-04: yan dikis artik belde daraliyor (koltukalti 244.2 → bel 229.2 → etek 244.4 mm); bel noktasi konturda YOKTU, sadece bir Bezier kontrol noktasiydi.</text>\n`
   + `<text x="20" y="52" font-family="Helvetica" font-size="12" fill="#5b7089">${parcalar}</text>\n`
   + `<text x="20" y="70" font-family="Helvetica" font-size="12" fill="${issues ? '#b03030' : '#5b7089'}">${issues ? 'motorun kendi uyarilari: ' + issues : 'motorun kendi uyarisi yok'} · sol: kesilecek kalip · sag: teknik cizim (flat)</text>\n`
   + `${kalip.frag}\n${flat.frag}\n</svg>\n`;

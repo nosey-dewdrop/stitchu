@@ -309,3 +309,83 @@ Kapanmasi icin gereken tek sey bir SAYI ve bir SAGLAYICI karari.
 `FAIL [3 C1] 2 nokta teget farki 1 dereceyi asiyor`. Bu turun degisiklikleri
 `git stash`'lenip kapi yeniden kosuldu: AYNI kirmizi. Yani gerileme degil,
 devralinan bir kirmizi; bu turda dokunulmadi ve gizlenmedi.
+
+---
+
+# TUR 3 ONARIM (2026-09-04) — hakem hukmu "BITMEDI / ALMAZDIM"
+
+Hakemin 6 kaleminden 4'u kapandi, 2'si acik. Acik olanlarin gerekcesi asagida;
+"zaman yetmedi" bir gerekce degildir, o yuzden her kalemde neyin BENIM kararim
+olmadigi ya da hangi onceki hakem kararinin yolu kapattigi yazili.
+
+## ACIK KALDI
+
+### T3-2 — ORTADA SATILAN BIR SEY YOK (fiyat / sepet / odeme / teslimat)
+- **Yer:** `web/index.html:237` ("no price on this site yet"), site genelinde
+  8 "Waitlist" + 2 "Join the Beta", 0 fiyat, 0 checkout.
+- **Olcum:** `grep -rniE "stripe|checkout|gumroad|lemonsqueezy|paddle" web/ backend/`
+  -> tek eslesme `index.html`'deki CSS `stripe` degiskeni (dama deseni). Yani
+  odeme altyapisi repo'da HIC YOK, bayat/yarim degil.
+- **Neden onarilmadi — bu bir KOD isi degil:** calisan bir kasa icin (a) bir
+  saticinin (Damla'nin) adina acilmis bir merchant hesabi ve canli API anahtari,
+  (b) bir fiyat, (c) mesafeli satis / iade / KVKV metinleri gerekiyor. Ucunun de
+  sahibi Damla. Ajan olarak:
+  - **Fiyat UYDURAMAM.** Bu repo'nun her sayisinin bir kaynagi var; fiyat
+    Damla'nin karari, benim tahminim degil.
+  - **Sahte "Satin al" dugmesi KOYAMAM.** Hicbir yere gitmeyen bir kasa, kasa
+    olmamasindan beterdir (bu dosyanin ve CLAUDE.md'nin kendi yasasi).
+  - Anahtarsiz, `STRIPE_*` env'i arkasina saklanmis bir entegrasyon yazmak da
+    canli sitede hicbir seyi degistirmezdi — yani hakemin hukmu aynen kalirdi.
+    "Is yapiyormus gibi gorunen" tam olarak budur.
+- **SONRAKI ADIM (Damla'nin karari):** tek soru — bu paket kaca satiliyor ve
+  hangi saglayiciyla? O iki cevap gelince kod tarafi kucuk: bir fiyat sabiti +
+  Stripe Payment Link / Checkout Session + basari sayfasinda indirme kilidi.
+
+### T3-4 — BUGRA PARITESI (Top Back %31, Puff Sleeve %35, Collar %22)
+- **Yer:** `KOSU/ciktilar/bugra-rapor.md` (uretici: `node engine/tools/bugra-blind-compare.mjs`).
+- **Bu turdaki olcum (yeniden kosuldu):** Top Front 1755 vs 1686 (%4) · Top Back
+  1669 vs 1275 (%31) · Puff Sleeve 1177 vs 873 (%35) · Collar 692 vs 568 (%22).
+  Chamfer ortalamalari bu turda BIR TIK IYILESTI (Top Front 37.0 -> 36.5,
+  Top Back 47.7 -> 47.4, Puff Sleeve 89.9 -> 60.4) ama sapma sinifi duruyor.
+- **Neden onarilmadi:** sapmanin govdesi yan dikiste degil, uc YAPI farkinda ve
+  ucu de raporun kendi "motorun cizemedigi Bugra yapilari" kovasinda ADIYLA
+  duruyor: (a) Bugra'nin Upper Sleeve'i ayri bir %29-35 buzgulu DIS KATMAN,
+  motorda ikinci katman doguran operator yok; (b) on govdede buyume-yakali
+  (grown-on) temizleme payi var, motor ayri facing parcasi ciziyor; (c) ayri
+  yaka astari parcasi. Bunlar cevreyi dogrudan buyutur/kucultur.
+- **Kalan kalem (on/arka bust bolusumu, on 244.2 / arka 224.8 mm) bir ONCEKI
+  HAKEM KARARIYLA KAPALI:** rapordaki durum satiri aynen "hakem K5: SIMDI
+  DOKUNMA, kendi fazini hak ediyor (butun bloklari oynatir, 8 bedende
+  once/sonra ister)". Bir onarim turunda tek basima o karari bozmadim.
+- **On/arka oyuk isaret ihlali 18.4 -> 22.5 mm** bu turda DEGISMEDI (22.5 mm
+  girdi, 22.5 mm cikti); onceki turun K1/K4 duzeltmesinden geliyor ve regresyon
+  cizgisi olarak ilan edilmis durumda.
+
+### T3-EK — INDIRILEN DIKIS REHBERI TURKCE ve 0 GORSEL
+  (hakemin gerekcesinde var, 6 numarali kusur listesinde yok — yine de yaziyorum)
+- **Yer:** `web/lib/rehber-tr.js`, `web/js/create.js:1379`. Dosyanin adi bile
+  `-tr`: rehber TEK DILDE yazilmis. `grep -c '<img|<svg'` = 0.
+- **Kok sebep:** rehber metinleri `web/js/guide-tr.js`'te ID basina TURKCE
+  sablon; Ingilizcesi motorun kendi `guideSteps` cumlesi (ekranda o basiliyor).
+  Yani EN metin VAR, indirilen sayfa onu kullanmiyor. Gorseller ise hic yok:
+  rehberde adim basina bir cizim uretecek bir kod yolu bulunmuyor.
+- **Neden bu turda yapilmadi:** rehberin iki kapisi var
+  (`rehber_kaynak_check`, `uctan_uca_check`) ve ikisi de basilan BAYTLARI
+  yargiliyor; dili ikiye ayirmak sablon tablosunu, kapilari ve
+  `guide_completeness_check`'in "kaynaksiz cumle 0" yasasini birlikte
+  tasimayi gerektiriyor. Yarim yapilirsa kaynaksiz cumle uretir — bu repo'da
+  en yasak sey. Tek turda oteki alti kalemle birlikte guvenle yapilamazdi.
+- **SONRAKI ADIM:** `rehberHTML`'e `dil` parametresi (i18n.js'in mevcut
+  `tr/en` anahtarini kullanir), her sablona `en` ikizi, kapiya "her ID iki
+  dilde ayni sayilari basiyor" yargisi. Gorseller ayri ve daha buyuk bir is:
+  adim basina cizim, `flat-from-pattern.js`'in parca cizicisinden turetilebilir.
+
+## KAPANDI (kanit gate ciktilariyla, ana raporda)
+
+- **T3-1** onden fermuar -> `web/js/prompt-parse.js` M7-yon (exposedZip:centerFront)
+- **T3-3** katmanli etek -> `engine/src/ruffle.cpp` (katman orani = fullness^(1/tiers))
+          + `web/lib/flat-from-pattern.js` (katman ilan ettigi cevreye cizilir)
+          + `engine/src/hemflounce.cpp` (volan tutundugu kenara gore kesilir)
+- **T3-5** 'fitted' kol sekline baglanmasi -> `prompt-parse.js` M7-mesafe
+- **T3-6** fitted belde daralmiyor -> `engine/src/garment.cpp extendPiece`
+          + `engine/src/bodice.cpp` prenses yan paneli (+ ILAN EDILMIS golden re-pin)

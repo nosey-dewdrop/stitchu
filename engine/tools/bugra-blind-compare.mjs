@@ -433,9 +433,9 @@ const SINIF = [
       + 'zaten ACIK olan on/arka bust bolusumu. Cizgi bugunku olculen degere BILEREK ve ADIYLA tasindi — sessiz degil.',
     kuyruk: { cizgiMM: 22.5, olculenMM: oyukIsaret } },
   { s: 'MOTOR EKSIGI', ad: 'fitted top BELDE DARALMIYOR (yan dikis koltukaltindan etege surekli genisliyor)',
-    olcum: 'sevk edilen cizimde (KOSU/ciktilar/bugra-spec-giysi.png, FRONT ve BACK figurleri) shaping=dart oldugu halde yan dikis monoton; bel daralmasi GOZLE 0. Kalipta bust pensi VAR, yan dikiste bel girintisi YOK.',
-    kok: 'shaping ekseni PENS uretir, yan dikis EGRISI uretmez; "fitted" bir ust bel hattinda yan dikisten de alir. Motorda yan dikisi belde iceri alan bir eksen yok.',
-    durum: 'ACIK — bu fazda ADIYLA acildi, kapatilmadi (hakem raporunda C bolumunun hicbir kovasinda gecmiyordu)' },
+    olcum: 'ONCE: sevk edilen cizimde (KOSU/ciktilar/bugra-spec-giysi.png) shaping=dart oldugu halde yan dikis monotondu; bel daralmasi GOZLE 0. SONRA (2026-09-04, ayni cizim): Top Front yan kenari koltukalti 244.2 -> BEL 229.2 -> etek 244.4 mm; bel noktasi artik konturun UZERINDE bir komut.',
+    kok: 'ILK HIPOTEZ YANLISTI ("motorda yan dikisi belde iceri alan bir eksen yok"). OLCULDU: eksen VARDI — kalibin kendi bel genisligi `waistlineWidth = frontWidth - sideTake` hesaplaniyordu, ama beli gecen bir ustte yan dikis TEK bir kubikle koltukaltindan etege iniyordu ve o sayi kubigin yalniz KONTROL NOKTASIYDI. Bir Bezier kontrol noktasindan gecmez: cizilen bel EU38 icin 238.7 mm cikiyordu, kalibin kendi beli 229.2 mm iken (ceyrekte 9.5, cevrede 3.8 cm fazla). Duzeltme: bele inen CIZGI konturda tutuluyor (kapali/crop bedenin hep yaptigi sey), sonra belden kalcaya ayni kubik. Yeni sayi/sabit YOK.',
+    durum: 'KAPANDI 2026-09-04 — garment.cpp extendPiece + bodice.cpp prenses yan paneli. Golden ILAN EDILEREK yeniden pinlendi (engine/GOLDEN-PIN.md 2026-09-04, 187 spec\'in 50\'si, hepsi ust; Damla onayi bekliyor). Birlikte duzelen sessiz kapi: validator.cpp topSideSeamLength cizgi gelince nullopt donup on/arka yan dikis kuralini kapatacakti. sewable_census 82980/82980, sideseam_adversarial_check + walkgate_check yesil.' },
 ];
 
 say('');

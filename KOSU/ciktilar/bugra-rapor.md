@@ -17,15 +17,15 @@
 
 | motor ~ Bugra | motor bbox | Bugra bbox | mean SIMDI | p95 | max | mean ONCE | delta |
 |---|---|---|---|---|---|---|---|
-| Top Front ~ Front Body | 293×660 | 301×511 | 37.4 | 142.1 | 149.6 | 37.0 | +0.4 |
-| Top Back ~ Back Body | 275×618 | 213×452 | 47.9 | 165.8 | 169.5 | 47.7 | +0.1 |
+| Top Front ~ Front Body | 293×660 | 301×511 | 36.5 | 141.5 | 149.6 | 37.0 | -0.5 |
+| Top Back ~ Back Body | 275×618 | 213×452 | 47.4 | 165.8 | 169.4 | 47.7 | -0.3 |
 | Puff Sleeve ~ Lower Sleeve | 473×270 | 346×170 | 60.4 | 135.9 | 154.0 | 89.9 | -29.6 |
 | Peter Pan Collar (bebe yaka) ~ Collar | 298×110 | 182×165 | 39.0 | 99.9 | 120.6 | 39.0 | +0.0 |
 
 Parca sayisi: **motor 6** vs **Bugra 7**.
 
 Cevre (kesim cizgisi, mm):
-- Top Front: motor 1754 vs Bugra 1686 (fark 68, 4%) — motor dikis cizgisi 1630
+- Top Front: motor 1755 vs Bugra 1686 (fark 69, 4%) — motor dikis cizgisi 1631
 - Top Back: motor 1669 vs Bugra 1275 (fark 394, 31%) — motor dikis cizgisi 1550
 - Puff Sleeve: motor 1177 vs Bugra 873 (fark 304, 35%) — motor dikis cizgisi 1067
 - Peter Pan Collar (bebe yaka): motor 692 vs Bugra 568 (fark 125, 22%) — motor dikis cizgisi 562
@@ -41,14 +41,14 @@ komut indeksi / sabit landmark listesi YOK.
 | yaka-on | 101.7 | 213.1 | -111.4 | - | - |  |
 | omuz-on | 122.5 | 44.8 | +77.7 | - | - |  |
 | OYUK-on | 222.7 | 211.4 | +11.2 | 1.123 | 1.229 | (y/k KESIM cizgisinde) |
-| yan-dikis-on | 344.3 | 201.7 | +142.6 | - | - | (Bugra: alt+ust, arada pens agzi) |
-| etek-on | 270.1 | 243.1 | +27 | - | - |  |
+| yan-dikis-on | 166.7 | 201.7 | -35.1 | - | - | (Bugra: alt+ust, arada pens agzi) |
+| etek-on | 178.8 | 243.1 | -64.3 | - | - |  |
 | on-orta CF | 550.5 | 401.5 | +149 | - | - |  |
 | yaka-arka | 73.6 | 123.8 | -50.2 | - | - |  |
 | omuz-arka | 122.5 | 48.1 | +74.4 | - | - |  |
 | OYUK-arka | 200.2 | 220 | -19.9 | 1.072 | 1.175 |  |
-| yan-dikis-arka | 344.8 | 227.4 | +117.4 | - | - |  |
-| etek-arka | 244.7 | 176.6 | +68.1 | - | - |  |
+| yan-dikis-arka | 166 | 227.4 | -61.4 | - | - |  |
+| etek-arka | 179.3 | 176.6 | +2.7 | - | - |  |
 | arka-orta CB | 564 | 393.6 | +170.4 | - | - |  |
 | OYUK toplam (on+arka) | 422.9 | 431.5 | -8.6 | - | - |  |
 | OYUK on-arka (isaret) | 22.5 | -11 | +33.5 | - | - | (yasa: on <= arka — knowledge/drafting-math-eu38.md, Bugra 8/8 beden) |
@@ -137,9 +137,9 @@ en kucuk x'i — kontrol noktasi degil, EGRININ kendisi.
 - durum: **ACIK — hakem K5: SIMDI DOKUNMA, kendi fazini hak ediyor (butun bloklari oynatir, 8 bedende once/sonra ister). EXIT KODU: bu tek kalem bir REGRESYON CIZGISI tasiyor (asagi bak) — kirmizi ADIYLA duruyor ama kapiyi tek basina dusurmuyor, cunku kapanmasi bir OLCUM degil bir KARAR. Emsal: engine/tests/v5-ratchet-baseline.json V5-G uzlasmasi. DIKKAT — BU FAZ ONU KOTULESTIRDI: 18.4 -> 22.5 mm. Sebep K1/K4: on oyuk yayinlanmis on genislik cizgisine (162.0) oturunca arkadan (172.0) daha COK uzadi. Iki duzeltme de motorun KENDI yayinina karsi dogru; kotulesen sey, zaten ACIK olan on/arka bust bolusumu. Cizgi bugunku olculen degere BILEREK ve ADIYLA tasindi — sessiz degil.**
 
 ### [MOTOR EKSIGI] fitted top BELDE DARALMIYOR (yan dikis koltukaltindan etege surekli genisliyor)
-- olcum: sevk edilen cizimde (KOSU/ciktilar/bugra-spec-giysi.png, FRONT ve BACK figurleri) shaping=dart oldugu halde yan dikis monoton; bel daralmasi GOZLE 0. Kalipta bust pensi VAR, yan dikiste bel girintisi YOK.
-- kok sebep: shaping ekseni PENS uretir, yan dikis EGRISI uretmez; "fitted" bir ust bel hattinda yan dikisten de alir. Motorda yan dikisi belde iceri alan bir eksen yok.
-- durum: **ACIK — bu fazda ADIYLA acildi, kapatilmadi (hakem raporunda C bolumunun hicbir kovasinda gecmiyordu)**
+- olcum: ONCE: sevk edilen cizimde (KOSU/ciktilar/bugra-spec-giysi.png) shaping=dart oldugu halde yan dikis monotondu; bel daralmasi GOZLE 0. SONRA (2026-09-04, ayni cizim): Top Front yan kenari koltukalti 244.2 -> BEL 229.2 -> etek 244.4 mm; bel noktasi artik konturun UZERINDE bir komut.
+- kok sebep: ILK HIPOTEZ YANLISTI ("motorda yan dikisi belde iceri alan bir eksen yok"). OLCULDU: eksen VARDI — kalibin kendi bel genisligi `waistlineWidth = frontWidth - sideTake` hesaplaniyordu, ama beli gecen bir ustte yan dikis TEK bir kubikle koltukaltindan etege iniyordu ve o sayi kubigin yalniz KONTROL NOKTASIYDI. Bir Bezier kontrol noktasindan gecmez: cizilen bel EU38 icin 238.7 mm cikiyordu, kalibin kendi beli 229.2 mm iken (ceyrekte 9.5, cevrede 3.8 cm fazla). Duzeltme: bele inen CIZGI konturda tutuluyor (kapali/crop bedenin hep yaptigi sey), sonra belden kalcaya ayni kubik. Yeni sayi/sabit YOK.
+- durum: **KAPANDI 2026-09-04 — garment.cpp extendPiece + bodice.cpp prenses yan paneli. Golden ILAN EDILEREK yeniden pinlendi (engine/GOLDEN-PIN.md 2026-09-04, 187 spec'in 50'si, hepsi ust; Damla onayi bekliyor). Birlikte duzelen sessiz kapi: validator.cpp topSideSeamLength cizgi gelince nullopt donup on/arka yan dikis kuralini kapatacakti. sewable_census 82980/82980, sideseam_adversarial_check + walkgate_check yesil.**
 
 ## Motorun cizemedigi Bugra yapilari (adiyla; sessiz atlama yok)
 - PUF UST KATMANI (Bugra Upper Sleeve): T14 olcumune gore Bugra kolu "yatay bolunmus" DEGIL — Lower Sleeve gercek set-in kol, Upper Sleeve onun ustune dikilen %29-35 buzgulu AYRI DIS KATMAN. Motorun sozlugunde ikinci katman doguran operator yok (sleeveCap {plain, gathered, puffed, cap} TEK parcayi sekillendirir). Motor puf ust katmanini CIZEMIYOR — adiyla kayit.
