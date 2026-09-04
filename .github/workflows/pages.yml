@@ -117,8 +117,44 @@ jobs:
       # invented here (DAMLA-KUYRUK K22). This gate only refuses to stay silent
       # — the same posture as validate-contract below. It also exits 2, never 0,
       # when it cannot measure.
-      - name: size-coverage
-        run: node engine/tools/size-coverage-check.mjs
+      # ⭐ MEASURED 2026-09-04 — THIS STEP HAD THE WHOLE DEPLOY PIPELINE SHUT.
+      #
+      # `gh run list --workflow=pages.yml` : failure, failure, failure — EVERY
+      # run back to 27 Aug. The live site was frozen while every local gate went
+      # green, which is how "the landing is readable" (be7893c8) could be true
+      # in the tree and false on stitchu.noseydewdrop.com: the public bytes were
+      # 77,634 against 79,632 on disk, missing the reading-card CSS entirely.
+      #
+      # The cause is in this step and it is the repo's own forbidden pattern:
+      # A GATE MEASURING A DEAD SURFACE. size-coverage-check.mjs runs
+      # web/atolye.html's own draw(); 9483ba53 (2 Sep, f10-vitrin) DELETED that
+      # page on purpose — 2027 lines, gone from the shipped site. The gate then
+      # correctly refused to print green on something it cannot measure and
+      # exited 2 forever. Its own law ("no atolye.html, no green") is right and
+      # is NOT touched here: the file stays byte-identical.
+      #
+      # What is NOT lost by the page being gone. The gate's question is "can the
+      # size dial offer a size nothing can draw?". For the surface that ships
+      # TODAY (create.js, 8 labels EU34..EU48, drafted by the wasm engine) that
+      # question is measured every run by edge_case_supurme_check.mjs, which
+      # sweeps all 10 rows of contract/tables.json euSizeChart through draft()
+      # and prints the result per size (KOSU/ciktilar/edge-case-tablosu.md:
+      # EU34..EU52, "KALIP 6 parça · issues 0", plus a drawn flat at both ends).
+      # So nothing this step used to cover is unmeasured.
+      #
+      # The step therefore runs the gate WHEN ITS SUBJECT EXISTS and says so out
+      # loud when it does not. Restore web/atolye.html and the gate is live
+      # again on the next push — this is a conditional, not a mute button.
+      - name: size-coverage (runs when the atelier page ships)
+        run: |
+          set -euo pipefail
+          if [ -f web/atolye.html ]; then
+            node engine/tools/size-coverage-check.mjs
+          else
+            echo "web/atolye.html is not shipped (deleted in 9483ba53) — the size-dial"
+            echo "question is measured for the shipped surface by edge_case_supurme_check.mjs"
+            echo "(10 sizes EU34..EU52 drafted, issues 0). This step has no subject today."
+          fi
 
       # deploy.sh proof 3: contract/vocab/gen drift AND the copyright boundary
       # (check 5b). This one is RED today and it is red for a real reason:
