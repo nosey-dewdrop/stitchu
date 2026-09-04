@@ -133,3 +133,19 @@ format tercihi — dışarı öyle söyleme.**
 ## Bulunamadı
 Facebook dikiş gruplarından birebir alıntı yapan blog **yok** — gruplar özel ve
 ekran görüntüsü paylaşımını yasaklıyor, blogcular alıntı yerine özetliyor.
+
+## ★ PROJEKSİYONDA ÇÖZÜLMEMİŞ TEK SORUN — bizim motorumuz tam bunu yapıyor
+Love to Sew bölüm 290 (30 Eyl 2025), iki kalıp firması sahibi konuşuyor.
+Projeksiyonla dikenlerin çözemediği şey: **kalıp düzenlemeleri.** Göğüs payı
+(FBA), basen payı, karın payı gerektiren biri projeksiyonda ya kâğıda kopyalıyor
+(projeksiyonun bütün faydası gidiyor) ya Illustrator/Inkscape öğreniyor.
+Helen Wilkinson (10 yıllık kalıp tasarımcısı) *"hâlâ öğreniyorum"* diyor ve
+sunucular dinleyicilere **"bunu nasıl çözeceğimizi siz söyleyin"** diyor.
+→ Bizde bu zaten var: motor düzenlemeyi parametre olarak uyguluyor
+(`edit_locality_check`, "yakayı 2cm derinleştir") ve kalıbı yeniden üretiyor.
+Kopyalama yok, Illustrator yok. Projeksiyon dosyası eklenirse bu boşluk
+doğrudan bizim olur.
+
+**Fiyat gerçeği (Damla'nın kararı, sadece veri):** hiçbir firma projeksiyon
+dosyasına ayrı ücret almıyor — hepsi kalıbın içinde bedava veriliyor
+("complimentary value-add"). Rakip yazılım katmanı $0–20 tek seferlik.
