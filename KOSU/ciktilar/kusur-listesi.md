@@ -389,3 +389,176 @@ olmadigi ya da hangi onceki hakem kararinin yolu kapattigi yazili.
 - **T3-5** 'fitted' kol sekline baglanmasi -> `prompt-parse.js` M7-mesafe
 - **T3-6** fitted belde daralmiyor -> `engine/src/garment.cpp extendPiece`
           + `engine/src/bodice.cpp` prenses yan paneli (+ ILAN EDILMIS golden re-pin)
+
+---
+
+## TUR 4 ONARIM (2026-09-04) — KAPANANLAR VE ACIK KALANLAR
+
+Bagimsiz denetci alti kusur yazdi (dordu satis-engelleyici, ikisi gorunur).
+Dordu KAPANDI, biri KISMEN, biri urun karari oldugu icin ACIK.
+Kapi ciktilari ana raporda; asagisi kok sebep + kalan.
+
+### KAPANDI — K2 pens havada duran cizik (denetci kusur 2)
+- **Yer:** `web/lib/flat-from-pattern.js` (`pensiDikiseOturt`, buildView icinde).
+- **Kok sebep OLCULDU, hipotez degil.** Denetci "pens tek cizgi cizilmis,
+  konvansiyon ince kapali V ister" dedi. Referans OLCULDU ve hipotez CURUDU:
+  `GIRDI/iyi-flat/adaylar/13-yuksek-bel-a-line.png` on bedeninde pens TEK
+  cizgidir (yari basina bir tane), V degil. Yani cizgi sayisi degil, cizginin
+  NEREDE BITTIGI yanlisti: pens agzi, pens kapanmasinin biraktigi KINK'in
+  ustunde duruyor, cizilen bel dikisi ise o kinki temizleyen egri
+  (`smoothEdge`, G2-goz/K2). Olculen bosluk, EU38 'gathered mini' elbisede:
+  on pensler **9.14 / 6.03 mm**, arka pensler **5.51 / 4.47 mm**. Etek
+  pensleri daha kotu: onlarin agzi etegin KENDI ham ust kenarinda ve o kenar
+  bir elbisede HIC CIZILMIYOR.
+- **Onarim:** bacak kendi ekseninde (apeks -> agiz) uzatilip cizilen dikisle
+  KESISTIRILIYOR; kesisim yoksa en yakin nokta izdusumu; ikisi de yoksa bacak
+  oldugu gibi kalir ve sebep `cizilemeyen:` yorumuna yazilir.
+- **Kanit:** ayni iki spec'te olculen bosluk **0.00 mm** (8 pensin 8'i).
+  Kemerin kasten kisalttigi bacak (wbDepth) dokunulmadan birakilir.
+- **KAPI:** `node engine/tests/cizim_giysi_mi.mjs` (a)-(k)+(g2) YESIL.
+
+### KAPANDI — K1a balon kol "kagit ucak kanadi" (denetci kusur 1, kol yarisi)
+- **Yer:** ayni dosya, kol blogu (`innCiz` / `balonKabarmaMM`).
+- **Kok sebep OLCULDU:** motor `Balloon Sleeve` + `Sleeve Cuff` basiyor,
+  `buzguOku` etek buzgu oranini **1.8005** olarak OKUYOR — ama cizim manset
+  cizgisini kolun kendi genis etek yarisina (**169.45 mm**) basiyordu.
+  Mansetin gercek bitmis yarisi **94.12 mm**. Manset kolla ayni genislikte
+  cizilince balon kolun tek tanimlayici ozelligi (bilekte kisilmesi) silinir
+  ve geriye duz kama kalir. Oran zaten olculuyordu, cizime hic uygulanmiyordu.
+- **Onarim:** etek kosesi mansetin bitmis yarisina cekildi; koltukalti konturu,
+  olculen buzgu fazlasi kadar (**Lh - Lc = 75.34 mm**) katlama cizgisinden
+  UZAGA kabartildi, tepesi buzgunun oldugu ucta (manset) — kapak buzgusundeki
+  yasanin aynisi, aynalanmis profil. Hicbir genislik secilmedi.
+- **Kanit:** cizimde `data-manset-yarim-mm="94.12"`,
+  `data-kol-etek-yarim-mm="169.45"`, `data-balon-kabarma-mm="75.34"`.
+  Gorsel: `KOSU/ciktilar/02-elbise-balon-uzun-kol-dik-yaka.png`,
+  `05-ust-balon-uzun-kol.png` (yeniden uretildi).
+
+### KAPANDI — K1b buzgulu etek "ucgen koni, tek drape cizgisi yok"
+- **Yer:** ayni dosya (`DOKUM_X_ORAN` / `DOKUM_BASLANGIC`) +
+  `contract/flat-convention-v1.json sevkPoz.buzgu.etekDokumu`.
+- **Sayilar UYDURULMADI, referanstan OLCULDU** (tarak yogunlugunun olculdugu
+  yontemin aynisi): `GIRDI/iyi-flat/adaylar/08-empire-buzgu-etek.png`,
+  1050x1400 px, gorunus A on etegi, pencere x 40-470 / y 240-760, esik
+  luma<128. Her satirda siluet kenarlari bulundu, ic cizgi gruplari cikarildi,
+  on orta dikeyi haric tutuldu. Sonuc: **yari basina 3 cizgi**, x konumlari
+  yari-genisligin **0.19 / 0.40 / 0.66**'si (etegin %70, %80, %90
+  derinliginde AYNI, +-0.02), baslangic derinlikleri **0.41 / 0.56 / 0.63**,
+  ucu de etek ucuna iniyor.
+- **Yalniz OLCULEN buzguda cizilir:** kosul `out.notes.buzguBel`, yani etek
+  bel kenari / beden bel kenari >= 1.235 (contract gatherRatios). A-line ya da
+  duz etek tek cizgi almaz — denetci hakli bir sekilde "her flat'e susleme"
+  koymamizi istemiyordu.
+- **Cizgi silüetin O YUKSEKLIKTEKI kendi yari-genisliginin kesridir**, sabit
+  bir egri degil; etek genisledikce cizgiler de acilir.
+
+### KAPANDI — K3 flat sonuc ekraninda yok (denetci kusur 3)
+- **Yer:** `web/js/create.js` (`flatKarti`), `web/css/app.css` (.flat-panel),
+  `web/js/i18n.js` (create.flatcard.*).
+- **Kok sebep:** sonuc ekrani kalip merkezli kuruldu; flat cikti listesine bir
+  DOSYA TURU olarak eklendi, render hattina hic baglanmadi.
+- **Onarim:** sonuc ekraninda, indirme dugmelerinin USTUNDE, "What you are
+  about to cut" karti. Cizim ayni `flatSVG()` cagrisidir — ikinci bir kalem
+  yok, indirilen dosyayla ayni baytlar. Cizim reddederse (`cizilemeyen:`)
+  sebep kartin altina basilir, kart sessizce kaybolmaz.
+- **Kanit (tarayicida kosuldu, CDP, 127.0.0.1:8931):** iki promptta da
+  `.flat-panel` var, icinde 1 SVG, konsol hatasi 0.
+  Ekran goruntusu alindi ve GOZLE bakildi.
+
+### KAPANDI — K5 baslik alicinin cumlesiyle celisiyor (denetci kusur 5)
+- **Yer:** yeni `web/lib/baslik.js` + `web/js/create.js draftedTitle`.
+- **Kok sebep OLCULDU (motor kaynagi):** `engine/src/garment.cpp:748-757`
+  basligi `title(spec.skirtStyle) + sleeveWord + "dress"` diye kuruyor — yani
+  SADECE iki eksenden. O iki eksen secilmemisse motorun VARSAYILANI ("A-line",
+  "straight-sleeve") baslikta bir IDDIA olarak basiliyordu; alicinin acikca
+  yazdigi wrapFront / skirtLength / exposedZip / collarType / topLength
+  eksenleri ise basliga hic girmiyordu.
+- **Yasa:** baslik yalnizca kaynagi `soruldu` (alici yazdi/secti) ya da
+  `gorulen` (fotografta okundu) olan ekseni tasiyabilir; `cikarildi` (host
+  default) ve `zorunlu` (dikilebilirlik) BASLIGA GIREMEZ. Kelime de
+  uydurulmaz: once alicinin KENDI kelimesi, sonra menunun etiketi, sonra
+  eksen degerinin insan hali. Sira alicinin kendi cumle sirasidir.
+- **Once / sonra (canli hattan olculdu):**
+  - `long sleeve maxi wrap dress ... knit fabric, deep v neckline`
+    "A-line straight-sleeve dress" -> **"Long sleeve maxi wrap dress with
+    knit, v neckline"**
+  - `a top with a zipper at the front and a peter pan collar`
+    "Cropped top" -> **"Top with zipper front, peter pan"**
+  - `fitted gathered midi dress with puff sleeves`
+    "A-line puff-sleeve dress" -> **"Midi dress with puff sleeves"**
+  - `a dress with a gathered skirt and balloon sleeves, mini`
+    -> **"Dress with gathered skirt, balloon, mini"**
+- Ayni baslik dosya adina, A4 kapagina ve rehbere de gider (tek kaynak).
+
+### KAPANDI — K6 "not understood" gurultusu (denetci kusur 6)
+- **Yer:** `web/js/prompt-parse.js` (`eksenAdiYut` + komsu-eksen cumlesi).
+- **Kok sebep, iki ayri sey:**
+  1. `P` tablosu ekseni STIL kelimesiyle tasiyor ('knit', 'peter pan'), eksenin
+     KENDI adiyla degil. Cumledeki 'fabric' / 'collar' / 'sleeves' kelimeleri
+     hicbir ifadeye ait olmadigi icin artik kaliyor ve dogrudan "en yakin
+     primitif" cikmaz sokagina dusuyordu — karsiligi AYNI satirda okunmusken.
+  2. Okunmus bir ifadenin yanindaki sifat ('deep') `enYakinPrimitif`'e
+     dusuyordu; o olcu METIN yakinligidir, anlam degil, ve "closest thing I
+     can draw is the edge" gibi sacma bir oneri uretiyordu.
+- **Onarim, TABLOYA HICBIR KELIME EKLEMEDEN:** (1) artik kelime bir spec eksen
+  ADINI karsiliyorsa (`collarType` -> collar|type, `fabric` -> fabric) VE O
+  EKSEN ZATEN OKUNDUYSA, kirmizi "anlamadim" degil notr "you already have it"
+  satiri olur; okunmamis eksenin adi hala kirmizidir. (2) komsusu okunmus bir
+  artik icin cumle komsudan turer: "I read neckline from 'v neckline' next to
+  it; there is no separate dial for 'deep'".
+- **Once / sonra (canli hattan):** `long sleeve maxi wrap dress ... deep v
+  neckline` -> kirmizi satir **4 -> 3** (kalan ucu de eyleme donuk: tie ->
+  tieClosure ekseni, waist -> "gathered waist yaz", deep -> ayri kadran yok);
+  `a top with a zipper at the front and a peter pan collar` -> kirmizi satir
+  **2 -> 0**; `a dress with a gathered skirt and balloon sleeves, mini` ->
+  **1 -> 0**.
+- **KAPI:** `node engine/tests/prompt_spec_check.mjs` GREEN.
+
+## ONARILMADI (durust liste, T4)
+
+### T4-4 — ORTADA SATILAN BIR SEY YOK (denetci kusur 4)
+- **Durum bir onceki turdan AYNEN gecerli** ve o turun gerekcesi bu dosyada
+  yukarida duruyor: fiyat UYDURULAMAZ (Damla'nin karari), hicbir yere gitmeyen
+  sahte bir "Satin al" dugmesi kasa olmamasindan beterdir, anahtarsiz bir
+  Stripe iskeleti de canli sitede hicbir seyi degistirmez.
+- Ayrica site bunu artik ACIKCA ILAN EDIYOR (`web/index.html`: "no price on
+  this site yet: nothing gets a price before a toile is sewn and judged").
+  Bir ajanin tek basina bozabilecegi bir cumle degil.
+- **SONRAKI ADIM (tek soru, Damla'nin karari):** bu paket kaca satiliyor ve
+  hangi saglayiciyla? Cevap gelince kod tarafi kucuk: fiyat sabiti + Stripe
+  Payment Link + basari sayfasinda indirme kilidi.
+
+### T4-1c — ETEK UCU DALGASI (festoon) CIZILMEDI
+- Referans 08'de buzgulu etegin ucu DALGALIDIR ve bunu cizmedim.
+- **Gerekce:** etek ucu, kalip tarafindaki (g)/(g2) kapilarinin milimetresiyle
+  olctugu kenardir. Onu dalgalandirmak cizimi guzellestirirken OLCULEN bir
+  kenari oynatir. Susleme ugruna olculen bir kenari kimildatmak bu deponun
+  yasagi. Karar contract'a da yazildi (`etekDokumu._cizilmeyen`).
+- **SONRAKI ADIM:** dalga, siluet konturunun degil ayri bir `dokum` yolunun
+  ustune cizilirse kapilara dokunmadan eklenebilir; o zaman dalga sayisi da
+  ayni referanstan olculur (kivrim basina bir dalga).
+
+### T4-1d — BALON KOLUN DIS KONTURU HALA DUZ
+- Balon kolun katlama cizgisi (dis siluet) S -> out duz cizgisidir; kolun
+  kabarmasi yalniz koltukalti tarafinda. Referans 04/06/09'da lob iki taraflidir.
+- **Gerekce:** katlama cizgisi kolun KENDI olculen boyudur (Lf) ve onu
+  kabartmak icin bir kaynak sayi YOK — kapak buzgusu olculdugunde (bz.kapak)
+  zaten kabartiliyor, balonda kapak buzgusu OLCULMUYOR (motorun balon kolu
+  kapakta degil etekte buzuyor). Uydurma genlikle kabartmadim.
+- **SONRAKI ADIM:** motor tarafi — balon kol kapaginda da olculebilir bir
+  buzgu varsa `sleeve_cap` kenari uzun cizilmeli; o zaman mevcut `yay`
+  operatoru hicbir yeni sayi olmadan lobu basar.
+
+### T4-EK — ONCEDEN KIRMIZI, BENIM DEGIL: flat_artifact_census
+- `ctest -R flat_artifact_census` KIRMIZI: "[3 C1] 2 nokta teget farki 1 dereceyi
+  asiyor". Bu kapi 3B kabuk hattini (`shell-flat`) olcuyor, etiketi
+  ARASTIRMA_HATTI_SEVK_DISI, ve bu turda degistirdigim hicbir dosyaya
+  bakmiyor. DOGRULANDI: `web/lib/flat-from-pattern.js` stash'lenip HEAD haline
+  dondurulunce AYNI iki ihlalle AYNI sekilde dusuyor. Yani devraldigim kirmizi.
+
+### T4-EK2 — generated_ratchet_check ONCEDEN KIRMIZIYDI, MUHURLENDI
+- `contract/generated-paths.sha256` `engine/golden-reference.csv` icin
+  2a2f5dad… ilan ediyordu, HEAD'de commitli dosyanin sha'si 70895ffa…
+  (yani bir onceki tur goldeni yeniden uretip manifesti ayni commit'e
+  koymamis). Dosyaya DOKUNMADIM; yalnizca manifest, commitli baytlara
+  yeniden muhurlendi (`--accept`) ve `golden_check` zaten yesildi.

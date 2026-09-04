@@ -2,7 +2,7 @@
 #   engine/tests/generated_ratchet_check.sh --accept
 # and commit this file in the SAME commit as the pages it describes.
 # A line moving here without its producer being run is a hand-edit.
-2a2f5dad7d287abc0cdc3827fbcb672998a7910a33277a38238cead56d43beb0  engine/golden-reference.csv
+70895ffa4da46bc8412149465fae49a3bafcc63bca979cb22ef242ccebac6917  engine/golden-reference.csv
 a8ecd9ae565de70f3df4abb2be22b2cf43326a66c212fe0a1187b361c03bb28a  web/guide/a-line-skirt.html
 9840048be432a2d69bb251f1ea34d62756c624755d174f89680823530ae02d3b  web/guide/babydoll-dress.html
 67eb81041c77ed32015fa67a8779b8ab05c8c12ea81a2bc7089a574f7ba1b031  web/guide/choosing-fabric.html
