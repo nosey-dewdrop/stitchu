@@ -301,6 +301,23 @@ Doğru iddia "herkes bantlamaktan nefret ediyor" DEĞİL; doğrusu: **bantlama b
 bir kesimi eliyor** — yazıcısı olmayan, sadece iPad'i olan, vakti dar, ve
 30 sayfayı aşan büyük giysiler. Hedef kitle o kesim.
 
+### BANTLAMA VERGİSİNİN GERÇEK SAYILARI (9 marka, 70+ kalıp, satıcının kendi ilanından)
+Rakiplerin ürün sayfalarından çekildi, tahmin değil: basit üst/etek **20-40
+sayfa**, elbise/pantolon **40-60**, kaban/blazer/kot **65-115**. Bulunan en
+büyük: Cashmerette Fiske pijama **147 sayfa** (A0'da 11). En küçük: Megan
+Nielsen külot 8 sayfa. A0 karşılığı hep 1-5 tabaka.
+
+**★ ÖLÇÜLEN HAKSIZLIK — pazarlamada kullanılabilir:** aynı kalıp, büyük beden
+aralığında **%20-85 daha fazla sayfa**. Cashmerette Montrose 26→48 (+%85),
+Hatton 36→61 (+%69), Canton Moto 53→87 (+%64), Brookhaven 48→76 (+%58).
+Yani plus-size diken kadın aynı kalıp için daha çok kâğıt, daha çok mürekkep,
+daha çok bant ödüyor. Bizim motorumuzda beden bir parametre — bu ceza yok.
+
+⚠ **DÜRÜST KARŞI KANIT:** sektör bu sorunu zaten dolanıyor. Closet Core'un YENİ
+kalıplarının hepsinde projeksiyon dosyası var (eskilerde yok). Yani "bantlama
+acısı" tek başına konumlandırma olamaz; bizim farkımız **kalıbın kendisinin
+fotoğraftan/prompttan üretilmesi**, dosya formatı değil.
+
 ### PROJEKSİYON DOSYASI — ucuz özellik, ölçülmüş talep (4 Eyl'de bulundu)
 Ev dikişçileri PDF'i kâğıda basıp yapıştırmak yerine **projeksiyonla kumaşa
 yansıtıyor.** Kanıt: "Projectors for Sewing" Facebook grubu 2021'de 35 bin,
