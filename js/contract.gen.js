@@ -952,11 +952,12 @@ export const VISION_TASIMA = {
       },
       {
         "ad": "gorunurFermuar",
-        "ara": "(exposed|visible|statement|contrast)\\s*zip(per)?",
+        "ara": "\\b(exposed|visible|statement|contrast)\\s*zip(per)?",
         "durum": "eslendi",
         "eksen": "exposedZip",
         "deger": "centerBack",
-        "cozum": "vocab-resolution-v1.json: exposedZip.*"
+        "cozum": "vocab-resolution-v1.json: exposedZip.*",
+        "not": "OLCULDU 2026-09-04: sinirsiz alternatif 'INVISIBLE zipper'i 'visible zip' diye eslesiyordu — gizli fermuar isteyen kullaniciya GORUNUR tasarim fermuari cikiyordu, tam tersi. \\b sinirla kapandi."
       },
       {
         "ad": "omuzAcik",
@@ -1021,8 +1022,8 @@ export const VISION_TASIMA = {
         "tr": "bunu henüz dikemiyorum — kelime kalıp motorunun sözlüğü dışında"
       },
       "oneri": {
-        "en": "the pattern still sews without it; the closest drawable details live on the spec screen (Edge/Panel/Stitch primitives, contract/primitives-v1.json)",
-        "tr": "kalıp onsuz da dikiliyor; en yakın çizilebilir detaylar spec ekranındaki eksenlerde (Edge/Panel/Stitch primitifleri, contract/primitives-v1.json)"
+        "en": "the pattern still sews without it; pick the closest detail from the choices on this screen",
+        "tr": "kalıp onsuz da dikiliyor; en yakın detayı bu ekrandaki seçimlerden seç"
       }
     }
   }

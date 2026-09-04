@@ -65,6 +65,9 @@ export const STRINGS = {
   'create.spec.promptbtn': { en: 'Read my words', tr: 'Yazdığımı oku' },
   'create.spec.promptok': { en: 'read: {what}. Check the picks below, fix anything I got wrong.', tr: 'okunan: {what}. Aşağıdaki seçimleri kontrol et, yanlışım varsa düzelt.' },
   'create.spec.promptunknown': { en: 'not understood: {word} — {hint}', tr: 'anlaşılmadı: {word} — {hint}' },
+  // M6-zaten: a word naming something the engine draws by default is neither
+  // "read onto an axis" nor "not understood" — it gets its own neutral line.
+  'create.spec.promptalready': { en: 'you already have it: {word} — {hint}', tr: 'zaten var: {word} — {hint}' },
   'create.spec.promptempty': { en: 'Nothing to read yet — type a few words about the garment.', tr: 'Okunacak bir şey yok — giysiyi birkaç kelimeyle yaz.' },
   'create.spec.photo': { en: 'or start from a photo', tr: 'ya da fotoğraftan başla' },
   'create.spec.photobtn': { en: 'Upload a garment photo', tr: 'Kıyafet fotoğrafı yükle' },
