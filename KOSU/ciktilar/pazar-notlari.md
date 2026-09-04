@@ -114,3 +114,22 @@ karşı. Tek nicel talep verisi: Charm Patterns'ın 1.800 kişilik anketinde
 projektör dosyası tercihi 2024'te %10'u aştı. **Bu "satışların %10'u" DEĞİL,
 format tercihi — dışarı öyle söyleme.**
 
+
+---
+
+## Kötü talimat / beden şikâyetleri (4 Eyl, kaynaklı alıntılar)
+- Bir dikiş öğretmeni (Fit Sew Beautiful, 12 Oca 2026): *"Henüz en az bir büyük
+  hata içermeyen bir indie kalıp kullanmadım."* · *"Birden fazla öğrencim bana
+  $3'lık bir Etsy kalıbı getirdi, giysiyi oluşturacak parçalar eksikti."*
+- Profesyonel kalıpçı (Claire-Louise Hardie): *"Çoğu, iyi talimat yazacak kadar
+  deneyimli dikişçi değil."* · *"Sew-along gerekiyorsa talimat zaten yeterince
+  net değildir."* (Elizabeth)
+- Beden tarafı: *"Ölçüp beden seçiyorum, dikiyorum ve KOCAMAN çıkıyor."* ·
+  *"Ölçü tablolarını okuyup hâlâ düzgün kalıplara sığamayacak kadar şişman
+  olduğunu görmek ne kadar aşağılayıcı."*
+- AI kalıpları: *"Bu kelime salatası!"* — makerlar *"imkânsız bir şeyi yapmaya
+  çalışarak zamanını, enerjisini, parasını ve malzemesini harcıyor."*
+
+## Bulunamadı
+Facebook dikiş gruplarından birebir alıntı yapan blog **yok** — gruplar özel ve
+ekran görüntüsü paylaşımını yasaklıyor, blogcular alıntı yerine özetliyor.
