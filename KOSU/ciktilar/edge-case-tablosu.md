@@ -1,6 +1,6 @@
 # EDGE CASE SÜPÜRME TABLOSU (M4-edge)
 
-üretildi: `node engine/tests/edge_case_supurme_check.mjs` · 2026-09-03
+üretildi: `node engine/tests/edge_case_supurme_check.mjs` · 2026-09-04
 
 YASA: her vaka ya geçerli bir çıktı verir ya **adıyla** reddedilir ve reddin yanında
 kullanıcının yapabileceği **sonraki adım** durur. Sessiz çöküş 0, sessiz default 0,
@@ -29,7 +29,7 @@ etiket tarafı bankalı okuma JSON'ları, kalıp tarafı sevk edilen wasm baytı
 | prompt | sadece boşluk | BOŞ İLAN EDİLDİ |  |
 | prompt | sadece emoji | BOŞ İLAN EDİLDİ |  |
 | prompt | sadece noktalama | BOŞ İLAN EDİLDİ |  |
-| prompt | anlamsız prompt | okunan 0 eksen | ANLAŞILMADI: asdfgh → en yakın primitif: edge (contract/primitives-v1.json) \| qwerty → en yakın primitif: op.overlay (contract/primitives-v1.json) \| zxcvb → en yakın primitif: edge (contract/primitives-v1.json) |
+| prompt | anlamsız prompt | okunan 0 eksen | ANLAŞILMADI: asdfgh → bunu tek bir detay olarak çizemiyorum; en yakın çizebildiğim şey 'edge' ekseni \| qwerty → bunu tek bir detay olarak çizemiyorum; en yakın çizebildiğim şey 'overlay' ekseni \| zxcvb → bunu tek bir detay olarak çizemiyorum; en yakın çizebildiğim şey 'edge' ekseni |
 | prompt | çelişkili prompt (kolsuz + uzun kollu) | okunan 3 eksen | sleeveLength=long garment=dress sleeveStyle=none · KONAKSIZ: 'kolsuz' okundu, kolsuz seçildi; kol ekseni yok — kol istiyorsan 'kolsuz' kelimesini çıkar; 'uzun kollu' uygulanmadı |
 | prompt | çelişkili prompt EN (sleeveless + long sleeve) | okunan 3 eksen | sleeveLength=long garment=dress sleeveStyle=none · KONAKSIZ: 'sleeveless' okundu, kolsuz seçildi; kol ekseni yok — kol istiyorsan 'kolsuz' kelimesini çıkar; 'long sleeve' uygulanmadı |
 | prompt | çelişkili prompt (etek + yaka) | okunan 3 eksen | neckline=square garment=skirt skirtLength=midi · KONAKSIZ: 'etek' okundu, etek seçildi; üst gövde ekseni yok — bu kelimeyi kullanmak için 'elbise' ya da 'bluz' yaz; 'kare yakali' uygulanmadı |

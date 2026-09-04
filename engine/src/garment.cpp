@@ -734,9 +734,13 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
         steps.push_back("Try it on, then hem with a 2 cm double fold.");
     }
 
+    // M6-zaten: the sleeve word comes from BOTH sleeve axes (SleeveBlock::
+    // titleWord), so "Puff Sleeve cut 2" on the piece list can no longer be
+    // titled "straight-sleeve dress".
     const std::string sleeveWord = halter
         ? "halter "
-        : (spec.sleeveStyle == SleeveStyle::None ? "" : std::string(title(spec.sleeveStyle)) + "-sleeve ");
+        : (spec.sleeveStyle == SleeveStyle::None ? ""
+           : std::string(SleeveBlock::titleWord(spec.sleeveStyle, spec.sleeveCap)) + "-sleeve ");
 
     DraftedPattern pattern;
     pattern.garment = empire
@@ -969,8 +973,10 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
                                            bodice.frontPrincess, bodice.backPrincess,
                                            /*waistEnds=*/extra == 0);
 
+    // M6-zaten: same two-axis word source as the dress title above.
     const std::string sleeveWord =
-        spec.sleeveStyle == SleeveStyle::None ? "" : std::string(" ") + title(spec.sleeveStyle) + "-sleeve";
+        spec.sleeveStyle == SleeveStyle::None ? ""
+        : std::string(" ") + SleeveBlock::titleWord(spec.sleeveStyle, spec.sleeveCap) + "-sleeve";
 
     DraftedPattern pattern;
     pattern.garment = std::string(raw(spec.topLength)) + sleeveWord + " top";

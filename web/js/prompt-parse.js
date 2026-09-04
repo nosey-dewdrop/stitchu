@@ -64,8 +64,17 @@ T('neckline', 'pussyBow', ['pussy', 'bow'], ['fiyonk', 'yaka']);
 
 T('sleeveStyle', 'none', 'sleeveless', 'kolsuz', 'strapless', 'straplez',
   ['without', 'sleeves'], ['no', 'sleeves']);
+// ⭐ M6-zaten — 'fitted' TEK BAŞINA BİR KOL ŞEKLİ DEĞİLDİR.
+// ÖLÇÜLDÜ 2026-09-04: `fitted dress with a back zipper` ekranda BAŞARI satırı
+// olarak `fitted → sleeveStyle: straight` bastı. Kolsuz istenen bir elbiseye
+// düz kol eklendi ve bu "okudum" diye duyuruldu. `fitted` alıcı için bir
+// SİLÜET kelimesidir; kolu ancak cümlede bir KOL ekseni varken niteler
+// (`long fitted sleeves`). Bare hâli aşağıda ZATEN tablosuna düşer, çünkü
+// motorun varsayılanı (measurements.hpp `Shaping shaping = Shaping::Dart`)
+// zaten belde pens açıyor — ölçüldü: bodice front markings = 2 pens,
+// rehber adımı "Sew all darts first".
 T('sleeveStyle', 'straight', ['straight', 'sleeves'], ['straight', 'sleeve'],
-  'fitted', ['duz', 'kol']);
+  ['duz', 'kol']);
 T('sleeveStyle', 'balloon', 'balloon', 'bishop', ['balon', 'kol'], ['balon', 'kollu']);
 
 T('sleeveLength', 'short', ['short', 'sleeves'], ['short', 'sleeve'], ['kisa', 'kol'], ['kisa', 'kollu']);
@@ -340,14 +349,126 @@ function yonNiteleyiciBagla(tokens, used, eksenler) {
   }
 }
 
+// ⭐ M6-zaten (a) — DEĞER NİTELEYİCİSİ: SÖZLÜĞÜN KENDİ EŞ ANLAMLISI, KOMŞUSUNA
+// BAĞLI OKUNUR.
+//
+// `fitted` engine/vocab.json'da sleeveStyle'ın eş anlamlısıdır ("fitted" ->
+// "straight") — AMA yalnız bir KOLU nitelerken. Tabloya serbest kelime olarak
+// yazıldığında `fitted dress` cümlesine kimsenin istemediği düz kolu ekliyordu.
+// Kural yapısal: bir eş anlamlı ancak cümle o eksenin AİLESİNDEN bir eksen
+// zaten okuduysa bağlanır. Yeni değer, yeni ifade, yeni eksen YOK; var olan
+// eş anlamlı tablosu (VOCAB[field].synonyms) okunuyor.
+const NITELEYICI = [
+  // token -> hangi eksene, o eksen ailesinden biri cümlede varsa
+  { token: 'fitted', field: 'sleeveStyle', aile: ['sleeveStyle', 'sleeveLength', 'sleeveCap', 'cuffStyle'] },
+];
+
+function niteleyiciBagla(tokens, used, eksenler) {
+  for (const n of NITELEYICI) {
+    const hedef = canonical(n.field, n.token);
+    if (hedef === undefined) continue; // the synonym left the vocabulary: bind nothing.
+    if (!n.aile.some((f) => eksenler[f])) continue;
+    for (let i = 0; i < tokens.length; i++) {
+      if (used[i] || !tokenEsler(tokens[i], n.token)) continue;
+      used[i] = 'matched';
+      const onceki = eksenler[n.field];
+      if (onceki) { onceki.idx.push(i); onceki.kelime += ` ${tokens[i]}`; }
+      else eksenler[n.field] = { value: hedef, kelime: tokens[i], idx: [i] };
+      break;
+    }
+  }
+}
+
+// ⭐ M6-zaten (b) — MOTORUN ZATEN ÇİZDİĞİ ŞEYE "ANLAMADIM" DEMEK YALANDIR.
+//
+// ÖLÇÜLDÜ 2026-09-04, bu tablo yokken:
+//   'invisible zipper center back' -> 0 eksen, dört kelime de kırmızı
+//      ('invisible' -> "en yakın primitif: bodice")
+//   'back zip dress' / 'zipper at back' / 'arkadan fermuarlı elbise' -> 0 fermuar
+// Oysa MOTOR ÇIKTISINDA ÖLÇÜLDÜ (engine/dist, varsayılan elbise):
+//   pieces[Bodice Back].closure === 'invisible zipper (center back)'
+//   guideSteps: "Insert an invisible zipper in the center back through bodice
+//   and skirt". Yani kullanıcının istediği şey ZATEN çiziliydi ve ona
+//   "bunu bilmiyorum" dendi. Bu, sessiz default'tan beter: var olan bir
+//   yeteneği inkâr etmek.
+//
+// ⛔ MENÜ BÜYÜTME DEĞİL (madde 9): tek bir eksen, değer ya da ifade
+// eklenmiyor; engine/vocab.json bayt bayt aynı. Eklenen şey bir CEVAP:
+// motorun koşulsuz yaptığı işi adıyla söylemek. Her kayıt bir MOTOR OLGUSUNA
+// dayanır ve `kanit` alanında o olgunun kaynağı yazılıdır.
+const ZATEN = [
+  {
+    id: 'cbZip',
+    kanit: 'engine/src/garment.cpp annotateTechnical: closure "invisible zipper (center back)"',
+    tokens: ['zipper', 'zip', 'fermuar'],
+    // Komşu nitelikler aynı ifadeye aittir; ayrı ayrı kırmızı satır olamazlar.
+    nitelik: ['invisible', 'hidden', 'concealed', 'gizli', 'normal',
+      'back', 'arka', 'arkada', 'arkadan', 'sirt', 'sirtta',
+      'center', 'centre', 'orta'],
+    // Fermuar kararı ÖLÇÜLÜ (wearability.cpp: en dar geçiş vs baş çevresi) ve
+    // yalnız elbisede bir CB dikişi var; etek/üstte motor fermuar çizmiyor.
+    kosul: (e) => (e.garment ? e.garment.value : 'dress') === 'dress',
+    evet: {
+      tr: 'zaten çiziliyor: elbise arka ortada gizli fermuarla kapanıyor; gerekli mi diye motor senin ölçünle karar veriyor ve sonuç sayfasında sebebini yazıyor',
+      en: 'already drawn: the dress closes with an invisible center-back zipper; whether you need one is decided from your own measurements and the reason is printed on the result page',
+    },
+    hayir: {
+      tr: 'bu giysinin fermuarı yok — etek ve üst baştan/belden geçerek giyiliyor; fermuar istiyorsan "elbise" yaz',
+      en: 'this garment has no zipper — a skirt and a top are pulled on, no closure is drafted; write "dress" if you want the zippered one',
+    },
+  },
+  {
+    id: 'fitted',
+    kanit: 'engine/src/measurements.hpp: Shaping shaping = Shaping::Dart (default); bodice front markings = 2 waist darts',
+    tokens: ['fitted', 'tailored'],
+    nitelik: ['vucuda', 'oturan', 'dar'],
+    kosul: () => true,
+    evet: {
+      tr: 'zaten çiziliyor: gövde belde pensle daraltılıyor (varsayılan pens; "prenses" yazarsan prenses dikişi olur)',
+      en: 'already drawn: the body is taken in at the waist with darts (the default; write "princess" for princess seams instead)',
+    },
+  },
+];
+
+/** Consume the ZATEN phrases and their neighbouring qualifiers. */
+function zatenOku(tokens, used, eksenler) {
+  const out = [];
+  for (const z of ZATEN) {
+    let anchor = -1;
+    for (let i = 0; i < tokens.length && anchor === -1; i++) {
+      if (used[i]) continue;
+      if (z.tokens.some((w) => tokenEsler(tokens[i], w))) anchor = i;
+    }
+    if (anchor === -1) continue;
+    const alinan = [anchor];
+    for (let j = 0; j < tokens.length; j++) {
+      if (used[j] || j === anchor || Math.abs(j - anchor) > 1 + GAP) continue;
+      if (z.nitelik.some((w) => tokenEsler(tokens[j], w))) alinan.push(j);
+    }
+    for (const j of alinan) used[j] = 'zaten';
+    const tamam = z.kosul(eksenler);
+    out.push({
+      id: z.id,
+      kelime: alinan.sort((a, b) => a - b).map((j) => tokens[j]).join(' '),
+      durum: tamam ? 'ciziliyor' : 'yok',
+      metin: tamam ? z.evet : z.hayir,
+      kanit: z.kanit,
+    });
+  }
+  return out;
+}
+
+/** One report line, in both languages, built once. */
+const rapor = (kelime, tr, en) => ({ kelime, oneri: tr, oneriI18n: { tr, en } });
+
 /**
  * Deterministic parse: free text -> existing spec axes + the honest remainder.
- * Returns { eksenler, anlasilmadi, hesap, bos }.
+ * Returns { eksenler, anlasilmadi, zaten, hesap, bos }.
  */
 export function parsePrompt(text) {
   const tokens = fold(text).match(/[a-z0-9]+/g) || [];
   if (!tokens.length) {
-    return { eksenler: {}, anlasilmadi: [], oovKarar: [], hesap: { toplam: 0, eslesen: 0, stop: 0, anlasilmayan: 0 }, bos: true };
+    return { eksenler: {}, anlasilmadi: [], oovKarar: [], zaten: [], hesap: { toplam: 0, eslesen: 0, stop: 0, zaten: 0, anlasilmayan: 0 }, bos: true };
   }
   const used = new Array(tokens.length).fill(false);
   const eksenler = {};
@@ -373,10 +494,9 @@ export function parsePrompt(text) {
       const onceki = eksenler[entry.field];
       if (onceki && onceki.value !== entry.value) {
         // Same axis, second different word: NOT applied and NOT silent.
-        anlasilmadi.push({
-          kelime,
-          oneri: `'${entry.field}' ekseni bu metinde zaten '${onceki.kelime}' -> '${onceki.value}' okundu; '${kelime}' uygulanmadı`,
-        });
+        anlasilmadi.push(rapor(kelime,
+          `'${entry.field}' ekseni bu metinde zaten '${onceki.kelime}' -> '${onceki.value}' okundu; '${kelime}' uygulanmadı`,
+          `this sentence already set ${entry.field} to '${onceki.value}' with '${onceki.kelime}', so '${kelime}' was not applied`));
         for (const j of picks) used[j] = 'reported';
         continue;
       }
@@ -385,11 +505,19 @@ export function parsePrompt(text) {
     }
   }
 
+  niteleyiciBagla(tokens, used, eksenler);
   yonNiteleyiciBagla(tokens, used, eksenler);
+  const zaten = zatenOku(tokens, used, eksenler);
 
-  let eslesen = 0, stop = 0, anlasilmayan = 0;
+  let eslesen = 0, stop = 0, anlasilmayan = 0, zatenSayi = 0;
   for (let i = 0; i < tokens.length; i++) {
     if (used[i] === 'matched') { eslesen++; continue; }
+    // A ZATEN token IS matched — it landed on a construction the engine draws
+    // unconditionally and it gets its own printed line. It stays inside
+    // `eslesen` so the zero-silence arithmetic (toplam = eslesen+stop+
+    // anlasilmayan) keeps its original shape; `hesap.zaten` is a SUBSET of
+    // `eslesen`, not a fourth bucket.
+    if (used[i] === 'zaten') { eslesen++; zatenSayi++; continue; }
     if (used[i] === 'reported') { anlasilmayan++; continue; } // already in anlasilmadi
     if (STOP.has(tokens[i])) { stop++; continue; }
     anlasilmayan++;
@@ -397,7 +525,9 @@ export function parsePrompt(text) {
     // conflict sentence; anything else gets the nearest primitive.
     const owner = P.find((e) => e.tokens.includes(tokens[i]) && eksenler[e.field]);
     if (owner) {
-      anlasilmadi.push({ kelime: tokens[i], oneri: `'${owner.field}' ekseni zaten '${eksenler[owner.field].value}' okundu; '${tokens[i]}' uygulanmadı` });
+      anlasilmadi.push(rapor(tokens[i],
+        `'${owner.field}' ekseni zaten '${eksenler[owner.field].value}' okundu; '${tokens[i]}' uygulanmadı`,
+        `${owner.field} was already read as '${eksenler[owner.field].value}', so '${tokens[i]}' was not applied`));
       continue;
     }
     // ⭐ M4-edge — "BU KELİME SÖZLÜĞÜN DIŞINDA" DEMEK, KELİME SÖZLÜKTEYKEN, YALAN.
@@ -421,13 +551,18 @@ export function parsePrompt(text) {
       e.tokens.some((w) => tokenEsler(tokens[i], w)));
     if (yarim.length) {
       const tamam = [...new Set(yarim.map((e) => e.tokens.join(' ')))].slice(0, 3);
-      anlasilmadi.push({
-        kelime: tokens[i],
-        oneri: `'${tokens[i]}' bilinen bir kelime ama tek başına bir eksen belirtmiyor; şöyle yaz: ${tamam.join(' / ')}`,
-      });
+      anlasilmadi.push(rapor(tokens[i],
+        `'${tokens[i]}' bilinen bir kelime ama tek başına bir eksen belirtmiyor; şöyle yaz: ${tamam.join(' / ')}`,
+        `'${tokens[i]}' is a word I know, but on its own it does not say which detail you mean; try: ${tamam.join(' / ')}`));
       continue;
     }
-    anlasilmadi.push({ kelime: tokens[i], oneri: `en yakın primitif: ${enYakinPrimitif(tokens[i])} (contract/primitives-v1.json)` });
+    // ⭐ M6-zaten: the dead end used to read "en yakın primitif: bodice
+    // (contract/primitives-v1.json)" — an internal file path and a word
+    // ('primitif') that means nothing to someone buying a pattern. Same
+    // pointer, said in the buyer's language, no repo path.
+    anlasilmadi.push(rapor(tokens[i],
+      `bunu tek bir detay olarak çizemiyorum; en yakın çizebildiğim şey '${enYakinPrimitif(tokens[i]).replace('op.', '')}' ekseni`,
+      `I cannot draw this as a detail of its own; the closest thing I can draw is the ${enYakinPrimitif(tokens[i]).replace('op.', '')}`));
   }
   // ⭐ SÖZLÜK-DIŞI KELİMELER, CONTRACT'IN KENDİ TABLOSUNDAN GEÇİRİLİYOR.
   // `anlasilmadi` bir kelimenin en yakın PRİMİTİF ADINI söylüyor; bu, kullanıcı
@@ -450,11 +585,37 @@ export function parsePrompt(text) {
   const oovTokens = tokens.map((w) => (STOP.has(w) ? null : w));
   const oovKarar = oovAdaylari(oovTokens, bilinmeyenIdx).map((t) => oovKarariVer(t, null));
 
+  // ⭐ M6-zaten — CONTRACT'IN CEVABI VARKEN LEVENSHTEIN TAHMİNİ BASMAK.
+  // ÖLÇÜLDÜ 2026-09-04: 'shirt dress with buttons' -> 'buttons' için ekrana
+  // "en yakın primitif: op.extend" yazılıyordu. Oysa AYNI ÇAĞRIDA
+  // contract/vision-tasima-v1.json'ın `dugmeSirasi` kuralı o kelimeyi
+  // buttonRow eksenine bağlamıştı; cevap hesaplanıp atılıyordu. Harf-mesafesi
+  // tahmini yalnız contract'ın da bir sözü olmadığında konuşur.
+  for (const k of oovKarar) {
+    const idx = anlasilmadi.findIndex((u) => k.term.split(' ').includes(u.kelime));
+    if (idx === -1) continue;
+    const u = anlasilmadi[idx];
+    // Bilinen-kelime-yarım-ifade cümlesi (M4-edge) daha iyidir, ona dokunma.
+    if (/şöyle yaz|zaten/.test(u.oneri)) continue;
+    if (k.durum === 'eslendi') {
+      anlasilmadi[idx] = rapor(u.kelime,
+        `'${k.term}' bu motorda '${k.eksen}' ekseninde yaşıyor; aşağıdaki seçimlerden onu aç`,
+        `'${k.term}' lives on the '${k.eksen}' setting in this engine — turn it on in the picks below`);
+    } else if (k.kural !== 'bilinmeyen' && k.sebep && k.oneri) {
+      // Only a NAMED contract rule ("welt pocket", "hood") says something a
+      // buyer can act on. The generic `bilinmeyen` verdict carries no garment
+      // information, so the nearest-drawable pointer above stays.
+      anlasilmadi[idx] = rapor(u.kelime,
+        `${k.sebep.tr} — ${k.oneri.tr}`, `${k.sebep.en} — ${k.oneri.en}`);
+    }
+  }
+
   return {
     eksenler,
     anlasilmadi,
     oovKarar,
-    hesap: { toplam: tokens.length, eslesen, stop, anlasilmayan },
+    zaten,
+    hesap: { toplam: tokens.length, eslesen, stop, anlasilmayan, zaten: zatenSayi },
     bos: false,
   };
 }
@@ -551,13 +712,16 @@ const KONAK_KURALLARI = [
               'collarType', 'collarEdge', 'topLength', 'keyhole', 'wrapFront',
               'backOpening', 'laceUpBack', 'backDetail', 'bardotStyle',
               'peplum', 'placketStyle', 'edgeFinish'],
-    sonraki: "etek seçildi; üst gövde ekseni yok — bu kelimeyi kullanmak için 'elbise' ya da 'bluz' yaz" },
+    sonraki: "etek seçildi; üst gövde ekseni yok — bu kelimeyi kullanmak için 'elbise' ya da 'bluz' yaz",
+    sonrakiEn: "you picked a skirt, so there is no upper body to put this on — write 'dress' or 'top' to use this word" },
   { konak: 'garment', konakDeger: 'top',
     olenler: ['skirtStyle', 'skirtLength', 'ruffle', 'backSlit', 'waistline'],
-    sonraki: "üst seçildi; etek ekseni yok — bu kelimeyi kullanmak için 'elbise' ya da 'etek' yaz" },
+    sonraki: "üst seçildi; etek ekseni yok — bu kelimeyi kullanmak için 'elbise' ya da 'etek' yaz",
+    sonrakiEn: "you picked a top, so there is no skirt to put this on — write 'dress' or 'skirt' to use this word" },
   { konak: 'sleeveStyle', konakDeger: 'none',
     olenler: ['sleeveLength', 'sleeveCap', 'cuffStyle'],
-    sonraki: "kolsuz seçildi; kol ekseni yok — kol istiyorsan 'kolsuz' kelimesini çıkar" },
+    sonraki: "kolsuz seçildi; kol ekseni yok — kol istiyorsan 'kolsuz' kelimesini çıkar",
+    sonrakiEn: "you asked for sleeveless, so there is no sleeve to shape — drop the word 'sleeveless' if you want sleeves" },
 ];
 
 /** The axes this parse SET whose own host the same parse killed. Each entry is
@@ -570,11 +734,14 @@ export function konaksizEksenler(parsed) {
     if (!e[k.konak] || e[k.konak].value !== k.konakDeger) continue;
     for (const alan of k.olenler) {
       if (!e[alan]) continue;
+      const tr = `'${e[k.konak].kelime}' okundu, ${k.sonraki}; '${e[alan].kelime}' uygulanmadı`;
+      const en = `I read '${e[k.konak].kelime}': ${k.sonrakiEn}; '${e[alan].kelime}' was not applied`;
       out.push({
         alan,
         kelime: e[alan].kelime,
         konak: `${e[k.konak].kelime} → ${k.konak}: ${k.konakDeger}`,
-        oneri: `'${e[k.konak].kelime}' okundu, ${k.sonraki}; '${e[alan].kelime}' uygulanmadı`,
+        oneri: tr,
+        oneriI18n: { tr, en },
       });
     }
   }

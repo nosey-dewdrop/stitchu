@@ -136,5 +136,29 @@ std::vector<PatternPiece> draft(
     BuzguResult* capBuzgu = nullptr,
     BuzguResult* hemBuzgu = nullptr);
 
+// ⭐ M6-zaten — THE GARMENT TITLE MUST NAME THE SLEEVE THAT IS DRAWN.
+//
+// MEASURED 2026-09-04: `puff sleeve gathered waist midi dress` produced the
+// heading "Gathered STRAIGHT-SLEEVE dress" and the file names
+// stitchu-gathered-straight-sleeve-dress-*.svg/.dxf/-a4.pdf, while the piece
+// list on the same screen said "Puff Sleeve · cut 2" and the drawing showed a
+// puffed cap. The title read SleeveStyle (the silhouette axis) and never
+// SleeveCap (the head axis); two axes describe one piece and the name saw one.
+// A buyer files a pattern by its name; a name that contradicts the drawing is
+// a wrong pattern on the shelf.
+//
+// This is the SAME word source the piece name uses (sleeve.cpp `sleeve.name`),
+// stated once so the two can no longer drift apart.
+inline const char* titleWord(SleeveStyle style, SleeveCap cap) {
+    if (style == SleeveStyle::None) return "";
+    if (style == SleeveStyle::Balloon) return "balloon";
+    switch (cap) {
+        case SleeveCap::Puffed:   return "puff";
+        case SleeveCap::Gathered: return "gathered-head";
+        case SleeveCap::Cap:      return "cap";
+        default:                  return "straight";
+    }
+}
+
 } // namespace SleeveBlock
 } // namespace stitchu

@@ -86,7 +86,7 @@
       { "ad": "asimetrikPat", "ara": "(asymmetric|asymmetrical|offset|off[\\s-]?cent|diagonal).{0,20}(button|placket|closure|front)", "durum": "eslendi", "eksen": "placketStyle", "deger": "asymmetric", "cozum": "vocab-resolution-v1.json: placketStyle.asymmetric" },
       { "ad": "dugmeSirasi", "ara": "button", "durum": "eslendi", "eksen": "buttonRow", "deger": "decorative", "cozum": "vocab-resolution-v1.json: buttonRow.*" },
       { "ad": "arkaDetay", "ara": "(back|caped?).{0,15}(cape|ruffle|frill|flounce|cascade)|pelerin", "durum": "eslendi", "eksen": "backDetail", "deger": "cape", "cozum": "vocab-resolution-v1.json: backDetail.*" },
-      { "ad": "gorunurFermuar", "ara": "(exposed|visible|statement|contrast)\\s*zip(per)?", "durum": "eslendi", "eksen": "exposedZip", "deger": "centerBack", "cozum": "vocab-resolution-v1.json: exposedZip.*" },
+      { "ad": "gorunurFermuar", "ara": "\\b(exposed|visible|statement|contrast)\\s*zip(per)?", "durum": "eslendi", "eksen": "exposedZip", "deger": "centerBack", "cozum": "vocab-resolution-v1.json: exposedZip.*", "not": "OLCULDU 2026-09-04: sinirsiz alternatif 'INVISIBLE zipper'i 'visible zip' diye eslesiyordu — gizli fermuar isteyen kullaniciya GORUNUR tasarim fermuari cikiyordu, tam tersi. \\b sinirla kapandi." },
       { "ad": "omuzAcik", "ara": "off[\\s-]?shoulder|bardot", "durum": "eslendi", "eksen": "bardotStyle", "deger": "plain", "cozum": "vocab-resolution-v1.json: bardotStyle.*" },
       { "ad": "kupDikisi", "ara": "cup seam|bra[\\s-]?cup|bustier cup|seamed cup|underbust seam", "durum": "eslendi", "eksen": "cupSeam", "deger": "horizontal", "cozum": "vocab-resolution-v1.json: cupSeam.horizontal" },
       { "ad": "roba", "ara": "\\byoke\\b|babydoll|baby doll|swing dress", "durum": "eslendi", "eksen": "yoke", "deger": "plain", "cozum": "vocab-resolution-v1.json: yoke.*" },
@@ -97,7 +97,7 @@
     ],
     "bilinmeyen": {
       "sebep": { "en": "I cannot sew this yet — the word is outside the pattern engine's vocabulary", "tr": "bunu henüz dikemiyorum — kelime kalıp motorunun sözlüğü dışında" },
-      "oneri": { "en": "the pattern still sews without it; the closest drawable details live on the spec screen (Edge/Panel/Stitch primitives, contract/primitives-v1.json)", "tr": "kalıp onsuz da dikiliyor; en yakın çizilebilir detaylar spec ekranındaki eksenlerde (Edge/Panel/Stitch primitifleri, contract/primitives-v1.json)" }
+      "oneri": { "en": "the pattern still sews without it; pick the closest detail from the choices on this screen", "tr": "kalıp onsuz da dikiliyor; en yakın detayı bu ekrandaki seçimlerden seç" }
     }
   }
 }

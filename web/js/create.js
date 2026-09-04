@@ -939,17 +939,32 @@ function showSpec() {
         ...editList.map(([f, e]) => `${e.kelime} → ${f}: ${e.mm}mm`),
       ].join(' · ');
       if (okList) pStatus.appendChild(el('div', '', t('create.spec.promptok', { what: okList })));
+      // ⭐ M6-zaten: a word that names something the engine ALREADY draws (the
+      // invisible center-back zipper, the darted waist) is neither a read axis
+      // nor an unknown word. It gets its own neutral line that says the thing
+      // is there — the old code called it "not understood", which is a lie
+      // about the engine's own output.
+      for (const z of (parsed.zaten || [])) {
+        const line = el('div', '', t(z.durum === 'ciziliyor' ? 'create.spec.promptalready' : 'create.spec.promptunknown',
+          { word: z.kelime, hint: z.metin[getLang()] || z.metin.en }));
+        line.style.color = z.durum === 'ciziliyor' ? 'var(--gray, #5b7089)' : '#8f2038';
+        pStatus.appendChild(line);
+      }
+      // ⭐ M6-zaten: the hint text is written in BOTH languages at its source
+      // (prompt-parse.js `rapor`), so an English page can no longer print a
+      // Turkish sentence under the prompt box.
+      const ipucu = (u) => (u.oneriI18n && (u.oneriI18n[getLang()] || u.oneriI18n.en)) || u.oneri;
       for (const u of parsed.anlasilmadi) {
-        const line = el('div', '', t('create.spec.promptunknown', { word: u.kelime, hint: u.oneri }));
+        const line = el('div', '', t('create.spec.promptunknown', { word: u.kelime, hint: ipucu(u) }));
         line.style.color = '#8f2038';
         pStatus.appendChild(line);
       }
       for (const k of konaksiz) {
-        const line = el('div', '', t('create.spec.promptunknown', { word: k.kelime, hint: k.oneri }));
+        const line = el('div', '', t('create.spec.promptunknown', { word: k.kelime, hint: ipucu(k) }));
         line.style.color = '#8f2038';
         pStatus.appendChild(line);
       }
-      if (!okList && !parsed.anlasilmadi.length && !konaksiz.length) {
+      if (!okList && !parsed.anlasilmadi.length && !konaksiz.length && !(parsed.zaten || []).length) {
         pStatus.textContent = t('create.spec.promptempty');
       }
       rebuild();
