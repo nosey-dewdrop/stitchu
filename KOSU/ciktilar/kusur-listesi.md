@@ -190,3 +190,122 @@ Kaynak olculmeden cizilmez.
 gozlemi dogrulandi (K2 turunda uretilen flat'te gorulur). Yaka konvansiyon
 pozunun (`poseBodice`) isi; A2 ile ayni bolge ve ayni risk (yaka kapilari).
 Bu turda dokunulmadi.
+
+---
+
+## TUR 2 ONARIM (2026-09-04) — KAPANANLAR VE ACIK KALANLAR
+
+Denetci urunu tarayicida kosturdu ve alti kusur bildirdi. Dordu kapandi ve
+tarayicida dogrulandi; ikisi acik ve nedeni asagida sayiyla yazili.
+
+### KAPANDI
+
+**K-T2.1 — cumle yanlis okunup 'okudum' deniyordu. (denetci kusur 1)**
+Olculdu: `fitted dress with a back zipper` -> BASARI satiri
+`fitted -> sleeveStyle: straight`. Istenmeyen duz kol ekleniyor, istenen
+fermuar dusuyordu. `zipper at back` / `back zip dress` /
+`arkadan fermuarli elbise` / `invisible zipper center back` -> 0 fermuar.
+Iki ayri kok sebep bulundu, ikisi de kaynagindan kapatildi:
+- `fitted` ifade tablosuna bir KOL es anlamlisi olarak yazilmisti. Artik
+  yalniz cumlede bir kol ekseni varken kola baglanir (`long fitted sleeves`);
+  yalniz bastaysa asagidaki ZATEN kanalina duser.
+- Fermuar kelimeleri hicbir eksene inmiyordu, cunku ISTENEN SEY ZATEN
+  CIZILIYOR ve parser onu bilmiyordu. Motor ciktisindan olculdu (varsayilan
+  elbise, `engine/dist`): `pieces[Bodice Back].closure ===
+  "invisible zipper (center back)"`, rehber adimi "Insert an invisible zipper
+  in the center back", ve `Shaping::Dart` varsayilan olduğu icin Bodice Front
+  iki bel pensi tasiyor. Yeni `zaten` kanali bu kelimeleri adiyla okuyup
+  "zaten var" der; etek/ustte tersini durustce soyler ("bu giysinin fermuari
+  yok"). Sozluge tek eksen/deger/ifade eklenmedi, `engine/vocab.json` bayt
+  bayt ayni.
+- Ayrica: `contract/vision-tasima-v1.json` `gorunurFermuar` kurali
+  `(exposed|visible|...)` sinirsiz alternatifiyle **INVISIBLE** zipper'i
+  'visible zip' diye eslesiyordu — gizli fermuar isteyene GORUNUR tasarim
+  fermuari cikiyordu, tam tersi giysi. `\b` ile sinirlandi.
+Tarayicida dogrulandi (EN create.html): "you already have it: back zipper —
+already drawn: the dress closes with an invisible center-back zipper ...".
+
+**K-T2.2 — canli sitede landing onarimi yoktu. (denetci kusur 2)**
+Denetcinin hipotezi ("pushlanmamis") dogruydu ama YARIMDI: push edilse bile
+YAYINLANAMAZDI. Olculdu: `gh run list --workflow=pages.yml` — 27 Agu'dan beri
+HER kosu `failure`. Kok sebep, reponun kendi yasakladigi sey: **OLU HAT OLCEN
+BIR KAPI.** `size-coverage-check.mjs` `web/atolye.html`'in kendi `draw()`'unu
+kosuyor; `9483ba53` (2 Eyl) o sayfayi bilerek sildi (2027 satir). Kapi
+olcemedigi seye dogru olarak yesil demedi ve sonsuza kadar `exit 2` verdi,
+boylece TUM deploy hatti kapali kaldi. Kapinin kendisi ve yasasi
+DEGISTIRILMEDI (dosya bayt bayt ayni); `pages.yml` adimi kapiyi konusu
+SEVK EDILDIGINDE kosar, edilmediginde sevk edilen yuzeyi olcen kapiyi adiyla
+soyler (`edge_case_supurme_check`, 10 beden EU34..EU52, issues 0).
+Sonuc olculdu: kosu `success` (33822728592), canli `index.html` 77.634 ->
+79.632 bayt, `web/index.html` ile **bayt bayt ayni**, hero metni beyaz okuma
+karti uzerinde (ekran goruntusu alindi).
+
+**K-T2.3 — Ingilizce arayuzde Turkce hata mesaji. (denetci kusur 3)**
+Kok sebep: `anlasilmadi[].oneri` metinleri `prompt-parse.js` icinde TEK DILDE
+sabit yaziliydi ve i18n katmanindan gecmiyordu; ayrica alici yuzeyine
+`contract/primitives-v1.json` repo yolunu siziyordu. Her rapor cumlesi artik
+kaynaginda IKI DILDE kuruluyor (`rapor(kelime, tr, en)`) ve `getLang()` ile
+basiliyor; repo yolu hem bu dosyadan hem contract'in `bilinmeyen` metninden
+kaldirildi. Ayrica: contract'in ZATEN cozdugu bir kelimeye harf-mesafesi
+tahmini basiliyordu — `buttons` icin "en yakin primitif: op.extend" yazarken
+ayni cagri onu `buttonRow` eksenine baglamisti; simdi contract'in cevabi
+basiliyor. Tarayicida dogrulandi: "'gathered' is a word I know, but on its
+own it does not say which detail you mean; try: gathered sleeve / ...".
+
+**K-T2.4 — baslik ve dosya adi cizimle celisiyordu. (denetci kusur 5)**
+Kok sebep motorda: `garment.cpp` giysi adini yalniz `SleeveStyle`'dan
+(siluet ekseni) okuyor, `SleeveCap`'ten (tac ekseni) okumuyordu; iki eksen
+ayni parcayi anlatiyor, ad birini goruyordu. `SleeveBlock::titleWord()` artik
+parca adinin kullandigi TEK kaynak. Olculdu (yeniden derlenmis wasm):
+`puff -> "gathered puff-sleeve dress"` + parca `Puff Sleeve`;
+`plain -> straight-sleeve`, `balloon -> balloon-sleeve`,
+`sleeveless -> "gathered dress"`. Dosya adlari ayni kaynaktan turedigi icin
+onlar da duzeldi. `ctest -R golden` 3/3 PASS (isim golden CSV'de degil).
+
+### ACIK — ve neden bu turda kapatilmadi
+
+**A9 — Katmanli etek genislemiyor. (denetci kusur 6) — KOK SEBEP BULUNDU,
+KALIPTA, VE SAYISI KAYNAKSIZ.**
+Denetcinin gozlemi olculerek dogrulandi: K3'un dort katmaninin DORDU de
+x-acikligi **479.40 mm** ile ciziliyor — hicbir genisleme yok.
+Denetcinin hipotezi ("buzgu notasyon olarak basiliyor, silueti etkilemiyor")
+YARIM cikti. Cizim gercekten katmani etegin KENDI egiminden turetiyor ve duz
+etekte o egim 0, ama asil sorun daha derinde:
+- `engine/src/ruffle.hpp` modeli ILAN EDIYOR: "tier i attaches to tier i-1's
+  bottom edge, so its edge is edge x fullness^(i-1) and its cut length
+  edge x fullness^i". Yani BITMIS etek ucu cevresi katman basina carpiliyor.
+- `engine/constants.yaml ruffleFullnessDefault = 2.5`, `status: assumed`,
+  kaynagi "hem ruffle default gather ratio" — yani TEK bir firfir seridi icin
+  secilmis bir sayi. `ruffle.cpp draftTiers` onu `edge *= fullness` ile UC KEZ
+  BILESIK uyguluyor.
+- Sonuc, motorun kendi kesim talimatlarindan okundu: tier 1 total **2397 mm**,
+  tier 2 **5993 mm**, tier 3 **14981 mm**. Bitmis etek ucu cevresi
+  958.8 x 2.5^3 = **15 metre**. Bu bir giysi degil.
+- DENENDI VE GERI ALINDI: cizim motorun ILAN ETTIGI sayilara oturtuldu
+  (katman x-aciklklari 479 -> 1198 -> 2996 -> 7490 mm). Cizim genisledi ama
+  `viewBox` 15151 mm oldu ve ekranda BOS SAYFA cikti. Bozuk bir resmi daha
+  bozuk bir resimle degistirmek olurdu, o yuzden siluet elle GERI ALINDI.
+- Dogru onarim katman basina bir oran (gercek kademeli eteklerde ~1.3-1.6)
+  ister; o sayinin `engine/constants.yaml` icinde KAYNAGI yok ve bu turda
+  uydurulmadi (CLAUDE.md: "patternmaking sayilarini tahmin etme").
+- BU TURDA YINE DE KAPANAN PARCA: cizim, katmanin acik cevresi diye TEK
+  SERIDIN kutusunu (1198.50 mm) okuyordu; gercek acik cevre serit sayisiyla
+  carpilmis toplamdir. Ilan edilen `data-katman-buzgu-orani` bu yuzden
+  tier 2'de **1.25** yaziyordu, olcusu **6.25** iken — alicinin gordugu
+  dolgunluk besde bir kadar EKSIK BEYAN EDILIYORDU. Artik motorun kendi
+  "(total N mm)" sayisi okunuyor: 2.50 / 6.25 / 15.62. Siluet degismedi,
+  BEYAN duzeldi ve kalibin kacikligi artik cizimde GORUNUYOR.
+
+**A6 (yineleniyor) — Ortada satilan bir sey yok. (denetci kusur 4)**
+Hala acik ve hala bilincli. Denetci hakli: gorevin cumlesi "satilir flat" ve
+bugun urun ucretsiz bir demoyla bitiyor. Ama fiyat, sepet, odeme ve teslimat
+bir kod kusuru degil bir URUN KARARIDIR: hangi fiyat, hangi lisans, hangi
+saglayici, hangi iade. Bir onarim ajaninin bunlari tek tarafli uydurmasi,
+reponun kendi kuralini ("bir prova dikilip yargilanmadan hicbir seye fiyat
+konmaz") ve kok kurali (bosluğu bir yonle doldurma) birden cignerdi.
+Kapanmasi icin gereken tek sey bir SAYI ve bir SAGLAYICI karari.
+
+**A10 — `flat_artifact_census` kirmizi (ONCEDEN kirik, bu turda degil).**
+`FAIL [3 C1] 2 nokta teget farki 1 dereceyi asiyor`. Bu turun degisiklikleri
+`git stash`'lenip kapi yeniden kosuldu: AYNI kirmizi. Yani gerileme degil,
+devralinan bir kirmizi; bu turda dokunulmadi ve gizlenmedi.

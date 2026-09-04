@@ -1805,14 +1805,64 @@ function buildView(P, which) {
       const ustW = yariGen(fY1 - olcuBoy);
       const egim = (hemW !== null && ustW !== null && olcuBoy > 0)
         ? (hemW - ustW) / olcuBoy : 0;
+      // ⭐ KATMANLI ETEK GENISLEMIYORDU — KOK SEBEP CIZIMDE, SAYI MOTORDA.
+      //
+      // OLCULDU 2026-09-04, bu blok yokken: K3 (kademeli firfir + etek ucu
+      // volani), dort katmanin DORDU de x-acikligi 479.40 mm ile cizildi —
+      // koltukaltindan etek ucuna dumduz bir boru, uzerine yapistirilmis dort
+      // yatay dikdortgen. Bir katmanli etek katmanli etek gibi okunmuyordu.
+      //
+      // Bir onceki tur "ziggurat" basamagini dogru bicimde oldurmustu (her
+      // katman TUTUNDUGU kenar kadar genis baslar) ama katmanin ALT kenarini
+      // ETEGIN kendi egiminden turetti. Duz etekte egim = 0, yani alt kenar =
+      // ust kenar: cizim, kumasin ASLA hangi olamayacagi alt sinira oturdu.
+      //
+      // SAYI TAHMIN EDILMIYOR, MOTORDAN OKUNUYOR. engine/src/ruffle.hpp'nin
+      // ilan ettigi model birebir sudur: "tier i attaches to tier i-1's bottom
+      // edge, so its edge is edge x fullness^(i-1) and its cut length
+      // edge x fullness^i". Yani bir katmanin BITMIS alt cevresi, kendi ACIK
+      // (kesim) uzunlugudur ve bir sonraki katmanin bitmis ust cevresidir. O
+      // uzunlugu motor parcanin kendi kesim talimatina YAZIYOR:
+      //   "cut 5 strip(s) 1199 x 104 mm, join end to end (total 5993 mm)"
+      //   "cut 2 rectangle(s) 989 x 230 mm ... (flat top edge 1918 mm gathers
+      //    to fit your 959 mm hem ...)"
+      // Cizim bu iki sayiyi okur. Hicbir kesir, hicbir drape katsayisi
+      // secilmedi — secilseydi kaynagi olmazdi ve bu dosyaya giremezdi.
+      //
+      // AYRICA DUZELEN OLCUM: eski kod katmanin ACIK cevresi diye TEK SERIDIN
+      // kutusunu (1198.50 mm) aliyordu; gercek acik cevre serit sayisiyla
+      // carpilmis toplamdir (tier 2 = 5993 mm). Ilan edilen buzgu orani bu
+      // yuzden 1.25 yaziliyordu, olcusu 2.50 iken — alicinin gordugu dolgunluk
+      // besde bir kadar eksik beyan ediliyordu.
+      const KAT_MM = /\(total\s+(\d+(?:\.\d+)?)\s*mm\)/i;
+      const VOLAN_MM = /flat top edge\s+(\d+(?:\.\d+)?)\s*mm/i;
+      /** The FINISHED bottom circumference the engine declares for this layer,
+       *  in mm, or null when the piece states no such number. */
+      const acikCevreMM = (p) => {
+        const s = String(p.cutInstruction || '');
+        const m = KAT_MM.exec(s) || VOLAN_MM.exec(s);
+        return m ? Number(m[1]) : null;
+      };
       let y = fY1;
       let wUst = hemW;
       let oncekiCevre = null;
       if (wUst !== null && wUst > 0) for (const p of sira) {
         const b = bbox(segsFromCommands(p.commands));
-        const uzun = Math.max(b.x1 - b.x0, b.y1 - b.y0);
+        const uzun = acikCevreMM(p) ?? Math.max(b.x1 - b.x0, b.y1 - b.y0);
         const derin = Math.min(b.x1 - b.x0, b.y1 - b.y0);
         if (!(uzun > 0 && derin > 0)) continue;
+        // ⛔ SILUET DEGISTIRILMEDI, VE BUNUN SEBEBI OLCULDU.
+        // Denendi: alt yarim genislik = (bitmis alt cevre / 4) x olcek, yani
+        // motorun ILAN ETTIGI sayi. Cizim genisledi ama KULLANILAMAZ oldu:
+        // viewBox 15151 mm, katman x-acikliklari 479 -> 1198 -> 2996 -> 7490 mm,
+        // ekranda bos bir sayfa. Sebep cizimde degil KALIPTA (asagida, kusur
+        // listesinde K3-A olarak yazili): tiered yol tek-firfir icin sourced
+        // edilmis 2.5 orani KATMAN BASINA BILESIK uyguluyor (ruffle.cpp
+        // `edge *= fullness`), 958.8 x 2.5^3 = 14981 mm = 15 m etek ucu. Bu bir
+        // giysi degil. Cizimi o sayiya oturtmak, bozuk bir resmi daha bozuk bir
+        // resimle degistirmekti; kalibi yalanlamamak icin siluet oldugu gibi
+        // birakildi ve fark ILAN EDILIYOR (data-katman-buzgu-orani).
+        // Dogru sayi (katman basina oran) kaynaksiz secilemez — kusur acik.
         const wAlt = Math.max(1, wUst + egim * derin);
         // ⚠ OLCULEN UYUSMAZLIK, GIZLENMEDI: bir katman kendi ustundeki katmanin
         // ALT kenarindan KISA cikabiliyor. K3 EU38'de olculdu: Hem Flounce 988.8
