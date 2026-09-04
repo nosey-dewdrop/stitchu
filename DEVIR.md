@@ -221,6 +221,70 @@ Damla'nın kendi sırası: **ticari iş modelleri + iOS uygulaması.**
 
 ---
 
+## 7.5 SONRAKİ DEĞİL, ONDAN SONRAKİ OTURUM — PLATFORM KATMANI
+
+Damla'nın kendi tarifi. **Bu oturumda çözülmeyecek**, ama bugünkü mimari bunu
+ucuza almaya hazır olacak. Sıradaki oturum ya bunu yapar ya zeminini kurar.
+
+**Ne kuruluyor:** stitchu tek seferlik bir üretici olmaktan çıkıp **yaşayan bir
+ürün** oluyor — hesap, kota, ödeme, gardırop, satış, ve programatik SEO.
+
+### Kurallar (Damla'nın koyduğu)
+1. **Bedava kullanım yok.** Başta demo için izin var, sonrası hesaba bağlı.
+2. **Her hesaba 2 hak:** prompt ya da fotoğraftan → flat + kalıp, iki kez.
+3. Sonrası **kredi veya abonelik** ile ilerler.
+4. **Gardırop:** kullanıcının kalıpları ve giysileri hesabında durur, geri
+   dönülebilir, düzenlenebilir (bölgesel edit zaten var).
+5. **Web'de iki şey satılıyor:** kalıp (dijital) ve giysi (fiziksel).
+6. **Üyelik web ve mobil arasında ortak** — aynı hesap, aynı gardırop.
+7. **Programatik SEO, agresif.** Sayfalar elle değil üreteçten doğacak.
+
+### Bugünkü mimarinin taşıması gerekenler (hazırlık = bunlar)
+Bunlar yapılmazsa platform katmanı pahalıya patlar:
+
+- **Kota sunucu tarafında sayılır.** İstemciye güvenilmez. `backend/guard.js`
+  bugün IP + günlük tavan sayıyor; hesap başına kota da **aynı yerde**
+  sayılacak. Ücretsiz 2 hakkın istemcide tutulması = herkeste sınırsız hak.
+- **Üretilen her paketin kalıcı kimliği olmalı.** Gardırop, spec'in kendisini
+  (JSON) saklar — piksel/PDF değil. Spec + motor sürümü = paket yeniden
+  üretilebilir. Bu zaten doğru mimari: `draftJSON` deterministik, aynı spec
+  aynı çıktıyı veriyor. Gardırop kaydı = spec + kumaş + beden + köken damgası.
+- **Anonim → hesap geçişi.** Demo'da üretilen paket, kayıt olunca hesaba
+  taşınabilmeli (spec zaten `closet.js`/localStorage'da tutuluyor; kaybolmadan
+  taşınacak).
+- **Motor sürümü kayıtlı.** Gardıroptaki eski bir kalıp yeniden üretildiğinde
+  hangi motorla çizildiği bilinmeli, yoksa "kalıbım değişti" şikayeti gelir.
+- **Ödeme öncesi yazılı olması gerekenler:** iade koşulu (dijital ürün),
+  kullanıcının yüklediği fotoğrafın telif sorumluluğu, fotoğrafın Anthropic
+  API'ye gittiği (bu sonuncusu sitede zaten yazıyor).
+- **Fiziksel satış ayrı akış:** B2B/giysi tarafında risk Damla'da, o yüzden
+  fiziksel satılan model **kendi tasarımı** olacak.
+
+### Programatik SEO — nasıl kurulacak
+Motor zaten sayı üretiyor; SEO sayfaları o sayıdan doğacak, elle yazılmayacak
+(landing'de bu kural zaten var: elle yazılmış sayı = 0, `vitrin_gercek_check`).
+
+- **Sayfa ailesi fikirleri:** giysi tipi × kumaş × beden kombinasyonları;
+  "X kumaşta Y elbise kalıbı" · "EU38 A-line elbise kalıbı, dikiş payı dahil" ·
+  kumaş rehberi sayfaları (katalogdaki 5 kumaşın her biri, kaynaklı) ·
+  primitif kompozisyon galerisi (`primitif-5` üreteci).
+- **Kural:** her sayfa **gerçek bir motor çıktısı** taşıyacak (indirilebilir
+  flat/kalıp önizlemesi). İçeriksiz doorway sayfası üretme — Google cezalandırır
+  ve Damla'nın "wrapper = flop" testine de takılır.
+- **Altyapı hazır:** `engine/tools/gen-sitemap.mjs` tek üreteç,
+  `site-health.mjs` ölü link/sitemap kapısı, `gen-landing-motor.mjs` sayıları
+  motordan basıyor. Programatik sayfalar **aynı boru hattına** eklenecek,
+  yan yol açılmayacak.
+- **Ölçek uyarısı:** sayfa sayısı büyüyünce `site-health` ve deploy süresi
+  şişer; üreteç sayfa başına değil toplu çalışacak şekilde yazılmalı.
+
+### Sıra (öneri, hakem değiştirebilir)
+1. Hesap + kota (sunucu tarafı) → 2. Gardırop (spec kalıcılığı) →
+3. Ödeme (kredi/abonelik) → 4. Programatik SEO → 5. Fiziksel satış akışı.
+Mobil, hesap ve gardırop hazır olunca aynı API'yi tüketir (`backend/API.md`).
+
+---
+
 ## 8. İLK 10 DAKİKA
 
 ```bash
