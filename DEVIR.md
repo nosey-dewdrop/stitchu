@@ -301,6 +301,16 @@ Doğru iddia "herkes bantlamaktan nefret ediyor" DEĞİL; doğrusu: **bantlama b
 bir kesimi eliyor** — yazıcısı olmayan, sadece iPad'i olan, vakti dar, ve
 30 sayfayı aşan büyük giysiler. Hedef kitle o kesim.
 
+### FİYAT ÇIPASI — alıcı bugün baskıya ne ödüyor (doğrulanmış vitrin fiyatları)
+Adanmış kalıp baskıcıları A0 tabaka başına **$2-5 / £1.10-2.00 / €1**; kumaş
+dükkânları aynı işi 2-3 katına satıyor (Blackbird 6,50 CAD, Core Fabrics $5).
+Staples/FedEx gibi büyük zincirler adanmış baskıcının **2,5-4 katı** ($8-9).
+**★ Asıl gerçek: kargo ücreti işi domine ediyor.** 1-2 tabakada faturanın
+%60-80'i kargo. Gerçek rakamlar: 6 tabakalık bir kalıp İngiltere'de Netprinter
+ile **£11,60 teslim**, ABD'de PDF Plotting ile **~$33 teslim**.
+Bu bizim dijital paketimizin fiyat çıpasıdır — alıcı sadece BASKIYA bunu ödüyor,
+kalıbın kendisi hariç. Ve fiziksel satışa girersen rekabet ettiğin eksen kargo.
+
 ### ★ KAMA CÜMLE — alıcının kendi kurduğu çerçeve
 Dört ayrı kaynakta, birbirinden bağımsız insanlar aynı şeyi söylüyor:
 **"Bir ürüne para verdim, sonra imalatını kendim tamamlamak zorunda kaldım."**
