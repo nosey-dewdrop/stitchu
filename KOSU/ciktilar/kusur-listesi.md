@@ -562,3 +562,186 @@ Kapi ciktilari ana raporda; asagisi kok sebep + kalan.
   (yani bir onceki tur goldeni yeniden uretip manifesti ayni commit'e
   koymamis). Dosyaya DOKUNMADIM; yalnizca manifest, commitli baytlara
   yeniden muhurlendi (`--accept`) ve `golden_check` zaten yesildi.
+
+---
+
+# T5 — BAGIMSIZ DENETCI TUR 5, ONARIM TURU (2026-09-04)
+
+Denetci hukmu: BITMEDI / ALMAZDIM. Alti kusur. Asagida her biri, kok sebebiyle
+ve kanitiyla. Kanit = kosulan komut ve ciktisi, "baktim iyiydi" degil.
+
+## ONARILDI
+
+### T5-1 — CANLI SITEDE FOTOGRAF YOLU OLUYDU (satis engelleyici)
+- **Bulgu:** gercek Chrome ile create.html'e fotograf yuklendiginde /api/analyze'a
+  SIFIR istek gitti, ekrana `Cannot read properties of undefined (reading 'then')`
+  basildi. O sirada 8 JS kapisinin 8'i de yesildi.
+- **KOK SEBEP, OLCULDU (tahmin degil):** Cloudflare'in kendi `api.js`'i indirilip
+  okundu — `execute:function` govdesindeki HER dal ciplak `return;` ile bitiyor,
+  yani `turnstile.execute()` HICBIR SEY DONDURMEZ. `analyze.js` uzerine `.then`
+  yaziyordu, o yuzden her fotograf yuklemesinin ILK isi TypeError atmakti. Bu
+  hicbir zaman calismamis bir yol: 600010'a da, adblock'a da bagli degil.
+  Gercek tarayicida dogrulandi: `execute()` -> `typeof undefined`, `hasThen=false`.
+- **ONARIM:** token artik `render()`'in `callback` / `error-callback` /
+  `timeout-callback` secenegiyle aliniyor; `render()` undefined donerse okunabilir
+  bir ret ciliyor ve widget bir sonraki denemede yeniden kuruluyor.
+- **KAPI (yeni):** `engine/tests/foto_yolu_check.mjs`, ctest'e bagli. Iki yarim:
+  statik kaynak + GERCEK Chrome'da sevk edilen `analyze.js` modulu, gercek
+  Cloudflare test sitekey'i, /api/analyze'i dinleyen yerel sunucu.
+  Kosuldu: `gercek tarayici fotografi gecirdi: OK garment=dress px=1024x658 ·
+  /api/analyze tam 1 kez cagrildi · istek turnstile token tasiyor (21 karakter) ·
+  kucultulmus JPEG gonderildi (9848 base64 bayt)`.
+- **MUTASYON KANITI:** eski `.then` bicimi geri konuldugunda kapi denetcinin
+  cumlesini birebir basiyor: `THREW Cannot read properties of undefined
+  (reading 'then')` + `/api/analyze HIC cagrilmadi`. Kapi olu hat degil.
+- ⚠ **GERI CEKILEN IDDIA:** ilk olcumde "display:none host challenge'i hic
+  cozmuyor" cikti (3 sn sonra getResponse undefined). Ayni kapiya display:none
+  MUTASYONU sokulunca kapi YESIL kaldi — callback yoluyla token 45 sn icinde
+  geliyor. Ilk olcum erken okumaydi; iddia DOGRULANMADI ve kapida bir kural
+  olarak DURMUYOR. Host yine ekran disinda tutuluyor ama bu bir yasa degil.
+- ⚠ **CANLIDA DOGRULANMADI:** onarim yerelde kanitlandi; canli sitede
+  gecerli olmasi icin deploy gerekiyor (bu turda push yok). Denetcinin gordugu
+  `600010` sitekey/hostname baglantisi ayrica DOGRULANMADI — ama artik o hal
+  bile ham yigin izi degil, okunabilir bir ret uretiyor.
+
+### T5-2a — KATMANLI ETEK ILAN ETTIGI BOYU ASIYORDU (satis engelleyici)
+- **Bulgu:** `a maxi tiered skirt` -> Front paneli 912 mm (maxi'nin TAMAMI) ve
+  ONUN ALTINA 104+104+102 mm kademe. Dikilen giysi belden 1222 mm: yerde
+  suruyor. Cizim de bunu dogru gosteriyordu (tam boy koni + abajur).
+- **KOK SEBEP:** `engine/src/garment.cpp` firfir blogu etegin hemine EKLIYOR,
+  hicbir yerde boydan DUSMUYORDU. Kademeli etekte kademeler boyu BOLER.
+- **ONARIM:** `GarmentDrafter::draft` artik firfir acikken etek boyunu
+  `kademe x derinlik` kadar kisaltiyor; rezerv kalca cizgisinin (skirt.hpp
+  `hipDepth`) altina inemiyor, dayanirsa kademe derinligi kisaliyor ve kisalma
+  dikis rehberine SAYIYLA yaziliyor. Yeni sabit yok — iki sayi da zaten vardi.
+- **KAPI:** `tiered_ruffle_check` hukmu SERTLESTIRILDI (gevsetilmedi): eski hali
+  "tiers acikken butun parcalar bayt bayt ayni" diyordu ve tam da bu kusuru
+  muhurluyordu. Yeni hali (a) etek disi her parca bayt bayt ayni + (b) etek
+  paneli TAM OLARAK kademelerin kapladigi kadar kisa. Kosuldu:
+  `Skirt Front: 662.00 -> 392.00 mm (kademeler 270 mm'i geri veriyor)`, 27/27 PASS.
+- `ctest -R golden` 3/3 yesil (goldenlerde firfir yok, kalip hatti kimildamadi).
+
+### T5-4 — INGILIZCE SITEDE REHBER TURKCE INIYORDU (satis engelleyici)
+- **Bulgu:** dugmenin adi "HTML, sewing guide (Turkish)", inen 129 satirin
+  tamami Turkce.
+- **KOK SEBEP:** `web/lib/rehber-tr.js` tek dilli yazilmisti ve i18n katmani
+  ustune ceviri koymuyor, etikete parantezle "(Turkish)" yazip durumu
+  kabulleniyordu.
+- **ONARIM, TEK CUMLE UYDURULMADAN:** Ingilizce zaten VARDI ve KAYNAKTI —
+  motorun her `rehber` kaydi kendi Ingilizce cumlesini (`a.text`) ve `basis`
+  sayilarini tasiyor; buradaki Turkce sablonlar zaten onun cevirisiydi.
+  `guideSteps` de zaten Ingilizce, `sewing-guide.json` zaten `en` alani tasiyor.
+  Cevrilen tek sey sayfanin kendi mobilyasi (baslik, tablo etiketi, kaynak
+  satiri). `rehberHTML(..., {dil})` eklendi, create.js sayfanin dilini geciriyor,
+  etiketten "(Turkish)" kalkti.
+- Motorun kendi Ingilizce metnindeki Turkce onculer de duzeltildi
+  (`Puf nokta:` -> `Worth knowing:`, `Zor nokta — ...` -> `Hard spot — ...`,
+  `Uc zor nokta:` -> `Hard spots:`, `Tela / interfacing:` -> `Interfacing:`).
+- **KANIT:** ayni kalip iki dilde uretildi, govdedeki Turkce'ye ozgu harf sayisi
+  `en: 0` / `tr: 604`. Ingilizce metin gozle okundu, ISO kodlari, igne bandi ve
+  kaynak satirlari yerinde. `rehber_kaynak_check` 46/46 yesil, `uctan_uca_check`
+  yesil.
+
+### T5-6 — ALICININ CUMLESI DOSYAYA/BASLIGA ULASMIYORDU
+Uc ayri kok sebep, ucu de kapandi:
+- **(a) DOSYA ADI IKI AYRI SABLONDAN.** `stitchu-${pattern.garment}-${skirtStyle}`
+  — motorun YALNIZCA skirtStyle+kol ekseninden kurdugu ad + tek bir eksenin ham
+  degeri. O yuzden 'gathered' iki kez yaziliyordu ve alicinin yazmadigi 'a-line'
+  dosyaya giriyordu. Ad artik ekrandaki BASLIKTAN turuyor (tek kaynak).
+  OLCULDU: `a maxi tiered skirt...` -> `stitchu-a-line-skirt-aline` ->
+  **`stitchu-maxi-tiered-skirt`**; `a fitted midi dress with balloon sleeves...`
+  -> `stitchu-gathered-balloon-sleeve-dress-gathered` ->
+  **`stitchu-midi-dress-with-balloon-sleeves-gathered-skirt-sweetheart`**.
+- **(b) 'with balloon' YARIM CUMLESI.** `eksenAdiYut` bitisik yazilan eksen
+  ismini ("sleeves") "zaten okundu" diye yutuyor ama ALICININ IFADESINE geri
+  yazmiyordu. Artik bitisikse ifadeye ekleniyor (yeni deger/tablo yok).
+  OLCULDU: `sleeveStyle = balloon <- "balloon"` -> `<- "balloon sleeves"`.
+- **(c) 'fitted' KOLA BAGLANIYORDU.** `a fitted dress with puff sleeves` ->
+  `sleeveStyle: straight` + `sleeveCap: puffed`, iki celisen okuma yan yana.
+  Mesafe butcesi (1+GAP=3) kisa cumlede yetmiyordu. Kural artik dilbilgisel:
+  sifat ile eksen ARASINDA giysinin adi duruyorsa sifat giysinindir, baglanmaz.
+  `long fitted sleeves` baglanmaya devam ediyor (sifat gercekten kolun yaninda).
+- **(d) YANLIS GEREKCE.** `'tiers'` icin ekrana "I read garment from 'skirt'
+  next to it" yaziliyordu — 'skirt' 3., 'tiers' 6. token, ve dogru cevap ayni
+  cumlede okunmus `ruffle` ekseniydi. Iki hata: dongu mesafeye bakmadan obje
+  sirasindaki ilk ekseni seciyordu, ve kelimenin zaten okunmus bir kelimenin
+  cekimi oldugu hic sorulmuyordu. Simdi: once ayni kok, sonra EN YAKIN eksen.
+  OLCULDU: `tiers -> ruffle was already read in this sentence from 'tiered';
+  'tiers' repeats it and opens no separate dial`.
+  (Kok karsilastirmasi RAPOR METNI icin ayri ve genis bir kok kullanir;
+  eslestiriciye ('govdeler') dokunulmadi — dokunulsa 'gathered' -> 'gather'
+  olurdu ve tablo eslesmeleri kayardi.)
+
+### T5-3 — PUF KOLUN HACMI: DENETCININ HUKMU ARTIK GECERLI DEGIL
+- Denetci "flat'te kol iki duz cizgiden ibaret bir kama, sifir hacim" dedi ve
+  `kusur-listesi.md`'nin "A1 — ONARILMADI" kaydini dayanak gosterdi.
+- **OLCULDU, BU TURDA, SEVK EDILEN CIZIMDE:**
+  - `sleeveCap: puffed` (referans 09/10'un giysisi): `data-buzgu-kapak-oran
+    = 1.2901`, `data-buzgu-kapak-fazla-mm = 122.66`. Cizilen kol DISBUKEY,
+    kubbeli, omuz cizgisinin ustune kabaran bir kutle — `/tmp/flat-bak/
+    a-fitted-dress-with-puff-sleeves-flat.png` ile gozle dogrulandi.
+  - `sleeveStyle: balloon`: kapak buzgu orani ESIGIN ALTINDA (nitelik hic
+    basilmiyor), cunku motorun balon kolu KAPAKTA degil ETEKTE buzuyor —
+    `data-buzgu-etek-oran = 1.6903`, `data-manset-yarim-mm = 94.12` (kolun
+    kendi etek yarisi 159.09), `data-balon-kabarma-mm = 64.97`.
+- Yani cizim, kalibin TASIDIGI buzguyu tasiyor. Denetcinin gosterdigi "1.35x
+  tac" sayisi (buzgu_katman_check) puf kolun DUZ KOLA orani; cizimin kullandigi
+  dikis buyuklugu ise tac/kol-oyugu oranidir — ayni sayi degil.
+- **ACIK KALAN, KUCULEREK:** balon kolun DIS konturu (katlama cizgisi) hala
+  duz; kabarma yalniz koltukalti tarafinda. Gerekce T4-1d'de yaziliydi ve hala
+  gecerli: balon kolun kapaginda olculebilir bir buzgu YOK, uydurma genlikle
+  kabartmak bu deponun yasagi. Motor tarafi is.
+
+## ONARILMADI — GEREKCESIYLE
+
+### T5-2b — KATMANLI ETEGIN CIZILEN GENISLIGI (siluet)
+- Boy kusuru kapandi (T5-2a) ama cizilen siluet hala genis aciliyor: son
+  kademenin cizilen yarim genisligi ~749 mm (kalca yarisi ~300 mm).
+- **BU BIR UYDURMA DEGIL, KALIBIN KENDI SAYISI:** kademe bir DIKDORTGEN
+  serittir; ust kenari ustteki kademeye buzulur, ALT kenari serbest asilir, yani
+  bitmis alt cevresi kendi kesim uzunlugudur (tier 3 = 2997 mm -> 2997/4 = 749).
+  Yayinlanmis dolgunluk bandi (2.0-3.0) uygulandiginda 3 metrelik etek ucu
+  fizikte dogru sonuctur.
+- **NEDEN DOKUNMADIM:** teknik flat konvansiyonu ASILAN siluete cizer, acik
+  cevreye degil — bunu `GIRDI/iyi-flat/adaylar/08-empire-buzgu-etek.png`
+  uzerinde olctum: buzgulu etek belden eteg ucuna yalnizca 0.63 -> 0.81 (gogus
+  genisligine gore) aciliyor, yani ~1.29x; hicbir referans 2.5x'e yaklasmiyor.
+  AMA 15 referansin HICBIRI kademeli (tiered) etek DEGIL. Kademeli bir etegin
+  cizilen dokum genisligi icin bu depoda kaynakli bir sayi YOK, ve
+  `feedback_once_konvansiyon_arastir` acikca "sayiyla contract'a yaz, sonra ciz"
+  diyor. Kaynaksiz bir carpan koymadim.
+- **SONRAKI ADIM:** GIRDI'ye en az iki yayinlanmis TIERED etek teknik cizimi
+  eklenip ayni piksel penceresiyle olculursa (08 icin yapildigi gibi), sayi
+  `contract/flat-convention-v1.json sevkPoz.buzgu` altina kaynagiyla yazilir ve
+  cizim tek satirda o sayiya oturur.
+
+### T5-5 — ORTADA SATILAN BIR SEY YOK (besinci tur)
+- Fiyat/sepet/odeme/teslimat yok; tek donusum yolu e-posta kutusu.
+- **BU TEKNIK BIR EKSIK DEGIL, KAPANMAMIS BIR URUN KARARI.** Site gerekceyi
+  kendisi yaziyor (index.html:237 "nothing gets a price before a toile is sewn
+  and judged"). O toile hic dikilmedi. Bir ajanin dikebilecegi bir sey degil ve
+  fiyat koymak Damla'nin karari — kod yazarak kapatmaya calismak, karari
+  gaspetmek olurdu.
+- Altyapi hazir: bekleme listesi endpoint'i calisiyor (denetci olctu, HTTP 200).
+
+### T5-EK — BUZGULU ETEK (kademesiz) CIZIMDE BOS BIR DIKDORTGEN
+- Sorulmadi ama bu turda gorduğum ve bildirmeden gecemeyecegim sey:
+  `--spec '{"garment":"skirt","skirtStyle":"gathered","skirtLength":"maxi"}'`
+  ciziminde belde TEK bir buzgu tiki, govdede tek bir dokum cizgisi yok —
+  dumduz bos bir dikdortgen iniyor. Sebep okunabiliyor: bel buzgu olcumu
+  (`out.notes.bodiceWaistMM > 0`) yalniz ELBISEDE var, ETEKTE bedene ait bir
+  bel kenari olmadigi icin hic calismiyor. ELBISEDE ayni ozellik calisiyor.
+  Onarilmadi: bu turda sirasi gelmedi, ve tahminle degil ayni olcum yoluyla
+  (etegin bel kenari / kemerin bitmis uzunlugu) kapanmali.
+
+### T5-EK2 — ONCEDEN KIRMIZI, BENIM DEGIL (uc kapi)
+- `flat_artifact_census`: 3B kabuk hattinin bel C1 kirigi (20.56°), etiketi
+  ARASTIRMA_HATTI_SEVK_DISI. Kapinin KENDI aciklamasi bu sayiyi (20.5594°) ve
+  "bu ajanin yetkisi DEGIL" notunu zaten tasiyor. `git diff` ile dogrulandi:
+  kapinin adiyla gosterdigi iki dosyada (`shellprojection.cpp`,
+  `surfacepattern.cpp`) bu turda TEK BAYT degismedi.
+- `style_check`: `engine/STYLE-PIN` diskte YOK (0 stil pinli). Dosyaya
+  dokunmadim, olusturmadim — pin basmak stilleri dondurmak demek, karar.
+- `sizechart_source_check`: `shoulderCM/backLengthCM/armLengthCM/neckCM`
+  kaynaksiz (CLAUDE.md'de K10 olarak zaten kayitli). `contract/tables.json`
+  bu turda degismedi.

@@ -374,7 +374,7 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
     // weight or lighter") turned into this bolt's own number.
     if (facingPieces > 0) {
         add("sew.interfacing",
-            "Tela / interfacing: this draft has " + num(facingPieces) +
+            "Interfacing: this draft has " + num(facingPieces) +
                 " shaped piece(s) that hold a shape (facing, collar, band or cuff). Fuse "
                 "an interfacing to each one — without it they roll to the outside no matter "
                 "how well they are sewn." +
@@ -391,7 +391,7 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
                            : std::string(";weightDeclared=0;swatchCM=10;gsmFactor=100;birim=g/m2")));
     } else {
         add("sew.interfacing",
-            "Tela / interfacing: none, and that is measured, not skipped. This draft has " +
+            "Interfacing: none, and that is measured, not skipped. This draft has " +
                 num(facingPieces) +
                 " pieces of the kind that carry interfacing (facing, collar, band, cuff, "
                 "placket, waistband) — the shapes are held by seams and darts here. Do not "
@@ -516,7 +516,7 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
     // 9 — PÜF NOKTALAR, every one measured off THIS pattern's geometry.
     if (notches > 0) {
         add("tip.notches",
-            "Püf nokta: there are " + num(notches) +
+            "Worth knowing: there are " + num(notches) +
                 " notch marks on these pieces and not one of them is decoration — each is "
                 "a point where two edges have to meet. Snip them 3 mm into the seam "
                 "allowance as you cut, before you move the paper.",
@@ -524,7 +524,7 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
     }
     if (!pattern.pieces.empty()) {
         add("tip.seamAllowance",
-            "Püf nokta: the outer line on every piece is the CUT line and the inner one is "
+            "Worth knowing: the outer line on every piece is the CUT line and the inner one is "
             "the SEW line, " + num(pattern.pieces.front().seamAllowance, 1) +
                 " mm apart. Sew on the inner line or the whole garment comes out that much "
                 "bigger at every seam.",
@@ -532,21 +532,21 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
     }
     if (longestMM > 0) {
         add("tip.longestPiece",
-            "Püf nokta: the largest piece is '" + longestName + "', " + num(longestMM, 0) +
+            "Worth knowing: the largest piece is '" + longestName + "', " + num(longestMM, 0) +
                 " mm across. Check that your table and your fabric width take it before "
                 "you start pinning.",
             "computed:longestMM=" + num(longestMM, 0) + ";piece=" + longestName);
     }
     if (chestEase < 0) {
         add("tip.negativeEase",
-            "Püf nokta: this pattern is deliberately " + num(-chestEase * 100.0, 1) +
+            "Worth knowing: this pattern is deliberately " + num(-chestEase * 100.0, 1) +
                 "% SMALLER than your bust. That is not an error — the fabric is meant to "
                 "stretch onto the body. Do not add it back when you cut.",
             "computed:negativeEasePct=" + num(-chestEase * 100.0, 1));
     }
     if (FabricBand::dartsDropOut(axis)) {
         add("tip.dartsDropOut",
-            "Püf nokta: above " + num(FabricBand::kSuperMinPct, 0) +
+            "Worth knowing: above " + num(FabricBand::kSuperMinPct, 0) +
                 "% stretch the published rule drops the bust dart — the fabric absorbs the "
                 "shaping. This engine does not remove it yet; if you are using a super-"
                 "stretch knit, sew the dart shallower or leave it out and check the fit.",
@@ -582,7 +582,7 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
             const double easeMM = capMM - armMM;
             const double easePct = 100.0 * easeMM / armMM;
             hp.push_back({1.0 + std::fabs(easeMM) / armMM, "zor.capEase",
-                          "Zor nokta — kol kapağı / cap ease: the sleeve cap measures " +
+                          "Hard spot — sleeve cap ease: the sleeve cap measures " +
                               num(capMM, 1) + " mm and the armhole it goes into measures " +
                               num(armMM, 1) + " mm, so " + num(std::fabs(easeMM), 1) + " mm (" +
                               num(std::fabs(easePct), 1) + "%) " +
@@ -630,7 +630,7 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
         if (tightR > 0.0 && tightSA > 0.0) {
             const double saCurve = tightSA;
             hp.push_back({saCurve / tightR, "zor.clip",
-                          "Zor nokta — çentikleme / clipping: the tightest curve in this pattern "
+                          "Hard spot — clipping: the tightest curve in this pattern "
                           "is on '" + tightName + "', radius " + num(tightR, 1) +
                               " mm, and the seam allowance you have to fold inside it is " +
                               num(saCurve, 1) + " mm. " +
@@ -653,7 +653,7 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
         if (axis.widthDeclared() && widestMM > 0.0) {
             const double sparMM = boltMM - widestMM;
             hp.push_back({widestMM / boltMM, "zor.boltRoom",
-                          "Zor nokta — top eni: the widest piece is '" + widestName + "' at " +
+                          "Hard spot — bolt width: the widest piece is '" + widestName + "' at " +
                               num(widestMM, 0) + " mm across the grain and your bolt is " +
                               num(boltMM, 0) + " mm wide, which leaves " + num(sparMM, 0) +
                               " mm of spare width" +
@@ -695,7 +695,7 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
         if (smallDim > 0.0 && smallSA > 0.0) {
             const double saSmall = smallSA;
             hp.push_back({2.0 * saSmall / smallDim, "zor.smallPiece",
-                          "Zor nokta — küçük parça: the smallest cut piece is '" + smallName +
+                          "Hard spot — small piece: the smallest cut piece is '" + smallName +
                               "', " + num(smallDim, 0) + " mm across its narrow side, and it "
                               "carries a " + num(saSmall, 1) +
                               " mm allowance on each side — " + num(2.0 * saSmall, 1) +
@@ -720,7 +720,7 @@ inline std::vector<GuideAdvice> build(const DraftedPattern& pattern, const Fabri
         const int shown = static_cast<int>(std::min<size_t>(3, hp.size()));
         if (!hp.empty()) {
             add("zor.ozet",
-                "Üç zor nokta: " + num(static_cast<int>(hp.size())) +
+                "Hard spots: " + num(static_cast<int>(hp.size())) +
                     " difficulties were measured on this pattern in this fabric and the " +
                     num(shown) +
                     " hardest are printed below, ordered by how far each one has gone past its "

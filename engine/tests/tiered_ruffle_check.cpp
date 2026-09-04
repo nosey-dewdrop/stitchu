@@ -80,10 +80,48 @@ int main() {
     // The cascade adds exactly TIERS pieces on an unchanged base.
     check(dTiered.pieces.size() == dPlain.pieces.size() + TIERS,
           "tiers add exactly one piece per tier");
-    bool baseSame = true;
-    for (size_t i = 0; i < dPlain.pieces.size(); ++i)
-        baseSame = baseSame && samePiece(dPlain.pieces[i], dTiered.pieces[i]);
-    check(baseSame, "existing pieces are identical with the tiers on");
+    // ⭐ BU HÜKÜM 2026-09-04'TE DEĞİŞTİ — GEVŞETİLEREK DEĞİL, SERTLEŞTİRİLEREK.
+    //
+    // Eski hâli "tiers açıkken var olan bütün parçalar BAYT BAYT aynı" diyordu ve
+    // yeşil yanıyordu. Yeşil yandığı için de asıl kusuru koruyordu: fırfır
+    // kademeleri eteğin hemine EKLENİYOR, hiçbir yerde boydan DÜŞÜLMÜYORDU.
+    // Bağımsız denetçi bunu üründe gördü: 'a maxi tiered skirt' -> 912 mm'lik
+    // tam boy panel + altına 310 mm kademe = belden 1222 mm, yani yerde sürünen
+    // bir etek, ve teknik çizimde tam boy koninin altına yapıştırılmış bir
+    // "abajur". Kademeli etekte kademeler boyu BÖLER; alıcının "maxi" dediği şey
+    // bitmiş giysinin boyudur.
+    //
+    // Yeni hüküm iki şeyi birden söylüyor ve ikisi de eskisinden dar:
+    //   (a) ETEK DIŞINDAKİ her parça hâlâ bayt bayt aynı (beden, kol, biye…),
+    //   (b) etek panelleri TAM OLARAK kademelerin kapladığı kadar kısa.
+    // (b) olmadan (a) tek başına bir kusuru mühürlüyordu.
+    const double reserve = DEPTH * TIERS;
+    bool baseSame = true, skirtShorter = true;
+    for (size_t i = 0; i < dPlain.pieces.size(); ++i) {
+        const auto& a = dPlain.pieces[i];
+        const auto& b = dTiered.pieces[i];
+        if (a.name.find("Skirt") == std::string::npos) {
+            baseSame = baseSame && samePiece(a, b);
+            continue;
+        }
+        auto boy = [](const PatternPiece& p) {
+            double lo = 1e18, hi = -1e18;
+            for (const auto& c : p.commands) { lo = std::min(lo, c.to.y); hi = std::max(hi, c.to.y); }
+            return hi - lo;
+        };
+        const double d = boy(a) - boy(b);
+        if (std::fabs(d - reserve) > 0.5) {
+            skirtShorter = false;
+            std::printf("      %s: %.2f -> %.2f mm (fark %.2f, beklenen %.2f)\n",
+                        a.name.c_str(), boy(a), boy(b), d, reserve);
+        } else {
+            std::printf("      %s: %.2f -> %.2f mm (kademeler %.0f mm'i geri veriyor)\n",
+                        a.name.c_str(), boy(a), boy(b), reserve);
+        }
+    }
+    check(baseSame, "every NON-skirt piece is identical with the tiers on");
+    check(skirtShorter, "the skirt panel is shorter by exactly tiers x depth — the tiers divide the "
+                        "declared length, they are not hung under a full-length skirt");
 
     // Validity for all three drafts.
     check(PatternValidator::issues(plain, m, dPlain).empty(), "base draft valid");

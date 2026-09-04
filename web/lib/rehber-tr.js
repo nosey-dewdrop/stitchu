@@ -135,46 +135,144 @@ const TR = {
 // Which engine advices belong under which printed heading, in the order a
 // person actually uses them: prepare -> buy -> cut -> sew -> the hard bits.
 const BOLUMLER = [
-  { baslik: 'Kumaş', ids: ['fabric.band', 'fabric.stretchTest', 'fabric.recovery', 'fabric.drape'] },
-  { baslik: 'Kesmeden önce', ids: ['prep.prewash'] },
-  { baslik: 'Ne alacaksın', ids: ['cut.yardage', 'sew.interfacing'] },
-  { baslik: 'İğne, dikiş, kenar', ids: ['sew.needle', 'sew.stitch', 'sew.seamClass', 'sew.edgeFinish', 'sew.boundEdge'] },
-  { baslik: 'Bu giysinin bu kumaştaki zor noktaları', ids: ['zor.ozet', 'zor.capEase', 'zor.clip', 'zor.boltRoom', 'zor.smallPiece'] },
-  { baslik: 'Püf noktalar', ids: ['cut.pieces', 'tip.notches', 'tip.seamAllowance', 'tip.longestPiece', 'tip.negativeEase', 'tip.dartsDropOut'] },
+  { baslik: { tr: 'Kumaş', en: 'Fabric' }, ids: ['fabric.band', 'fabric.stretchTest', 'fabric.recovery', 'fabric.drape'] },
+  { baslik: { tr: 'Kesmeden önce', en: 'Before you cut' }, ids: ['prep.prewash'] },
+  { baslik: { tr: 'Ne alacaksın', en: 'What to buy' }, ids: ['cut.yardage', 'sew.interfacing'] },
+  { baslik: { tr: 'İğne, dikiş, kenar', en: 'Needle, stitch, edge' }, ids: ['sew.needle', 'sew.stitch', 'sew.seamClass', 'sew.edgeFinish', 'sew.boundEdge'] },
+  { baslik: { tr: 'Bu giysinin bu kumaştaki zor noktaları', en: 'Where this garment fights this fabric' }, ids: ['zor.ozet', 'zor.capEase', 'zor.clip', 'zor.boltRoom', 'zor.smallPiece'] },
+  { baslik: { tr: 'Püf noktalar', en: 'Things worth knowing' }, ids: ['cut.pieces', 'tip.notches', 'tip.seamAllowance', 'tip.longestPiece', 'tip.negativeEase', 'tip.dartsDropOut'] },
 ];
 
-function adviceHTML(a) {
+// ⭐ İNGİLİZCE SİTEDE EVE GÖTÜRÜLEN REHBER TÜRKÇEYDİ (bağımsız denetçi, tur 5,
+//    kusur 4 — satış engelleyici).
+//
+// ÖLÇÜLDÜ 2026-09-04: İngilizce arayüzdeki tek dikiş rehberi düğmesinin adı
+// birebir "HTML, sewing guide (Turkish)" idi ve inen dosyanın 129 satırının
+// tamamı Türkçeydi. İçerik iyiydi (ISO 4915/4916 kodları, kaynaklı iğne
+// numarası, ölçülmüş zorluk sıralaması) ama İngiliz alıcı okuyamıyordu.
+// Etiketin içine parantezle "(Turkish)" yazmak bir onarım değil, durumun
+// kabullenilmesiydi.
+//
+// ⛔ ÇÖZÜM YENİ METİN YAZMAK DEĞİL. İngilizce zaten VARDI ve KAYNAKTI: motorun
+// her `rehber` kaydı kendi İngilizce cümlesini (`a.text`) ve kendi `basis`
+// sayılarını taşıyor — bu dosyadaki Türkçe şablonlar zaten o cümlelerin
+// çevirisiydi. Yani İngilizce rehber, motorun kendi sözünün ta kendisidir;
+// burada tek bir tavsiye cümlesi uydurulmadı. Aynısı iki yerde daha geçerli:
+// `guideSteps` zaten İngilizce (GUIDE_TR onların çevirisi) ve
+// web/data/sewing-guide.json'un fabricLogic bloğu zaten `en` alanı taşıyor.
+// Çevrilen tek şey sayfanın KENDİ mobilyası: başlık, tablo etiketi, kaynak
+// satırı — sayı taşımayan, iddia taşımayan kelimeler.
+function adviceHTML(a, dil) {
   const { kv, kaynaklar } = basisAyristir(a.basis);
-  const tr = TR[a.id];
+  const tr = dil === 'en' ? null : TR[a.id];
   // NO TEMPLATE -> the engine's own English, verbatim. A paraphrase invented
   // here would be a sentence with no source, which is the one thing forbidden.
   const govde = tr ? tr(kv, a.text) : esc(a.text);
   const kayn = [];
-  if (kaynaklar.length) kayn.push(`kaynak: contract/guide-sources.json → ${kaynaklar.join(' + ')}`);
+  if (kaynaklar.length) {
+    kayn.push(dil === 'en'
+      ? `source: contract/guide-sources.json → ${kaynaklar.join(' + ')}`
+      : `kaynak: contract/guide-sources.json → ${kaynaklar.join(' + ')}`);
+  }
   const hesap = Object.entries(kv).filter(([, v]) => v !== '').map(([x, y]) => `${x}=${y}`);
-  if (hesap.length) kayn.push(`bu çizimin ölçtüğü: ${hesap.join(' · ')}`);
+  if (hesap.length) {
+    kayn.push(dil === 'en'
+      ? `what this draft measured: ${hesap.join(' · ')}`
+      : `bu çizimin ölçtüğü: ${hesap.join(' · ')}`);
+  }
   return `<p class="ad" data-advice="${esc(a.id)}">${govde}</p>
 <p class="kaynak">${esc(kayn.join(' | '))}</p>`;
 }
 
-function bedenSerisiHTML(seri) {
+// Sayfanın kendi mobilyası, iki dilde.
+const S = {
+  title: { tr: 'dikiş rehberi', en: 'sewing guide' },
+  pieces: { tr: 'parça', en: 'pieces' },
+  fabricM: { tr: 'm kumaş (140 cm en)', en: 'm of fabric (140 cm wide)' },
+  saH: { tr: 'Dikiş payı', en: 'Seam allowance' },
+  saBody: {
+    tr: (mm) => `<strong>dikiş payı ${mm} mm — kesim çizgisine DAHİL.</strong>\nDIŞ çizgiden kes, içteki ince çizgiden dik. Bu sayı kalıbın kendi geometrisinden okunur\n(her parçanın <code>seamAllowance</code> alanı), ayrı bir tablodan değil.`,
+    en: (mm) => `<strong>seam allowance ${mm} mm — INCLUDED in the cutting line.</strong>\nCut on the outer line, stitch on the thin inner one. The number is read off the pattern's own\ngeometry (each piece's <code>seamAllowance</code> field), not from a separate table.`,
+  },
+  digerH: { tr: 'Motorun diğer notları', en: "The engine's other notes" },
+  kumasH: { tr: 'Kumaş sayıları', en: 'Fabric numbers' },
+  rowFabric: { tr: 'kumaş', en: 'fabric' },
+  rowWeight: { tr: 'ağırlık', en: 'weight' },
+  rowBolt: { tr: 'top eni', en: 'bolt width' },
+  rowStretch: { tr: 'esneme', en: 'stretch' },
+  rowNeed: { tr: 'gereken kumaş', en: 'fabric needed' },
+  notMeasured: { tr: 'ÖLÇÜLMEDİ', en: 'NOT MEASURED' },
+  needSuffix: {
+    tr: "m (140 cm ende, motorun kendi yerleşiminden)",
+    en: "m (at 140 cm width, from the engine's own layout)",
+  },
+  kumasKaynak: {
+    tr: 'sayıların kaynağı: contract/fabric-catalog-v1.json → GIRDI/kumaslar.md (her sayının yanında yayınlayan satıcı sayfası; ölçülmemiş alan ÖLÇÜLMEDİ etiketi taşır)',
+    en: 'where the numbers come from: contract/fabric-catalog-v1.json → GIRDI/kumaslar.md (each number carries the seller page that published it; an unmeasured field is labelled NOT MEASURED)',
+  },
+  wants: { tr: 'Bu kesim ne ister?', en: 'What does this cut want?' },
+  askFor: { tr: 'Mağazada iste:', en: 'Ask for:' },
+  families: { tr: 'Aileler:', en: 'Families:' },
+  cost: { tr: 'Bedeli:', en: 'The trade-off:' },
+  logicKaynak: { tr: 'kaynak: web/data/sewing-guide.json', en: 'source: web/data/sewing-guide.json' },
+  kesimH: { tr: 'Kesim planı', en: 'Cutting plan' },
+  kesimKaynak: {
+    tr: 'kesim talimatları motorun kendi parça listesinden, kelimesi kelimesine.',
+    en: "the cutting notes are the engine's own piece list, word for word.",
+  },
+  insaH: { tr: 'İnşa sırası', en: 'Order of construction' },
+  insaKaynak: {
+    tr: 'her adım motorun kendi dikiş talimatı (engine guideSteps), Türkçesi web/js/guide-tr.js tablosundan; tabloda olmayan adım UYDURULMAZ, İngilizce basılır.',
+    en: "every step is the engine's own sewing instruction (engine guideSteps), printed verbatim — nothing here is paraphrased.",
+  },
+  seriH: {
+    tr: (c, k) => `Beden serisi — ${c} ve ±${k} komşusu`,
+    en: (c, k) => `Size run — ${c} and its ±${k} neighbours`,
+  },
+  seriGovde: {
+    tr: (k, kirp) => `Bu paket tek beden değil: seçtiğin bedenin iki yanındaki ${k} bedeni de aynı çizimden,
+aynı motorla üretildi ve pakette <strong>her beden ayrı bir A4 kalıp PDF'i</strong> olarak duruyor
+(<code>kalip-A4-EU34.pdf</code>, <code>kalip-A4-EU36.pdf</code>, …)${kirp}. Ölçün iki bedenin
+arasına düşüyorsa ya da giysi ilk provada dar/bol geliyorsa, yeni bir kalıp satın almadan komşu katmanı
+kesersin. Aşağıdaki göğüs/bel/kalça sayıları <em>vücut</em> ölçüsüdür (giysi değil), beden çizelgesinden gelir.`,
+    en: (k, kirp) => `This pack is not a single size: the ${k} size(s) on either side of the one you picked were
+drafted from the same drawing by the same engine, and the pack carries <strong>a separate A4 pattern PDF
+for every size</strong> (<code>kalip-A4-EU34.pdf</code>, <code>kalip-A4-EU36.pdf</code>, …)${kirp}. If your
+measurement falls between two sizes, or the first toile comes out tight or loose, you cut the neighbouring
+layer instead of buying another pattern. The bust/waist/hip numbers below are <em>body</em> measurements
+(not the garment) and come from the size chart.`,
+  },
+  colSize: { tr: 'beden', en: 'size' },
+  colBust: { tr: 'göğüs cm', en: 'bust cm' },
+  colWaist: { tr: 'bel cm', en: 'waist cm' },
+  colHip: { tr: 'kalça cm', en: 'hip cm' },
+  colPieces: { tr: 'parça', en: 'pieces' },
+  colFabric: { tr: 'kumaş', en: 'fabric' },
+  seriKaynak: {
+    tr: 'kaynak: motorun kendi gradeJSON çıktısı (engine/wasm/bindings.cpp) · vücut ölçüleri contract/tables.json draft.euSizeChart',
+    en: "source: the engine's own gradeJSON output (engine/wasm/bindings.cpp) · body measurements from contract/tables.json draft.euSizeChart",
+  },
+};
+const SS = (key, dil, ...args) => {
+  const v = S[key][dil === 'en' ? 'en' : 'tr'];
+  return typeof v === 'function' ? v(...args) : v;
+};
+
+function bedenSerisiHTML(seri, dil) {
   if (!seri || !Array.isArray(seri.bedenler) || !seri.bedenler.length) return '';
   const satir = seri.bedenler.map((b) =>
     `<tr${b.size === seri.merkez ? ' class="merkez"' : ''}><td>${esc(b.size)}${b.size === seri.merkez ? ' ★' : ''}</td>` +
     `<td>${b.bust}</td><td>${b.waist}</td><td>${b.hip}</td>` +
     `<td>${b.pieces}</td><td>${b.meters} m</td></tr>`).join('\n');
+  const kirp = seri.kirpildi && seri.kirpildi !== 'kırpılmadı' ? ` — ${esc(seri.kirpildi)}` : '';
   return `
-<h2>Beden serisi — ${esc(seri.merkez)} ve ±${seri.komsu} komşusu</h2>
-<p>Bu paket tek beden değil: seçtiğin bedenin iki yanındaki ${seri.komsu} bedeni de aynı çizimden,
-aynı motorla üretildi ve pakette <strong>her beden ayrı bir A4 kalıp PDF'i</strong> olarak duruyor
-(<code>kalip-A4-EU34.pdf</code>, <code>kalip-A4-EU36.pdf</code>, …)${seri.kirpildi && seri.kirpildi !== 'kırpılmadı' ? ` — ${esc(seri.kirpildi)}` : ''}. Ölçün iki bedenin
-arasına düşüyorsa ya da giysi ilk provada dar/bol geliyorsa, yeni bir kalıp satın almadan komşu katmanı
-kesersin. Aşağıdaki göğüs/bel/kalça sayıları <em>vücut</em> ölçüsüdür (giysi değil), beden çizelgesinden gelir.</p>
+<h2>${esc(SS('seriH', dil, seri.merkez, seri.komsu))}</h2>
+<p>${SS('seriGovde', dil, seri.komsu, kirp)}</p>
 <table>
-<tr><th>beden</th><th>göğüs cm</th><th>bel cm</th><th>kalça cm</th><th>parça</th><th>kumaş</th></tr>
+<tr><th>${esc(SS('colSize', dil))}</th><th>${esc(SS('colBust', dil))}</th><th>${esc(SS('colWaist', dil))}</th><th>${esc(SS('colHip', dil))}</th><th>${esc(SS('colPieces', dil))}</th><th>${esc(SS('colFabric', dil))}</th></tr>
 ${satir}
 </table>
-<p class="kaynak">kaynak: motorun kendi gradeJSON çıktısı (engine/wasm/bindings.cpp) · vücut ölçüleri contract/tables.json draft.euSizeChart</p>`;
+<p class="kaynak">${esc(SS('seriKaynak', dil))}</p>`;
 }
 
 /**
@@ -197,9 +295,13 @@ export function rehberHTML(p, spec, fabricId, guideData, opts = {}) {
   const saMM = Math.round(p.pieces[0].seamAllowance);
   const beden = opts.beden || 'EU38';
   const baslik = opts.baslik || p.garment;
+  // ⭐ DİL. Varsayılan Türkçe, çünkü bu dosya Türkçe doğdu ve mevcut çağıranlar
+  // (kapılar, paket üreteci) dil vermiyor. create.js sayfanın kendi dilini
+  // geçirir; İngilizce arayüzde İngilizce rehber iner.
+  const dil = opts.dil === 'en' ? 'en' : 'tr';
   const profile = fabricProfile(spec);
-  const logic = guideData && guideData.fabricLogic && guideData.fabricLogic[profile]
-    ? guideData.fabricLogic[profile].tr : null;
+  const logicRow = guideData && guideData.fabricLogic && guideData.fabricLogic[profile];
+  const logic = logicRow ? (logicRow[dil] || logicRow.tr) : null;
   const guideKaynak = (guideData && guideData._source) || '';
 
   // ── the engine's own advice, grouped. An advice the engine emitted and no
@@ -212,32 +314,32 @@ export function rehberHTML(p, spec, fabricId, guideData, opts = {}) {
     const parcalar = ids.filter((id) => byId.has(id));
     if (!parcalar.length) return '';
     parcalar.forEach((id) => kullanildi.add(id));
-    return `<h2>${esc(h)}</h2>\n${parcalar.map((id) => adviceHTML(byId.get(id))).join('\n')}`;
+    return `<h2>${esc(typeof h === 'string' ? h : h[dil])}</h2>\n${parcalar.map((id) => adviceHTML(byId.get(id), dil)).join('\n')}`;
   }).filter(Boolean).join('\n');
   const artan = rehberList.filter((a) => !kullanildi.has(a.id));
   const artanHTML = artan.length
-    ? `<h2>Motorun diğer notları</h2>\n${artan.map(adviceHTML).join('\n')}` : '';
+    ? `<h2>${esc(SS('digerH', dil))}</h2>\n${artan.map((a) => adviceHTML(a, dil)).join('\n')}` : '';
 
   // inşa sırası — the engine's own steps, Turkish through the shipped table.
-  const adimlar = (p.guideSteps || []).map((s) =>
-    `<li>${esc(GUIDE_TR[s] || s)}</li>`).join('\n');
+  const adimlar = (p.guideSteps || []).map((step) =>
+    `<li>${esc(dil === 'en' ? step : (GUIDE_TR[step] || step))}</li>`).join('\n');
 
   // kesim planı — verbatim from the drafted pieces.
   const kesim = p.pieces.map((pc) =>
     `<tr><td>${esc(pc.name)}</td><td>${esc(pc.cutInstruction)}</td></tr>`).join('\n');
 
   const kumasSatirlar = [
-    `<tr><td>kumaş</td><td>${esc(preset.trLabel)}</td></tr>`,
-    `<tr><td>ağırlık</td><td>${preset.fabricWeightGSM} g/m²</td></tr>`,
-    `<tr><td>top eni</td><td>${preset.fabricWidthCM} cm</td></tr>`,
-    `<tr><td>esneme</td><td>${preset.fabricStretchPct >= 0 ? preset.fabricStretchPct + ' %' : 'ÖLÇÜLMEDİ'}</td></tr>`,
-    `<tr><td>gereken kumaş</td><td>${p.fabricMeters140} m (140 cm ende, motorun kendi yerleşiminden)</td></tr>`,
+    `<tr><td>${esc(SS('rowFabric', dil))}</td><td>${esc(dil === 'en' ? (preset.label || preset.trLabel) : preset.trLabel)}</td></tr>`,
+    `<tr><td>${esc(SS('rowWeight', dil))}</td><td>${preset.fabricWeightGSM} g/m²</td></tr>`,
+    `<tr><td>${esc(SS('rowBolt', dil))}</td><td>${preset.fabricWidthCM} cm</td></tr>`,
+    `<tr><td>${esc(SS('rowStretch', dil))}</td><td>${preset.fabricStretchPct >= 0 ? preset.fabricStretchPct + ' %' : esc(SS('notMeasured', dil))}</td></tr>`,
+    `<tr><td>${esc(SS('rowNeed', dil))}</td><td>${p.fabricMeters140} ${esc(SS('needSuffix', dil))}</td></tr>`,
   ].join('\n');
 
   return `<!doctype html>
-<html lang="tr">
+<html lang="${dil}">
 <meta charset="utf-8">
-<title>${esc(baslik)} — dikiş rehberi (${esc(beden)})</title>
+<title>${esc(baslik)} — ${esc(SS('title', dil))} (${esc(beden)})</title>
 <style>
   body { max-width: 760px; margin: 40px auto; padding: 0 22px;
          font: 15px/1.6 -apple-system, system-ui, sans-serif; color: #1f3a5f; }
@@ -255,39 +357,37 @@ export function rehberHTML(p, spec, fabricId, guideData, opts = {}) {
   .sa { background: #f7f1e2; padding: 10px 14px; }
   @media print { body { margin: 10mm auto; } h2 { page-break-after: avoid; } }
 </style>
-<h1>${esc(baslik)} — dikiş rehberi</h1>
-<p class="kaynak">${esc(beden)} · ${p.pieces.length} parça · ${p.fabricMeters140} m kumaş (140 cm en)${opts.kokenSatiri ? ' · ' + esc(opts.kokenSatiri) : ''}</p>
+<h1>${esc(baslik)} — ${esc(SS('title', dil))}</h1>
+<p class="kaynak">${esc(beden)} · ${p.pieces.length} ${esc(SS('pieces', dil))} · ${p.fabricMeters140} ${esc(SS('fabricM', dil))}${opts.kokenSatiri ? ' · ' + esc(opts.kokenSatiri) : ''}</p>
 
-<h2>Dikiş payı</h2>
-<p class="sa"><strong>dikiş payı ${saMM} mm — kesim çizgisine DAHİL.</strong>
-DIŞ çizgiden kes, içteki ince çizgiden dik. Bu sayı kalıbın kendi geometrisinden okunur
-(her parçanın <code>seamAllowance</code> alanı), ayrı bir tablodan değil.</p>
+<h2>${esc(SS('saH', dil))}</h2>
+<p class="sa">${SS('saBody', dil, saMM)}</p>
 
 ${bolumHTML}
 ${artanHTML}
 
-<h2>Kumaş sayıları</h2>
+<h2>${esc(SS('kumasH', dil))}</h2>
 <table>
 ${kumasSatirlar}
 </table>
-<p class="kaynak">sayıların kaynağı: contract/fabric-catalog-v1.json → GIRDI/kumaslar.md (her sayının yanında yayınlayan satıcı sayfası; ölçülmemiş alan ÖLÇÜLMEDİ etiketi taşır)</p>
-${logic ? `<p><strong>Bu kesim ne ister?</strong> ${esc(logic.want)} — ${esc(logic.why)}</p>
-<p><strong>Mağazada iste:</strong> ${esc(logic.ask)}. Aileler: ${esc(logic.families)}.</p>
-<p><strong>Bedeli:</strong> ${esc(logic.tradeoff)}</p>
-<p class="kaynak">kaynak: web/data/sewing-guide.json (${esc(guideKaynak)})</p>` : ''}
-${bedenSerisiHTML(opts.bedenSerisi)}
+<p class="kaynak">${esc(SS('kumasKaynak', dil))}</p>
+${logic ? `<p><strong>${esc(SS('wants', dil))}</strong> ${esc(logic.want)} — ${esc(logic.why)}</p>
+<p><strong>${esc(SS('askFor', dil))}</strong> ${esc(logic.ask)}. ${esc(SS('families', dil))} ${esc(logic.families)}.</p>
+<p><strong>${esc(SS('cost', dil))}</strong> ${esc(logic.tradeoff)}</p>
+<p class="kaynak">${esc(SS('logicKaynak', dil))} (${esc(guideKaynak)})</p>` : ''}
+${bedenSerisiHTML(opts.bedenSerisi, dil)}
 
-<h2>Kesim planı</h2>
+<h2>${esc(SS('kesimH', dil))}</h2>
 <table>
 ${kesim}
 </table>
-<p class="kaynak">kesim talimatları motorun kendi parça listesinden, kelimesi kelimesine.</p>
+<p class="kaynak">${esc(SS('kesimKaynak', dil))}</p>
 
-<h2>İnşa sırası</h2>
+<h2>${esc(SS('insaH', dil))}</h2>
 <ol>
 ${adimlar}
 </ol>
-<p class="kaynak">her adım motorun kendi dikiş talimatı (engine guideSteps), Türkçesi web/js/guide-tr.js tablosundan; tabloda olmayan adım UYDURULMAZ, İngilizce basılır.</p>
+<p class="kaynak">${esc(SS('insaKaynak', dil))}</p>
 </html>
 `;
 }

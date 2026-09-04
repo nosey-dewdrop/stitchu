@@ -424,6 +424,20 @@ add_test(NAME bridge_guard COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/bridge
 # Cloudflare'in hükmünü yoksay). Muhafızlar backend/guard.js'te, WASM'siz.
 add_test(NAME wallet_fuse_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/wallet_fuse_check.mjs)
 
+# foto_yolu_check (2026-09-04): "A photo goes in." — landing'in BIRINCI cumlesi.
+# Bagimsiz denetci canli sitede gercek bir fotograf yukledi: /api/analyze'a SIFIR
+# istek gitti, ekrana ham yigin izi basildi ("Cannot read properties of undefined
+# (reading 'then')"). O anda 8 JS kapisinin 8'i de YESILDI — kapi seti motoru
+# koruyordu, uretim yolunu korumuyordu. Kok sebep Cloudflare'in kendi api.js'inde
+# okundu: turnstile.execute() hicbir sey dondurmez, uzerindeki .then her seferinde
+# TypeError atar. Kapi iki yarim: (A) kaynak, her kosuda baglayici; (B) GERCEK
+# Chrome + gercek Cloudflare + sevk edilen analyze.js modulu + /api/analyze'i
+# dinleyen yerel sunucu. Mutasyon kaniti: eski .then bicimi geri konunca canli
+# yarim denetcinin cumlesini birebir basiyor. Chrome/Cloudflare yoksa B yarisi
+# "OLCULMEDI" der (yesil sayilmaz), A yarisi yine de kirmiziya cevirebilir.
+add_test(NAME foto_yolu_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/foto_yolu_check.mjs)
+set_tests_properties(foto_yolu_check PROPERTIES TIMEOUT 180)
+
 # 27 Tem kopuk kablo mandalları (json-el adli raporu): dört sessiz kopukluk.
 # api_wire_check: skirtLengthMM API yolunda motora ULAŞIR (backend normalize
 # spec taşır, web=backend aynı mm, 353!=1100 kalıp, 0/atlanmış default aynı).

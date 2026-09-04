@@ -13,7 +13,28 @@ export const photoAvailable = () => Boolean(BACKEND_URL) && Boolean(TURNSTILE_SI
 // are single-use and expire in ~300s, so a fresh one is minted for every photo
 // rather than cached. If anything here fails we throw rather than calling the
 // Worker without a token: a refusal the user can read beats a 403 they cannot.
+//
+// ⚠ THE ONE THING ABOUT CLOUDFLARE'S API THAT COST US THE WHOLE PHOTO PATH
+// (measured 2026-09-04 in real Chrome against the always-pass test sitekey;
+// the gate that now holds it is engine/tests/foto_yolu_check.mjs):
+//
+//   `turnstile.execute()` RETURNS NOTHING. Not a promise — `undefined`.
+//   Read it in their own minified api.js: every branch of `execute:function`
+//   ends in a bare `return;`. The old code here did `.execute(...).then(...)`,
+//   so the FIRST thing every photo upload did was throw
+//   "Cannot read properties of undefined (reading 'then')" — a raw stack
+//   fragment on the buyer's screen, and zero requests to /api/analyze.
+//   The token arrives through the `callback` option of render(), nowhere else.
+//
+// So: render once WITH callbacks, and route each execute() into the deferred
+// that is waiting for it.
+//
+// (The host is parked offscreen rather than display:none. An early probe said
+// a hidden host never solves; a mutation of the gate DISPROVED that — with the
+// callback wiring it solves either way. Offscreen is kept because it costs
+// nothing, but it is not load-bearing and no gate asserts it.)
 let turnstileWidget = null;
+let turnstilePending = null; // { resolve, reject } of the execute() in flight
 
 function loadTurnstileScript() {
   if (window.turnstile) return Promise.resolve();
@@ -32,32 +53,67 @@ function loadTurnstileScript() {
   return script._loading;
 }
 
+// Every exit from the widget lands here, so a late callback after a timeout
+// cannot resolve a promise the caller already gave up on.
+function settleTurnstile(err, token) {
+  const pending = turnstilePending;
+  turnstilePending = null;
+  if (!pending) return;
+  clearTimeout(pending.timer);
+  if (err) pending.reject(err);
+  else pending.resolve(token);
+}
+
+const VERIFY_FAILED = () => new Error('Verification failed, pick the garment below instead.');
+
 async function turnstileToken() {
   await loadTurnstileScript();
+  if (!window.turnstile || typeof window.turnstile.render !== 'function') {
+    throw new Error('Verification could not load, pick the garment below instead.');
+  }
   if (turnstileWidget === null) {
     const host = document.createElement('div');
-    host.style.display = 'none';
+    // NOT display:none — see the note above; a hidden widget never solves.
+    host.style.cssText = 'position:absolute;left:-9999px;top:0;width:300px;height:65px;';
+    host.setAttribute('aria-hidden', 'true');
     document.body.appendChild(host);
-    turnstileWidget = window.turnstile.render(host, {
+    const id = window.turnstile.render(host, {
       sitekey: TURNSTILE_SITE_KEY,
       size: 'invisible',
+      callback: (token) => settleTurnstile(null, token),
+      'error-callback': () => { settleTurnstile(VERIFY_FAILED()); return true; },
+      'expired-callback': () => settleTurnstile(VERIFY_FAILED()),
+      'timeout-callback': () => settleTurnstile(
+        new Error('Verification timed out, pick the garment below instead.'),
+      ),
     });
+    // render() returns undefined when it refuses (bad sitekey, wrong hostname,
+    // blocked frame). Leaving turnstileWidget null makes the NEXT photo retry
+    // the render instead of executing a widget that does not exist.
+    if (id === undefined || id === null) {
+      host.remove();
+      throw new Error('Verification could not start here, pick the garment below instead.');
+    }
+    turnstileWidget = id;
   } else {
     // A widget holds one token at a time; reset before asking for the next.
     window.turnstile.reset(turnstileWidget);
   }
+  if (turnstilePending) settleTurnstile(VERIFY_FAILED());
   return new Promise((resolve, reject) => {
-    const timer = setTimeout(
-      () => reject(new Error('Verification timed out, pick the garment below instead.')),
-      20000,
-    );
-    window.turnstile
-      .execute(turnstileWidget, { size: 'invisible' })
-      .then((token) => { clearTimeout(timer); resolve(token); })
-      .catch(() => {
-        clearTimeout(timer);
-        reject(new Error('Verification failed, pick the garment below instead.'));
-      });
+    turnstilePending = {
+      resolve,
+      reject,
+      timer: setTimeout(
+        () => settleTurnstile(new Error('Verification timed out, pick the garment below instead.')),
+        20000,
+      ),
+    };
+    try {
+      window.turnstile.execute(turnstileWidget, { size: 'invisible' });
+    } catch {
+      settleTurnstile(VERIFY_FAILED());
+    }
   });
 }
 

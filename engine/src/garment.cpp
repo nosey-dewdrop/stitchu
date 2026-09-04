@@ -1017,7 +1017,44 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
 
 namespace GarmentDrafter {
 
-DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m) {
+DraftedPattern draft(const GarmentSpec& specIn, const BodyMeasurementsSnapshot& m) {
+    // ⭐ KATMANLI ETEK, İLAN ETTİĞİ BOYU AŞIYORDU — "ABAJUR" KUSURUNUN KÖKÜ.
+    //
+    // ÖLÇÜLDÜ 2026-09-04 (bağımsız denetçi + burada yeniden): `a maxi tiered
+    // skirt` -> Front paneli 912 mm (maxi'nin tamamı) ve ONUN ALTINA 104+104+102
+    // mm'lik üç fırfır kademesi. Dikilen giysi belden 1222 mm: EU38 bel-yer
+    // mesafesinin epeyce altına, yani yere sürünen bir etek. Teknik çizim de bunu
+    // dürüstçe gösteriyordu: tam boy bir A-line koninin ALTINA yapıştırılmış,
+    // kalçanın katı genişliğinde bir abajur eteği.
+    //
+    // KÖK SEBEP TEK SATIRDI VE ÇİZİMDE DEĞİLDİ: fırfır bloğu eteğin hemine
+    // EKLENİYORDU, hiçbir yerde eteğin boyundan DÜŞÜLMÜYORDU. Kademeli etekte
+    // kademeler boyu BÖLER — alıcının "maxi" derken kastettiği şey bitmiş
+    // giysinin boyudur, gövde panelinin boyu değil.
+    //
+    // ⛔ YENİ SABİT YOK. Rezerv, zaten var olan iki sayıdan çıkıyor:
+    // kademe sayısı x kademe derinliği (measurements.hpp ruffleTiers/
+    // ruffleDepthMM). Gövdeye kalan boy hiçbir zaman kalça çizgisinin
+    // (skirt.hpp hipDepth) altına inemez — inerse etek paneli şekilsiz kalır —
+    // ve o sınıra dayanırsa kademe derinliği KISALTILIR, sessizce değil:
+    // kısaltma dikiş rehberine sayıyla yazılır.
+    GarmentSpec spec = specIn;
+    double ruffleKisaltmaMM = 0;   // gövdeden düşülen toplam (rapor için)
+    double ruffleIstenenDerinlikMM = spec.ruffleDepthMM;
+    const bool ruffleEtekHemine =
+        spec.ruffleHem && (spec.garment == GarmentType::Skirt || spec.garment == GarmentType::Dress);
+    if (ruffleEtekHemine) {
+        const int kat = std::max(1, std::min(5, spec.ruffleTiers));
+        const double ilanEdilen = spec.skirtLengthMM > 0
+            ? std::clamp(spec.skirtLengthMM, 250.0, 1200.0)
+            : millimeters(spec.skirtLength);
+        const double tavan = std::max(0.0, ilanEdilen - SkirtBlock::hipDepth);
+        double derin = std::max(0.0, spec.ruffleDepthMM);
+        if (derin * kat > tavan) derin = tavan / kat;   // kalça çizgisine dayandı
+        ruffleKisaltmaMM = derin * kat;
+        spec.ruffleDepthMM = derin;
+        spec.skirtLengthMM = ilanEdilen - ruffleKisaltmaMM;
+    }
     DraftedPattern pattern;
     switch (spec.garment) {
         case GarmentType::Skirt:
@@ -1341,6 +1378,24 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
                 "onto the bottom edge of the tier above it the same way. Only the last tier gets a "
                 "narrow 1 cm rolled hem — the other tiers' bottom edges disappear into the seam "
                 "that receives the next tier.");
+        }
+        // The tiers DIVIDE the length the buyer asked for; they are not hung
+        // under a full-length skirt. Said out loud with the two numbers, because
+        // the panel a sewist cuts is now shorter than the word "maxi" implies.
+        if (ruffleKisaltmaMM > 0) {
+            const long kis = std::lround(ruffleKisaltmaMM);
+            std::string line =
+                "Length: the tiers are part of the length you asked for, not an addition to it, so "
+                "the skirt panel is drafted " + std::to_string(kis) +
+                " mm shorter and the tiers make that " + std::to_string(kis) +
+                " mm back up. Finished length is what you asked for.";
+            if (spec.ruffleDepthMM < ruffleIstenenDerinlikMM - 0.5) {
+                line += " Each tier is " + std::to_string(std::lround(spec.ruffleDepthMM)) +
+                        " mm deep rather than " + std::to_string(std::lround(ruffleIstenenDerinlikMM)) +
+                        " mm: at that depth the tiers would have eaten into the hip line and the "
+                        "panel would have had no shape left to cut.";
+            }
+            pattern.guideSteps.push_back(line);
         }
         // Fabric: tier i is hem x r^i long and (depth + margins) deep, where
         // r = fullness^(1/tiers) — the SAME per-tier ratio ruffle.cpp cuts with
