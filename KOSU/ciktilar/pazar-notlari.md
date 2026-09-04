@@ -149,3 +149,16 @@ doğrudan bizim olur.
 **Fiyat gerçeği (Damla'nın kararı, sadece veri):** hiçbir firma projeksiyon
 dosyasına ayrı ücret almıyor — hepsi kalıbın içinde bedava veriliyor
 ("complimentary value-add"). Rakip yazılım katmanı $0–20 tek seferlik.
+
+## Projeksiyon kullanımı — yayınlanmış TEK gerçek sayı (Charm Patterns anketi)
+Onlarca firma tarandı, sadece Charm Patterns (Gertie) yıllık müşteri anketinde
+format tercihini yayınlıyor — ve üç yıllık seri var:
+- 2022: **%3** (n=2.708) · 2023: **%6** (n=2.582, "geçen yılın iki katı")
+- 2024: **%10'u aştı** (n=1.800+)
+Kaynak: charmpatterns.com/{charm-survey-results-2022, 2023-charm-survey-results,
+2024-charm-survey-results}
+⚠ Alıntılarken şart: tek bir vintage-stil markanın kendi müşterilerine sorduğu,
+kendi seçilimli anket. "Sektörün %10'u" DEĞİL. 2024 rakamı da kesin değil,
+"%10'u aştı".
+⚠ Ayrıca kaçınılacak uydurma: "CIA anketine göre dikişçilerin %68'i..." diye
+dolaşan bir istatistik var — CIA'nın böyle bir anketi YOK, SEO çöpü.
