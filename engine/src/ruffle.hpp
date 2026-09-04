@@ -24,5 +24,12 @@ PatternPiece draft(double edgeMM, double fullness = 2.5, double depthMM = 80, in
 std::vector<PatternPiece> draftTiers(
     double edgeMM, double fullness = 2.5, double depthMM = 80, int tiers = 1, int notches = 4);
 
+// The FINISHED bottom circumference the ruffle leaves behind — the edge anything
+// hung UNDER it (a hem flounce) must be cut to fit. A gathered strip is gathered
+// only at the top, so its finished bottom edge IS its cut length; with tiers the
+// per-tier ratio is fullness^(1/tiers), so the last tier's bottom lands on
+// edgeMM x fullness whatever the tier count is. One source for both call sites.
+double finishedBottomMM(double edgeMM, double fullness);
+
 } // namespace RuffleBlock
 } // namespace stitchu

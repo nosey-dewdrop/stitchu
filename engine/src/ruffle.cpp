@@ -78,19 +78,48 @@ std::vector<PatternPiece> draftTiers(
     fullness = std::max(1.5, std::min(4.0, fullness));
     notches = std::max(2, std::min(12, notches));
 
+    // ⭐ KATMANLI ETEK GİYİLEBİLİR BİR GİYSİ DEĞİLDİ — ORAN HER DİKİŞTE
+    // YENİDEN ÇARPILIYORDU.
+    //
+    // ÖLÇÜLDÜ 2026-09-04, EU38 A-line midi, hem 958.8 mm, ruffleTiers=3:
+    //   eski model (`edge *= fullness`) -> tier 3 kesim uzunluğu
+    //   958.8 x 2.5^3 = 14981 mm. On beş metrelik etek ucu bir giysi değildir;
+    //   flat çizimi de bu sayıya inanamadığı için katmanları hiç genişletmedi
+    //   (dört katmanın DÖRDÜ de ±239.70 mm — hakem ölçümü, 2026-09-04).
+    //
+    // KÖK SEBEP BİR KATEGORİ HATASI: `fullness` constants.yaml'da
+    // "hem ruffle default gather ratio, in the published 2.0-3.0 gathering
+    // band" olarak tanımlıdır — BİR büzgülü kenarın tutunduğu BİTMİŞ kenara
+    // oranı. Katmanlı etekte alıcının gördüğü bitmiş kenar SON katmanın alt
+    // ucudur; dolgunluk o ucun etek hemine oranıdır. Eski kod tek bir kenar
+    // için yayınlanmış oranı her dikişte yeniden uygulayarak bandın dışına
+    // çıkıyordu (2.5^3 = 15.6, band 2.0-3.0).
+    //
+    // ⛔ YENİ SAYI SEÇİLMEDİ, constants.yaml'a satır EKLENMEDİ. Katman başına
+    // oran var olan sabitin n'inci köküdür: r^tiers = fullness. SON katmanın
+    // kesim uzunluğu tam olarak hem x fullness'tır — yayınlanmış bandın
+    // kendisi — ara katmanlar o toplamı eşit paylaşır. tiers=1'de r = fullness,
+    // yani tek fırfır BAYT BAYT aynı kalır.
+    // EU38, 3 katman: r = 2.5^(1/3) = 1.3572 -> kesim 1301 / 1766 / 2397 mm.
+    const double r = std::pow(fullness, 1.0 / tiers);
+
     std::vector<PatternPiece> pieces;
     pieces.reserve(tiers);
-    double edge = edgeMM; // the edge tier i gathers onto: edgeMM x fullness^(i-1)
+    double edge = edgeMM; // the edge tier i gathers onto: edgeMM x r^(i-1)
     for (int i = 1; i <= tiers; ++i) {
         const bool last = i == tiers;
         const std::string target = i == 1
             ? "the hem"
             : ("tier " + std::to_string(i - 1) + "'s bottom edge");
         pieces.push_back(strip("Ruffle tier " + std::to_string(i) + " (fırfır)",
-                               target, edge * fullness, depthMM, notches, last));
-        edge *= fullness;
+                               target, edge * r, depthMM, notches, last));
+        edge *= r;
     }
     return pieces;
+}
+
+double finishedBottomMM(double edgeMM, double fullness) {
+    return edgeMM * std::max(1.5, std::min(4.0, fullness));
 }
 
 } // namespace RuffleBlock

@@ -1,7 +1,8 @@
 // Tiered ruffle (kademeli fırfır) check: proves the cascade is REAL — tier i
-// gathers onto edge x fullness^(i-1) and is cut at edge x fullness^i, tiers=1
-// stays byte-identical to the single ruffle, the base draft never changes and
-// every piece stays printable + valid.
+// gathers onto edge x r^(i-1) and is cut at edge x r^i with r = fullness^(1/tiers),
+// so the last tier lands exactly on hem x fullness (the published gather band);
+// tiers=1 stays byte-identical to the single ruffle, the base draft never changes
+// and every piece stays printable + valid.
 #include <cstdio>
 #include <cmath>
 #include <string>
@@ -89,21 +90,28 @@ int main() {
     check(PatternValidator::issues(single, m, dSingle).empty(), "single-ruffle draft valid");
     check(PatternValidator::issues(tiered, m, dTiered).empty(), "tiered draft valid");
 
-    // The math per tier: cut length = hem x fullness^i, segmented evenly and
-    // printable; only the last tier carries the rolled-hem depth.
+    // The math per tier: cut length = hem x r^i where r = FULLNESS^(1/TIERS) —
+    // the published gather band describes the FINISHED hem against the skirt
+    // hem, so the LAST tier is exactly hem x FULLNESS and the tiers share that
+    // total. (Old model: hem x FULLNESS^i, i.e. the band re-applied at every
+    // seam — EU38 3 tiers gave a 15 m hem. Root cause + evidence in
+    // engine/src/ruffle.cpp.) Every other judgement below is unchanged.
+    const double R = std::pow(FULLNESS, 1.0 / TIERS);
     const auto tiers = rufflePieces(dTiered);
+    check(std::fabs(hem * std::pow(R, TIERS) - hem * FULLNESS) < 1e-6,
+          "the last tier's cut length is exactly hem x fullness (the published band)");
     for (int i = 1; i <= TIERS && i <= (int)tiers.size(); ++i) {
         const PatternPiece& p = *tiers[i - 1];
-        const double total = hem * std::pow(FULLNESS, i);
+        const double total = hem * std::pow(R, i);
         const int segs = std::max(1, (int)std::ceil(total / 1400.0));
         const double segLen = total / segs;
         const Rect box = boundingBox(p.commands);
         std::printf("      tier %d: edge %.0f -> cut %.0f mm = %d segment(s) x %.0f mm\n",
-                    i, total / FULLNESS, total, segs, box.width);
+                    i, total / R, total, segs, box.width);
         check(p.name.find("Ruffle tier " + std::to_string(i)) != std::string::npos,
               "tier " + std::to_string(i) + " named for the validator's trim exclusion");
         check(std::fabs(box.width - segLen) < 1.0,
-              "tier " + std::to_string(i) + " piece = one even segment of hem x fullness^" + std::to_string(i));
+              "tier " + std::to_string(i) + " piece = one even segment of hem x r^" + std::to_string(i));
         check(box.width <= 3000.0, "tier " + std::to_string(i) + " printable (<= 3000 mm cap)");
         const double expectH = DEPTH + 12 + (i == TIERS ? 10 : 12);
         check(std::fabs(box.height - expectH) < 0.5,

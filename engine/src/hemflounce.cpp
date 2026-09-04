@@ -155,13 +155,18 @@ void placementNotch(PatternPiece* piece, double targetX, double targetY) {
 
 } // namespace
 
-bool apply(DraftedPattern& pattern, HemFlounce style) {
+bool apply(DraftedPattern& pattern, HemFlounce style, double hostHemMM) {
     if (style == HemFlounce::None) return true;
 
     // Measure the finished hem off the drafted front + back bottom edges (like the
     // peplum reads the waist / the gather block reads its zone). A garment with no
     // measurable hosting hem (no front+back body / bottom edge) is refused honestly.
-    const double hemMM = std::clamp(finishedHemMM(pattern), 0.0, maxHem);
+    // If the caller names the edge the flounce really hangs from (a ruffled hem
+    // puts a gathered tier BETWEEN the draft and the flounce), that edge wins —
+    // the flounce is cut to fit what it is sewn to, not to a hem it never touches.
+    const double hemMM = hostHemMM > 0
+        ? std::clamp(hostHemMM, 0.0, maxHem)
+        : std::clamp(finishedHemMM(pattern), 0.0, maxHem);
     if (hemMM < minHem) {
         pattern.guideSteps.push_back(
             "Hem flounce: skipped — this draft has no measurable all-around hem to "

@@ -48,7 +48,13 @@ namespace HemFlounceBlock {
 // step. Does nothing for HemFlounce::None. Returns false (with an honest guide
 // note) when there is no measurable hosting hem to hang a flounce from — never
 // fails silently.
-bool apply(DraftedPattern& pattern, HemFlounce style);
+// hostHemMM: the edge the flounce actually hangs from, when it is NOT the
+// drafted bottom edge. ⭐ ÖLÇÜLDÜ 2026-09-04: bir katmanlı etekte (K3: 3 fırfır
+// kademesi + volan) bu blok eteğin KENDİ hemini ölçüyordu (958.8 mm) ama volan
+// son kademenin altına dikiliyor (2397 mm). Kesilen halka dikileceği kenardan
+// 479 mm DAR çıkıyordu — flat çiziminde etek ucu içeri kırılıyor, dikişte hiç
+// tutmuyor. 0 = eskisi gibi kendi ölç (varsayılan, bayt bayt aynı).
+bool apply(DraftedPattern& pattern, HemFlounce style, double hostHemMM = 0);
 
 } // namespace HemFlounceBlock
 } // namespace stitchu
