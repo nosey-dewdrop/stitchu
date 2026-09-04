@@ -134,6 +134,21 @@ sürüyordu; tiplerinde kol, yaka, pens yoktu. Flat kalıp hattına bağlandı:
 
 ## 5. TUZAKLAR — bunlara düşme, hepsi bu oturumda yaşandı
 
+- **★ DARBOĞAZDA AJAN DOĞURMA, ARACI TAMİR ET.** Aynı hata iki kez tekrarlandıysa
+  DUR ve hatayı OKU. Çoğu darboğaz eksik bir araçtır, zor bir problem değil:
+  eksik modül, kurulmamış paket, bayat build, asılı süreç. Üçüncü kez aynı yolu
+  denemek de, "belki başka bir ajan çözer" diye yeni ajan doğurmak da kayıptır.
+  Gerçek örnek (4 Eyl): bir ajan tarayıcıyı sürmek için `websocket` modülünü
+  arayıp bulamadı ve döngüye girdi; çözüm tek satırdı —
+  `python3 -m pip install --break-system-packages websocket-client`. Ondan
+  önce birden çok ajan aynı duvara tosladı.
+  Kural: **hata mesajını oku → eksik olanı kur/derle/öldür → devam et.**
+  Ortamı onarmak ajan doğurmaktan hem ucuz hem kesin. Kuramıyorsan o adımı
+  ATLA ve adıyla raporla; sessizce tekrar deneme.
+- **Alt-ajan doğurma yetkisi.** Araştırma ajanı kendi alt-ajanlarını doğurabilir
+  ve kaçabilir: 4 Eyl'de bir "siteyi eleştir" ajanı 69 alt-ajan doğurup milyonlarca
+  token yaktı, üstelik ana ajan öldürülünce çocukları ölmedi. Brief'e **"alt-ajan
+  DOĞURMA"** yaz; gerekiyorsa sayısına tavan koy.
 - **Chrome asılı kalıyor.** Headless çağrıyı `timeout` ile sar, `--user-data-dir`
   izole ver, bitince süreçleri öldür. Bir workflow tam bundan 6 denemede
   stall etti. Zombi Chrome süreçleri makinede birikiyor, öldür.
