@@ -311,6 +311,16 @@ Dört ayrı kaynakta, birbirinden bağımsız insanlar aynı şeyi söylüyor:
   (alexmasson)
 Konumlandırmayı "bantlamak sıkıcı" üzerine değil **bu cümle** üzerine kur.
 
+**★ SÜRE DEĞİL, HATA BİRİKİMİ — asıl argüman bu.** Bantlamanın gerçek kusuru
+sıkıcı olması değil: bir mühendis (utahliz) bantladıktan sonra parçaların
+**ölçülebilir şekilde kaydığını** bildirdi; başkaları "sayfalar hiç hizalanmıyor",
+"kenardaki parçalar kesik çıktı" diyor. Bu bir geometri/yazılım argümanı, "can
+sıkıcı" argümanı değil — bizim tarafımız burası.
+⚠ **SÜRE SAYISI KULLANMA:** iddialar iki kutuplu — yöntem satan blogcular
+"5-15 dakika" diyor, sıradan dikişçiler yorumlarda "1-3 saat" diyor. Tek bir
+sayı söylersen topluluk seni düzeltir. Daha sağlam birim **sayfa sayısı**
+(yukarıdaki tablo).
+
 **İki yan bulgu:** (1) kimsenin konuşmadığı bir dert — bantlanmış kalıbın
 SAKLANMASI ("katlanınca bozuluyor, yer kaplıyor"); 93 yorumun ~8'i bunu diyor.
 (2) Talep arzı aşmış durumda: İngiltere'deki Patternsy copyshop baskı servisi
