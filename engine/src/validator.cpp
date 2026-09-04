@@ -825,19 +825,42 @@ std::optional<double> topSideSeamLength(const PatternPiece& piece) {
     }
     // hemEnd now points at the hem-to-center curve; the two curves before it are
     // side-to-hem (hemEnd-1) and armhole-lower (hemEnd-2).
-    if (hemEnd < 2 ||
-        piece.commands[hemEnd - 2].type != CmdType::Curve ||
-        piece.commands[hemEnd - 1].type != CmdType::Curve) return std::nullopt;
+    if (hemEnd < 2 || piece.commands[hemEnd - 1].type != CmdType::Curve) return std::nullopt;
+    // ⭐ 2026-09-04: the extended side seam is TWO commands now — a LINE down to
+    // the side waist (the waist point is back ON the outline, see garment.cpp
+    // extendPiece) and then the waist->hip curve. Reading only the curve made
+    // this function return nullopt the moment the line appeared, i.e. the
+    // front/back side-seam rule would have gone BLIND on every extended top —
+    // a silently disabled gate. Both shapes are measured, whole seam either way.
+    if (hemEnd >= 3 && piece.commands[hemEnd - 2].type == CmdType::Line &&
+        piece.commands[hemEnd - 3].type == CmdType::Curve) {
+        return pathLength({PathCommand::move(piece.commands[hemEnd - 3].to),
+                           piece.commands[hemEnd - 2], piece.commands[hemEnd - 1]});
+    }
+    if (piece.commands[hemEnd - 2].type != CmdType::Curve) return std::nullopt;
     return pathLength({PathCommand::move(piece.commands[hemEnd - 2].to), piece.commands[hemEnd - 1]});
 }
 
-// Princess side panel: [0]=move(split), [1]=armhole lower half, [2]=side seam
-// (curve to hem when extended, line to the waist when cropped).
+// Princess side panel: [0]=move(split), [1]=armhole lower half, [2]=side seam.
+// Cropped: [2] is the LINE to the waist and that is the whole seam. Extended
+// (2026-09-04): [2] is that same line — the waist point is back on the outline —
+// and [3] is the waist->hip curve; both belong to the seam.
 std::optional<double> princessTopSideSeam(const PatternPiece& piece) {
     if (piece.commands.size() < 3 ||
         piece.commands[1].type != CmdType::Curve ||
         (piece.commands[2].type != CmdType::Curve && piece.commands[2].type != CmdType::Line)) {
         return std::nullopt;
+    }
+    // Which shape is this? TOPOLOGY answers, not geometry (an apple body's hip can
+    // be narrower than its waist, so "does it flare out" is not a test):
+    //   extended  [2]=line to waist, [3]=waist->hem CURVE, [4]=hem sweep CURVE
+    //   cropped   [2]=line to waist, [3]=waist EDGE curve, [4]=LINE to the apex
+    // So [3] joins the seam only when a curve follows it.
+    if (piece.commands.size() > 4 && piece.commands[2].type == CmdType::Line &&
+        piece.commands[3].type == CmdType::Curve &&
+        piece.commands[4].type == CmdType::Curve) {
+        return pathLength({PathCommand::move(piece.commands[1].to),
+                           piece.commands[2], piece.commands[3]});
     }
     return pathLength({PathCommand::move(piece.commands[1].to), piece.commands[2]});
 }

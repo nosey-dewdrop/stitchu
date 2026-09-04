@@ -108,6 +108,7 @@
         { "id": "neckPoint",   "x": "frontNeckW",     "y": "0" },
         { "id": "shoulderTip", "x": "tipX",           "y": "shoulderDrop" },
         { "id": "underarm",    "x": "frontWidth",     "y": "underarmY" },
+        { "id": "sideWaist",   "x": "frontWaistlineWidth", "y": "backLengthMM - 8" },
         { "id": "hemSide",     "x": "hipHalfQuarter", "y": "backLengthMM + extendMM - 10" },
         { "id": "hemCenter",   "x": "0",              "y": "frontLength + extendMM" }
       ],
@@ -118,6 +119,7 @@
         { "op": "line",  "to": "shoulderTip" },
         { "op": "scye",  "to": "underarm", "from": "shoulderTip", "neck": "neckPoint",
           "half": "front", "innerX": "frontScyeInnerX", "maxInset": "frontScyeMaxInset" },
+        { "op": "line",  "to": "sideWaist" },
         { "op": "curve", "to": "hemSide",
           "cp1": ["frontWaistlineWidth", "backLengthMM + extendMM * 0.35"],
           "cp2": ["hipHalfQuarter", "backLengthMM + extendMM * 0.7"] },
@@ -144,6 +146,7 @@
         { "id": "neckPoint",   "x": "backNeckW",      "y": "0" },
         { "id": "shoulderTip", "x": "tipX",           "y": "bTipDrop" },
         { "id": "underarm",    "x": "backWidth",      "y": "underarmY" },
+        { "id": "sideWaist",   "x": "backWaistlineWidth", "y": "backLengthMM - 8" },
         { "id": "hemSide",     "x": "hipHalfQuarter", "y": "backLengthMM + extendMM - 10" },
         { "id": "hemCenter",   "x": "0",              "y": "backLengthMM + extendMM" }
       ],
@@ -155,6 +158,7 @@
         { "op": "line",  "to": "shoulderTip" },
         { "op": "scye",  "to": "underarm", "from": "shoulderTip", "neck": "neckPoint",
           "half": "back", "innerX": "backScyeInnerX", "maxInset": "backScyeMaxInset" },
+        { "op": "line",  "to": "sideWaist" },
         { "op": "curve", "to": "hemSide",
           "cp1": ["backWaistlineWidth", "backLengthMM + extendMM * 0.35"],
           "cp2": ["hipHalfQuarter", "backLengthMM + extendMM * 0.7"] },

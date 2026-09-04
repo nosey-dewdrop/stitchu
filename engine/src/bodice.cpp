@@ -783,8 +783,19 @@ PrincessHalf makePrincessPieces(
         split, armSplit.second.to};
     sideCommands.push_back(armSplit.second);
     if (extra > 0) {
-        // Side seam nips at the waist and flares out to the hip in one curve
-        // (same construction the dart-mode top extension uses).
+        // ⭐ "BELDE NIPLIYOR" DIYORDU, NIPLEMIYORDU — BEL NOKTASI KONTURDA YOKTU.
+        // ÖLÇÜLDÜ 2026-09-04 (Buğra spec'i, EU38 fitted top): yan kenar
+        // koltukaltından (244.2 mm) eteğe TEK bir kübikle iniyordu ve bel
+        // genişliği `sideWaist.x` yalnız bir KONTROL NOKTASIydı. Bézier kendi
+        // kontrol noktasına uğramaz: bel hizasında çizilen kenar 238.7 mm
+        // çıkıyordu, kalıbın kendi bel sayısı 229.2 mm iken. Yani "fitted"
+        // kelimesiyle satılan giysi, çeyrekte 9.5 mm (çevrede 3.8 cm) daha
+        // geniş kesiliyordu ve alıcının gördüğü çizimde bel HİÇ daralmıyordu
+        // (bugra-rapor.md [MOTOR EKSİĞİ], kendi üst yazısıyla itiraf edilmiş).
+        // ⛔ Yeni sayı yok: bel noktası zaten hesaplanmış (`sideWaist`), sadece
+        // konturun ÜZERİNE konuyor. Kapalı (crop/elbise) beden bunu hep böyle
+        // çiziyordu; uzatılan beden onu kaybediyordu.
+        sideCommands.push_back(PathCommand::line(sideWaist));
         sideCommands.push_back(PathCommand::curve(
             hemSide,
             {sideWaist.x, sideWaistY + extra * 0.35},
@@ -823,8 +834,11 @@ PrincessHalf makePrincessPieces(
     half.center = center;
     half.side = side;
     half.armholeLength = armholeLen;
+    // extra > 0: the drawn side seam is now TWO commands (line to the side waist,
+    // then the waist->hip curve) — see the "BEL NOKTASI" note above. Measure both,
+    // or the truing compares against a seam nobody draws.
     half.sideSeam = extra > 0
-        ? pathLength({PathCommand::move(armholeBottom), sideCommands[2]})
+        ? pathLength({PathCommand::move(armholeBottom), sideCommands[2], sideCommands[3]})
         : std::hypot(sideWaist.x - armholeBottom.x, sideWaist.y - armholeBottom.y);
     half.sewnWaist = pathLength({PathCommand::move(legA), waistAtA.second}) +
                      pathLength({PathCommand::move(sideWaist), sideWaistEdge});
@@ -1186,16 +1200,22 @@ BodiceDraft draft(const BodyMeasurementsSnapshot& m, const BodiceOptions& option
     // block's classic extension (dart fallback) command for command.
     const auto extendedSideLen = [&](bool princess, double chestW, double aY, double sY,
                                      double waistlineWidth, double dartW) {
+        // ⭐ 2026-09-04: bu ölçüm, çizilen dikişin AYNISI olmak zorunda. Uzatılan
+        // beden artık önce BELE bir çizgi, sonra belden eteğe bir kübik çiziyor
+        // (yukarıdaki "BEL NOKTASI KONTURDA KALIR" notu); ölçüm de öyle.
+        const Point sideWaistPt{waistlineWidth, sY - 8};
         if (princess) {
             const double underarmY = sleevelessScye ? aY - sleevelessUnderarmRaiseMM : aY;
             const double gapHem = dartW * std::max(0.0, 1.0 - extendBelowWaist / hipBlendDepth);
             const double sideHemX = hipHalfQuarter + gapHem;
-            return pathLength({PathCommand::move({chestW, underarmY}), PathCommand::curve(
+            return pathLength({PathCommand::move({chestW, underarmY}),
+                               PathCommand::line(sideWaistPt), PathCommand::curve(
                 {sideHemX, sY + extendBelowWaist - 10},
                 {waistlineWidth, sY + extendBelowWaist * 0.35},
                 {sideHemX, sY + extendBelowWaist * 0.7})});
         }
-        return pathLength({PathCommand::move({chestW, aY}), PathCommand::curve(
+        return pathLength({PathCommand::move({chestW, aY}),
+                           PathCommand::line(sideWaistPt), PathCommand::curve(
             {hipHalfQuarter, sY + extendBelowWaist - 10},
             {waistlineWidth, sY + extendBelowWaist * 0.35},
             {hipHalfQuarter, sY + extendBelowWaist * 0.7})});

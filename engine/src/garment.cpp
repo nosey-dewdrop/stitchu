@@ -69,6 +69,15 @@ PatternPiece extendPiece(const PatternPiece& piece, double sideWaistY, double ce
         if (cmd.type == CmdType::Line && std::fabs(cmd.to.y - (sideWaistY - 8)) < 0.5) {
             const Point hemSide{hipWidth, sideWaistY + extra - 10};
             const Point hemCenter{0, centerWaistY + extra};
+            // ⭐ BEL NOKTASI KONTURDA KALIR (2026-09-04). Eski hâl bu satırı
+            // (koltukaltından BELE inen yan dikiş çizgisini) DÜŞÜRÜP yerine
+            // doğrudan eteğe inen tek bir kübik koyuyordu; kalıbın bel genişliği
+            // `cmd.to.x` yalnız bir kontrol noktası olarak kalıyordu ve bir
+            // Bézier kontrol noktasına uğramaz. ÖLÇÜLDÜ: Buğra spec'i EU38'de
+            // çizilen bel 238.7 mm, kalıbın kendi beli 229.2 mm — çeyrekte
+            // 9.5 mm, çevrede 3.8 cm fazla. "fitted" yazan giysi kutu
+            // çiziliyordu. Çizgi geri kondu; hiçbir sayı değişmedi.
+            commands.push_back(cmd);
             commands.push_back(PathCommand::curve(
                 hemSide,
                 {cmd.to.x, sideWaistY + extra * 0.35},
@@ -1172,7 +1181,27 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
     // measurable hem). A gathered/flared skirt already ripples and is refused.
     if (spec.hemFlounce != static_cast<int>(HemFlounce::None) &&
         (spec.garment == GarmentType::Dress || spec.garment == GarmentType::Top)) {
-        HemFlounceBlock::apply(pattern, static_cast<HemFlounce>(spec.hemFlounce));
+        // ⭐ VOLAN, DİKİLECEĞİ KENARA GÖRE KESİLİR — ETEĞİN HEMİNE GÖRE DEĞİL.
+        // ÖLÇÜLDÜ 2026-09-04 (K3, EU38): fırfır kademeleri açıkken volan yine
+        // eteğin kendi hemini (958.8 mm) ölçüyordu, oysa son kademenin altına
+        // dikiliyor (2397 mm). Kesilen halka 479 mm DAR: flat çiziminde etek ucu
+        // içeri kırılıyordu ve dikişte hiç tutmazdı. Aynı fırfır bloğu iki yerde
+        // hesaplanmasın diye kenar TEK kaynaktan okunuyor
+        // (RuffleBlock::finishedBottomMM). Fırfır kapalıyken 0 geçilir ve blok
+        // eskisi gibi kendi ölçer — bayt bayt aynı.
+        const bool topPeplumRuffleHost =
+            spec.ruffleHem && spec.garment == GarmentType::Top &&
+            spec.peplum != static_cast<int>(PeplumStyle::None);
+        double hostHemMM = 0;
+        if (spec.ruffleHem && (spec.garment == GarmentType::Dress || topPeplumRuffleHost)) {
+            const double edgeMM = topPeplumRuffleHost
+                ? PeplumBlock::hemCircumferenceMM(static_cast<PeplumStyle>(spec.peplum), m.waistMM())
+                : SkirtBlock::hemCircumferenceMM(
+                      m, spec.skirtStyle, spec.skirtLength, resolveShaping(spec, m), spec.fabric,
+                      /*lengthExtraMM=*/0, spec.skirtLengthMM);
+            hostHemMM = RuffleBlock::finishedBottomMM(edgeMM, spec.ruffleFullness);
+        }
+        HemFlounceBlock::apply(pattern, static_cast<HemFlounce>(spec.hemFlounce), hostHemMM);
     }
     // Opt-in pocket (cep, patch 3.12): a PATCH pocket (separate piece + placement
     // mark) or a SIDE-SEAM in-seam pocket (two bag pieces + a mouth mark). Post-
@@ -1313,9 +1342,15 @@ DraftedPattern draft(const GarmentSpec& spec, const BodyMeasurementsSnapshot& m)
                 "narrow 1 cm rolled hem — the other tiers' bottom edges disappear into the seam "
                 "that receives the next tier.");
         }
-        // Fabric: each tier is hem x fullness^i long and (depth + margins) deep.
+        // Fabric: tier i is hem x r^i long and (depth + margins) deep, where
+        // r = fullness^(1/tiers) — the SAME per-tier ratio ruffle.cpp cuts with
+        // (the published band is the ratio of the FINISHED hem to the skirt hem,
+        // not a factor re-applied at every seam). A single ruffle keeps r =
+        // fullness, so the one-tier estimate is unchanged.
+        const double rTier = std::pow(std::max(1.5, std::min(4.0, spec.ruffleFullness)),
+                                      1.0 / std::max<size_t>(1, ruffles.size()));
         double lenMultiplier = 0, f = 1;
-        for (size_t i = 0; i < ruffles.size(); ++i) { f *= spec.ruffleFullness; lenMultiplier += f; }
+        for (size_t i = 0; i < ruffles.size(); ++i) { f *= rTier; lenMultiplier += f; }
         pattern.fabricMeters140 = roundToPlaces(
             pattern.fabricMeters140 +
                 hemMM * lenMultiplier * (spec.ruffleDepthMM + 25) / 1.0e6 * 1.1,

@@ -1065,11 +1065,18 @@ Result<DraftedPattern> draftRecipe(
             size_t hemEnd = cmds.size() - 1;
             while (hemEnd > 0 && (cmds[hemEnd].type == CmdType::Close ||
                                   cmds[hemEnd].type == CmdType::Line)) --hemEnd;
+            // 2026-09-04: the extended top's side seam is a LINE to the side waist
+            // followed by the waist->hip curve (bodice.cpp / garment.cpp: the waist
+            // point is back ON the outline). So the armhole is the curve two or
+            // three commands back depending on that line — walked, not pinned.
             if (hemEnd < 3 || cmds[hemEnd].type != CmdType::Curve ||
-                cmds[hemEnd - 1].type != CmdType::Curve ||
-                cmds[hemEnd - 2].type != CmdType::Curve)
+                cmds[hemEnd - 1].type != CmdType::Curve)
                 fail("draft: piece does not follow the canonical top outline order (RECETE-SPEC §6) — the armhole cannot be measured");
-            return pathLength({PathCommand::move(cmds[hemEnd - 3].to), cmds[hemEnd - 2]});
+            size_t scye = hemEnd - 2;
+            if (cmds[scye].type == CmdType::Line && scye > 0) --scye; // skip the waist line
+            if (scye < 1 || cmds[scye].type != CmdType::Curve)
+                fail("draft: piece does not follow the canonical top outline order (RECETE-SPEC §6) — the armhole cannot be measured");
+            return pathLength({PathCommand::move(cmds[scye - 1].to), cmds[scye]});
         };
         // motor sum order: back half + front half (bodice.cpp:890-891).
         const double armholeLength = armholeArc(*back) + armholeArc(*front);

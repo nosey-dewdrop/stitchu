@@ -8,6 +8,50 @@ required for behavior changes).
 
 ## Pin history
 
+### 2026-09-04 — 25416 lines, md5 eb1d52bc31d1b2e92ad7e737a9ed854c (DECLARED RE-PIN, M7-fitted, ⚠ DAMLA ONAYI BEKLIYOR)
+- Label: "M7-fitted: uzatilan bedende bel noktasi kontura geri kondu (yan dikis
+  artik koltukalti -> BEL -> kalca; bel genisligi yalniz bir Bezier kontrol
+  noktasiydi, cizilen bel EU38'de 238.7mm iken kalibin kendi beli 229.2mm)".
+- ⚠ ONAY DURUMU: **YOK.** Bu re-pin bir onarim turunda yapildi ve Damla'ya
+  sorulamadi. Kayit bu yuzden ONAY BEKLIYOR olarak duruyor; kok sebep, once/sonra
+  sayilari ve etkilenen parca listesi asagida, karar Damla'nin.
+
+- (a) KOK SEBEP — TEK KALEM, motorun KENDI hesapladigi sayiya karsi olculdu:
+  `engine/src/garment.cpp extendPiece` (dart modu) ve `engine/src/bodice.cpp`
+  prenses yan paneli, beli gecen bir ustte yan dikisi TEK bir kubikle
+  koltukaltindan etege indiriyordu; kalibin kendi bel genisligi (`waistlineWidth`,
+  yani `frontWidth - sideTake`) o kubigin yalniz KONTROL NOKTASIYDI. Bir Bezier
+  kontrol noktasindan GECMEZ. Yani "fitted" diye satilan bir ust, kalibin kendi
+  bel sayisindan daha genis kesiliyordu ve alicinin gordugu cizimde bel hic
+  daralmiyordu (KOSU/ciktilar/bugra-rapor.md, [MOTOR EKSIGI] "fitted top BELDE
+  DARALMIYOR", durum ACIK; bugra-spec-giysi.png'nin kendi ust yazisi da bunu
+  itiraf ediyordu). Duzeltme: bel noktasina inen CIZGI konturda tutuluyor
+  (kapali/crop bedenin hep yaptigi sey), sonra belden kalcaya ayni kubik.
+  **YENI SAYI YOK, YENI SABIT YOK** — `waistlineWidth` zaten hesaplanmisti.
+
+- (b) ONCE / SONRA (calistirilmis olcum, `engine/build/golden_dump`):
+  | govde, top/crew/hip | cizilen bel yarim-genisligi ONCE | SONRA | kalibin kendi beli |
+  |---|---|---|---|
+  | EU38 | 238.7 mm (bel noktasi konturda YOK) | 229.2 mm | 229.2 mm |
+  | pear | 265.6 mm | 251.4 mm | 251.4 mm |
+  | bigNeckSmallShoulder | 271.4 mm | 262.5 mm | 262.5 mm |
+  EU38'de ceyrekte 9.5 mm = cevrede 3.8 cm; pear'da ceyrekte 14.2 mm = 5.7 cm.
+
+- (c) ETKILENEN PARCALAR: 187 spec'in **50'si** degisti, hepsi UST
+  (`top/*/hip/*` + `top/*/tunic/*`); tek degisiklik `Top Front` / `Top Back` (ve
+  prenses `Top Side *`) konturunda bir LINE komutunun geri gelmesi. Elbise, etek,
+  kol, yaka, manset, cropped ust: **BAYT AYNI** (0 satir degisti). Satir sayisi
+  25116 -> 25416 = 50 spec x 2 yari x ~3 dump satiri.
+
+- (d) BIRLIKTE DUZELEN SESSIZ KAPI: `engine/src/validator.cpp topSideSeamLength`
+  yan dikisi "son iki EGRI" diye ariyordu; cizgi geri gelince `nullopt` donup
+  on/arka yan dikis kuralini her uzatilmis ustte SESSIZCE KAPATACAKTI. Fonksiyon
+  artik cizgi+egriyi birlikte olcuyor, prenses hali de oyle
+  (`princessTopSideSeam`). `sideseam_adversarial_check`'in `commands[4]` sabit
+  indeksi de topolojiye cevrildi — esik DEGISMEDI, adversary yeniden gercek
+  yan dikisi bozuyor. Kanit: `sewable_census` 82980 taslakta 82980 sewable
+  (sideseam 120 -> 0), `sideseam_adversarial_check` + `walkgate_check` yesil.
+
 ### 2026-09-03 — 25116 lines, md5 da98352aa171231a8a7bb5f6f04a4b92 (DECLARED RE-PIN, hakem K2 ONAYLI, M2-bugra)
 - Label: "M2-bugra: set-in scye karni yayinlanmis Aldrich p.11 genislik cizgisine
   oturdu (on/arka acik 11.08/9.05 -> 0.00mm); arka kelepce ON yaka genisligiyle

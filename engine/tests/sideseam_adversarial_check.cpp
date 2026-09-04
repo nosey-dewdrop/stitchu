@@ -113,10 +113,21 @@ int main() {
         DraftedPattern bad = GarmentDrafter::draft(s, m);
         PatternPiece* front = find(bad, "Top Front");
         check(front != nullptr, "top front piece exists");
-        if (front && front->commands.size() > 4 && front->commands[4].type == CmdType::Curve) {
-            front->commands[4].to.y += 120.0;
-            front->commands[4].cp1.y += 120.0;
-            front->commands[4].cp2.y += 120.0;
+        // The side-to-hem curve is found by TOPOLOGY, not by a pinned index: the
+        // extended top grew a LINE to the side waist on 2026-09-04 (the waist
+        // point is back on the outline) and a hard-coded commands[4] silently
+        // started corrupting the wrong command — the adversary stopped being an
+        // adversary. Take the LAST curve before the trailing hem/CF commands,
+        // exactly the way validator.cpp::topSideSeamLength walks back.
+        size_t hemEnd = front ? front->commands.size() - 1 : 0;
+        while (front && hemEnd > 0 &&
+               (front->commands[hemEnd].type == CmdType::Close ||
+                front->commands[hemEnd].type == CmdType::Line)) --hemEnd;
+        if (front && hemEnd >= 2 && front->commands[hemEnd - 1].type == CmdType::Curve) {
+            PathCommand& side = front->commands[hemEnd - 1];
+            side.to.y += 120.0;
+            side.cp1.y += 120.0;
+            side.cp2.y += 120.0;
         }
         check(hasRule(PatternValidator::issues(s, m, bad), "sideseam"),
               "broken: a top with a longer front side seam FIRES the sideseam gate");
