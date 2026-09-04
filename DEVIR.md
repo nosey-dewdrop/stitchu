@@ -316,6 +316,25 @@ Yani bunu ayrı ürün değil, **paketin içindeki bir dosya** olarak ver.
 DOĞRULANMADI: "müşterilerin %X'i istedi" diye yayınlanmış tek bir sayı YOK —
 talep hikâyesi bugün sadece grup büyümesi ve arz sayımıyla kurulabilir.
 
+**★ İKİ SERT GERÇEK (4 Eyl, ikisi de birincil kaynaktan):**
+1. **DONANIM+ABONELİK MODELİ ÖLDÜ, TALEP YAŞIYOR.** JOANN/Singer'ın "Ditto"su
+   NYFW'de "160 yılın ilk yıkıcı dikiş teknolojisi" diye lanse edildi ($799 +
+   $9,99/ay). Fiyatı iki yılda $799→$199'a düştü, JOANN iflas etti ve Ditto işi
+   **800.000 $ nakde** Singer'a satıldı (Mayıs 2025, iflas dosyası). Kullanıcılar
+   $50–200'lük jenerik projektör + ÜCRETSİZ web aracı kullanıyor. Ders: bu
+   kategoride donanım/ekosistem satılmaz, **dosya** verilir.
+2. **⚠ PATENT RİSKİ — projeksiyon özelliği yazmadan önce taranacak.**
+   US10750810B2 "Method of projecting sewing pattern pieces onto fabric"
+   (mucit Elizabeth Caven, 2038'e kadar geçerli) bugün **Singer Sourcing'in
+   elinde.** Devam patentleri de taranmalı. Biz sadece 1:1 vektör dosya
+   ürettiğimiz için muhtemelen kapsam dışıyız ama bu **hukukçu sorusu**,
+   varsayımla geçilmez.
+Yazılım katmanı ince: tek ciddi açık kaynak araç Pattern Projector (224 yıldız,
+60 açık issue), rakibi $20'lik tek kişilik bir ürün — 111 bin kişilik tabana
+karşı. Tek nicel talep verisi: Charm Patterns'ın 1.800 kişilik anketinde
+projektör dosyası tercihi 2024'te %10'u aştı. **Bu "satışların %10'u" DEĞİL,
+format tercihi — dışarı öyle söyleme.**
+
 ### Sıra (öneri, hakem değiştirebilir)
 1. Hesap + kota (sunucu tarafı) → 2. Gardırop (spec kalıcılığı) →
 3. Ödeme (kredi/abonelik) → 4. Programatik SEO → 5. Fiziksel satış akışı.
