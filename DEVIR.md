@@ -149,6 +149,12 @@ sürüyordu; tiplerinde kol, yaka, pens yoktu. Flat kalıp hattına bağlandı:
   ve kaçabilir: 4 Eyl'de bir "siteyi eleştir" ajanı 69 alt-ajan doğurup milyonlarca
   token yaktı, üstelik ana ajan öldürülünce çocukları ölmedi. Brief'e **"alt-ajan
   DOĞURMA"** yaz; gerekiyorsa sayısına tavan koy.
+- **`scripts/deploy.sh` sessizce asılabilir — `git fetch origin main` üzerinde.**
+  4 Eyl'de tam 43 dakika orada bekledi; ağ sağlamdı, bağlantı bayattı. Deploy
+  uzun sürüyorsa ÖNCE hangi alt-süreçte olduğuna bak:
+  `pgrep -P $(pgrep -f 'bash scripts/deploy.sh')`. `git fetch`'te asılıysa o
+  süreci öldür (`pkill -f 'git fetch origin main'`) — script `|| true` ile
+  devam eder. Ağı doğrula: `timeout 25 git ls-remote origin HEAD`.
 - **Chrome asılı kalıyor.** Headless çağrıyı `timeout` ile sar, `--user-data-dir`
   izole ver, bitince süreçleri öldür. Bir workflow tam bundan 6 denemede
   stall etti. Zombi Chrome süreçleri makinede birikiyor, öldür.
