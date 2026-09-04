@@ -278,6 +278,21 @@ Motor zaten sayı üretiyor; SEO sayfaları o sayıdan doğacak, elle yazılmaya
 - **Ölçek uyarısı:** sayfa sayısı büyüyünce `site-health` ve deploy süresi
   şişer; üreteç sayfa başına değil toplu çalışacak şekilde yazılmalı.
 
+### PROJEKSİYON DOSYASI — ucuz özellik, ölçülmüş talep (4 Eyl'de bulundu)
+Ev dikişçileri PDF'i kâğıda basıp yapıştırmak yerine **projeksiyonla kumaşa
+yansıtıyor.** Kanıt: "Projectors for Sewing" Facebook grubu 2021'de 35 bin,
+2023'te 60 bin, bugün **111.292 üye** — altı yılda 10 kat. ~150 kalıp firması
+projeksiyon dosyası veriyor (Jalie 202 dosya, Seamwork tüm kalıplarına ekledi).
+**Bir Fiverr satıcısı tek kalıbı projeksiyon dosyasına çevirmek için $130
+alıyor** — bizim motorumuz 1:1 vektör zaten üretiyor, bu neredeyse bedava bir
+özellik. Ve Helen's Closet gibi üst sıra bir indie marka Eylül 2025'te hâlâ
+"radarımda ama yapmadık" diyor — boşluk kayıtlı.
+Uyarı: araç katmanı ücretsiz ve açık kaynak (Pattern Projector, PDFStitcher) ve
+topluluğun ödeme isteği düşük ("$20 tek seferlik makul" — örneklem belirsiz).
+Yani bunu ayrı ürün değil, **paketin içindeki bir dosya** olarak ver.
+DOĞRULANMADI: "müşterilerin %X'i istedi" diye yayınlanmış tek bir sayı YOK —
+talep hikâyesi bugün sadece grup büyümesi ve arz sayımıyla kurulabilir.
+
 ### Sıra (öneri, hakem değiştirebilir)
 1. Hesap + kota (sunucu tarafı) → 2. Gardırop (spec kalıcılığı) →
 3. Ödeme (kredi/abonelik) → 4. Programatik SEO → 5. Fiziksel satış akışı.
