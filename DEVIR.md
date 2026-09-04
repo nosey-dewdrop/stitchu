@@ -278,6 +278,29 @@ Motor zaten sayı üretiyor; SEO sayfaları o sayıdan doğacak, elle yazılmaya
 - **Ölçek uyarısı:** sayfa sayısı büyüyünce `site-health` ve deploy süresi
   şişer; üreteç sayfa başına değil toplu çalışacak şekilde yazılmalı.
 
+### ALICININ KENDİ AĞZINDAN ŞİKÂYET — pazarlama zemini (kaynaklı, 4 Eyl)
+Trustpilot ve YouTube yorumlarından **doğrudan alıntı** toplandı. Bizim
+çözdüğümüz şeyler tam olarak bunlar:
+- *"100 sayfa A4 indirip hepsini bantlamak kim ister?"* (Burda, 1★)
+- *"A0 boyutunda bile sunmuyorlar! Dijital birleştirince kenardaki her parçanın
+  kesik olduğunu gördüm."* (Simplicity M6044, 1★) — **hem A0 yok hem döşeme bozuk**
+- *"2 inçlik test karesini bir türlü 2 inç yapamadım, ne kadar ayar yaptıysam
+  olmadı. Pes ettim."* — bizim 100 mm kalibrasyon karesi + ölçek düzeltme yolu
+  tam bu kişinin sorunu
+- *"Katmanları açmak için aylık ücretli Adobe gerekiyor."* · *"iPad'de katman
+  açılmıyor, bütün bedenleri basmak zorundayım."*
+- *"Saatlerce bantlayıp sonunda AI çöpü olduğunu anlamak..."* — bantlama vergisi
+  ile sahte kalıp dolandırıcılığı birbirini büyütüyor (2025-26 fenomeni)
+- Etsy tarafı çürük: dosya teslim edilmiyor, satıcı gidince dosya siliniyor,
+  yıldızlar sahte (*"daha dikmeden 5 yıldız veriyorlar"*).
+
+⚠ **DÜRÜSTLÜK NOTU — pitch'i buna kurma:** aynı videoların yorumlarının
+ÇOĞUNLUĞU PDF kalıpları SEVİYOR (anında erişim, bedenin değişince yeniden
+basma, düşük görme için katman, *"televizyon izlerken bantlamak rahatlatıcı"*).
+Doğru iddia "herkes bantlamaktan nefret ediyor" DEĞİL; doğrusu: **bantlama belli
+bir kesimi eliyor** — yazıcısı olmayan, sadece iPad'i olan, vakti dar, ve
+30 sayfayı aşan büyük giysiler. Hedef kitle o kesim.
+
 ### PROJEKSİYON DOSYASI — ucuz özellik, ölçülmüş talep (4 Eyl'de bulundu)
 Ev dikişçileri PDF'i kâğıda basıp yapıştırmak yerine **projeksiyonla kumaşa
 yansıtıyor.** Kanıt: "Projectors for Sewing" Facebook grubu 2021'de 35 bin,
