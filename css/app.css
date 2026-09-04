@@ -114,6 +114,14 @@ h1.screen-title { font-weight: 400; font-size: 28px; letter-spacing: -0.01em; }
 .dl-alt { display: inline-block; margin: 12px 0 0; font-size: 13px; color: var(--gray);
   background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline; }
 .dl-msg { min-height: 20px; font-size: 13.5px; margin: 10px 0 0; color: var(--accent); }
+/* T4-hakem k3: THE FLAT, ON SCREEN. Ayni kagit (.dl-panel ile ayni cerceve),
+   cunku sonuc ekrani tek bir sayfa gibi okunmali. Cizim 1:1 mm ciziliyor;
+   burada yalnizca SUNUM genisligi kutuya sigar, viewBox'a dokunulmaz. */
+.flat-panel { margin: 24px 0 8px; padding: 22px 24px; border: 1px solid var(--seam-color, rgba(0,0,0,.12));
+  border-top: 2px solid var(--accent); border-radius: 4px; background: #fff; max-width: 620px; }
+.flat-card-svg { margin-top: 8px; min-height: 60px; font-size: 13.5px; color: var(--gray); }
+.flat-card-svg svg { display: block; width: 100%; height: auto; }
+.flat-card-sebep { font-size: 13px; color: var(--gray); margin: 10px 0 0; }
 /* OPERATÖR PROGRAMI (GECE7 / F5-D): the engine's own answer to "what can
    op.split / op.suppress / op.rotate do to this pattern", refusals included.
    Deliberately the same quiet ink as .dl-koken and .dl-msg — a refusal here is

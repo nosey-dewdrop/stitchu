@@ -538,6 +538,53 @@ function zatenOku(tokens, used, eksenler) {
   return out;
 }
 
+/**
+ * ⭐ OKUNMUS BIR EKSENIN KENDI ADI "ANLASILMADI" DEGILDIR (T4-hakem, kusur 6).
+ *
+ * OLCULEN HATA (canli site, tek okumada ayni ekran): "knit -> fabric: knit"
+ * DOGRU okundu, ve AYNI ekranda kirmiziyla "not understood: fabric — I cannot
+ * draw this as a detail of its own; the closest thing I can draw is the flare"
+ * yazdi. Ayni sekilde "peter pan -> collarType: peterPan" okundu ve 'collar'
+ * kelimesi kirmizi bir satir dogurdu. Alici, cumlesinin TAMAMI dogru okunmusken
+ * ekranda dort kirmizi "anlamadim" satiri goruyordu.
+ *
+ * KOK SEBEP: `P` tablosu ekseni STIL KELIMESIYLE tasiyor ('knit', 'peter pan'),
+ * eksenin KENDI ADIYLA degil. Cumledeki 'fabric' / 'collar' / 'neckline'
+ * kelimeleri hicbir ifadeye ait olmadigi icin artik kalıyor ve artik kelimeler
+ * dogrudan "en yakin primitif" cikmaz sokagina dusuyor — kelimenin gercek
+ * karsiligi zaten O SATIRDA okunmus olmasina ragmen.
+ *
+ * ⛔ TABLOYA HICBIR KELIME EKLENMEDI. Eslesme, spec eksen ADININ kendisinden
+ * turer: `collarType` -> ['collar','type'], `fabric` -> ['fabric'],
+ * `skirtLength` -> ['skirt','length']. Yani yeni bir sozluk degil, var olan
+ * eksen adlarinin okunmasi. Ve yalnizca O EKSEN ZATEN OKUNMUSSA yutulur:
+ * okunmamis bir eksenin adi hala gercek bir bosluktur ve kirmizi kalir.
+ */
+function eksenAdiYut(tokens, used, eksenler) {
+  const parcala = (alan) => alan.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase().split(/\s+/);
+  const out = [];
+  for (let i = 0; i < tokens.length; i++) {
+    if (used[i]) continue;
+    for (const alan of Object.keys(eksenler)) {
+      if (!parcala(alan).some((w) => tokenEsler(tokens[i], w))) continue;
+      const e = eksenler[alan];
+      used[i] = 'zaten';
+      out.push({
+        id: `eksen-adi:${alan}`,
+        kelime: tokens[i],
+        durum: 'ciziliyor',
+        metin: {
+          tr: `'${alan}' ekseni bu cumlede zaten '${e.kelime}' -> '${e.value}' olarak okundu`,
+          en: `${alan} was already read in this sentence as '${e.value}' from '${e.kelime}'`,
+        },
+        kanit: `eksenler.${alan}`,
+      });
+      break;
+    }
+  }
+  return out;
+}
+
 /** One report line, in both languages, built once. */
 const rapor = (kelime, tr, en) => ({ kelime, oneri: tr, oneriI18n: { tr, en } });
 
@@ -588,6 +635,9 @@ export function parsePrompt(text) {
   niteleyiciBagla(tokens, used, eksenler);
   yonNiteleyiciBagla(tokens, used, eksenler);
   const zaten = zatenOku(tokens, used, eksenler);
+  // Eksenin kendi adi, `zatenOku`'dan SONRA yutulur: ZATEN tablosunun kendi
+  // capalari (fermuar, pens) once konusur, artan eksen adi ondan sonra.
+  zaten.push(...eksenAdiYut(tokens, used, eksenler));
 
   let eslesen = 0, stop = 0, anlasilmayan = 0, zatenSayi = 0;
   for (let i = 0; i < tokens.length; i++) {
@@ -646,6 +696,31 @@ export function parsePrompt(text) {
       anlasilmadi.push(rapor(tokens[i],
         `'${tokens[i]}' bilinen bir kelime ama tek başına bir eksen belirtmiyor; şöyle yaz: ${tamam.join(' / ')}`,
         `'${tokens[i]}' is a word I know, but on its own it does not say which detail you mean; try: ${tamam.join(' / ')}`));
+      continue;
+    }
+    // ⭐ BIR OKUNMUS IFADENIN YANINDAKI SIFAT, "EN YAKIN PRIMITIF" DEGILDIR
+    //    (T4-hakem, kusur 6).
+    // OLCULEN HATA: '... deep v neckline' cumlesinde 'v neckline' DOGRU okundu
+    // (neckline: vNeck) ve komsusundaki 'deep' icin ekrana "I cannot draw this
+    // as a detail of its own; the closest thing I can draw is the EDGE" yazildi.
+    // Bu cumle iki kez yanlis: kelime bir yaka DERINLIGI niteliyor, ve onerilen
+    // 'edge' ekseninin onunla hicbir alakasi yok — `enYakinPrimitif` bir metin
+    // yakinligi olcusu, bir anlam olcusu degil, ve komsusu zaten okunmus bir
+    // artik uzerinde calistirilinca sacma cikiyor. Dogru cevap komsudan turer:
+    // hangi ekseni hangi kelimeden okudugumu soyle, ve o eksenin bu sifat icin
+    // ayri bir kadrani OLMADIGINI adiyla soyle. Yeni kelime, yeni tablo YOK.
+    const komsuAlan = (() => {
+      for (const [alan, e] of Object.entries(eksenler)) {
+        if (!Array.isArray(e.idx)) continue;
+        if (e.idx.some((j) => Math.abs(j - i) <= 1 + GAP)) return { alan, e };
+      }
+      return null;
+    })();
+    if (komsuAlan) {
+      anlasilmadi.push(rapor(tokens[i],
+        `'${komsuAlan.alan}' ekseni yanindaki '${komsuAlan.e.kelime}' kelimesinden okundu; ` +
+        `'${tokens[i]}' icin ayri bir kadran yok, uygulanmadi`,
+        `I read ${komsuAlan.alan} from '${komsuAlan.e.kelime}' next to it; there is no separate dial for '${tokens[i]}', so it was not applied`));
       continue;
     }
     // ⭐ M6-zaten: the dead end used to read "en yakın primitif: bodice

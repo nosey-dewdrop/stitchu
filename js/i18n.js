@@ -108,6 +108,16 @@ export const STRINGS = {
   // The flat is a DIFFERENT drawing from the pattern and the label has to say so,
   // or a shopper downloads it expecting pieces and finds a picture of a dress.
   'create.dl.flat': { en: 'SVG, technical flat (front + back)', tr: 'SVG, teknik çizim (ön + arka)' },
+  // ⭐ T4-hakem k3: flat artik sadece bir indirme dugmesinin arkasinda degil,
+  // sonuc ekraninda. Basliktaki soru isareti kurali gecerli degil (soru degil).
+  'create.flatcard.title': { en: 'What you are about to cut', tr: 'Kesmek üzere olduğun şey' },
+  'create.flatcard.sub': {
+    en: 'The technical flat — the finished garment, front and back, at EU38. The same drawing the download button hands you.',
+    tr: 'Teknik çizim — bitmiş giysinin önü ve arkası, EU38. İndirme düğmesinin verdiği çizimin aynısı.',
+  },
+  'create.flatcard.loading': { en: 'drawing the flat…', tr: 'teknik çizim çiziliyor…' },
+  'create.flatcard.notdrawn': { en: 'Not drawn: {what}', tr: 'Çizilemeyen: {what}' },
+  'create.flatcard.error': { en: 'The flat could not be drawn: {why}', tr: 'Teknik çizim çizilemedi: {why}' },
   // Named refusal, not a silent redraw: the flat pen stamps the operator it does
   // not have, and the shopper is told before the file is on their disk.
   'create.dl.flatgap': {

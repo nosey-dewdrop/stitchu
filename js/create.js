@@ -18,7 +18,7 @@ import { measureGarment } from './measure.js?v=148';
 // matching `download` or `dxf`, so a shopper could see a pattern and carry
 // nothing out of the browser. The writers are shared with studio.html, one
 // module for the whole site; see the header of download.js.
-import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG } from './download.js?v=148';
+import { safeName, saveSVG, saveDXF, saveA4Pdf, saveA0Pdf, saveFlatSVG, flatSVG } from './download.js?v=148';
 // F0: KÖKEN. Every axis below carries where its value came from, and the two
 // files the user takes home carry the derived list by name. See provenance.js.
 import { yeniKoken, isaretle, ilanEdilecek, kokenCumlesi } from './provenance.js?v=148';
@@ -32,6 +32,8 @@ import { parsePrompt, parseEditPrompt, birlestir, konaksizEksenler } from './pro
 // eder — en sade dikilebilir arka, akış DURMAZ. Mantık web/lib/arka-koken.js'te
 // saf durur ki arka_koken_check kapısı onu node'da aynen koşabilsin.
 import { arkaDamgala, arkaOkumasi } from '../lib/arka-koken.js?v=148';
+// F-BASLIK: sonuç başlığı alıcının kendi cümlesinden kurulur (T4-hakem k5).
+import { giysiBasligi } from '../lib/baslik.js?v=148';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -1170,9 +1172,28 @@ function showSpec() {
 // closed-enum ratchet (vocab_reference_check) is measuring when it counts
 // references to a menu we are supposed to be dismantling, not growing.
 const drafted = (result) => result.pattern.garment;
+// ⭐ BASLIK ALICININ CUMLESIYLE CELISIYORDU (T4-hakem, kusur 5). Gerekce,
+// olculen uc vaka ve yasa: web/lib/baslik.js dosyasinin basinda. Ozet: motorun
+// `pattern.garment` adi YALNIZCA skirtStyle + sleeve ekseninden kuruluyor, o
+// iki eksen secilmemisse motorun VARSAYILANI ("A-line", "straight-sleeve")
+// baslikta bir iddia olarak basiliyordu; alicinin acikca yazdigi wrapFront /
+// skirtLength / exposedZip / collarType eksenleri ise basliga hic girmiyordu.
+// Baslik artik yalnizca kaynagi `soruldu`/`gorulen` olan eksenleri, alicinin
+// KENDI kelimeleriyle ve kendi cumle sirasiyla tasir.
+const BASLIK_ETIKET = (() => {
+  const t = {};
+  for (const g of SPEC_GROUPS) {
+    t[g.key] = {};
+    for (const [v, en] of g.options) t[g.key][v] = en;
+  }
+  return t;
+})();
 const draftedTitle = (result) => {
-  const g = drafted(result);
-  return g.charAt(0).toUpperCase() + g.slice(1);
+  const { baslik } = giysiBasligi({
+    spec, koken, okuma: promptParsed, etiketler: BASLIK_ETIKET,
+    isim: spec.garment || drafted(result),
+  });
+  return baslik;
 };
 
 function showResult(result) {
@@ -1205,6 +1226,17 @@ function showResult(result) {
   // to pick the fabric reasoning; carry a shallow copy of the chosen spec.
   result.spec = { ...spec };
   renderResult(body, result);
+
+  // ⭐ FLAT EKRANDA (T4-hakem, kusur 3). OLCULEN HATA: 'Draft my pattern'
+  // sonrasi sayfada 7 SVG vardi — 1 yerlesim + 6 parca karti — ve teknik flat
+  // HICBIRI degildi. Flat'e ulasmanin tek yolu bir indirme dugmesine basip
+  // dosyayi baska bir programda acmakti. Urunun vaadi "kalip + flat", alici
+  // ise flat'i satin alma karari verirken hic gormuyordu.
+  // Kok sebep: sonuc ekrani kalip merkezli kuruldu; flat, cikti listesine bir
+  // DOSYA TURU olarak eklendi ama render hattina hic baglanmadi. Cizim ayni
+  // hattan (download.js flatSVG -> web/lib/flat-from-pattern.js) gelir, ikinci
+  // bir kalem yoktur; indirilen dosyayla ayni baytlardir.
+  if (!result.issues.length) screen.appendChild(flatKarti());
 
   const nav = el('div', 'step-nav');
   const again = el('button', 'btn', t('create.changegarment'));
@@ -1242,6 +1274,42 @@ function showResult(result) {
   if (!result.issues.length) {
     screen.appendChild(gradePanel(result));
   }
+}
+
+/**
+ * Teknik flat'i sonuc ekraninda GOSTEREN kart. Cizim indirilen dosyanin ta
+ * kendisidir (ayni flatSVG cagrisi); burada yalnizca sayfaya gomulur.
+ * Cizim gecikirse/reddedilirse sebep ADIYLA basilir, kart sessizce kaybolmaz.
+ */
+function flatKarti() {
+  const panel = el('section', 'flat-panel');
+  panel.appendChild(el('h2', 'dl-title', t('create.flatcard.title')));
+  panel.appendChild(el('p', 'dl-sub', t('create.flatcard.sub')));
+  const kutu = el('div', 'flat-card-svg');
+  kutu.textContent = t('create.flatcard.loading');
+  panel.appendChild(kutu);
+  (async () => {
+    try {
+      const { svg } = await flatSVG(spec, { size: FLAT_BEDEN }, koken, KOKEN_ALANLARI);
+      kutu.innerHTML = svg;
+      const s = kutu.querySelector('svg');
+      if (s) {
+        // Kagit olcusu 1:1 mm; ekranda kutuya sigsin diye yalnizca SUNUM
+        // boyutu degisir, viewBox (dolayisiyla her mm) aynen kalir.
+        s.removeAttribute('width');
+        s.removeAttribute('height');
+        s.setAttribute('width', '100%');
+        s.style.height = 'auto';
+        s.style.maxHeight = '520px';
+      }
+      const c = svg.match(/<!--\s*cizilemeyen:([^>]*)-->/);
+      if (c) panel.appendChild(el('p', 'flat-card-sebep', t('create.flatcard.notdrawn', { what: c[1].trim() })));
+    } catch (err) {
+      kutu.textContent = t('create.flatcard.error', { why: String((err && err.message) || err) });
+      console.error('flat card:', err);
+    }
+  })();
+  return panel;
 }
 
 // The three files, plus the print-shop A0. Every one of them is written by
