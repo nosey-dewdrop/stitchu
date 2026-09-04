@@ -162,3 +162,15 @@ kendi seçilimli anket. "Sektörün %10'u" DEĞİL. 2024 rakamı da kesin değil
 "%10'u aştı".
 ⚠ Ayrıca kaçınılacak uydurma: "CIA anketine göre dikişçilerin %68'i..." diye
 dolaşan bir istatistik var — CIA'nın böyle bir anketi YOK, SEO çöpü.
+
+## ★ FORUMLARIN ASIL SÖYLEDİĞİ (20 yıllık arşiv taraması, 4 Eyl)
+Şikâyetlerin tekrar eden şekli "PDF bozuldu" değil: **alıcı ne satın aldığını
+önceden bilemiyor.** Bitmiş giysi ölçüsü yok, ne kadar bolluk (ease) var
+bilinmiyor, talimatın hangi seviye dikişçi varsayıyoru yazmıyor. Forumların
+standart cevabı hep aynı: "önce prova (muslin) dik" — yani bir proje daha.
+Örnekler: *"Ölçümü aldım, bedeni seçtim, KOCAMAN çıktı. Neden?"* · *"Bitmiş
+giysi ölçüsü neden veriyorlar hiç anlamamıştım, şimdi anladım."* · *"Ticari
+kalıbı diktirmek için kalıpçılık bilmek gerekmemeli — zaten o yüzden kalıbı
+satın aldın."*
+→ Motorumuz bunların hepsini zaten HESAPLIYOR (bitmiş çevre, ease, parça
+sayısı, dikiş payı). Satın almadan ÖNCE göstermek ucuz ve bu boşluğu kapatır.
