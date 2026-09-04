@@ -957,7 +957,7 @@ export const VISION_TASIMA = {
         "eksen": "exposedZip",
         "deger": "centerBack",
         "cozum": "vocab-resolution-v1.json: exposedZip.*",
-        "not": "OLCULDU 2026-09-04: sinirsiz alternatif 'INVISIBLE zipper'i 'visible zip' diye eslesiyordu — gizli fermuar isteyen kullaniciya GORUNUR tasarim fermuari cikiyordu, tam tersi. \\b sinirla kapandi."
+        "not": "OLCULDU 2026-09-04: sinir konmamis alternatif 'INVISIBLE zipper'i 'visible zip' diye eslesiyordu — gizli fermuar isteyen kullaniciya GORUNUR tasarim fermuari cikiyordu, tam tersi. \\b sinirla kapandi."
       },
       {
         "ad": "omuzAcik",
