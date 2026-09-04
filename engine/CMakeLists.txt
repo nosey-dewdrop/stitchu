@@ -1462,3 +1462,11 @@ add_test(NAME vitrin_check COMMAND ${NODE_EXECUTABLE}
 #      ekraninda + gizlilik sayfasinda YAZILI kalir ("cihazinda kalir" yasak).
 add_test(NAME vitrin_gercek_check COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/vitrin_gercek_check.mjs)
+
+# F0 KAPI A — enum_dallanma_check: HEDEF.md madde 9 circiri. engine/src cizim
+# kodunda spec enum'lari (Neckline, SleeveStyle, SkirtStyle...) uzerine
+# `case E::X` + `== E::X` dallarinin toplamini sayar; giris katmani (specparse.hpp,
+# *.gen.hpp) haric. Taban engine/tests/enum-dallanma-baseline.json: artis KIRMIZI,
+# azalis yeni taban (dosya yeniden yazilir, commit'e girer). F3 sonunda hedef 0:
+# giysi bir Edge/Panel/Stitch GRAFI olur, menu kelimesine dallanan kod kalmaz.
+add_test(NAME enum_dallanma_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/enum_dallanma_check.sh)

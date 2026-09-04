@@ -171,3 +171,12 @@ KOSU/ciktilar/*.svg
 KOSU/ciktilar/*.html
 # F9 paket-01: uctan uca kosunun urun paketi, PAKET_DIR ile yeniden basilir
 KOSU/ciktilar/paket-01/
+
+# F0 (2026-09-05): telifli kiyas gorselleri — GIRDI/ veya patterns_real/ icerigi
+# (fotograf, satin alinmis sayfa) tasiyan HER overlay/kontak/kiyas buraya gider,
+# commit edilmez. KOSU/ciktilar'daki commit'li dosyalar yalniz fotografin YOLUNU
+# ve motorun kendi ciktisini tasir.
+KOSU/ciktilar/_yerel/
+# F0 "once" fotografi: bugunku 9 flat'in kontak sayfasi. Urun degisince yeniden
+# uretilemez (eski motoru gosterir), o yuzden *.png kuralindan muaf ve takipli.
+!KOSU/ciktilar/zemin-once.png
