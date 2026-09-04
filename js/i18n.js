@@ -135,7 +135,11 @@ export const STRINGS = {
   // F10-vitrin (hakem borcu c): the sewing guide the shopper takes home, wired
   // to the result screen instead of sitting pure in web/lib. The refusal is
   // named: no catalog fabric, no needle table, no invented numbers.
-  'create.dl.rehber': { en: 'HTML, sewing guide (Turkish)', tr: 'HTML, dikiş rehberi (Türkçe)' },
+  // Etiketten '(Turkish)' KALKTI, çünkü artık doğru değil: rehber sayfanın
+  // dilinde iniyor (bağımsız denetçi tur 5, kusur 4). Parantez içinde dili
+  // duyurmak bir onarım değil, İngiliz alıcıya okuyamayacağı bir dosyayı
+  // uyararak vermekti.
+  'create.dl.rehber': { en: 'HTML, sewing guide', tr: 'HTML, dikiş rehberi' },
   'create.dl.rehberfabric': {
     en: 'pick a catalog fabric above first — without one the guide refuses to invent needle and stitch settings',
     tr: 'önce yukarıdan katalog kumaşı seç — kumaşsız rehber iğne ve dikiş ayarı uydurmayı reddeder',

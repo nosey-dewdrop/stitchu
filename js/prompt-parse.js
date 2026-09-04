@@ -296,6 +296,21 @@ function govdeler(tok) {
   return out;
 }
 
+// ⚠ SADECE RAPOR METNİ İÇİN. `govdeler` bir EŞLEŞTİRİCİDİR: neyin çizileceğine
+// karar verir, o yüzden ek listesi (EN_EKLER = es/s) bilerek dardır. 'ed' oraya
+// eklenirse 'gathered' -> 'gather', 'fitted' -> 'fitt' olur ve tablo eşleşmeleri
+// kayar. Ama "bu kelime, az önce okuduğum kelimenin tekrarı mı?" sorusu hiçbir
+// şey çizmez, yalnız bir cümle yazar; orada 'tiers' ile 'tiered'ın aynı kök
+// olduğunu görebilmek gerekiyor (ölçülen hata: 'tiers' için "I read garment
+// from 'skirt'" yazılıyordu). Bu yüzden ayrı, GENİŞ ve ETKİSİZ bir kök.
+function raporKoku(tok) {
+  const out = new Set(govdeler(tok));
+  for (const ek of ['ed', 'd', 'ing', 'es', 's']) {
+    if (tok.endsWith(ek) && tok.length - ek.length >= 3) out.add(tok.slice(0, tok.length - ek.length));
+  }
+  return [...out];
+}
+
 /** Does `tok` speak the table token `want`, allowing a Turkish suffix? */
 function tokenEsler(tok, want) {
   if (tok === want) return true;
@@ -407,7 +422,28 @@ function niteleyiciBagla(tokens, used, eksenler) {
     if (!aileIdx.length) continue;
     for (let i = 0; i < tokens.length; i++) {
       if (used[i] || !tokenEsler(tokens[i], n.token)) continue;
-      if (Math.min(...aileIdx.map((j) => Math.abs(j - i))) > NITELEYICI_MESAFE) continue;
+      const enYakin = aileIdx.reduce((b, j) => (Math.abs(j - i) < Math.abs(b - i) ? j : b), aileIdx[0]);
+      if (Math.abs(enYakin - i) > NITELEYICI_MESAFE) continue;
+      // ⭐ M7-mesafe (b) — GİYSİNİN ADI BİR DUVARDIR.
+      //
+      // ÖLÇÜLDÜ 2026-09-04 (bağımsız denetçi, tur 5): mesafe bütçesi tek başına
+      // yetmiyor. 'a fitted dress with puff sleeves' -> fitted(1) dress(2)
+      // puff(4) sleeves(5); |4-1| = 3 = bütçe, yani `fitted` KOLA bağlanıyor ve
+      // ekran aynı anda hem `sleeveStyle: straight` hem `sleeveCap: puffed`
+      // okuduğunu yazıyor — iki çelişen okuma, kullanıcı düz kol istemediği
+      // hâlde. Bir önceki tur bunu daha uzun bir cümlede yakalamıştı ve
+      // gerekçesi doğruydu; eksik olan, bütçenin kısa cümlede de kifayetsiz
+      // olduğuydu.
+      //
+      // Kural sayısal değil DİLBİLGİSEL, ve yeni veri istemiyor: bir sıfat ile
+      // nitelediği eksen ARASINDA giysinin adı duruyorsa (fitted | DRESS | puff
+      // sleeves), o sıfat giysinin sıfatıdır, eksenin değil. Bağlanmaz — ve
+      // sessizce düşmez: `fitted` aşağıdaki ZATEN tablosuna düşer, orada
+      // "zaten çiziliyor: gövde belde pensle daraltılıyor" cevabını alır.
+      const gIdx = eksenler.garment && Array.isArray(eksenler.garment.idx)
+        ? eksenler.garment.idx : [];
+      const arada = gIdx.some((g) => (g > Math.min(i, enYakin) && g < Math.max(i, enYakin)));
+      if (arada) continue;
       used[i] = 'matched';
       const onceki = eksenler[n.field];
       if (onceki) { onceki.idx.push(i); onceki.kelime += ` ${tokens[i]}`; }
@@ -565,10 +601,37 @@ function eksenAdiYut(tokens, used, eksenler) {
   const out = [];
   for (let i = 0; i < tokens.length; i++) {
     if (used[i]) continue;
-    for (const alan of Object.keys(eksenler)) {
-      if (!parcala(alan).some((w) => tokenEsler(tokens[i], w))) continue;
+    // ⭐ YUTULAN İSİM, KULLANICININ KENDİ İFADESİNİN PARÇASIDIR.
+    //
+    // ÖLÇÜLDÜ 2026-09-04 (bağımsız denetçi, tur 5): 'balloon sleeves' yazan
+    // alıcının sonuç başlığı "Midi dress with balloon, gathered skirt, ..."
+    // oldu — "with balloon" yarım bir cümle, balloon NE? Sebep buradaydı:
+    // 'sweetheart neckline' ve 'gathered skirt' ifade tablosunda İKİ TOKENLİ
+    // birer giriş olduğu için kelimeyi tam taşıyor, ama 'balloon' tek tokenli
+    // bir giriş; ardından gelen 'sleeves' bu fonksiyon tarafından "bu eksen
+    // zaten okundu" diye yutuluyor ve İFADEYE geri yazılmıyordu.
+    //
+    // Yeni değer, yeni eksen, yeni tablo satırı YOK: yalnızca alıcının bitişik
+    // yazdığı isim, okuduğumuz ifadeye ekleniyor. Bitişiklik şart — cümlenin
+    // öbür ucundaki bir isim bu ifadenin parçası değildir.
+    const adaylar = Object.keys(eksenler)
+      .filter((alan) => parcala(alan).some((w) => tokenEsler(tokens[i], w)));
+    if (adaylar.length > 1) {
+      // Birden çok eksen aynı ismi taşıyor (sleeveStyle/sleeveLength/sleeveCap).
+      // İsim, cümlede EN YAKIN duranın ifadesine aittir.
+      adaylar.sort((a, b) => {
+        const d = (alan) => Math.min(...(eksenler[alan].idx || [1e9]).map((j) => Math.abs(j - i)));
+        return d(a) - d(b);
+      });
+    }
+    for (const alan of adaylar) {
       const e = eksenler[alan];
       used[i] = 'zaten';
+      if (Array.isArray(e.idx) && e.idx.some((j) => Math.abs(j - i) === 1)) {
+        const hepsi = [...e.idx, i].sort((a, b) => a - b);
+        e.kelime = hepsi.map((j) => tokens[j]).join(' ');
+        e.idx = hepsi;
+      }
       out.push({
         id: `eksen-adi:${alan}`,
         kelime: tokens[i],
@@ -709,18 +772,51 @@ export function parsePrompt(text) {
     // artik uzerinde calistirilinca sacma cikiyor. Dogru cevap komsudan turer:
     // hangi ekseni hangi kelimeden okudugumu soyle, ve o eksenin bu sifat icin
     // ayri bir kadrani OLMADIGINI adiyla soyle. Yeni kelime, yeni tablo YOK.
+    // ⭐ GEREKÇE, DOĞRU KOMŞUYU GÖSTERMEK ZORUNDA (bağımsız denetçi, tur 5).
+    //
+    // ÖLÇÜLDÜ 2026-09-04: 'a maxi tiered skirt, gathered, three tiers' cümlesinde
+    // 'tiers'(6) için ekrana "I read garment from 'skirt' NEXT TO IT" yazıldı.
+    // 'skirt' 3. token, 'tiers' 6. token — yan yana değiller; ve zaten doğru
+    // cevap 'skirt' değil, aynı cümlede 'tiered'(2) kelimesinden OKUNMUŞ olan
+    // `ruffle` eksenidir. İki ayrı hata vardı: (1) döngü mesafeye bakmadan
+    // eksenlerin OBJE SIRASINDAKİ ilkini seçiyordu, (2) kelimenin kendisinin
+    // zaten okunmuş bir kelimenin çekimi olduğu hiç sorulmuyordu.
+    //
+    // Yanlış gerekçe, gerekçe yokluğundan beterdir: alıcı 'three tiers'ın
+    // uygulanmadığını okuyor ve sebep olarak alakasız bir kelime görüyor.
+    //
+    // Sıra: (a) bu kelime zaten okunmuş bir kelimenin çekimi mi (aynı gövde) —
+    // öyleyse hangi eksene gittiğini söyle; (b) değilse bütçe içindeki EN YAKIN
+    // ekseni göster. Yeni tablo, yeni kelime yok; ölçü zaten var olan gövde
+    // eşleştiricisi (`tokenEsler`).
     const komsuAlan = (() => {
+      let ayni = null, yakin = null, yakinD = Infinity;
       for (const [alan, e] of Object.entries(eksenler)) {
         if (!Array.isArray(e.idx)) continue;
-        if (e.idx.some((j) => Math.abs(j - i) <= 1 + GAP)) return { alan, e };
+        const kelimeler = String(e.kelime || '').split(/\s+/).filter(Boolean);
+        // Gövde eşleşmesi İKİ YÖNLÜ olmak zorunda: `tokenEsler` yalnız SOLU
+        // gövdeliyor ('tiers' -> 'tier'), sağı olduğu gibi arıyor, o yüzden
+        // 'tiers' ile 'tiered' hiç buluşmuyordu. Kelimenin kendisi değişmiyor,
+        // yalnız karşılaştırma simetrik hâle geliyor.
+        if (!ayni && kelimeler.some((w) => raporKoku(tokens[i]).some((g) => raporKoku(w).includes(g)))) {
+          ayni = { alan, e, ayniKok: true };
+        }
+        const d = Math.min(...e.idx.map((j) => Math.abs(j - i)));
+        if (d <= 1 + GAP && d < yakinD) { yakinD = d; yakin = { alan, e, ayniKok: false }; }
       }
-      return null;
+      return ayni || yakin;
     })();
     if (komsuAlan) {
-      anlasilmadi.push(rapor(tokens[i],
-        `'${komsuAlan.alan}' ekseni yanindaki '${komsuAlan.e.kelime}' kelimesinden okundu; ` +
-        `'${tokens[i]}' icin ayri bir kadran yok, uygulanmadi`,
-        `I read ${komsuAlan.alan} from '${komsuAlan.e.kelime}' next to it; there is no separate dial for '${tokens[i]}', so it was not applied`));
+      const { alan, e, ayniKok } = komsuAlan;
+      anlasilmadi.push(ayniKok
+        ? rapor(tokens[i],
+          `'${alan}' ekseni bu cümlede zaten '${e.kelime}' kelimesinden okundu; ` +
+          `'${tokens[i]}' onun tekrarı, ayrı bir kadran açmıyor`,
+          `${alan} was already read in this sentence from '${e.kelime}'; '${tokens[i]}' repeats it and opens no separate dial`)
+        : rapor(tokens[i],
+          `'${alan}' ekseni yanindaki '${e.kelime}' kelimesinden okundu; ` +
+          `'${tokens[i]}' icin ayri bir kadran yok, uygulanmadi`,
+          `I read ${alan} from '${e.kelime}' next to it; there is no separate dial for '${tokens[i]}', so it was not applied`));
       continue;
     }
     // ⭐ M6-zaten: the dead end used to read "en yakın primitif: bodice

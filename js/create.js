@@ -1188,6 +1188,19 @@ const BASLIK_ETIKET = (() => {
   }
   return t;
 })();
+/** The result title as a file name: same words, same order, filesystem-safe.
+ *  Trimmed on a WORD boundary (a name cut mid-word reads like corruption) and
+ *  never emptied — a title with no ascii left falls back to the drafted class,
+ *  which is the only other thing on the screen that names the garment. */
+function dosyaAdi(baslik, sinif) {
+  const tam = safeName(baslik);
+  if (tam === 'pattern') return safeName(sinif);
+  if (tam.length <= 64) return tam;
+  const kesik = tam.slice(0, 64);
+  const son = kesik.lastIndexOf('-');
+  return son > 16 ? kesik.slice(0, son) : kesik;
+}
+
 const draftedTitle = (result) => {
   const { baslik } = giysiBasligi({
     spec, koken, okuma: promptParsed, etiketler: BASLIK_ETIKET,
@@ -1350,7 +1363,26 @@ function downloadPanel(result) {
   panel.appendChild(el('h2', 'dl-title', t('create.dl.title')));
   panel.appendChild(el('p', 'dl-sub', t('create.dl.sub')));
 
-  const base = `stitchu-${safeName(drafted(result))}-${safeName(spec.silhouette || spec.skirtStyle || spec.neckline || 'pattern')}`;
+  // ⭐ DOSYA ADI, BAŞLIKLA AYNI KAYNAKTAN (bağımsız denetçi tur 5, kusur 6).
+  //
+  // ÖLÇÜLDÜ 2026-09-04. Girdi: 'a fitted midi dress with balloon sleeves, a
+  // gathered skirt, a sweetheart neckline and a front zipper'. İnen dört
+  // dosyanın adı: `stitchu-gathered-balloon-sleeve-dress-gathered` — fitted yok,
+  // midi yok, sweetheart yok, zipper yok, 'gathered' İKİ KEZ var. İkinci vaka:
+  // 'a maxi tiered skirt, gathered, three tiers' -> `stitchu-a-line-skirt-aline`,
+  // yani ekrandaki başlık "Maxi tiered skirt" derken dosya adı alıcının hiç
+  // yazmadığı 'a-line'ı iki kez taşıyordu.
+  //
+  // KÖK SEBEP: ad İKİ AYRI ŞABLONDAN kuruluyordu. Başlık `giysiBasligi()` ile
+  // alıcının kendi kelimelerinden; dosya adı ise `pattern.garment` (motorun
+  // YALNIZCA skirtStyle + kol ekseninden kurduğu ad) + tek bir eksenin ham
+  // değerinden. O tek eksen `spec.skirtStyle` olduğu için motorun VARSAYILANI
+  // ('aline'/'gathered') hem başa hem sona yazılıyordu, ve alıcının yazdığı
+  // neckline/length/closure eksenleri hiç okunmuyordu.
+  //
+  // Alıcı dosyayı klasöründe altı ay sonra gördüğünde ne ısmarladığını okuyor.
+  // Ad artık ekranda okuduğu cümlenin ta kendisi; iki şablon bire indi.
+  const base = `stitchu-${dosyaAdi(draftedTitle(result), drafted(result))}`;
   const title = draftedTitle(result);
   const msg = el('p', 'dl-msg', '');
 
@@ -1448,8 +1480,13 @@ function downloadPanel(result) {
     const resp = await fetch('data/sewing-guide.json?v=148');
     if (!resp.ok) throw new Error('sewing-guide.json okunamadı (HTTP ' + resp.status + ')');
     const guideData = await resp.json();
+    // ⭐ REHBER, SAYFANIN DİLİNDE (bağımsız denetçi tur 5, kusur 4). İngilizce
+    // sitede inen dosya baştan sona Türkçeydi ve düğmenin adı "(Turkish)" diye
+    // durumu kabulleniyordu. Dil artık ekranın diliyle aynı; İngilizcesi
+    // motorun KENDİ cümlesidir (rehber-tr.js'in başındaki gerekçe).
+    const dil = getLang() === 'tr' ? 'tr' : 'en';
     const html = rehberHTML(result.pattern, spec, spec.fabricPreset, guideData,
-      { baslik: title, beden: FLAT_BEDEN, kokenSatiri: kokenCumlesi(koken, true) });
+      { baslik: title, beden: FLAT_BEDEN, dil, kokenSatiri: kokenCumlesi(koken, dil === 'tr') });
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
