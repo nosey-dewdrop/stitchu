@@ -905,10 +905,15 @@ AGNES_U = 'https://cdn.shopify.com/s/files/1/0364/2693/products/Tilly_and_the_Bu
 FRIDA_U = 'https://cdn.shopify.com/s/files/1/0364/2693/files/frida-shirt-sewing-pattern-tilly-and-the-buttons-tech-drawing.png?v=1772114163'
 CFG5 = {
   # ---------------- DIRSEK boyu (F1 karar ajani 2, tur 10 uygulama): satici cumlesi 'elbow-length', SNP + bel cizili, boy='dirsek', kisa=None ----------------
-  # F1 tur 11: hedef >= 3 buzgulu + >= 3 duz SAGLANDI: buzgulu 3 (Style Arc Dallas 'elbow length puff sleeve gathered into lining with elastic',
+  # F1 tur 11: buzgulu 3 (Style Arc Dallas 'elbow length puff sleeve gathered into lining with elastic',
   # Style Arc Zalia 'elbow ... sleeves gathered into a bind' (dress version), Style Arc Queenie 'elbow length sleeve with double frill and a gathered head'),
   # duz 5 (Cashmerette Duxbury, Cashmerette Honeybourne 'elbow-length sleeves', Cashmerette Montrose View B 'elbow length sleeves', Style Arc Yvette
   # 'elbow length sleeve with inverted pleat', Style Arc Emerald 'full elbow length sleeve with tucks and bound finish' — pili/tuck agzi Celia kurali ile DUZ).
+  # F1 karar 4 (tur 12): ETIKET KURALI Edge/Panel diliyle — 'agizda buzgu var mi' = kol GOVDE panelinin agiz Edge'i toplanmis mi (elastik/band/manset icine
+  # buzgu). Agza dikilen ayri bir Panel'in (firfir) kendi kenarindaki buzgu kol agzini buzgulu yapmaz (o buzgu firfir Panel'inin Edge'inde gather Stitch).
+  # Queenie: agiz Edge duz + firfir Panel -> DUZ (buzgulu 3 -> 2, duz 5 -> 6; dirsek tablosu karar 3 ile zaten BILGI). Emerald: agiz Edge tuck Stitch, govde
+  # balon -> DUZ (Celia kurali; balonOran BILGI). Karsi-ornek (karar 2): elastik/band farki da aciyi ayirmiyor — Dallas 'gathered into lining with elastic'
+  # (bandsiz elastik) 73.6 SARKAN kumede, empire/Lucy (elastik) yana acilan kumede.
   # Payda tur 11'de omuz genisligi oldugu icin bel dikisi sart degil; bel dikisi olanlarda (Duxbury, Honeybourne, Queenie, Emerald) torso da BILGI olculur.
   # Style Arc ana urun gorseli = teknik cizim (line drawing), sayfada ayri dosya yok; Cashmerette tech-ill 4x5.
   # Onceki hedef (tur 10): >= 3 buzgulu + >= 3 duz. Bulunan: 1 duz (Duxbury). Aranip ELENENLER (5 Eyl 2026): Rivermont 'short, elbow, or long' ama cizimde tek kol (hangi boy
@@ -958,7 +963,7 @@ CFG5 = {
     agizNot='agiz oval biye olarak cizili (kol izleyiciye donuk); agiz uzunlugu = ovalin PCA uzun ekseni'),
   'sa-queenie.jpg': dict(url='https://www.stylearc.com/wp-content/uploads/queenie-woven-dress-g342000.jpg',
     sayfa='https://www.stylearc.com/shop/sewing-patterns/queenie-woven-dress/', urun='Style Arc Queenie Woven Dress, SLEEVE 2 (dirsek boyu, kep buzgulu, agizda cift firfir; ust sag gorunum)', marka='Style Arc',
-    etiket='buzgulu', etiketNeden='agizda buzgulu cift firfir (frill dikisinde buzgu cizgileri) + kep buzgusu. DOGRULANMADI-notu: buzgu firfirin kendisinde, kol govdesi agiza dogru daralmaz; konvansiyon kurali (agizda buzgu cizgisi var mi) buzgulu der, sinif bu kuralla verildi', esik=160, gorunumX=(990, 1260),
+    etiket='duz', etiketNeden='F1 karar 4 (tur 12): kol GOVDE panelinin agiz Edge\'i duz (toplanmamis, govde agiza dogru daralmaz); agza dikilen cift firfir AYRI bir Panel, buzgu o Panel\'in kendi kenarindaki gather Stitch\'tir, kol agzini buzgulu yapmaz -> DUZ. Kep buzgusu (gathered head) agiz etiketine girmez (omuzUstuKubbe istisnasinin konusu). Tur 11 etiketi buzgulu idi (firfir dikisindeki buzgu cizgileri agiz buzgusu sayilmisti, DOGRULANMADI notuyla); kural artik acik, not kalkti', esik=160, gorunumX=(990, 1260),
     omuzKutu=(1060, 1080, 75, 90), kolUcu=(1030, 1092, 222, 238), kolPencere=(1030, 1092, 75, 238), boy='dirsek', torsoOlc=True,
     boyKaynak='urun sayfasi: "elbow length sleeve with double frill and a gathered head"; agiz = firfir dikisi (firfir kolPencere disinda, manset kurali gibi)',
     snp=(1105, 1120, 72, 85), bel=dict(tip='yatayCizgi', pencere=(1100, 1200, 232, 244)), belNot='bel dikisi (darted fitted bodice / etek)'),
@@ -1213,10 +1218,11 @@ dirsekOlcum = {ad: {'etiket': k['etiket'], 'kolBoyuOverOmuz': k.get('kolBoyuOver
 nDirsekBuz = sum(1 for k in dirsekKume.values() if k['etiket'] == 'buzgulu'); nDirsekDuz = sum(1 for k in dirsekKume.values() if k['etiket'] == 'duz')
 _buzKonum = {ad: o['aciKonumu'] for ad, o in dirsekOlcum.items() if o['etiket'] == 'buzgulu'}
 _nSark = sum(1 for v in _buzKonum.values() if v == 'sarkan kume'); _nYana = sum(1 for v in _buzKonum.values() if v == 'yana acilan kume')
-if nDirsekBuz < 3 or nDirsekDuz < 3: _dBilgi = 'BILGI YOK: olcum yetersiz (buzgulu %d/3, duz %d/3)' % (nDirsekBuz, nDirsekDuz)
-elif _nSark == nDirsekBuz: _dBilgi = 'UZUN: buzgulu dirsek acilarinin hepsi sarkan aci kumesinde (kesim %.1f derece) -> dirsek kollar aci bakimindan uzun kollarla ayni kumede' % _kesim
-elif _nYana == nDirsekBuz: _dBilgi = 'KISA: buzgulu dirsek acilarinin hepsi yana acilan kumede'
+if nDirsekBuz == 0: _dBilgi = 'buzgulu dirsek kol yok'
+elif _nSark == nDirsekBuz: _dBilgi = 'UZUN: buzgulu dirsek acilarinin hepsi (n=%d) sarkan aci kumesinde (kesim %.1f derece) -> dirsek kollar aci bakimindan uzun kollarla ayni kumede' % (nDirsekBuz, _kesim)
+elif _nYana == nDirsekBuz: _dBilgi = 'KISA: buzgulu dirsek acilarinin hepsi (n=%d) yana acilan kumede' % nDirsekBuz
 else: _dBilgi = 'BOLUNME: buzgulu dirsek acilari iki kumeye dagildi (sarkan %d, yana acilan %d)' % (_nSark, _nYana)
+if nDirsekBuz < 3 or nDirsekDuz < 3: _dBilgi += ' | n eski hukum esiginin altinda (buzgulu %d/3, duz %d/3; karar 4: Queenie agzi DUZ, buzgulu 3 -> 2) — tablo zaten BILGI, hukum tasimaz' % (nDirsekBuz, nDirsekDuz)
 dirsekHukmu = {'n': len(dirsekKume), 'nBuzgulu': nDirsekBuz, 'nDuz': nDirsekDuz, 'gerekli': 'n >= 3 buzgulu VE n >= 3 duz', 'olcumler': dirsekOlcum,
                'aciKumeKesimDeg': _kesim, 'buzguluAciKonumu': _buzKonum, 'bilgi': _dBilgi,
                'tanim': 'BILGI (F1 karar 3, tur 12; tur 10-11 HUKUM idi). Konum bu kosunun aci kumelerinden (kolBoyuOverOmuz.aciKumeleri: en buyuk >= 10 derece bosluk), eski puf bandi / sarkan IQR referansi degil. Hukum tasimaz: kosul boy kelimesini okumuyor, 3c hukmunu boySinifiOrtusme tasiyor.',

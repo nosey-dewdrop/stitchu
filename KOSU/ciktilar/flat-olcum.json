@@ -3493,8 +3493,8 @@
      1600
     ],
     "esik": 160,
-    "etiket": "buzgulu",
-    "etiketNeden": "agizda buzgulu cift firfir (frill dikisinde buzgu cizgileri) + kep buzgusu. DOGRULANMADI-notu: buzgu firfirin kendisinde, kol govdesi agiza dogru daralmaz; konvansiyon kurali (agizda buzgu cizgisi var mi) buzgulu der, sinif bu kuralla verildi",
+    "etiket": "duz",
+    "etiketNeden": "F1 karar 4 (tur 12): kol GOVDE panelinin agiz Edge'i duz (toplanmamis, govde agiza dogru daralmaz); agza dikilen cift firfir AYRI bir Panel, buzgu o Panel'in kendi kenarindaki gather Stitch'tir, kol agzini buzgulu yapmaz -> DUZ. Kep buzgusu (gathered head) agiz etiketine girmez (omuzUstuKubbe istisnasinin konusu). Tur 11 etiketi buzgulu idi (firfir dikisindeki buzgu cizgileri agiz buzgusu sayilmisti, DOGRULANMADI notuyla); kural artik acik, not kalkti",
     "omuzUcu": {
      "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
      "pencere": [
@@ -5730,8 +5730,9 @@
     "yeniKume": {
      "alan": "balonOranDik",
      "duz": {
-      "n": 14,
+      "n": 15,
       "degerler": {
+       "sa-queenie.jpg": 0.889,
        "cash-honeybourne.jpg": 0.912,
        "tilly-nell.jpg#kisa-duz": 0.941,
        "cash-montrose.jpg": 0.986,
@@ -5747,13 +5748,12 @@
        "tilly-frida.png#uzun": 1.551,
        "tilly-stevie-addon.jpg#tunik": 1.669
       },
-      "min": 0.912,
+      "min": 0.889,
       "max": 1.669
      },
      "buzgulu": {
-      "n": 11,
+      "n": 10,
       "degerler": {
-       "sa-queenie.jpg": 0.889,
        "sa-dallas.jpg": 1.09,
        "bhl-alix-1.jpg": 1.33,
        "tilly-mabel.jpg#bluz": 1.378,
@@ -5765,19 +5765,14 @@
        "bhl-lucy-puff.jpg": 1.916,
        "tilly-nell.jpg#puf": 2.69
       },
-      "min": 0.889,
+      "min": 1.09,
       "max": 2.69
      },
      "bosluk": null,
      "ortusenler": {
-      "cash-duxbury.jpg": 1.047,
-      "cash-honeybourne.jpg": 0.912,
-      "cash-montrose.jpg": 0.986,
       "sa-yvette.jpg": 1.366,
-      "sa-emerald.jpg": 0.996,
       "sa-dallas.jpg": 1.09,
       "sa-zalia.jpg": 1.498,
-      "sa-queenie.jpg": 0.889,
       "bhl-alix-1.jpg": 1.33,
       "bhl-marie-dress.jpg": 1.453,
       "bhl-loren-1.png": 1.655,
@@ -5786,11 +5781,7 @@
       "tilly-lyra.png#uzun": 1.445,
       "tilly-stevie-addon.jpg#tunik": 1.669,
       "tilly-coco.jpg#v1": 1.271,
-      "tilly-agnes.png#kisa": 1.041,
-      "tilly-agnes.png#buzgulu-omuz": 1.022,
       "tilly-agnes.png#uzun": 1.131,
-      "tilly-nell.jpg#kisa-duz": 0.941,
-      "tilly-nell.jpg#bilezik": 1.008,
       "named-ilta.png": 1.521,
       "tilly-frida.png#uzun": 1.551
      },
@@ -5799,9 +5790,10 @@
     "birlesik": {
      "alan": "balonOranDik",
      "duz": {
-      "n": 21,
+      "n": 22,
       "degerler": {
        "cash-wyman.jpg": 0.779,
+       "sa-queenie.jpg": 0.889,
        "cash-honeybourne.jpg": 0.912,
        "tilly-nell.jpg#kisa-duz": 0.941,
        "cash-hampden.jpg": 0.958,
@@ -5827,9 +5819,8 @@
       "max": 1.669
      },
      "buzgulu": {
-      "n": 17,
+      "n": 16,
       "degerler": {
-       "sa-queenie.jpg": 0.889,
        "sa-dallas.jpg": 1.09,
        "dd-magnolia.jpg": 1.137,
        "02-uzun-robe-dress.png": 1.252,
@@ -5847,29 +5838,20 @@
        "soi-lori.png": 2.435,
        "tilly-nell.jpg#puf": 2.69
       },
-      "min": 0.889,
+      "min": 1.09,
       "max": 2.69
      },
      "bosluk": null,
      "ortusenler": {
-      "cash-hampden.jpg": 0.958,
       "dd-orage.png": 1.441,
-      "dd-passiflore.jpg": 1.033,
       "dd-magnolia.jpg": 1.137,
       "03-empire-dress-uc-boy.png": 1.51,
-      "04-a-line-puff-kol.png": 1.003,
       "06-a-line-puff-kol-varyant.png": 1.224,
       "02-uzun-robe-dress.png": 1.252,
       "05-a-line-top-ve-elbise.png": 1.345,
-      "07-uzun-kol-akiskan-etek.png": 0.998,
-      "cash-duxbury.jpg": 1.047,
-      "cash-honeybourne.jpg": 0.912,
-      "cash-montrose.jpg": 0.986,
       "sa-yvette.jpg": 1.366,
-      "sa-emerald.jpg": 0.996,
       "sa-dallas.jpg": 1.09,
       "sa-zalia.jpg": 1.498,
-      "sa-queenie.jpg": 0.889,
       "bhl-alix-1.jpg": 1.33,
       "bhl-marie-dress.jpg": 1.453,
       "bhl-loren-1.png": 1.655,
@@ -5878,11 +5860,7 @@
       "tilly-lyra.png#uzun": 1.445,
       "tilly-stevie-addon.jpg#tunik": 1.669,
       "tilly-coco.jpg#v1": 1.271,
-      "tilly-agnes.png#kisa": 1.041,
-      "tilly-agnes.png#buzgulu-omuz": 1.022,
       "tilly-agnes.png#uzun": 1.131,
-      "tilly-nell.jpg#kisa-duz": 0.941,
-      "tilly-nell.jpg#bilezik": 1.008,
       "named-ilta.png": 1.521,
       "tilly-frida.png#uzun": 1.551
      },
@@ -6140,10 +6118,11 @@
     "yeniKume": {
      "alan": "balonOranYatay",
      "duz": {
-      "n": 14,
+      "n": 15,
       "degerler": {
        "cash-honeybourne.jpg": 0.662,
        "sa-emerald.jpg": 0.902,
+       "sa-queenie.jpg": 0.924,
        "cash-montrose.jpg": 0.981,
        "cash-duxbury.jpg": 1.019,
        "tilly-agnes.png#buzgulu-omuz": 1.031,
@@ -6161,9 +6140,8 @@
       "max": 2.667
      },
      "buzgulu": {
-      "n": 11,
+      "n": 10,
       "degerler": {
-       "sa-queenie.jpg": 0.924,
        "sa-dallas.jpg": 1.031,
        "tilly-mabel.jpg#bluz": 1.388,
        "bhl-marie-dress.jpg": 1.448,
@@ -6175,17 +6153,14 @@
        "bhl-loren-1.png": 1.796,
        "tilly-nell.jpg#puf": 2.529
       },
-      "min": 0.924,
+      "min": 1.031,
       "max": 2.529
      },
      "bosluk": null,
      "ortusenler": {
-      "cash-duxbury.jpg": 1.019,
-      "cash-montrose.jpg": 0.981,
       "sa-yvette.jpg": 1.21,
       "sa-dallas.jpg": 1.031,
       "sa-zalia.jpg": 1.483,
-      "sa-queenie.jpg": 0.924,
       "bhl-alix-1.jpg": 1.487,
       "bhl-marie-dress.jpg": 1.448,
       "bhl-loren-1.png": 1.796,
@@ -6209,11 +6184,12 @@
     "birlesik": {
      "alan": "balonOranYatay",
      "duz": {
-      "n": 21,
+      "n": 22,
       "degerler": {
        "cash-honeybourne.jpg": 0.662,
        "cash-wyman.jpg": 0.79,
        "sa-emerald.jpg": 0.902,
+       "sa-queenie.jpg": 0.924,
        "cash-hampden.jpg": 0.928,
        "cash-montrose.jpg": 0.981,
        "07-uzun-kol-akiskan-etek.png": 0.987,
@@ -6237,9 +6213,8 @@
       "max": 2.667
      },
      "buzgulu": {
-      "n": 17,
+      "n": 16,
       "degerler": {
-       "sa-queenie.jpg": 0.924,
        "sa-dallas.jpg": 1.031,
        "dd-magnolia.jpg": 1.126,
        "02-uzun-robe-dress.png": 1.231,
@@ -6257,29 +6232,23 @@
        "soi-lori.png": 2.111,
        "tilly-nell.jpg#puf": 2.529
       },
-      "min": 0.924,
+      "min": 1.031,
       "max": 2.529
      },
      "bosluk": null,
      "ortusenler": {
-      "cash-hampden.jpg": 0.928,
       "soi-lori.png": 2.111,
       "dd-orage.png": 1.441,
       "dd-passiflore.jpg": 1.032,
       "dd-magnolia.jpg": 1.126,
       "03-empire-dress-uc-boy.png": 1.334,
-      "04-a-line-puff-kol.png": 1.01,
       "06-a-line-puff-kol-varyant.png": 1.094,
       "02-uzun-robe-dress.png": 1.231,
       "05-a-line-top-ve-elbise.png": 1.351,
-      "07-uzun-kol-akiskan-etek.png": 0.987,
       "10-princess-a-line.png": 1.679,
-      "cash-duxbury.jpg": 1.019,
-      "cash-montrose.jpg": 0.981,
       "sa-yvette.jpg": 1.21,
       "sa-dallas.jpg": 1.031,
       "sa-zalia.jpg": 1.483,
-      "sa-queenie.jpg": 0.924,
       "bhl-alix-1.jpg": 1.487,
       "bhl-marie-dress.jpg": 1.448,
       "bhl-loren-1.png": 1.796,
@@ -6305,7 +6274,7 @@
    "kolBoyuOverOmuz": {
     "alan": "kolBoyuOverOmuz",
     "n": 33,
-    "nBuzgulu": 15,
+    "nBuzgulu": 14,
     "degerler": [
      {
       "flat": "dd-passiflore.jpg",
@@ -6438,7 +6407,7 @@
      {
       "flat": "sa-queenie.jpg",
       "oran": 0.924,
-      "etiket": "buzgulu",
+      "etiket": "duz",
       "boy": "dirsek",
       "kolAcisiDeg": 85.7,
       "torsoOran": 0.93
@@ -6619,10 +6588,6 @@
       "sa-zalia.jpg": [
        76.0,
        0.734
-      ],
-      "sa-queenie.jpg": [
-       85.7,
-       0.924
       ],
       "bhl-marie-dress.jpg": [
        79.2,
@@ -6882,8 +6847,8 @@
    },
    "dirsek": {
     "n": 8,
-    "nBuzgulu": 3,
-    "nDuz": 5,
+    "nBuzgulu": 2,
+    "nDuz": 6,
     "gerekli": "n >= 3 buzgulu VE n >= 3 duz",
     "olcumler": {
      "cash-duxbury.jpg": {
@@ -6943,7 +6908,7 @@
       "boyKaynak": "urun sayfasi: \"Elbow or 3/4 length sleeves gathered into a bind\" + cizim etiketi \"ELBOW SLEEVE LENGTH\" (dress version); A-line, bel dikisi yok: torso olculmez"
      },
      "sa-queenie.jpg": {
-      "etiket": "buzgulu",
+      "etiket": "duz",
       "kolBoyuOverOmuz": 0.924,
       "kolBoyuOverTorso": 0.93,
       "kolAcisiDeg": 85.7,
@@ -6954,10 +6919,9 @@
     "aciKumeKesimDeg": 48.4,
     "buzguluAciKonumu": {
      "sa-dallas.jpg": "sarkan kume",
-     "sa-zalia.jpg": "sarkan kume",
-     "sa-queenie.jpg": "sarkan kume"
+     "sa-zalia.jpg": "sarkan kume"
     },
-    "bilgi": "UZUN: buzgulu dirsek acilarinin hepsi sarkan aci kumesinde (kesim 48.4 derece) -> dirsek kollar aci bakimindan uzun kollarla ayni kumede",
+    "bilgi": "UZUN: buzgulu dirsek acilarinin hepsi (n=2) sarkan aci kumesinde (kesim 48.4 derece) -> dirsek kollar aci bakimindan uzun kollarla ayni kumede | n eski hukum esiginin altinda (buzgulu 2/3, duz 6/3; karar 4: Queenie agzi DUZ, buzgulu 3 -> 2) — tablo zaten BILGI, hukum tasimaz",
     "tanim": "BILGI (F1 karar 3, tur 12; tur 10-11 HUKUM idi). Konum bu kosunun aci kumelerinden (kolBoyuOverOmuz.aciKumeleri: en buyuk >= 10 derece bosluk), eski puf bandi / sarkan IQR referansi degil. Hukum tasimaz: kosul boy kelimesini okumuyor, 3c hukmunu boySinifiOrtusme tasiyor.",
     "eskiReferans": {
      "sarkanIQR": [
@@ -7044,7 +7008,6 @@
     "buzgulu": {
      "sa-dallas.jpg": 73.6,
      "sa-zalia.jpg": 76.0,
-     "sa-queenie.jpg": 85.7,
      "bhl-alix-1.jpg": 65.0,
      "bhl-marie-dress.jpg": 79.2,
      "bhl-loren-1.png": 53.3,
@@ -7060,6 +7023,7 @@
      "cash-montrose.jpg": 81.3,
      "sa-yvette.jpg": 77.6,
      "sa-emerald.jpg": 78.0,
+     "sa-queenie.jpg": 85.7,
      "tilly-stevie-addon.jpg#tunik": 26.0,
      "tilly-coco.jpg#v1": 75.7,
      "tilly-agnes.png#kisa": 76.4,
