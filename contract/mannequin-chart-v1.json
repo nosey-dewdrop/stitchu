@@ -51,6 +51,7 @@
       "_turetme": "farkCeyrekMM = kalipGogusYarimMM * oran.belGogus - kalipBelKapaliYarimMM = 245.0965 * 0.85814 - 197.5854 = 12.7417 (bel kapali = pens-kapali, cizim_giysi_mi g2 aritmetigi)"
     },
     "donusum": {
+      "_durum": "ESKI (2026-09-05, F0 hakem kusuru 2) — data-manken-bel-yarim-mm anlami icin contract/body-v1.json ayniInsan.svgNitelikleri GECER: nitelik cizimden olculen yari-genisligi tasimak ZORUNDA (hakem cizimdir), donusum-oncesi ara deger degil. Bu blok ve web/lib/flat-from-pattern.js carpani F2'de croquis36 degerlemesi gelince silinir; o zamana dek sayilar okunabilir, _law'in nitelik cumlesi gecersiz.",
       "farkCeyrekMM": 12.7417,
       "kalcaDerinlikMM": 200,
       "_law": "ILAN EDILMIS TEK DONUSUM. Flat, bel hattinda yari-genisligini farkCeyrekMM kadar ACAR (cevre farki 4x = 50.97 mm): carpan m(y) = 1 + d(y)/Wbel, d(y) gogus hattinda 0'dan bele dogru dogrusal buyur, belde farkCeyrekMM, belden kalcaDerinlikMM asagida tekrar 0 (kalca ve gogus insan cizelgesinde: olcum blogundaki en-kisitlayici karar). Wbel = o cizimin KENDI donusum-oncesi bel yari-genisligi ve SVG'ye data-manken-bel-yarim-mm olarak basilir — kapi donusumu tersine cevirip kalipla OZDESLIGI olcer. kalcaDerinlikMM kaynagi: engine/src/bodice.cpp:708 hipBlendDepth = 200 (bel-kalca cizim derinligi, etek blogu ile ayni).",

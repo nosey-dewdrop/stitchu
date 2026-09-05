@@ -130,7 +130,11 @@ DIST_SER=$(awk '{print $1}' "$TMPS" | sort | uniq -c | sort -rn | awk '{printf "
 rm -f "$TMP" "$TMPS"
 
 # --- JS kovalari --------------------------------------------------------------
-RE_JS_CMP="[=!]==[[:space:]]*'[A-Za-z_]+'"
+# sol baglamla yakalanir: rol-kontrolu (`.role === 'X'`, `e[0] === 'X'`) ile ciplak
+# `kind === 'panel'` dispatch'i AYRILIR (F0 hakem kusuru 3). Sozcuk deseni [A-Za-z_]+;
+# tire/noktali adlar ('orta-dikis', 'op.attach') bu desene HIC girmez, sayilmaz.
+RE_JS_CMP="[A-Za-z_.0-9]*(\[[0-9]\])?[[:space:]]*[=!]==[[:space:]]*'[A-Za-z_]+'"
+RE_JS_ROLE_CTX="(\.role|\[0\])[[:space:]]*[=!]=="
 # primitif rolleri: contract'tan okunur (elle liste yok). Eksikse kapi FAIL (sessiz
 # gevseme yok: liste bos kalsa roller dal sayilir ve sayi sicrar, taban gizli asilir).
 PRIM_ROLES=$(python3 -c "
@@ -140,11 +144,19 @@ p=json.load(open('contract/primitives-v1.json'))['primitifler']
 names=list(b['edgeRoles_geometry_hpp'])+list(b['seamKinds_flat_js'])+list(p.keys())
 import re; print('|'.join(re.escape(n) for n in names))" 2>/dev/null)
 [ -n "$PRIM_ROLES" ] || { echo "FAIL  primitif rol listesi contract'tan okunamadi (body-v1 _ad_uyumu.edgeRoles_geometry_hpp/seamKinds_flat_js, primitives-v1 primitifler)"; exit 2; }
-RE_JS_EXCL="'(close|move|line|curve|number|object|string|undefined|function|boolean|${PRIM_ROLES})'"
+RE_JS_EXCL="'(close|move|line|curve|number|object|string|undefined|function|boolean)'"
+RE_JS_ROLE_WORD="'(${PRIM_ROLES})'"
+# yalniz fiilen eslesebilen (^[A-Za-z_]+$) primitif adlari; gerisi olu haric
+PRIM_ROLES_ETKIN=$(echo "$PRIM_ROLES" | tr '|' '\n' | sed 's/\\//g' | grep -E '^[A-Za-z_]+$' | paste -sd' ' -)
+# js_say <dosya>: rol-baglamli primitif kontrolu haric, ciplak sozcuk sayilir
+js_say() {
+  grep -oE "$RE_JS_CMP" "$1" 2>/dev/null | grep -vE "$RE_JS_EXCL" \
+    | grep -vE "${RE_JS_ROLE_CTX}[[:space:]]*${RE_JS_ROLE_WORD}" | wc -l | tr -d ' '
+}
 RE_JS_MM="^[[:space:]]*(const|let|var)[[:space:]]+[A-Za-z_]+_MM[[:space:]]*=[[:space:]]*[0-9]"
 JS_CMP=0; JS_MM=0; JS_DIST=""
 for f in $JSFILES; do
-  c=$(grep -oE "$RE_JS_CMP" "$f" 2>/dev/null | grep -vE "$RE_JS_EXCL" | wc -l | tr -d ' ')
+  c=$(js_say "$f")
   m=$(grep -cE "$RE_JS_MM" "$f" 2>/dev/null); m=${m:-0}
   JS_CMP=$((JS_CMP + c)); JS_MM=$((JS_MM + m))
   JS_DIST="${JS_DIST}      \"$(basename "$f")\": {\"dallanma\": $c, \"sabitMM\": $m},
@@ -153,7 +165,7 @@ done
 JS_DIST=$(printf "%s" "$JS_DIST" | sed '$ s/,$//')
 JS_MET=0; JS_MET_DIST=""
 for f in $JSMETIN; do
-  c=$(grep -oE "$RE_JS_CMP" "$f" 2>/dev/null | grep -vE "$RE_JS_EXCL" | wc -l | tr -d ' ')
+  c=$(js_say "$f")
   JS_MET=$((JS_MET + c))
   JS_MET_DIST="${JS_MET_DIST}      \"$(basename "$f")\": $c,
 "
@@ -163,7 +175,7 @@ JS_MET_DIST=$(printf "%s" "$JS_MET_DIST" | sed '$ s/,$//')
 write_baseline() {
   {
     echo "{"
-    echo "  \"_ne\": \"enum_dallanma_check.sh circir tabani. Uc circir: toplam(=cpp.dallanma), js.dallanma, js.sabitMM — hicbiri ARTAMAZ. Azalis bu dosyayi OTOMATIK YAZMAZ; taban --baseline ile bilincli, ayri commit'te kesilir (gerekce commit mesajinda). cpp.serializasyon (case E::X: return \\\"...\\\") bilgi icindir, toplama girmez. Sayim: case <SpecEnum>::X + [=!]= <SpecEnum>::X, engine/src/*.cpp|*.hpp, specparse.hpp ve *.gen.hpp haric; js: web/lib/flat-*.js + arka-koken.js icinde === 'kelime' (yol komutu/typeof haric) ve <AD>_MM = sayi; haric: yol komutu/typeof + contract primitif rolleri (body-v1 edgeRoles_geometry_hpp, seamKinds_flat_js; primitives-v1 primitifler). js.metin: web/lib/rehber-tr.js + pdf-core.js, ayni desen, ayri circir. Hedef: cpp F3 sonu 0; js.dallanma/sabitMM F2 sonu 0; js.metin rehber fazinda 0.\","
+    echo "  \"_ne\": \"enum_dallanma_check.sh circir tabani. Uc circir: toplam(=cpp.dallanma), js.dallanma, js.sabitMM — hicbiri ARTAMAZ. Azalis bu dosyayi OTOMATIK YAZMAZ; taban --baseline ile bilincli, ayri commit'te kesilir (gerekce commit mesajinda). cpp.serializasyon (case E::X: return \\\"...\\\") bilgi icindir, toplama girmez. Sayim: case <SpecEnum>::X + [=!]= <SpecEnum>::X, engine/src/*.cpp|*.hpp, specparse.hpp ve *.gen.hpp haric; js: web/lib/flat-*.js + arka-koken.js icinde === 'kelime' (yol komutu/typeof haric) ve <AD>_MM = sayi; haric: yol komutu/typeof + contract primitif rolleri (body-v1 edgeRoles_geometry_hpp, seamKinds_flat_js; primitives-v1 primitifler) YALNIZ rol baglaminda (.role === 'X' / e[0] === 'X'); ciplak === 'panel' sayilir. js.metin: web/lib/rehber-tr.js + pdf-core.js, ayni desen, ayri circir. Hedef: cpp F3 sonu 0; js.dallanma/sabitMM F2 sonu 0; js.metin rehber fazinda 0.\","
     echo "  \"_kesildi\": \"$(date +%Y-%m-%d) $(git rev-parse --short HEAD 2>/dev/null || echo '?')\","
     echo "  \"specEnumSayisi\": $N_ENUM,"
     echo "  \"toplam\": $TOTAL,"
@@ -189,7 +201,7 @@ echo "spec enum ($N_ENUM): $(echo "$ENUMS" | paste -sd' ' -)"
 echo "kapsam cpp: $(echo "$FILES" | wc -l | tr -d ' ') dosya (engine/src, specparse/gen haric)"
 echo "kapsam js : $(echo "$JSFILES" | wc -l | tr -d ' ') dosya ($(echo "$JSFILES" | xargs -n1 basename | paste -sd' ' -))"
 echo "kapsam js.metin: $(echo "$JSMETIN" | wc -l | tr -d ' ') dosya ($(echo "$JSMETIN" | xargs -n1 basename | paste -sd' ' -))"
-echo "haric primitif rolleri (contract'tan): $(echo "$PRIM_ROLES" | tr '|' ' ' | sed 's/\\//g')"
+echo "haric primitif rolleri (contract'tan, yalniz rol baglaminda .role/[0] ve fiilen eslesebilen adlar): $PRIM_ROLES_ETKIN"
 echo "cpp.dallanma (toplam, circir): $TOTAL"
 echo "cpp.serializasyon (bilgi, toplama girmez): $SER"
 echo "js.dallanma (circir): $JS_CMP"

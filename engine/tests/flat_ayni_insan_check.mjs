@@ -37,7 +37,11 @@
 // kapi bunu BULGU olarak basar (kalcaY-belY her flat'te ayni sabit = olcum degil).
 //
 // ILAN-CIZIM MUTABAKATI (karar ajani #5): ilan edilen bel y'sinde cizimden
-// olculen yari-genislik ile data-manken-bel-yarim-mm arasindaki fark basilir;
+// olculen yari-genislik ile data-manken-bel-yarim-mm arasindaki fark basilir.
+// ISARET TEK TANIM: belMutabakat = cizim - ilan (tablo basligi 'ciz-ilan',
+// contract olculenler 'belYarimMutabakat (cizim - ilan)'); pozitif = ilan EKSIK.
+// Uc yuzey (bu kod, tablo basligi, contract) ayni cumleyi tasir; asagida
+// ISARET_KONTROL bunu her kosuda grep ile dogrular.
 // tolerans doluyken fark > tolerans olan flat KIRMIZI. Ilan bir sey, cizim baska
 // bir sey soyleyemez — hukum GEOMETRI uzerindedir, niteligi dogru yazip cizimi
 // bozuk birakmak yesil vermez.
@@ -77,6 +81,20 @@ if (existsSync(bodyPath)) {
   const b = JSON.parse(readFileSync(bodyPath, 'utf8'));
   TOL = b?.ayniInsan?.toleransMM ?? null;
   SIZE_BEKLENEN = b?.ayniInsan?.svgNitelikleri?.['data-size']?.deger ?? null;
+}
+
+// ---- isaret mutabakati: kod + tablo basligi + contract tek tanim ----------------
+{
+  const me = readFileSync(fileURLToPath(import.meta.url), 'utf8');
+  const kodTanim = /row\.belMutabakat = [^;]*row\.cizimBelYarim - row\.belYarimIlan/.test(me);
+  const baslik = /belIlan  ciz-ilan/.test(me);
+  const contractOk = existsSync(bodyPath)
+    ? (JSON.parse(readFileSync(bodyPath, 'utf8'))?.ayniInsan?.olculenler ?? []).includes('belYarimMutabakat (cizim - ilan)')
+    : true;
+  if (!(kodTanim && baslik && contractOk)) {
+    console.log(`FAIL  isaret mutabakati: kod(cizim-ilan)=${kodTanim} baslik(ciz-ilan)=${baslik} contract('belYarimMutabakat (cizim - ilan)')=${contractOk} — uc yuzey tek isaret tasimali`);
+    process.exit(1);
+  }
 }
 
 // ---- SVG okuma: on siluet yolu + nitelikleri ---------------------------------
@@ -162,7 +180,7 @@ const OLCULER = [
 ];
 const f1 = (v) => (v == null || Number.isNaN(v) ? '—' : v.toFixed(1).padStart(7));
 console.log(`flat_ayni_insan_check — ${rows.length} flat, tolerans ${TOL == null ? 'YOK (contract/body-v1.json ayniInsan.toleransMM null -> yalniz olcum)' : TOL + ' mm'}`);
-console.log('flat                                   sinif                 size      bustY    belY  kalcaY   omuzX  belYar bustYar kalcaYar belIlan  ilan-ciz   ustY');
+console.log('flat                                   sinif                 size      bustY    belY  kalcaY   omuzX  belYar bustYar kalcaYar belIlan  ciz-ilan   ustY');
 for (const r of rows) {
   if (r.hata) { console.log(`${r.flat.padEnd(38)} ${r.sinif.padEnd(20)} HATA ${r.hata}`); continue; }
   console.log(`${r.flat.padEnd(38)} ${r.sinif.padEnd(20)} ${String(r.size ?? '—').padEnd(9)}${f1(r.bustY)} ${f1(r.belY)} ${f1(r.kalcaY)} ${f1(r.omuzX)} ${f1(r.cizimBelYarim)} ${f1(r.cizimBustYarim)} ${f1(r.cizimKalcaYarim)} ${f1(r.belYarimIlan)} ${f1(r.belMutabakat)} ${f1(r.cizimUstY)}`);
@@ -198,7 +216,8 @@ for (const r of rows) {
     // siluet yari-genisligi" adini tasiyorsa dosyadaki yolun olcusunu tasimak zorunda.
     // Ilan carpan ONCESI ara degeri tasiyor (flat-from-pattern.js:136 MANKEN_FARK_CEYREK_MM);
     // bu "baska seyin dogru degeri" degil, YANLIS etikettir. Adiyla basilir.
-    if (asti || Math.abs(r.belMutabakat) > 0.5) bulgular.push(`${asti ? 'FAIL ' : ''}${r.flat}: ilan YANLIS ${(-r.belMutabakat).toFixed(1)} mm (carpan oncesi, flat-from-pattern.js:136) — bel yari-genislik ilan ${r.belYarimIlan.toFixed(1)} vs cizim ${r.cizimBelYarim.toFixed(1)}; hakem cizimdir${asti ? `, tolerans ${TOL} mm asildi` : ''}`);
+    // TEK ISARET (F0 hakem kusuru 1): belMutabakat = cizim - ilan; pozitif = ilan EKSIK.
+    if (asti || Math.abs(r.belMutabakat) > 0.5) bulgular.push(`${asti ? 'FAIL ' : ''}${r.flat}: ilan ${Math.abs(r.belMutabakat).toFixed(1)} mm ${r.belMutabakat > 0 ? 'EKSIK' : 'FAZLA'} (ciz-ilan ${r.belMutabakat > 0 ? '+' : ''}${r.belMutabakat.toFixed(1)}; carpan oncesi, flat-from-pattern.js:136) — bel yari-genislik ilan ${r.belYarimIlan.toFixed(1)} vs cizim ${r.cizimBelYarim.toFixed(1)}; hakem cizimdir${asti ? `, tolerans ${TOL} mm asildi` : ''}`);
   }
   if (TOL != null && SIZE_BEKLENEN != null && r.size !== SIZE_BEKLENEN) {
     fails++;

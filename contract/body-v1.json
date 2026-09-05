@@ -118,7 +118,7 @@
   "ayniInsan": {
     "_tanim": "KAPI B (engine/tests/flat_ayni_insan_check.mjs) buradan okur. Butun flat'ler croquis36'da degerlendigi icin bel/gogus/kalca y'si ve omuz ucu x'i HER flat'te ayni olmak zorunda (HEDEF madde 5). Tolerans null iken kapi yalniz OLCER ve basar; F1 tolerans yazinca kapi kirmizi/yesil verir. Hukum GEOMETRI uzerindedir: ilan edilen nitelik cizimle mutabik olmak zorunda (belYarimMutabakat), beden kimligi croquis36 olmak zorunda (data-size).",
     "toleransMM": null,
-    "olculenler": ["bustLine.y", "waist.y", "hip.y", "shoulderTip.x", "cizimBelYarim", "cizimBustYarim", "cizimKalcaYarim", "belYarimMutabakat (ilan - cizim)", "data-size == svgNitelikleri.data-size"],
+    "olculenler": ["bustLine.y", "waist.y", "hip.y", "shoulderTip.x", "cizimBelYarim", "cizimBustYarim", "cizimKalcaYarim", "belYarimMutabakat (cizim - ilan)", "data-size == svgNitelikleri.data-size"],
     "kaynak": null,
     "svgNitelikleri": {
       "_tanim": "Karar ajani #5: flat SVG'sinin KAPI B'ye konustugu nitelik adlari SOZLESMEDIR. F2'nin C++ flat'i AYNI adlari AYNI anlamda basar; kapi ve bu blok degismez. Bugun bu adlari web/lib/flat-from-pattern.js yaziyor.",
@@ -128,7 +128,7 @@
       "data-manken-bust-y": { "anlam": "bustLine.y, mm, grup koordinatinda" },
       "data-manken-bel-y": { "anlam": "waist.y, mm" },
       "data-manken-kalca-y": { "anlam": "hip.y, mm — croquis36 hip landmark'indan; bel y + sabit DEGIL" },
-      "data-manken-bel-yarim-mm": { "anlam": "bel hattinda siluet yari-genisligi, mm; cizimden olculenle mutabik olmak zorunda" },
+      "data-manken-bel-yarim-mm": { "anlam": "bel hattinda siluet yari-genisligi, mm; cizimden olculenle mutabik olmak zorunda. Isaret tek tanim: belYarimMutabakat = cizim - ilan, pozitif = ilan EKSIK (kapi tablo basligi ciz-ilan). mannequin-chart-v1 v2.donusum bu niteligi donusum-ONCESI deger diye tanimliyordu — o tanim ESKI, bu gecer." },
       "data-omuz-uc": { "anlam": "'x y' — shoulderTip, mm; omuzsuz gorunumde de basilir (croquis36 bedeninden), cunku origin bedenin omuz cizgisidir" },
       "grupKoordinati": { "deger": "y=0 omuz cizgisi (neckBase hizasi), +y asagi, x=0 CF", "anlam": "koordinat.origin ile ayni cumle; etek dahil her gorunum bu origin'de (istisna yok)" }
     },
@@ -142,7 +142,7 @@
       "cizimBustYarim_mm": { "min": 176.9, "max": 244.2, "maxMin": 67.3 },
       "cizimKalcaYarim_mm": { "min": 194.1, "max": 250.7, "maxMin": 56.6 },
       "hipY_not": "hip.y bugun her flat'te waist.y + 200.0 mm SABIT (web/lib/flat-from-pattern.js:137 MANKEN_KALCA_DERINLIK_MM, 9/9 flat ayni dusus). Bu bir olcum degil; kalca hatti y sutunu bel y'nin kopyasidir. F2 sonrasi hip.y croquis36 landmark'indan gelir.",
-      "belMutabakat_not": "9/9 flat'te cizimden olculen bel yari-genislik, ilan edilen data-manken-bel-yarim-mm'den tam 12.7 mm buyuk (= flat-from-pattern.js:136 MANKEN_FARK_CEYREK_MM 12.7417). Ilan carpan oncesi, cizim carpan sonrasi: ilan ile cizim ayni sey degil. Tolerans dolunca KIRMIZI.",
+      "belMutabakat_not": "ciz-ilan = +12.7 (9/9 flat): cizimden olculen bel yari-genislik, ilan edilen data-manken-bel-yarim-mm'den tam 12.7 mm buyuk, yani ilan 12.7 mm EKSIK (= flat-from-pattern.js:136 MANKEN_FARK_CEYREK_MM 12.7417). Ilan carpan oncesi, cizim carpan sonrasi: ilan ile cizim ayni sey degil. Tolerans dolunca KIRMIZI.",
       "etek_not": "07-etek-a-line: bel y -49.2, omuz ucu yok, cizim ust kenari -49.2 — gorunum origin'i beden landmark'i degil (bel ustu). F2'de etek de omuz cizgisi origin'ine baglanir, istisna olmaz (karar ek dokum c)."
     }
   },
