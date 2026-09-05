@@ -5,13 +5,13 @@
 #   bash KOSU/sinyal.sh kabul P3   tek fazin kabulunu kos
 #   bash KOSU/sinyal.sh muhurle    muhur yaz (yalniz ana oturum, faz baslamadan)
 #   bash KOSU/sinyal.sh kapat P3   kabul + tam sinyal yesilse fazi tabana isle
-# Taban durumu KOSU-STITCHU.md icindeki tek satirda: <!-- sinyal.taban dallanma=436 kapanan= -->
+# Taban durumu 0509-kosu.md icindeki tek satirda: <!-- sinyal.taban dallanma=436 kapanan= -->
 # Isci bu dosyaya DOKUNMAZ (muhurlu).
 set -u; cd "$(git rev-parse --show-toplevel)" || exit 2
-DOC=KOSU-STITCHU.md
+DOC=0509-kosu.md
 taban_oku(){ grep -oE '<!-- sinyal\.taban [^>]*-->' $DOC | grep -oE "$1=[^ >]*" | cut -d= -f2; }
 taban_yaz(){ python3 - "$1" "$2" <<'PY'
-import re,sys;k,v=sys.argv[1],sys.argv[2];p='KOSU-STITCHU.md';s=open(p).read()
+import re,sys;k,v=sys.argv[1],sys.argv[2];p='0509-kosu.md';s=open(p).read()
 s=re.sub(r'(<!-- sinyal\.taban [^>]*?)'+k+r'=[^ >]*',lambda m:m.group(1)+k+'='+v,s);open(p,'w').write(s)
 PY
 }
@@ -208,8 +208,8 @@ sinyal(){ MOD=$1; K=0; echo "== SINYAL ($MOD) $(date '+%Y-%m-%d %H:%M') HEAD $(g
       [ "$a" = 1 ] && [ "$b" = 1 ] && echo "  YESIL bilinen kirmizi pinleri sabit (34 hukum, 1 ihlal)" || { echo "  KIRMIZI pin degisti: flat_ayni=$a cizim=$b (regresyon ya da ilan guncellenmeli)"; K=1; }
     fi
   fi
-  echo "-- 5 madde defteri (KOSU-STITCHU.md)"; awk '/^### Madde defteri/,/^### Nerede/' KOSU-STITCHU.md | grep -E '^\| [0-9§]' | sed 's/^/  /'
-  echo "-- 6 nerede kaldik"; awk '/^### Nerede kaldık/,0' KOSU-STITCHU.md | tail -n +2 | grep -v '^$' | tail -3 | sed 's/^/  /'
+  echo "-- 5 defter (0509-kosu.md §5.1-5.2)"; grep -E '^5\.[12]\.' 0509-kosu.md | sed 's/^/  /'
+  echo "-- 6 nerede kaldik (KOSU/0509-ilerleme.md)"; grep -E '^\| 20' KOSU/0509-ilerleme.md | tail -2 | cut -c1-200 | sed 's/^/  /'
   [ $K -eq 0 ] && echo "== SINYAL: YESIL" || { echo "== SINYAL: KIRMIZI"; exit 1; }
 }
 case "${1:-hizli}" in
