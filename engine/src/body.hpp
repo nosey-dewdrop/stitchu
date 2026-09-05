@@ -38,13 +38,18 @@ public:
     double ringBackFrac(const std::string& name) const;          // arka yay payi (0.5 yoksa)
     double scalar(const std::string& name) const;                // "length.arm", "width.crossBack", "angle.shoulderSlope"
     bool hasScalar(const std::string& name) const;
-    // Halka uzerinde nokta: halkanin y'sinde, yari-genislik a = ayni adli
-    // landmark'in x'i, yari-derinlik b cevreden cozulur (elips cevre formulu).
+    // Halka uzerinde nokta: halkanin y'sinde. Kesit (contract halkaKesitOran):
+    //  - ANSUR II'li halkalar: a = breadthOverGirth x cevre/2, b = depthOverGirth x cevre/2,
+    //    SUPERELIPS |x/a|^n + |z/b|^n = 1, n cevre kapanacak sekilde cozulur (ringExponent);
+    //  - digerleri: ELIPS, a/b = halkaKesitOran, a cevreden (Ramanujan).
     // aciDeg 0 = sag yan (+x), 90 = on (+z), 180 = sol, 270 = arka.
+    // gercek36/graded landmark.x == ringHalfWidth(halka): TEK genislik tanimi (F1 tur 4).
     BodyPoint point(const std::string& ringName, double aciDeg) const;
-    double ringHalfWidth(const std::string& ringName) const;     // a, mm (3B yari eksen; landmark.x degil)
+    double ringHalfWidth(const std::string& ringName) const;     // a, mm (on izdusum yari genisligi)
     double ringHalfDepth(const std::string& ringName) const;     // b, mm
+    double ringExponent(const std::string& ringName) const;      // superelips n (elips halkada 2.0)
     static double ringAspect(const std::string& ringName);       // a/b, contract halkaKesitOran
+    static bool ringHasBreadth(const std::string& ringName);     // breadthOverGirth.<halka> contract'ta var mi
     std::vector<std::string> landmarkNames() const;
     std::vector<std::string> ringNames() const;
 
@@ -60,6 +65,7 @@ private:
     std::vector<LM> lm_;
     std::vector<RG> rg_;
     std::vector<SC> sc_;
+    mutable std::vector<std::pair<std::string, double>> expCache_;
     void set(const std::string& name, double x, double y);
     void setRing(const std::string& name, double g, double bf);
     void setScalar(const std::string& name, double v);

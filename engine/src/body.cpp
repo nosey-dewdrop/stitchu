@@ -101,27 +101,7 @@ Body Body::graded(const std::string& size) {
     const double arm = G("length.arm");
     const double underbustOran = gradeConst("girth.underbust_oran");
 
-    b.set("landmark.nape", 0.0, -napeDrop);
-    b.set("landmark.neckBase", r1(neckHalf), 0.0);
-    b.set("landmark.neckFront", 0.0, r1(neckHalf * gradeConst("neckFrontOverHalfNeck")));
-    b.set("landmark.shoulderTip", r1(tipX), r1(tipY));
-    b.set("landmark.underarm", bust / 4.0, r1(underarmY));
-    b.set("landmark.bustApex", r1(apexX), r1(apexY));
-    b.set("landmark.bustLine", bust / 4.0, r1(apexY));
-    b.set("landmark.underbust", r1(bust * underbustOran / 4.0), r1(r1(apexY) + gradeConst("underbustApexDropMM")));
-    b.set("landmark.waist", waist / 4.0, r1(waistY));
-    b.set("landmark.highHip", G("girth.highHip") / 4.0, r1(waistY + gradeConst("length.waistToHighHip")));
-    b.set("landmark.hip", hip / 4.0, r1(hipY));
-    b.set("landmark.crotch", 0.0, r1(waistY + G("length.bodyRise")));
-    b.set("landmark.knee", 0.0, r1(waistY + G("length.waistToKnee")));
-    b.set("landmark.ankle", 0.0, r1(waistY + G("length.waistToFloor") - gradeConst("ankleFloor")));
-    // Kol sarkik, govdenin yanina bitisik: eksen x = koltukalti yarimi + ustkol yari kalinligi
-    // (girth.biceps / 2pi, daire kesit — contract'ta DOGRULANMADI beyanli). Eski x = shoulderTip.x
-    // govdenin icinden geciyordu (F1 hakem kusuru); gercek36 landmark.elbow/wrist kaynak alaninda.
-    const double armX = r1(bust / 4.0 + G("girth.biceps") / (2.0 * kPi));
-    b.set("landmark.elbow", armX, r1(r1(tipY) + r1(gradeConst("length.shoulderToElbow_oran") * arm)));
-    b.set("landmark.wrist", armX, r1(r1(tipY) + arm));
-
+    // Halkalar ONCE: landmark x'leri ringHalfWidth'ten okunur (tek genislik tanimi, F1 tur 4).
     b.setRing("girth.neckBase", G("girth.neckBase"), 0.5);
     b.setRing("girth.upperBust", bust - gradeConst("girth.upperBust_fark"), contract::kNoValue);
     b.setRing("girth.bust", bust, G("arkaPay.bust"));
@@ -134,6 +114,29 @@ Body Body::graded(const std::string& size) {
     b.setRing("girth.wrist", G("girth.wrist"), contract::kNoValue);
     b.setRing("girth.armhole", contract::kNoValue, contract::kNoValue);
     b.setRing("girth.knee", contract::kNoValue, contract::kNoValue);
+
+    b.set("landmark.nape", 0.0, -napeDrop);
+    b.set("landmark.neckBase", r1(neckHalf), 0.0);
+    b.set("landmark.neckFront", 0.0, r1(neckHalf * gradeConst("neckFrontOverHalfNeck")));
+    b.set("landmark.shoulderTip", r1(tipX), r1(tipY));
+    // Gercek bedenin ON IZDUSUMU: x = kesit yari genisligi (ANSUR II breadthOverGirth x cevre/2),
+    // cevre/4 (tup yasasi) DEGIL — o flat'in (croquis) genisligidir (F1 hakem tur 3 kusur 1).
+    b.set("landmark.underarm", r1(b.ringHalfWidth("girth.upperBust")), r1(underarmY));
+    b.set("landmark.bustApex", r1(apexX), r1(apexY));
+    b.set("landmark.bustLine", r1(b.ringHalfWidth("girth.bust")), r1(apexY));
+    b.set("landmark.underbust", r1(b.ringHalfWidth("girth.underbust")), r1(r1(apexY) + gradeConst("underbustApexDropMM")));
+    b.set("landmark.waist", r1(b.ringHalfWidth("girth.waist")), r1(waistY));
+    b.set("landmark.highHip", r1(b.ringHalfWidth("girth.highHip")), r1(waistY + gradeConst("length.waistToHighHip")));
+    b.set("landmark.hip", r1(b.ringHalfWidth("girth.hip")), r1(hipY));
+    b.set("landmark.crotch", 0.0, r1(waistY + G("length.bodyRise")));
+    b.set("landmark.knee", 0.0, r1(waistY + G("length.waistToKnee")));
+    b.set("landmark.ankle", 0.0, r1(waistY + G("length.waistToFloor") - gradeConst("ankleFloor")));
+    // Kol sarkik: eksen omuz ucundan duz asagi (x = shoulderTip.x). Omuz ucu gogus yarimindan
+    // genis oldugu icin (ANSUR II biacromial/2 179 > chestbreadth/2 125) kol govdenin disinda
+    // kalir; eski 'koltukalti yarimi + biceps/2pi' (253.0) tup yariminin artefaktiydi (F1 tur 3).
+    const double armX = r1(tipX);
+    b.set("landmark.elbow", armX, r1(r1(tipY) + r1(gradeConst("length.shoulderToElbow_oran") * arm)));
+    b.set("landmark.wrist", armX, r1(r1(tipY) + arm));
 
     for (const auto& c : contract::kBodyGradeCols) {
         const std::string n = c.name;
@@ -152,8 +155,12 @@ Body Body::graded(const std::string& size) {
 
 Body Body::croquisOf(const Body& real) {
     Body b; b.id_ = "croquis@" + real.id();
-    const double bustHalf = real.landmark("landmark.bustLine").x;
-    const double hipHalf = real.landmark("landmark.hip").x;
+    // Croquis = duz serilmis giysinin bedeni: girth landmark x'leri cevre/4 (tup yasasi, on+arka
+    // ust uste), gercek bedenin izdusumu (ringHalfWidth) DEGIL. Omuz cizgisi duz serilince
+    // ikiye katlanmaz, o yuzden croquis omuz ucu (sevkPoz 0.875 x gogus yarimi) gogus yariminin
+    // icinde kalir — gercek bedende tersi (body_check g).
+    const double bustHalf = real.ring("girth.bust") / 4.0;
+    const double hipHalf = real.ring("girth.hip") / 4.0;
     const double stretch = croquisOran("dikeyUzatma");
     const double torso = real.landmark("landmark.waist").y * stretch;
     // Yatay oranlarin paydasi omuz ucu x'idir, bust yarimi degil (F1 duzeltme
@@ -181,7 +188,7 @@ Body Body::croquisOf(const Body& real) {
     b.set("landmark.bustLine", bustHalf, cApex);
     b.set("landmark.underbust", r1(bustHalf * gradeConst("girth.underbust_oran")), r1(cApex + croquisOran("underbustDropMM")));
     b.set("landmark.waist", cw, waistY);
-    b.set("landmark.highHip", real.landmark("landmark.highHip").x, r1(waistY + gradeConst("length.waistToHighHip") * stretch));
+    b.set("landmark.highHip", real.ring("girth.highHip") / 4.0, r1(waistY + gradeConst("length.waistToHighHip") * stretch));
     b.set("landmark.hip", hipHalf, hipY);
     for (const char* n : {"landmark.crotch", "landmark.knee", "landmark.ankle"}) b.set(n, 0.0, r1(real.landmark(n).y * stretch));
     // Kol: sevkPoz kol acisi (croquisOranlar.kolAcisiDeg = flat-convention sevkPoz.kolAcisiDeg.taban,
@@ -255,26 +262,77 @@ double Body::ringAspect(const std::string& ringName) {
     throw std::runtime_error("body: halkaKesitOran yok: " + ringName);
 }
 
-// Kesit elipsi: cevre = ring, a/b = halkaKesitOran (contract, DOGRULANMADI beyanli).
-// landmark.x KULLANILMAZ: o duz-serili yari genislik (cevre/4), 3B yari eksen degil.
+namespace {
+bool kesitVal(const char* prefix, const std::string& ring, double& out) {
+    const std::string key = std::string(prefix) + ring;
+    for (const auto& c : contract::kBodyKesitOran)
+        if (key == c.name) { out = c.v; return true; }
+    return false;
+}
+// Superelips |x/a|^n + |z/b|^n = 1 parametrik: x = a sgn(cos t)|cos t|^(2/n), z = b sgn(sin t)|sin t|^(2/n).
+double sePow(double c, double e) { return (c < 0 ? -1.0 : 1.0) * std::pow(std::fabs(c), e); }
+} // namespace
+
+bool Body::ringHasBreadth(const std::string& ringName) { double v; return kesitVal("breadthOverGirth.", ringName, v); }
+
+// Kesit (contract halkaKesitOran, F1 tur 4):
+//  - ANSUR II'li halka: a = breadthOverGirth x cevre/2 (on izdusum yari genisligi = landmark.x),
+//    b = depthOverGirth x cevre/2; superelips ustelini ringExponent cevreye gore cozer.
+//  - diger halka: elips, a/b = halkaKesitOran, a = P / ramanujan(1, 1/k).
 double Body::ringHalfWidth(const std::string& ringName) const {
     if (!hasRing(ringName)) throw std::runtime_error("body: halkanin cevresi yok: " + ringName);
-    const double P = ring(ringName), k = ringAspect(ringName);
-    // ramanujan(a, a/k) a ile dogrusal olcekler: a = P / ramanujan(1, 1/k)
+    const double P = ring(ringName);
+    double bo;
+    if (kesitVal("breadthOverGirth.", ringName, bo)) return bo * P / 2.0;
+    const double k = ringAspect(ringName);
     return P / ellipsePerimeterRamanujan(1.0, 1.0 / k);
 }
-double Body::ringHalfDepth(const std::string& ringName) const { return ringHalfWidth(ringName) / ringAspect(ringName); }
+double Body::ringHalfDepth(const std::string& ringName) const {
+    double dg;
+    if (kesitVal("depthOverGirth.", ringName, dg)) return dg * ring(ringName) / 2.0;
+    return ringHalfWidth(ringName) / ringAspect(ringName);
+}
+
+namespace {
+// point() ile ayni orneklemede kesit cevresi (arka pay dahil); body_check (a) da 2000 adimla olcer.
+double sectionPerimeter(double a, double b, double bf, double n) {
+    const int N = 2000; double per = 0; double px = a, pz = 0;
+    for (int k = 1; k <= N; ++k) {
+        const double t = 2.0 * kPi * k / N;
+        const double bz = std::sin(t) >= 0 ? b * (1.0 - bf) / 0.5 : b * bf / 0.5;
+        const double x = a * sePow(std::cos(t), 2.0 / n), z = bz * sePow(std::sin(t), 2.0 / n);
+        per += std::hypot(x - px, z - pz); px = x; pz = z;
+    }
+    return per;
+}
+} // namespace
+
+double Body::ringExponent(const std::string& ringName) const {
+    if (!ringHasBreadth(ringName)) return 2.0;
+    for (const auto& c : expCache_) if (c.first == ringName) return c.second;
+    const double P = ring(ringName), a = ringHalfWidth(ringName), b = ringHalfDepth(ringName), bf = ringBackFrac(ringName);
+    // n=2 elips cevreyi eksik kapatir (ANSUR: %5-13), n->inf dikdortgen 4(a+b) fazla; arada tek kok (cevre n'de monoton).
+    double lo = 2.0, hi = 40.0;
+    if (sectionPerimeter(a, b, bf, lo) > P) hi = lo;               // elips zaten fazla: n=2 kalir (sapma body_check'te gorunur)
+    for (int i = 0; i < 60 && hi - lo > 1e-9; ++i) {
+        const double mid = 0.5 * (lo + hi);
+        if (sectionPerimeter(a, b, bf, mid) < P) lo = mid; else hi = mid;
+    }
+    const double n = 0.5 * (lo + hi);
+    expCache_.push_back({ringName, n});
+    return n;
+}
 
 BodyPoint Body::point(const std::string& ringName, double aciDeg) const {
     const std::string lm = landmarkOfRing(ringName);
     if (lm.empty()) throw std::runtime_error("body: halkanin landmark'i yok: " + ringName);
     const BodyPoint c = landmark(lm);
-    const double a = ringHalfWidth(ringName), b = ringHalfDepth(ringName);
+    const double a = ringHalfWidth(ringName), b = ringHalfDepth(ringName), n = ringExponent(ringName);
     const double t = aciDeg * kPi / 180.0;
     // arka yay payi: arka yarim (z<0) derinligi backFrac/0.5, on yarim (1-backFrac)/0.5 ile olceklenir
     const double bf = ringBackFrac(ringName);
     const double bz = std::sin(t) >= 0 ? b * (1.0 - bf) / 0.5 : b * bf / 0.5;
-    return {a * std::cos(t), c.y, bz * std::sin(t)};
+    return {a * sePow(std::cos(t), 2.0 / n), c.y, bz * sePow(std::sin(t), 2.0 / n)};
 }
 
 std::vector<std::string> Body::landmarkNames() const {

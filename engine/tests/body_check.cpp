@@ -5,7 +5,7 @@
 //      point(halka, aci) ile cizilen elipsin cevresi cevreMM'in %0.5'i icinde
 //  (b) landmark y sirasi: contract bedenler.<id>.landmarkSirasi (tier dizisi; tier ici esit
 //      izinli, tier'lar arasi kesin artan). Sira kaynagin dedigidir, testin varsayimi degil:
-//      gercek36'da koltukalti gogus hattinin USTUNDE, croquis36'da ALTINDA (karar ajani 1).
+//      F1 tur 4: satilan flat olcumu sonrasi iki bedende AYNI sira (koltukalti gogus hattinin ustunde).
 //      graded EU34-44 gercek36 sirasini kullanir (ayni formul).
 //  (c) iki beden farki: Body(croquis36)-Body(gercek36) == farkTablosu (kapiToleransMM)
 //  (d) parametrik: graded("EU36") == fromContract("gercek36") ve
@@ -16,7 +16,9 @@
 //  (f) croquis36 bandlari: body.gen.hpp kCroquisBand (figure-bands.json waist_bust / bust_hip,
 //      flat-convention sevkPoz omuzGogusOran / omuzEgimiDeg) — croquis bandlarin DISINA cikamaz;
 //      gercek36'da koltukalti gogus hattinin ustunde (Aldrich armscye depth < Brusttiefe)
-//  (g) kol govdenin DISINDA: elbow/wrist x > underarm x, iki beden (F1 hakem: kol silueti kesiyordu)
+//  (g) gercek+graded: shoulderTip.x >= bustLine.x ve >= underarm.x (omuz gogsun disinda; ANSUR II), kol ekseni
+//      elbow/wrist x >= underarm x (iki beden), landmark.x == ringHalfWidth (tek genislik); croquis girth x == cevre/4
+//  (h) siluet dizisi (fig) bedenin kendi y sirasinda ve monoton — sabit dizi zikzak cizerdi
 //
 // argv[1] verilirse KOSU/ciktilar/beden-iki.svg cizer: iki bedenin on gorunusu
 // yan yana (halka cizgileri + landmark etiketleri) + 34-44 serisinin siluetleri.
@@ -94,6 +96,12 @@ static double yard(const char* name) {
     for (const auto& r : stitchu::contract::kBodyCizimYardimcisi) if (std::string(r.name) == name) return r.v;
     throw std::runtime_error(std::string("cizimYardimcisi yok: ") + name);
 }
+// Govde siluet dizisi: neckBase + shoulderTip + govde halkalari, bedenin kendi y'sine gore siralanir.
+static std::vector<std::string> siluetSirasi(const Body& b) {
+    std::vector<std::string> v = {"landmark.neckBase", "landmark.shoulderTip", "landmark.underarm", "landmark.bustLine", "landmark.underbust", "landmark.waist", "landmark.highHip", "landmark.hip"};
+    std::stable_sort(v.begin(), v.end(), [&](const std::string& a, const std::string& c) { return b.landmark(a).y < b.landmark(c).y; });
+    return v;
+}
 static std::string fig(const Body& b, double ox, double oy, double s, bool labels, const std::string& title) {
     std::ostringstream o;
     const double dizDis = yard("bacakDisDizOverHip"), bilekDis = yard("bacakDisBilekOverHip"), dizIc = yard("bacakIcDizOverHip"), bilekIc = yard("bacakIcBilekOverHip"), agYarim = yard("agHalkaYarimOverHip");
@@ -102,11 +110,13 @@ static std::string fig(const Body& b, double ox, double oy, double s, bool label
     auto P = [&](const char* n) { return b.landmark(n); };
     o << "<g class=\"beden\" data-body=\"" << b.id() << "\">\n";
     o << "<text x=\"" << X(0) << "\" y=\"" << Y(-95) << "\" text-anchor=\"middle\" class=\"baslik\">" << title << "</text>\n";
-    // yari siluet (sag) ve aynasi: neckBase -> shoulderTip -> underarm -> bustLine -> underbust -> waist -> highHip -> hip
-    const char* seq[] = {"landmark.neckBase", "landmark.shoulderTip", "landmark.underarm", "landmark.bustLine", "landmark.underbust", "landmark.waist", "landmark.highHip", "landmark.hip"};
+    // yari siluet (sag) ve aynasi: govde landmark'lari BEDENIN KENDI y sirasinda (siluetSirasi):
+    // sabit dizi degil — gercek36'da koltukalti gogus hattinin ustunde, baska bir bedende tersi
+    // olabilir; sabit dizi zikzak cizerdi (F1 hakem tur 3 kusur 4).
+    const std::vector<std::string> seq = siluetSirasi(b);
     for (int side : {1, -1}) {
         o << "<polyline class=\"siluet\" points=\"";
-        for (const char* n : seq) { BodyPoint p = P(n); o << X(side * p.x) << "," << Y(p.y) << " "; }
+        for (const auto& n : seq) { BodyPoint p = P(n.c_str()); o << X(side * p.x) << "," << Y(p.y) << " "; }
         BodyPoint h = P("landmark.hip"), c = P("landmark.crotch"), k = P("landmark.knee"), a = P("landmark.ankle");
         // bacak: kalcadan diz ve bilege dogru daralan dis hat (oranlar contract cizimYardimcisi, DOGRULANMADI beyanli)
         o << X(side * h.x * dizDis) << "," << Y(k.y) << " " << X(side * h.x * bilekDis) << "," << Y(a.y) << "\" />\n";
@@ -153,8 +163,9 @@ static void writeSvg(const std::string& path) {
     o << "<rect width=\"100%\" height=\"100%\" fill=\"#fff\"/>\n";
     o << "<text x=\"20\" y=\"26\" class=\"baslik\">contract/body-v1.json — iki beden, tek sozlesme (mm, y=0 omuz cizgisi, +y asagi)</text>\n";
     o << "<text x=\"20\" y=\"44\" class=\"not\">Sol: gercek36 (kalibin bedeni; Burda/Aldrich/Mueller). Orta: croquis36 (flat'in bedeni; Zoe Hong flat template oranlari + tech-pack poz). Sag: 34-44 kalip serisi (Body::graded). Kirmizi kesik = halka, mavi = omuz cizgisi origin.</text>\n";
-    o << fig(g, 300, 150, s, true, "gercek36 — kalip (bust 840 / bel 660 / kalca 900)");
-    o << fig(c, 950, 150, s, true, "croquis36 — flat (ayni tup, template oran; kol sevkPoz 30 derece)");
+    o << fig(g, 300, 150, s, true, "gercek36 — kalip (bust 840 / bel 660 / kalca 900; on izdusum ANSUR II)");
+    { double kol = 0; for (const auto& r : stitchu::contract::kCroquisOran) if (std::string(r.name) == "kolAcisiDeg") kol = r.v;
+      o << fig(c, 950, 150, s, true, "croquis36 — flat (girth x = cevre/4 tup; kol satilan flat medyani " + f1(kol) + " derece)"); }
     // fark tablosu
     { double y = 640; o << "<text class=\"baslik\" x=\"1280\" y=\"" << y << "\" style=\"font-size:13px\">fark croquis36 - gercek36 (dx, dy) mm</text>\n";
       for (const auto& r : stitchu::contract::kBodyFark) { if (r.x == 0 && r.y == 0) continue; y += 15; o << "<text class=\"etiket\" data-landmark=\"" << r.name << "\" x=\"1280\" y=\"" << y << "\">" << kisa(r.name) << ": " << f1(r.x) << ", " << f1(r.y) << "</text>\n"; }
@@ -169,7 +180,7 @@ static void writeSvg(const std::string& path) {
         x += 78;
     }
     o << "</g>\n";
-    o << "<text class=\"not\" x=\"20\" y=\"" << H - 30 << "\">Kaynak: contract/body-v1.json (her sayinin yaninda kaynak; DOGRULANMADI etiketli olanlar orada adiyla). Cizim: engine/tests/body_check.cpp (C++); diz/bilek/ag oranlari contract cizimYardimcisi (DOGRULANMADI, yalniz bu cizim). Koltukalti: gercek gogus hattinin USTUNDE, croquis ALTINDA (0.625 torso, karar 1) — sira contract landmarkSirasi.</text>\n";
+    o << "<text class=\"not\" x=\"20\" y=\"" << H - 30 << "\">Kaynak: contract/body-v1.json (her sayinin yaninda kaynak; DOGRULANMADI etiketli olanlar orada adiyla). Cizim: engine/tests/body_check.cpp (C++); diz/bilek/ag oranlari contract cizimYardimcisi (DOGRULANMADI, yalniz bu cizim). Gercek x = ANSUR II on izdusum (superelips kesit), croquis x = cevre/4 (duz serilmis giysi). Koltukalti iki bedende gogus hattinin ustunde (croquis 0.625 torso: sablon + satilan flat medyani 0.61) — sira contract landmarkSirasi.</text>\n";
     o << "<text class=\"not\" x=\"20\" y=\"" << H - 14 << "\">Damla icin: flat'ler ORTADAKI iskelete oturur (omuz/koltukalti/gogus/bel/kalca y'leri her flat'te ayni), kaliplar SAGDAKI serinin ustune cizilir.</text>\n";
     o << "</svg>\n";
     std::ofstream f(path); f << o.str();
@@ -222,11 +233,34 @@ int main(int argc, char** argv) {
       // croquis36 icin koltukalti/gogus hatti sirasi (b)'de contract'tan okunur; burada varsayim yazilmaz (karar ajani 1).
       ok(g.landmark("landmark.underarm").y < g.landmark("landmark.bustLine").y, "gercek koltukalti gogus hattinin USTUNDE (Aldrich armscye depth 206 < Brusttiefe)"); }
 
-    std::printf("(g) kol govdenin disinda\n");
+    std::printf("(g) omuz gogsun disinda, kol ekseni koltukaltinin disinda (F1 tur 4)\n");
+    { // Gercek beden (ve 6 graded): on izdusum — omuz ucu gogus yariminin DISINDA (ANSUR II: 1986/1986 kadinda
+      // biacromial > chestbreadth), kol ekseni (elbow/wrist x) koltukalti yariminin disinda/uzerinde.
+      std::vector<Body> reals = {g}; for (const auto& sz : Body::gradeSizes()) reals.push_back(Body::graded(sz));
+      for (const Body& b : reals) {
+          const double side = b.landmark("landmark.underarm").x, bustX = b.landmark("landmark.bustLine").x, tipX = b.landmark("landmark.shoulderTip").x;
+          ok(tipX >= bustX && tipX >= side, b.id() + ": shoulderTip.x " + f1(tipX) + " >= bustLine.x " + f1(bustX) + " ve >= underarm.x " + f1(side) + " (omuz gogsun disinda)");
+          ok(b.landmark("landmark.elbow").x >= side && b.landmark("landmark.wrist").x >= side,
+             b.id() + ": kol ekseni elbow.x " + f1(b.landmark("landmark.elbow").x) + " / wrist.x " + f1(b.landmark("landmark.wrist").x) + " >= koltukalti yarimi " + f1(side));
+          ok(std::fabs(b.landmark("landmark.bustLine").x - b.ringHalfWidth("girth.bust")) <= 0.05 + 1e-9 && std::fabs(b.landmark("landmark.waist").x - b.ringHalfWidth("girth.waist")) <= 0.05 + 1e-9 && std::fabs(b.landmark("landmark.hip").x - b.ringHalfWidth("girth.hip")) <= 0.05 + 1e-9,   // contract 0.1 mm yuvarlar
+             b.id() + ": landmark.x == ringHalfWidth (tek genislik tanimi; bust " + f1(b.ringHalfWidth("girth.bust")) + " bel " + f1(b.ringHalfWidth("girth.waist")) + " kalca " + f1(b.ringHalfWidth("girth.hip")) + ")");
+      }
+      // Croquis: duz serilmis giysi — girth x'leri cevre/4 (iki kat), omuz cizgisi katlanmaz; omuz/gogus orani
+      // sevkPoz bandinda (f) yargilanir, '>=' burada YANLIS hukum olurdu. Kol ekseni yine koltukaltinin disinda.
+      const double cside = c.landmark("landmark.underarm").x;
+      ok(c.landmark("landmark.elbow").x >= cside && c.landmark("landmark.wrist").x >= cside,
+         c.id() + ": kol ekseni elbow.x " + f1(c.landmark("landmark.elbow").x) + " / wrist.x " + f1(c.landmark("landmark.wrist").x) + " >= koltukalti yarimi " + f1(cside));
+      for (const char* n : {"landmark.bustLine", "landmark.hip", "landmark.underarm"})
+          ok(std::fabs(c.landmark(n).x - c.ring(Body::ringOfLandmark(n) == "girth.upperBust" ? "girth.bust" : Body::ringOfLandmark(n)) / 4.0) < 1e-9,
+             c.id() + ": " + std::string(n) + ".x " + f1(c.landmark(n).x) + " == cevre/4 (tup yasasi)");
+    }
+
+    std::printf("(h) siluet dizisi y'de monoton (beden-iki.svg zikzak yapmaz)\n");
     for (const Body* b : {&g, &c}) {
-        const double side = b->landmark("landmark.underarm").x;
-        ok(b->landmark("landmark.elbow").x > side && b->landmark("landmark.wrist").x > side,
-           b->id() + ": elbow.x " + f1(b->landmark("landmark.elbow").x) + " / wrist.x " + f1(b->landmark("landmark.wrist").x) + " > koltukalti yarimi " + f1(side));
+        const auto seq = siluetSirasi(*b); bool mono = true;
+        for (size_t i = 1; i < seq.size(); ++i) if (b->landmark(seq[i]).y < b->landmark(seq[i - 1]).y) mono = false;
+        std::string dizi; for (const auto& n : seq) dizi += kisa(n) + "(" + f1(b->landmark(n).y) + ") ";
+        ok(mono, b->id() + ": siluet " + dizi);
     }
 
     if (argc > 1) writeSvg(argv[1]);

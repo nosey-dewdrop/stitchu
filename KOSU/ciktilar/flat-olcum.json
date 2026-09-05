@@ -1,5 +1,5 @@
 {
- "_ne": "F6-konvansiyon: 5 referans flatin piksel olcumu. Uretici: KOSU/flat-olcum.py",
+ "_ne": "satilan flat piksel olcumu. Uretici: KOSU/flat-olcum.py. Bolum 1: F6-konvansiyon 5 flat bel/gogus; Bolum 2 (F1 kapanis 2026-09-05): 15 flatte kol oyugu tabani / pens ucu / kol acisi",
  "esik": 160,
  "flatler": {
   "13-yuksek-bel-a-line.png": {
@@ -123,5 +123,901 @@
   "n": 2,
   "sinir": "n=2 — kollu uc referansta gogus olculemedigi icin oran iki kolsuz referanstan geliyor; Damla baska referans isaretlerse bu dosya yeniden kosulur ve contract v2 guncellenir"
  },
- "kalca": "OLCULMEDI — bes referansin besinde de bel alti giysi klosu (A etek) govdeyi ortuyor; olculecek sey mankenin kalcasi degil etegin klosu olurdu. En kisitlayici deger: fark 0 (contract v2 kalcayi ve gogsu insan cizelgesinde birakir, yalniz bel donusur)"
+ "kalca": "OLCULMEDI — bes referansin besinde de bel alti giysi klosu (A etek) govdeyi ortuyor; olculecek sey mankenin kalcasi degil etegin klosu olurdu. En kisitlayici deger: fark 0 (contract v2 kalcayi ve gogsu insan cizelgesinde birakir, yalniz bel donusur)",
+ "f1Kapanis": {
+  "_ne": "F1 kapanis: 15 flat, on gorunum, SOL yari. Sayilar orijinal piksel. Oranlar: (y - SNP.y) / (bel.y - SNP.y).",
+  "flatler": {
+   "01-kaftan-maxi-uzun-kol.png": {
+    "OLCULEMEDI": "kaftan: omuz dikisi, kol oyugu ve dogal bel cizimde yok (govde hatti gorunmez)"
+   },
+   "02-uzun-robe-dress.png": {
+    "urun": "Folkwear robe (tarama, 1036 px)",
+    "boyutPX": [
+     1036,
+     1021
+    ],
+    "esik": 160,
+    "kolTipi": "setin",
+    "cfX": 246,
+    "not": "tarama kalitesi dusuk: SNP ve oyuk tohumla (snap); sal yaka SNP penceresini bozar. Kol oyugu 1940 robe: dusuk oyuk",
+    "snp": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      203,
+      168
+     ],
+     "snapPX": [
+      204,
+      168
+     ],
+     "mesafePX": 1.0,
+     "yaricapPX": 8
+    },
+    "bel": {
+     "yontem": "bantta en dar siluet satiri",
+     "pencereX": [
+      100,
+      400
+     ],
+     "bant": [
+      360,
+      400
+     ],
+     "satirY": 373,
+     "solX": 114,
+     "sagX": 369,
+     "genislikPX": 255
+    },
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      145,
+      180
+     ],
+     "snapPX": [
+      146,
+      183
+     ],
+     "mesafePX": 3.16,
+     "yaricapPX": 8
+    },
+    "oyukTabani": {
+     "yontem": "goz tohumu + snap (kose)",
+     "tohum": [
+      169,
+      323
+     ],
+     "snapPX": [
+      169,
+      323
+     ],
+     "mesafePX": 0.0,
+     "yaricapPX": 8
+    },
+    "torsoPX": 205,
+    "oyukOverTorso": 0.7561,
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      100,
+      156,
+      410,
+      452
+     ],
+     "uclar": [
+      [
+       104,
+       420
+      ],
+      [
+       155,
+       410
+      ]
+     ],
+     "orta": [
+      129.5,
+      415.0
+     ],
+     "nMurekkep": 768
+    },
+    "kolAcisiDeg": {
+     "deger": 85.9,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -16.5,
+      232.0
+     ]
+    }
+   },
+   "03-empire-dress-uc-boy.png": {
+    "urun": "Folkwear empire (Simple Version Front, ~200 px figur)",
+    "boyutPX": [
+     1358,
+     1358
+    ],
+    "esik": 160,
+    "kolTipi": "puf",
+    "cfX": 157,
+    "not": "yalniz kol acisi (kisa PUF kol: kol yana acilir, sarkan kol degil — medyanda ayri etiketle)",
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      98,
+      328
+     ],
+     "snapPX": [
+      98,
+      328
+     ],
+     "mesafePX": 0.0,
+     "yaricapPX": 6
+    },
+    "torso": {
+     "OLCULEMEDI": "empire kesim: dogal bel cizimde yok; kare yaka: SNP yok; oyuk puf altinda"
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      22,
+      60,
+      340,
+      385
+     ],
+     "uclar": [
+      [
+       38,
+       340
+      ],
+      [
+       53,
+       384
+      ]
+     ],
+     "orta": [
+      45.5,
+      362.0
+     ],
+     "nMurekkep": 359
+    },
+    "kolAcisiDeg": {
+     "deger": 32.9,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -52.5,
+      34.0
+     ]
+    }
+   },
+   "04-a-line-puff-kol.png": {
+    "urun": "Helen's Closet Holmes, view A",
+    "boyutPX": [
+     1080,
+     1350
+    ],
+    "esik": 160,
+    "kolTipi": "setin",
+    "cfX": 350,
+    "not": "kisa set-in kol, V yaka, buzgulu bel; pens: gogus altindan yana pens, ucu apex vekili",
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      290,
+      312,
+      55,
+      85
+     ],
+     "xy": [
+      295,
+      69
+     ]
+    },
+    "bel": {
+     "yontem": "bantta en dar siluet satiri",
+     "pencereX": [
+      190,
+      510
+     ],
+     "bant": [
+      232,
+      262
+     ],
+     "satirY": 236,
+     "solX": 279,
+     "sagX": 420,
+     "genislikPX": 141
+    },
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      249,
+      89
+     ],
+     "snapPX": [
+      249,
+      89
+     ],
+     "mesafePX": 0.0,
+     "yaricapPX": 6
+    },
+    "oyukTabani": {
+     "OLCULEMEDI": "kol ic kenari govde yan dikisiyle CAKISIK (tek cizgi x~271, y 175-232), kol agzi ic kosesi govdeye deger: oyuk tabani kosesi cizimde yok; zoom ile bakildi (2026-09-05)"
+    },
+    "pensUcu": {
+     "yontem": "pencerede CF'ye en yakin murekkep (pens ucu)",
+     "pencere": [
+      270,
+      296,
+      174,
+      196
+     ],
+     "xy": [
+      283,
+      183
+     ]
+    },
+    "torsoPX": 167,
+    "pensUcuOverTorso": 0.6826,
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      195,
+      266,
+      195,
+      235
+     ],
+     "uclar": [
+      [
+       203,
+       201
+      ],
+      [
+       265,
+       232
+      ]
+     ],
+     "orta": [
+      234.0,
+      216.5
+     ],
+     "nMurekkep": 307
+    },
+    "kolAcisiDeg": {
+     "deger": 83.3,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -15.0,
+      127.5
+     ]
+    }
+   },
+   "05-a-line-top-ve-elbise.png": {
+    "urun": "Helen's Closet March, view A (gri croquis ustunde)",
+    "boyutPX": [
+     1080,
+     1350
+    ],
+    "esik": 100,
+    "kolTipi": "bishop",
+    "cfX": 304,
+    "not": "esik 100: arkadaki croquis govde acik gri, murekkep koyu; uzun bishop kol manset",
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      232,
+      252,
+      245,
+      272
+     ],
+     "xy": [
+      251,
+      246
+     ]
+    },
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      167,
+      277
+     ],
+     "snapPX": [
+      168,
+      277
+     ],
+     "mesafePX": 1.0,
+     "yaricapPX": 6
+    },
+    "oyukTabani": {
+     "yontem": "kol ic kenari - yan dikis arasinda beyaz boslugun ilk satiri",
+     "satirY": 392,
+     "parcalar": [
+      [
+       180,
+       181
+      ],
+      [
+       191,
+       191
+      ]
+     ],
+     "pencere": [
+      180,
+      206,
+      350,
+      400
+     ]
+    },
+    "torso": {
+     "OLCULEMEDI": "empire/yoke kesim: dogal bel cizimde yok"
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      100,
+      165,
+      590,
+      636
+     ],
+     "uclar": [
+      [
+       100,
+       599
+      ],
+      [
+       164,
+       606
+      ]
+     ],
+     "orta": [
+      132.0,
+      602.5
+     ],
+     "nMurekkep": 460
+    },
+    "kolAcisiDeg": {
+     "deger": 83.7,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -36.0,
+      325.5
+     ]
+    }
+   },
+   "06-a-line-puff-kol-varyant.png": {
+    "urun": "Deer&Doe Eleanor, view A",
+    "boyutPX": [
+     1050,
+     1400
+    ],
+    "esik": 160,
+    "kolTipi": "setin",
+    "cfX": 283,
+    "not": "set-in kisa kol (omuzda hafif buzgu); pens: kol oyugundan gogse pens (armhole dart), ucu apex vekili. Oyuk penceresi x<=206: pens cizgisi (x 193-222, y 183-193) dikise bagli, pencereye girse tek parca sayilir",
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      225,
+      250,
+      60,
+      95
+     ],
+     "xy": [
+      234,
+      76
+     ]
+    },
+    "bel": {
+     "yontem": "bantta en dar siluet satiri",
+     "pencereX": [
+      111,
+      475
+     ],
+     "bant": [
+      230,
+      300
+     ],
+     "satirY": 258,
+     "solX": 201,
+     "sagX": 346,
+     "genislikPX": 145
+    },
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      194,
+      88
+     ],
+     "snapPX": [
+      194,
+      88
+     ],
+     "mesafePX": 0.0,
+     "yaricapPX": 6
+    },
+    "oyukTabani": {
+     "yontem": "kol ic kenari - yan dikis arasinda beyaz boslugun ilk satiri",
+     "satirY": 187,
+     "parcalar": [
+      [
+       192,
+       193
+      ],
+      [
+       204,
+       205
+      ]
+     ],
+     "pencere": [
+      176,
+      206,
+      150,
+      230
+     ]
+    },
+    "pensUcu": {
+     "yontem": "pencerede CF'ye en yakin murekkep (pens ucu)",
+     "pencere": [
+      205,
+      230,
+      172,
+      195
+     ],
+     "xy": [
+      221,
+      184
+     ]
+    },
+    "torsoPX": 182,
+    "oyukOverTorso": 0.6099,
+    "pensUcuOverTorso": 0.5934,
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      125,
+      190,
+      200,
+      240
+     ],
+     "uclar": [
+      [
+       127,
+       209
+      ],
+      [
+       189,
+       213
+      ]
+     ],
+     "orta": [
+      158.0,
+      211.0
+     ],
+     "nMurekkep": 431
+    },
+    "kolAcisiDeg": {
+     "deger": 73.7,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -36.0,
+      123.0
+     ]
+    }
+   },
+   "07-uzun-kol-akiskan-etek.png": {
+    "urun": "Deer&Doe Celia, gorunum A",
+    "boyutPX": [
+     1050,
+     1522
+    ],
+    "esik": 160,
+    "kolTipi": "setin",
+    "cfX": 278,
+    "not": "kisa set-in kol (omuzda buzgu), V yaka, bel dikisi; pens yok (buzgu)",
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      245,
+      265,
+      15,
+      45
+     ],
+     "xy": [
+      254,
+      29
+     ]
+    },
+    "bel": {
+     "yontem": "bantta en dar siluet satiri",
+     "pencereX": [
+      51,
+      443
+     ],
+     "bant": [
+      194,
+      240
+     ],
+     "satirY": 213,
+     "solX": 207,
+     "sagX": 349,
+     "genislikPX": 142
+    },
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      195,
+      60
+     ],
+     "snapPX": [
+      194,
+      60
+     ],
+     "mesafePX": 1.0,
+     "yaricapPX": 6
+    },
+    "oyukTabani": {
+     "yontem": "kol ic kenari - yan dikis arasinda beyaz boslugun ilk satiri",
+     "satirY": 167,
+     "parcalar": [
+      [
+       193,
+       195
+      ],
+      [
+       198,
+       200
+      ]
+     ],
+     "pencere": [
+      185,
+      215,
+      120,
+      190
+     ]
+    },
+    "torsoPX": 184,
+    "oyukOverTorso": 0.75,
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      140,
+      190,
+      170,
+      200
+     ],
+     "uclar": [
+      [
+       140,
+       173
+      ],
+      [
+       189,
+       181
+      ]
+     ],
+     "orta": [
+      164.5,
+      177.0
+     ],
+     "nMurekkep": 253
+    },
+    "kolAcisiDeg": {
+     "deger": 75.8,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -29.5,
+      117.0
+     ]
+    }
+   },
+   "08-empire-buzgu-etek.png": {
+    "OLCULEMEDI": "kimono kol: omuz ucu ve kol oyugu yok"
+   },
+   "09-a-line-puff-kol-midi.png": {
+    "OLCULEMEDI": "kare yaka omuzsuz: SNP yok; balon kol bagli, kol ekseni tanimsiz"
+   },
+   "10-princess-a-line.png": {
+    "urun": "Alice (4375 px)",
+    "boyutPX": [
+     4375,
+     5833
+    ],
+    "esik": 160,
+    "kolTipi": "bishop",
+    "cfX": 1104,
+    "not": "uzun bishop kol, manset; yalniz kol acisi",
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      900,
+      940,
+      395,
+      430
+     ],
+     "xy": [
+      914,
+      402
+     ]
+    },
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      695,
+      460
+     ],
+     "snapPX": [
+      698,
+      464
+     ],
+     "mesafePX": 5.0,
+     "yaricapPX": 12
+    },
+    "torso": {
+     "OLCULEMEDI": "empire/yoke: dogal bel yok; kol oyugu tabani kolun altinda (kol ic kenari govdeye bel dikisinde deger)"
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      330,
+      520,
+      1350,
+      1500
+     ],
+     "uclar": [
+      [
+       330,
+       1355
+      ],
+      [
+       519,
+       1499
+      ]
+     ],
+     "orta": [
+      424.5,
+      1427.0
+     ],
+     "nMurekkep": 6016
+    },
+    "kolAcisiDeg": {
+     "deger": 74.1,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -273.5,
+      963.0
+     ]
+    }
+   },
+   "11-a-line-uzun-kol.png": {
+    "OLCULEMEDI": "kutu kesim tiered, kolsuz: dogal bel yok (payda yok)"
+   },
+   "12-empire-uzun-kol.png": {
+    "OLCULEMEDI": "kimono kol: omuz ucu ve kol oyugu yok"
+   },
+   "13-yuksek-bel-a-line.png": {
+    "urun": "Deer&Doe Mica, view A (2188 px)",
+    "boyutPX": [
+     2188,
+     2918
+    ],
+    "esik": 160,
+    "kolTipi": "yok",
+    "cfX": 547,
+    "not": "kolsuz: oyuk tabani = en genis satir (kol oyugu egrisi yan dikise doner); pens: bel pensi ucu (apex vekili, apexin ~2 cm altinda)",
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      460,
+      490,
+      90,
+      122
+     ],
+     "xy": [
+      474,
+      104
+     ]
+    },
+    "bel": {
+     "yontem": "bantta en dar siluet satiri",
+     "pencereX": [
+      300,
+      800
+     ],
+     "bant": [
+      480,
+      580
+     ],
+     "satirY": 517,
+     "solX": 384,
+     "sagX": 718,
+     "genislikPX": 334
+    },
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      425,
+      130
+     ],
+     "snapPX": [
+      425,
+      130
+     ],
+     "mesafePX": 0.0,
+     "yaricapPX": 10
+    },
+    "oyukTabani": {
+     "yontem": "kolsuz: sol siluet kenarinin en dista oldugu ilk satir (kol oyugu egrisi yan dikise doner)",
+     "pencereX": [
+      300,
+      560
+     ],
+     "bant": [
+      250,
+      420
+     ],
+     "satirY": 344,
+     "solX": 364
+    },
+    "pensUcu": {
+     "yontem": "pencerede CF'ye en yakin murekkep (pens ucu)",
+     "pencere": [
+      440,
+      472,
+      395,
+      430
+     ],
+     "xy": [
+      451,
+      422
+     ]
+    },
+    "torsoPX": 413,
+    "oyukOverTorso": 0.5811,
+    "pensUcuOverTorso": 0.77
+   },
+   "14-uzun-kol-maxi.png": {
+    "OLCULEMEDI": "askili kare yaka: SNP yok (payda yok); gorunum B uzun kollu ama govde figuru kucuk ve askili ust ayni"
+   },
+   "15-maxi-akiskan.png": {
+    "urun": "Sallie jumpsuit, view A",
+    "boyutPX": [
+     1001,
+     1500
+    ],
+    "esik": 160,
+    "kolTipi": "kap",
+    "cfX": 135,
+    "not": "kap kol (govdeden uzanti): omuz ucu = kap dis kosesi, oyuk = kap alt kenarinin yan dikise degdigi kose (tohum+snap); kol ekseni tanimsiz",
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      82,
+      97,
+      10,
+      30
+     ],
+     "xy": [
+      88,
+      18
+     ]
+    },
+    "bel": {
+     "yontem": "bantta en dar siluet satiri",
+     "pencereX": [
+      20,
+      260
+     ],
+     "bant": [
+      140,
+      185
+     ],
+     "satirY": 164,
+     "solX": 76,
+     "sagX": 195,
+     "genislikPX": 119
+    },
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      38,
+      44
+     ],
+     "snapPX": [
+      38,
+      44
+     ],
+     "mesafePX": 0.0,
+     "yaricapPX": 6
+    },
+    "oyukTabani": {
+     "yontem": "goz tohumu + snap (kose)",
+     "tohum": [
+      66,
+      96
+     ],
+     "snapPX": [
+      66,
+      96
+     ],
+     "mesafePX": 0.0,
+     "yaricapPX": 6
+    },
+    "torsoPX": 146,
+    "oyukOverTorso": 0.5342
+   }
+  },
+  "medyanlar": {
+   "oyukOverTorso": {
+    "n": 5,
+    "degerler": {
+     "02-uzun-robe-dress.png": 0.7561,
+     "06-a-line-puff-kol-varyant.png": 0.6099,
+     "07-uzun-kol-akiskan-etek.png": 0.75,
+     "13-yuksek-bel-a-line.png": 0.5811,
+     "15-maxi-akiskan.png": 0.5342
+    },
+    "medyan": 0.6099,
+    "min": 0.5342,
+    "max": 0.7561,
+    "tanim": "kol oyugu tabani y / (SNP->bel); croquisOranlar.underarmOverTorso adayi"
+   },
+   "pensUcuOverTorso": {
+    "n": 3,
+    "degerler": {
+     "04-a-line-puff-kol.png": 0.6826,
+     "06-a-line-puff-kol-varyant.png": 0.5934,
+     "13-yuksek-bel-a-line.png": 0.77
+    },
+    "medyan": 0.6826,
+    "tanim": "pens ucu y / (SNP->bel); apexDropOverTorso VEKILI (pens ucu apexin 1.5-3 cm yaninda/altinda biter)"
+   },
+   "kolAcisiDeg": {
+    "nHepsi": 7,
+    "hepsi": {
+     "02-uzun-robe-dress.png": {
+      "deg": 85.9,
+      "kolTipi": "setin"
+     },
+     "03-empire-dress-uc-boy.png": {
+      "deg": 32.9,
+      "kolTipi": "puf"
+     },
+     "04-a-line-puff-kol.png": {
+      "deg": 83.3,
+      "kolTipi": "setin"
+     },
+     "05-a-line-top-ve-elbise.png": {
+      "deg": 83.7,
+      "kolTipi": "bishop"
+     },
+     "06-a-line-puff-kol-varyant.png": {
+      "deg": 73.7,
+      "kolTipi": "setin"
+     },
+     "07-uzun-kol-akiskan-etek.png": {
+      "deg": 75.8,
+      "kolTipi": "setin"
+     },
+     "10-princess-a-line.png": {
+      "deg": 74.1,
+      "kolTipi": "bishop"
+     }
+    },
+    "medyanHepsi": 75.8,
+    "sarkan": {
+     "n": 6,
+     "degerler": {
+      "02-uzun-robe-dress.png": 85.9,
+      "04-a-line-puff-kol.png": 83.3,
+      "05-a-line-top-ve-elbise.png": 83.7,
+      "06-a-line-puff-kol-varyant.png": 73.7,
+      "07-uzun-kol-akiskan-etek.png": 75.8,
+      "10-princess-a-line.png": 74.1
+     },
+     "medyan": 79.55,
+     "min": 73.7,
+     "max": 85.9,
+     "tanim": "set-in ve bishop (sarkan) kollar; kisa puf yana acilir, sarkma acisi degil"
+    }
+   }
+  }
+ }
 }
