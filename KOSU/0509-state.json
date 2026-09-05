@@ -2,13 +2,26 @@
   "adim": "A1",
   "durum": "ISCI",
   "deneme": 1,
-  "butce": {"commit": 0, "saat": 0, "derlemeCommit": 0},
+  "butce": {
+    "commit": 0,
+    "saat": 0,
+    "derlemeCommit": 0
+  },
   "tag": "adim-A1-once",
-  "yol": ["A1"],
-  "taban": {"cpp.dallanma": 436, "js.dallanma": 18, "js.sabitMM": 2, "js.metin": 34},
+  "yol": [
+    "A1"
+  ],
+  "taban": {
+    "cpp.dallanma": 436,
+    "js.dallanma": 18,
+    "js.sabitMM": 2,
+    "js.metin": 34
+  },
   "regresyonTabani": null,
   "kabulKomutlari": [],
   "devredilen": [],
   "banned": [],
-  "kararDefteri": []
+  "kararDefteri": [],
+  "ilkYesil": {},
+  "kapi": "engine/tests/0509-kapi.sh"
 }
