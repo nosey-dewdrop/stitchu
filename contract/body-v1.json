@@ -15,6 +15,7 @@
     "seamKinds_flat_js": ["pens", "prenses", "orta-dikis", "bel-dikisi", "dikis-izi"],
     "_seamKinds_not": "web/lib/flat-from-pattern.js interior[] ogelerinin turu (interior.push(['pens'|'prenses'|'orta-dikis'|'bel-dikisi'|'dikis-izi', ...])). Bunlar contract/primitives-v1.json seam/op.suppress primitifinin ornekleridir (pens = kenara uygulanan operator), menu kelimesi degil. enum_dallanma_check.sh js.dallanma sayiminda edgeRoles_geometry_hpp ile birlikte HARIC tutulur: primitif rolu kontrolu dal sayilmaz (F0 hakem, HEDEF 1.9). F2 flat'i C++'a tasiyinca bu liste motorun emit ettigi seam kind adlariyla birlesir.",
     "figure_landmarks_json": ["neckBase", "shoulderTip", "underarm", "bustLine", "bustApex", "underbust", "waist", "highHip", "hip", "crotch"],
+    "_figure_landmarks_birim": "contract/figure-landmarks.json EU36 flat-px (S=5.6) biriminde, bu dosya mm'de; underarm y=112.0 ve bustLine y=132.2 orada AYRI satirdir (koltukalti != gogus hatti). F1 iki dosyayi tek birime baglar ya da figure-landmarks'i 'eski' isaretler (karar ajani dokum d).",
     "_origin_uyumu": "contract/figure-landmarks.json _koordinat.origin 'omuz cizgisi' (neckBase y=0) ve KAPI B grup koordinati (y=0 omuz cizgisi) ile bu dosyanin koordinat.origin'i AYNI cumledir; F0 ilk iskeletteki 'nape' origin'i (ikinci dikey origin) kaldirildi."
   },
 
@@ -118,14 +119,16 @@
   "ayniInsan": {
     "_tanim": "KAPI B (engine/tests/flat_ayni_insan_check.mjs) buradan okur. Butun flat'ler croquis36'da degerlendigi icin bel/gogus/kalca y'si ve omuz ucu x'i HER flat'te ayni olmak zorunda (HEDEF madde 5). Tolerans null iken kapi yalniz OLCER ve basar; F1 tolerans yazinca kapi kirmizi/yesil verir. Hukum GEOMETRI uzerindedir: ilan edilen nitelik cizimle mutabik olmak zorunda (belYarimMutabakat), beden kimligi croquis36 olmak zorunda (data-size).",
     "toleransMM": null,
-    "olculenler": ["bustLine.y", "waist.y", "hip.y", "shoulderTip.x", "cizimBelYarim", "cizimBustYarim", "cizimKalcaYarim", "belYarimMutabakat (cizim - ilan)", "data-size == svgNitelikleri.data-size"],
+    "olculenler": ["bustLine.y", "underarm.y", "waist.y", "hip.y", "shoulderTip.x", "cizimBelYarim", "cizimBustYarim", "cizimKalcaYarim", "belYarimMutabakat (cizim - ilan)", "data-size == svgNitelikleri.data-size", "onArka.dBel", "onArka.dOmuz", "onArka.dAlt"],
     "kaynak": null,
     "svgNitelikleri": {
       "_tanim": "Karar ajani #5: flat SVG'sinin KAPI B'ye konustugu nitelik adlari SOZLESMEDIR. F2'nin C++ flat'i AYNI adlari AYNI anlamda basar; kapi ve bu blok degismez. Bugun bu adlari web/lib/flat-from-pattern.js yaziyor.",
       "siluetSecici": { "deger": "path[data-rol=\"siluet\"][data-view=\"front\"]", "anlam": "on gorunumun dis siluet yolu; KAPI B geometriyi bu yoldan olcer" },
+      "siluetSeciciArka": { "deger": "path[data-rol=\"siluet\"][data-view=\"back\"]", "anlam": "arka gorunumun dis siluet yolu; KAPI B on/arka mutabakatini bu ikisinden olcer (F0 hakem ENGEL 1). Ayni nitelik adlari ayni anlamda basilir." },
       "data-unit-mm": { "deger": "1", "anlam": "grup koordinatinda 1 birim = 1 mm" },
       "data-size": { "deger": "croquis36", "anlam": "flat'in degerlendigi beden kimligi (bedenler.croquis36). Bugun EU38 basiliyor; tolerans dolunca croquis36 disi KIRMIZI (karar #6)" },
-      "data-manken-bust-y": { "anlam": "bustLine.y, mm, grup koordinatinda" },
+      "data-manken-bust-y": { "anlam": "bustLine.y, mm, grup koordinatinda — GOGUS HALKASININ y'si; koltukalti DEGIL. Bugunku kod (web/lib/flat-from-pattern.js:141 'the underarm level', :1535) bu ada koltukalti y'sini basiyor: ilan yanlis, sozlesme bu satirdir (karar ajani F0 #1: contract kazanir)" },
+      "data-manken-koltukalti-y": { "anlam": "underarm.y, mm — kol oyugu tabani; bustLine.y DEGIL. Bugun basilmiyor (KAPI B '—' basar); F2 croquis36 underarm.y'den basar" },
       "data-manken-bel-y": { "anlam": "waist.y, mm" },
       "data-manken-kalca-y": { "anlam": "hip.y, mm — croquis36 hip landmark'indan; bel y + sabit DEGIL" },
       "data-manken-bel-yarim-mm": { "anlam": "bel hattinda siluet yari-genisligi, mm; cizimden olculenle mutabik olmak zorunda. Isaret tek tanim: belYarimMutabakat = cizim - ilan, pozitif = ilan EKSIK (kapi tablo basligi ciz-ilan). mannequin-chart-v1 v2.donusum bu niteligi donusum-ONCESI deger diye tanimliyordu — o tanim ESKI, bu gecer." },
@@ -136,14 +139,50 @@
       "_tanim": "'Once' fotografinin sayilari (HEDEF §3.3 compounding error kontrolu). Kaynak: node engine/tests/flat_ayni_insan_check.mjs, KOSU/ciktilar/01..09 (commit 533c3d7c, EU38 gercek bedenden cizilip manken carpaniyla cekistirilmis flat'ler; gorsel KOSU/ciktilar/zemin-once.png). Sonraki her kiyas bu sayilara karsi. Bunlar OLCUM sayisidir, beden sayisi degil; body-v1'in 'kaynaksiz sayi yok' kurali bu bloga uygulanmaz cunku kaynak KAPI B ciktisinin kendisidir.",
       "kaynak": "engine/tests/flat_ayni_insan_check.mjs @ 533c3d7c, 9 flat, data-size=EU38",
       "belY_mm": { "dress": 428.2, "dressPrincess": 405.8, "top": 397.0, "skirt": -49.2, "maxMin": 477.5 },
-      "bustY_mm": { "dress": 231.0, "dressKolsuz": 225.0, "dressPrincess": 242.3, "skirt": -49.2, "maxMin": 291.5 },
+      "underarmY_mm": { "dress": 231.0, "dressKolsuz": 225.0, "dressPrincess": 242.3, "skirt": -49.2, "maxMin": 291.5, "not": "kod (web/lib/flat-from-pattern.js:1535) bu sayiyi data-manken-bust-y ADIYLA basiyor ama mankenWarp'in bustY parametresi koltukalti seviyesidir (satir 141 'the underarm level'); ilan yanlis, sayi koltukaltidir (karar ajani F0 #1)" },
+      "bustY_mm": { "deger": null, "kaynak": "OLCULMEDI — bugunku SVG'lerde gogus halkasi ilani yok; data-manken-bust-y koltukalti tasiyor" },
       "omuzX_mm": { "min": 191.7, "max": 207.6, "maxMin": 15.9, "eksik": "07-etek-a-line (omuz ucu ilani yok)" },
       "cizimBelYarim_mm": { "min": 176.9, "max": 241.9, "maxMin": 65.0 },
       "cizimBustYarim_mm": { "min": 176.9, "max": 244.2, "maxMin": 67.3 },
       "cizimKalcaYarim_mm": { "min": 194.1, "max": 250.7, "maxMin": 56.6 },
       "hipY_not": "hip.y bugun her flat'te waist.y + 200.0 mm SABIT (web/lib/flat-from-pattern.js:137 MANKEN_KALCA_DERINLIK_MM, 9/9 flat ayni dusus). Bu bir olcum degil; kalca hatti y sutunu bel y'nin kopyasidir. F2 sonrasi hip.y croquis36 landmark'indan gelir.",
       "belMutabakat_not": "ciz-ilan = +12.7 (9/9 flat): cizimden olculen bel yari-genislik, ilan edilen data-manken-bel-yarim-mm'den tam 12.7 mm buyuk, yani ilan 12.7 mm EKSIK (= flat-from-pattern.js:136 MANKEN_FARK_CEYREK_MM 12.7417). Ilan carpan oncesi, cizim carpan sonrasi: ilan ile cizim ayni sey degil. Tolerans dolunca KIRMIZI.",
-      "etek_not": "07-etek-a-line: bel y -49.2, omuz ucu yok, cizim ust kenari -49.2 — gorunum origin'i beden landmark'i degil (bel ustu). F2'de etek de omuz cizgisi origin'ine baglanir, istisna olmaz (karar ek dokum c)."
+      "etek_not": "07-etek-a-line: bel y -49.2, omuz ucu yok, cizim ust kenari -49.2 — gorunum origin'i beden landmark'i degil (bel ustu). F2'de etek de omuz cizgisi origin'ine baglanir, istisna olmaz (karar ek dokum c).",
+      "bundle": "c43d3d4f64df9f20 (web/vendor/stitchu-engine.js source-stamp; zemin-once.png etiketi ve KAPI B basligi ayni damgayi tasir — hakem notu 5, tek kimlik)"
+    },
+    "onArka": {
+      "_tanim": "ON/ARKA MUTABAKATI (F0 hakem ENGEL 1; hic bir listede yoktu). Flat'te yan dikis TEK cizgidir: ayni giysinin on ve arka gorunumu ayni bedende, ayni omuzda, ayni boyda olmak zorunda; degilse rafta 'iki ayri giysi' okunur ve dikilemez. KAPI B her SVG'de front VE back siluetini okur, uc fark basar: dBel = |waist.y_on - waist.y_arka| (ilan), dOmuz = |shoulderTip.x_on - shoulderTip.x_arka| (ilan), dAlt = |altKenar.y_on - altKenar.y_arka| (cizimden, siluet yolunun en alt y'si). toleransMM null iken yalniz olcer; F1 doldurunca fark > tolerans olan flat KIRMIZI. Kok (F0 hakem): web/lib/flat-from-pattern.js mankenWarp gorunum basina, waistPt her parcadan ayri — on ile arka ortak croquis36 landmark'indan degil kendi kalip parcasinin CF/CB uzunlugundan degerleniyor. Kalip tarafinda on/arka yan dikis uzunlugu farki DOGRULANMADI (F1: cizim_giysi_mi'ye tek olcum satiri, once sayisi alinir).",
+      "toleransMM": null,
+      "kaynak": null,
+      "once": {
+        "kaynak": "engine/tests/flat_ayni_insan_check.mjs (on/arka tablosu), bundle c43d3d4f64df9f20, 9 flat, data-size=EU38",
+        "dBel_mm": { "dress_01_02_03_04_09": 16.2, "top_05": 96.8, "top_06": 100.3, "skirt_07": 10.5, "dressPrincess_08": 4.3, "min": 4.3, "max": 100.3 },
+        "dOmuz_mm": { "dress_top_01_06_09": 16.5, "dressPrincess_08": 10.6, "skirt_07": null, "min": 10.6, "max": 16.5, "eksik": "07-etek-a-line (omuz ucu ilani yok)" },
+        "dAlt_mm": { "dress_top_01_06_08_09": 40.0, "skirt_07": 0.0, "min": 0.0, "max": 40.0 },
+        "not": "01/02/03/04/09: bel y 428.2 (on) vs 412.0 (arka); omuz ucu (207.6,53.7) vs (191.1,49.3); etek ucu 1095 vs 1055 (01/03/08/09), 1345 vs 1305 (02), 895 vs 855 (04), 625 vs 585 (05/06). 05/06 arka bel y 300.2/296.7 vs on 397.0. 07 etek bel -49.2 vs -38.7. 08 prenses bel 405.8/401.5, omuz 191.7/181.0."
+      }
+    },
+    "sonrakiFazKalemleri": {
+      "_tanim": "F0 hakem hukmu ve karar ajani kararlarindan dogan ADLI kabul kalemleri; F1/F2 brief'i bunlari buradan alir (F0 ajani olur, baglam tasimaz). Her kalem: kim, ne, olculebilir kabul.",
+      "F1": [
+        "flat-kume.mjs: KOSU/uret.mjs SVG uretimi ortak module cikar; flat_ayni_insan_check argumansiz kosunca SVG'leri engine/build/flat-ayni-insan/ altina KENDI uretir (Chrome'suz); temiz clone'da ctest -R flat_ayni_insan exit 0 (karar #2)",
+        "ayniInsan.toleransMM ve ayniInsan.onArka.toleransMM kaynakli doldurulur (endustri konvansiyonu, sayiyla); dolunca 9/9 kirmizi beklenir (once sayilari yukarida)",
+        "croquis36 landmark sayilari kaynakli doldurulur; contract/figure-landmarks.json EU36 flat-px (S=5.6) birimi ile bu dosyanin mm'si tek birime baglanir ya da figure-landmarks 'eski' isaretlenir — iki landmark tablosu yasamaz (dokum d)",
+        "contract/flat-convention-v1.json:25 _law 'gogus (koltukalti) hatti' -> 'koltukalti hatti ve gogus hatti' (karar #1c); :42 chestY 276 'ACIK' sayisi body-v1 underarm.y'ye kaynakli tasinmadan doldurulmaz (dokum c)",
+        "kalip tarafinda on/arka yan dikis uzunlugu farki: cizim_giysi_mi'ye tek olcum satiri, once sayisi alinir (hakem notu 2)",
+        "kabul regex'i '...|surface|enum_dallanma|flat_ayni_insan' (21 test) DEVIR.md kabul bolumune tek yerde (karar #3)",
+        "vocab-reference tabani bir daha yukari kesilmez; vocab_reference_check kod ve prose'u iki kovaya ayirir (enum_dallanma modeli) ya da tests/*.mjs basliklarini ve contract _tanim alanlarini sayimdan cikarir"
+      ],
+      "F2": [
+        "mankenWarp + MANKEN_FARK_CEYREK_MM + MANKEN_KALCA_DERINLIK_MM silinir; kabul: KAPI B ciz-ilan 0.0 (9/9), hipY != waistY+200",
+        "contract/mannequin-chart-v1.json git rm; tuketici sayisi F2 basinda rg ile alinir; kabul: rg -l mannequin-chart engine web contract -> 0; tarih dosyalarina dokunulmaz",
+        "flat croquis36'dan degerlenir (BODY = croquis36); kabul: data-size=croquis36 9/9, KAPI B toleransta yesil, data-manken-bust-y = bustLine.y ve data-manken-koltukalti-y = underarm.y ayri basilir",
+        "ON/ARKA MUTABAKATI: on ve arka gorunum ortak croquis36 landmark'indan degerlenir; kabul: KAPI B dBel/dOmuz/dAlt <= onArka.toleransMM 9/9",
+        "kapanma primitifi: edgeRoles'ta adli kapanma rolu (or. closure_cb); woven+pens/bel-dikisi giyside kapanma zorunlu kurali validator'da; kabul: 9 flat arka gorunumunde kapanma cizili (closure rolu sayisi >= 1) veya adiyla red. Bugun 9/9 SVG'de 'zip|fermuar' 0 eslesme",
+        "pens hizasi: bel dikisinde bodice pens x ile etek pens x farki <= 0.1 mm (en az bir cift), egik pensin ucu bustApex'e yonelik (apex x +- 10 mm); cizim_giysi_mi'ye olcum satiri. Bugun 01: bodice 69.6 ve 129.7->160.4 egik, etek 98.6 — hic bir cift karsilasmiyor",
+        "yaka on/arka genislik farki <= 0.1 mm",
+        "9 SVG + zemin-sonra.png yeniden uretilir (ayni bundle damgasiyla etiketli), zemin-once.png yaninda durur; kusuru yeni SVG'ye tekrar pisirmek HEDEF 14 ihlali"
+      ]
     }
   },
 

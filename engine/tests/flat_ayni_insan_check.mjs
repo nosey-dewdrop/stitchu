@@ -11,6 +11,13 @@
 // data-view="front"). Iki kaynaktan okur ve ikisini de basar:
 //   ILAN:  cizimin kendi ilan ettigi data-manken-bust-y / -bel-y / -kalca-y ve
 //          data-omuz-uc (x y) — web/lib/flat-from-pattern.js yaziyor.
+//          DIKKAT (karar ajani F0 #1, contract kazanir): data-manken-bust-y'nin
+//          SOZLESME anlami bustLine.y'dir; bugunku kod ise bu ada koltukalti
+//          y'sini basiyor (flat-from-pattern.js:141 'the underarm level').
+//          Kapi bu sutunu 'bustY(ilan)' diye basar ama once blogunda sayi
+//          underarmY_mm adiyla durur; koltukalti icin AYRI nitelik
+//          data-manken-koltukalti-y okunur (bugun yok -> '—'). F2 ikisini
+//          ayri basar; tolerans dolunca ikisi de olculur.
 //   CIZIM: siluet yolunun GEOMETRISI: yol (M/L/C) polilineye acilir, ilan
 //          edilen bel y'sinde yolun en genis |x|'i (yari-genislik) ve yolun en
 //          ust noktasi (omuz cizgisi y) olculur. Ilan ile cizim ayrisirsa bu
@@ -45,6 +52,16 @@
 // tolerans doluyken fark > tolerans olan flat KIRMIZI. Ilan bir sey, cizim baska
 // bir sey soyleyemez — hukum GEOMETRI uzerindedir, niteligi dogru yazip cizimi
 // bozuk birakmak yesil vermez.
+//
+// ON/ARKA MUTABAKATI (F0 hakem ENGEL 1 — hic bir listede yoktu). Flat'te yan
+// dikis TEK cizgidir: on ile arka gorunum ayni bedende, ayni omuzda, ayni boyda
+// olmak zorunda; yoksa rafta 'iki ayri giysi' okunur ve dikilemez. Her SVG'de
+// data-view="back" siluet yolu da okunur ve uc fark basilir:
+//   dBel  = |belY_on - belY_arka|      (ilan, mm)
+//   dOmuz = |omuzX_on - omuzX_arka|    (ilan, mm)
+//   dAlt  = |altY_on - altY_arka|      (cizimden: siluet yolunun en alt y'si = etek/bluz ucu)
+// Tolerans contract/body-v1.json ayniInsan.onArka.toleransMM: null -> yalniz
+// olcer ('once' sayisi), sayi -> fark > tolerans olan flat KIRMIZI.
 //
 // BEDEN KIMLIGI (karar ajani #6): tolerans doluyken data-size, contract
 // ayniInsan.svgNitelikleri["data-size"] (croquis36) degilse KIRMIZI. Flat HER
@@ -82,11 +99,19 @@ if (files.length === 0) { console.log('FAIL  olculecek flat yok (KOSU/ciktilar/0
 // tolerans: contract'tan, yoksa null (olc-yalniz)
 let TOL = null;
 let SIZE_BEKLENEN = null; // contract ayniInsan.svgNitelikleri["data-size"] (croquis36)
+let TOL_ONARKA = null;    // contract ayniInsan.onArka.toleransMM (null -> yalniz olcum)
 const bodyPath = join(ROOT, 'contract/body-v1.json');
 if (existsSync(bodyPath)) {
   const b = JSON.parse(readFileSync(bodyPath, 'utf8'));
   TOL = b?.ayniInsan?.toleransMM ?? null;
   SIZE_BEKLENEN = b?.ayniInsan?.svgNitelikleri?.['data-size']?.deger ?? null;
+  TOL_ONARKA = b?.ayniInsan?.onArka?.toleransMM ?? null;
+}
+// bundle damgasi: olcum hangi motorla yapildi (hakem notu 5: iki kimlik olmasin)
+let DAMGA = '—';
+{
+  const bp = join(ROOT, 'web/vendor/stitchu-engine.js');
+  if (existsSync(bp)) { const m = readFileSync(bp, 'utf8').slice(0, 200).match(/source-stamp ([0-9a-f]{16})/); if (m) DAMGA = m[1]; }
 }
 
 // ---- isaret mutabakati: kod + tablo basligi + contract tek tanim ----------------
@@ -109,11 +134,12 @@ function attrs(tag) {
   for (const m of tag.matchAll(/([a-zA-Z:-]+)="([^"]*)"/g)) o[m[1]] = m[2];
   return o;
 }
-function frontSiluet(svg) {
+function siluet(svg, view) {
   const tags = [...svg.matchAll(/<path\b[^>]*>/g)].map((m) => m[0]);
-  const t = tags.find((x) => /data-rol="siluet"/.test(x) && /data-view="front"/.test(x));
+  const t = tags.find((x) => /data-rol="siluet"/.test(x) && new RegExp(`data-view="${view}"`).test(x));
   return t ? attrs(t) : null;
 }
+const frontSiluet = (svg) => siluet(svg, 'front');
 
 // ---- path d -> polyline (M/L/C/Z, mutlak) -------------------------------------
 function toPolyline(d) {
@@ -170,6 +196,22 @@ for (const f of files) {
   row.cizimBustYarim = row.bustY != null ? halfWidthAt(pts, row.bustY) : null;
   row.cizimKalcaYarim = row.kalcaY != null ? halfWidthAt(pts, row.kalcaY) : null;
   row.kalcaDusus = row.kalcaY != null && row.belY != null ? row.kalcaY - row.belY : null;
+  row.koltukaltiY = n('data-manken-koltukalti-y'); // karar #1: ayri nitelik; bugun basilmiyor -> null
+  row.altY = pts.length ? Math.max(...pts.map((p) => p[1])) : null;
+  // ---- arka gorunum (on/arka mutabakati) ----
+  const b = siluet(svg, 'back');
+  if (b) {
+    const nb = (k) => (b[k] == null ? null : parseFloat(b[k]));
+    row.belYArka = nb('data-manken-bel-y');
+    const ob = b['data-omuz-uc'] ? b['data-omuz-uc'].split(/\s+/).map(parseFloat) : null;
+    row.omuzXArka = ob ? ob[0] : null;
+    const pb = toPolyline(b.d || '');
+    row.altYArka = pb.length ? Math.max(...pb.map((p) => p[1])) : null;
+    const d = (u, v) => (u != null && v != null ? Math.abs(u - v) : null);
+    row.dBel = d(row.belY, row.belYArka);
+    row.dOmuz = d(row.omuzX, row.omuzXArka);
+    row.dAlt = d(row.altY, row.altYArka);
+  } else { row.arkaYok = true; }
   row.belMutabakat = row.belYarimIlan != null && row.cizimBelYarim != null ? row.cizimBelYarim - row.belYarimIlan : null;
   rows.push(row);
 }
@@ -185,7 +227,7 @@ const OLCULER = [
   ['cizimKalcaYarim', 'kalca yari-genislik (cizimden)'],
 ];
 const f1 = (v) => (v == null || Number.isNaN(v) ? '—' : v.toFixed(1).padStart(7));
-console.log(`flat_ayni_insan_check — ${rows.length} flat, tolerans ${TOL == null ? 'YOK (contract/body-v1.json ayniInsan.toleransMM null -> yalniz olcum)' : TOL + ' mm'}`);
+console.log(`flat_ayni_insan_check — bundle ${DAMGA} — ${rows.length} flat, tolerans ${TOL == null ? 'YOK (contract/body-v1.json ayniInsan.toleransMM null -> yalniz olcum)' : TOL + ' mm'}`);
 console.log('flat                                   sinif                 size      bustY    belY  kalcaY   omuzX  belYar bustYar kalcaYar belIlan  ciz-ilan   ustY');
 for (const r of rows) {
   if (r.hata) { console.log(`${r.flat.padEnd(38)} ${r.sinif.padEnd(20)} HATA ${r.hata}`); continue; }
@@ -194,6 +236,7 @@ for (const r of rows) {
 
 let fails = 0;
 const sapma = {};
+const bulgularOnArka = [];
 console.log('\nsapma (kume ustunde):');
 for (const [k, ad] of OLCULER) {
   const vals = rows.map((r) => r[k]).filter((v) => typeof v === 'number' && !Number.isNaN(v));
@@ -207,8 +250,30 @@ for (const [k, ad] of OLCULER) {
   if (TOL != null) { hukum = spread <= TOL ? 'OK  ' : 'FAIL'; if (spread > TOL) fails++; }
   console.log(`  ${hukum}  ${ad.padEnd(32)} n=${vals.length}${eksik ? ` (${eksik} yok)` : ''}  min ${mn.toFixed(1)}  max ${mx.toFixed(1)}  max-min ${spread.toFixed(1)} mm  ort ${ort.toFixed(1)}  en buyuk |sapma| ${maxAbs.toFixed(1)} mm`);
 }
+// ---- on/arka mutabakati -------------------------------------------------------
+console.log(`\non/arka mutabakati (ayni SVG, on vs arka siluet; tolerans ${TOL_ONARKA == null ? 'YOK (ayniInsan.onArka.toleransMM null -> yalniz olcum)' : TOL_ONARKA + ' mm'}):`);
+console.log('flat                                   belY_on belY_ar   dBel  omuzX_on omuzX_ar  dOmuz  altY_on altY_ar   dAlt  koltukaltiY');
+const onArka = {};
+for (const r of rows) {
+  if (r.hata) continue;
+  if (r.arkaYok) { console.log(`${r.flat.padEnd(38)} ARKA SILUET YOK`); bulgularOnArka.push(`${r.flat}: arka siluet yolu yok`); continue; }
+  let h = '';
+  if (TOL_ONARKA != null) {
+    const kirmizi = [r.dBel, r.dOmuz, r.dAlt].some((v) => v != null && v > TOL_ONARKA);
+    h = kirmizi ? '  FAIL' : '  OK';
+    if (kirmizi) fails++;
+  }
+  console.log(`${r.flat.padEnd(38)} ${f1(r.belY)} ${f1(r.belYArka)} ${f1(r.dBel)} ${f1(r.omuzX)} ${f1(r.omuzXArka)} ${f1(r.dOmuz)} ${f1(r.altY)} ${f1(r.altYArka)} ${f1(r.dAlt)} ${f1(r.koltukaltiY)}${h}`);
+}
+for (const [k, ad] of [['dBel', 'bel y farki'], ['dOmuz', 'omuz ucu x farki'], ['dAlt', 'alt kenar y farki']]) {
+  const vals = rows.map((r) => r[k]).filter((v) => typeof v === 'number' && !Number.isNaN(v));
+  if (!vals.length) continue;
+  onArka[k] = { n: vals.length, min: Math.min(...vals), max: Math.max(...vals) };
+  console.log(`  on/arka ${ad.padEnd(20)} n=${vals.length}  min ${onArka[k].min.toFixed(1)}  max ${onArka[k].max.toFixed(1)} mm`);
+}
+
 // ilan-cizim mutabakati: bel yari-genisligi ilan (data-manken-bel-yarim-mm) vs cizim
-const bulgular = [];
+const bulgular = [...bulgularOnArka];
 const dusus = rows.map((r) => r.kalcaDusus).filter((v) => typeof v === 'number' && !Number.isNaN(v));
 if (dusus.length >= 2 && Math.max(...dusus) - Math.min(...dusus) < 0.05) {
   bulgular.push(`kalca y - bel y ${dusus.length} flat'te de ${dusus[0].toFixed(1)} mm — SABIT, olcum degil (flat-from-pattern.js MANKEN_KALCA_DERINLIK_MM); kalca hatti y sutunu bel y'nin kopyasidir, croquis36 hip.y landmark'indan gelmeli`);
@@ -231,14 +296,19 @@ for (const r of rows) {
   } else if (SIZE_BEKLENEN != null && r.size !== SIZE_BEKLENEN) {
     bulgular.push(`${r.flat}: data-size="${r.size}" (beklenen ${SIZE_BEKLENEN}; tolerans dolunca KIRMIZI)`);
   }
+  if (!r.arkaYok && [r.dBel, r.dOmuz, r.dAlt].some((v) => v != null && v > 0.5)) {
+    const asti = TOL_ONARKA != null && [r.dBel, r.dOmuz, r.dAlt].some((v) => v != null && v > TOL_ONARKA);
+    bulgular.push(`${asti ? 'FAIL ' : ''}${r.flat}: on ve arka AYNI bedende degil — dBel ${f1(r.dBel).trim()} dOmuz ${f1(r.dOmuz).trim()} dAlt ${f1(r.dAlt).trim()} mm (yan dikis tek cizgidir; flat-from-pattern.js her gorunumu kendi parcasinin CF/CB ve bel noktasindan degerliyor)`);
+  }
   if (r.omuzX == null) bulgular.push(`${r.flat}: omuz ucu ilani yok (sinif ${r.sinif}) — origin bel ustu, beden landmark'i degil`);
   if (r.belY != null && r.belY < 0) bulgular.push(`${r.flat}: bel y ${r.belY.toFixed(1)} < 0 — gorunum origin'i beden landmark'ina bagli degil`);
   if (r.cizimUstY != null && Math.abs(r.cizimUstY) > 0.5) bulgular.push(`${r.flat}: cizim ust kenari y=${r.cizimUstY.toFixed(1)} (omuz cizgisi 0 degil)`);
 }
 if (bulgular.length) { console.log('\nbulgular:'); for (const b of bulgular) console.log(`  - ${b}`); }
 
-if (wantJSON) console.log('\n' + JSON.stringify({ tolerans: TOL, rows, sapma, bulgular }, null, 1));
+if (wantJSON) console.log('\n' + JSON.stringify({ bundle: DAMGA, tolerans: TOL, toleransOnArka: TOL_ONARKA, rows, sapma, onArka, bulgular }, null, 1));
 
+if (TOL == null && TOL_ONARKA != null && fails) { console.log(`\nFAIL  ${fails} flat on/arka mutabakatsiz (tolerans ${TOL_ONARKA} mm)`); process.exit(1); }
 if (TOL == null) { console.log(`\nolcum bitti — tolerans yokken hukum yok (F1 contract'a yazinca kapi kirmizi/yesil verir)`); process.exit(0); }
-if (fails) { console.log(`\nFAIL  ${fails} hukum kirmizi (tolerans ${TOL} mm: kume sapmasi / ilan-cizim farki / beden kimligi) — flat'ler ayni insana cizilmemis`); process.exit(1); }
+if (fails) { console.log(`\nFAIL  ${fails} hukum kirmizi (tolerans ${TOL} mm: kume sapmasi / ilan-cizim farki / beden kimligi${TOL_ONARKA != null ? ` / on-arka ${TOL_ONARKA} mm` : ''}) — flat'ler ayni insana cizilmemis`); process.exit(1); }
 console.log(`\nOK    ${rows.length} flat ayni insan (tolerans ${TOL} mm)`);
