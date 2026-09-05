@@ -1470,3 +1470,18 @@ add_test(NAME vitrin_gercek_check COMMAND ${NODE_EXECUTABLE}
 # azalis yeni taban (dosya yeniden yazilir, commit'e girer). F3 sonunda hedef 0:
 # giysi bir Edge/Panel/Stitch GRAFI olur, menu kelimesine dallanan kod kalmaz.
 add_test(NAME enum_dallanma_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/enum_dallanma_check.sh)
+# F0 hakem turu (2f309520): yukaridaki "azalis yeni taban (dosya yeniden
+# yazilir)" cumlesi ARTIK GECERSIZ — gate modu tabani YAZMAZ, "--baseline
+# (commit et)" basar (karar ajani #4, vocab_reference_check modeli). Ayrica
+# `case E::X: return "..."` serializasyon satirlari toplamdan cikti ve flat'i
+# cizen JS kalemi (web/lib/flat-*.js, arka-koken.js) iki ayri circir aldi
+# (js.dallanma, js.sabitMM). Ayrinti: engine/tests/enum_dallanma_check.sh basligi.
+
+# F0 KAPI B — flat_ayni_insan_check: HEDEF.md madde 5 (butun flat'ler ayni
+# insan). KOSU/ciktilar/0X-*.svg kumesinde bel/gogus/kalca y, omuz ucu x ve
+# cizimden bel/gogus/kalca yari-genisliklerini olcer; ilan (data-manken-*) ile
+# cizimin mutabakatini ve data-size=croquis36 kimligini denetler. Tolerans
+# contract/body-v1.json ayniInsan.toleransMM: null iken yalniz OLCER (exit 0,
+# "once" sayisi), F1 doldurunca kirmizi/yesil. Sayi bu testte yok, contract'ta.
+add_test(NAME flat_ayni_insan_check COMMAND ${NODE_EXECUTABLE}
+         ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_ayni_insan_check.mjs)

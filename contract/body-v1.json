@@ -2,7 +2,7 @@
   "_contract": "body-v1 — BEDEN SOZLESMESI ISKELETI (F0, 2026-09-05). Bir giysi GRAFI, iki BEDEN, iki CIKTI (HEDEF.md madde 4, 5). Graf kenarlari mm ile degil, buradaki LANDMARK adlari + oranla tanimlanir; graf gercek36'da degerlenince KALIP, croquis36'da degerlenince FLAT cikar. Bu dosya F0'da yalniz ADLARI ve TANIMLARI tasir; her sayi null'dur. F1 sayilari kaynagiyla doldurur (kaynaksiz sayi yazilmaz; kaynak yoksa en kisitlayici deger + 'DOGRULANMADI' etiketi). F2 bu adlara karsi kod yazar: engine/src bir landmark'a bu dosyadaki adiyla erisir, baska adla degil.",
   "version": 1,
   "id": "stitchu-body-v1",
-  "_durum": "ISKELET — sayi yok. Doldurma sirasi: F1. Bu dosyaya sayi girildiginde her sayinin yaninda kaynak alani dolu olmak zorunda.",
+  "_durum": "ISKELET — olcu sayisi yok (F0 hakem turu: prose icindeki kaynaksiz sayi ipuclari da silindi). Doldurma sirasi: F1. Bu dosyaya sayi girildiginde her sayinin yaninda kaynak alani dolu olmak zorunda. Tek istisna ayniInsan.once: bugunku EU38 flat'lerin OLCULMUS 'once' sayilari, kaynagi KAPI B ciktisi.",
   "_ad_uyumu": {
     "_not": "Adlar mevcut koda karsi rg ile bakilarak secildi; F2'nin kod yazacagi adlar bunlardir, kod tarafindaki eski adlar sag sutunda.",
     "measurements_hpp": {
@@ -12,20 +12,23 @@
     },
     "tables_json_euSizeChart_fields": ["bustCM", "waistCM", "hipCM", "shoulderCM", "backLengthCM", "armLengthCM", "neckCM"],
     "edgeRoles_geometry_hpp": ["armhole_front", "armhole_back", "sleeve_cap", "sleeve_underarm"],
-    "figure_landmarks_json": ["neckBase", "shoulderTip", "underarm", "bustLine", "bustApex", "underbust", "waist", "highHip", "hip", "crotch"]
+    "figure_landmarks_json": ["neckBase", "shoulderTip", "underarm", "bustLine", "bustApex", "underbust", "waist", "highHip", "hip", "crotch"],
+    "_origin_uyumu": "contract/figure-landmarks.json _koordinat.origin 'omuz cizgisi' (neckBase y=0) ve KAPI B grup koordinati (y=0 omuz cizgisi) ile bu dosyanin koordinat.origin'i AYNI cumledir; F0 ilk iskeletteki 'nape' origin'i (ikinci dikey origin) kaldirildi."
   },
 
   "koordinat": {
-    "_tanim": "Landmark noktalari beden koordinat sisteminde durur. x=0 on-orta (CF) / arka-orta (CB) duzlemi, y=0 boyun tabani arka noktasi (nape) hizasi, +y asagi, birim mm. Halkalar (girth) cevre uzunlugudur, noktasi yoktur; halkanin y'si ayni adli landmark'in y'sidir.",
+    "_tanim": "TEK dikey origin (F0 hakem: eski iskelette nape ve omuz cizgisi diye iki origin vardi, aradaki dusus tanimsizdi). Landmark noktalari, flat SVG grup koordinati (KAPI B) ve contract/figure-landmarks.json AYNI sistemde durur: x=0 on-orta (CF) / arka-orta (CB) duzlemi; y=0 OMUZ CIZGISI = neckBase (omuz-boyun noktasi, SNP) hizasi; +y asagi; birim mm. nape bu sistemde bir landmark'tir, origin degil: y'si negatif (omuz cizgisinin ustunde), F1 kaynagiyla doldurur (length.napeToShoulderLine). Halkalar (girth) cevre uzunlugudur, noktasi yoktur; halkanin y'si ayni adli landmark'in y'sidir.",
     "birim": "mm",
-    "origin": "nape (boyun tabani arka nokta)",
-    "xEkseni": "sol/sag simetrik, yari-genislik pozitif"
+    "origin": "omuz cizgisi: y=0 neckBase.y (SNP hizasi), x=0 CF/CB",
+    "yEkseni": "+y asagi",
+    "xEkseni": "sol/sag simetrik, yari-genislik pozitif",
+    "ayniCumleyiSoyleyenler": ["contract/figure-landmarks.json _koordinat.origin", "engine/tests/flat_ayni_insan_check.mjs basligi (Koordinat)", "ayniInsan.svgNitelikleri.grupKoordinati"]
   },
 
   "landmarklar": {
     "_tanim": "Bedende bir NOKTA. Her biri {x, y, kaynak}. Graf kenarlari bu adlara baglanir (or. 'omuz kenari: neckBase -> shoulderTip').",
-    "nape":          { "tanim": "Boyun tabani arka nokta (C7). Dikey origin.", "x": null, "y": null, "kaynak": null },
-    "neckBase":      { "tanim": "Boyun tabani yan nokta; omuz cizgisinin boyun ucu (omuz-boyun noktasi, SNP).", "x": null, "y": null, "kaynak": null },
+    "nape":          { "tanim": "Boyun tabani arka nokta (yedinci boyun omuru). Omuz cizgisinin USTUNDE: y = -length.napeToShoulderLine (negatif). Arka boy buradan olculur.", "x": null, "y": null, "kaynak": null },
+    "neckBase":      { "tanim": "Boyun tabani yan nokta; omuz cizgisinin boyun ucu (omuz-boyun noktasi, SNP). y = 0 (koordinat.origin).", "x": null, "y": null, "kaynak": null },
     "neckFront":     { "tanim": "Boyun tabani on nokta (kopruk cukurunun ustu, CF).", "x": null, "y": null, "kaynak": null },
     "shoulderTip":   { "tanim": "Omuz ucu (akromion). Set-in kol oyugunun tepesi; sleeve_cap kenarinin tepesine dikilir.", "x": null, "y": null, "kaynak": null },
     "underarm":      { "tanim": "Koltukalti noktasi; kol oyugu tabani. armhole_front ve armhole_back kenarlari burada birlesir; sleeve_underarm buraya dikilir.", "x": null, "y": null, "kaynak": null },
@@ -60,10 +63,11 @@
 
   "uzunluklar": {
     "_tanim": "Iki landmark arasindaki beden uzunlugu, mm. Landmark koordinatlarindan TURETILEBILIR olan her uzunluk turetilir, ayrica yazilmaz; buradakiler beden tablolarinin dogrudan verdigi ve landmark y'lerini KURAN uzunluklardir.",
-    "length.backNapeToWaist":  { "tanim": "Arka boy: nape -> waist (CB uzerinden). measurements.hpp backLengthCM. waist.y'yi kurar.", "mm": null, "kaynak": null },
+    "length.napeToShoulderLine": { "tanim": "nape'in omuz cizgisinin (y=0) ustunde kalan dususu: nape.y = -bu. Arka boy tablolari nape'ten olcer, koordinat omuz cizgisinden baslar; ikisini bu tek sayi baglar.", "mm": null, "kaynak": null },
+    "length.backNapeToWaist":  { "tanim": "Arka boy: nape -> waist (CB uzerinden). measurements.hpp backLengthCM. waist.y = length.backNapeToWaist - length.napeToShoulderLine.", "mm": null, "kaynak": null },
     "length.frontNeckToWaist": { "tanim": "On boy: neckFront -> waist (CF uzerinden, apex uzerinden degil).", "mm": null, "kaynak": null },
     "length.shoulder":         { "tanim": "Omuz uzunlugu: neckBase -> shoulderTip. measurements.hpp shoulderCM.", "mm": null, "kaynak": null },
-    "length.armholeDepth":     { "tanim": "Kol oyugu derinligi: nape hizasindan underarm hizasina dikey (bodice armholeDepth).", "mm": null, "kaynak": null },
+    "length.armholeDepth":     { "tanim": "Kol oyugu derinligi: nape hizasindan underarm hizasina dikey (bodice armholeDepth). underarm.y = length.armholeDepth - length.napeToShoulderLine.", "mm": null, "kaynak": null },
     "length.bustDepth":        { "tanim": "Gogus dususu: neckBase -> bustApex.", "mm": null, "kaynak": null },
     "length.waistToHip":       { "tanim": "Bel-kalca dususu: waist.y -> hip.y (flat-from-pattern MANKEN_KALCA_DERINLIK_MM karsiligi; sabit degil, bedenden okunur).", "mm": null, "kaynak": null },
     "length.waistToHighHip":   { "tanim": "Bel-ust kalca dususu.", "mm": null, "kaynak": null },
@@ -84,20 +88,20 @@
   },
 
   "acilar": {
-    "angle.shoulderSlope": { "tanim": "Omuz egimi, derece, yataydan asagi (neckBase -> shoulderTip). measurements.hpp shoulderInclDeg. flat-convention sevkPoz omuz egimi 15-22 bununla mutabik olmak zorunda.", "deg": null, "kaynak": null }
+    "angle.shoulderSlope": { "tanim": "Omuz egimi, derece, yataydan asagi (neckBase -> shoulderTip). measurements.hpp shoulderInclDeg. contract/flat-convention sevkPoz omuz egimi bandi bununla mutabik olmak zorunda (band sayisi orada, kaynakli; buraya kopyalanmadi).", "deg": null, "kaynak": null }
   },
 
   "bedenler": {
     "_tanim": "Iki beden KIMLIGI (HEDEF madde 4). Ayni landmark adlari, iki ayri deger kumesi. Graf bu iki bedenden birinde DEGERLENIR; baska bir donusum (mankenWarp gibi flat'e sonradan uygulanan carpan) bu sozlesme dolunca ORTADAN KALKAR — flat dogrudan croquis36'da degerlenir.",
     "gercek36": {
-      "tanim": "Kalibin bedeni: EU36 gercek, dikilebilir, giyilebilir kadin bedeni. contract/tables.json draft.euSizeChart.EU36 tabani (burda style Damen Masstabellen, Koergroesse 168, verified) + buraya eklenecek landmark y'leri.",
+      "tanim": "Kalibin bedeni: EU36 gercek, dikilebilir, giyilebilir kadin bedeni. contract/tables.json draft.euSizeChart.EU36 tabani (burda style Damen Masstabellen, Koergroesse degeri orada, verified) + buraya eklenecek landmark y'leri.",
       "kaynakTaban": "contract/tables.json -> draft.euSizeChart.EU36",
       "landmarklar": null, "halkalar": null, "uzunluklar": null, "genislikler": null, "acilar": null
     },
     "croquis36": {
-      "tanim": "Flat'in bedeni: ideal kadin croquis (moda cizim konvansiyonu), EU36 vitrin bedeni. Sabit tek beden — flat her zaman buradan cizilir (34-44 serisi yalniz kalip icin). Oranlar bas-boyu birimiyle (stature / basBoyu) tanimlanir; F1 endustri konvansiyonunu (9-10 bas croquis, ASTM D6673 flat sablonu, Zoe Hong/Shutterstock sablon olcumleri contract/figure-bands.json) kaynagiyla yazar.",
+      "tanim": "Flat'in bedeni: ideal kadin croquis (moda cizim konvansiyonu), EU36 vitrin bedeni. Sabit tek beden — flat her zaman buradan cizilir (34-44 serisi yalniz kalip icin). Oranlar bas-boyu birimiyle (stature / basBoyu) tanimlanir; F1 endustri konvansiyonunu (croquis bas sayisi, ASTM D6673 flat sablonu, Zoe Hong/Shutterstock sablon olcumleri contract/figure-bands.json) kaynagiyla yazar. Bu prose'a sayi yazilmaz; sayi alanlara, kaynagiyla.",
       "kaynakTaban": null,
-      "basBoyuBirimi": { "tanim": "stature / bas yuksekligi. Croquis'te 9-10; gercek bedende ~7.5. Sayi F1.", "deger": null, "kaynak": null },
+      "basBoyuBirimi": { "tanim": "stature / bas yuksekligi. Croquis'te gercek bedenden buyuktur (uzatilmis figur); iki deger de F1'de kaynakli alana yazilir, prose'a degil.", "deger": null, "kaynak": null },
       "landmarklar": null, "halkalar": null, "uzunluklar": null, "genislikler": null, "acilar": null
     }
   },
@@ -110,10 +114,35 @@
   },
 
   "ayniInsan": {
-    "_tanim": "KAPI B (engine/tests/flat_ayni_insan_check.mjs) buradan okur. Butun flat'ler croquis36'da degerlendigi icin bel/gogus/kalca y'si ve omuz ucu x'i HER flat'te ayni olmak zorunda (HEDEF madde 5). Tolerans null iken kapi yalniz OLCER ve basar; F1 tolerans yazinca kapi kirmizi/yesil verir.",
+    "_tanim": "KAPI B (engine/tests/flat_ayni_insan_check.mjs) buradan okur. Butun flat'ler croquis36'da degerlendigi icin bel/gogus/kalca y'si ve omuz ucu x'i HER flat'te ayni olmak zorunda (HEDEF madde 5). Tolerans null iken kapi yalniz OLCER ve basar; F1 tolerans yazinca kapi kirmizi/yesil verir. Hukum GEOMETRI uzerindedir: ilan edilen nitelik cizimle mutabik olmak zorunda (belYarimMutabakat), beden kimligi croquis36 olmak zorunda (data-size).",
     "toleransMM": null,
-    "olculenler": ["bustLine.y", "waist.y", "hip.y", "shoulderTip.x"],
-    "kaynak": null
+    "olculenler": ["bustLine.y", "waist.y", "hip.y", "shoulderTip.x", "cizimBelYarim", "cizimBustYarim", "cizimKalcaYarim", "belYarimMutabakat (ilan - cizim)", "data-size == svgNitelikleri.data-size"],
+    "kaynak": null,
+    "svgNitelikleri": {
+      "_tanim": "Karar ajani #5: flat SVG'sinin KAPI B'ye konustugu nitelik adlari SOZLESMEDIR. F2'nin C++ flat'i AYNI adlari AYNI anlamda basar; kapi ve bu blok degismez. Bugun bu adlari web/lib/flat-from-pattern.js yaziyor.",
+      "siluetSecici": { "deger": "path[data-rol=\"siluet\"][data-view=\"front\"]", "anlam": "on gorunumun dis siluet yolu; KAPI B geometriyi bu yoldan olcer" },
+      "data-unit-mm": { "deger": "1", "anlam": "grup koordinatinda 1 birim = 1 mm" },
+      "data-size": { "deger": "croquis36", "anlam": "flat'in degerlendigi beden kimligi (bedenler.croquis36). Bugun EU38 basiliyor; tolerans dolunca croquis36 disi KIRMIZI (karar #6)" },
+      "data-manken-bust-y": { "anlam": "bustLine.y, mm, grup koordinatinda" },
+      "data-manken-bel-y": { "anlam": "waist.y, mm" },
+      "data-manken-kalca-y": { "anlam": "hip.y, mm — croquis36 hip landmark'indan; bel y + sabit DEGIL" },
+      "data-manken-bel-yarim-mm": { "anlam": "bel hattinda siluet yari-genisligi, mm; cizimden olculenle mutabik olmak zorunda" },
+      "data-omuz-uc": { "anlam": "'x y' — shoulderTip, mm; omuzsuz gorunumde de basilir (croquis36 bedeninden), cunku origin bedenin omuz cizgisidir" },
+      "grupKoordinati": { "deger": "y=0 omuz cizgisi (neckBase hizasi), +y asagi, x=0 CF", "anlam": "koordinat.origin ile ayni cumle; etek dahil her gorunum bu origin'de (istisna yok)" }
+    },
+    "once": {
+      "_tanim": "'Once' fotografinin sayilari (HEDEF §3.3 compounding error kontrolu). Kaynak: node engine/tests/flat_ayni_insan_check.mjs, KOSU/ciktilar/01..09 (commit 533c3d7c, EU38 gercek bedenden cizilip manken carpaniyla cekistirilmis flat'ler; gorsel KOSU/ciktilar/zemin-once.png). Sonraki her kiyas bu sayilara karsi. Bunlar OLCUM sayisidir, beden sayisi degil; body-v1'in 'kaynaksiz sayi yok' kurali bu bloga uygulanmaz cunku kaynak KAPI B ciktisinin kendisidir.",
+      "kaynak": "engine/tests/flat_ayni_insan_check.mjs @ 533c3d7c, 9 flat, data-size=EU38",
+      "belY_mm": { "dress": 428.2, "dressPrincess": 405.8, "top": 397.0, "skirt": -49.2, "maxMin": 477.5 },
+      "bustY_mm": { "dress": 231.0, "dressKolsuz": 225.0, "dressPrincess": 242.3, "skirt": -49.2, "maxMin": 291.5 },
+      "omuzX_mm": { "min": 191.7, "max": 207.6, "maxMin": 15.9, "eksik": "07-etek-a-line (omuz ucu ilani yok)" },
+      "cizimBelYarim_mm": { "min": 176.9, "max": 241.9, "maxMin": 65.0 },
+      "cizimBustYarim_mm": { "min": 176.9, "max": 244.2, "maxMin": 67.3 },
+      "cizimKalcaYarim_mm": { "min": 194.1, "max": 250.7, "maxMin": 56.6 },
+      "hipY_not": "hip.y bugun her flat'te waist.y + 200.0 mm SABIT (web/lib/flat-from-pattern.js:137 MANKEN_KALCA_DERINLIK_MM, 9/9 flat ayni dusus). Bu bir olcum degil; kalca hatti y sutunu bel y'nin kopyasidir. F2 sonrasi hip.y croquis36 landmark'indan gelir.",
+      "belMutabakat_not": "9/9 flat'te cizimden olculen bel yari-genislik, ilan edilen data-manken-bel-yarim-mm'den tam 12.7 mm buyuk (= flat-from-pattern.js:136 MANKEN_FARK_CEYREK_MM 12.7417). Ilan carpan oncesi, cizim carpan sonrasi: ilan ile cizim ayni sey degil. Tolerans dolunca KIRMIZI.",
+      "etek_not": "07-etek-a-line: bel y -49.2, omuz ucu yok, cizim ust kenari -49.2 — gorunum origin'i beden landmark'i degil (bel ustu). F2'de etek de omuz cizgisi origin'ine baglanir, istisna olmaz (karar ek dokum c)."
+    }
   },
 
   "kumasBollugu": {
