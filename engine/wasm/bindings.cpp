@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#include "../src/body.hpp"
 #include "../src/dxf.hpp"
 #include "../src/garment.hpp"
 #include "../src/recipe.hpp"
@@ -686,9 +687,24 @@ std::string flatJSONBinding(val specObj, val bodyObj) {
     }
 }
 
+// F1 tur 5: Body'nin wasm'a GERCEKTEN girmesi icin tek okuyucu (karar ajani 5 'bindings eklenmez' demisti; ama
+// tuketicisiz body.cpp linker tarafindan atildi, wasm bayt-ayni kaldi — 'motor Body tasiyor' cumlesi bos kaliyordu).
+// Cizim/geometri YOK: yalniz iki bedenin ve 34-44 serisinin landmark/halka sayilarini JSON basar. F2 flat'i buradan okur.
+std::string bodyJSON(std::string bodyId) {
+    using stitchu::Body;
+    Body b = (bodyId == "gercek36" || bodyId == "croquis36") ? Body::fromContract(bodyId) : Body::graded(bodyId);
+    std::string o = "{\"id\":\"" + b.id() + "\",\"landmarks\":{";
+    bool first = true;
+    for (const auto& n : b.landmarkNames()) { if (!b.hasLandmark(n)) continue; const auto p = b.landmark(n); o += (first ? "" : ",") + std::string("\"") + n + "\":[" + std::to_string(p.x) + "," + std::to_string(p.y) + "]"; first = false; }
+    o += "},\"rings\":{"; first = true;
+    for (const auto& n : b.ringNames()) { if (!b.hasRing(n)) continue; o += (first ? "" : ",") + std::string("\"") + n + "\":" + std::to_string(b.ring(n)); first = false; }
+    o += "}}";
+    return o;
+}
 } // namespace
 
 EMSCRIPTEN_BINDINGS(stitchu_engine) {
+    emscripten::function("bodyJSON", &bodyJSON);
     emscripten::function("draftJSON", &draftJSON);
     emscripten::function("gradeJSON", &gradeJSON);
     emscripten::function("draftRecipeJSON", &draftRecipeJSON);
