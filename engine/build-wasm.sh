@@ -90,6 +90,9 @@ ENGINE_SRCS=(
   src/bodysurface.cpp
   src/body.cpp   # F1 tur 5/6 (karar ajani 5 + karar 2): iki beden, contract body.gen.hpp. Cizim yapan embind EKLENMEZ (F2'ye kadar web Body'den cizmez);
                  # tek okuyucu bodyJSON (wasm/bindings.cpp) kapili: engine/tests/wasm_body_check.mjs bundle == contract dogrular (tuketicisiz body.cpp'yi linker atiyordu)
+  src/graf.cpp        # F2a: GRAF IR (bedene referansli Edge/Panel/Seam grafi); embind yok, F2b/F3 baglar
+  src/grafop.cpp      # F2a: graf op'lari (saf, edit-locality, replay)
+  src/grafdogrula.cpp # F2a: dogrulayici + sanal dikis
   src/garmentshell.cpp
   src/flatten.cpp
   src/shellprojection.cpp

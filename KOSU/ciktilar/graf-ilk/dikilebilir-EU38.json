@@ -1,0 +1,602 @@
+{
+  "garment": "taban-elbise",
+  "body": "EU38",
+  "onArkaEsit": false,
+  "dikilebilir": true,
+  "kirmizi": 0,
+  "hukumler": [
+    {
+      "kural": "tolerans",
+      "hedef": "contract",
+      "deger": "dikis 2.00 · centik 0.50 · halka 2.00 · pens 2.00 mm; ratio [1.00, 3.50]",
+      "gecti": true,
+      "bilgi": true
+    },
+    {
+      "kural": "sema",
+      "hedef": "taban-elbise",
+      "deger": "sozlesmeyle uyumlu",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "panel_kapali",
+      "hedef": "on_beden",
+      "deger": "7 kenar, halka kapali",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "panel_kapali",
+      "hedef": "arka_beden",
+      "deger": "7 kenar, halka kapali",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "panel_kapali",
+      "hedef": "on_etek",
+      "deger": "5 kenar, halka kapali",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "panel_kapali",
+      "hedef": "arka_etek",
+      "deger": "5 kenar, halka kapali",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "panel_kapali",
+      "hedef": "kol",
+      "deger": "5 kenar, halka kapali",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "referans",
+      "hedef": "taban-elbise",
+      "deger": "6 dikis, 5 halka; tum referanslar cozuldu",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "on_beden/cf",
+      "deger": "kat kenari x=0, panel onFold",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "on_beden/waist_front",
+      "deger": "seam kenari, dikis: bel",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "on_beden/side_front",
+      "deger": "seam kenari, dikis: yan_beden",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "on_beden/armhole_front.1",
+      "deger": "seam kenari, dikis: kol_oyugu",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "on_beden/armhole_front.2",
+      "deger": "seam kenari, dikis: kol_oyugu",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "on_beden/shoulder",
+      "deger": "seam kenari, dikis: omuz",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "on_beden/neck_front",
+      "deger": "cut kenari, bitirme: faced",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "arka_beden/cb",
+      "deger": "kat kenari x=0, panel onFold",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "arka_beden/waist_back",
+      "deger": "seam kenari, dikis: bel",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "arka_beden/side_back",
+      "deger": "seam kenari, dikis: yan_beden",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "arka_beden/armhole_back.1",
+      "deger": "seam kenari, dikis: kol_oyugu",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "arka_beden/armhole_back.2",
+      "deger": "seam kenari, dikis: kol_oyugu",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "arka_beden/shoulder",
+      "deger": "seam kenari, dikis: omuz",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "arka_beden/neck_back",
+      "deger": "cut kenari, bitirme: faced",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "on_etek/cf",
+      "deger": "kat kenari x=0, panel onFold",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "on_etek/hem_front",
+      "deger": "cut kenari, bitirme: hem",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "on_etek/side_front.1",
+      "deger": "seam kenari, dikis: yan_etek",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "on_etek/side_front.2",
+      "deger": "seam kenari, dikis: yan_etek",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "on_etek/waist_front",
+      "deger": "seam kenari, dikis: bel",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "arka_etek/cb",
+      "deger": "kat kenari x=0, panel onFold",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "arka_etek/hem_back",
+      "deger": "cut kenari, bitirme: hem",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "arka_etek/side_back.1",
+      "deger": "seam kenari, dikis: yan_etek",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "arka_etek/side_back.2",
+      "deger": "seam kenari, dikis: yan_etek",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "arka_etek/waist_back",
+      "deger": "seam kenari, dikis: bel",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "kol/cap_front",
+      "deger": "seam kenari, dikis: kol_oyugu",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "kol/underarm_front",
+      "deger": "seam kenari, dikis: kol_alti",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "kol/hem",
+      "deger": "cut kenari, bitirme: hem",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "kol/underarm_back",
+      "deger": "seam kenari, dikis: kol_alti",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kenar_turu",
+      "hedef": "kol/cap_back",
+      "deger": "seam kenari, dikis: kol_oyugu",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kendini_kesme",
+      "hedef": "on_beden",
+      "deger": "kontur temiz",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kendini_kesme",
+      "hedef": "arka_beden",
+      "deger": "kontur temiz",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kendini_kesme",
+      "hedef": "on_etek",
+      "deger": "kontur temiz",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kendini_kesme",
+      "hedef": "arka_etek",
+      "deger": "kontur temiz",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "kendini_kesme",
+      "hedef": "kol",
+      "deger": "kontur temiz",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "dikis_uzunluk",
+      "hedef": "omuz",
+      "deger": "a 122.45 mm, hedef 122.45 (ratio 1.0000 x b 122.45 + ease 0.00), artik 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "dikis_uzunluk",
+      "hedef": "yan_beden",
+      "deger": "a 211.93 mm, hedef 211.93 (ratio 1.0000 x b 211.93 + ease 0.00), artik 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "centik",
+      "hedef": "yan_beden @0.5000",
+      "deger": "iki tarafta en kotu sapma 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "dikis_uzunluk",
+      "hedef": "kol_oyugu",
+      "deger": "a 384.89 mm, hedef 384.38 (ratio 1.0400 x b 369.59 + ease 0.00), artik 0.51 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "dikis_uzunluk",
+      "hedef": "bel",
+      "deger": "a 362.50 mm, hedef 362.50 (ratio 1.0000 x b 362.50 + ease 0.00), artik 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "centik",
+      "hedef": "bel @0.2500",
+      "deger": "iki tarafta en kotu sapma 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "centik",
+      "hedef": "bel @0.7500",
+      "deger": "iki tarafta en kotu sapma 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "dikis_uzunluk",
+      "hedef": "yan_etek",
+      "deger": "a 595.39 mm, hedef 595.39 (ratio 1.0000 x b 595.39 + ease 0.00), artik 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "dikis_uzunluk",
+      "hedef": "kol_alti",
+      "deger": "a 190.80 mm, hedef 190.80 (ratio 1.0000 x b 190.80 + ease 0.00), artik 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "yerlestirme",
+      "hedef": "on_beden",
+      "deger": "rijit poz (kok) theta 0.00 deg, t (0.00, 0.00); alan 713.31 cm2, cevre 1147.62 mm",
+      "gecti": true,
+      "bilgi": true
+    },
+    {
+      "kural": "yerlestirme",
+      "hedef": "arka_beden",
+      "deger": "rijit poz (omuz) theta -180.00 deg, t (247.80, 45.20); alan 754.44 cm2, cevre 1183.06 mm",
+      "gecti": true,
+      "bilgi": true
+    },
+    {
+      "kural": "yerlestirme",
+      "hedef": "on_etek",
+      "deger": "rijit poz (bel) theta -98.75 deg, t (-296.26, -110.54); alan 1379.64 cm2, cevre 1609.14 mm",
+      "gecti": true,
+      "bilgi": true
+    },
+    {
+      "kural": "yerlestirme",
+      "hedef": "arka_etek",
+      "deger": "rijit poz (bel) theta 0.00 deg, t (0.00, 0.00); alan 1379.64 cm2, cevre 1609.14 mm",
+      "gecti": true,
+      "bilgi": true
+    },
+    {
+      "kural": "yerlestirme",
+      "hedef": "kol",
+      "deger": "rijit poz (kol_oyugu) theta 99.93 deg, t (340.31, 235.82); alan 812.27 cm2, cevre 1086.99 mm",
+      "gecti": true,
+      "bilgi": true
+    },
+    {
+      "kural": "halka_kapanma",
+      "hedef": "yaka (neck)",
+      "deger": "toplam 156.73 mm, en buyuk kavsak boslugu 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "halka_kapanma",
+      "hedef": "kol_oyugu_halka (armhole)",
+      "deger": "toplam 369.59 mm, en buyuk kavsak boslugu 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "halka_kapanma",
+      "hedef": "bel_halka (waist_ring)",
+      "deger": "toplam 362.50 mm, en buyuk kavsak boslugu 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "halka_kapanma",
+      "hedef": "etek_ucu (hem)",
+      "deger": "toplam 495.00 mm, en buyuk kavsak boslugu 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "halka_kapanma",
+      "hedef": "kol_agzi (sleeve_hem)",
+      "deger": "toplam 320.50 mm, en buyuk kavsak boslugu 0.00 mm",
+      "gecti": true,
+      "bilgi": false
+    }
+  ],
+  "dikisler": [
+    {
+      "seam": "omuz",
+      "lenA": 122.44786645752552,
+      "lenB": 122.44786645752552,
+      "hedefA": 122.44786645752552,
+      "artikMM": 0,
+      "gecti": true,
+      "ucBoslukMM": 0,
+      "centikArtikMM": []
+    },
+    {
+      "seam": "yan_beden",
+      "lenA": 211.92938092676062,
+      "lenB": 211.92938092676062,
+      "hedefA": 211.92938092676062,
+      "artikMM": 0,
+      "gecti": true,
+      "ucBoslukMM": 0,
+      "centikArtikMM": [0]
+    },
+    {
+      "seam": "kol_oyugu",
+      "lenA": 384.8878789846944,
+      "lenB": 369.5921005069445,
+      "hedefA": 384.3757845272223,
+      "artikMM": 0.5120944574720738,
+      "gecti": true,
+      "ucBoslukMM": 159.70416084985283,
+      "centikArtikMM": []
+    },
+    {
+      "seam": "bel",
+      "lenA": 362.5,
+      "lenB": 362.5,
+      "hedefA": 362.5,
+      "artikMM": 0,
+      "gecti": true,
+      "ucBoslukMM": 0,
+      "centikArtikMM": [0, 0]
+    },
+    {
+      "seam": "yan_etek",
+      "lenA": 595.3909944983848,
+      "lenB": 595.3909944983848,
+      "hedefA": 595.3909944983848,
+      "artikMM": 0,
+      "gecti": true,
+      "ucBoslukMM": 0,
+      "centikArtikMM": []
+    },
+    {
+      "seam": "kol_alti",
+      "lenA": 190.8,
+      "lenB": 190.8,
+      "hedefA": 190.8,
+      "artikMM": 0,
+      "gecti": true,
+      "ucBoslukMM": 0,
+      "centikArtikMM": []
+    }
+  ],
+  "halkalar": [
+    {
+      "ring": "yaka",
+      "role": "neck",
+      "toplamMM": 156.7307765247241,
+      "kapanmaMM": 0,
+      "enKotuKavsak": "",
+      "gecti": true,
+      "kavsaklar": "arka_beden/neck_back -> on_beden/neck_front: kat aynasi | on_beden/neck_front -> arka_beden/neck_back: dikis omuz (0.00)"
+    },
+    {
+      "ring": "kol_oyugu_halka",
+      "role": "armhole",
+      "toplamMM": 369.5921005069446,
+      "kapanmaMM": 0,
+      "enKotuKavsak": "",
+      "gecti": true,
+      "kavsaklar": "on_beden/armhole_front.1 -> on_beden/armhole_front.2: kose | on_beden/armhole_front.2 -> arka_beden/armhole_back.2: dikis omuz (0.00) | arka_beden/armhole_back.2 -> arka_beden/armhole_back.1: kose | arka_beden/armhole_back.1 -> on_beden/armhole_front.1: dikis yan_beden (0.00)"
+    },
+    {
+      "ring": "bel_halka",
+      "role": "waist_ring",
+      "toplamMM": 362.5,
+      "kapanmaMM": 0,
+      "enKotuKavsak": "",
+      "gecti": true,
+      "kavsaklar": "on_beden/waist_front -> arka_beden/waist_back: dikis yan_beden (0.00) | arka_beden/waist_back -> on_beden/waist_front: kat aynasi"
+    },
+    {
+      "ring": "etek_ucu",
+      "role": "hem",
+      "toplamMM": 495,
+      "kapanmaMM": 0,
+      "enKotuKavsak": "",
+      "gecti": true,
+      "kavsaklar": "on_etek/hem_front -> arka_etek/hem_back: dikis yan_etek (0.00) | arka_etek/hem_back -> on_etek/hem_front: kat aynasi"
+    },
+    {
+      "ring": "kol_agzi",
+      "role": "sleeve_hem",
+      "toplamMM": 320.5,
+      "kapanmaMM": 0,
+      "enKotuKavsak": "",
+      "gecti": true,
+      "kavsaklar": "kol/hem -> kol/hem: dikis kol_alti (0.00)"
+    }
+  ],
+  "pozlar": [
+    {
+      "panel": "on_beden",
+      "yerlesti": true,
+      "cosT": 1,
+      "sinT": 0,
+      "tx": 0,
+      "ty": 0,
+      "yerlestiren": "kok",
+      "alanMM2": 71331.12677580242,
+      "cevreMM": 1147.6151169833447
+    },
+    {
+      "panel": "arka_beden",
+      "yerlesti": true,
+      "cosT": -1,
+      "sinT": -3.216245299353273e-16,
+      "tx": 247.79999999999998,
+      "ty": 45.20000000000006,
+      "yerlestiren": "omuz",
+      "alanMM2": 75444.33032873877,
+      "cevreMM": 1183.0622548168963
+    },
+    {
+      "panel": "on_etek",
+      "yerlesti": true,
+      "cosT": -0.15220675751720736,
+      "sinT": -0.9883486747935154,
+      "tx": -296.26025174344466,
+      "ty": -110.54013347437845,
+      "yerlestiren": "bel",
+      "alanMM2": 137963.75,
+      "cevreMM": 1609.1409944983848
+    },
+    {
+      "panel": "arka_etek",
+      "yerlesti": true,
+      "cosT": 1,
+      "sinT": 0,
+      "tx": 0,
+      "ty": 0,
+      "yerlestiren": "bel",
+      "alanMM2": 137963.75,
+      "cevreMM": 1609.1409944983848
+    },
+    {
+      "panel": "kol",
+      "yerlesti": true,
+      "cosT": -0.17248858848113605,
+      "sinT": 0.985011516097038,
+      "tx": 340.31089175433516,
+      "ty": 235.8209272659662,
+      "yerlestiren": "kol_oyugu",
+      "alanMM2": 81226.54842207565,
+      "cevreMM": 1086.9878789846941
+    }
+  ]
+}

@@ -58,7 +58,10 @@ add_library(engine
     src/recipe.cpp
     src/dxf.cpp
     src/nest.cpp
-    src/drape.cpp)
+    src/drape.cpp
+    src/graf.cpp
+    src/grafop.cpp
+    src/grafdogrula.cpp)
 target_include_directories(engine PUBLIC src)
 target_compile_options(engine PRIVATE -Wall -Wextra)
 
@@ -1507,3 +1510,28 @@ add_test(NAME gen_contract_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOUR
 # contract/body-v1.json ile ayni sayilari basiyor mu — croquis36/gercek36 landmark'lari ve EU34-44 halka cevreleri 1e-6 icinde.
 # 'node ile elle okundu' kanit degil kapidir; bundle damgasi ciktida basilir. Cizim yapan embind yok, yalniz okuyucu.
 add_test(NAME wasm_body_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/wasm_body_check.mjs)
+
+# ---- F2a GRAF IR (2026-09-05, HEDEF madde 9/4-5/2): giysi = bedene referansli Edge/Panel/Seam grafi.
+# graf_ir_check: JSON gidis-donus bayt-ayni + sema (contract/graf-v1.json) + iki bedende degerleme +
+#   replay; KOSU/ciktilar/graf-ilk/graf.json pin (yenileme: graf_ir_check ... --emit).
+# graf_op_check: her op icin edit-locality (dokunulmayan panel bayt-ayni) + degismez + negatif; replay.
+# graf_dikilebilir_check: dogrulayici (panel kapali, referans, kenar turu, dikis uzunluk, centik,
+#   kendini kesme) + sanal dikis (halka kapanma) — taban gercek36'da 0 kirmizi; her kural icin kiran
+#   ornek adiyla kirmizi; toleranslar contract'tan (bos contract -> adiyla ret).
+add_executable(graf_ir_check tests/graf_ir_check.cpp)
+target_link_libraries(graf_ir_check PRIVATE engine)
+add_test(NAME graf_ir_check COMMAND graf_ir_check
+    ${CMAKE_CURRENT_SOURCE_DIR}/../contract/graf-v1.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/../contract/garment-spec-v2.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/../KOSU/ciktilar/graf-ilk/graf.json)
+add_executable(graf_op_check tests/graf_op_check.cpp)
+target_link_libraries(graf_op_check PRIVATE engine)
+add_test(NAME graf_op_check COMMAND graf_op_check
+    ${CMAKE_CURRENT_SOURCE_DIR}/../contract/graf-v1.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/../KOSU/ciktilar/graf-ilk/graf.json)
+add_executable(graf_dikilebilir_check tests/graf_dikilebilir_check.cpp)
+target_link_libraries(graf_dikilebilir_check PRIVATE engine)
+add_test(NAME graf_dikilebilir_check COMMAND graf_dikilebilir_check
+    ${CMAKE_CURRENT_SOURCE_DIR}/../contract/graf-v1.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/../KOSU/ciktilar/graf-ilk/graf.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/../KOSU/ciktilar/graf-ilk)

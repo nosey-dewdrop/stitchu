@@ -1,0 +1,193 @@
+{
+  "_contract": "graf-v1 — GRAF IR SOZLESMESI (F2a, 2026-09-05). HEDEF.md madde 9: sozluk Edge/Panel/Stitch primitifleriyle kurulur, sabit menu yok. Madde 4-5: BIR giysi grafi, IKI beden (gercek36 = kalip, croquis36 = flat), iki cikti. Madde 2: edit = grafa op, kaydi tekrar oynatilabilir. Bu dosya alan adlarinin, enum'larin, toleranslarin ve op tablosunun TEK kaynagidir: engine/src/graf.hpp (tipler + JSON gidis-donus), engine/src/grafop.hpp (op'lar), engine/src/grafdogrula.hpp (dogrulayici + sanal dikis) buradan okur. F4a (fotograf) ve F4b (prompt) hedef semasi da BU dosyadir: vision/prompt katmani dogrudan bu belgeyi uretir. Alan adlari Ingilizce, aciklamalar TR+EN. Kaynagi olmayan sayi 'DOGRULANMADI' tasir ve en kisitlayici secildi.",
+  "version": "1.0.0",
+  "id": "graf-v1",
+  "_yasa": [
+    "1. Nokta mm ile DEGIL beden landmark'i + oranla tanimlanir (Anchor). mm yalniz ofsetMM/yOfsetMM alanlarinda durur ve bedenden bagimsiz bir eklemedir (pay, kayma). Bir nokta birden cok landmark teriminin afin birlesimi olabilir (combo, agirliklar 1'e toplanir): kesirle bolme ve oranla uzatma grafi mm'ye dusurmez.",
+    "2. Ayni graf iki bedende degerlenir: Body('gercek36' / graded EU34-44) -> KALIP, Body('croquis36') -> FLAT. Graf hangi bedende oldugunu bilmez; degerleme baglami (EvalCtx) bedeni ve halka basina bollugu tasir. Kumas = bedene bolluk alani: bolluk halkanin cevresini orantili buyutur.",
+    "3. Panel kapali kenar halkasidir: edges[i].to == edges[i+1].from yapisal olarak (landmark terimleri esit), sayiyla degil. Kenar turleri: seam (bir Seam'de dikilir), cut (serbest kenar, finish gerekcesi zorunlu), fold (x=0 kat cizgisi, panel onFold), dartLeg (pens bacagi; iki bacak ortak apeks, esit uzunluk).",
+    "4. Seam iki kenar KUMESI arasinda bir oran tasir: len(a) = ratio x len(b) + easeMM. Buzgu bir stil adi degil bu orandir (GarmentCode Interface.ruffle; contract/primitives-v1.json seam.ratio). a tarafi buzulen taraftir, ratio >= 1.",
+    "5. Bir kenar bolununce ROLU kaybolmaz, PARCALI tasinir (rolePart/roleCount). K2/K5'in kok sebebi (KOSU/ciktilar/primitif-DUSEN-*.txt: yoke/cup bolmesi kol oyugunun adini dusuruyordu) bu alanla kapanir: oyuk = parcalarin toplami.",
+    "6. Her op saf fonksiyondur ve yalniz adiyla dokundugu panel(ler)i degistirir; diger paneller BAYT-AYNI kalir (edit-locality, contract/edit-locality-v1.json yasasi grafa tasindi). Op kaydi grafa eklenir; kayitlarin tabana yeniden oynatilmasi ayni JSON'u verir (spec-diff deseni, Zoo/KittyCAD).",
+    "7. Dikilebilirlik bir Body verilince olculur: dikis uzunluk artigi, centik eslesmesi, kendini kesme, halka kapanmasi (sanal dikis). Kapanmayan giysi dikilebilir DEGILDIR. Sonuc bir tablodur (JSON + markdown) ve F6 paketine girer.",
+    "8. Giysi TIPI kelimesine bagli sabit bu dosyaya GIRMEZ (HEDEF 1.9). Enum'lar dikis tarzi ve bitirme teknigidir, giysi adlari degil."
+  ],
+  "koordinat": "contract/body-v1.json koordinat blogu ile ayni cumle: x=0 CF/CB duzlemi, y=0 omuz cizgisi (landmark.neckBase), +y asagi, mm. Panel yerel koordinati bedenin koordinatidir; kalip sayfasina yerlestirme F2b'nin isidir.",
+  "kokTip": "Garment",
+  "tipler": {
+    "Garment": {
+      "aciklama": {"tr": "Giysi grafi: paneller, dikisler, halkalar ve op gecmisi.", "en": "The whole design as a graph: panels, seams, rings and the op history."},
+      "alanlar": {
+        "id": {"tip": "string", "zorunlu": true, "aciklama": {"tr": "Grafin adi.", "en": "Name of the graph."}},
+        "version": {"tip": "string", "zorunlu": true, "aciklama": {"tr": "Her zaman 'graf-v1'.", "en": "Always 'graf-v1'."}},
+        "notes": {"tip": "string", "aciklama": {"tr": "Serbest not: kaynaklar, uydurulan varsayimlar ADIYLA (HEDEF §2: uydurdugunu soyle).", "en": "Free note: sources, and every assumed choice named out loud."}},
+        "panels": {"tip": "Panel[]", "zorunlu": true, "aciklama": {"tr": "Kesilecek parcalar.", "en": "Pieces to be cut."}},
+        "seams": {"tip": "Seam[]", "zorunlu": true, "aciklama": {"tr": "Dikisler (iki kenar kumesi + oran).", "en": "Seams (two edge sets + ratio)."}},
+        "rings": {"tip": "Ring[]", "zorunlu": true, "aciklama": {"tr": "Acikliklar: yaka, kol oyugu, bel, etek ucu, kol agzi. Sanal dikis bunlarin kapanmasini olcer.", "en": "Openings: neck, armhole, hem, sleeve hem. Virtual sewing measures their closure."}},
+        "ops": {"tip": "OpRecord[]", "zorunlu": true, "aciklama": {"tr": "Uygulanan op kayitlari, sirayla. Bos dizi = taban graf.", "en": "Applied op records in order. Empty = base graph."}}
+      }
+    },
+    "Panel": {
+      "aciklama": {"tr": "Kapali kenar halkasi = bir kez kesilecek parca.", "en": "Closed edge loop = one piece to cut."},
+      "alanlar": {
+        "id": {"tip": "string", "zorunlu": true},
+        "edges": {"tip": "Edge[]", "zorunlu": true, "aciklama": {"tr": "En az 3 kenar; edges[i].to == edges[i+1].from.", "en": "At least 3 edges; edges[i].to == edges[i+1].from."}},
+        "grainDeg": {"tip": "number", "zorunlu": true, "aciklama": {"tr": "Cozgu yonu, derece; 0 duz, 45 verev (ASTM D6673 katman 7).", "en": "Grain angle in degrees; 0 straight, 45 bias."}},
+        "onFold": {"tip": "boolean", "zorunlu": true, "aciklama": {"tr": "x=0 kat cizgisi (ASTM katman 6). fold kenari olan panelde true.", "en": "Cut on the x=0 fold line."}},
+        "cutCount": {"tip": "integer", "zorunlu": true, "aciklama": {"tr": "Kac kez kesilecek.", "en": "How many times to cut."}},
+        "seamAllowanceMM": {"tip": "number", "zorunlu": true, "aciklama": {"tr": "Dikis payi mm; 0 = F2b contract varsayilanini (pattern-sheet-v1) uygular, burada sayi uydurulmaz.", "en": "Seam allowance mm; 0 = F2b applies the sheet contract default."}},
+        "bolluk": {"tip": "Bolluk[]", "aciklama": {"tr": "Halka basina cevre bollugu (mm). Degerleme bu halkanin cevresini G + mm olarak okur.", "en": "Per-ring circumference ease (mm) added at evaluation."}},
+        "gerekce": {"tip": "string", "aciklama": {"tr": "Parca neden var (parca_sayisi yasasi: gerekcesiz parca yok).", "en": "Why this piece exists."}}
+      }
+    },
+    "Edge": {
+      "aciklama": {"tr": "Iki nokta arasinda tek kenar: dogru (control bos) ya da kubik (2 kontrol).", "en": "One edge between two points: a line (no control) or a cubic (2 controls)."},
+      "alanlar": {
+        "id": {"tip": "string", "zorunlu": true, "aciklama": {"tr": "Panel icinde tekil. Bolunen kenar '.1', '.2' eki alir.", "en": "Unique within the panel; split parts get '.1', '.2'."}},
+        "kind": {"tip": "enum:edgeKind", "zorunlu": true},
+        "role": {"tip": "string", "aciklama": {"tr": "Anatomik ad, mevcut edgeRoles ile uyumlu: armhole_front, armhole_back, sleeve_cap, sleeve_underarm, sleeve_hem, neck_front, neck_back, shoulder, side_front, side_back, waist_front, waist_back, hem_front, hem_back, cf, cb. Serbest metin; enum degil.", "en": "Anatomical name compatible with the engine's edgeRoles. Free text, not an enum."}},
+        "rolePart": {"tip": "integer", "aciklama": {"tr": "Bolunmus rolun kacinci parcasi (1..roleCount). Yok = tam kenar.", "en": "Which part of a split role (1..roleCount)."}},
+        "roleCount": {"tip": "integer", "aciklama": {"tr": "Rol kac parcaya bolundu.", "en": "How many parts the role was split into."}},
+        "from": {"tip": "RefPoint", "zorunlu": true},
+        "to": {"tip": "RefPoint", "zorunlu": true},
+        "control": {"tip": "RefPoint[]", "aciklama": {"tr": "0 ya da 2 kontrol noktasi (kubik Bezier).", "en": "0 or 2 control points (cubic Bezier)."}},
+        "finish": {"tip": "enum:finish", "aciklama": {"tr": "cut kenar icin bitirme gerekcesi; dikisli kenarda bos.", "en": "Finishing reason for a cut edge; empty on a sewn edge."}},
+        "notches": {"tip": "number[]", "aciklama": {"tr": "Kenar uzerinde centik kesirleri (0,1), yay uzunluguyla.", "en": "Notch fractions along the edge (0,1) by arc length."}},
+        "gatherRatio": {"tip": "number", "aciklama": {"tr": "Bu kenar buzgu icin kac kat uzatildi (bilgi; hukum Seam.ratio'da).", "en": "How much this edge was lengthened for gathering (info; the judgement lives in Seam.ratio)."}}
+      }
+    },
+    "Anchor": {
+      "aciklama": {"tr": "Tek landmark terimi. x = oran x taban + ofsetMM; taban xOf'a gore landmark.x ya da halka payi. y = yLandmark.y (+ yOran x (yLandmark2.y - yLandmark.y)) + yOfsetMM.", "en": "One landmark term. x = oran x base + ofsetMM; base is landmark.x or a ring share per xOf. y from yLandmark, optionally interpolated toward yLandmark2, plus yOfsetMM."},
+      "alanlar": {
+        "landmark": {"tip": "string", "zorunlu": true, "aciklama": {"tr": "contract/body-v1.json landmark adi ('landmark.<ad>').", "en": "A body-v1 landmark name."}},
+        "xOf": {"tip": "enum:xOf", "aciklama": {"tr": "x tabani. landmark: landmark.x (croquis'te cevre/4 tup). ringFront: G x (1 - arkaPay) / 2; ringBack: G x arkaPay / 2; ringQuarter: G / 4. G = halka cevresi + bolluk. scalarHalf: genislik olcusu / 2 (ring alaninda olcunun adi).", "en": "x base: the landmark's x, a share of the ring circumference (front / back / quarter), or half of a named body width."}},
+        "ring": {"tip": "string", "aciklama": {"tr": "xOf ring* icin halka ('girth.<ad>'); bos = landmark'in kendi halkasi. xOf scalarHalf icin genislik olcusu adi ('width.<ad>').", "en": "Ring for xOf ring* (empty = the landmark's own ring); for scalarHalf, the width measure name."}},
+        "oran": {"tip": "number", "zorunlu": true, "aciklama": {"tr": "x carpani. 0 = CF/CB, 1 = landmark kenari.", "en": "x multiplier. 0 = centre line, 1 = the landmark edge."}},
+        "ofsetMM": {"tip": "number", "zorunlu": true, "aciklama": {"tr": "x'e mutlak ekleme, mm (bedenden bagimsiz pay).", "en": "Absolute x addition, mm."}},
+        "yLandmark": {"tip": "string", "aciklama": {"tr": "y tabani; bos = landmark.", "en": "y base; empty = landmark."}},
+        "yLandmark2": {"tip": "string", "aciklama": {"tr": "Dolu ise y iki landmark arasinda yOran ile ara deger.", "en": "If set, y is interpolated toward this landmark by yOran."}},
+        "yOran": {"tip": "number", "aciklama": {"tr": "0 = yLandmark, 1 = yLandmark2.", "en": "0 = yLandmark, 1 = yLandmark2."}},
+        "yOfsetMM": {"tip": "number", "aciklama": {"tr": "y'ye mutlak ekleme, mm.", "en": "Absolute y addition, mm."}}
+      }
+    },
+    "RefPointCombo": {
+      "aciklama": {"tr": "Cok terimli nokta: agirliklari 1'e toplanan Anchor'lar.", "en": "Multi-term point: anchors whose weights sum to 1."},
+      "alanlar": {
+        "combo": {"tip": "Term[]", "zorunlu": true}
+      }
+    },
+    "Term": {
+      "aciklama": {"tr": "Agirlikli Anchor.", "en": "Weighted anchor."},
+      "alanlar": {
+        "w": {"tip": "number", "zorunlu": true},
+        "landmark": {"tip": "string", "zorunlu": true},
+        "xOf": {"tip": "enum:xOf"},
+        "ring": {"tip": "string"},
+        "oran": {"tip": "number", "zorunlu": true},
+        "ofsetMM": {"tip": "number", "zorunlu": true},
+        "yLandmark": {"tip": "string"},
+        "yLandmark2": {"tip": "string"},
+        "yOran": {"tip": "number"},
+        "yOfsetMM": {"tip": "number"}
+      }
+    },
+    "Bolluk": {
+      "alanlar": {
+        "ring": {"tip": "string", "zorunlu": true},
+        "mm": {"tip": "number", "zorunlu": true}
+      }
+    },
+    "EdgeRef": {
+      "aciklama": {"tr": "Panel + kenar adi.", "en": "Panel + edge id."},
+      "alanlar": {
+        "panel": {"tip": "string", "zorunlu": true},
+        "edge": {"tip": "string", "zorunlu": true}
+      }
+    },
+    "Seam": {
+      "aciklama": {"tr": "Iki kenar kumesini birlestiren dikis. len(a) = ratio x len(b) + easeMM.", "en": "A seam joining two edge sets. len(a) = ratio x len(b) + easeMM."},
+      "alanlar": {
+        "id": {"tip": "string", "zorunlu": true},
+        "a": {"tip": "EdgeRef[]", "zorunlu": true, "aciklama": {"tr": "Buzulen taraf (ratio >= 1).", "en": "The gathered side (ratio >= 1)."}},
+        "b": {"tip": "EdgeRef[]", "zorunlu": true},
+        "ratio": {"tip": "number", "zorunlu": true, "aciklama": {"tr": "araliklar.ratio icinde.", "en": "Within araliklar.ratio."}},
+        "easeMM": {"tip": "number", "zorunlu": true, "aciklama": {"tr": "Oran disi mutlak fazlalik (kol kapagi payi gibi).", "en": "Absolute extra beyond the ratio (cap ease)."}},
+        "notchFractions": {"tip": "number[]", "aciklama": {"tr": "Dikis boyunca kesirler; iki tarafta ayni kesirde centik bulunmali (toleranslar.centikMM).", "en": "Fractions along the seam; both sides must carry a notch at the same fraction."}},
+        "closure": {"tip": "Closure", "aciklama": {"tr": "Kapama (fermuar/dugme) bu dikisin bir bolumudur.", "en": "A closure lives on a part of this seam."}},
+        "gerekce": {"tip": "string"}
+      }
+    },
+    "Closure": {
+      "alanlar": {
+        "type": {"tip": "enum:closureType", "zorunlu": true},
+        "fromFraction": {"tip": "number", "zorunlu": true},
+        "toFraction": {"tip": "number", "zorunlu": true}
+      }
+    },
+    "Ring": {
+      "aciklama": {"tr": "Aciklik: dikildiginde ardisik kenarlar. Kat cizgisine dayanan uclar ayna ile kapanir.", "en": "An opening: consecutive edges once sewn. Ends resting on a fold line close by mirror."},
+      "alanlar": {
+        "id": {"tip": "string", "zorunlu": true},
+        "role": {"tip": "string", "zorunlu": true, "aciklama": {"tr": "neck | armhole | hem | sleeve_hem | waist_ring ... (edgeRoles ile uyumlu, enum degil).", "en": "Anatomical name; free text."}},
+        "edges": {"tip": "EdgeRef[]", "zorunlu": true}
+      }
+    },
+    "OpRecord": {
+      "alanlar": {
+        "op": {"tip": "string", "zorunlu": true, "aciklama": {"tr": "oplar tablosundaki ad.", "en": "A name from the oplar table."}},
+        "args": {"tip": "json", "zorunlu": true}
+      }
+    }
+  },
+  "enumlar": {
+    "edgeKind": ["cut", "seam", "fold", "dartLeg"],
+    "_edgeKind": "cut = serbest kenar (finish zorunlu); seam = bir Seam'de dikilir; fold = x=0 kat cizgisi; dartLeg = pens bacagi (brief'teki 'dart' turu: pens bir kenar degil iki bacak + apeks oldugu icin bacak adiyla). ASTM D6673: kesim cizgisi (1) ve dikis cizgisi (14) ayri katman; ayrim burada kind'da.",
+    "xOf": ["landmark", "ringFront", "ringBack", "ringQuarter", "scalarHalf"],
+    "_xOf": "scalarHalf: x = oran x (beden genislik olcusu)/2; olcunun adi Anchor.ring alaninda (width.crossFront, width.crossBack — contract/body-v1.json genislikler). Kol oyugunun icbukey noktasi (cross front/back) buradan gelir, uydurma oran degil.",
+    "finish": ["hem", "faced", "bound", "rolled", "raw"],
+    "_finish": "Serbest kenarin bitirme teknigi: hem = kivrilip dikilir; faced = pervaz; bound = biye; rolled = rulo kenar; raw = bitirilmez (kumas gerekcesi). Giysi adi degil, dikis teknigi.",
+    "closureType": ["zipper", "buttons", "hooks", "ties", "open"],
+    "_closureType": "Kapama donanimi; 'open' = dikilmeyen acik bolum (yirtmac). Yirtmac derinligi contract/primitives-v1.json seam.sewnToFraction ile ayni sayidir: closure.fromFraction..toFraction."
+  },
+  "toleranslar": {
+    "_tanim": "grafdogrula.hpp Tolerans::fromContract buradan okur; NaN kalirsa dogrulayici adiyla reddeder. Hepsi mm.",
+    "dikisUzunlukMM": {
+      "deger": 2.0,
+      "kaynak": "contract/body-v1.json ayniInsan.toleransMM ile AYNI zincir: URBN Apparel Technical Manual 'Position points, olcu <5 in' = 1/8 in = 3.175 mm ust sinir (knowledge/POM-TOLERANS-URBN-2026-08-23.md); repodaki CLO sayisi engine/src/validator.hpp:23 pairedSeamTolerance 3.0 (yayin degil, yazilim varsayilani); GarmentCode StitchingRule.isMatching tol=0.05 GORELI (500 mm'de 25 mm — bizim kapimizin esigi degil, knowledge/TEKNOLOJI-2026-08-23.md:66). En kisitlayici yayinli degerin altinda, cizim cozunurlugunun (1 mm) ustunde: 2.0 — DOGRULANMADI etiketi ayniInsan ile ayni, gevsetme yonunde degil."
+    },
+    "centikMM": {
+      "deger": 0.5,
+      "kaynak": "engine/tests/notch_alignment_check.cpp (2026-09-03): 'dikisin ustunde yurunen mm ... 0.5mm icinde' — motorun mevcut centik kapisi, repo konvansiyonu (yayin yok, DOGRULANMADI). En kisitlayici var olan deger."
+    },
+    "halkaKapanmaMM": {
+      "deger": 2.0,
+      "kaynak": "dikisUzunlukMM ile ayni: halka bir dikisin uzunluk artigi ya da bir kavsakta iki dikisin farkiyla kapanir; ayni buyukluk, ayni dayanak."
+    },
+    "pensBacakMM": {
+      "deger": 2.0,
+      "kaynak": "engine/src/validator.hpp dartSumTolerance 2.0 (repo konvansiyonu) ve dikisUzunlukMM ile ayni zincir; pens bacaklari insadan esit oldugu icin fark yalniz sayisal artiktir."
+    }
+  },
+  "araliklar": {
+    "ratio": {"aralik": [1.0, 3.5], "kaynak": "contract/primitives-v1.json seam.ratio ve op.gather.ratio aralik 1.0..3.5 (Bugra Locket olcumu %29-35 buzgu bandin icinde)."},
+    "flareFactor": {"aralik": [1.0, 4.0], "kaynak": "contract/primitives-v1.json op.flare.hemFactor aralik 1.0..4.0."}
+  },
+  "oplar": {
+    "_tanim": "engine/src/grafop.hpp applyOp(op, args). Her op saf: yalniz adi gecen panel(ler)/dikis degisir; kaydi Garment.ops'a eklenir. Kesir = 0..1 yay parametresi; oran boyutsuz.",
+    "subdivide": {"args": {"panel": "string", "edge": "string", "fractions": "number[]"}, "tr": "Kenari kesirlerde boler; rol PARCALI tasinir; dikis/halka referanslari parcalara acilir.", "en": "Split an edge at fractions; the role is carried as parts."},
+    "dart": {"args": {"panel": "string", "edge": "string", "atFraction": "number", "intakeOran": "number", "apex": "RefPoint", "legId": "string"}, "tr": "Kenardan intakeOran kadar (kenar uzunlugunun kesri) iceri alir; iki dartLeg + apeks. Aci parametre degil: intake ve apeks, aciyi beden verir.", "en": "Take in a fraction of the edge as a dart: two dartLeg edges to the apex."},
+    "gather": {"args": {"panel": "string", "edge": "string", "ratio": "number"}, "tr": "Kenari kendi dogrultusunda ratio kat uzatir (kat kenarina dayaniyorsa x=0 etrafinda); tasidigi dikisin orani guncellenir (a = buzulen taraf).", "en": "Lengthen the edge along itself by ratio; the seam ratio follows."},
+    "flare": {"args": {"panel": "string", "edge": "string", "factor": "number"}, "tr": "Serbest (cut) kenari factor kat acar (klos). Dikisli kenar icin gather.", "en": "Widen a free edge by factor."},
+    "extend": {"args": {"panel": "string", "edge": "string", "deltaMM": "number"}, "tr": "Kenari +y'ye deltaMM tasir (uzatma).", "en": "Move the edge down by deltaMM."},
+    "shorten": {"args": {"panel": "string", "edge": "string", "deltaMM": "number"}, "tr": "Kenari -y'ye deltaMM tasir (kisaltma, pozitif mm).", "en": "Move the edge up by deltaMM."},
+    "extendTo": {"args": {"panel": "string", "edge": "string", "yLandmark": "string", "yOfsetMM": "number"}, "tr": "Kenarin y tabanini baska bir landmark'a baglar (diz -> ayak bilegi).", "en": "Re-anchor the edge's y to another landmark."},
+    "split": {"args": {"panel": "string", "vertexA": "string", "vertexB": "string", "panelA": "string", "panelB": "string", "seam": "string", "seamRatio": "number"}, "tr": "Paneli iki kose arasinda ikiye boler (kose = kenar baslangici); yeni dikis eklenir; roller parcali kalir (once subdivide ile kose ac).", "en": "Cut a panel between two vertices into two panels joined by a new seam."},
+    "overlay": {"args": {"host": "string", "edges": "string[]", "excessRatio": "number", "panel": "string", "seamPrefix": "string"}, "tr": "Konak panelin kopyasi ust katman; sayilan kenarlar excessRatio ile uzatilir ve konaga dikilir (buzgulu ust katman). Konak bayt-ayni.", "en": "A gathered overlay copy of the host panel sewn back on the named edges."},
+    "attach": {"args": {"hostPanel": "string", "hostEdge": "string", "panel": "Panel", "edge": "string", "ratio": "number", "seam": "string"}, "tr": "Yeni panel (fiyonk/cep/volan/kusak) konak kenara ratio ile dikilir.", "en": "Sew a new panel onto a host edge."},
+    "reshapeEdge": {"args": {"panel": "string", "edge": "string", "from": "RefPoint?", "to": "RefPoint?", "control": "RefPoint[]?"}, "tr": "Kenarin uc/kontrol noktalarini yeniden yazar (yaka, etek ucu).", "en": "Rewrite an edge's endpoints / controls."},
+    "moveVertex": {"args": {"panel": "string", "edge": "string", "to": "RefPoint"}, "tr": "Kenar baslangic kosesini tasir (komsu kenar birlikte).", "en": "Move a vertex (shared by two edges)."},
+    "mirror": {"args": {"panel": "string", "newId": "string"}, "tr": "Panelin x-aynasi yeni panel (asimetri icin).", "en": "Mirror a panel across x=0 into a new panel."},
+    "closure": {"args": {"seam": "string", "type": "enum:closureType", "fromFraction": "number", "toFraction": "number"}, "tr": "Dikisin bir bolumune kapama yazar.", "en": "Mark a closure on part of a seam."},
+    "bulge": {"args": {"panel": "string", "edge": "string", "dMM": "number", "nx": "number", "ny": "number", "hedefMM": "number", "bodyId": "string"}, "tr": "Kubik kenarin kontrol noktalarini (nx,ny) yonunde dMM kaydirir. fitLength'in sayisal cozumu bu kayitla saklanir (hedef + beden bilgi).", "en": "Shift a cubic edge's controls; the stored form of fitLength's numeric solution."}
+  }
+}
