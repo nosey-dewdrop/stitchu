@@ -238,12 +238,29 @@ def pca_uclar(pts):
 # sevkPoz.kolAcisiDeg.kosulluBant[0].kosul (agizBuzguOranMin, kolBoyuOverTorsoMax). Bu dosya BOLUM 5'te kisa alt kume
 # boslugunu ve kol boyu boslugunu URETIR ve dosyanin sonunda contract'taki sayiyla KARSILASTIRIR: fark varsa 'ESIK UYUMSUZ'
 # basar, exit 2. Ayni esik icin repoda iki sayi olamaz (tur 8'de PUF_ESIK 1.28 / contract 1.21 ikiligi buradan cikti).
-CONTRACT_FC = os.path.join(HERE, '..', 'contract', 'flat-convention-v1.json')
+# F1 tur 10 (hakem ENGEL 2): esikler HICBIR ETIKET VERMEZ. Tur 9'da eski 13 kolun duz/buzgulu etiketi kolTipi'nden
+# (balonOran >= PUF_ESIK) ve olculen kollarin kisa/uzun etiketi kolBoyuOverTorso < KISA_ESIK'ten geliyordu: uretici kendi
+# esigine bagliydi, kontrol yalniz 'contract kendi sabit noktasinda mi' diyordu (1.713/[1.51,1.916] da gecerdi). Simdi:
+# agiz etiketi (duz/buzgulu) HER kolda CFG3/CFG5'te cizim konvansiyonundan elle (agizda buzgu/lastik/buzgulu manset cizili mi),
+# boy etiketi (kisa/uzun/dirsek) urun tanimindan ya da cizimden elle (boyKaynak); kolTipi bu ikisinden turetilir. Oranlar
+# (balonOranDik, kolBoyuOverTorso) YALNIZ bosluk hesabinda kullanilir. PUF_ESIK/KISA_ESIK bu dosyada yalniz dosya
+# sonundaki contract-uretici karsilastirmasinda okunur. FLAT_CONTRACT ortam degiskeni negatif test icin baska bir contract
+# dosyasi gosterir (beyan: 1.713/[1.51,1.916] ve 0.7/[0.656,0.704] -> exit 2).
+CONTRACT_FC = os.environ.get('FLAT_CONTRACT') or os.path.join(HERE, '..', 'contract', 'flat-convention-v1.json')
 KOSUL = json.load(open(CONTRACT_FC))['sevkPoz']['kolAcisiDeg']['kosulluBant'][0]['kosul']
 PUF_ESIK, KISA_ESIK = KOSUL['agizBuzguOranMin'], KOSUL['kolBoyuOverTorsoMax']
 EGRI_ESIK, EGRI_PENCERE, APEX_TOL, APEX_PENCERE = 0.12, 12, 2, 6
 YEREL = os.path.join(HERE, 'ciktilar', '_yerel', 'yeni-flat')
 os.makedirs(YEREL, exist_ok=True)
+
+def boyEtiket(boy):
+    # F1 tur 10: kisa True / uzun False / dirsek None (ne kisa ne uzun; Mabel ornegi, sinifa sayilmaz). 'torso' artik etiket degil.
+    assert boy in ('kisa', 'uzun', 'dirsek'), 'boy etiketi urun taniminden elle yazilir: kisa/uzun/dirsek, %r' % boy
+    return {'kisa': True, 'uzun': False, 'dirsek': None}[boy]
+def kolTipiEtiketten(etiket, kisa):
+    # kolTipi = agiz etiketi x boy etiketi; oran okunmaz. puf yalniz kisa+buzgulu (yana acilir, sarkan banda girmez).
+    if etiket == 'buzgulu': return 'puf' if kisa is True else 'bishop'
+    return 'setin'
 
 def indir(url, ad):
     yol = os.path.join(YEREL, ad)
@@ -263,7 +280,9 @@ CFG3 = {
     bel=dict(tip='yatayCizgi', pencere=(560, 760, 1280, 1320)),
     pens=(440, 500, 1085, 1125), pensTipi='yan pens ucu',
     apexCizgi=(560, 760, 1090, 1120),
-    kolUcu=(100, 335, 1600, 1720), kolPencere=(0, 330, 1150, 1600), boy='torso',
+    kolUcu=(100, 335, 1600, 1720), kolPencere=(0, 330, 1150, 1600), boy='uzun', torsoOlc=True,
+    boyKaynak='bilek boyu set-in kol (cizim: agiz bel dikisinin ~330 px altinda, etek yaninda); urun sayfasi kol boyu yazmaz',
+    etiket='duz', etiketNeden='agiz acik duz kenar, manset/buzgu cizgisi yok',
     not_='sloper: yan gogus pensi + bel pensleri + bel dikisi + KESIK GOGUS HATTI cizgisi (apex seviyesi dogrudan). Uzun set-in kol.'),
   'cash-hampden.jpg': dict(
     url='https://cdn.shopify.com/s/files/1/0735/5719/files/Cashmerette-1111Hampden-tech-ill-IG.jpg?v=1780419534',
@@ -272,7 +291,9 @@ CFG3 = {
     oyuk=dict(tip='tohum', xy=(330, 1052)), oyukNot='kisa kol: kol agzi ic kosesi = kol oyugu dikisi + yan dikis kesisimi (uc cizgi bir noktada)',
     bel=dict(tip='bant', pencere=(560, 760, 1240, 1330)),
     prenses=dict(x=(400, 560), y=(945, 1262)), pensTipi='prenses 45 derece',
-    kolUcu=(150, 340, 985, 1060), kolPencere=(150, 335, 720, 1052), boy='torso',
+    kolUcu=(150, 340, 985, 1060), kolPencere=(150, 335, 720, 1052), boy='kisa', torsoOlc=True,
+    boyKaynak='kisa set-in kol (cizim: agiz omuz ucunun ~300 px altinda, bel bandinin 200 px ustunde, dirsek ustu)',
+    etiket='duz', etiketNeden='agiz acik duz kenar (kesik cizgi = bastirma dikisi), buzgu yok',
     not_='kol oyugu prenses dikisi + bel bandi + kisa set-in kol'),
   'cash-lenox.jpg': dict(
     url='https://cdn.shopify.com/s/files/1/0735/5719/files/Cashmerette-Lenox-tech-ill-4x5-v2.jpg?v=1780419002',
@@ -290,13 +311,15 @@ CFG3 = {
     esik=160, cf=305, snap=6, omuzUcu=(222, 62),
     olculemezTorso='anvelop: SNP yaka altinda, bel dikisi egik; pens isaretleri 2 px kalem — apex olculmedi',
     kolUcu=(125, 162, 195, 250), kolPencere=(120, 232, 70, 250), boy='kisa', boyKaynak='kisa mansetli puf kol; agiz omuz ucunun ~190 px altinda, figur bel ~250 px: dirsegin ustunde',
+    etiket='buzgulu', etiketNeden='agizda manset bandi, bandin ustunde buzgu cizgileri; kep de buzgulu',
     not_='mansetli kisa puf kol (yalniz kol tipi + acisi)'),
   'dd-orage.png': dict(
     url='https://cdn.shopify.com/s/files/1/0632/8217/files/D0046S-dessin_technique.png?v=1710965602',
     sayfa='https://www.deer-and-doe.fr/products/orage-dress-top-skirt-pattern', urun='Deer&Doe Orage Dress, gorunum A (siyah dolgu)',
     esik=100, cf=262, snap=15, omuzUcu=(163, 222),
     olculemezTorso='siyah dolgu: pens/dikis okunmaz (yalniz siluet); yalniz kol',
-    kolUcu=(128, 178, 478, 500), kolPencere=(110, 200, 300, 480), boy='uzun', boyKaynak='uzun kol: agiz bel dikisinin (y 375) 120 px altinda',
+    kolUcu=(128, 178, 478, 500), kolPencere=(110, 200, 300, 480), boy='uzun', boyKaynak='uzun kol: agiz bel dikisinin (y 375) 120 px altinda; urun sayfasi (Closet Core): "Version A has long sleeves"',
+    etiket='duz', etiketNeden='oturan orgu kol, bilege dogru daralir, agiz duz kenar; siyah siluette buzgu/manset cizgisi yok (tur 9 kolTipi bishop etiketi orandan gelmisti, konvansiyonla DUZ)',
     not_='uzun set-in kol, bel dikisi (beyaz cizgi)'),
   'dd-passiflore.jpg': dict(
     url='https://cdn.shopify.com/s/files/1/0632/8217/files/Passiflore-dress-pattern_Deer-and-doe_techflat.jpg?v=1710966857',
@@ -304,22 +327,36 @@ CFG3 = {
     esik=100, cf=262, snap=15, omuzUcu=(175, 150),
     olculemezTorso='siyah dolgu; yalniz kol',
     kolUcu=(150, 205, 190, 250), kolPencere=(140, 215, 160, 250), boy='kisa', boyKaynak='kisa kol: agiz omuzun ~85 px altinda, bel bandi (y 275) ustunde',
+    etiket='duz', etiketNeden='agiz acik duz kenar (ince manset cizgisi, buzgu yok)',
     not_='kisa set-in kol'),
   'dd-magnolia.jpg': dict(
     url='https://cdn.shopify.com/s/files/1/0632/8217/files/magnolia-dress-pattern-tech-flat.jpg?v=1710966606',
     sayfa='https://www.deer-and-doe.fr/products/magnolia-dress-pattern', urun='Deer&Doe Magnolia Dress, gorunum A (siyah dolgu)',
     esik=100, cf=262, snap=15, omuzUcu=(178, 142),
     olculemezTorso='siyah dolgu; yalniz kol',
-    kolUcu=(190, 245, 322, 352), kolPencere=(180, 250, 200, 352), boy='uzun', boyKaynak='uzun kol: agiz bel bandinin (y 250) 90 px altinda',
+    kolUcu=(190, 245, 322, 352), kolPencere=(180, 250, 200, 352), boy='uzun', boyKaynak='uzun kol: agiz bel bandinin (y 250) 90 px altinda; urun sayfasi: "a long set-in sleeve"',
+    etiket='buzgulu', etiketNeden='agizda kisa buzgu cizgileri (siyah siluette 5-6 dikey cizgi), kol mansete toplanir (tur 9 kolTipi setin etiketi orandan gelmisti, konvansiyonla BUZGULU)',
     not_='uzun set-in kol, mansetli'),
   # --- eski flat'lerin kolTipi yeniden etiketi (ayni GIRDI dosyalari) ---
-  '03-empire-dress-uc-boy.png': dict(eski=True, kolPencere=(25, 92, 318, 398), boy='kisa', boyKaynak='agiz omuz ucunun 34 px altinda, figur ~200 px: dirsek ustu'),
-  '04-a-line-puff-kol.png': dict(eski=True, kolPencere=(195, 272, 100, 240), boy='torso'),
-  '06-a-line-puff-kol-varyant.png': dict(eski=True, kolPencere=(125, 203, 110, 235), boy='torso'),
-  '02-uzun-robe-dress.png': dict(eski=True, kolPencere=(100, 170, 330, 452), boy='torso'),
-  '05-a-line-top-ve-elbise.png': dict(eski=True, kolPencere=(95, 185, 400, 636), boy='uzun', boyKaynak='agiz omuzun 325 px altinda, figur govdesi ~300 px'),
-  '07-uzun-kol-akiskan-etek.png': dict(eski=True, kolPencere=(135, 190, 130, 200), boy='torso'),
-  '10-princess-a-line.png': dict(eski=True, kolPencere=(300, 700, 700, 1500), boy='uzun', boyKaynak='agiz omuzun ~1000 px altinda (4375 px goruntu)'),
+  # etiket/boy F1 tur 10: konvansiyondan ve urun tanimindan elle, kolTipi/orandan DEGIL (hakem ENGEL 2)
+  '03-empire-dress-uc-boy.png': dict(eski=True, kolPencere=(25, 92, 318, 398), boy='kisa', boyKaynak='agiz omuz ucunun 34 px altinda, figur ~200 px: dirsek ustu',
+    etiket='buzgulu', etiketNeden='Folkwear empire Simple Version: agizda buzgulu band, kep buzgulu (puf)'),
+  '04-a-line-puff-kol.png': dict(eski=True, kolPencere=(195, 272, 100, 240), boy='kisa', torsoOlc=True,
+    boyKaynak='Helen\'s Closet Holmes urun sayfasi: "a button-front bodice, and short sleeves"; cizim: agiz bel bandinin ustunde, dirsek ustu',
+    etiket='duz', etiketNeden='agiz acik duz kenar (bastirma dikisi kesik cizgi), buzgu/manset yok'),
+  '06-a-line-puff-kol-varyant.png': dict(eski=True, kolPencere=(125, 203, 110, 235), boy='kisa', torsoOlc=True,
+    boyKaynak='Deer&Doe Eleanor urun sayfasi (Closet Core): view A "The sleeve ends above the elbow with a gentle puff at the shoulder"',
+    etiket='duz', etiketNeden='buzgu OMUZDA, agiz acik duz kenar (BOLUM 3 kurali: omuz buzgusu tipi degistirmez)'),
+  '02-uzun-robe-dress.png': dict(eski=True, kolPencere=(100, 170, 330, 452), boy='uzun', torsoOlc=True,
+    boyKaynak='Folkwear 1940 robe: bilek boyu kol (cizim: agiz bel hizasinin altinda, kol dirsegi gecer)',
+    etiket='buzgulu', etiketNeden='alt kolda yatay buzgu (shirring) cizgileri, agiz buzgulu manset gibi toplanmis (tur 9 kolTipi setin etiketi orandan gelmisti, konvansiyonla BUZGULU)'),
+  '05-a-line-top-ve-elbise.png': dict(eski=True, kolPencere=(95, 185, 400, 636), boy='uzun', boyKaynak='agiz omuzun 325 px altinda, figur govdesi ~300 px',
+    etiket='buzgulu', etiketNeden="Helen's Closet March: agizda manset bandi + buzgu cizgileri (bishop)"),
+  '07-uzun-kol-akiskan-etek.png': dict(eski=True, kolPencere=(135, 190, 130, 200), boy='kisa', torsoOlc=True,
+    boyKaynak='Deer&Doe Celia (Closet Core blog: "gently puffed sleeves ... shaped with inverted box pleats at the hem"); cizim: agiz bel dikisinin ustunde, dirsek ustu; urun sayfasi 404 (DOGRULANMADI: yalniz blog + cizim)',
+    etiket='duz', etiketNeden='buzgu omuzda; agizda pili (inverted box pleat), buzgu/lastik/manset cizgisi yok -> agiz duz sayilir'),
+  '10-princess-a-line.png': dict(eski=True, kolPencere=(300, 700, 700, 1500), boy='uzun', boyKaynak='agiz omuzun ~1000 px altinda (4375 px goruntu)',
+    etiket='buzgulu', etiketNeden='Alice: agizda manset bandi + buzgu cizgileri (bishop)'),
 }
 
 def yatayCizgiSatiri(px, W, x0, x1, y0, y1, esik):
@@ -505,7 +542,11 @@ f1['medyanlar'] = {
 # KOSU/ciktilar/_yerel/yeni-flat/ altina indirilir — telif: repoya girmez, .gitignore). Hedef:
 #   apex vekili n >= 6 (pens ucu / prenses kavis tepesi / gogus hatti cizgisi AYRI etiket),
 #   kol acisi n >= 10, kolTipi OLCULEBILIR tanimla yeniden etiketlenir, kolsuz oyuk tabani yontemi.
-# KOL TIPI TANIMI (olculebilir; hakem: 'puf = omuzda buzgu mu, agizda mi?'):
+# KOL TIPI TANIMI — F1 tur 10 (hakem ENGEL 2): etiket ORANDAN CIKMAZ. Agiz etiketi (duz/buzgulu) her kolda CFG3.etiket
+#   (cizim konvansiyonu: agizda buzgu/lastik/buzgulu manset cizili mi), boy etiketi CFG3.boy (kisa/uzun/dirsek; urun tanimi
+#   ya da cizim, boyKaynak). kolTipi = kolTipiEtiketten(etiket, kisa). balonOran ve kisaOlcu asagida BILGI/bosluk icin olculur.
+#   Asagidaki tur 5-9 tanimi tarihce (esik-tureve etiket): tur 10'da yalniz oranlarin OLCUMU kaldi, etiket kismi gecersiz.
+# (tarihce) KOL TIPI TANIMI (olculebilir; hakem: 'puf = omuzda buzgu mu, agizda mi?'):
 #   balonOran = kolPencere icindeki EN GENIS murekkep satiri (kolun govdesi) / kol agzi PCA uzunlugu.
 #   agiz buzgulu/mansetli kol: balonOran >= PUF_ESIK (1.28) — kol govdesi agizdan genis. 1.28 = olculen kumede
 #   duz/klos kollarin maksimumu (1.231, 02 robe) ile buzgulu kollarin minimumu (1.334, 03 empire puf) ortasi;
@@ -528,8 +569,8 @@ f3 = {'_ne': 'F1 tur 5: yeni acik teknik cizimler (indie kalip markalari; URL he
              'Yontem Bolum 2 ile ayni (SNP->bel payda; on gorunum sol yari); ek yontemler bu dosyanin BOLUM 3 basliginda. '
              'Dosyalar KOSU/ciktilar/_yerel/yeni-flat/ (telif; commit edilmez).',
       'tanimlar': {'PUF_ESIK': PUF_ESIK, 'KISA_ESIK': KISA_ESIK, 'EGRI_ESIK': EGRI_ESIK, 'EGRI_PENCERE': EGRI_PENCERE, 'APEX_PENCERE': APEX_PENCERE,
-                   'kolTipi': 'balonOran = kol govdesinin en genis satiri / agiz PCA uzunlugu; >= PUF_ESIK -> agiz buzgulu; kisa+balon = puf (banda girmez), uzun+balon = bishop, degilse setin',
-                   'kisa': 'kol boyu (omuz ucu -> agiz ortasi, kol EKSENI boyunca, hypot) / torso < KISA_ESIK (torso yoksa boyKaynak ile elle); F1 tur 9: dikey yerine eksen boyu, kisaOlcuDikey eski dikey deger bilgi icin durur'},
+                   'kolTipi': 'F1 tur 10: etiket (agiz duz/buzgulu, cizim konvansiyonu, CFG3.etiket) + boy (kisa/uzun/dirsek, urun tanimi/cizim, CFG3.boy) -> buzgulu+kisa = puf (banda girmez), buzgulu+uzun = bishop, duz = setin. balonOran BILGI, etiket vermez',
+                   'kisa': 'F1 tur 10: boy etiketi CFG3.boy (urun tanimi / cizim, boyKaynak), esikten bagimsiz; kolBoyuOverTorso (omuz ucu -> agiz ortasi, kol EKSENI boyunca, hypot) / torso yalniz torsoOlc kollarda olculur ve YALNIZ bosluk hesabina girer; kisaOlcuDikey eski dikey deger bilgi'},
       'flatler': {}}
 apexKayit = []   # (ad, oran, vekilTipi)
 for ad, c in CFG3.items():
@@ -542,13 +583,11 @@ for ad, c in CFG3.items():
         k['enGenisSatir'] = {'y': b[0], 'genislikPX': b[1], 'x': [b[2], b[3]]}; k['agizPX'] = round(agizW, 1)
         k['balonOran'] = round(b[1] / agizW, 3)
         dy = eski['kolUcu']['orta'][1] - eski['omuzUcu']['snapPX'][1]
-        if c['boy'] == 'torso':
+        if c.get('torsoOlc'):
             kb = math.hypot(eski['kolUcu']['orta'][0] - eski['omuzUcu']['snapPX'][0], dy)
-            k['kisaOlcu'] = round(kb / eski['torsoPX'], 3); k['kisaOlcuDikey'] = round(dy / eski['torsoPX'], 3); k['kisa'] = k['kisaOlcu'] < KISA_ESIK
-        else:
-            k['kisa'] = c['boy'] == 'kisa'; k['boyKaynak'] = c['boyKaynak']
-        balon = k['balonOran'] >= PUF_ESIK
-        k['kolTipi'] = 'puf' if (balon and k['kisa']) else 'bishop' if balon else 'setin'
+            k['kisaOlcu'] = round(kb / eski['torsoPX'], 3); k['kisaOlcuDikey'] = round(dy / eski['torsoPX'], 3)
+        k['boy'] = c['boy']; k['boyKaynak'] = c['boyKaynak']; k['kisa'] = boyEtiket(c['boy'])
+        k['etiket'] = c['etiket']; k['etiketNeden'] = c['etiketNeden']; k['kolTipi'] = kolTipiEtiketten(k['etiket'], k['kisa'])
         k['kolTipiEski'] = c2['kolTipi']; k['kolAcisiDeg'] = eski['kolAcisiDeg']['deger']
         f3['flatler'][ad] = k
         continue
@@ -617,11 +656,10 @@ for ad, c in CFG3.items():
         bal = kolBalon(px, W, H, *c['kolPencere'], esik); agizW = math.hypot(b2[0] - a[0], b2[1] - a[1])
         k['kolPencere'] = list(c['kolPencere']); k['enGenisSatir'] = {'y': bal[0], 'genislikPX': bal[1], 'x': [bal[2], bal[3]]}; k['agizPX'] = round(agizW, 1)
         k['balonOran'] = round(bal[1] / agizW, 3)
-        if c['boy'] == 'torso' and 'torsoPX' in k:
-            k['kisaOlcu'] = round(math.hypot(dx, dy) / k['torsoPX'], 3); k['kisaOlcuDikey'] = round(dy / k['torsoPX'], 3); k['kisa'] = k['kisaOlcu'] < KISA_ESIK
-        else: k['kisa'] = c['boy'] == 'kisa'; k['boyKaynak'] = c.get('boyKaynak')
-        balon = k['balonOran'] >= PUF_ESIK
-        k['kolTipi'] = 'puf' if (balon and k['kisa']) else 'bishop' if balon else 'setin'
+        if c.get('torsoOlc') and 'torsoPX' in k:
+            k['kisaOlcu'] = round(math.hypot(dx, dy) / k['torsoPX'], 3); k['kisaOlcuDikey'] = round(dy / k['torsoPX'], 3)
+        k['boy'] = c['boy']; k['boyKaynak'] = c.get('boyKaynak'); k['kisa'] = boyEtiket(c['boy'])
+        k['etiket'] = c['etiket']; k['etiketNeden'] = c['etiketNeden']; k['kolTipi'] = kolTipiEtiketten(k['etiket'], k['kisa'])
     elif 'kolTipi' in c: k['kolTipi'] = c['kolTipi']
     f3['flatler'][ad] = k
 
@@ -819,7 +857,8 @@ CFG5 = {
   'bhl-alix-1.jpg': dict(url='https://cdn.shopify.com/s/files/1/0289/4249/products/tech_illos2-01.jpg?v=1477044717',
     sayfa='https://byhandlondon.com/products/alix-dress-pdf-sewing-pattern', urun='By Hand London Alix Dress (bishop kol, lastikli manset)', marka='By Hand London',
     etiket='buzgulu', etiketNeden='agizda lastik + buzgu cizgileri, altinda kucuk firfir', esik=160,
-    omuzKutu=(135, 165, 8, 30), kolUcu=(22, 74, 250, 270), kolPencere=(12, 150, 110, 240), boy='torso',
+    omuzKutu=(135, 165, 8, 30), kolUcu=(22, 74, 250, 270), kolPencere=(12, 150, 110, 240), boy='uzun', torsoOlc=True,
+    boyKaynak='urun sayfasi: "long, billowing raglan sleeves secured at the wrist with a delicate elasticated cuff" (bitmis kol boyu 61-64.5 cm)',
     snp=(150, 240, 10, 25), bel=dict(tip='yatayCizgi', pencere=(165, 265, 183, 192)), belNot='bel bandi cizgisi (yatayCizgi: bandin ust ya da alt cizgisi, +-7 px)'),
   'bhl-marie-dress.jpg': dict(url='https://cdn.shopify.com/s/files/1/0289/4249/products/Technicalillustrations_Dress_B.jpg?v=1639823609',
     sayfa='https://byhandlondon.com/products/marie-shirt-dress-pdf-sewing-pattern-uk-2-38', urun='By Hand London Marie Dress B (bishop kol, buzgulu manset + firfir)', marka='By Hand London',
@@ -864,11 +903,13 @@ CFG5 = {
     omuzKutu=(150, 200, 1065, 1100), kolUcu=(44, 135, 1610, 1634), kolPencere=(40, 180, 1300, 1400), boy='uzun', boyKaynak='LONG SLEEVE'),
   'tilly-nell.jpg#kisa-duz': dict(dosya='tilly-nell.jpg', **_tilly(NELL_U, 'https://tillyandthebuttons.com/products/nell-blouse-dress-sewing-pattern', 'Tilly and the Buttons Nell Midi Dress (short straight sleeves)'),
     etiket='duz', etiketNeden='agiz acik duz kenar',
-    omuzKutu=(600, 665, 1095, 1125), kolUcu=(560, 650, 1214, 1250), kolPencere=(560, 672, 1105, 1215), boy='torso',
+    omuzKutu=(600, 665, 1095, 1125), kolUcu=(560, 650, 1214, 1250), kolPencere=(560, 672, 1105, 1215), boy='kisa', torsoOlc=True,
+    boyKaynak='urun sayfasi: "Four sleeve options: short and straight, bracelet-length, flutter, or lined puffball" -> short and straight',
     snp=(700, 745, 1085, 1100), bel=dict(tip='yatayCizgi', pencere=(640, 760, 1325, 1345)), belNot='bel dikisi (etek buzgusunun ustu)'),
   'tilly-nell.jpg#bilezik': dict(dosya='tilly-nell.jpg', **_tilly(NELL_U, 'https://tillyandthebuttons.com/products/nell-blouse-dress-sewing-pattern', 'Tilly and the Buttons Nell Knee-length Dress (bracelet sleeves)'),
     etiket='duz', etiketNeden='agiz acik duz kenar',
-    omuzKutu=(170, 215, 1095, 1115), kolUcu=(45, 120, 1434, 1462), kolPencere=(40, 170, 1150, 1330), boy='torso',
+    omuzKutu=(170, 215, 1095, 1115), kolUcu=(45, 120, 1434, 1462), kolPencere=(40, 170, 1150, 1330), boy='uzun', torsoOlc=True,
+    boyKaynak='urun sayfasi: "Four sleeve options: short and straight, bracelet-length, flutter, or lined puffball" -> bracelet-length (bilek ustu, dirsegin altinda)',
     snp=(240, 280, 1085, 1102), bel=dict(tip='yatayCizgi', pencere=(150, 320, 1325, 1345)), belNot='bel dikisi (etek buzgusunun ustu)'),
   'named-ilta.png': dict(url='https://cdn.shopify.com/s/files/1/0414/6003/9840/files/api.ILTAdress_linedrawing.png?v=1763639851',
     sayfa='https://www.namedclothing.com/en-us/products/ilta-ruched-shirt-dress', urun='Named Clothing Ilta Ruched Shirt Dress (dusuk omuz uzun kol, yirtmacli DUZ gomlek manseti)', marka='Named Clothing',
@@ -919,6 +960,7 @@ def overlay5(yol, ad, c, k, om, agiz, bal, dik):
 
 f5 = {'_ne': 'F1 tur 8 (karar ajani 3): kosulluBant esiklerine ikinci kaynak. 3 yeni marka ailesi (By Hand London, Tilly and the Buttons, Named Clothing), '
              '8 agzi buzgulu + 9 duz/klos kol; etiket cizim konvansiyonundan (agizda buzgu/lastik/buzgulu manset var mi), balonOran etiketi bilmeden olculur. '
+             'F1 tur 10: boy etiketi (kisa/uzun/dirsek) de urun taniminden elle (boyKaynak), kolBoyuOverTorso yalniz bosluk hesabinda. '
              'Yontem BOLUM 3 (agiz PCA / omuz) + eksene DIK kesit (kolGenislikDik; gerekce dosya basliginda). Dosyalar ve overlay kontrol gorselleri KOSU/ciktilar/_yerel/yeni-flat/ (telif; commit edilmez).',
       'olculmedi': OLCULMEDI5, 'flatler': {}}
 for ad, c in CFG5.items():
@@ -946,18 +988,15 @@ for ad, c in CFG5.items():
     k['enGenisYataySatir'] = {'y': bal[0], 'genislikPX': bal[1], 'x': [bal[2], bal[3]]}; k['balonOranYatay'] = round(bal[1] / agizW, 3)
     gpts = inkPts(px, W, H, *c['kolPencere'], esik); dik = kolGenislikDik(gpts, om, mid)
     k['enGenisDikKesit'] = dik; k['balonOranDik'] = round(dik['genislikPX'] / agizW, 3)
-    if c['boy'] == 'torso':
+    if c.get('torsoOlc'):
         spts = inkPts(px, W, H, *c['snp'], esik); top = min(spts, key=lambda p: (p[1], p[0]))
         k['snp'] = {'yontem': 'pencerede en ust murekkep', 'pencere': list(c['snp']), 'xy': list(top)}; k['snpY'] = top[1]
         y, n = yatayCizgiSatiri(px, W, *c['bel']['pencere'], esik)
         k['bel'] = {'yontem': 'bel dikisi: pencerede en cok murekkepli satir', 'pencere': list(c['bel']['pencere']), 'satirY': y, 'nMurekkep': n, 'not': c.get('belNot')}; k['belY'] = y
         k['torsoPX'] = y - top[1]
         k['agizOmuzDikeyOverTorso'] = round(dy / k['torsoPX'], 3)   # BILGI: eski tanim (dikey), hukum tasimaz (F1 tur 9)
-        k['kolBoyuOverTorso'] = round(math.hypot(dx, dy) / k['torsoPX'], 3); k['kisa'] = k['kolBoyuOverTorso'] < KISA_ESIK
-        k['boy'] = 'kisa' if k['kisa'] else 'uzun'; k['boyKaynak'] = 'olculdu: kolBoyuOverTorso %s (KISA_ESIK %s)' % (k['kolBoyuOverTorso'], KISA_ESIK)
-    else:
-        k['boy'] = c['boy']; k['boyKaynak'] = c['boyKaynak']; k['kisa'] = (c['boy'] == 'kisa')
-        if c['boy'] == 'dirsek': k['kisa'] = None
+        k['kolBoyuOverTorso'] = round(math.hypot(dx, dy) / k['torsoPX'], 3)   # YALNIZ bosluk hesabi icin; etiket vermez (F1 tur 10)
+    k['boy'] = c['boy']; k['boyKaynak'] = c['boyKaynak']; k['kisa'] = boyEtiket(c['boy'])
     k['overlay'] = os.path.relpath(overlay5(yol, ad, c, k, om, [list(a), list(b2)], bal, dik), os.path.join(HERE, '..'))
     f5['flatler'][ad] = k
 
@@ -974,8 +1013,8 @@ for ad, k3 in f3['flatler'].items():
     eskiDik[ad] = {'enGenisDikKesit': dik, 'balonOranDik': round(dik['genislikPX'] / agizW, 3), 'balonOranYatay': k3['balonOran']}
 f5['eskiKumeDik'] = {'_ne': 'BOLUM 3 kollari eksene dik kesitle yeniden olculdu (pencereler/omuz/agiz BOLUM 3 kaydindan, degismedi)', 'flatler': eskiDik}
 
-# --- birlesik kume: eski 13 (etiket kolTipi'nden: setin -> duz, puf/bishop -> buzgulu; gorsel okuma ile ayni) + yeni ---
-eskiKume = {ad: {'balonOranDik': eskiDik[ad]['balonOranDik'], 'balonOranYatay': k['balonOran'], 'etiket': ('duz' if k['kolTipi'] == 'setin' else 'buzgulu'),
+# --- birlesik kume: eski 13 (etiket CFG3.etiket: cizim konvansiyonu, F1 tur 10; kolTipi'nden/orandan DEGIL) + yeni ---
+eskiKume = {ad: {'balonOranDik': eskiDik[ad]['balonOranDik'], 'balonOranYatay': k['balonOran'], 'etiket': k['etiket'], 'etiketNeden': k['etiketNeden'],
                  'kisaOlcu': k.get('kisaOlcu'), 'kisaOlcuDikey': k.get('kisaOlcuDikey'), 'kisa': k.get('kisa'), 'boyKaynak': k.get('boyKaynak'),
                  'kolAcisiDeg': (k['kolAcisiDeg']['deger'] if isinstance(k['kolAcisiDeg'], dict) else k['kolAcisiDeg'])}
            for ad, k in f3['flatler'].items() if ad in eskiDik}
@@ -1018,7 +1057,7 @@ f5['medyanlar'] = {
                        'ortaNokta': (round((kisaMax + uzunMin) / 2, 4) if (kisaMax is not None and uzunMin is not None and kisaMax < uzunMin) else None),
                        'esik': KISA_ESIK, 'esikBoslukIcinde': (kisaMax is not None and uzunMin is not None and kisaMax < KISA_ESIK < uzunMin),
                        'tanim': 'HUKUM (F1 tur 9, hakem ENGEL 2). kol boyu = omuz ucu -> agiz ortasi, kol EKSENI boyunca (hypot(dx,dy)) / torso (SNP->bel). Eski dikey deger = kolBoyu x sin(kolAcisiDeg) (degerler[].dikey, bilgi): '
-                                'aciya bagli oldugu icin band secen kosul olarak donguseldi; F2 grafta kol boyunu bilir, aciyi bilmez. kisa = oran < esik. Esik boslugun icindeyse kalir, degilse ortaNokta.'},
+                                'aciya bagli oldugu icin band secen kosul olarak donguseldi; F2 grafta kol boyunu bilir, aciyi bilmez. F1 tur 10: kisa etiketi urun taniminda (boyKaynak), orandan DEGIL; oran yalniz bosluk. Esik boslugun icindeyse kalir, degilse ortaNokta.'},
   'agizOmuzDikeyOverTorso': {'n': len(dikeyOlcumler), 'degerler': [{'flat': ad, 'oran': v, 'kisa': kk} for v, ad, kk in dikeyOlcumler],
                              'kisaMax': max([v for v, _, kk in dikeyOlcumler if kk] or [None]), 'uzunMin': min([v for v, _, kk in dikeyOlcumler if not kk] or [None]),
                              'tanim': 'BILGI (eski tanim, F1 tur 8; hukum tasimaz). Dikey mesafe / torso; kisa etiketi artik kolBoyuOverTorso ile.'},

@@ -127,13 +127,13 @@
  "f1Tur5": {
   "_ne": "F1 tur 5: yeni acik teknik cizimler (indie kalip markalari; URL her kayitta) + eski flatlerin kolTipi yeniden etiketi. Yontem Bolum 2 ile ayni (SNP->bel payda; on gorunum sol yari); ek yontemler bu dosyanin BOLUM 3 basliginda. Dosyalar KOSU/ciktilar/_yerel/yeni-flat/ (telif; commit edilmez).",
   "tanimlar": {
-   "PUF_ESIK": 1.2755,
-   "KISA_ESIK": 0.6,
+   "PUF_ESIK": 1.367,
+   "KISA_ESIK": 0.952,
    "EGRI_ESIK": 0.12,
    "EGRI_PENCERE": 12,
    "APEX_PENCERE": 6,
-   "kolTipi": "balonOran = kol govdesinin en genis satiri / agiz PCA uzunlugu; >= PUF_ESIK -> agiz buzgulu; kisa+balon = puf (banda girmez), uzun+balon = bishop, degilse setin",
-   "kisa": "kol boyu (omuz ucu -> agiz ortasi, kol EKSENI boyunca, hypot) / torso < KISA_ESIK (torso yoksa boyKaynak ile elle); F1 tur 9: dikey yerine eksen boyu, kisaOlcuDikey eski dikey deger bilgi icin durur"
+   "kolTipi": "F1 tur 10: etiket (agiz duz/buzgulu, cizim konvansiyonu, CFG3.etiket) + boy (kisa/uzun/dirsek, urun tanimi/cizim, CFG3.boy) -> buzgulu+kisa = puf (banda girmez), buzgulu+uzun = bishop, duz = setin. balonOran BILGI, etiket vermez",
+   "kisa": "F1 tur 10: boy etiketi CFG3.boy (urun tanimi / cizim, boyKaynak), esikten bagimsiz; kolBoyuOverTorso (omuz ucu -> agiz ortasi, kol EKSENI boyunca, hypot) / torso yalniz torsoOlc kollarda olculur ve YALNIZ bosluk hesabina girer; kisaOlcuDikey eski dikey deger bilgi"
   },
   "flatler": {
    "cash-wyman.jpg": {
@@ -290,7 +290,11 @@
     "balonOran": 0.79,
     "kisaOlcu": 1.559,
     "kisaOlcuDikey": 1.539,
+    "boy": "uzun",
+    "boyKaynak": "bilek boyu set-in kol (cizim: agiz bel dikisinin ~330 px altinda, etek yaninda); urun sayfasi kol boyu yazmaz",
     "kisa": false,
+    "etiket": "duz",
+    "etiketNeden": "agiz acik duz kenar, manset/buzgu cizgisi yok",
     "kolTipi": "setin"
    },
    "cash-hampden.jpg": {
@@ -434,7 +438,11 @@
     "balonOran": 0.928,
     "kisaOlcu": 0.532,
     "kisaOlcuDikey": 0.513,
+    "boy": "kisa",
+    "boyKaynak": "kisa set-in kol (cizim: agiz omuz ucunun ~300 px altinda, bel bandinin 200 px ustunde, dirsek ustu)",
     "kisa": true,
+    "etiket": "duz",
+    "etiketNeden": "agiz acik duz kenar (kesik cizgi = bastirma dikisi), buzgu yok",
     "kolTipi": "setin"
    },
    "cash-lenox.jpg": {
@@ -606,8 +614,11 @@
     },
     "agizPX": 47.4,
     "balonOran": 2.111,
-    "kisa": true,
+    "boy": "kisa",
     "boyKaynak": "kisa mansetli puf kol; agiz omuz ucunun ~190 px altinda, figur bel ~250 px: dirsegin ustunde",
+    "kisa": true,
+    "etiket": "buzgulu",
+    "etiketNeden": "agizda manset bandi, bandin ustunde buzgu cizgileri; kep de buzgulu",
     "kolTipi": "puf"
    },
    "dd-orage.png": {
@@ -685,9 +696,12 @@
     },
     "agizPX": 45.1,
     "balonOran": 1.441,
+    "boy": "uzun",
+    "boyKaynak": "uzun kol: agiz bel dikisinin (y 375) 120 px altinda; urun sayfasi (Closet Core): \"Version A has long sleeves\"",
     "kisa": false,
-    "boyKaynak": "uzun kol: agiz bel dikisinin (y 375) 120 px altinda",
-    "kolTipi": "bishop"
+    "etiket": "duz",
+    "etiketNeden": "oturan orgu kol, bilege dogru daralir, agiz duz kenar; siyah siluette buzgu/manset cizgisi yok (tur 9 kolTipi bishop etiketi orandan gelmisti, konvansiyonla DUZ)",
+    "kolTipi": "setin"
    },
    "dd-passiflore.jpg": {
     "urun": "Deer&Doe Passiflore Dress, gorunum A (siyah dolgu)",
@@ -764,8 +778,11 @@
     },
     "agizPX": 52.3,
     "balonOran": 1.032,
-    "kisa": true,
+    "boy": "kisa",
     "boyKaynak": "kisa kol: agiz omuzun ~85 px altinda, bel bandi (y 275) ustunde",
+    "kisa": true,
+    "etiket": "duz",
+    "etiketNeden": "agiz acik duz kenar (ince manset cizgisi, buzgu yok)",
     "kolTipi": "setin"
    },
    "dd-magnolia.jpg": {
@@ -843,9 +860,12 @@
     },
     "agizPX": 61.3,
     "balonOran": 1.126,
+    "boy": "uzun",
+    "boyKaynak": "uzun kol: agiz bel bandinin (y 250) 90 px altinda; urun sayfasi: \"a long set-in sleeve\"",
     "kisa": false,
-    "boyKaynak": "uzun kol: agiz bel bandinin (y 250) 90 px altinda",
-    "kolTipi": "setin"
+    "etiket": "buzgulu",
+    "etiketNeden": "agizda kisa buzgu cizgileri (siyah siluette 5-6 dikey cizgi), kol mansete toplanir (tur 9 kolTipi setin etiketi orandan gelmisti, konvansiyonla BUZGULU)",
+    "kolTipi": "bishop"
    },
    "03-empire-dress-uc-boy.png": {
     "eskiKayit": "Bolum 2",
@@ -865,8 +885,11 @@
     },
     "agizPX": 46.5,
     "balonOran": 1.334,
-    "kisa": true,
+    "boy": "kisa",
     "boyKaynak": "agiz omuz ucunun 34 px altinda, figur ~200 px: dirsek ustu",
+    "kisa": true,
+    "etiket": "buzgulu",
+    "etiketNeden": "Folkwear empire Simple Version: agizda buzgulu band, kep buzgulu (puf)",
     "kolTipi": "puf",
     "kolTipiEski": "puf",
     "kolAcisiDeg": 32.9
@@ -891,7 +914,11 @@
     "balonOran": 1.01,
     "kisaOlcu": 0.769,
     "kisaOlcuDikey": 0.763,
-    "kisa": false,
+    "boy": "kisa",
+    "boyKaynak": "Helen's Closet Holmes urun sayfasi: \"a button-front bodice, and short sleeves\"; cizim: agiz bel bandinin ustunde, dirsek ustu",
+    "kisa": true,
+    "etiket": "duz",
+    "etiketNeden": "agiz acik duz kenar (bastirma dikisi kesik cizgi), buzgu/manset yok",
     "kolTipi": "setin",
     "kolTipiEski": "setin",
     "kolAcisiDeg": 83.3
@@ -916,7 +943,11 @@
     "balonOran": 1.094,
     "kisaOlcu": 0.704,
     "kisaOlcuDikey": 0.676,
-    "kisa": false,
+    "boy": "kisa",
+    "boyKaynak": "Deer&Doe Eleanor urun sayfasi (Closet Core): view A \"The sleeve ends above the elbow with a gentle puff at the shoulder\"",
+    "kisa": true,
+    "etiket": "duz",
+    "etiketNeden": "buzgu OMUZDA, agiz acik duz kenar (BOLUM 3 kurali: omuz buzgusu tipi degistirmez)",
     "kolTipi": "setin",
     "kolTipiEski": "setin",
     "kolAcisiDeg": 73.7
@@ -941,8 +972,12 @@
     "balonOran": 1.231,
     "kisaOlcu": 1.135,
     "kisaOlcuDikey": 1.132,
+    "boy": "uzun",
+    "boyKaynak": "Folkwear 1940 robe: bilek boyu kol (cizim: agiz bel hizasinin altinda, kol dirsegi gecer)",
     "kisa": false,
-    "kolTipi": "setin",
+    "etiket": "buzgulu",
+    "etiketNeden": "alt kolda yatay buzgu (shirring) cizgileri, agiz buzgulu manset gibi toplanmis (tur 9 kolTipi setin etiketi orandan gelmisti, konvansiyonla BUZGULU)",
+    "kolTipi": "bishop",
     "kolTipiEski": "setin",
     "kolAcisiDeg": 85.9
    },
@@ -964,8 +999,11 @@
     },
     "agizPX": 64.4,
     "balonOran": 1.351,
-    "kisa": false,
+    "boy": "uzun",
     "boyKaynak": "agiz omuzun 325 px altinda, figur govdesi ~300 px",
+    "kisa": false,
+    "etiket": "buzgulu",
+    "etiketNeden": "Helen's Closet March: agizda manset bandi + buzgu cizgileri (bishop)",
     "kolTipi": "bishop",
     "kolTipiEski": "bishop",
     "kolAcisiDeg": 83.7
@@ -990,7 +1028,11 @@
     "balonOran": 0.987,
     "kisaOlcu": 0.656,
     "kisaOlcuDikey": 0.636,
-    "kisa": false,
+    "boy": "kisa",
+    "boyKaynak": "Deer&Doe Celia (Closet Core blog: \"gently puffed sleeves ... shaped with inverted box pleats at the hem\"); cizim: agiz bel dikisinin ustunde, dirsek ustu; urun sayfasi 404 (DOGRULANMADI: yalniz blog + cizim)",
+    "kisa": true,
+    "etiket": "duz",
+    "etiketNeden": "buzgu omuzda; agizda pili (inverted box pleat), buzgu/lastik/manset cizgisi yok -> agiz duz sayilir",
     "kolTipi": "setin",
     "kolTipiEski": "setin",
     "kolAcisiDeg": 75.8
@@ -1013,8 +1055,11 @@
     },
     "agizPX": 237.6,
     "balonOran": 1.679,
-    "kisa": false,
+    "boy": "uzun",
     "boyKaynak": "agiz omuzun ~1000 px altinda (4375 px goruntu)",
+    "kisa": false,
+    "etiket": "buzgulu",
+    "etiketNeden": "Alice: agizda manset bandi + buzgu cizgileri (bishop)",
     "kolTipi": "bishop",
     "kolTipiEski": "bishop",
     "kolAcisiDeg": 74.1
@@ -1406,7 +1451,7 @@
      },
      "dd-orage.png": {
       "deg": 89.7,
-      "kolTipi": "bishop",
+      "kolTipi": "setin",
       "balonOran": 1.441,
       "kisa": false
      },
@@ -1418,7 +1463,7 @@
      },
      "dd-magnolia.jpg": {
       "deg": 82.2,
-      "kolTipi": "setin",
+      "kolTipi": "bishop",
       "balonOran": 1.126,
       "kisa": false
      },
@@ -1432,17 +1477,17 @@
       "deg": 83.3,
       "kolTipi": "setin",
       "balonOran": 1.01,
-      "kisa": false
+      "kisa": true
      },
      "06-a-line-puff-kol-varyant.png": {
       "deg": 73.7,
       "kolTipi": "setin",
       "balonOran": 1.094,
-      "kisa": false
+      "kisa": true
      },
      "02-uzun-robe-dress.png": {
       "deg": 85.9,
-      "kolTipi": "setin",
+      "kolTipi": "bishop",
       "balonOran": 1.231,
       "kisa": false
      },
@@ -1456,7 +1501,7 @@
       "deg": 75.8,
       "kolTipi": "setin",
       "balonOran": 0.987,
-      "kisa": false
+      "kisa": true
      },
      "10-princess-a-line.png": {
       "deg": 74.1,
@@ -2468,7 +2513,7 @@
   }
  },
  "f1Tur8": {
-  "_ne": "F1 tur 8 (karar ajani 3): kosulluBant esiklerine ikinci kaynak. 3 yeni marka ailesi (By Hand London, Tilly and the Buttons, Named Clothing), 8 agzi buzgulu + 9 duz/klos kol; etiket cizim konvansiyonundan (agizda buzgu/lastik/buzgulu manset var mi), balonOran etiketi bilmeden olculur. Yontem BOLUM 3 (agiz PCA / omuz) + eksene DIK kesit (kolGenislikDik; gerekce dosya basliginda). Dosyalar ve overlay kontrol gorselleri KOSU/ciktilar/_yerel/yeni-flat/ (telif; commit edilmez).",
+  "_ne": "F1 tur 8 (karar ajani 3): kosulluBant esiklerine ikinci kaynak. 3 yeni marka ailesi (By Hand London, Tilly and the Buttons, Named Clothing), 8 agzi buzgulu + 9 duz/klos kol; etiket cizim konvansiyonundan (agizda buzgu/lastik/buzgulu manset var mi), balonOran etiketi bilmeden olculur. F1 tur 10: boy etiketi (kisa/uzun/dirsek) de urun taniminden elle (boyKaynak), kolBoyuOverTorso yalniz bosluk hesabinda. Yontem BOLUM 3 (agiz PCA / omuz) + eksene DIK kesit (kolGenislikDik; gerekce dosya basliginda). Dosyalar ve overlay kontrol gorselleri KOSU/ciktilar/_yerel/yeni-flat/ (telif; commit edilmez).",
   "olculmedi": {
    "bhl-anna-1.jpg": "kimono kol: kol ile govde tek parca, kol govdesinin en genis kesiti tanimsiz (BHL Anna Dress, https://cdn.shopify.com/s/files/1/0289/4249/products/Anna_Tech_1.jpg)",
    "bhl-zeena-short.jpg": "teknik flat degil, figurlu illustrasyon (BHL Zeena)",
@@ -2598,9 +2643,9 @@
     "torsoPX": 174,
     "agizOmuzDikeyOverTorso": 1.411,
     "kolBoyuOverTorso": 1.557,
-    "kisa": false,
     "boy": "uzun",
-    "boyKaynak": "olculdu: kolBoyuOverTorso 1.557 (KISA_ESIK 0.6)",
+    "boyKaynak": "urun sayfasi: \"long, billowing raglan sleeves secured at the wrist with a delicate elasticated cuff\" (bitmis kol boyu 61-64.5 cm)",
+    "kisa": false,
     "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-bhl-alix-1.png"
    },
    "bhl-marie-dress.jpg": {
@@ -3867,9 +3912,9 @@
     "torsoPX": 245,
     "agizOmuzDikeyOverTorso": 0.545,
     "kolBoyuOverTorso": 0.591,
-    "kisa": true,
     "boy": "kisa",
-    "boyKaynak": "olculdu: kolBoyuOverTorso 0.591 (KISA_ESIK 0.6)",
+    "boyKaynak": "urun sayfasi: \"Four sleeve options: short and straight, bracelet-length, flutter, or lined puffball\" -> short and straight",
+    "kisa": true,
     "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-nell_kisa-duz.png"
    },
    "tilly-nell.jpg#bilezik": {
@@ -3992,9 +4037,9 @@
     "torsoPX": 245,
     "agizOmuzDikeyOverTorso": 1.388,
     "kolBoyuOverTorso": 1.485,
-    "kisa": false,
     "boy": "uzun",
-    "boyKaynak": "olculdu: kolBoyuOverTorso 1.485 (KISA_ESIK 0.6)",
+    "boyKaynak": "urun sayfasi: \"Four sleeve options: short and straight, bracelet-length, flutter, or lined puffball\" -> bracelet-length (bilek ustu, dirsegin altinda)",
+    "kisa": false,
     "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-nell_bilezik.png"
    },
    "named-ilta.png": {
@@ -4447,38 +4492,41 @@
     "eskiKume13": {
      "alan": "balonOranDik",
      "duz": {
-      "n": 8,
+      "n": 7,
       "degerler": {
        "cash-wyman.jpg": 0.779,
        "cash-hampden.jpg": 0.958,
        "07-uzun-kol-akiskan-etek.png": 0.998,
        "04-a-line-puff-kol.png": 1.003,
        "dd-passiflore.jpg": 1.033,
-       "dd-magnolia.jpg": 1.137,
        "06-a-line-puff-kol-varyant.png": 1.224,
-       "02-uzun-robe-dress.png": 1.252
+       "dd-orage.png": 1.441
       },
       "min": 0.779,
-      "max": 1.252
+      "max": 1.441
      },
      "buzgulu": {
-      "n": 5,
+      "n": 6,
       "degerler": {
+       "dd-magnolia.jpg": 1.137,
+       "02-uzun-robe-dress.png": 1.252,
        "05-a-line-top-ve-elbise.png": 1.345,
-       "dd-orage.png": 1.441,
        "03-empire-dress-uc-boy.png": 1.51,
        "10-princess-a-line.png": 1.747,
        "soi-lori.png": 2.435
       },
-      "min": 1.345,
+      "min": 1.137,
       "max": 2.435
      },
-     "bosluk": [
-      1.252,
-      1.345
-     ],
-     "ortaNokta": 1.2985,
-     "hukum": "BOSLUK KALDI: skaler esik ayirici; yeni esik = boslugun ortasi"
+     "bosluk": null,
+     "ortusenler": {
+      "dd-orage.png": 1.441,
+      "dd-magnolia.jpg": 1.137,
+      "06-a-line-puff-kol-varyant.png": 1.224,
+      "02-uzun-robe-dress.png": 1.252,
+      "05-a-line-top-ve-elbise.png": 1.345
+     },
+     "hukum": "ORTUSME: iki sinif bu eksende ayrilmiyor; skaler esik yanlis ayirici (karar ajani 3c)"
     },
     "yeniKume": {
      "alan": "balonOranDik",
@@ -4530,7 +4578,7 @@
     "birlesik": {
      "alan": "balonOranDik",
      "duz": {
-      "n": 17,
+      "n": 16,
       "degerler": {
        "cash-wyman.jpg": 0.779,
        "tilly-nell.jpg#kisa-duz": 0.941,
@@ -4542,10 +4590,9 @@
        "dd-passiflore.jpg": 1.033,
        "tilly-agnes.png#kisa": 1.041,
        "tilly-agnes.png#uzun": 1.131,
-       "dd-magnolia.jpg": 1.137,
        "06-a-line-puff-kol-varyant.png": 1.224,
-       "02-uzun-robe-dress.png": 1.252,
        "tilly-coco.jpg#v1": 1.271,
+       "dd-orage.png": 1.441,
        "named-ilta.png": 1.521,
        "tilly-frida.png#uzun": 1.551,
        "tilly-stevie-addon.jpg#tunik": 1.669
@@ -4554,12 +4601,13 @@
       "max": 1.669
      },
      "buzgulu": {
-      "n": 13,
+      "n": 14,
       "degerler": {
+       "dd-magnolia.jpg": 1.137,
+       "02-uzun-robe-dress.png": 1.252,
        "bhl-alix-1.jpg": 1.33,
        "05-a-line-top-ve-elbise.png": 1.345,
        "tilly-mabel.jpg#bluz": 1.378,
-       "dd-orage.png": 1.441,
        "tilly-lyra.png#uzun": 1.445,
        "bhl-marie-dress.jpg": 1.453,
        "03-empire-dress-uc-boy.png": 1.51,
@@ -4570,13 +4618,16 @@
        "soi-lori.png": 2.435,
        "tilly-nell.jpg#puf": 2.69
       },
-      "min": 1.33,
+      "min": 1.137,
       "max": 2.69
      },
      "bosluk": null,
      "ortusenler": {
       "dd-orage.png": 1.441,
+      "dd-magnolia.jpg": 1.137,
       "03-empire-dress-uc-boy.png": 1.51,
+      "06-a-line-puff-kol-varyant.png": 1.224,
+      "02-uzun-robe-dress.png": 1.252,
       "05-a-line-top-ve-elbise.png": 1.345,
       "bhl-alix-1.jpg": 1.33,
       "bhl-marie-dress.jpg": 1.453,
@@ -4585,6 +4636,7 @@
       "tilly-mabel.jpg#bluz": 1.378,
       "tilly-lyra.png#uzun": 1.445,
       "tilly-stevie-addon.jpg#tunik": 1.669,
+      "tilly-coco.jpg#v1": 1.271,
       "named-ilta.png": 1.521,
       "tilly-frida.png#uzun": 1.551
      },
@@ -4594,13 +4646,16 @@
      "eskiKume13": {
       "alan": "balonOranDik",
       "duz": {
-       "n": 2,
+       "n": 5,
        "degerler": {
         "cash-hampden.jpg": 0.958,
-        "dd-passiflore.jpg": 1.033
+        "07-uzun-kol-akiskan-etek.png": 0.998,
+        "04-a-line-puff-kol.png": 1.003,
+        "dd-passiflore.jpg": 1.033,
+        "06-a-line-puff-kol-varyant.png": 1.224
        },
        "min": 0.958,
-       "max": 1.033
+       "max": 1.224
       },
       "buzgulu": {
        "n": 2,
@@ -4612,15 +4667,18 @@
        "max": 2.435
       },
       "bosluk": [
-       1.033,
+       1.224,
        1.51
       ],
-      "ortaNokta": 1.2715,
+      "ortaNokta": 1.367,
       "hukum": "BOSLUK KALDI: skaler esik ayirici; yeni esik = boslugun ortasi",
-      "duzMax": 1.033,
+      "duzMax": 1.224,
       "buzMin": 1.51,
       "uyeler": {
        "duz": [
+        "04-a-line-puff-kol.png",
+        "06-a-line-puff-kol-varyant.png",
+        "07-uzun-kol-akiskan-etek.png",
         "cash-hampden.jpg",
         "dd-passiflore.jpg"
        ],
@@ -4632,10 +4690,7 @@
       "olculmedi": {},
       "disarida_uzun": [
        "02-uzun-robe-dress.png",
-       "04-a-line-puff-kol.png",
        "05-a-line-top-ve-elbise.png",
-       "06-a-line-puff-kol-varyant.png",
-       "07-uzun-kol-akiskan-etek.png",
        "10-princess-a-line.png",
        "cash-wyman.jpg",
        "dd-magnolia.jpg",
@@ -4702,16 +4757,19 @@
      "birlesik": {
       "alan": "balonOranDik",
       "duz": {
-       "n": 5,
+       "n": 8,
        "degerler": {
         "tilly-nell.jpg#kisa-duz": 0.941,
         "cash-hampden.jpg": 0.958,
+        "07-uzun-kol-akiskan-etek.png": 0.998,
+        "04-a-line-puff-kol.png": 1.003,
         "tilly-agnes.png#buzgulu-omuz": 1.022,
         "dd-passiflore.jpg": 1.033,
-        "tilly-agnes.png#kisa": 1.041
+        "tilly-agnes.png#kisa": 1.041,
+        "06-a-line-puff-kol-varyant.png": 1.224
        },
        "min": 0.941,
-       "max": 1.041
+       "max": 1.224
       },
       "buzgulu": {
        "n": 4,
@@ -4725,15 +4783,18 @@
        "max": 2.69
       },
       "bosluk": [
-       1.041,
+       1.224,
        1.51
       ],
-      "ortaNokta": 1.2755,
+      "ortaNokta": 1.367,
       "hukum": "BOSLUK KALDI: skaler esik ayirici; yeni esik = boslugun ortasi",
-      "duzMax": 1.041,
+      "duzMax": 1.224,
       "buzMin": 1.51,
       "uyeler": {
        "duz": [
+        "04-a-line-puff-kol.png",
+        "06-a-line-puff-kol-varyant.png",
+        "07-uzun-kol-akiskan-etek.png",
         "cash-hampden.jpg",
         "dd-passiflore.jpg",
         "tilly-agnes.png#buzgulu-omuz",
@@ -4752,10 +4813,7 @@
       },
       "disarida_uzun": [
        "02-uzun-robe-dress.png",
-       "04-a-line-puff-kol.png",
        "05-a-line-top-ve-elbise.png",
-       "06-a-line-puff-kol-varyant.png",
-       "07-uzun-kol-akiskan-etek.png",
        "10-princess-a-line.png",
        "bhl-alix-1.jpg",
        "bhl-loren-1.png",
@@ -4781,7 +4839,7 @@
     "eskiKume13": {
      "alan": "balonOranYatay",
      "duz": {
-      "n": 8,
+      "n": 7,
       "degerler": {
        "cash-wyman.jpg": 0.79,
        "cash-hampden.jpg": 0.928,
@@ -4789,30 +4847,33 @@
        "04-a-line-puff-kol.png": 1.01,
        "dd-passiflore.jpg": 1.032,
        "06-a-line-puff-kol-varyant.png": 1.094,
-       "dd-magnolia.jpg": 1.126,
-       "02-uzun-robe-dress.png": 1.231
+       "dd-orage.png": 1.441
       },
       "min": 0.79,
-      "max": 1.231
+      "max": 1.441
      },
      "buzgulu": {
-      "n": 5,
+      "n": 6,
       "degerler": {
+       "dd-magnolia.jpg": 1.126,
+       "02-uzun-robe-dress.png": 1.231,
        "03-empire-dress-uc-boy.png": 1.334,
        "05-a-line-top-ve-elbise.png": 1.351,
-       "dd-orage.png": 1.441,
        "10-princess-a-line.png": 1.679,
        "soi-lori.png": 2.111
       },
-      "min": 1.334,
+      "min": 1.126,
       "max": 2.111
      },
-     "bosluk": [
-      1.231,
-      1.334
-     ],
-     "ortaNokta": 1.2825,
-     "hukum": "BOSLUK KALDI: skaler esik ayirici; yeni esik = boslugun ortasi"
+     "bosluk": null,
+     "ortusenler": {
+      "dd-orage.png": 1.441,
+      "dd-magnolia.jpg": 1.126,
+      "03-empire-dress-uc-boy.png": 1.334,
+      "02-uzun-robe-dress.png": 1.231,
+      "05-a-line-top-ve-elbise.png": 1.351
+     },
+     "hukum": "ORTUSME: iki sinif bu eksende ayrilmiyor; skaler esik yanlis ayirici (karar ajani 3c)"
     },
     "yeniKume": {
      "alan": "balonOranYatay",
@@ -4866,7 +4927,7 @@
     "birlesik": {
      "alan": "balonOranYatay",
      "duz": {
-      "n": 17,
+      "n": 16,
       "degerler": {
        "cash-wyman.jpg": 0.79,
        "cash-hampden.jpg": 0.928,
@@ -4878,10 +4939,9 @@
        "tilly-agnes.png#kisa": 1.054,
        "tilly-nell.jpg#bilezik": 1.058,
        "06-a-line-puff-kol-varyant.png": 1.094,
-       "dd-magnolia.jpg": 1.126,
        "tilly-agnes.png#uzun": 1.133,
-       "02-uzun-robe-dress.png": 1.231,
        "tilly-coco.jpg#v1": 1.321,
+       "dd-orage.png": 1.441,
        "tilly-frida.png#uzun": 1.615,
        "named-ilta.png": 1.735,
        "tilly-stevie-addon.jpg#tunik": 2.667
@@ -4890,12 +4950,13 @@
       "max": 2.667
      },
      "buzgulu": {
-      "n": 13,
+      "n": 14,
       "degerler": {
+       "dd-magnolia.jpg": 1.126,
+       "02-uzun-robe-dress.png": 1.231,
        "03-empire-dress-uc-boy.png": 1.334,
        "05-a-line-top-ve-elbise.png": 1.351,
        "tilly-mabel.jpg#bluz": 1.388,
-       "dd-orage.png": 1.441,
        "bhl-marie-dress.jpg": 1.448,
        "bhl-alix-1.jpg": 1.487,
        "tilly-lyra.png#uzun": 1.534,
@@ -4906,14 +4967,16 @@
        "soi-lori.png": 2.111,
        "tilly-nell.jpg#puf": 2.529
       },
-      "min": 1.334,
+      "min": 1.126,
       "max": 2.529
      },
      "bosluk": null,
      "ortusenler": {
       "soi-lori.png": 2.111,
       "dd-orage.png": 1.441,
+      "dd-magnolia.jpg": 1.126,
       "03-empire-dress-uc-boy.png": 1.334,
+      "02-uzun-robe-dress.png": 1.231,
       "05-a-line-top-ve-elbise.png": 1.351,
       "10-princess-a-line.png": 1.679,
       "bhl-alix-1.jpg": 1.487,
@@ -4925,6 +4988,8 @@
       "tilly-nell.jpg#puf": 2.529,
       "tilly-lyra.png#uzun": 1.534,
       "tilly-stevie-addon.jpg#tunik": 2.667,
+      "tilly-coco.jpg#v1": 1.321,
+      "tilly-agnes.png#uzun": 1.133,
       "named-ilta.png": 1.735,
       "tilly-frida.png#uzun": 1.615
      },
@@ -4952,21 +5017,21 @@
      {
       "flat": "07-uzun-kol-akiskan-etek.png",
       "oran": 0.656,
-      "kisa": false,
+      "kisa": true,
       "dikey": 0.636,
       "kolAcisiDeg": 75.8
      },
      {
       "flat": "06-a-line-puff-kol-varyant.png",
       "oran": 0.704,
-      "kisa": false,
+      "kisa": true,
       "dikey": 0.676,
       "kolAcisiDeg": 73.7
      },
      {
       "flat": "04-a-line-puff-kol.png",
       "oran": 0.769,
-      "kisa": false,
+      "kisa": true,
       "dikey": 0.763,
       "kolAcisiDeg": 83.3
      },
@@ -4999,16 +5064,16 @@
       "kolAcisiDeg": 80.9
      }
     ],
-    "kisaMax": 0.591,
-    "uzunMin": 0.656,
+    "kisaMax": 0.769,
+    "uzunMin": 1.135,
     "bosluk": [
-     0.591,
-     0.656
+     0.769,
+     1.135
     ],
-    "ortaNokta": 0.6235,
-    "esik": 0.6,
+    "ortaNokta": 0.952,
+    "esik": 0.952,
     "esikBoslukIcinde": true,
-    "tanim": "HUKUM (F1 tur 9, hakem ENGEL 2). kol boyu = omuz ucu -> agiz ortasi, kol EKSENI boyunca (hypot(dx,dy)) / torso (SNP->bel). Eski dikey deger = kolBoyu x sin(kolAcisiDeg) (degerler[].dikey, bilgi): aciya bagli oldugu icin band secen kosul olarak donguseldi; F2 grafta kol boyunu bilir, aciyi bilmez. kisa = oran < esik. Esik boslugun icindeyse kalir, degilse ortaNokta."
+    "tanim": "HUKUM (F1 tur 9, hakem ENGEL 2). kol boyu = omuz ucu -> agiz ortasi, kol EKSENI boyunca (hypot(dx,dy)) / torso (SNP->bel). Eski dikey deger = kolBoyu x sin(kolAcisiDeg) (degerler[].dikey, bilgi): aciya bagli oldugu icin band secen kosul olarak donguseldi; F2 grafta kol boyunu bilir, aciyi bilmez. F1 tur 10: kisa etiketi urun taniminda (boyKaynak), orandan DEGIL; oran yalniz bosluk. Esik boslugun icindeyse kalir, degilse ortaNokta."
    },
    "agizOmuzDikeyOverTorso": {
     "n": 9,
@@ -5026,17 +5091,17 @@
      {
       "flat": "07-uzun-kol-akiskan-etek.png",
       "oran": 0.636,
-      "kisa": false
+      "kisa": true
      },
      {
       "flat": "06-a-line-puff-kol-varyant.png",
       "oran": 0.676,
-      "kisa": false
+      "kisa": true
      },
      {
       "flat": "04-a-line-puff-kol.png",
       "oran": 0.763,
-      "kisa": false
+      "kisa": true
      },
      {
       "flat": "02-uzun-robe-dress.png",
@@ -5059,8 +5124,8 @@
       "kisa": false
      }
     ],
-    "kisaMax": 0.545,
-    "uzunMin": 0.636,
+    "kisaMax": 0.763,
+    "uzunMin": 1.132,
     "tanim": "BILGI (eski tanim, F1 tur 8; hukum tasimaz). Dikey mesafe / torso; kisa etiketi artik kolBoyuOverTorso ile."
    },
    "kolAcisiDeg": {
