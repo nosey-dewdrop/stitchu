@@ -19,6 +19,7 @@ Yeni oturum önce en alttaki "Nerede kaldık?" bölümünü okur.
 | K11 | 2026-09-05 | Landing'de fiyat/satış cümlesi yok; ilk toile Damla dikene kadar | HEDEF §4; 600+ saatte kumaşa kesilmiş çıktı yok | Damla paket-03'ü dikip prova listesini doldurunca |
 | K12 | 2026-09-05 | Fotoğraf hattı üç kaynak: poz landmark'ı + siluet oranı + Claude semantiği; çelişkide ölçüm kazanır; yalnız LLM ile sessiz devam yok | HEDEF 8, 11; vision tek başına isim uyduruyordu | Landmark modeli tarayıcıda kurulamazsa deftere yazılır, (b)+(c) ile devam, ilan edilir |
 | K13 | 2026-09-05 | Buğra referans, ayar hedefi değil; Buğra'ya sabit eklemek reward hacking | 28 Tem Damla: "geometri knows it all" | — |
+| K15 | 2026-09-05 | Kabul komutları fazdan ÖNCE yazılır (`KOSU/kabul/P1-P9.sh`), mühürlenir (`KOSU/muhur.sh`); `KOSU/sinyal.sh` her faz sonu ve oturum başı koşar: mühür + enum tabanı + kapanan fazların kabulü + madde defteri | rabadon §8 hata 1-3: ölçütü işi yapan yazmıştı, liste takip edilmemişti, süreç ilerleyip iş yerinde saymıştı | — |
 | K14 | 2026-09-05 | Sadece ön fotoğraf: en sade dikilebilir arka (düz, orta arka kapanma) + görünür ilan + neden. İkinci fotoğraf alanı isteğe bağlı | HEDEF §2 | — |
 
 ## Madde defteri (HEDEF §1-§4; her faz sonunda güncellenir)
@@ -44,4 +45,6 @@ Yeni oturum önce en alttaki "Nerede kaldık?" bölümünü okur.
 
 ## Nerede kaldık?
 
-- 2026-09-05 19:10 — Plan yazıldı (`PLAN.md`). Koşu durdu; son commit `2a654269` (F2a: graf IR, 15 op, doğrulayıcı, 3 bedende 0 kırmızı). Sıradaki: **P1 graftan çizim**. Henüz başlamadı.
+- 2026-09-05 21:35 — Koşu belgesi `KOSU-STITCHU.md` (rabadon-5 biçimi), kabul scriptleri P1-P9 + mühür + `sinyal.sh` yazıldı; `sinyal.sh hizli` YEŞİL (enum 436, kapanan faz 0). Sıradaki: **P1** — Damla "başla" deyince. Her fazın kapanışı: `sinyal.sh tam` yeşil → `sinyal.taban.json kapanan`'a faz eklenir → madde defteri + bu bölüm + `DEVIR-PROMPT.md` güncellenir.
+
+- 2026-09-05 19:10 — Plan yazıldı (`KOSU-STITCHU.md`). Koşu durdu; son commit `2a654269` (F2a: graf IR, 15 op, doğrulayıcı, 3 bedende 0 kırmızı). Sıradaki: **P1 graftan çizim**. Henüz başlamadı.
