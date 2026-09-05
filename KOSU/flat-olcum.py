@@ -939,6 +939,34 @@ CFG5 = {
   # belirsiz); Sew Over It Cassie 'just above the elbow' (buzgulu) — sitede teknik cizim yok, yalniz foto; Seamwork Sloan/Pomme puf (boy kelimesi yok / cizim yok);
   # Megan Nielsen Sudley A 'above elbow sleeves' bluz (bel yok); Tilly Mabel ELBOW LENGTH (off-shoulder, SNP yok, asagida); Tilly Etta 'three-quarter';
   # Cashmerette Roseclair 3/4 buzgulu manset (dirsek kelimesi yok); Sew Liberated Ember '3/4' (lastik dirsek USTUNDE, dirsek boyu degil); Deer&Doe Eleanor 'above the elbow' (kisa, CFG3).
+  # ---------------- F1 karar 1 (tur 12, 5 Eyl 2026): ucuncu yana-acilan ornek ARAMASI, sinirli (4 aday YA DA 60 dk). Aday sarti: satici teknik cizimi, set-in omuz,
+  # agzi buzgulu. Kume atamasi YALNIZ mevcut aci boslugu kuraliyla; aci sarkan kumeye duserse oyle yazilir. Baslangic 15:14.
+  #   (1) Puff and Pencil PUFF SLEEVE (puffandpencil.com/products/puff-sleeves-sewing-pattern): sayfanin kendi gorseli Puff_sleeve_2025.png iki kol TEK BASINA
+  #       (govde yok -> omuz ucu / omuz genisligi tanimsiz, olculemez). AYNI kol saticinin DRAW BLOUSE x PUFF SLEEVES sayfasindaki teknik cizimde govdeyle
+  #       birlikte (Shopify_bundle_9.png, set-in kesikli kol oyugu dikisi): o cizim olculdu (pp-draw-puff). Satici: 'short sleeve with a lot of volume ...
+  #       ends just above the elbow and is finished with a casing containing an elastic' -> agiz buzgulu (lastik kanal), kisa.
+  #   (2) Seamwork Baker Smock Dress (seamwork.com/pdf-sewing-patterns/baker): urun gorselleri arasinda teknik cizim (3232-2d34b8b2.jpg on/arka A ve B).
+  #       Satici: 'The pouf sleeves feature an elastic casing that finishes just above the elbow' -> agiz buzgulu, kisa (Eleanor 'above the elbow' emsali).
+  #   (3) Closet Core Nicks Dress + Blouse (teknik cizim NicksDress_BlousePattern_TechnicalPattern.jpg): KISA kolun agzi DUZ (aday sarti saglanmaz);
+  #       UZUN kol 'elastic gathered cuff' -> agzi buzgulu, uzun: olculdu (cc-nicks).
+  #   (4) Friday Pattern Company Adrienne Blouse: cizim var (pics-13.jpg) ama kol omuzda lastikle yakaya toplanir ('gathered up at the shoulders'),
+  #       omuz dikisi/ucu yok -> set-in sarti saglanmaz, ELENDI (olculmedi).
+  #   Sonuc asagida f1Tur8.medyanlar.kolBoyuOverOmuz.aciKumeleri: uc olcum de sarkan kumede, yana acilan n=2 kaldi (kosulluBant[0] askida).
+  'pp-draw-puff.png': dict(gorunumX=(600, 1480), url='https://cdn.shopify.com/s/files/1/0766/2898/4138/files/Shopify_bundle_9.png?v=1760444673',
+    sayfa='https://puffandpencil.com/products/draw-blouse-x-puff-sleeve', urun='Puff and Pencil DRAW Blouse x PUFF Sleeve (kisa puf kol, lastik kanalli agiz; PUFF SLEEVE urununun kolu govde uzerinde; on gorunum, sol kol)', marka='Puff and Pencil',
+    etiket='buzgulu', etiketNeden='agiz lastik kanala toplanmis (satici: casing containing an elastic), kol govdesi agizdan genis, kep buzgulu (govde panelinin agiz Edge\'i toplanmis: karar 4 kurali)', esik=160,
+    omuzKutu=(838, 860, 158, 182), kolUcu=(690, 842, 583, 614), kolPencere=(640, 860, 158, 614), boy='kisa',
+    boyKaynak='urun sayfasi (WebFetch 2026-09-05): "The PUFF Sleeve is a short sleeve with a lot of volume ... The sleeve ends just above the elbow and is finished with a casing containing an elastic"; cizim: agiz omuz ucunun ~430 px altinda, bluz etegi ~1120'),
+  'sw-baker.jpg': dict(gorunumX=(0, 400), url='https://www.seamwork.com/media/products/3232/3232-2d34b8b2.jpg',
+    sayfa='https://www.seamwork.com/pdf-sewing-patterns/baker', urun='Seamwork Baker Smock Dress (kisa puf kol, lastik kanalli agiz; teknik cizim, on gorunum A sol kol)', marka='Seamwork',
+    etiket='buzgulu', etiketNeden='agiz lastik kanala toplanmis (satici: elastic casing), agizda buzgu cizgileri + kucuk firfir, kep buzgulu', esik=150,
+    omuzKutu=(60, 72, 265, 278), kolUcu=(26, 58, 425, 437), kolPencere=(8, 72, 265, 437), boy='kisa',
+    boyKaynak='urun sayfasi (WebFetch 2026-09-05): "The pouf sleeves feature an elastic casing that finishes just above the elbow"; cizim: agiz omuz ucunun ~160 px altinda, bel/empire dikisi ~400 (Eleanor "above the elbow" emsali: kisa)'),
+  'cc-nicks.jpg': dict(gorunumX=(100, 1050), url='https://cdn.shopify.com/s/files/1/0632/8217/products/NicksDress_BlousePattern_TechnicalPattern.jpg?v=1662744153',
+    sayfa='https://closetcorepatterns.com/products/nicks-dress-blouse-pattern', urun='Closet Core Nicks Dress View A (uzun kol, lastikli buzgulu manset; teknik cizim, on gorunum sol kol)', marka='Closet Core Patterns',
+    etiket='buzgulu', etiketNeden='agizda lastikli buzgulu manset (satici: elastic gathered cuff), manset ustunde buzgu cizgileri; kep omuzda buzgulu', esik=160,
+    omuzKutu=(335, 358, 65, 82), kolUcu=(150, 232, 545, 598), kolPencere=(140, 360, 65, 545), boy='uzun',
+    boyKaynak='urun sayfasi (products.json 2026-09-05): "a long sleeve with wrist pleats for shaping and an elastic gathered cuff"; cizim: manset bel bandinin (~400) altinda, bilek boyu. Kisa kol secenegi agzi DUZ oldugu icin aday degil'),
   'cash-duxbury.jpg': dict(gorunumX=(380, 1230), url='https://www.cashmerette.com/cdn/shop/files/Cashmerette-1302-Duxbury-tech-ill-4x5-gray.jpg?v=1779195202',
     sayfa='https://www.cashmerette.com/products/duxbury-dress-pdf-pattern', urun='Cashmerette Duxbury Dress (dirsek boyu set-in kol, derin bask; alt sol on gorunum)', marka='Cashmerette',
     etiket='duz', etiketNeden='agiz acik duz kenar, kesik cizgi = derin bask dikisi (satici: deep hem), buzgu/lastik/manset yok', esik=160,

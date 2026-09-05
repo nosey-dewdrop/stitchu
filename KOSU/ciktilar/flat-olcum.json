@@ -2757,6 +2757,315 @@
    "tilly-coco.jpg#v2": "turn-back mansetli 3/4 kol: manset bolgesi 50 px gridde guvenle okunamadi (kol x 830-950, y 60-390 olculdu ama manset penceresi yok); duz sinif n >= 5 zaten sagli"
   },
   "flatler": {
+   "pp-draw-puff.png": {
+    "dosya": "pp-draw-puff.png",
+    "urun": "Puff and Pencil DRAW Blouse x PUFF Sleeve (kisa puf kol, lastik kanalli agiz; PUFF SLEEVE urununun kolu govde uzerinde; on gorunum, sol kol)",
+    "marka": "Puff and Pencil",
+    "sayfa": "https://puffandpencil.com/products/draw-blouse-x-puff-sleeve",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0766/2898/4138/files/Shopify_bundle_9.png?v=1760444673",
+    "boyutPX": [
+     2048,
+     2048
+    ],
+    "esik": 160,
+    "etiket": "buzgulu",
+    "etiketNeden": "agiz lastik kanala toplanmis (satici: casing containing an elastic), kol govdesi agizdan genis, kep buzgulu (govde panelinin agiz Edge'i toplanmis: karar 4 kurali)",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      838,
+      860,
+      158,
+      182
+     ],
+     "xy": [
+      856,
+      170
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      690,
+      842,
+      583,
+      614
+     ],
+     "uclar": [
+      [
+       692,
+       583
+      ],
+      [
+       810,
+       583
+      ]
+     ],
+     "orta": [
+      751.0,
+      583.0
+     ],
+     "nMurekkep": 938
+    },
+    "kolAcisiDeg": {
+     "deger": 75.7,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -105.0,
+      413.0
+     ]
+    },
+    "agizPX": 118.0,
+    "kolPencere": [
+     640,
+     860,
+     158,
+     614
+    ],
+    "enGenisYataySatir": {
+     "y": 362,
+     "genislikPX": 219,
+     "x": [
+      640,
+      859
+     ]
+    },
+    "balonOranYatay": 1.856,
+    "enGenisDikKesit": {
+     "genislikPX": 221.9,
+     "eksenS": 234,
+     "uclar": [
+      [
+       857.1,
+       411.7
+      ],
+      [
+       642.0,
+       357.0
+      ]
+     ],
+     "eksenAciDeg": 75.7
+    },
+    "balonOranDik": 1.881,
+    "omuzGenisligi": {
+     "simetriX": 1036.5,
+     "kaynak": "gorunumX [600, 1480] penceresinde omuz ucu satirlarinin (y 170..174) siluet ortasi medyani",
+     "genislikPX": 361.0,
+     "cfFarkPX": null,
+     "tanim": "iki omuz ucu arasi = 2 x (simetri ekseni - sol omuz ucu x); croquis36 karsiligi 2 x landmark.shoulderTip.x = 367.6 mm"
+    },
+    "kolBoyuOverOmuz": 1.18,
+    "boy": "kisa",
+    "boyKaynak": "urun sayfasi (WebFetch 2026-09-05): \"The PUFF Sleeve is a short sleeve with a lot of volume ... The sleeve ends just above the elbow and is finished with a casing containing an elastic\"; cizim: agiz omuz ucunun ~430 px altinda, bluz etegi ~1120",
+    "kisa": true,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-pp-draw-puff.png"
+   },
+   "sw-baker.jpg": {
+    "dosya": "sw-baker.jpg",
+    "urun": "Seamwork Baker Smock Dress (kisa puf kol, lastik kanalli agiz; teknik cizim, on gorunum A sol kol)",
+    "marka": "Seamwork",
+    "sayfa": "https://www.seamwork.com/pdf-sewing-patterns/baker",
+    "gorselURL": "https://www.seamwork.com/media/products/3232/3232-2d34b8b2.jpg",
+    "boyutPX": [
+     768,
+     1152
+    ],
+    "esik": 150,
+    "etiket": "buzgulu",
+    "etiketNeden": "agiz lastik kanala toplanmis (satici: elastic casing), agizda buzgu cizgileri + kucuk firfir, kep buzgulu",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      60,
+      72,
+      265,
+      278
+     ],
+     "xy": [
+      61,
+      270
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      26,
+      58,
+      425,
+      437
+     ],
+     "uclar": [
+      [
+       26,
+       425
+      ],
+      [
+       57,
+       435
+      ]
+     ],
+     "orta": [
+      41.5,
+      430.0
+     ],
+     "nMurekkep": 79
+    },
+    "kolAcisiDeg": {
+     "deger": 83.1,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -19.5,
+      160.0
+     ]
+    },
+    "agizPX": 32.6,
+    "kolPencere": [
+     8,
+     72,
+     265,
+     437
+    ],
+    "enGenisYataySatir": {
+     "y": 368,
+     "genislikPX": 54,
+     "x": [
+      14,
+      68
+     ]
+    },
+    "balonOranYatay": 1.658,
+    "enGenisDikKesit": {
+     "genislikPX": 53.5,
+     "eksenS": 97,
+     "uclar": [
+      [
+       68.1,
+       368.6
+      ],
+      [
+       15.0,
+       362.1
+      ]
+     ],
+     "eksenAciDeg": 83.1
+    },
+    "balonOranDik": 1.642,
+    "omuzGenisligi": {
+     "simetriX": 158.5,
+     "kaynak": "gorunumX [0, 400] penceresinde omuz ucu satirlarinin (y 270..274) siluet ortasi medyani",
+     "genislikPX": 195.0,
+     "cfFarkPX": null,
+     "tanim": "iki omuz ucu arasi = 2 x (simetri ekseni - sol omuz ucu x); croquis36 karsiligi 2 x landmark.shoulderTip.x = 367.6 mm"
+    },
+    "kolBoyuOverOmuz": 0.827,
+    "boy": "kisa",
+    "boyKaynak": "urun sayfasi (WebFetch 2026-09-05): \"The pouf sleeves feature an elastic casing that finishes just above the elbow\"; cizim: agiz omuz ucunun ~160 px altinda, bel/empire dikisi ~400 (Eleanor \"above the elbow\" emsali: kisa)",
+    "kisa": true,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-sw-baker.png"
+   },
+   "cc-nicks.jpg": {
+    "dosya": "cc-nicks.jpg",
+    "urun": "Closet Core Nicks Dress View A (uzun kol, lastikli buzgulu manset; teknik cizim, on gorunum sol kol)",
+    "marka": "Closet Core Patterns",
+    "sayfa": "https://closetcorepatterns.com/products/nicks-dress-blouse-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0632/8217/products/NicksDress_BlousePattern_TechnicalPattern.jpg?v=1662744153",
+    "boyutPX": [
+     2084,
+     3126
+    ],
+    "esik": 160,
+    "etiket": "buzgulu",
+    "etiketNeden": "agizda lastikli buzgulu manset (satici: elastic gathered cuff), manset ustunde buzgu cizgileri; kep omuzda buzgulu",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      335,
+      358,
+      65,
+      82
+     ],
+     "xy": [
+      357,
+      74
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      150,
+      232,
+      545,
+      598
+     ],
+     "uclar": [
+      [
+       153,
+       545
+      ],
+      [
+       231,
+       577
+      ]
+     ],
+     "orta": [
+      192.0,
+      561.0
+     ],
+     "nMurekkep": 1700
+    },
+    "kolAcisiDeg": {
+     "deger": 71.3,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -165.0,
+      487.0
+     ]
+    },
+    "agizPX": 84.3,
+    "kolPencere": [
+     140,
+     360,
+     65,
+     545
+    ],
+    "enGenisYataySatir": {
+     "y": 496,
+     "genislikPX": 199,
+     "x": [
+      158,
+      357
+     ]
+    },
+    "balonOranYatay": 2.36,
+    "enGenisDikKesit": {
+     "genislikPX": 195.4,
+     "eksenS": 446,
+     "uclar": [
+      [
+       348.0,
+       541.9
+      ],
+      [
+       162.9,
+       479.2
+      ]
+     ],
+     "eksenAciDeg": 71.3
+    },
+    "balonOranDik": 2.318,
+    "omuzGenisligi": {
+     "simetriX": 533.5,
+     "kaynak": "gorunumX [100, 1050] penceresinde omuz ucu satirlarinin (y 74..78) siluet ortasi medyani",
+     "genislikPX": 353.0,
+     "cfFarkPX": null,
+     "tanim": "iki omuz ucu arasi = 2 x (simetri ekseni - sol omuz ucu x); croquis36 karsiligi 2 x landmark.shoulderTip.x = 367.6 mm"
+    },
+    "kolBoyuOverOmuz": 1.457,
+    "boy": "uzun",
+    "boyKaynak": "urun sayfasi (products.json 2026-09-05): \"a long sleeve with wrist pleats for shaping and an elastic gathered cuff\"; cizim: manset bel bandinin (~400) altinda, bilek boyu. Kisa kol secenegi agzi DUZ oldugu icin aday degil",
+    "kisa": false,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-cc-nicks.png"
+   },
    "cash-duxbury.jpg": {
     "dosya": "cash-duxbury.jpg",
     "urun": "Cashmerette Duxbury Dress (dirsek boyu set-in kol, derin bask; alt sol on gorunum)",
@@ -5810,7 +6119,7 @@
       "max": 1.669
      },
      "buzgulu": {
-      "n": 10,
+      "n": 13,
       "degerler": {
        "sa-dallas.jpg": 1.09,
        "bhl-alix-1.jpg": 1.33,
@@ -5819,8 +6128,11 @@
        "bhl-marie-dress.jpg": 1.453,
        "sa-zalia.jpg": 1.498,
        "tilly-marnie.png": 1.615,
+       "sw-baker.jpg": 1.642,
        "bhl-loren-1.png": 1.655,
+       "pp-draw-puff.png": 1.881,
        "bhl-lucy-puff.jpg": 1.916,
+       "cc-nicks.jpg": 2.318,
        "tilly-nell.jpg#puf": 2.69
       },
       "min": 1.09,
@@ -5828,6 +6140,7 @@
      },
      "bosluk": null,
      "ortusenler": {
+      "sw-baker.jpg": 1.642,
       "sa-yvette.jpg": 1.366,
       "sa-dallas.jpg": 1.09,
       "sa-zalia.jpg": 1.498,
@@ -5877,7 +6190,7 @@
       "max": 1.669
      },
      "buzgulu": {
-      "n": 16,
+      "n": 19,
       "degerler": {
        "sa-dallas.jpg": 1.09,
        "dd-magnolia.jpg": 1.137,
@@ -5890,9 +6203,12 @@
        "sa-zalia.jpg": 1.498,
        "03-empire-dress-uc-boy.png": 1.51,
        "tilly-marnie.png": 1.615,
+       "sw-baker.jpg": 1.642,
        "bhl-loren-1.png": 1.655,
        "10-princess-a-line.png": 1.747,
+       "pp-draw-puff.png": 1.881,
        "bhl-lucy-puff.jpg": 1.916,
+       "cc-nicks.jpg": 2.318,
        "soi-lori.png": 2.435,
        "tilly-nell.jpg#puf": 2.69
       },
@@ -5907,6 +6223,7 @@
       "06-a-line-puff-kol-varyant.png": 1.224,
       "02-uzun-robe-dress.png": 1.252,
       "05-a-line-top-ve-elbise.png": 1.345,
+      "sw-baker.jpg": 1.642,
       "sa-yvette.jpg": 1.366,
       "sa-dallas.jpg": 1.09,
       "sa-zalia.jpg": 1.498,
@@ -5992,22 +6309,24 @@
        "max": 1.041
       },
       "buzgulu": {
-       "n": 2,
+       "n": 4,
        "degerler": {
+        "sw-baker.jpg": 1.642,
+        "pp-draw-puff.png": 1.881,
         "bhl-lucy-puff.jpg": 1.916,
         "tilly-nell.jpg#puf": 2.69
        },
-       "min": 1.916,
+       "min": 1.642,
        "max": 2.69
       },
       "bosluk": [
        1.041,
-       1.916
+       1.642
       ],
-      "ortaNokta": 1.4785,
+      "ortaNokta": 1.3415,
       "hukum": "BOSLUK KALDI: skaler esik ayirici; yeni esik = boslugun ortasi",
       "duzMax": 1.041,
-      "buzMin": 1.916,
+      "buzMin": 1.642,
       "uyeler": {
        "duz": [
         "tilly-agnes.png#buzgulu-omuz",
@@ -6016,6 +6335,8 @@
        ],
        "buzgulu": [
         "bhl-lucy-puff.jpg",
+        "pp-draw-puff.png",
+        "sw-baker.jpg",
         "tilly-nell.jpg#puf"
        ]
       },
@@ -6034,6 +6355,7 @@
        "bhl-alix-1.jpg",
        "bhl-loren-1.png",
        "bhl-marie-dress.jpg",
+       "cc-nicks.jpg",
        "named-ilta.png",
        "tilly-agnes.png#uzun",
        "tilly-coco.jpg#v1",
@@ -6062,9 +6384,11 @@
        "max": 1.224
       },
       "buzgulu": {
-       "n": 4,
+       "n": 6,
        "degerler": {
         "03-empire-dress-uc-boy.png": 1.51,
+        "sw-baker.jpg": 1.642,
+        "pp-draw-puff.png": 1.881,
         "bhl-lucy-puff.jpg": 1.916,
         "soi-lori.png": 2.435,
         "tilly-nell.jpg#puf": 2.69
@@ -6094,7 +6418,9 @@
        "buzgulu": [
         "03-empire-dress-uc-boy.png",
         "bhl-lucy-puff.jpg",
+        "pp-draw-puff.png",
         "soi-lori.png",
+        "sw-baker.jpg",
         "tilly-nell.jpg#puf"
        ]
       },
@@ -6117,6 +6443,7 @@
        "bhl-loren-1.png",
        "bhl-marie-dress.jpg",
        "cash-wyman.jpg",
+       "cc-nicks.jpg",
        "dd-magnolia.jpg",
        "dd-orage.png",
        "named-ilta.png",
@@ -6198,7 +6525,7 @@
       "max": 2.667
      },
      "buzgulu": {
-      "n": 10,
+      "n": 13,
       "degerler": {
        "sa-dallas.jpg": 1.031,
        "tilly-mabel.jpg#bluz": 1.388,
@@ -6206,9 +6533,12 @@
        "sa-zalia.jpg": 1.483,
        "bhl-alix-1.jpg": 1.487,
        "tilly-lyra.png#uzun": 1.534,
+       "sw-baker.jpg": 1.658,
        "tilly-marnie.png": 1.68,
        "bhl-lucy-puff.jpg": 1.705,
        "bhl-loren-1.png": 1.796,
+       "pp-draw-puff.png": 1.856,
+       "cc-nicks.jpg": 2.36,
        "tilly-nell.jpg#puf": 2.529
       },
       "min": 1.031,
@@ -6216,6 +6546,9 @@
      },
      "bosluk": null,
      "ortusenler": {
+      "pp-draw-puff.png": 1.856,
+      "sw-baker.jpg": 1.658,
+      "cc-nicks.jpg": 2.36,
       "sa-yvette.jpg": 1.21,
       "sa-dallas.jpg": 1.031,
       "sa-zalia.jpg": 1.483,
@@ -6271,7 +6604,7 @@
       "max": 2.667
      },
      "buzgulu": {
-      "n": 16,
+      "n": 19,
       "degerler": {
        "sa-dallas.jpg": 1.031,
        "dd-magnolia.jpg": 1.126,
@@ -6283,11 +6616,14 @@
        "sa-zalia.jpg": 1.483,
        "bhl-alix-1.jpg": 1.487,
        "tilly-lyra.png#uzun": 1.534,
+       "sw-baker.jpg": 1.658,
        "10-princess-a-line.png": 1.679,
        "tilly-marnie.png": 1.68,
        "bhl-lucy-puff.jpg": 1.705,
        "bhl-loren-1.png": 1.796,
+       "pp-draw-puff.png": 1.856,
        "soi-lori.png": 2.111,
+       "cc-nicks.jpg": 2.36,
        "tilly-nell.jpg#puf": 2.529
       },
       "min": 1.031,
@@ -6304,6 +6640,9 @@
       "02-uzun-robe-dress.png": 1.231,
       "05-a-line-top-ve-elbise.png": 1.351,
       "10-princess-a-line.png": 1.679,
+      "pp-draw-puff.png": 1.856,
+      "sw-baker.jpg": 1.658,
+      "cc-nicks.jpg": 2.36,
       "sa-yvette.jpg": 1.21,
       "sa-dallas.jpg": 1.031,
       "sa-zalia.jpg": 1.483,
@@ -6331,8 +6670,8 @@
    },
    "kolBoyuOverOmuz": {
     "alan": "kolBoyuOverOmuz",
-    "n": 33,
-    "nBuzgulu": 14,
+    "n": 36,
+    "nBuzgulu": 17,
     "degerler": [
      {
       "flat": "dd-passiflore.jpg",
@@ -6455,6 +6794,14 @@
       "torsoOran": null
      },
      {
+      "flat": "sw-baker.jpg",
+      "oran": 0.827,
+      "etiket": "buzgulu",
+      "boy": "kisa",
+      "kolAcisiDeg": 83.1,
+      "torsoOran": null
+     },
+     {
       "flat": "tilly-agnes.png#kisa",
       "oran": 0.887,
       "etiket": "duz",
@@ -6503,6 +6850,14 @@
       "torsoOran": 1.135
      },
      {
+      "flat": "pp-draw-puff.png",
+      "oran": 1.18,
+      "etiket": "buzgulu",
+      "boy": "kisa",
+      "kolAcisiDeg": 75.7,
+      "torsoOran": null
+     },
+     {
       "flat": "05-a-line-top-ve-elbise.png",
       "oran": 1.204,
       "etiket": "buzgulu",
@@ -6549,6 +6904,14 @@
       "boy": "uzun",
       "kolAcisiDeg": 80.9,
       "torsoOran": 1.559
+     },
+     {
+      "flat": "cc-nicks.jpg",
+      "oran": 1.457,
+      "etiket": "buzgulu",
+      "boy": "uzun",
+      "kolAcisiDeg": 71.3,
+      "torsoOran": null
      },
      {
       "flat": "tilly-marnie.png",
@@ -6639,6 +7002,18 @@
        74.1,
        1.233
       ],
+      "pp-draw-puff.png": [
+       75.7,
+       1.18
+      ],
+      "sw-baker.jpg": [
+       83.1,
+       0.827
+      ],
+      "cc-nicks.jpg": [
+       71.3,
+       1.457
+      ],
       "sa-dallas.jpg": [
        73.6,
        1.273
@@ -6716,9 +7091,9 @@
    "boySinifiOrtusme": {
     "kolBoyuOverOmuz": {
      "kisa": {
-      "n": 13,
+      "n": 15,
       "min": 0.374,
-      "max": 1.027,
+      "max": 1.18,
       "degerler": {
        "dd-passiflore.jpg": 0.374,
        "cash-hampden.jpg": 0.522,
@@ -6731,8 +7106,10 @@
        "07-uzun-kol-akiskan-etek.png": 0.718,
        "06-a-line-puff-kol-varyant.png": 0.72,
        "soi-lori.png": 0.799,
+       "sw-baker.jpg": 0.827,
        "tilly-agnes.png#kisa": 0.887,
-       "tilly-nell.jpg#puf": 1.027
+       "tilly-nell.jpg#puf": 1.027,
+       "pp-draw-puff.png": 1.18
       }
      },
      "dirsek": {
@@ -6751,7 +7128,7 @@
       }
      },
      "uzun": {
-      "n": 12,
+      "n": 13,
       "min": 1.163,
       "max": 1.81,
       "degerler": {
@@ -6761,6 +7138,7 @@
        "dd-orage.png": 1.241,
        "dd-magnolia.jpg": 1.354,
        "cash-wyman.jpg": 1.448,
+       "cc-nicks.jpg": 1.457,
        "tilly-marnie.png": 1.508,
        "tilly-coco.jpg#v1": 1.603,
        "tilly-agnes.png#uzun": 1.63,
@@ -6772,7 +7150,7 @@
      "ortusme": {
       "kisa-dirsek": true,
       "dirsek-uzun": true,
-      "kisa-uzun": false
+      "kisa-uzun": true
      },
      "hukum": "BOY SINIFI ORAN EKSENINDE AYRILMIYOR (3c): ayirici yanlis"
     },
@@ -7078,6 +7456,9 @@
    },
    "kolAcisiDeg": {
     "buzgulu": {
+     "pp-draw-puff.png": 75.7,
+     "sw-baker.jpg": 83.1,
+     "cc-nicks.jpg": 71.3,
      "sa-dallas.jpg": 73.6,
      "sa-zalia.jpg": 76.0,
      "bhl-alix-1.jpg": 65.0,
