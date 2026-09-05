@@ -165,6 +165,12 @@ sürüyordu; tiplerinde kol, yaka, pens yoktu. Flat kalıp hattına bağlandı:
   `engine/build-wasm.sh`, `engine/wasm/` altında değil), yoksa web eski motoru
   kullanır ve "düzelttim" yalan olur. Damga `git ls-files` tabanlıdır (5 Eyl):
   `.rabadon/` oturum dosyaları damgaya girmez, temiz clone aynı damgayı hesaplar.
+- **Body ve wasm (karar ajanı 5 + karar 2, F1 tur 6).** Çizim yapan embind EKLENMEZ (F2'ye
+  kadar web Body'den çizmez, `mankenWarp` benzeri çarpan üretmez); tek okuyucu `bodyJSON`
+  (`engine/wasm/bindings.cpp`) KAPILI: `ctest -R wasm_body_check` sevk edilen
+  `web/vendor/stitchu-engine.js` içindeki bodyJSON'u contract/body-v1.json ile (landmark 1e-6,
+  EU34-44 halka çevreleri) her build'de kıyaslar ve bundle damgasını basar. Tüketicisiz body.cpp'yi
+  linker atıyordu (bundle bayt-aynı kalmıştı) — "Body sevk motorunda" cümlesi bu kapı olmadan yalan.
 - **`vocab_reference_check` (BREADTH→DEPTH cırcırı).** Kapalı enum'a referans
   artışını kırmızı yakar. Yorum satırında geçen kelime bile sayılır. Önce
   `git diff -- engine/vocab.json` bak: bayt-aynıysa artış prose'dur, tabanı

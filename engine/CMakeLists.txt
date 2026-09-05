@@ -1502,3 +1502,8 @@ add_test(NAME body_check COMMAND body_check)
 # kosulmamis) exit 1. specv1v2_map_check ile ayni desen; generated-paths.sha256
 # manifesti *.gen.* ciktilarini tasimiyordu, bekci bu satirdir.
 add_test(NAME gen_contract_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen-contract.mjs --check)
+
+# wasm_body_check (F1 tur 6, karar ajani 2 sart 2): sevk edilen bundle'in (web/vendor/stitchu-engine.js) bodyJSON okuyucusu
+# contract/body-v1.json ile ayni sayilari basiyor mu — croquis36/gercek36 landmark'lari ve EU34-44 halka cevreleri 1e-6 icinde.
+# 'node ile elle okundu' kanit degil kapidir; bundle damgasi ciktida basilir. Cizim yapan embind yok, yalniz okuyucu.
+add_test(NAME wasm_body_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/wasm_body_check.mjs)

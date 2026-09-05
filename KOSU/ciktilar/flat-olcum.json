@@ -230,6 +230,13 @@
     },
     "torsoPX": 557,
     "oyukOverTorso": 0.6912,
+    "oyukFizik": {
+     "ok": true,
+     "esik": 0.4769,
+     "toleransPX": 1,
+     "tolerans": 0.0018,
+     "kural": "giysi oyuk tabani >= gercek36 koltukalti (underarm.y/waist.y, contract) - 1 px/torso"
+    },
     "apexVekilOverTorso": 0.6571,
     "apexVekilTipi": "yan pens ucu",
     "gogusHattiOverTorso": 0.6535,
@@ -367,6 +374,13 @@
     },
     "torsoPX": 624.0,
     "oyukOverTorso": 0.6186,
+    "oyukFizik": {
+     "ok": true,
+     "esik": 0.4769,
+     "toleransPX": 1,
+     "tolerans": 0.0016,
+     "kural": "giysi oyuk tabani >= gercek36 koltukalti (underarm.y/waist.y, contract) - 1 px/torso"
+    },
     "apexVekilOverTorso": 0.5401,
     "apexVekilTipi": "prenses 45 derece",
     "kolUcu": {
@@ -504,6 +518,13 @@
     },
     "torsoPX": 510.0,
     "oyukOverTorso": 0.4765,
+    "oyukFizik": {
+     "ok": true,
+     "esik": 0.4769,
+     "toleransPX": 1,
+     "tolerans": 0.002,
+     "kural": "giysi oyuk tabani >= gercek36 koltukalti (underarm.y/waist.y, contract) - 1 px/torso"
+    },
     "apexVekilOverTorso": 0.5412,
     "apexVekilTipi": "prenses 45 derece",
     "kolTipi": "yok"
@@ -991,6 +1012,57 @@
     "kolTipi": "bishop",
     "kolTipiEski": "bishop",
     "kolAcisiDeg": 74.1
+   },
+   "bugra-locket": {
+    "urun": "Bugra (BB) Locket Top, kisa puf kol, satici teknik cizimi (STRIPE renklendirmesi, sol kol)",
+    "kaynak": "patterns_real/Locket Top/5 Inspirations.jpg (satin alinmis, yerel, commit edilmez)",
+    "boyutPX": [
+     2000,
+     2000
+    ],
+    "esik": 90,
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      822,
+      260
+     ],
+     "snapPX": [
+      822,
+      265
+     ],
+     "mesafePX": 5.0,
+     "yaricapPX": 8
+    },
+    "kolUcu": {
+     "yontem": "agiz bandinin iki ucu goz tohumu + snap, ortasi",
+     "uclar": [
+      [
+       718,
+       440
+      ],
+      [
+       803,
+       540
+      ]
+     ],
+     "orta": [
+      760.5,
+      490.0
+     ]
+    },
+    "kolTipi": "puf",
+    "kisa": true,
+    "boyKaynak": "kisa puf kol (satici: Upper Sleeve buzgulu + Lower Sleeve band; 2 Pattern Cutting.jpg parca 5/6)",
+    "not": "torso payda yok (SNP/bel penceresi bu gorselde olculmedi; yalniz kol acisi). Kol kepinde buzgu, agiz band ile toplanmis -> agiz ortasi omuz ucunun altinda: kol SARKAR, yana acilmaz.",
+    "kolAcisiDeg": {
+     "deger": 74.7,
+     "tanim": "omuz ucu -> kol agzi ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -61.5,
+      225.0
+     ]
+    }
    }
   },
   "medyanlar": {
@@ -1001,39 +1073,79 @@
      {
       "flat": "04-a-line-puff-kol.png",
       "oran": 0.6826,
-      "vekil": "pens ucu"
+      "vekil": "pens ucu",
+      "sinif": "Y-NOTR",
+      "sinifNeden": "gogus altindan yana pens (CFG2 not), ucu apex hizasinda"
      },
      {
       "flat": "06-a-line-puff-kol-varyant.png",
       "oran": 0.5934,
-      "vekil": "pens ucu"
+      "vekil": "pens ucu",
+      "sinif": "DISARIDA",
+      "sinifNeden": "kol oyugu pensi (armhole dart): ucu apexin ust-disinda, stile bagli"
      },
      {
       "flat": "13-yuksek-bel-a-line.png",
       "oran": 0.71,
-      "vekil": "pens ucu (bel pensi, duzeltilmis -0.06)"
+      "vekil": "pens ucu (bel pensi, duzeltilmis -0.06)",
+      "sinif": "Y-OFSETLI",
+      "sinifNeden": "bel pensi ucu apexin 2-3 cm altinda; -0.06 torso (23 mm @390) duzeltildi"
      },
      {
       "flat": "cash-wyman.jpg",
       "oran": 0.6571,
-      "vekil": "yan pens ucu"
+      "vekil": "yan pens ucu",
+      "sinif": "Y-NOTR",
+      "sinifNeden": "yan pens ucu, ayni cizimde cizili gogus hattiyla 0.004 icinde"
      },
      {
       "flat": "cash-wyman.jpg",
       "oran": 0.6535,
-      "vekil": "gogus hatti cizgisi"
+      "vekil": "gogus hatti cizgisi",
+      "sinif": "DOGRUDAN",
+      "sinifNeden": "kesik gogus hatti cizgisi = apex seviyesi"
      },
      {
       "flat": "cash-hampden.jpg",
       "oran": 0.5401,
-      "vekil": "prenses 45 derece"
+      "vekil": "prenses 45 derece",
+      "sinif": "DISARIDA",
+      "sinifNeden": "kol oyugu prensesi dirsegi apexin ustunde, stile bagli"
      },
      {
       "flat": "cash-lenox.jpg",
       "oran": 0.5412,
-      "vekil": "prenses 45 derece"
+      "vekil": "prenses 45 derece",
+      "sinif": "DISARIDA",
+      "sinifNeden": "kol oyugu prensesi dirsegi apexin ustunde, stile bagli"
      }
     ],
+    "birincil": {
+     "n": 4,
+     "medyan": 0.6699,
+     "siniflar": [
+      "DOGRUDAN",
+      "Y-NOTR",
+      "Y-OFSETLI"
+     ],
+     "degerler": [
+      0.6535,
+      0.6571,
+      0.6826,
+      0.71
+     ],
+     "tanim": "karar ajani 4: apex'e geometrik iliskisi bilinen vekiller; DISARIDA (prenses dirsegi, oyuk pensi) medyana girmez"
+    },
+    "disarida": {
+     "n": 3,
+     "medyan": 0.5412,
+     "degerler": [
+      0.5401,
+      0.5412,
+      0.5934
+     ],
+     "tanim": "bilgi: apex'i olcmez, kayitta durur"
+    },
     "pensUcu": {
      "n": 4,
      "medyan": 0.6699
@@ -1128,6 +1240,12 @@
       "kolTipi": "bishop",
       "balonOran": 1.679,
       "kisa": false
+     },
+     "bugra-locket": {
+      "deg": 74.7,
+      "kolTipi": "puf",
+      "balonOran": null,
+      "kisa": true
      }
     },
     "sarkan": {
@@ -1154,18 +1272,42 @@
      }
     },
     "puf": {
-     "n": 2,
+     "n": 3,
      "degerler": {
       "soi-lori.png": 63.3,
-      "03-empire-dress-uc-boy.png": 32.9
+      "03-empire-dress-uc-boy.png": 32.9,
+      "bugra-locket": 74.7
      },
-     "medyan": 48.1
+     "medyan": 63.3,
+     "band": [
+      32.9,
+      74.7
+     ],
+     "bandKurali": "n >= 3 -> min/max (n < 10); n < 3 band yazilmaz (karar ajani 6)"
     }
    },
    "oyukOverTorso": {
     "cash-wyman.jpg": 0.6912,
     "cash-hampden.jpg": 0.6186,
     "cash-lenox.jpg": 0.4765
+   },
+   "oyukOverTorsoBirlesik": {
+    "n": 7,
+    "medyan": 0.6186,
+    "degerler": {
+     "02-uzun-robe-dress.png": 0.7561,
+     "06-a-line-puff-kol-varyant.png": 0.6099,
+     "07-uzun-kol-akiskan-etek.png": 0.75,
+     "15-maxi-akiskan.png": 0.5342,
+     "cash-wyman.jpg": 0.6912,
+     "cash-hampden.jpg": 0.6186,
+     "cash-lenox.jpg": 0.4765
+    },
+    "fizikDisi": {
+     "13-yuksek-bel-a-line.png": 0.2954
+    },
+    "esik": 0.4769,
+    "tanim": "Bolum 2 + Bolum 3 oyuk tabani, fizik suzgeci gecenler (oyuk >= bedenin koltukalti - 1 px); croquisOranlar.underarmOverTorso ikinci kaynagi"
    }
   }
  },
@@ -1241,6 +1383,13 @@
     },
     "torsoPX": 205,
     "oyukOverTorso": 0.7561,
+    "oyukFizik": {
+     "ok": true,
+     "esik": 0.4769,
+     "toleransPX": 1,
+     "tolerans": 0.0049,
+     "kural": "giysi oyuk tabani >= gercek36 koltukalti (underarm.y/waist.y, contract) - 1 px/torso"
+    },
     "kolUcu": {
      "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
      "pencere": [
@@ -1613,6 +1762,13 @@
     },
     "torsoPX": 182,
     "oyukOverTorso": 0.6099,
+    "oyukFizik": {
+     "ok": true,
+     "esik": 0.4769,
+     "toleransPX": 1,
+     "tolerans": 0.0055,
+     "kural": "giysi oyuk tabani >= gercek36 koltukalti (underarm.y/waist.y, contract) - 1 px/torso"
+    },
     "pensUcuOverTorso": 0.5934,
     "kolUcu": {
      "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
@@ -1720,6 +1876,13 @@
     },
     "torsoPX": 184,
     "oyukOverTorso": 0.75,
+    "oyukFizik": {
+     "ok": true,
+     "esik": 0.4769,
+     "toleransPX": 1,
+     "tolerans": 0.0054,
+     "kural": "giysi oyuk tabani >= gercek36 koltukalti (underarm.y/waist.y, contract) - 1 px/torso"
+    },
     "kolUcu": {
      "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
      "pencere": [
@@ -1901,7 +2064,8 @@
      "satirY": 226,
      "solX": 406,
      "maxEgim": 0.417,
-     "pencere": 12
+     "pencere": 12,
+     "OLCULEMEDI": "fizik disi: oyuk tabani 0.2954 x torso, bedenin koltukalti 0.4769 USTUNDE (71 mm @390) — yontem yanlis ozelligi yakaladi; medyan disi"
     },
     "pensUcu": {
      "yontem": "pencerede CF'ye en yakin murekkep (pens ucu)",
@@ -1918,6 +2082,13 @@
     },
     "torsoPX": 413,
     "oyukOverTorso": 0.2954,
+    "oyukFizik": {
+     "ok": false,
+     "esik": 0.4769,
+     "toleransPX": 1,
+     "tolerans": 0.0024,
+     "kural": "giysi oyuk tabani >= gercek36 koltukalti (underarm.y/waist.y, contract) - 1 px/torso"
+    },
     "pensUcuOverTorso": 0.77
    },
    "14-uzun-kol-maxi.png": {
@@ -1988,21 +2159,27 @@
      "yaricapPX": 6
     },
     "torsoPX": 146,
-    "oyukOverTorso": 0.5342
+    "oyukOverTorso": 0.5342,
+    "oyukFizik": {
+     "ok": true,
+     "esik": 0.4769,
+     "toleransPX": 1,
+     "tolerans": 0.0068,
+     "kural": "giysi oyuk tabani >= gercek36 koltukalti (underarm.y/waist.y, contract) - 1 px/torso"
+    }
    }
   },
   "medyanlar": {
    "oyukOverTorso": {
-    "n": 5,
+    "n": 4,
     "degerler": {
      "02-uzun-robe-dress.png": 0.7561,
      "06-a-line-puff-kol-varyant.png": 0.6099,
      "07-uzun-kol-akiskan-etek.png": 0.75,
-     "13-yuksek-bel-a-line.png": 0.2954,
      "15-maxi-akiskan.png": 0.5342
     },
-    "medyan": 0.6099,
-    "min": 0.2954,
+    "medyan": 0.68,
+    "min": 0.5342,
     "max": 0.7561,
     "tanim": "kol oyugu tabani y / (SNP->bel); croquisOranlar.underarmOverTorso adayi"
    },

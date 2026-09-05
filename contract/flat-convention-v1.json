@@ -169,7 +169,7 @@
       "min": 74.5,
       "max": 85.9,
       "taban": 82.2,
-      "_tabanNeden": "taban = satilan flat SARKAN kol (kolTipi setin/bishop, olculebilir tanim: balonOran + boy, KOSU/flat-olcum.py BOLUM 3) medyani n=11: 02 Folkwear robe 85.9, 04 Holmes 83.3, 05 March 83.7, 06 Eleanor 73.7, 07 Celia 75.8, 10 Alice 74.1, Cashmerette Wyman 80.9, Cashmerette Hampden 74.5, Deer&Doe Orage 89.7, Passiflore 88.1, Magnolia 82.2 -> medyan 82.2; band = IQR [74.5, 85.9] (karar ajani 6: yayilim 73.7-89.7 = 16 derece > 10 ve n >= 10 -> IQR, min/max degil). Kisa PUF kol (yana acilan, agiz buzgulu: 03 empire 32.9, Sew Over It Lori 63.3; n=2) banda GIRMEZ, band yazilmaz (n < 3); F2 puf kolu medyan 48.1 'DOGRULANMADI n=2' ile cizer, (b) olcer-basar. Olcum: flat-olcum.json f1Tur5.medyanlar.kolAcisiDeg. Eski 79.55/[73.7, 85.9] (n=6) _eski79'da.",
+      "_tabanNeden": "taban = satilan flat SARKAN kol (kolTipi setin/bishop, olculebilir tanim: balonOran + boy, KOSU/flat-olcum.py BOLUM 3) medyani n=11: 02 Folkwear robe 85.9, 04 Holmes 83.3, 05 March 83.7, 06 Eleanor 73.7, 07 Celia 75.8, 10 Alice 74.1, Cashmerette Wyman 80.9, Cashmerette Hampden 74.5, Deer&Doe Orage 89.7, Passiflore 88.1, Magnolia 82.2 -> medyan 82.2; band = IQR [74.5, 85.9] (karar ajani 6: yayilim 73.7-89.7 = 16 derece > 10 ve n >= 10 -> IQR, min/max degil). Kisa PUF kol sarkan banda GIRMEZ; kendi bandi pufKol (n=3: 03 empire 32.9, Lori 63.3, Bugra Locket 74.7 -> [32.9, 74.7], medyan 63.3; F1 tur 6). Olcum: flat-olcum.json f1Tur5.medyanlar.kolAcisiDeg. Eski 79.55/[73.7, 85.9] (n=6) _eski79'da.",
       "_kaynak": "GIRDI/iyi-flat/adaylar (Deer&Doe Eleanor/Celia, Helen's Closet Holmes/March, Folkwear robe, Alice) satilan flat olcumu (HEDEF 5: satilan flat > sablon > prose). Adstronaut/Techpacker 'kol omuz yatayinin ustune cikmaz, asagi sarkar' cumlesi YONUYLE gecerli, 20-40 sayisi REDDEDILDI. Uzun kolda bilek: croquis36 wrist.y = 629.2, kalca 593 ile ag 663 arasinda (body-v1). data-kol-aci = uygulanan aci, yatayin ALTINA dogru derece.",
       "_urlNot": "olcum dosyalari repoda (GIRDI/iyi-flat/adaylar/*.png, KAYNAKLAR.md); web URL gerekmez",
       "_kapiNotu": "KOSU/ciktilar/01-09 (web/lib/flat-from-pattern.js, eski 20/30/40 sabitleri) bu banda [74.5, 85.9] girmez: cizim_giysi_mi (b) 'kol acisi konvansiyon bandinda' hukmu BEKLENEN kirmizi (DEVIR.md KABUL), F2 flat C++'ta croquis36 kolundan cizince kapanir. Kapi gevsetilmedi; urun bandin disinda.",
@@ -186,6 +186,13 @@
         "max": 85.9,
         "taban": 79.55,
         "_tabanNeden": "taban = satilan flat medyani (6 sarkan kol: 02 Folkwear robe 85.9, 04 Holmes 83.3, 05 March 83.7, 06 Eleanor 73.7, 07 Celia 75.8, 10 Alice 74.1), band = olculen min/max. Olcum: KOSU/flat-olcum.py Bolum 2 -> KOSU/ciktilar/flat-olcum.json f1Kapanis.medyanlar.kolAcisiDeg (omuz ucu -> kol agzi orta noktasi, yatayin altina derece; kisa puf kol 03 32.9 yana acilir, banda girmez). Eski 20-40/30 prose'dan gelmisti (URL dogrulanmamis, olcumsuz) ve satilan flat'in 34-46 derece disindaydi: Damla'nin 'kanat' kusurunun yumusatilmis hali (F1 hakem tur 3 kusur 3)."
+      },
+      "pufKol": {
+        "n": 3,
+        "min": 32.9,
+        "max": 74.7,
+        "medyan": 63.3,
+        "_kaynak": "KISA PUF kol (yana acilan, agiz buzgulu/bandli) — sarkan kol bandina GIRMEZ, kendi bandi: 03 Folkwear empire 32.9, Sew Over It Lori 63.3, Bugra Locket Top satici teknik cizimi 74.7 (patterns_real/Locket Top/5 Inspirations.jpg, satin alinmis, yerel, commit edilmez; omuz ucu (822,265) -> agiz bandi ortasi (760.5,490), dxdy -61.5/225; overlay KOSU/ciktilar/_yerel/bugra-locket-kol-overlay.png). n=3 -> band min/max (n<10), medyan 63.3 (karar ajani 6, F1 tur 6). Olcum: KOSU/flat-olcum.py BOLUM 4 -> flat-olcum.json f1Tur5.medyanlar.kolAcisiDeg.puf. Yayilim 42 derece: puf kolun acisi kep buzgusu/agiz bandi oranina bagli (Locket bandli agiz sarkar, empire kisa puf yana acilir); F2 puf kolu medyan 63.3 ile cizer, (b) banda gore olcer-basar. Eski n=2 medyan 48.1 'DOGRULANMADI n=2' bu kayitla kapandi."
       }
     },
     "omuzEgimiDeg": {

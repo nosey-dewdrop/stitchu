@@ -113,6 +113,20 @@ sonuc['kalca'] = ('OLCULMEDI — bes referansin besinde de bel alti giysi klosu 
                   'olculecek sey mankenin kalcasi degil etegin klosu olurdu. En kisitlayici deger: fark 0 '
                   '(contract v2 kalcayi ve gogsu insan cizelgesinde birakir, yalniz bel donusur)')
 
+# ---------------------------------------------------------------- AKIL SUZGECI (F1 tur 6; hakem kusuru: 13 Mica 0.2954 fizik disi)
+# Giysinin kol oyugu tabani bedenin koltukaltinin ALTINDA olur (kol oyugu bollugu); ustunde olamaz. Esik SAYI DEGIL,
+# contract/body-v1.json gercek36 landmark.underarm.y / landmark.waist.y'den okunur (0.4769). Tolerans = 1 kaynak px / torsoPX
+# (olcum cozunurlugu; Lenox 0.4765, 510 px torso -> 1 px = 0.0020). Gecmeyen olcum 'OLCULEMEDI' etiketiyle kayitta durur,
+# medyana GIRMEZ (bilgi silinmez, hukum tasimaz).
+_bv1 = json.load(open(os.path.join(HERE, '..', 'contract', 'body-v1.json')))
+_g36 = _bv1['bedenler']['gercek36']['landmarklar']
+ANATOMIK_KOLTUKALTI = round(_g36['landmark.underarm']['y'] / _g36['landmark.waist']['y'], 4)
+def oyukFizik(oran, torsoPX):
+    tol = 1.0 / torsoPX
+    return {'ok': oran >= ANATOMIK_KOLTUKALTI - tol, 'esik': ANATOMIK_KOLTUKALTI, 'toleransPX': 1, 'tolerans': round(tol, 4),
+            'kural': 'giysi oyuk tabani >= gercek36 koltukalti (underarm.y/waist.y, contract) - 1 px/torso'}
+oyukFizikDisi = []   # (ad, oran) medyan disi kalanlar
+
 # ---------------------------------------------------------------- BOLUM 2 (F1 kapanis)
 # Her flat: on gorunum (A) SOL yarisi olculur (cizimler simetrik). Pencereler orijinal px.
 #   snp:     (x0,x1,y0,y1) en ust murekkep
@@ -437,7 +451,12 @@ for ad, c in CFG2.items():
         torso = belY - snpY
         k['torsoPX'] = torso
         if oyukY is not None:
-            k['oyukOverTorso'] = round((oyukY - snpY) / torso, 4); oyukOran.append((ad, k['oyukOverTorso']))
+            k['oyukOverTorso'] = round((oyukY - snpY) / torso, 4)
+            k['oyukFizik'] = oyukFizik(k['oyukOverTorso'], torso)
+            if k['oyukFizik']['ok']: oyukOran.append((ad, k['oyukOverTorso']))
+            else:
+                k['oyukTabani']['OLCULEMEDI'] = 'fizik disi: oyuk tabani %.4f x torso, bedenin koltukalti %.4f USTUNDE (%.0f mm @390) — yontem yanlis ozelligi yakaladi; medyan disi' % (k['oyukOverTorso'], ANATOMIK_KOLTUKALTI, (ANATOMIK_KOLTUKALTI - k['oyukOverTorso']) * 390)
+                oyukFizikDisi.append((ad, k['oyukOverTorso']))
         if pensY is not None:
             k['pensUcuOverTorso'] = round((pensY - snpY) / torso, 4); pensOran.append((ad, k['pensUcuOverTorso']))
     elif 'olculemezTorso' in c:
@@ -570,7 +589,10 @@ for ad, c in CFG3.items():
         y, n = yatayCizgiSatiri(px, W, *c['apexCizgi'], esik); k['gogusHattiCizgisi'] = {'yontem': 'kesik gogus hatti: pencerede en cok murekkepli satir', 'pencere': list(c['apexCizgi']), 'satirY': y, 'nMurekkep': n}
     if snpY is not None and belY is not None:
         torso = belY - snpY; k['torsoPX'] = torso
-        if oyukY is not None: k['oyukOverTorso'] = round((oyukY - snpY) / torso, 4)
+        if oyukY is not None:
+            k['oyukOverTorso'] = round((oyukY - snpY) / torso, 4); k['oyukFizik'] = oyukFizik(k['oyukOverTorso'], torso)
+            if not k['oyukFizik']['ok']:
+                k['oyukTabani']['OLCULEMEDI'] = 'fizik disi: bedenin koltukalti %.4f ustunde; medyan disi' % ANATOMIK_KOLTUKALTI; oyukFizikDisi.append((ad, k['oyukOverTorso']))
         if apexY is not None: k['apexVekilOverTorso'] = round((apexY - snpY) / torso, 4); k['apexVekilTipi'] = vekil; apexKayit.append((ad, k['apexVekilOverTorso'], vekil))
         if 'gogusHattiCizgisi' in k:
             k['gogusHattiOverTorso'] = round((k['gogusHattiCizgisi']['satirY'] - snpY) / torso, 4); apexKayit.append((ad, k['gogusHattiOverTorso'], 'gogus hatti cizgisi'))
@@ -591,12 +613,54 @@ for ad, c in CFG3.items():
     elif 'kolTipi' in c: k['kolTipi'] = c['kolTipi']
     f3['flatler'][ad] = k
 
+# ---------------------------------------------------------------- BOLUM 4 (F1 tur 6; karar ajani 6): Bugra Locket KISA PUF kol
+# Eldeki satin alinmis birincil kaynak: patterns_real/Locket Top/5 Inspirations.jpg (satici urun gorseli, 6 kumas renklendirmesi
+# ayni teknik cizim; 2000x2000 px). Okunur, degistirilmez, commit edilmez (telif); yalniz sayilar buraya. Ayni yontem: omuz ucu
+# (kol kepinin omuz dikisine degdigi ust nokta) -> kol agzi ortasi (agiz bandinin iki ucunun ortasi), yatayin ALTINA derece.
+# Tohumlar goz ile 50 px grid ustunde okundu (STRIPE ust, sol kol; scratchpad linen_grid.png), snap ile murekkebe cekildi.
+LOCKET = os.path.join(HERE, '..', 'patterns_real', 'Locket Top', '5 Inspirations.jpg')
+LOCKET_CFG = dict(esik=90, snap=8, omuzUcu=(822, 260), agizUclar=((713, 442), (803, 540)), cf=880, urun='Bugra (BB) Locket Top, kisa puf kol, satici teknik cizimi (STRIPE renklendirmesi, sol kol)')
+if os.path.exists(LOCKET):
+    im = Image.open(LOCKET).convert('L'); px, (W, H) = im.load(), im.size
+    c = LOCKET_CFG; om = snap(px, W, H, c['omuzUcu'], c['snap'], c['esik'])
+    u1 = snap(px, W, H, c['agizUclar'][0], c['snap'], c['esik']); u2 = snap(px, W, H, c['agizUclar'][1], c['snap'], c['esik'])
+    k = {'urun': c['urun'], 'kaynak': 'patterns_real/Locket Top/5 Inspirations.jpg (satin alinmis, yerel, commit edilmez)', 'boyutPX': [W, H], 'esik': c['esik'],
+         'omuzUcu': {'yontem': 'goz tohumu + snap', **om} if om else {'BULUNAMADI': list(c['omuzUcu'])},
+         'kolUcu': {'yontem': 'agiz bandinin iki ucu goz tohumu + snap, ortasi', 'uclar': [u1 and u1['snapPX'], u2 and u2['snapPX']]},
+         'kolTipi': 'puf', 'kisa': True, 'boyKaynak': 'kisa puf kol (satici: Upper Sleeve buzgulu + Lower Sleeve band; 2 Pattern Cutting.jpg parca 5/6)',
+         'not': 'torso payda yok (SNP/bel penceresi bu gorselde olculmedi; yalniz kol acisi). Kol kepinde buzgu, agiz band ile toplanmis -> agiz ortasi omuz ucunun altinda: kol SARKAR, yana acilmaz.'}
+    if om and u1 and u2:
+        mid = ((u1['snapPX'][0] + u2['snapPX'][0]) / 2.0, (u1['snapPX'][1] + u2['snapPX'][1]) / 2.0)
+        sx, sy = om['snapPX']; dx, dy = mid[0] - sx, mid[1] - sy
+        k['kolUcu']['orta'] = [round(mid[0], 1), round(mid[1], 1)]
+        k['kolAcisiDeg'] = {'deger': round(math.degrees(math.atan2(dy, abs(dx))), 1), 'tanim': 'omuz ucu -> kol agzi ortasi, yatayin ALTINA derece', 'dxdy': [round(dx, 1), round(dy, 1)]}
+    f3['flatler']['bugra-locket'] = k
+else:
+    f3['flatler']['bugra-locket'] = {'OKUNMADI': 'patterns_real/Locket Top/5 Inspirations.jpg bu makinede yok (satin alinmis kaynak, repoda degil)'}
+
 # --- medyanlar: Bolum 2 + Bolum 3 birlesik ---
 apexHepsi = [(ad, v, 'pens ucu') for ad, v in pensOran] + apexKayit
 # 13 Mica bel pensi ucu: apexin ~2-3 cm altinda biter -> duzeltme (hakem: ham 0.77 degil ~0.71). Duzeltme = -0.06 torso
 # (torso 390 mm'de 23 mm; 13'un kendi notu '2-3 cm'). Ham deger de kayitta durur.
 MICA_DUZELTME = -0.06
 apexHepsi = [(ad, (round(v + MICA_DUZELTME, 4) if ad.startswith('13-') else v), (t + ' (bel pensi, duzeltilmis %+.2f)' % MICA_DUZELTME if ad.startswith('13-') else t)) for ad, v, t in apexHepsi]
+# SINIF (F1 tur 6, karar ajani 4): vekil apex'e GEOMETRIK iliskisiyle siniflanir; birincil medyan = DOGRUDAN + Y-NOTR + duzeltilmis Y-OFSETLI.
+#  DOGRUDAN : cizili gogus hatti / apex isareti (apex seviyesi dogrudan)
+#  Y-NOTR   : yan gogus pensi ucu — apexten YANA kisa biter, y'si apex hizasinda (Wyman: yan pens 0.6571 vs cizili hat 0.6535, fark 0.004)
+#  Y-OFSETLI: bel pensi ucu — apexin 2.5-3 cm ALTINDA biter, olculen/standart ofsetle duzeltilir (13 Mica -0.06 torso)
+#  DISARIDA : kol oyugu pensi ucu (06 Eleanor), prenses 45-derece dirsegi (Hampden/Lenox) — konumu stile bagli, apex'i olcmez;
+#             medyana GIRMEZ, bilgi olarak kayitta durur (bilgi silme yasagi).
+SINIF = {('04-a-line-puff-kol.png', 'pens ucu'): ('Y-NOTR', 'gogus altindan yana pens (CFG2 not), ucu apex hizasinda'),
+         ('06-a-line-puff-kol-varyant.png', 'pens ucu'): ('DISARIDA', 'kol oyugu pensi (armhole dart): ucu apexin ust-disinda, stile bagli'),
+         ('13-yuksek-bel-a-line.png', 'pens ucu (bel pensi, duzeltilmis -0.06)'): ('Y-OFSETLI', 'bel pensi ucu apexin 2-3 cm altinda; -0.06 torso (23 mm @390) duzeltildi'),
+         ('cash-wyman.jpg', 'yan pens ucu'): ('Y-NOTR', 'yan pens ucu, ayni cizimde cizili gogus hattiyla 0.004 icinde'),
+         ('cash-wyman.jpg', 'gogus hatti cizgisi'): ('DOGRUDAN', 'kesik gogus hatti cizgisi = apex seviyesi'),
+         ('cash-hampden.jpg', 'prenses 45 derece'): ('DISARIDA', 'kol oyugu prensesi dirsegi apexin ustunde, stile bagli'),
+         ('cash-lenox.jpg', 'prenses 45 derece'): ('DISARIDA', 'kol oyugu prensesi dirsegi apexin ustunde, stile bagli')}
+def sinif(ad, t):
+    s_ = SINIF.get((ad, t)); return s_ if s_ else ('SINIFSIZ', 'SINIF tablosunda yok — medyana girmez')
+birincilV = [v for ad, v, t in apexHepsi if sinif(ad, t)[0] in ('DOGRUDAN', 'Y-NOTR', 'Y-OFSETLI')]
+disaridaV = [v for ad, v, t in apexHepsi if sinif(ad, t)[0] == 'DISARIDA']
 pensV = [v for _, v, t in apexHepsi if t.startswith('pens') or t.startswith('yan pens')]
 prensesV = [v for _, v, t in apexHepsi if t.startswith('prenses')]
 cizgiV = [v for _, v, t in apexHepsi if t.startswith('gogus')]
@@ -613,14 +677,22 @@ sv = sorted(sarkan.values())
 def iqr(v):
     s = sorted(v); n = len(s); q1 = s[n // 4]; q3 = s[(3 * n) // 4]; return q1, q3
 f3['medyanlar'] = {
-  'apexOverTorso': {'n': len(tumV), 'medyanHepsi': medyan(tumV), 'kayitlar': [{'flat': ad, 'oran': v, 'vekil': t} for ad, v, t in apexHepsi],
+  'apexOverTorso': {'n': len(tumV), 'medyanHepsi': medyan(tumV), 'kayitlar': [{'flat': ad, 'oran': v, 'vekil': t, 'sinif': sinif(ad, t)[0], 'sinifNeden': sinif(ad, t)[1]} for ad, v, t in apexHepsi],
+                    'birincil': {'n': len(birincilV), 'medyan': medyan(birincilV), 'siniflar': ['DOGRUDAN', 'Y-NOTR', 'Y-OFSETLI'], 'degerler': sorted(birincilV),
+                                 'tanim': 'karar ajani 4: apex\'e geometrik iliskisi bilinen vekiller; DISARIDA (prenses dirsegi, oyuk pensi) medyana girmez'},
+                    'disarida': {'n': len(disaridaV), 'medyan': medyan(disaridaV), 'degerler': sorted(disaridaV), 'tanim': 'bilgi: apex\'i olcmez, kayitta durur'},
                     'pensUcu': {'n': len(pensV), 'medyan': medyan(pensV)}, 'prenses': {'n': len(prensesV), 'medyan': medyan(prensesV)},
                     'gogusHattiCizgisi': {'n': len(cizgiV), 'medyan': medyan(cizgiV)},
                     'ikiVekilFarki': (round(abs(medyan(pensV) - medyan(prensesV)), 4) if pensV and prensesV else None),
                     'micaDuzeltme': MICA_DUZELTME},
   'kolAcisiDeg': {'hepsi': aci, 'sarkan': {'n': len(sv), 'medyan': medyan(sv), 'min': min(sv), 'max': max(sv), 'iqr': iqr(sv), 'degerler': sarkan},
-                  'puf': {'n': len(puf), 'degerler': puf, 'medyan': medyan(list(puf.values())) if puf else None}},
+                  'puf': {'n': len(puf), 'degerler': puf, 'medyan': medyan(list(puf.values())) if puf else None,
+                          'band': ([min(puf.values()), max(puf.values())] if len(puf) >= 3 else None),
+                          'bandKurali': 'n >= 3 -> min/max (n < 10); n < 3 band yazilmaz (karar ajani 6)'}},
   'oyukOverTorso': {ad: k['oyukOverTorso'] for ad, k in f3['flatler'].items() if 'oyukOverTorso' in k},
+  'oyukOverTorsoBirlesik': (lambda vals: {'n': len(vals), 'medyan': medyan([v for _, v in vals]), 'degerler': dict(vals), 'fizikDisi': dict(oyukFizikDisi),
+                                          'esik': ANATOMIK_KOLTUKALTI, 'tanim': 'Bolum 2 + Bolum 3 oyuk tabani, fizik suzgeci gecenler (oyuk >= bedenin koltukalti - 1 px); croquisOranlar.underarmOverTorso ikinci kaynagi'})(
+                              list(oyukOran) + [(ad, k['oyukOverTorso']) for ad, k in f3['flatler'].items() if 'oyukOverTorso' in k and k.get('oyukFizik', {}).get('ok')]),
 }
 sonuc['f1Tur5'] = f3
 sonuc['f1Kapanis'] = f1

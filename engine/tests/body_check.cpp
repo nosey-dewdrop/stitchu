@@ -21,8 +21,10 @@
 //  (g) croquis: TUM girth landmark'lari x == cevre/4 x (1 + kCroquisBolluk) (tek genislik yasasi, F1 tur 5);
 //      croquis omuz istisnasi SOZLESMEDEN okunur ve basilir (kCroquisOmuzHukmu, karar ajani 2)
 //  (h) siluet dizisi (fig) bedenin kendi y sirasinda ve monoton — sabit dizi zikzak cizerdi
-//  (i) gogus kesiti (F1 tur 5): on lob h contract'ta (MDPI 50-71 bandinda), n basilir; on/arka yay payi
-//      arkaPay ile 0.05 icinde (DOGRULANMADI tolerans: arkaPay KALIP payi, beden yay payi degil — halkaKesitOran._lob)
+//  (i) gogus kesiti (F1 tur 5/6): on lob h contract'ta (MDPI 50-71 bandinda) TEK hukum; superelips n'i her ANSUR
+//      halkasinda (bust/underbust/waist/highHip/hip) ve gogus on/arka yay payi TUM bedenlerde BILGI satiri, hukum yok.
+//      Karar ajani 1 (F1 tur 6): n COZULEN degerdir, tavan icin kaynak yok; arkaPay GarmentCode KALIP payidir, bedenin
+//      yay payi degil — eski 0.05 toleransli kiyas (0.0484 ile 1.6/1000 altinda gecen) esik-uydurmaydi, KALDIRILDI.
 //
 // argv[1] verilirse KOSU/ciktilar/beden-iki.svg cizer: iki bedenin on gorunusu
 // yan yana (halka cizgileri + landmark etiketleri) + 34-44 serisinin siluetleri.
@@ -154,8 +156,10 @@ static std::string fig(const Body& b, double ox, double oy, double s, bool label
         BodyPoint p = P(n);
         double hw = p.x > 0 ? p.x : P("landmark.hip").x * (std::string(n) == "landmark.crotch" ? agYarim : std::string(n) == "landmark.knee" ? dizDis : bilekDis);
         o << "<line class=\"halka\" x1=\"" << X(-hw) << "\" y1=\"" << Y(p.y) << "\" x2=\"" << X(hw) << "\" y2=\"" << Y(p.y) << "\" />\n";
-        double ly = Y(p.y) + 3; if (ly - lastLabelY < 12) ly = lastLabelY + 12; lastLabelY = ly;
-        if (labels) o << "<text class=\"etiket\" data-landmark=\"" << n << "\" x=\"" << X(hw) + 6 << "\" y=\"" << ly << "\">" << kisa(n) << " y=" << f1(p.y) << (p.x > 0 ? " x=" + f1(p.x) : "") << "</text>\n";
+        // Etiket carpismasi (F1 tur 6 hakem kusuru): iki halka 14 px'ten (33 mm) yakinsa ikincisi SOL tarafa yazilir (text-anchor end),
+        // ayni tarafta alt alta itilmez — itme etiketi kendi cizgisinden ayirip komsuyla bindiriyordu (underarm 186 / bustLine 200.2).
+        const double ly = Y(p.y) + 3; const bool sol = (ly - lastLabelY < 14); if (!sol) lastLabelY = ly;
+        if (labels) o << "<text class=\"etiket\" data-landmark=\"" << n << "\" x=\"" << (sol ? X(-hw) - 6 : X(hw) + 6) << "\" y=\"" << ly << "\"" << (sol ? " text-anchor=\"end\"" : "") << ">" << kisa(n) << " y=" << f1(p.y) << (p.x > 0 ? " x=" + f1(p.x) : "") << "</text>\n";
     }
     // omuz cizgisi (origin)
     { BodyPoint t = P("landmark.shoulderTip");
@@ -185,16 +189,18 @@ static void writeSvg(const std::string& path) {
       for (const auto& r : stitchu::contract::kBodyFark) { if (r.x == 0 && r.y == 0) continue; y += 15; o << "<text class=\"etiket\" data-landmark=\"" << r.name << "\" x=\"1280\" y=\"" << y << "\">" << kisa(r.name) << ": " << f1(r.x) << ", " << f1(r.y) << "</text>\n"; }
       y += 15; o << "<text class=\"etiket\" x=\"1280\" y=\"" << y << "\">digerleri 0,0 (bel/kalca/diz/ag/boy ayni)</text>\n"; }
     // seri
-    o << "<g class=\"seri\">\n<text class=\"baslik\" x=\"1540\" y=\"70\" text-anchor=\"middle\" style=\"font-size:13px\">kalip serisi EU34-44 (Body::graded)</text>\n";
-    double x = 1345; const double ss = 0.17;
+    o << "<g class=\"seri\">\n<text class=\"baslik\" x=\"1525\" y=\"70\" text-anchor=\"middle\" style=\"font-size:13px\">kalip serisi EU34-44 (Body::graded)</text>\n";
+    double x = 1330; const double ss = 0.17; // 1330 + 5 x 78 = 1720 son merkez; kol yari genisligi ~35 px -> 1755 < 1800 (eski 1345 tasiyordu)
     for (const auto& sz : Body::gradeSizes()) {
         const Body b = Body::graded(sz);
         o << fig(b, x, 200, ss, false, sz);
-        o << "<text class=\"etiket\" x=\"" << x << "\" y=\"" << 200 + 1420 * ss << "\" text-anchor=\"middle\">" << f1(b.ring("girth.bust") / 10) << "/" << f1(b.ring("girth.waist") / 10) << "/" << f1(b.ring("girth.hip") / 10) << "</text>\n";
+        // cm tam sayi (Burda tablosu tam cm), 10.5 px fontta ~55 px: 78 px adimda komsuya binmez (F1 tur 6 hakem kusuru)
+        auto cm = [](double mm) { return std::to_string(static_cast<int>(std::lround(mm / 10.0))); };
+        o << "<text class=\"etiket\" x=\"" << x << "\" y=\"" << 200 + 1420 * ss << "\" text-anchor=\"middle\">" << cm(b.ring("girth.bust")) << "/" << cm(b.ring("girth.waist")) << "/" << cm(b.ring("girth.hip")) << "</text>\n";
         x += 78;
     }
     o << "</g>\n";
-    o << "<text class=\"not\" x=\"20\" y=\"" << H - 30 << "\">Kaynak: contract/body-v1.json (her sayinin yaninda kaynak; DOGRULANMADI etiketli olanlar orada adiyla). Cizim: engine/tests/body_check.cpp (C++); diz/bilek/ag oranlari contract cizimYardimcisi (DOGRULANMADI, yalniz bu cizim). Gercek x = ANSUR II on izdusum (superelips + on lob kesit), gercek gogus ucu y = ANSUR cervicale->gogus ucu (200.2); croquis x = cevre/4 (duz serilmis giysi), croquis gogus hatti = satilan flat pens/prenses medyani (254.9: giysi gogsu bedenin 55 mm altinda cizer). Kol kalinligi biceps/bilek cevresinden, ayri rol. Sira contract landmarkSirasi.</text>\n";
+    o << "<text class=\"not\" x=\"20\" y=\"" << H - 30 << "\">Kaynak: contract/body-v1.json (her sayinin yaninda kaynak; DOGRULANMADI etiketli olanlar orada adiyla). Cizim: engine/tests/body_check.cpp (C++); diz/bilek/ag oranlari contract cizimYardimcisi (DOGRULANMADI, yalniz bu cizim). Gercek x = ANSUR II on izdusum (superelips + on lob kesit), gercek gogus ucu y = ANSUR cervicale->gogus ucu (200.2); croquis x = cevre/4 (duz serilmis giysi = bedenin ACILMIS yuzeyi), croquis gogus hatti 254.9 = satilan flat DOGRUDAN vekil 0.6535 + Burda Brusttiefe yuzey hesabi 0.6628 (iki kaynak); 200.2 ile 54.7 mm fark IZDUSUM farkidir (yuzey vs 3B dikey), hata degil. Kol kalinligi biceps/bilek cevresinden, ayri rol. Sira contract landmarkSirasi.</text>\n";
     o << "<text class=\"not\" x=\"20\" y=\"" << H - 14 << "\">Damla icin: flat'ler ORTADAKI iskelete oturur (omuz/koltukalti/gogus/bel/kalca y'leri her flat'te ayni), kaliplar SAGDAKI serinin ustune cizilir.</text>\n";
     o << "</svg>\n";
     std::ofstream f(path); f << o.str();
@@ -283,18 +289,21 @@ int main(int argc, char** argv) {
         ok(mono, b->id() + ": siluet " + dizi);
     }
 
-    std::printf("(i) gogus kesiti: on lob + superelips, on/arka yay payi (F1 tur 5)\n");
+    std::printf("(i) gogus kesiti: on lob + superelips; n ve yay payi BILGI (karar ajani 1, F1 tur 6)\n");
     { std::vector<Body> reals = {g}; for (const auto& sz : Body::gradeSizes()) reals.push_back(Body::graded(sz));
+      const char* ansurRings[] = {"girth.bust", "girth.underbust", "girth.waist", "girth.highHip", "girth.hip"};
       for (const Body& b : reals) {
           const double h = b.ringLobHeight("girth.bust");
           ok(h >= 50.0 && h <= 71.0, b.id() + ": gogus lob yuksekligi " + f1(h) + " mm MDPI 3B tarama bandinda [50, 71] (halkaKesitOran._lob)");
+          // Superelips usteli n: kaynakli girdilerden (ANSUR a/D, Burda cevre) COZULEN cikti — tavan yok, hukum yok (halkaKesitOran._lob).
+          std::string ns; for (const char* r : ansurRings) ns += std::string(r).substr(6) + " n=" + f1(b.ringExponent(r)) + " ";
+          std::printf("  [..] %s: superelips n (bilgi, cozulen) %s\n", b.id().c_str(), ns.c_str());
+          // Gogus on/arka yay payi (bedenin) vs arkaPay (GarmentCode KALIP payi): iki ayri kategori, kiyas hukum degil bilgi.
           double on = 0, arka = 0; BodyPoint prev = b.point("girth.bust", 0.0);
           for (int k = 1; k <= 2000; ++k) { BodyPoint p = b.point("girth.bust", 360.0 * k / 2000.0); const double d = std::hypot(p.x - prev.x, p.z - prev.z); if (0.5 * (p.z + prev.z) >= 0) on += d; else arka += d; prev = p; }
           const double pay = arka / (on + arka), bf = b.ringBackFrac("girth.bust");
-          // Hukum yalniz gercek36'da (sozlesmenin bedeni); graded bedenlerde arkaPay GarmentCode kalip grade'i, lob h sabit ->
-          // pay kucuk bedende buyur (EU34 0.421): karar ajanina acik soru (halkaKesitOran._lob), burada bilgi olarak basilir.
-          const std::string msg = b.id() + ": gogus arka yay payi " + f1(pay * 1000) + "/1000 vs arkaPay " + f1(bf * 1000) + "/1000 (fark " + f1(std::fabs(pay - bf) * 1000) + "/1000; n=" + f1(b.ringExponent("girth.bust")) + ", kaburga b=" + f1(b.ringRibHalfDepth("girth.bust")) + ", D/2=" + f1(b.ringHalfDepth("girth.bust")) + ")";
-          if (b.id() == "gercek36") ok(std::fabs(pay - bf) <= 0.05, msg + " <= 50/1000 (DOGRULANMADI tolerans)"); else std::printf("  [..] %s (bilgi)\n", msg.c_str());
+          std::printf("  [..] %s: gogus arka yay payi (beden) %s/1000 | arkaPay (GarmentCode KALIP payi) %s/1000 | kaburga b=%s D/2=%s (bilgi, hukum yok)\n",
+                      b.id().c_str(), f1(pay * 1000).c_str(), f1(bf * 1000).c_str(), f1(b.ringRibHalfDepth("girth.bust")).c_str(), f1(b.ringHalfDepth("girth.bust")).c_str());
       } }
 
     if (argc > 1) writeSvg(argv[1]);

@@ -88,7 +88,8 @@ ENGINE_SRCS=(
   src/curvefit.cpp
   src/surfacepattern.cpp
   src/bodysurface.cpp
-  src/body.cpp   # F1 tur 5 (karar ajani 5): iki beden, contract body.gen.hpp; wasm bindings yok, F2 flat C++ a gecince baglanir
+  src/body.cpp   # F1 tur 5/6 (karar ajani 5 + karar 2): iki beden, contract body.gen.hpp. Cizim yapan embind EKLENMEZ (F2'ye kadar web Body'den cizmez);
+                 # tek okuyucu bodyJSON (wasm/bindings.cpp) kapili: engine/tests/wasm_body_check.mjs bundle == contract dogrular (tuketicisiz body.cpp'yi linker atiyordu)
   src/garmentshell.cpp
   src/flatten.cpp
   src/shellprojection.cpp
