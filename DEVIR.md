@@ -321,19 +321,33 @@ bash engine/tests/enum_dallanma_check.sh && node engine/tests/flat_ayni_insan_ch
 ```
 
 Regex 21 test seçer (`ctest -N -R ...`). F1'den sonra bu zincir **exit 1 verir ve
-bu BEKLENİR** — tek sebebi aşağıdaki ilk satırdır; başka bir test kızarırsa koşu durur.
+bu BEKLENİR** — sebebi aşağıdaki ilk İKİ satırdır (KAPI B 34 hüküm; F1 tur 4'ten sonra
+`cizim_giysi_mi` (b) kol açısı bandı, tam 1 ihlal); başka bir test kızarırsa koşu durur.
 
 | test | beklenen | kırmızı kümesinin SABİT sayısı | kapatan |
 |---|---|---|---|
 | `flat_ayni_insan_check` (KAPI B) | **exit 1 BEKLENİR** | `KOSU/ciktilar/01-09` (9/9 flat, data-size EU38) üstünde **34 hüküm** kırmızı; 34'ten FARKLI bir sayı = regresyon, koşu durur. Kabul komutu iki adım: `node KOSU/uret.mjs && node engine/tests/flat_ayni_insan_check.mjs` (temiz clone'da tek adım "ölçülecek flat yok" verir — bilinen açık, F2 `flat-kume` ile kapatır, karar 5b) | F2: 9/9 flat croquis36'dan C++'ta, 0 hüküm, exit 0 |
+| `cizim_giysi_mi` | **exit 1 BEKLENİR (F1 tur 4'ten beri)** | **tam 1 ihlal**: `(b) kol acisi konvansiyon bandinda [73.7, 85.9]` — `KOSU/ciktilar/01-09` 40 açı, 8 farklı (32.36–39.59), hepsi band dışı. Band artık satılan flat ölçümünden (`KOSU/flat-olcum.py` Bölüm 2 → `contract/flat-convention-v1.json sevkPoz.kolAcisiDeg` taban 79.55); eski flat'ler `web/lib/flat-from-pattern.js`'in 20/30/40 sabitleriyle çizilmiş ("kanat"). 1'den FARKLI ihlal sayısı = regresyon, koşu durur. Kapı gevşetilmedi; ürün bandın dışında. | F2: flat C++'ta croquis36 kolundan (kolAcisiDeg) çizilir, JS sabitleri ölür; 0 ihlal |
 | `style_check` | exit 1 | 0/31 pin (`engine/STYLE-PIN` dizini yok; `scripts/repin-style.sh --status`) | F3b (re-pin yalnız F3a iki hakemi geçince) |
 | `flat_artifact_census` | exit 1 | 1 ihlal (`[3 C1]` bel köşesi teğet farkı > 1°, araştırma hattı) | F3 |
 | `sizechart_source_check` | exit 1 | 4 kolon NONE (shoulderCM, backLengthCM, armLengthCM, neckCM) | F2 (karar 4: euSizeChart body-v1 izdüşümü) |
 | `figure_check` | exit 1 | 1 FAILURE (pin eksik) | F3b |
 
 Regex'teki diğer 20 test ve `body_check`, `gen_contract_check`, `bundle_fresh_check`,
-`vocab_reference_check` (üç kova, taban `ffa9e6ce`) **yeşil**; bunlardan biri kızarırsa
-kaynağı düzelt, kapıyı değil.
+`vocab_reference_check` (İKİ kova kod/prose, ratchet yalnız kod; taban `65a4b5cb`, kod **9298** —
+8bc5393a mesajındaki 9299 yazım hatası, baseline `_yasa` son satırı) **yeşil**; bunlardan biri
+kızarırsa kaynağı düzelt, kapıyı değil.
+
+**F1 sayılarının adresi (tek paragraf).** `contract/body-v1.json`: `bedenler.gercek36.landmarklar`
+(x = `halkaKesitOran.breadthOverGirth.<halka>` × çevre/2, ANSUR II süperelips kesit; kol ekseni x =
+shoulderTip.x), `bedenler.croquis36.landmarklar` (girth x = çevre/4 tüp; y'ler
+`croquisOranlar`: underarmOverTorso 0.625 iki kaynaklı, apexDropOverTorso 0.6826 satılan flat
+medyanı, kolAcisiDeg 79.55 = `flat-convention sevkPoz.kolAcisiDeg.taban`), `croquisOranlar._iyiFlatOlcumu`
+(15 flat ölçümü, üretici `KOSU/flat-olcum.py` → `KOSU/ciktilar/flat-olcum.json f1Kapanis`),
+`bedenler.*.landmarkSirasi` (iki bedende AYNI sıra, koltukaltı göğüs hattının üstünde),
+`bedenler.farkTablosu`, `gradeTablosu` (EU34-44), `halkaKesitOran` (ANSUR II kaynak zinciri),
+`ayniInsan.kapiToleransMM`. Landmark adları `landmark.<ad>` namespace. Görsel: `KOSU/ciktilar/beden-iki.png`
+(`engine/build/body_check KOSU/ciktilar/beden-iki.svg` + headless Chrome).
 
 ## 8. İLK 10 DAKİKA
 
