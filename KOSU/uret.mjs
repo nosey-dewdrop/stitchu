@@ -101,7 +101,14 @@ async function png(svgPath, pngPath, w, h) {
   }
   if (!cikti) { try { cp.kill('SIGKILL'); } catch {} }
   if (!ok) { try { ok = statSync(pngPath).size > 0; } catch { ok = false; } }
-  rmSync(d, { recursive: true, force: true });
+  // F1 hakem tur 10 ENGEL 1: SIGKILL asenkron; Chrome'un crashpad/yardimci surecleri
+  // profil dizinine hala yazarken rmSync ENOTEMPTY firlatiyor, node exit 1 ile yarida
+  // kaliyordu (10 kosunun ~5'i, 3/9 png'de kesilme; KABUL'e sahte '14 hukum' dusuyordu).
+  // Once child'in 'exit' olayi beklenir (5 s tavan), sonra silme 10 deneme / 100 ms
+  // ile ve try/catch icinde: silinemeyen temp dizin bir kosuyu DURDURMAZ, adiyla yazilir.
+  if (!cikti) await Promise.race([new Promise((r) => cp.once('exit', r)), bekle(5000)]);
+  try { rmSync(d, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }); }
+  catch (e) { console.log(`temp dizin silinemedi (${e.code}): ${d}`); }
   return ok;
 }
 
