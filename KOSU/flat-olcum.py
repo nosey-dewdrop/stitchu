@@ -235,6 +235,32 @@ def pca_uclar(pts):
     a = min(pr)[1]; b = max(pr)[1]
     return a, b, (round((a[0] + b[0]) / 2, 1), round((a[1] + b[1]) / 2, 1))
 
+# --- F1 tur 11 (hakem kusur: kolBoyuOverTorso paydasi giysinin bel dikisi = giysiye bagli; Holmes 'short' 0.769 > Duxbury 'elbow' 0.634) ---
+# Kol boyunun HUKUM paydasi artik OMUZ GENISLIGI: iki omuz ucu arasi (set-in kolda omuz dikisinin ucu = bedenin omuz ucu; body-v1 croquis36
+# landmark.shoulderTip.x 183.8 -> 367.6 mm). Giysinin bel yerlesiminden bagimsiz, her set-in flatte olculur (bel dikisi gerekmez; Zalia/Yvette/
+# Montrose gibi bel dikissiz giysiler de kumeye girer). Sag omuz ucu = sol omuz ucunun SIMETRI EKSENINE gore aynasi; simetri ekseni: on gorunum
+# penceresinde (gorunumX) OMUZ UCU SATIRINDAKI (omuz.y .. omuz.y+4, medyan) siluetin en sol/en sag murekkebinin ortasi — o satirda en dis murekkep
+# iki omuz ucudur (kol agzi satiri KULLANILMAZ: sag/sol kol agzi ayni satirda olmayabilir, Lyra/Nell'de sag kol yerine govde okunuyordu); anvelop Lori
+# gibi asimetrik CF'li giysilerde siluet yine simetriktir. gorunumX yoksa cf (simetrik cizim). Raglan / dusuk omuz / off-shoulder (omuzNot) kollarda omuz ucu bedenin
+# degil: payda tanimsiz, ADIYLA olculmedi. Eski payda (SNP->bel, kolBoyuOverTorso) BILGI olarak kayitta kalir.
+def simetriMerkezi(px, W, H, x0, x1, y, esik, satir=2):
+    ms = []
+    for yy in range(int(round(y)) - satir, int(round(y)) + satir + 1):
+        if not (0 <= yy < H): continue
+        xs = [x for x in range(max(0, x0), min(W, x1)) if px[x, yy] < esik]
+        if xs: ms.append((xs[0] + xs[-1]) / 2.0)
+    return (round(sorted(ms)[len(ms) // 2], 1), None) if ms else (None, 'gorunum penceresinde murekkep yok')
+def omuzGenisligi(px, W, H, c, omuzXY, agizOrta, esik):
+    if 'omuzNot' in c: return {'OLCULEMEDI': 'omuz ucu set-in degil (omuzNot: %s): omuz genisligi bedenin degil, payda tanimsiz' % c['omuzNot']}
+    if 'gorunumX' in c:
+        cx, err = simetriMerkezi(px, W, H, c['gorunumX'][0], c['gorunumX'][1], omuzXY[1] + 2, esik); kaynak = 'gorunumX %s penceresinde omuz ucu satirlarinin (y %d..%d) siluet ortasi medyani' % (list(c['gorunumX']), omuzXY[1], omuzXY[1] + 4)
+    else:
+        cx, err, kaynak = c.get('cf'), None, 'cf (simetrik cizim)'
+    if cx is None: return {'OLCULEMEDI': err or 'simetri ekseni yok (cf/gorunumX)'}
+    g = 2.0 * (cx - omuzXY[0])
+    return {'simetriX': cx, 'kaynak': kaynak, 'genislikPX': round(g, 1), 'cfFarkPX': (round(cx - c['cf'], 1) if 'cf' in c else None),
+            'tanim': 'iki omuz ucu arasi = 2 x (simetri ekseni - sol omuz ucu x); croquis36 karsiligi 2 x landmark.shoulderTip.x = 367.6 mm'}
+
 # --- Bolum 3 yardimcilari (Bolum 2'nin 13 Mica egrilik yontemi de kullanir) ---
 # F1 tur 9 (hakem ENGEL 1+2): PUF_ESIK ve KISA_ESIK TEK KAYNAKTAN okunur — contract/flat-convention-v1.json
 # sevkPoz.kolAcisiDeg.kosulluBant[0].kosul (agizBuzguOranMin, kolBoyuOverTorsoMax). Bu dosya BOLUM 5'te kisa alt kume
@@ -250,7 +276,7 @@ def pca_uclar(pts):
 # dosyasi gosterir (beyan: 1.713/[1.51,1.916] ve 0.7/[0.656,0.704] -> exit 2).
 CONTRACT_FC = os.environ.get('FLAT_CONTRACT') or os.path.join(HERE, '..', 'contract', 'flat-convention-v1.json')
 KOSUL = json.load(open(CONTRACT_FC))['sevkPoz']['kolAcisiDeg']['kosulluBant'][0]['kosul']
-PUF_ESIK, KISA_ESIK = KOSUL['agizBuzguOranMin'], KOSUL['kolBoyuOverTorsoMax']
+PUF_ESIK, KISA_ESIK = KOSUL['agizBuzguOranMin'], KOSUL.get('kolBoyuOverOmuzMax', KOSUL.get('kolBoyuOverTorsoMax'))   # F1 tur 11: payda omuz genisligi
 EGRI_ESIK, EGRI_PENCERE, APEX_TOL, APEX_PENCERE = 0.12, 12, 2, 6
 YEREL = os.path.join(HERE, 'ciktilar', '_yerel', 'yeni-flat')
 os.makedirs(YEREL, exist_ok=True)
@@ -310,7 +336,7 @@ CFG3 = {
   'soi-lori.png': dict(
     url='https://cdn.shopify.com/s/files/1/0628/1278/2766/files/Lori_Dress_line_drawing_1200px.png?v=1750235990',
     sayfa='https://www.sewoverit.com/products/lori-dress-pdf-sewing-pattern', urun='Sew Over It Lori Dress',
-    esik=160, cf=305, snap=6, omuzUcu=(222, 62),
+    esik=160, cf=305, snap=6, omuzUcu=(222, 62), gorunumX=(40, 580),
     olculemezTorso='anvelop: SNP yaka altinda, bel dikisi egik; pens isaretleri 2 px kalem — apex olculmedi',
     kolUcu=(125, 162, 195, 250), kolPencere=(120, 232, 70, 250), boy='kisa', boyKaynak='kisa mansetli puf kol; agiz omuz ucunun ~190 px altinda, figur bel ~250 px: dirsegin ustunde',
     etiket='buzgulu', etiketNeden='agizda manset bandi, bandin ustunde buzgu cizgileri; kep de buzgulu',
@@ -521,6 +547,8 @@ for ad, c in CFG2.items():
         k['kolUcu'] = {'yontem': 'kol agzi penceresi PCA ana ekseni uclari, ortasi', 'pencere': list(c['kolUcu']),
                        'uclar': [list(a), list(b)], 'orta': list(mid), 'nMurekkep': len(pts)}
         k['kolAcisiDeg'] = {'deger': aci, 'tanim': 'omuz ucu -> kol ucu ortasi, yatayin ALTINA derece', 'dxdy': [round(dx, 1), round(dy, 1)]}
+        k['omuzGenisligi'] = omuzGenisligi(px, W, H, c, (sx, sy), mid, esik)
+        if 'genislikPX' in k['omuzGenisligi']: k['kolBoyuOverOmuz'] = round(math.hypot(dx, dy) / k['omuzGenisligi']['genislikPX'], 3)
         acilarHepsi.append((ad, aci, kolTipi))
         if kolTipi in ('setin', 'bishop'): acilarSarkan.append((ad, aci))
     f1['flatler'][ad] = k
@@ -593,6 +621,7 @@ for ad, c in CFG3.items():
         if c.get('torsoOlc'):
             kb = math.hypot(eski['kolUcu']['orta'][0] - eski['omuzUcu']['snapPX'][0], dy)
             k['kisaOlcu'] = round(kb / eski['torsoPX'], 3); k['kisaOlcuDikey'] = round(dy / eski['torsoPX'], 3)
+        k['omuzGenisligi'] = eski.get('omuzGenisligi'); k['kolBoyuOverOmuz'] = eski.get('kolBoyuOverOmuz')   # F1 tur 11: BOLUM 2'de olculdu (cf simetri)
         k['boy'] = c['boy']; k['boyKaynak'] = c['boyKaynak']; k['kisa'] = boyEtiket(c['boy'])
         k['etiket'] = c['etiket']; k['etiketNeden'] = c['etiketNeden']; k['kolTipi'] = kolTipiEtiketten(k['etiket'], k['kisa'])
         k['kolAcisiDeg'] = eski['kolAcisiDeg']['deger']   # kolTipiEski kalkti: BOLUM 2 artik ayni turetimi kullanir (karar ajani 3b)
@@ -666,6 +695,8 @@ for ad, c in CFG3.items():
         k['balonOran'] = round(bal[1] / agizW, 3)
         if c.get('torsoOlc') and 'torsoPX' in k:
             k['kisaOlcu'] = round(math.hypot(dx, dy) / k['torsoPX'], 3); k['kisaOlcuDikey'] = round(dy / k['torsoPX'], 3)
+        k['omuzGenisligi'] = omuzGenisligi(px, W, H, c, (sx, sy), mid, esik)   # F1 tur 11: HUKUM paydasi omuz genisligi
+        if 'genislikPX' in k['omuzGenisligi']: k['kolBoyuOverOmuz'] = round(math.hypot(dx, dy) / k['omuzGenisligi']['genislikPX'], 3)
         k['boy'] = c['boy']; k['boyKaynak'] = c.get('boyKaynak'); k['kisa'] = boyEtiket(c['boy'])
         k['etiket'] = c['etiket']; k['etiketNeden'] = c['etiketNeden']; k['kolTipi'] = kolTipiEtiketten(k['etiket'], k['kisa'])
     elif 'kolTipi' in c: k['kolTipi'] = c['kolTipi']
@@ -759,6 +790,12 @@ if os.path.exists(LOCKET):
         k['kolAcisiDeg']['stripeMurekkep'] = k['kolAcisiDeg']['deger']
         k['kolAcisiDeg']['deger'] = medyan(degs)
         k['kolAcisiDeg']['tanim'] += '; deger = 6 renklendirme okumasinin medyani (okumalar), STRIPE murekkep okumasi stripeMurekkep alaninda'
+    # F1 tur 11: omuz genisligi paydasi (STRIPE kopyasi penceresi 660-1340; LOCKET_CFG.cf 880 simetri ekseni DEGIL, kullanilmaz)
+    if om and u1 and u2:
+        k['etiket'] = 'buzgulu'; k['etiketNeden'] = 'Upper Sleeve buzgulu + Lower Sleeve band (agiz banda toplanmis)'; k['boy'] = 'kisa'
+        k['omuzGenisligi'] = omuzGenisligi(px, W, H, dict(gorunumX=(660, 1340)), om['snapPX'], mid, c['esik'])
+        _ldx, _ldy = k['kolUcu']['orta'][0] - om['snapPX'][0], k['kolUcu']['orta'][1] - om['snapPX'][1]   # (6-okuma dongusu dx/dy'yi ezdi; yeniden)
+        if 'genislikPX' in k['omuzGenisligi']: k['kolBoyuOverOmuz'] = round(math.hypot(_ldx, _ldy) / k['omuzGenisligi']['genislikPX'], 3)
     f3['flatler']['bugra-locket'] = k
 else:
     f3['flatler']['bugra-locket'] = {'OKUNMADI': 'patterns_real/Locket Top/5 Inspirations.jpg bu makinede yok (satin alinmis kaynak, repoda degil)'}
@@ -841,8 +878,11 @@ sonuc['f1Kapanis'] = f1
 #   F1 tur 9 (hakem ENGEL 2): HUKUM olcusu kolBoyuOverTorso = hypot(dx, dy) / torso (kol ekseni boyunca kol boyu); dikey
 #                    deger BILGI olarak kalir (dikey = kolBoyu x sin(aci): banda bagli, dongusel). 'kisa' bununla karar verilir.
 #   F1 tur 9 (hakem ENGEL 1): kisa alt kume boslugu ELLE degil BURADA hesaplanir (kisaAltKume): yalniz kisa == True kollar
-#                    (olculen kolBoyuOverTorso < KISA_ESIK ya da boyKaynak ile acikca kisa); kisa None (dirsek boyu, torso yok:
-#                    Mabel) 'olculmedi' listesine ADIYLA girer, sinifa sayilmaz. Contract esigi bu alandan kopyalanir.
+#                    (F1 tur 10/11: kisa YALNIZ boy etiketinden, boyEtiket(CFG.boy); (tarihce) tur 9'da 'kolBoyuOverTorso < KISA_ESIK' de kisa sayardi,
+#                    kaldirildi); kisa None (dirsek boyu) 'olculmedi' listesine ADIYLA girer, sinifa sayilmaz. Contract esigi bu alandan kopyalanir.
+#   F1 tur 11 (hakem kusur 2, payda): kol boyu HUKUM orani kolBoyuOverOmuz = kol ekseni boyu / omuz genisligi (iki omuz ucu arasi; dosya basindaki
+#                    omuzGenisligi yardimcisi). kolBoyuOverTorso (SNP->bel) BILGI: payda giysinin bel dikisi, giysiye bagli (Holmes yuksek bel 0.769 >
+#                    Duxbury dirsek 0.634). Omuz paydasi bel dikisi istemez: dirsek kollari bel dikissiz giysilerden de olculur.
 #   Duz mansetli kolda (Coco turn-back, Ilta/Frida gomlek manseti) agiz = mansetin ALT kenari, kolPencere manseti DISLAR.
 # Omuz ucu: 'omuzKutu' penceresinde EN UST murekkep (kol kepinin tepesi = omuz dikisi noktasi; BOLUM 2 SNP yontemiyle ayni).
 # Pencereler ORIJINAL piksel, 50/20 px grid ustunde gozle okundu; her olcum icin kontrol overlay'i
@@ -862,24 +902,70 @@ AGNES_U = 'https://cdn.shopify.com/s/files/1/0364/2693/products/Tilly_and_the_Bu
 FRIDA_U = 'https://cdn.shopify.com/s/files/1/0364/2693/files/frida-shirt-sewing-pattern-tilly-and-the-buttons-tech-drawing.png?v=1772114163'
 CFG5 = {
   # ---------------- DIRSEK boyu (F1 karar ajani 2, tur 10 uygulama): satici cumlesi 'elbow-length', SNP + bel cizili, boy='dirsek', kisa=None ----------------
-  # Hedef >= 3 buzgulu + >= 3 duz. Bulunan: 1 duz (Duxbury). Aranip ELENENLER (5 Eyl 2026): Rivermont 'short, elbow, or long' ama cizimde tek kol (hangi boy
+  # F1 tur 11: hedef >= 3 buzgulu + >= 3 duz SAGLANDI: buzgulu 3 (Style Arc Dallas 'elbow length puff sleeve gathered into lining with elastic',
+  # Style Arc Zalia 'elbow ... sleeves gathered into a bind' (dress version), Style Arc Queenie 'elbow length sleeve with double frill and a gathered head'),
+  # duz 5 (Cashmerette Duxbury, Cashmerette Honeybourne 'elbow-length sleeves', Cashmerette Montrose View B 'elbow length sleeves', Style Arc Yvette
+  # 'elbow length sleeve with inverted pleat', Style Arc Emerald 'full elbow length sleeve with tucks and bound finish' — pili/tuck agzi Celia kurali ile DUZ).
+  # Payda tur 11'de omuz genisligi oldugu icin bel dikisi sart degil; bel dikisi olanlarda (Duxbury, Honeybourne, Queenie, Emerald) torso da BILGI olculur.
+  # Style Arc ana urun gorseli = teknik cizim (line drawing), sayfada ayri dosya yok; Cashmerette tech-ill 4x5.
+  # Onceki hedef (tur 10): >= 3 buzgulu + >= 3 duz. Bulunan: 1 duz (Duxbury). Aranip ELENENLER (5 Eyl 2026): Rivermont 'short, elbow, or long' ama cizimde tek kol (hangi boy
   # belirsiz); Sew Over It Cassie 'just above the elbow' (buzgulu) — sitede teknik cizim yok, yalniz foto; Seamwork Sloan/Pomme puf (boy kelimesi yok / cizim yok);
   # Megan Nielsen Sudley A 'above elbow sleeves' bluz (bel yok); Tilly Mabel ELBOW LENGTH (off-shoulder, SNP yok, asagida); Tilly Etta 'three-quarter';
   # Cashmerette Roseclair 3/4 buzgulu manset (dirsek kelimesi yok); Sew Liberated Ember '3/4' (lastik dirsek USTUNDE, dirsek boyu degil); Deer&Doe Eleanor 'above the elbow' (kisa, CFG3).
-  'cash-duxbury.jpg': dict(url='https://www.cashmerette.com/cdn/shop/files/Cashmerette-1302-Duxbury-tech-ill-4x5-gray.jpg?v=1779195202',
+  'cash-duxbury.jpg': dict(gorunumX=(380, 1230), url='https://www.cashmerette.com/cdn/shop/files/Cashmerette-1302-Duxbury-tech-ill-4x5-gray.jpg?v=1779195202',
     sayfa='https://www.cashmerette.com/products/duxbury-dress-pdf-pattern', urun='Cashmerette Duxbury Dress (dirsek boyu set-in kol, derin bask; alt sol on gorunum)', marka='Cashmerette',
     etiket='duz', etiketNeden='agiz acik duz kenar, kesik cizgi = derin bask dikisi (satici: deep hem), buzgu/lastik/manset yok', esik=160,
     omuzKutu=(548, 568, 1615, 1640), kolUcu=(405, 545, 1868, 1930), kolPencere=(400, 560, 1620, 1930), boy='dirsek', torsoOlc=True,
     boyKaynak='urun sayfasi: "Sleeveless bound armholes, elbow-length sleeves with deep hem" (curl 2026-09-05 HTTP 200); cizim: agiz bel dikisinin (y~2040) ~120 px ustunde',
     snp=(630, 670, 1585, 1610), bel=dict(tip='yatayCizgi', pencere=(600, 800, 2030, 2048)), belNot='bel dikisi (bodice/etek): pencerede en cok murekkepli satir'),
+  'cash-honeybourne.jpg': dict(url='https://www.cashmerette.com/cdn/shop/files/Cashmerette-Honeybourne-tech-ill-4x5.jpg',
+    sayfa='https://www.cashmerette.com/products/honeybourne-dress', urun='Cashmerette Honeybourne Dress (dirsek boyu set-in kol, bel dikisi, buzgulu etek; sol on gorunum)', marka='Cashmerette',
+    etiket='duz', etiketNeden='agiz acik duz kenar, kesik cizgi = bask dikisi, buzgu/lastik/manset yok', esik=160, gorunumX=(60, 1250),
+    omuzKutu=(296, 308, 630, 650), kolUcu=(95, 250, 1300, 1375), kolPencere=(95, 250, 640, 1370), boy='dirsek', torsoOlc=True,
+    boyKaynak='urun sayfasi: "The pretty elbow-length sleeves give an elegant touch" (WebFetch 2026-09-05); cizim: agiz bel dikisinin (y~1305) ~50 px altinda',
+    snp=(350, 380, 595, 625), bel=dict(tip='yatayCizgi', pencere=(300, 500, 1295, 1315)), belNot='bel dikisi (bodice/buzgulu etek): pencerede en cok murekkepli satir'),
+  'cash-montrose.jpg': dict(url='https://www.cashmerette.com/cdn/shop/files/Cashmerette-Montrose-tech-4X5.jpg',
+    sayfa='https://www.cashmerette.com/products/montrose-top-pdf-pattern', urun='Cashmerette Montrose Top View B (dirsek boyu set-in kol, jewel yaka; alt sol on gorunum, desenli)', marka='Cashmerette',
+    etiket='duz', etiketNeden='agiz acik duz kenar, kesik cizgi = bask dikisi, buzgu/lastik/manset yok', esik=160, gorunumX=(20, 1250),
+    omuzKutu=(190, 225, 1740, 1770), kolUcu=(50, 212, 2305, 2360), kolPencere=(50, 212, 1740, 2360), boy='dirsek',
+    boyKaynak='urun sayfasi / blog (blog.cashmerette.com 2018/03 montrose): "View B ... jewel neck, elbow length sleeves, and keyhole back"; bluz: bel dikisi yok, torso olculmez (omuz paydasi olculur)',
+    agizNot='desenli kumas (konfeti cizgileri) pencerede murekkep katar; PCA uclari yine agiz koseleri (dis kontur en uc noktalar), en genis kesit dis konturla sinirli'),
+  'sa-yvette.jpg': dict(url='https://www.stylearc.com/wp-content/uploads/yvette-woven-dress.jpg',
+    sayfa='https://www.stylearc.com/shop/sewing-patterns/yvette-woven-dress/', urun='Style Arc Yvette Woven Dress (dirsek boyu set-in kol, agizda ters pili; FRONT WITH SLEEVES gorunumu)', marka='Style Arc',
+    etiket='duz', etiketNeden='agizda ters pili (inverted pleat) + bask cizgisi; buzgu/lastik/buzgulu manset yok -> Celia kurali: pili agzi DUZ', esik=160, gorunumX=(1150, 1560),
+    omuzKutu=(1235, 1255, 105, 125), kolUcu=(1180, 1238, 296, 325), kolPencere=(1180, 1257, 105, 325), boy='dirsek',
+    boyKaynak='urun sayfasi: "Sleeveless or elbow length sleeved version with cuff" + cizim etiketi "ELBOW LENGTH SLEEVE WITH INVERTED PLEAT"; bel dikisi yok (asimetrik dikisler), torso olculmez'),
+  'sa-emerald.jpg': dict(url='https://www.stylearc.com/wp-content/uploads/emerald-woven-dress-g447869.jpg',
+    sayfa='https://www.stylearc.com/shop/sewing-patterns/emerald-woven-dress/', urun='Style Arc Emerald Woven Dress (dolgun dirsek boyu kol, agizda tuck + biye; FRONT gorunumu)', marka='Style Arc',
+    etiket='duz', etiketNeden='agizda tuck (pili) + biye (bound finish); buzgu/lastik/buzgulu manset yok -> Celia kurali: pili/tuck agzi DUZ. NOT: kol govdesi agizdan belirgin genis (balon), sinif agiz konvansiyonundan; F2 grafta agiz Edge\'i tuck Stitch tasir, gather degil', esik=160, gorunumX=(310, 680),
+    omuzKutu=(340, 362, 186, 200), omuzNot2='kep buzgulu ve omuz ustune yukselir (kep ust konturu y~192, omuz dikisi ucu ~(355,192)); pencere dikis ucunu alir, kep tepesini degil', kolUcu=(298, 354, 348, 372), kolPencere=(298, 354, 190, 372), boy='dirsek', torsoOlc=False,
+    boyKaynak='urun sayfasi: "Optional full elbow length sleeve with tucks and bound finish"; gomlek yakasi SNP\'yi orter, torso olculmez; bel dikisi var (y~350)',
+    bel=dict(tip='yatayCizgi', pencere=(380, 520, 344, 358)), belNot='bel dikisi (bilgi; SNP yok, torso hesaplanmaz)'),
   # ---------------- agzi buzgulu / lastikli / buzgulu mansetli ----------------
+  'sa-dallas.jpg': dict(url='https://www.stylearc.com/wp-content/uploads/dallas-woven-shirt-and-dress-g485462.jpg',
+    sayfa='https://www.stylearc.com/shop/sewing-patterns/dallas-woven-shirt-and-dress/', urun='Style Arc Dallas Woven Dress (dirsek boyu puf kol, lastikli agiz; ust sag FRONT gorunumu)', marka='Style Arc',
+    etiket='buzgulu', etiketNeden='agizda lastik (astara lastikle buzgulu), buzgu cizgileri; kep de buzgulu', esik=160, gorunumX=(1440, 1800),
+    omuzKutu=(1535, 1555, 108, 122), kolUcu=(1443, 1528, 290, 312), kolPencere=(1440, 1530, 108, 312), boy='dirsek',
+    boyKaynak='urun sayfasi: "Elbow length puff sleeve gathered into lining with elastic"; gomlek yakasi SNP\'yi orter, bu gorunumde bel dikisi yok: torso olculmez'),
+  'sa-zalia.jpg': dict(url='https://www.stylearc.com/wp-content/uploads/zalia-woven-top-and-dress-1.jpg',
+    sayfa='https://www.stylearc.com/shop/sewing-patterns/zalia-woven-top-and-dress/', urun='Style Arc Zalia Woven Dress (dirsek boyu balon kol, biyeye buzgulu agiz; FRONT DRESS VERSION)', marka='Style Arc',
+    etiket='buzgulu', etiketNeden='agiz biyeye buzgulu (oval biye, cevresinde buzgu cizgileri)', esik=160, gorunumX=(1060, 1510),
+    omuzKutu=(1140, 1160, 1035, 1050), kolUcu=(1095, 1128, 1183, 1242), kolPencere=(1060, 1152, 1040, 1280), boy='dirsek',
+    boyKaynak='urun sayfasi: "Elbow or 3/4 length sleeves gathered into a bind" + cizim etiketi "ELBOW SLEEVE LENGTH" (dress version); A-line, bel dikisi yok: torso olculmez',
+    agizNot='agiz oval biye olarak cizili (kol izleyiciye donuk); agiz uzunlugu = ovalin PCA uzun ekseni'),
+  'sa-queenie.jpg': dict(url='https://www.stylearc.com/wp-content/uploads/queenie-woven-dress-g342000.jpg',
+    sayfa='https://www.stylearc.com/shop/sewing-patterns/queenie-woven-dress/', urun='Style Arc Queenie Woven Dress, SLEEVE 2 (dirsek boyu, kep buzgulu, agizda cift firfir; ust sag gorunum)', marka='Style Arc',
+    etiket='buzgulu', etiketNeden='agizda buzgulu cift firfir (frill dikisinde buzgu cizgileri) + kep buzgusu. DOGRULANMADI-notu: buzgu firfirin kendisinde, kol govdesi agiza dogru daralmaz; konvansiyon kurali (agizda buzgu cizgisi var mi) buzgulu der, sinif bu kuralla verildi', esik=160, gorunumX=(990, 1260),
+    omuzKutu=(1060, 1080, 75, 90), kolUcu=(1030, 1092, 222, 238), kolPencere=(1030, 1092, 75, 238), boy='dirsek', torsoOlc=True,
+    boyKaynak='urun sayfasi: "elbow length sleeve with double frill and a gathered head"; agiz = firfir dikisi (firfir kolPencere disinda, manset kurali gibi)',
+    snp=(1105, 1120, 72, 85), bel=dict(tip='yatayCizgi', pencere=(1100, 1200, 232, 244)), belNot='bel dikisi (darted fitted bodice / etek)'),
   'bhl-alix-1.jpg': dict(url='https://cdn.shopify.com/s/files/1/0289/4249/products/tech_illos2-01.jpg?v=1477044717',
     sayfa='https://byhandlondon.com/products/alix-dress-pdf-sewing-pattern', urun='By Hand London Alix Dress (bishop kol, lastikli manset)', marka='By Hand London',
     etiket='buzgulu', etiketNeden='agizda lastik + buzgu cizgileri, altinda kucuk firfir', esik=160,
     omuzKutu=(135, 165, 8, 30), omuzNot='raglan (satici: "raglan sleeves"): omuz ucu yok; kol ust konturunun tepesi (F1 karar ajani 3c: not eksikti, eklendi)', kolUcu=(22, 74, 250, 270), kolPencere=(12, 150, 110, 240), boy='uzun', torsoOlc=True,
     boyKaynak='urun sayfasi: "long, billowing raglan sleeves secured at the wrist with a delicate elasticated cuff" (bitmis kol boyu 61-64.5 cm)',
     snp=(150, 240, 10, 25), bel=dict(tip='yatayCizgi', pencere=(165, 265, 183, 192)), belNot='bel bandi cizgisi (yatayCizgi: bandin ust ya da alt cizgisi, +-7 px)'),
-  'bhl-marie-dress.jpg': dict(url='https://cdn.shopify.com/s/files/1/0289/4249/products/Technicalillustrations_Dress_B.jpg?v=1639823609',
+  'bhl-marie-dress.jpg': dict(gorunumX=(100, 1350), url='https://cdn.shopify.com/s/files/1/0289/4249/products/Technicalillustrations_Dress_B.jpg?v=1639823609',
     sayfa='https://byhandlondon.com/products/marie-shirt-dress-pdf-sewing-pattern-uk-2-38', urun='By Hand London Marie Dress B (bishop kol, buzgulu manset + firfir)', marka='By Hand London',
     etiket='buzgulu', etiketNeden='agizda buzgu cizgileri, manset bandi, firfir', esik=120,
     omuzKutu=(300, 370, 200, 240), kolUcu=(135, 275, 1030, 1075), kolPencere=(90, 340, 230, 1030), boy='uzun', boyKaynak='bilek boyu bishop: agiz omuzun ~830 px altinda, elbise etek ucu 1750; bel dikisi yok',
@@ -888,44 +974,44 @@ CFG5 = {
     sayfa='https://byhandlondon.com/products/loren-blouse-dress-pdf-sewing-pattern', urun='By Hand London Loren Dress (raglan kol, buzgulu manset + firfir)', marka='By Hand London',
     etiket='buzgulu', etiketNeden='agizda buzgulu lastik bandi + firfir', esik=120,
     omuzKutu=(520, 660, 170, 210), omuzNot='raglan: omuz ucu yok; kol ust konturunun tepesi', kolUcu=(105, 250, 735, 825), kolPencere=(100, 470, 450, 720), boy='uzun', boyKaynak='bilek boyu: agiz omuzun ~600 px altinda; bel dikisi yok'),
-  'bhl-lucy-puff.jpg': dict(url='https://cdn.shopify.com/s/files/1/0289/4249/files/Technicalillustrations_puffsleeve_colour.jpg?v=1689767047',
+  'bhl-lucy-puff.jpg': dict(gorunumX=(100, 560), url='https://cdn.shopify.com/s/files/1/0289/4249/files/Technicalillustrations_puffsleeve_colour.jpg?v=1689767047',
     sayfa='https://byhandlondon.com/products/bhl-draft-it-yourself-lucy-dress', urun='By Hand London Lucy Dress (kisa puf kol, lastikli agiz + firfir; kol yana ~yatay acilir)', marka='By Hand London',
     etiket='buzgulu', etiketNeden='agizda lastik + firfir, kep buzgulu', esik=130,
     omuzKutu=(255, 275, 95, 130), kolUcu=(150, 170, 140, 200), kolPencere=(150, 248, 95, 225), boy='kisa', boyKaynak='kisa puf: agiz omuz hizasinda yana acilir, empire dikis 265, figur bel yok'),
-  'tilly-marnie.png': dict(**_tilly(MARNIE_U, 'https://tillyandthebuttons.com/products/marnie-blouse-dress-sewing-pattern', 'Tilly and the Buttons Marnie Blouse (bishop kol, lastikli agiz)'),
+  'tilly-marnie.png': dict(gorunumX=(10, 720), **_tilly(MARNIE_U, 'https://tillyandthebuttons.com/products/marnie-blouse-dress-sewing-pattern', 'Tilly and the Buttons Marnie Blouse (bishop kol, lastikli agiz)'),
     etiket='buzgulu', etiketNeden='agizda lastik + buzgu cizgileri',
     omuzKutu=(225, 260, 335, 360), kolUcu=(38, 140, 636, 700), kolPencere=(35, 225, 450, 640), boy='uzun', boyKaynak='bilek boyu: agiz omuzun ~330 px altinda, bluz etegi 800; bel dikisi yok'),
   'tilly-mabel.jpg#bluz': dict(dosya='tilly-mabel.jpg', **_tilly(MABEL_U, 'https://tillyandthebuttons.com/products/mabel-dress-blouse-sewing-pattern', 'Tilly and the Buttons Mabel Blouse (dirsek boyu puf kol, buzgulu (shirred) manset)'),
     etiket='buzgulu', etiketNeden='agizda shirring bandi + firfir',
     omuzKutu=(255, 300, 85, 105), omuzNot='omuz acik (off-shoulder): kol kepinin tepesi', kolUcu=(160, 225, 296, 352), kolPencere=(175, 318, 130, 295), boy='dirsek', boyKaynak='urun adi ELBOW LENGTH; agiz ~y 325, shirred bel bandi 405-445; SNP cizili degil (off-shoulder), torso olculemez'),
-  'tilly-nell.jpg#puf': dict(dosya='tilly-nell.jpg', **_tilly(NELL_U, 'https://tillyandthebuttons.com/products/nell-blouse-dress-sewing-pattern', 'Tilly and the Buttons Nell Blouse (puffball kisa kol: agiz icine katlanmis, govdeden dar)'),
+  'tilly-nell.jpg#puf': dict(dosya='tilly-nell.jpg', gorunumX=(20, 700), **_tilly(NELL_U, 'https://tillyandthebuttons.com/products/nell-blouse-dress-sewing-pattern', 'Tilly and the Buttons Nell Blouse (puffball kisa kol: agiz icine katlanmis, govdeden dar)'),
     etiket='buzgulu', etiketNeden='puffball: agiz govdeden dar, buzgu cizgileri agizda',
     omuzKutu=(280, 340, 280, 310), kolUcu=(262, 312, 486, 520), kolPencere=(200, 340, 300, 490), boy='kisa', boyKaynak='kisa: agiz omuzun ~230 px altinda, bluz etegi 740'),
-  'tilly-lyra.png#uzun': dict(dosya='tilly-lyra.png', **_tilly(LYRA_U, 'https://tillyandthebuttons.com/products/lyra-dress-sewing-pattern', 'Tilly and the Buttons Lyra Dress (uzun kol, lastikli agiz)'),
+  'tilly-lyra.png#uzun': dict(dosya='tilly-lyra.png', gorunumX=(100, 760), **_tilly(LYRA_U, 'https://tillyandthebuttons.com/products/lyra-dress-sewing-pattern', 'Tilly and the Buttons Lyra Dress (uzun kol, lastikli agiz)'),
     etiket='buzgulu', etiketNeden='agizda lastik + buzgu, kucuk firfir',
     omuzKutu=(295, 330, 105, 125), kolUcu=(150, 240, 530, 590), kolPencere=(170, 312, 280, 470), boy='uzun', boyKaynak='bilek boyu: agiz omuzun ~470 px altinda, yaka altindaki buzgulu dikis 390'),
   # ---------------- duz / klos (agiz acik ya da duz manset) ----------------
   'tilly-stevie-addon.jpg#tunik': dict(dosya='tilly-stevie-addon.jpg', **_tilly(STEVIE_U, 'https://tillyandthebuttons.com/products/stevie-add-on-sewing-pattern', 'Tilly and the Buttons Stevie Add-On tunik (dusuk omuz, 3/4 duz kol)'),
     etiket='duz', etiketNeden='agiz acik duz kenar',
     omuzKutu=(175, 200, 805, 830), omuzNot='dusuk omuz: kol dikisinin ust ucu', kolUcu=(8, 30, 862, 920), kolPencere=(8, 150, 800, 920), boy='uzun', boyKaynak='THREE-QUARTER LENGTH: agiz dirsegin altinda'),
-  'tilly-coco.jpg#v1': dict(dosya='tilly-coco.jpg', **_tilly(COCO_U, 'https://tillyandthebuttons.com/products/coco-top-dress-sewing-pattern', 'Tilly and the Buttons Coco Top v1 (3/4 duz oturan kol)'),
+  'tilly-coco.jpg#v1': dict(dosya='tilly-coco.jpg', gorunumX=(40, 790), **_tilly(COCO_U, 'https://tillyandthebuttons.com/products/coco-top-dress-sewing-pattern', 'Tilly and the Buttons Coco Top v1 (3/4 duz oturan kol)'),
     etiket='duz', etiketNeden='agiz acik duz kenar',
     omuzKutu=(260, 300, 70, 100), kolUcu=(128, 212, 608, 640), kolPencere=(135, 270, 380, 580), boy='uzun', boyKaynak='3/4 kol: agiz (y~605) etek ucuna (700) yakin, dirsegin altinda'),
-  'tilly-agnes.png#kisa': dict(dosya='tilly-agnes.png', **_tilly(AGNES_U, 'https://tillyandthebuttons.com/products/agnes-jersey-top-sewing-pattern', 'Tilly and the Buttons Agnes (straight cropped sleeve)'),
+  'tilly-agnes.png#kisa': dict(dosya='tilly-agnes.png', gorunumX=(30, 680), **_tilly(AGNES_U, 'https://tillyandthebuttons.com/products/agnes-jersey-top-sewing-pattern', 'Tilly and the Buttons Agnes (straight cropped sleeve)'),
     etiket='duz', etiketNeden='agiz acik duz kenar',
     omuzKutu=(150, 200, 232, 262), kolUcu=(75, 175, 522, 552), kolPencere=(0, 195, 300, 535), boy='kisa', boyKaynak='CROPPED SLEEVE: agiz dirsegin ustunde (etek ucu 750, agiz 550)'),
-  'tilly-agnes.png#buzgulu-omuz': dict(dosya='tilly-agnes.png', **_tilly(AGNES_U, 'https://tillyandthebuttons.com/products/agnes-jersey-top-sewing-pattern', 'Tilly and the Buttons Agnes (ruched cropped sleeve: OMUZDA buzgu, agiz acik)'),
+  'tilly-agnes.png#buzgulu-omuz': dict(dosya='tilly-agnes.png', gorunumX=(820, 1460), **_tilly(AGNES_U, 'https://tillyandthebuttons.com/products/agnes-jersey-top-sewing-pattern', 'Tilly and the Buttons Agnes (ruched cropped sleeve: OMUZDA buzgu, agiz acik)'),
     etiket='duz', etiketNeden='buzgu omuzda, agiz acik duz kenar (BOLUM 3 kurali: omuz buzgusu tipi degistirmez)',
     omuzKutu=(890, 960, 205, 230), kolUcu=(858, 962, 514, 540), kolPencere=(855, 970, 240, 500), boy='kisa', boyKaynak='CROPPED SLEEVE: agiz dirsegin ustunde'),
-  'tilly-agnes.png#uzun': dict(dosya='tilly-agnes.png', **_tilly(AGNES_U, 'https://tillyandthebuttons.com/products/agnes-jersey-top-sewing-pattern', 'Tilly and the Buttons Agnes (straight long sleeve)'),
+  'tilly-agnes.png#uzun': dict(dosya='tilly-agnes.png', gorunumX=(20, 720), **_tilly(AGNES_U, 'https://tillyandthebuttons.com/products/agnes-jersey-top-sewing-pattern', 'Tilly and the Buttons Agnes (straight long sleeve)'),
     etiket='duz', etiketNeden='agiz acik duz kenar',
     omuzKutu=(150, 200, 1065, 1100), kolUcu=(44, 135, 1610, 1634), kolPencere=(40, 180, 1300, 1400), boy='uzun', boyKaynak='LONG SLEEVE'),
-  'tilly-nell.jpg#kisa-duz': dict(dosya='tilly-nell.jpg', **_tilly(NELL_U, 'https://tillyandthebuttons.com/products/nell-blouse-dress-sewing-pattern', 'Tilly and the Buttons Nell Midi Dress (short straight sleeves)'),
+  'tilly-nell.jpg#kisa-duz': dict(dosya='tilly-nell.jpg', gorunumX=(560, 1010), **_tilly(NELL_U, 'https://tillyandthebuttons.com/products/nell-blouse-dress-sewing-pattern', 'Tilly and the Buttons Nell Midi Dress (short straight sleeves)'),
     etiket='duz', etiketNeden='agiz acik duz kenar',
     omuzKutu=(600, 665, 1095, 1125), kolUcu=(560, 650, 1214, 1250), kolPencere=(560, 672, 1105, 1215), boy='kisa', torsoOlc=True,
     boyKaynak='urun sayfasi: "Four sleeve options: short and straight, bracelet-length, flutter, or lined puffball" -> short and straight',
     snp=(700, 745, 1085, 1100), bel=dict(tip='yatayCizgi', pencere=(640, 760, 1325, 1345)), belNot='bel dikisi (etek buzgusunun ustu)'),
-  'tilly-nell.jpg#bilezik': dict(dosya='tilly-nell.jpg', **_tilly(NELL_U, 'https://tillyandthebuttons.com/products/nell-blouse-dress-sewing-pattern', 'Tilly and the Buttons Nell Knee-length Dress (bracelet sleeves)'),
+  'tilly-nell.jpg#bilezik': dict(dosya='tilly-nell.jpg', gorunumX=(30, 540), **_tilly(NELL_U, 'https://tillyandthebuttons.com/products/nell-blouse-dress-sewing-pattern', 'Tilly and the Buttons Nell Knee-length Dress (bracelet sleeves)'),
     etiket='duz', etiketNeden='agiz acik duz kenar',
     omuzKutu=(170, 215, 1095, 1115), kolUcu=(45, 120, 1434, 1462), kolPencere=(40, 170, 1150, 1330), boy='uzun', torsoOlc=True,
     boyKaynak='urun sayfasi: "Four sleeve options: short and straight, bracelet-length, flutter, or lined puffball" -> bracelet-length (bilek ustu, dirsegin altinda)',
@@ -1015,6 +1101,8 @@ for ad, c in CFG5.items():
         k['torsoPX'] = y - top[1]
         k['agizOmuzDikeyOverTorso'] = round(dy / k['torsoPX'], 3)   # BILGI: eski tanim (dikey), hukum tasimaz (F1 tur 9)
         k['kolBoyuOverTorso'] = round(math.hypot(dx, dy) / k['torsoPX'], 3)   # YALNIZ bosluk hesabi icin; etiket vermez (F1 tur 10)
+    k['omuzGenisligi'] = omuzGenisligi(px, W, H, c, om, mid, esik)   # F1 tur 11: HUKUM paydasi omuz genisligi (gorunumX simetri)
+    if 'genislikPX' in k['omuzGenisligi']: k['kolBoyuOverOmuz'] = round(math.hypot(dx, dy) / k['omuzGenisligi']['genislikPX'], 3)
     k['boy'] = c['boy']; k['boyKaynak'] = c['boyKaynak']; k['kisa'] = boyEtiket(c['boy'])
     k['overlay'] = os.path.relpath(overlay5(yol, ad, c, k, om, [list(a), list(b2)], bal, dik), os.path.join(HERE, '..'))
     f5['flatler'][ad] = k
@@ -1034,11 +1122,11 @@ f5['eskiKumeDik'] = {'_ne': 'BOLUM 3 kollari eksene dik kesitle yeniden olculdu 
 
 # --- birlesik kume: eski 13 (etiket CFG3.etiket: cizim konvansiyonu, F1 tur 10; kolTipi'nden/orandan DEGIL) + yeni ---
 eskiKume = {ad: {'balonOranDik': eskiDik[ad]['balonOranDik'], 'balonOranYatay': k['balonOran'], 'etiket': k['etiket'], 'etiketNeden': k['etiketNeden'],
-                 'kisaOlcu': k.get('kisaOlcu'), 'kisaOlcuDikey': k.get('kisaOlcuDikey'), 'kisa': k.get('kisa'), 'boyKaynak': k.get('boyKaynak'),
+                 'kisaOlcu': k.get('kisaOlcu'), 'kisaOlcuDikey': k.get('kisaOlcuDikey'), 'kisa': k.get('kisa'), 'boyKaynak': k.get('boyKaynak'), 'kolBoyuOverOmuz': k.get('kolBoyuOverOmuz'),
                  'kolAcisiDeg': (k['kolAcisiDeg']['deger'] if isinstance(k['kolAcisiDeg'], dict) else k['kolAcisiDeg'])}
            for ad, k in f3['flatler'].items() if ad in eskiDik}
 yeniKume = {ad: {'balonOranDik': k['balonOranDik'], 'balonOranYatay': k['balonOranYatay'], 'etiket': k['etiket'], 'kisaOlcu': k.get('kolBoyuOverTorso'), 'kisaOlcuDikey': k.get('agizOmuzDikeyOverTorso'),
-                 'kisa': k.get('kisa'), 'boyKaynak': k.get('boyKaynak'), 'kolAcisiDeg': k['kolAcisiDeg']['deger'], 'marka': k['marka']}
+                 'kisa': k.get('kisa'), 'boyKaynak': k.get('boyKaynak'), 'kolAcisiDeg': k['kolAcisiDeg']['deger'], 'marka': k['marka'], 'kolBoyuOverOmuz': k.get('kolBoyuOverOmuz')}
             for ad, k in f5['flatler'].items() if k.get('balonOranDik') is not None}
 def sinifOzet(kume, etiket, alan):
     v = sorted((k[alan], ad) for ad, k in kume.items() if k['etiket'] == etiket)
@@ -1066,19 +1154,71 @@ kisaMax = max([v for v, _, kk in kisaOlcumler if kk is True] or [None]); uzunMin
 # --- F1 karar ajani 2 (tur 10 uygulama): DIRSEK boyu kollar (boy='dirsek', kisa=None) ayri kova; kisa/uzun sinifina GIRMEZ, bosluk hesabina girmez.
 #   Hukum yalniz n >= 3 buzgulu VE n >= 3 duz dirsek kol olculunce: buzgulu dirsek acilari sarkan IQR'a dusuyorsa dirsek = 'uzun' (kosul icin kisa=False,
 #   bosluk ustten daralir); puf bandina dusuyorsa 'kisa' (alttan daralir); ikiye bolunuyorsa ayirici yanlis (3c) ve ancak o zaman n>=3 kendi bandiyla ucuncu
-#   kosulluBant. Su an olcum sayisi yetersiz -> 'HUKUM YOK', sayilar kayitta (bilgi silme yasagi).
-dirsekKume = {ad: k for ad, k in birlesik.items() if k.get('kisa') is None and k.get('kisaOlcu') is not None}
+#   kosulluBant. F1 tur 11: olcum TAMAM (buzgulu 3 / duz 5); kural harfiyen uygulanir, sonuc asagida dirsekHukmu.
+dirsekKume = {ad: k for ad, k in birlesik.items() if k.get('kisa') is None and (k.get('kolBoyuOverOmuz') is not None or k.get('kisaOlcu') is not None)}
 _sarkanIQR = f3['medyanlar']['kolAcisiDeg']['sarkan']['iqr']; _pufBand = f3['medyanlar']['kolAcisiDeg']['puf']['band']
 def _konum(a):
     if _sarkanIQR[0] <= a <= _sarkanIQR[1]: return 'sarkan IQR icinde'
     if _pufBand and _pufBand[0] <= a <= _pufBand[1]: return 'puf bandi icinde'
     return 'iki bandin disinda'
-dirsekOlcum = {ad: {'etiket': k['etiket'], 'kolBoyuOverTorso': k['kisaOlcu'], 'kolAcisiDeg': k['kolAcisiDeg'], 'aciKonumu': _konum(k['kolAcisiDeg']), 'boyKaynak': k.get('boyKaynak')} for ad, k in dirsekKume.items()}
+dirsekOlcum = {ad: {'etiket': k['etiket'], 'kolBoyuOverOmuz': k.get('kolBoyuOverOmuz'), 'kolBoyuOverTorso': k.get('kisaOlcu'), 'kolAcisiDeg': k['kolAcisiDeg'], 'aciKonumu': _konum(k['kolAcisiDeg']), 'boyKaynak': k.get('boyKaynak')} for ad, k in dirsekKume.items()}
 nDirsekBuz = sum(1 for k in dirsekKume.values() if k['etiket'] == 'buzgulu'); nDirsekDuz = sum(1 for k in dirsekKume.values() if k['etiket'] == 'duz')
+_buzKonum = {ad: o['aciKonumu'] for ad, o in dirsekOlcum.items() if o['etiket'] == 'buzgulu'}
+_nSark = sum(1 for v in _buzKonum.values() if v == 'sarkan IQR icinde'); _nPuf = sum(1 for v in _buzKonum.values() if v == 'puf bandi icinde')
+if nDirsekBuz < 3 or nDirsekDuz < 3: _dHukum = 'HUKUM YOK: olcum yetersiz (buzgulu %d/3, duz %d/3)' % (nDirsekBuz, nDirsekDuz)
+elif _nSark == nDirsekBuz: _dHukum = 'UZUN: buzgulu dirsek acilarinin hepsi sarkan IQR icinde -> dirsek kollar kosul icin uzun sayilir'
+elif _nPuf == nDirsekBuz: _dHukum = 'KISA: buzgulu dirsek acilarinin hepsi puf bandi icinde -> dirsek kollar kosul icin kisa sayilir'
+else: _dHukum = 'BOLUNME (karar ajani 3c): buzgulu dirsek acilari iki banda dagildi (sarkan IQR %d, puf bandi %d, disarida %d) -> kol BOYU sinifi (kisa/dirsek/uzun) aciyi ayirmiyor, ayirici yanlis; asagidaki boySinifiOrtusme tablosu ayni sonucu oran ekseninde verir' % (_nSark, _nPuf, nDirsekBuz - _nSark - _nPuf)
 dirsekHukmu = {'n': len(dirsekKume), 'nBuzgulu': nDirsekBuz, 'nDuz': nDirsekDuz, 'gerekli': 'n >= 3 buzgulu VE n >= 3 duz', 'olcumler': dirsekOlcum,
-               'sarkanIQR': _sarkanIQR, 'pufBand': _pufBand,
-               'hukum': ('HUKUM YOK: olcum yetersiz (buzgulu %d/3, duz %d/3); dirsek kollar kisa/uzun sinifina ve bosluga GIRMEZ, kosulda bosluga dusen deger adli kirmizi (contract kosul._boslukKurali)' % (nDirsekBuz, nDirsekDuz))
-                         if (nDirsekBuz < 3 or nDirsekDuz < 3) else 'OLCUM TAMAM: karar ajani 2 kurali uygulanir (buzgulu dirsek acilari -> sarkan IQR: uzun / puf bandi: kisa / bolunme: 3c)'}
+               'sarkanIQR': _sarkanIQR, 'pufBand': _pufBand, 'buzguluAciKonumu': _buzKonum, 'hukum': _dHukum,
+               'okumaHatasiNotu': 'Dallas 73.6 puf bandinin ust ucundan (74.2) 0.6, sarkan IQR alt ucundan (74.5) 0.9 derece uzakta; Locket 6 okumanin yayilimi 1.1 derece (okuma hatasi). Kural sayiyla uygulanir, tolerans EKLENMEDI (uydurma sayi yasagi); sinifin gercekten ayirmadigini oran tablosu bagimsiz gosterir.'}
+
+# --- F1 tur 11 HUKUM: kol boyu orani = kolBoyuOverOmuz (omuz genisligi paydasi; hakem kusur 2). Once BOY SINIFI (satici kelimesi kisa/dirsek/uzun) oran
+#   ekseninde ayriliyor mu? (karar ajani 3c testi) Sonra ACI kumeleri: buzgulu kollarda yana acilan (kucuk aci) ve sarkan (buyuk aci) kumesi arasindaki
+#   oran boslugu. Kosul (agiz buzgulu VE kol boyu orani < esik) icin esik bu ikinci bosluktan turetilir: 'yana acilan' konvansiyonu KISA-ELASTIK puf kolun
+#   konvansiyonudur; satici boy kelimesi degil, cizilen ACI siniflari (ayni contract'in bandlari) kumeyi belirler.
+def _boySinifOzet(kume, alan):
+    out = {}
+    for sinif, kk in (('kisa', True), ('dirsek', None), ('uzun', False)):
+        v = sorted((k[alan], ad) for ad, k in kume.items() if k.get('kisa') is kk and k.get(alan) is not None)
+        out[sinif] = {'n': len(v), 'min': (v[0][0] if v else None), 'max': (v[-1][0] if v else None), 'degerler': {ad: b for b, ad in v}}
+    def _ortusur(a, b): return out[a]['n'] and out[b]['n'] and not (out[a]['max'] < out[b]['min'])
+    out['ortusme'] = {'kisa-dirsek': bool(_ortusur('kisa', 'dirsek')), 'dirsek-uzun': bool(_ortusur('dirsek', 'uzun')), 'kisa-uzun': bool(_ortusur('kisa', 'uzun'))}
+    out['hukum'] = ('BOY SINIFI ORAN EKSENINDE AYRILMIYOR (3c): ayirici yanlis' if any(out['ortusme'].values()) else 'boy siniflari ayrik')
+    return out
+omuzKume = {ad: dict(k, kolBoyuOverOmuz=k['kolBoyuOverOmuz']) for ad, k in birlesik.items() if k.get('kolBoyuOverOmuz') is not None}
+_lk = f3['flatler'].get('bugra-locket', {})
+if _lk.get('kolBoyuOverOmuz') is not None:
+    omuzKume['bugra-locket'] = {'kolBoyuOverOmuz': _lk['kolBoyuOverOmuz'], 'etiket': _lk['etiket'], 'kisa': True, 'boyKaynak': _lk['boyKaynak'], 'kolAcisiDeg': _lk['kolAcisiDeg']['deger'], 'kisaOlcu': None}
+boySinifiOrtusme = {'kolBoyuOverOmuz': _boySinifOzet(omuzKume, 'kolBoyuOverOmuz'), 'kolBoyuOverTorso': _boySinifOzet(birlesik, 'kisaOlcu'),
+                    'tanim': 'satici boy kelimesi (kisa / dirsek / uzun, boyKaynak) ile olculen kol boyu orani: sinif araliklari ortusuyorsa boy kelimesi oran ekseninde ayirici degildir (karar ajani 3c). Iki paydayla da (omuz genisligi HUKUM, torso BILGI).'}
+# ACI kumeleri (yalniz agzi buzgulu kollar): acilar siralanir, EN BUYUK aci boslugu iki kumeyi ayirir (bosluk >= 10 derece: karar ajani 6'nin 'yayilim > 10' esigi);
+# yana acilan = kucuk aci kumesi, sarkan = buyuk aci kumesi. Sonra oran boslugu: yanaAcilan max(kolBoyuOverOmuz) .. sarkan min.
+buzKume = {ad: k for ad, k in omuzKume.items() if k['etiket'] == 'buzgulu'}
+_acilar = sorted((k['kolAcisiDeg'], ad) for ad, k in buzKume.items())
+_gaps = [(_acilar[i + 1][0] - _acilar[i][0], i) for i in range(len(_acilar) - 1)]
+_gmax, _gi = max(_gaps) if _gaps else (0, -1)
+ACI_KUME_BOSLUK_MIN = 10.0
+if _gmax >= ACI_KUME_BOSLUK_MIN:
+    _kesim = (_acilar[_gi][0] + _acilar[_gi + 1][0]) / 2.0
+    yanaAcilan = {ad: k for ad, k in buzKume.items() if k['kolAcisiDeg'] < _kesim}; sarkanBuz = {ad: k for ad, k in buzKume.items() if k['kolAcisiDeg'] >= _kesim}
+else:
+    _kesim = None; yanaAcilan = {}; sarkanBuz = dict(buzKume)
+yaMax = max([k['kolBoyuOverOmuz'] for k in yanaAcilan.values()] or [None]); saMin = min([k['kolBoyuOverOmuz'] for k in sarkanBuz.values()] or [None])
+oranBosluk = [yaMax, saMin] if (yaMax is not None and saMin is not None and yaMax < saMin) else None
+oranOrta = round((yaMax + saMin) / 2, 4) if oranBosluk else None
+yaAcilar = sorted(k['kolAcisiDeg'] for k in yanaAcilan.values())
+bandAktif = len(yanaAcilan) >= 3 and oranBosluk is not None
+yanaAcilanBand = {'n': len(yanaAcilan), 'uyeler': {ad: {'kolAcisiDeg': k['kolAcisiDeg'], 'kolBoyuOverOmuz': k['kolBoyuOverOmuz'], 'boyKaynak': k.get('boyKaynak')} for ad, k in yanaAcilan.items()},
+                  'min': (yaAcilar[0] if yaAcilar else None), 'max': (yaAcilar[-1] if yaAcilar else None), 'medyan': (medyan(yaAcilar) if yaAcilar else None),
+                  'aktif': bandAktif, 'nGerekli': 3,
+                  'hukum': ('AKTIF: n >= 3, oran boslugu var' if bandAktif else 'ASKIDA: yana acilan kume n=%d < 3 (karar ajani 3c: n >= 3 kendi bandi) %s -> kosulluBant[0] secilemez, her kol sarkan band; kume ve kosul kayitta, n >= 3 olunca kendiliginden aktif' % (len(yanaAcilan), '' if oranBosluk else 've oran boslugu yok'))}
+kolBoyuHukmu = {'alan': 'kolBoyuOverOmuz', 'n': len(omuzKume), 'nBuzgulu': len(buzKume),
+                'degerler': [{'flat': ad, 'oran': k['kolBoyuOverOmuz'], 'etiket': k['etiket'], 'boy': ('kisa' if k.get('kisa') is True else 'uzun' if k.get('kisa') is False else 'dirsek'), 'kolAcisiDeg': k['kolAcisiDeg'], 'torsoOran': k.get('kisaOlcu')} for ad, k in sorted(omuzKume.items(), key=lambda kv: kv[1]['kolBoyuOverOmuz'])],
+                'aciKumeleri': {'yontem': 'buzgulu kollarin acilari siralanir; en buyuk aci boslugu (>= %.0f derece) iki kumeyi ayirir' % ACI_KUME_BOSLUK_MIN, 'enBuyukAciBoslugu': [(_acilar[_gi][0], _acilar[_gi + 1][0]) if _gi >= 0 else None], 'kesimDeg': _kesim,
+                                'yanaAcilan': {ad: [k['kolAcisiDeg'], k['kolBoyuOverOmuz']] for ad, k in yanaAcilan.items()}, 'sarkan': {ad: [k['kolAcisiDeg'], k['kolBoyuOverOmuz']] for ad, k in sarkanBuz.items()}},
+                'yanaAcilanMax': yaMax, 'sarkanMin': saMin, 'bosluk': oranBosluk, 'ortaNokta': oranOrta,
+                'tanim': 'HUKUM (F1 tur 11). kol boyu = omuz ucu -> agiz ortasi, kol EKSENI boyunca / omuz genisligi (iki omuz ucu arasi; croquis36 2 x 183.8 = 367.6 mm). Kosul esigi = yana acilan buzgulu kumenin max orani ile sarkan buzgulu kumenin min orani arasindaki boslugun ortasi. Boy kelimesi (kisa/dirsek/uzun) kumeyi BELIRLEMEZ (boySinifiOrtusme: ortusuyor); cizilen aci kumesi belirler.'}
 f5['medyanlar'] = {
   'balonOranDik': {'eskiKume13': boslukHukmu(eskiKume, 'balonOranDik'), 'yeniKume': boslukHukmu(yeniKume, 'balonOranDik'), 'birlesik': boslukHukmu(birlesik, 'balonOranDik'),
                    'kisaAltKume': {'eskiKume13': kisaAltKume(eskiKume, 'balonOranDik'), 'yeniKume': kisaAltKume(yeniKume, 'balonOranDik'), 'birlesik': kisaAltKume(birlesik, 'balonOranDik'),
@@ -1087,16 +1227,17 @@ f5['medyanlar'] = {
                    'tanim': 'HUKUM EKSENI. kol eksenine dik en genis kesit / agiz uzunlugu; etiket cizim konvansiyonundan. Bosluk = duz maksimumu ile buzgulu minimumu arasi. TUM kume boslugu bilgi (ortusur), hukum kisaAltKume.'},
   'balonOranYatay': {'eskiKume13': boslukHukmu(eskiKume, 'balonOranYatay'), 'yeniKume': boslukHukmu(yeniKume, 'balonOranYatay'), 'birlesik': boslukHukmu(birlesik, 'balonOranYatay'),
                      'tanim': 'BILGI. BOLUM 3 yatay satir tanimi; eksen dusey olmayan kollarda kol boyunu olcer (Stevie/Lucy), hukum tasimaz.'},
+  'kolBoyuOverOmuz': kolBoyuHukmu,
+  'yanaAcilanBand': yanaAcilanBand,
+  'boySinifiOrtusme': boySinifiOrtusme,
   'kolBoyuOverTorso': {'n': len(kisaOlcumler), 'degerler': [{'flat': ad, 'oran': v, 'kisa': kk, 'dikey': next(d for d, a2, _ in dikeyOlcumler if a2 == ad), 'kolAcisiDeg': birlesik[ad]['kolAcisiDeg']} for v, ad, kk in kisaOlcumler],
                        'nDirsek': len(dirsekKume), 'kisaMax': kisaMax, 'uzunMin': uzunMin, 'bosluk': ([kisaMax, uzunMin] if (kisaMax is not None and uzunMin is not None and kisaMax < uzunMin) else None),
                        'ortaNokta': (round((kisaMax + uzunMin) / 2, 4) if (kisaMax is not None and uzunMin is not None and kisaMax < uzunMin) else None),
-                       'esik': KISA_ESIK, 'esikBoslukIcinde': (kisaMax is not None and uzunMin is not None and kisaMax < KISA_ESIK < uzunMin),
-                       'tanim': 'HUKUM (F1 tur 9, hakem ENGEL 2). kol boyu = omuz ucu -> agiz ortasi, kol EKSENI boyunca (hypot(dx,dy)) / torso (SNP->bel). Eski dikey deger = kolBoyu x sin(kolAcisiDeg) (degerler[].dikey, bilgi): '
-                                'aciya bagli oldugu icin band secen kosul olarak donguseldi; F2 grafta kol boyunu bilir, aciyi bilmez. F1 tur 10: kisa etiketi urun taniminda (boyKaynak), orandan DEGIL; oran yalniz bosluk. Esik boslugun icindeyse kalir, degilse ortaNokta.'},
+                       'tanim': 'BILGI (F1 tur 9-10 HUKUM idi; tur 11 hakem kusuru: payda SNP->giysinin bel dikisi giysiye bagli — Holmes (satici: short sleeves, yuksek bel/bagcikli) 0.769 > Duxbury (satici: elbow-length) 0.634; omuz paydasiyla Holmes 0.636 < Duxbury 0.700, sira duzeldi). Hukum kolBoyuOverOmuz.'},
   'dirsek': dirsekHukmu,
   'agizOmuzDikeyOverTorso': {'n': len(dikeyOlcumler), 'degerler': [{'flat': ad, 'oran': v, 'kisa': kk} for v, ad, kk in dikeyOlcumler],
                              'kisaMax': max([v for v, _, kk in dikeyOlcumler if kk] or [None]), 'uzunMin': min([v for v, _, kk in dikeyOlcumler if not kk] or [None]),
-                             'tanim': 'BILGI (eski tanim, F1 tur 8; hukum tasimaz). Dikey mesafe / torso; kisa etiketi artik kolBoyuOverTorso ile.'},
+                             'tanim': 'BILGI (eski tanim, F1 tur 8; hukum tasimaz).'},
   'kolAcisiDeg': {'buzgulu': {ad: k['kolAcisiDeg'] for ad, k in yeniKume.items() if k['etiket'] == 'buzgulu'}, 'duz': {ad: k['kolAcisiDeg'] for ad, k in yeniKume.items() if k['etiket'] == 'duz'},
                   'not': 'bilgi: raglan/dusuk omuz/off-shoulder kollarin omuz ucu set-in ile ayni nokta degil (omuzNot), banda girmez'},
 }
@@ -1111,27 +1252,39 @@ for alan in ('balonOranDik', 'balonOranYatay'):
 for kum in ('eskiKume13', 'yeniKume', 'birlesik'):
     h = f5['medyanlar']['balonOranDik']['kisaAltKume'][kum]
     print('KISA ALT KUME', kum, h['hukum'], 'duzMax', h['duzMax'], 'buzMin', h['buzMin'], 'bosluk', h.get('bosluk'), 'orta', h.get('ortaNokta'), 'uyeler', h['uyeler'], 'olculmedi', h['olculmedi'])
-kb = f5['medyanlar']['kolBoyuOverTorso']
-print('kolBoyuOverTorso:', json.dumps(kb['degerler']), 'kisaMax', kb['kisaMax'], 'uzunMin', kb['uzunMin'], 'bosluk', kb['bosluk'], 'orta', kb['ortaNokta'], 'esik', kb['esik'], 'icinde', kb['esikBoslukIcinde'])
+kb = f5['medyanlar']['kolBoyuOverOmuz']
+print('kolBoyuOverOmuz:', json.dumps(kb['degerler']), '\n  aci kumeleri', json.dumps(kb['aciKumeleri']), '\n  yanaAcilanMax', kb['yanaAcilanMax'], 'sarkanMin', kb['sarkanMin'], 'bosluk', kb['bosluk'], 'orta', kb['ortaNokta'])
+print('boySinifiOrtusme omuz:', json.dumps({s_: {kk: v for kk, v in d_.items() if kk != 'degerler'} if isinstance(d_, dict) else d_ for s_, d_ in f5['medyanlar']['boySinifiOrtusme']['kolBoyuOverOmuz'].items()}))
+print('boySinifiOrtusme torso:', json.dumps({s_: {kk: v for kk, v in d_.items() if kk != 'degerler'} if isinstance(d_, dict) else d_ for s_, d_ in f5['medyanlar']['boySinifiOrtusme']['kolBoyuOverTorso'].items()}))
+print('dirsek:', dirsekHukmu['hukum'], json.dumps(dirsekHukmu['buzguluAciKonumu']))
+print('yanaAcilanBand:', yanaAcilanBand['hukum'], 'n', yanaAcilanBand['n'], 'min/max/medyan', yanaAcilanBand['min'], yanaAcilanBand['max'], yanaAcilanBand['medyan'])
 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, 'w') as f:
     json.dump(sonuc, f, indent=1, ensure_ascii=False)
 
-# --- F1 tur 9: contract esikleri ile URETICI ciktisi ayni mi? (tek kaynak kontrolu; JSON yazildiktan sonra, fark exit 2) ---
+# --- F1 tur 9/11: contract esikleri ile URETICI ciktisi ayni mi? (tek kaynak kontrolu; JSON yazildiktan sonra, fark exit 2) ---
+# F1 tur 11 (hakem kusur 3): IKI esik icin AYNI kural — contract sayisi = ureticinin bosluk ORTASI, tolerans 1e-3 (JSON 3-4 ondalik yuvarlama);
+# 'bosluk icinde' yeterli DEGIL. Bosluk listeleri ve band durumu (aktif/n/min/max/medyan) bayt-ayni olmali.
+TOL = 1e-3
+def _esit(a, b): return a is not None and b is not None and abs(float(a) - float(b)) <= TOL
+def _listEsit(a, b): return a is not None and b is not None and len(a) == len(b) and all(_esit(x, y) for x, y in zip(a, b))
 hK = f5['medyanlar']['balonOranDik']['kisaAltKume']['birlesik']; uyumsuz = []
 if hK.get('bosluk') is None: uyumsuz.append('kisa alt kume boslugu KAPANDI: skaler esik ayirici degil (karar ajani 3c), contract esigi gecersiz')
 else:
-    if KOSUL['agizBuzguOranMin'] != hK['ortaNokta']: uyumsuz.append('agizBuzguOranMin contract %s != uretici ortaNokta %s' % (KOSUL['agizBuzguOranMin'], hK['ortaNokta']))
-    if list(KOSUL['agizBuzguOranBosluk']) != list(hK['bosluk']): uyumsuz.append('agizBuzguOranBosluk contract %s != uretici %s' % (KOSUL['agizBuzguOranBosluk'], hK['bosluk']))
-if kb['bosluk'] is None: uyumsuz.append('kolBoyuOverTorso kisa/uzun boslugu KAPANDI')
+    if not _esit(KOSUL['agizBuzguOranMin'], hK['ortaNokta']): uyumsuz.append('agizBuzguOranMin contract %s != uretici ortaNokta %s' % (KOSUL['agizBuzguOranMin'], hK['ortaNokta']))
+    if not _listEsit(KOSUL['agizBuzguOranBosluk'], hK['bosluk']): uyumsuz.append('agizBuzguOranBosluk contract %s != uretici %s' % (KOSUL['agizBuzguOranBosluk'], hK['bosluk']))
+if kb['bosluk'] is None: uyumsuz.append('kolBoyuOverOmuz yana-acilan/sarkan boslugu YOK (ortusme ya da kume bos)')
 else:
-    if not kb['esikBoslukIcinde']: uyumsuz.append('kolBoyuOverTorsoMax %s bosluk %s DISINDA; ortaNokta %s' % (KISA_ESIK, kb['bosluk'], kb['ortaNokta']))
-    if list(KOSUL['kolBoyuOverTorsoBosluk']) != list(kb['bosluk']): uyumsuz.append('kolBoyuOverTorsoBosluk contract %s != uretici %s' % (KOSUL['kolBoyuOverTorsoBosluk'], kb['bosluk']))
+    if not _esit(KOSUL.get('kolBoyuOverOmuzMax'), kb['ortaNokta']): uyumsuz.append('kolBoyuOverOmuzMax contract %s != uretici ortaNokta %s' % (KOSUL.get('kolBoyuOverOmuzMax'), kb['ortaNokta']))
+    if not _listEsit(KOSUL.get('kolBoyuOverOmuzBosluk'), kb['bosluk']): uyumsuz.append('kolBoyuOverOmuzBosluk contract %s != uretici %s' % (KOSUL.get('kolBoyuOverOmuzBosluk'), kb['bosluk']))
+BANT0 = json.load(open(CONTRACT_FC))['sevkPoz']['kolAcisiDeg']['kosulluBant'][0]
+for anahtar in ('n', 'min', 'max', 'medyan', 'aktif'):
+    if BANT0.get(anahtar) != yanaAcilanBand[anahtar]: uyumsuz.append('kosulluBant[0].%s contract %r != uretici %r' % (anahtar, BANT0.get(anahtar), yanaAcilanBand[anahtar]))
 if uyumsuz:
-    print('ESIK UYUMSUZ (contract/flat-convention-v1.json kosulluBant[0].kosul vs flat-olcum.json f1Tur8):'); [print('  -', u) for u in uyumsuz]
+    print('ESIK UYUMSUZ (contract/flat-convention-v1.json kosulluBant[0] vs flat-olcum.json f1Tur8):'); [print('  -', u) for u in uyumsuz]
     import sys; sys.exit(2)
-print('ESIK KONTROL OK: agizBuzguOranMin %s = kisa alt kume orta, bosluk %s; kolBoyuOverTorsoMax %s bosluk %s icinde' % (KOSUL['agizBuzguOranMin'], hK['bosluk'], KISA_ESIK, kb['bosluk']))
+print('ESIK KONTROL OK: agizBuzguOranMin %s = kisa alt kume orta (bosluk %s); kolBoyuOverOmuzMax %s = yana-acilan/sarkan orta (bosluk %s); kosulluBant[0] n=%s aktif=%s' % (KOSUL['agizBuzguOranMin'], hK['bosluk'], KOSUL.get('kolBoyuOverOmuzMax'), kb['bosluk'], yanaAcilanBand['n'], yanaAcilanBand['aktif']))
 print(json.dumps(sonuc['oranlar'], indent=1, ensure_ascii=False))
 for ad, k in f1['flatler'].items():
     if 'OLCULEMEDI' in k: print(ad, 'OLCULEMEDI:', k['OLCULEMEDI']); continue

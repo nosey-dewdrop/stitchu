@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720" font-family="Helvetica, Arial, sans-serif" font-size="13">
+<rect width="1400" height="720" fill="#fcfcfb"/>
+<text x="90" y="34" font-size="19" fill="#0b0b0b">Satilan flat: kol acisi - kol boyu / omuz genisligi (F1 tur 11, n=33 kol, 15 agzi buzgulu)</text>
+<text x="90" y="54" fill="#52514e">Kaynak: KOSU/ciktilar/flat-olcum.json f1Tur8.medyanlar.kolBoyuOverOmuz; aci = omuz ucu -&gt; kol agzi ortasi, yatayin altina derece; oran = kol ekseni boyu / iki omuz ucu arasi</text>
+<line x1="90" y1="650.0" x2="870" y2="650.0" stroke="#e4e3df"/>
+<text x="82" y="650.0" text-anchor="end" fill="#52514e" dy="4">20°</text>
+<line x1="90" y1="572.7" x2="870" y2="572.7" stroke="#e4e3df"/>
+<text x="82" y="572.7" text-anchor="end" fill="#52514e" dy="4">30°</text>
+<line x1="90" y1="495.3" x2="870" y2="495.3" stroke="#e4e3df"/>
+<text x="82" y="495.3" text-anchor="end" fill="#52514e" dy="4">40°</text>
+<line x1="90" y1="418.0" x2="870" y2="418.0" stroke="#e4e3df"/>
+<text x="82" y="418.0" text-anchor="end" fill="#52514e" dy="4">50°</text>
+<line x1="90" y1="340.7" x2="870" y2="340.7" stroke="#e4e3df"/>
+<text x="82" y="340.7" text-anchor="end" fill="#52514e" dy="4">60°</text>
+<line x1="90" y1="263.3" x2="870" y2="263.3" stroke="#e4e3df"/>
+<text x="82" y="263.3" text-anchor="end" fill="#52514e" dy="4">70°</text>
+<line x1="90" y1="186.0" x2="870" y2="186.0" stroke="#e4e3df"/>
+<text x="82" y="186.0" text-anchor="end" fill="#52514e" dy="4">80°</text>
+<line x1="90" y1="108.7" x2="870" y2="108.7" stroke="#e4e3df"/>
+<text x="82" y="108.7" text-anchor="end" fill="#52514e" dy="4">90°</text>
+<line x1="138.8" y1="70" x2="138.8" y2="650" stroke="#e4e3df"/>
+<text x="138.8" y="668" text-anchor="middle" fill="#52514e">0.4</text>
+<line x1="236.2" y1="70" x2="236.2" y2="650" stroke="#e4e3df"/>
+<text x="236.2" y="668" text-anchor="middle" fill="#52514e">0.6</text>
+<line x1="333.8" y1="70" x2="333.8" y2="650" stroke="#e4e3df"/>
+<text x="333.8" y="668" text-anchor="middle" fill="#52514e">0.8</text>
+<line x1="431.2" y1="70" x2="431.2" y2="650" stroke="#e4e3df"/>
+<text x="431.2" y="668" text-anchor="middle" fill="#52514e">1.0</text>
+<line x1="528.8" y1="70" x2="528.8" y2="650" stroke="#e4e3df"/>
+<text x="528.8" y="668" text-anchor="middle" fill="#52514e">1.2</text>
+<line x1="626.2" y1="70" x2="626.2" y2="650" stroke="#e4e3df"/>
+<text x="626.2" y="668" text-anchor="middle" fill="#52514e">1.4</text>
+<line x1="723.8" y1="70" x2="723.8" y2="650" stroke="#e4e3df"/>
+<text x="723.8" y="668" text-anchor="middle" fill="#52514e">1.6</text>
+<line x1="821.3" y1="70" x2="821.3" y2="650" stroke="#e4e3df"/>
+<text x="821.3" y="668" text-anchor="middle" fill="#52514e">1.8</text>
+<text x="480.0" y="690" text-anchor="middle" fill="#0b0b0b">kol boyu / omuz genisligi (croquis36: uzun kol 590 / 367.6 = 1.61)</text>
+<rect x="90" y="140.4" width="780" height="88.2" fill="#2a78d6" opacity="0.10"/>
+<text x="96" y="242.5" fill="#2a78d6" font-size="12">sarkan band IQR [74.5, 85.9], taban 82.2 (contract)</text>
+<rect x="253.8" y="70" width="9.3" height="580" fill="#eb6834" opacity="0.18"/>
+<text x="258.4" y="84" fill="#eb6834" font-size="12" text-anchor="middle">oran boslugu [0.636, 0.655] orta 0.6455 (0.019: olcum hatasi mertebesi)</text>
+<line x1="90" y1="430.4" x2="870" y2="430.4" stroke="#eb6834" stroke-dasharray="6 4"/>
+<text x="96" y="430.4" fill="#eb6834" font-size="12" dy="-4">en buyuk aci boslugu 34.5 -&gt; 62.3, kesim 48.4°: alti YANA ACILAN, ustu SARKAN</text>
+<rect x="121.6" y="118.9" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>dd-passiflore.jpg (duz): aci 88.1, oran 0.374, boy kisa</title></rect>
+<rect x="193.7" y="224.0" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>cash-hampden.jpg (duz): aci 74.5, oran 0.522, boy kisa</title></rect>
+<circle cx="202.1" cy="550.2" r="6" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"><title>03-empire-dress-uc-boy.png: aci 32.9, oran 0.53, boy kisa</title></circle>
+<rect x="234.7" y="280.5" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>tilly-nell.jpg#kisa-duz (duz): aci 67.2, oran 0.606, boy kisa</title></rect>
+<rect x="249.3" y="156.0" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>04-a-line-puff-kol.png (duz): aci 83.3, oran 0.636, boy kisa</title></rect>
+<circle cx="253.8" cy="537.9" r="6" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"><title>bhl-lucy-puff.jpg: aci 34.5, oran 0.636, boy kisa</title></circle>
+<rect x="258.1" y="197.0" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>sa-emerald.jpg (duz): aci 78.0, oran 0.654, boy dirsek</title></rect>
+<circle cx="263.1" cy="230.9" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>bugra-locket: aci 74.2, oran 0.655, boy kisa</title></circle>
+<rect x="265.4" y="125.8" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>tilly-agnes.png#buzgulu-omuz (duz): aci 87.2, oran 0.669, boy kisa</title></rect>
+<rect x="280.5" y="248.0" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>cash-duxbury.jpg (duz): aci 71.4, oran 0.7, boy dirsek</title></rect>
+<rect x="289.3" y="214.0" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>07-uzun-kol-akiskan-etek.png (duz): aci 75.8, oran 0.718, boy kisa</title></rect>
+<rect x="290.2" y="230.2" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>06-a-line-puff-kol-varyant.png (duz): aci 73.7, oran 0.72, boy kisa</title></rect>
+<circle cx="301.6" cy="216.9" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>sa-zalia.jpg: aci 76.0, oran 0.734, boy dirsek</title></circle>
+<rect x="298.1" y="171.4" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>cash-montrose.jpg (duz): aci 81.3, oran 0.736, boy dirsek</title></rect>
+<circle cx="333.3" cy="315.1" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>soi-lori.png: aci 63.3, oran 0.799, boy kisa</title></circle>
+<rect x="371.7" y="209.3" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>tilly-agnes.png#kisa (duz): aci 76.4, oran 0.887, boy kisa</title></rect>
+<circle cx="394.2" cy="141.9" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>sa-queenie.jpg: aci 85.7, oran 0.924, boy dirsek</title></circle>
+<rect x="437.0" y="185.4" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>cash-honeybourne.jpg (duz): aci 79.5, oran 1.021, boy dirsek</title></rect>
+<circle cx="444.4" cy="220.0" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>tilly-nell.jpg#puf: aci 75.6, oran 1.027, boy kisa</title></circle>
+<rect x="466.2" y="200.1" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>sa-yvette.jpg (duz): aci 77.6, oran 1.081, boy dirsek</title></rect>
+<circle cx="510.7" cy="140.4" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>02-uzun-robe-dress.png: aci 85.9, oran 1.163, boy uzun</title></circle>
+<circle cx="530.7" cy="157.4" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>05-a-line-top-ve-elbise.png: aci 83.7, oran 1.204, boy uzun</title></circle>
+<circle cx="544.8" cy="231.6" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>10-princess-a-line.png: aci 74.1, oran 1.233, boy uzun</title></circle>
+<rect x="544.2" y="106.5" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>dd-orage.png (duz): aci 89.7, oran 1.241, boy uzun</title></rect>
+<circle cx="564.3" cy="235.5" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>sa-dallas.jpg: aci 73.6, oran 1.273, boy dirsek</title></circle>
+<circle cx="603.8" cy="169.0" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>dd-magnolia.jpg: aci 82.2, oran 1.354, boy uzun</title></circle>
+<rect x="645.1" y="174.5" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>cash-wyman.jpg (duz): aci 80.9, oran 1.448, boy uzun</title></rect>
+<circle cx="678.9" cy="322.9" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>tilly-marnie.png: aci 62.3, oran 1.508, boy uzun</title></circle>
+<rect x="720.7" y="214.8" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>tilly-coco.jpg#v1 (duz): aci 75.7, oran 1.603, boy uzun</title></rect>
+<rect x="733.9" y="192.3" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>tilly-agnes.png#uzun (duz): aci 78.6, oran 1.63, boy uzun</title></rect>
+<circle cx="756.4" cy="192.2" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>bhl-marie-dress.jpg: aci 79.2, oran 1.667, boy uzun</title></circle>
+<circle cx="756.4" cy="238.6" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>tilly-lyra.png#uzun: aci 73.2, oran 1.667, boy uzun</title></circle>
+<rect x="821.6" y="265.8" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>tilly-nell.jpg#bilezik (duz): aci 69.1, oran 1.81, boy uzun</title></rect>
+<text x="210.1" y="541.2" font-size="11" fill="#52514e">empire-dress-uc-boy (kisa)</text>
+<text x="261.8" y="528.9" font-size="11" fill="#52514e">bhl-lucy-puff (kisa)</text>
+<text x="271.1" y="221.9" font-size="11" fill="#52514e">bugra-locket (kisa)</text>
+<text x="309.6" y="207.9" font-size="11" fill="#52514e">sa-zalia (dirsek)</text>
+<text x="341.3" y="306.1" font-size="11" fill="#52514e">soi-lori (kisa)</text>
+<text x="402.2" y="132.9" font-size="11" fill="#52514e">sa-queenie (dirsek)</text>
+<text x="452.4" y="211.0" font-size="11" fill="#52514e">tilly-nell puf (kisa)</text>
+<text x="518.7" y="119.4" font-size="11" fill="#52514e">uzun-robe-dress (uzun)</text>
+<text x="538.7" y="148.4" font-size="11" fill="#52514e">a-line-top-ve-elbise (uzun)</text>
+<text x="552.8" y="198.6" font-size="11" fill="#52514e">princess-a-line (uzun)</text>
+<text x="572.3" y="226.5" font-size="11" fill="#52514e">sa-dallas (dirsek)</text>
+<text x="611.8" y="136.0" font-size="11" fill="#52514e">dd-magnolia (uzun)</text>
+<text x="686.9" y="313.9" font-size="11" fill="#52514e">tilly-marnie (uzun)</text>
+<text x="764.4" y="183.2" font-size="11" fill="#52514e">bhl-marie-dress (uzun)</text>
+<text x="764.4" y="229.6" font-size="11" fill="#52514e">tilly-lyra uzun (uzun)</text>
+<circle cx="98" cy="590" r="6" fill="#eb6834"/>
+<text x="110" y="590" dy="4" fill="#0b0b0b" font-size="12">buzgulu, yana acilan (n=2) - kosulluBant[0] ASKIDA</text>
+<circle cx="98" cy="608" r="6" fill="#2a78d6"/>
+<text x="110" y="608" dy="4" fill="#0b0b0b" font-size="12">buzgulu, sarkan (n=13)</text>
+<rect x="94" y="622" width="9" height="9" fill="#9a9890"/>
+<text x="110" y="626" dy="4" fill="#0b0b0b" font-size="12">duz agiz (hepsi sarkan bandinda yargilanir)</text>
+<text x="940" y="62" font-size="15" fill="#0b0b0b">Satici boy kelimesi, ayni oran ekseninde</text>
+<text x="940" y="108" fill="#0b0b0b" dy="4">kisa  n=13</text>
+<rect x="958.5" y="121" width="163.2" height="18" rx="4" fill="#9a9890" opacity="0.35"/>
+<line x1="958.5" y1="121" x2="958.5" y2="139" stroke="#52514e" stroke-width="2"><title>dd-passiflore.jpg 0.374</title></line>
+<line x1="995.5" y1="121" x2="995.5" y2="139" stroke="#52514e" stroke-width="2"><title>cash-hampden.jpg 0.522</title></line>
+<line x1="997.5" y1="121" x2="997.5" y2="139" stroke="#52514e" stroke-width="2"><title>03-empire-dress-uc-boy.png 0.53</title></line>
+<line x1="1016.5" y1="121" x2="1016.5" y2="139" stroke="#52514e" stroke-width="2"><title>tilly-nell.jpg#kisa-duz 0.606</title></line>
+<line x1="1024.0" y1="121" x2="1024.0" y2="139" stroke="#52514e" stroke-width="2"><title>04-a-line-puff-kol.png 0.636</title></line>
+<line x1="1024.0" y1="121" x2="1024.0" y2="139" stroke="#52514e" stroke-width="2"><title>bhl-lucy-puff.jpg 0.636</title></line>
+<line x1="1028.8" y1="121" x2="1028.8" y2="139" stroke="#52514e" stroke-width="2"><title>bugra-locket 0.655</title></line>
+<line x1="1032.2" y1="121" x2="1032.2" y2="139" stroke="#52514e" stroke-width="2"><title>tilly-agnes.png#buzgulu-omuz 0.669</title></line>
+<line x1="1044.5" y1="121" x2="1044.5" y2="139" stroke="#52514e" stroke-width="2"><title>07-uzun-kol-akiskan-etek.png 0.718</title></line>
+<line x1="1045.0" y1="121" x2="1045.0" y2="139" stroke="#52514e" stroke-width="2"><title>06-a-line-puff-kol-varyant.png 0.72</title></line>
+<line x1="1064.8" y1="121" x2="1064.8" y2="139" stroke="#52514e" stroke-width="2"><title>soi-lori.png 0.799</title></line>
+<line x1="1086.8" y1="121" x2="1086.8" y2="139" stroke="#52514e" stroke-width="2"><title>tilly-agnes.png#kisa 0.887</title></line>
+<line x1="1121.8" y1="121" x2="1121.8" y2="139" stroke="#52514e" stroke-width="2"><title>tilly-nell.jpg#puf 1.027</title></line>
+<text x="958.5" y="154" font-size="11" fill="#52514e" text-anchor="middle">0.374</text>
+<text x="1121.8" y="154" font-size="11" fill="#52514e" text-anchor="middle">1.027</text>
+<text x="940" y="178" fill="#0b0b0b" dy="4">dirsek  n=8</text>
+<rect x="1028.5" y="191" width="154.8" height="18" rx="4" fill="#9a9890" opacity="0.35"/>
+<line x1="1028.5" y1="191" x2="1028.5" y2="209" stroke="#52514e" stroke-width="2"><title>sa-emerald.jpg 0.654</title></line>
+<line x1="1040.0" y1="191" x2="1040.0" y2="209" stroke="#52514e" stroke-width="2"><title>cash-duxbury.jpg 0.7</title></line>
+<line x1="1048.5" y1="191" x2="1048.5" y2="209" stroke="#52514e" stroke-width="2"><title>sa-zalia.jpg 0.734</title></line>
+<line x1="1049.0" y1="191" x2="1049.0" y2="209" stroke="#52514e" stroke-width="2"><title>cash-montrose.jpg 0.736</title></line>
+<line x1="1096.0" y1="191" x2="1096.0" y2="209" stroke="#52514e" stroke-width="2"><title>sa-queenie.jpg 0.924</title></line>
+<line x1="1120.2" y1="191" x2="1120.2" y2="209" stroke="#52514e" stroke-width="2"><title>cash-honeybourne.jpg 1.021</title></line>
+<line x1="1135.2" y1="191" x2="1135.2" y2="209" stroke="#52514e" stroke-width="2"><title>sa-yvette.jpg 1.081</title></line>
+<line x1="1183.2" y1="191" x2="1183.2" y2="209" stroke="#52514e" stroke-width="2"><title>sa-dallas.jpg 1.273</title></line>
+<text x="1028.5" y="224" font-size="11" fill="#52514e" text-anchor="middle">0.654</text>
+<text x="1183.2" y="224" font-size="11" fill="#52514e" text-anchor="middle">1.273</text>
+<text x="940" y="248" fill="#0b0b0b" dy="4">uzun  n=12</text>
+<rect x="1155.8" y="261" width="161.8" height="18" rx="4" fill="#9a9890" opacity="0.35"/>
+<line x1="1155.8" y1="261" x2="1155.8" y2="279" stroke="#52514e" stroke-width="2"><title>02-uzun-robe-dress.png 1.163</title></line>
+<line x1="1166.0" y1="261" x2="1166.0" y2="279" stroke="#52514e" stroke-width="2"><title>05-a-line-top-ve-elbise.png 1.204</title></line>
+<line x1="1173.2" y1="261" x2="1173.2" y2="279" stroke="#52514e" stroke-width="2"><title>10-princess-a-line.png 1.233</title></line>
+<line x1="1175.2" y1="261" x2="1175.2" y2="279" stroke="#52514e" stroke-width="2"><title>dd-orage.png 1.241</title></line>
+<line x1="1203.5" y1="261" x2="1203.5" y2="279" stroke="#52514e" stroke-width="2"><title>dd-magnolia.jpg 1.354</title></line>
+<line x1="1227.0" y1="261" x2="1227.0" y2="279" stroke="#52514e" stroke-width="2"><title>cash-wyman.jpg 1.448</title></line>
+<line x1="1242.0" y1="261" x2="1242.0" y2="279" stroke="#52514e" stroke-width="2"><title>tilly-marnie.png 1.508</title></line>
+<line x1="1265.8" y1="261" x2="1265.8" y2="279" stroke="#52514e" stroke-width="2"><title>tilly-coco.jpg#v1 1.603</title></line>
+<line x1="1272.5" y1="261" x2="1272.5" y2="279" stroke="#52514e" stroke-width="2"><title>tilly-agnes.png#uzun 1.63</title></line>
+<line x1="1281.8" y1="261" x2="1281.8" y2="279" stroke="#52514e" stroke-width="2"><title>bhl-marie-dress.jpg 1.667</title></line>
+<line x1="1281.8" y1="261" x2="1281.8" y2="279" stroke="#52514e" stroke-width="2"><title>tilly-lyra.png#uzun 1.667</title></line>
+<line x1="1317.5" y1="261" x2="1317.5" y2="279" stroke="#52514e" stroke-width="2"><title>tilly-nell.jpg#bilezik 1.81</title></line>
+<text x="1155.8" y="294" font-size="11" fill="#52514e" text-anchor="middle">1.163</text>
+<text x="1317.5" y="294" font-size="11" fill="#52514e" text-anchor="middle">1.81</text>
+<text x="940" y="330" fill="#0b0b0b" font-size="12">ortusme: kisa-dirsek EVET, dirsek-uzun EVET</text>
+<text x="940" y="348" fill="#eb6834" font-size="12">boy kelimesi aciyi/orani ayirmiyor (3c)</text>
+<text x="940" y="368" fill="#52514e" font-size="12">dirsek hukmu: BOLUNME (karar ajani 3c)</text>
+<text x="965.0" y="668" text-anchor="middle" fill="#52514e" font-size="11">0.4</text>
+<text x="1065.0" y="668" text-anchor="middle" fill="#52514e" font-size="11">0.8</text>
+<text x="1165.0" y="668" text-anchor="middle" fill="#52514e" font-size="11">1.2</text>
+<text x="1265.0" y="668" text-anchor="middle" fill="#52514e" font-size="11">1.6</text>
+</svg>
