@@ -20,6 +20,7 @@ add_library(engine
     src/planops.cpp
     src/patternedit.cpp
     src/bodysurface.cpp
+    src/body.cpp
     src/garmentshell.cpp
     src/bodice.cpp
     src/skirt.cpp
@@ -1485,3 +1486,11 @@ add_test(NAME enum_dallanma_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/enum
 # "once" sayisi), F1 doldurunca kirmizi/yesil. Sayi bu testte yok, contract'ta.
 add_test(NAME flat_ayni_insan_check COMMAND ${NODE_EXECUTABLE}
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_ayni_insan_check.mjs)
+
+# F1 (2026-09-05) IKI BEDEN, TEK SOZLESME: contract/body-v1.json -> body.gen.hpp ->
+# engine/src/body.cpp. Halka cevreleri contract ile esit, landmark sirasi
+# monoton, croquis36-gercek36 farki farkTablosu ile ayni, graded(EU36) ==
+# gercek36 (formul tek). argv[1] ile beden-iki.svg cizer (KOSU/ciktilar).
+add_executable(body_check tests/body_check.cpp)
+target_link_libraries(body_check PRIVATE engine)
+add_test(NAME body_check COMMAND body_check)

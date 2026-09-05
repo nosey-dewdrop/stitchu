@@ -180,3 +180,7 @@ KOSU/ciktilar/_yerel/
 # F0 "once" fotografi: bugunku 9 flat'in kontak sayfasi. Urun degisince yeniden
 # uretilemez (eski motoru gosterir), o yuzden *.png kuralindan muaf ve takipli.
 !KOSU/ciktilar/zemin-once.png
+
+# F1 (2026-09-05): beden iskeleti gorseli commit edilir (fotograf icermez)
+!KOSU/ciktilar/beden-iki.svg
+!KOSU/ciktilar/beden-iki.png

@@ -22,7 +22,7 @@
   },
 
   "croquis": {
-    "_law": "TEK CROQUIS. Butun flat'ler bu tek isaret kumesinden cikar. Bir stilin YAKASI/KOLU/ETEGI degisir; omuz ucu, gogus (koltukalti) hatti ve bel hatti YUKSEKLIGI DEGISMEZ. Kapi bu isaretleri her flat'ten olcup +-2 mm icinde ayni olduklarini dogrular.",
+    "_law": "TEK CROQUIS. Butun flat'ler bu tek isaret kumesinden cikar. Bir stilin YAKASI/KOLU/ETEGI degisir; omuz ucu, koltukalti hatti ve gogus hatti (IKI AYRI landmark: body-v1 underarm.y ve bustLine.y; F1 karar #1c) ve bel hatti YUKSEKLIGI DEGISMEZ. Kapi bu isaretleri her flat'ten olcup +-2 mm icinde ayni olduklarini dogrular.",
     "id": "eu38-flat-v1",
     "toleranceMM": 2.0,
     "units": "SVG kullanici birimi; x=0 on-orta (CF), y=0 omuz cizgisi, +y asagi",
@@ -39,7 +39,7 @@
         "_previous": { "u": 19.36, "mm": 58.08, "derivation": "neckDrop 4.0 + (shoulderTipX 78.0 - neckBase 30.0) x 0.32" },
         "_V4_A_NEDEN_DEGISTI": "Bagimsiz bir sayi degil, shoulderTipX'in turevi. shoulderTipX 78.0 -> 70.1799 degisince ayni formulden 19.36 -> 16.8576 duser." },
       "chestX": { "u": 73.3333, "mm": 220.0, "derivation": "bustCM 88.0 -> 880 mm; duz serili tup yari-genisligi = 880/4 = 220 mm; 220 / unitMM 3.0", "source": "burda EU38 bustCM (verified) + tup geometrisi" },
-      "chestY": { "u": 92.0, "mm": 276.0, "source": "ACIK — koltukalti derinligi kaynaksiz devralindi. NOT: Aldrich p.11 armscye DEPTH 21.0 cm NAPE'ten olculur, omuz cizgisinden degil; dogrudan capa olarak KULLANILMADI (yanlis temel olurdu)." },
+      "chestY": { "u": 92.0, "mm": 276.0, "_F1": "ESKI DEGER, KULLANILMAZ. body-v1 croquis36 underarm.y 156.0 mm (DOGRULANMADI, techpackwizard 0.40 x torso) ve bustLine.y 172.0 mm (template 0.441 x torso) bu sayinin yerine gecti; 276 hic bir bedenin koltukalti degildir (gercek36 186.0).", "source": "ACIK — koltukalti derinligi kaynaksiz devralindi. NOT: Aldrich p.11 armscye DEPTH 21.0 cm NAPE'ten olculur, omuz cizgisinden degil; dogrudan capa olarak KULLANILMADI (yanlis temel olurdu)." },
       "waistY": { "u": 150.0, "mm": 450.0, "source": "ACIK — kaynaksiz. draft.euSizeChart.backLengthCM KAYNAKSIZ kolon (K10), bilerek capa yapilmadi." },
       "waistX": { "u": 58.3333, "mm": 175.0, "derivation": "waistCM 70.0 -> 700 mm; 700/4 = 175 mm; 175 / unitMM 3.0. Sadece vucuda oturan (fitted/princess/darts/empire) govdede siluet bu genislige iner; salkim (shift) govde daha genis kalir — bu GIYSI ozelligi, croquis degil.", "source": "burda EU38 waistCM (verified) + tup geometrisi" },
       "hipX": { "u": 78.3333, "mm": 235.0, "derivation": "hipCM 94.0 -> 940 mm; 940/4 = 235 mm; 235 / unitMM 3.0", "source": "burda EU38 hipCM (verified) + tup geometrisi" },
