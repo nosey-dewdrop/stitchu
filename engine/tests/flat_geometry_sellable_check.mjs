@@ -76,7 +76,7 @@
 //
 // ★ HİÇBİR EŞİK BİZİM ÇIKTIMIZDAN TÜRETİLMEDİ (ORTAK.md md.3). İki dış kaynak:
 //   [B] SATIN ALINMIŞ Buğra Locket EU38 kalıbı — `contract/flat-convention-v1.json`
-//       croquis.sideSeamProfile._normalizedToChest, ölçüm dökümü
+//       croquis.sideSeamProfile.oranOverChest (seviye = body-v1 landmark id, oran = Locket giysi orani), ölçüm dökümü
 //       GECE/log/F-E.bugra-olcum.txt. RAPOR satırı olarak basılır (kapı değil:
 //       Buğra'nın 38'i burda'nın 40'ı, mutlak mm kıyaslanamaz).
 //   [C] contract/tables.json draft.euSizeChart — KAYNAKLI beden çizelgesi.
@@ -95,6 +95,8 @@ const root = join(here, '../..');
 const LAW = JSON.parse(readFileSync(join(root, 'contract/flat-convention-v1.json'), 'utf8'));
 const TABLES = JSON.parse(readFileSync(join(root, 'contract/tables.json'), 'utf8'));
 const SSP = LAW.croquis.sideSeamProfile;
+// Locket yan dikis orani: seviye body-v1 landmark id'si ('landmark.<ad>') ya da giysi kenari 'hem' (F1 karar 4).
+const oranAt = (seviye) => { const r = (SSP.oranOverChest || []).find((o) => o.seviye === seviye); if (!r) throw new Error(`sideSeamProfile.oranOverChest: seviye yok: ${seviye}`); return r.oran; };
 
 const BUNDLE = join(root, 'engine/dist/stitchu-engine.js');
 const FLAT_MOD = join(root, 'web/lib/flat-from-plan.js');
@@ -445,8 +447,8 @@ if (cizimler.length) {
   const hCh = halfWidthAt(pts, yOf((halkalar.find((h) => h.ad === 'bust') || {}).z_mm));
   const rows = [
     ['gogus', 1.0, 1.0],
-    ['bel', halfWidthAt(pts, yOf((halkalar.find((h) => h.ad === 'waist') || {}).z_mm)) / hCh, SSP._normalizedToChest.waist],
-    ['etek', hemHalf(pts) / hCh, SSP._normalizedToChest.hem],
+    ['bel', halfWidthAt(pts, yOf((halkalar.find((h) => h.ad === 'waist') || {}).z_mm)) / hCh, oranAt('landmark.waist')],
+    ['etek', hemHalf(pts) / hCh, oranAt('hem')],
   ];
   for (const [lbl, ours, theirs] of rows) {
     console.log(`    ${lbl.padEnd(8)} bizim ${ours.toFixed(4)}   Bugra ${theirs.toFixed(4)}   fark ${((ours - theirs) * 100).toFixed(2)} puan`);

@@ -111,12 +111,13 @@
         "shoulderToHem": 413.97,
         "waistBelowShoulder": 289.8
       },
-      "_normalizedToChest": {
-        "shoulder": 0.957,
-        "chest": 1.0,
-        "waist": 0.7683,
-        "hem": 0.8745
-      },
+      "oranOverChest": [
+        {"seviye": "landmark.shoulderTip", "oran": 0.957},
+        {"seviye": "landmark.bustLine", "oran": 1.0},
+        {"seviye": "landmark.waist", "oran": 0.7683},
+        {"seviye": "hem", "oran": 0.8745}
+      ],
+      "_oranOverChestNot": "F1 karar 4 (2026-09-05): eski ad _normalizedToChest, anahtarlari beden adiydi (waist/shoulder/chest/hem). Bu blok beden landmark'i DEGIL, satin alinmis Locket EU38 Back Body parcasinin yan dikis yarim-genislik ORANIDIR (giysi); landmark.* namespace'ine sokulmaz. seviye = body-v1 landmark id'si (carpismasiz namespace), oran = giysi sayisi, hem = giysi kenari. Sayilar ayni, _measuredMM'den turer (196.13/204.94, 157.46/204.94, 179.22/204.94). Okuyucu: engine/tests/flat_geometry_sellable_check.mjs parite raporu.",
       "shoulder": 0.957,
       "hemRisePerU": 0.1881,
       "_hemRiseDerivation": "Belden asagi inen govde yan dikisi yeniden ACILIR (bel en dar yer, etek kalcaya dogru genisler). Bugra'da bel 0.7683 -> etek 0.8745, arada 124.17 mm = 41.39 birim dusus. Egim = (0.8745 - 0.7683) x chestX 73.3333 / 41.39 = 0.1881 birim/birim. Ust etek yari-genisligi artik SABIT kalca genisligi degil, bu egimle bel genisliginden turuyor; tavan hipX x 0.98.",
