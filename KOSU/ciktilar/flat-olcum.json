@@ -2528,6 +2528,131 @@
    "tilly-coco.jpg#v2": "turn-back mansetli 3/4 kol: manset bolgesi 50 px gridde guvenle okunamadi (kol x 830-950, y 60-390 olculdu ama manset penceresi yok); duz sinif n >= 5 zaten sagli"
   },
   "flatler": {
+   "cash-duxbury.jpg": {
+    "dosya": "cash-duxbury.jpg",
+    "urun": "Cashmerette Duxbury Dress (dirsek boyu set-in kol, derin bask; alt sol on gorunum)",
+    "marka": "Cashmerette",
+    "sayfa": "https://www.cashmerette.com/products/duxbury-dress-pdf-pattern",
+    "gorselURL": "https://www.cashmerette.com/cdn/shop/files/Cashmerette-1302-Duxbury-tech-ill-4x5-gray.jpg?v=1779195202",
+    "boyutPX": [
+     2500,
+     3124
+    ],
+    "esik": 160,
+    "etiket": "duz",
+    "etiketNeden": "agiz acik duz kenar, kesik cizgi = derin bask dikisi (satici: deep hem), buzgu/lastik/manset yok",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      548,
+      568,
+      1615,
+      1640
+     ],
+     "xy": [
+      567,
+      1623
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      405,
+      545,
+      1868,
+      1930
+     ],
+     "uclar": [
+      [
+       408,
+       1868
+      ],
+      [
+       544,
+       1919
+      ]
+     ],
+     "orta": [
+      476.0,
+      1893.5
+     ],
+     "nMurekkep": 404
+    },
+    "kolAcisiDeg": {
+     "deger": 71.4,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -91.0,
+      270.5
+     ]
+    },
+    "agizPX": 145.2,
+    "kolPencere": [
+     400,
+     560,
+     1620,
+     1930
+    ],
+    "enGenisYataySatir": {
+     "y": 1867,
+     "genislikPX": 148,
+     "x": [
+      408,
+      556
+     ]
+    },
+    "balonOranYatay": 1.019,
+    "enGenisDikKesit": {
+     "genislikPX": 152.1,
+     "eksenS": 264,
+     "uclar": [
+      [
+       559.0,
+       1898.9
+      ],
+      [
+       414.9,
+       1850.4
+      ]
+     ],
+     "eksenAciDeg": 71.4
+    },
+    "balonOranDik": 1.047,
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      630,
+      670,
+      1585,
+      1610
+     ],
+     "xy": [
+      662,
+      1597
+     ]
+    },
+    "snpY": 1597,
+    "bel": {
+     "yontem": "bel dikisi: pencerede en cok murekkepli satir",
+     "pencere": [
+      600,
+      800,
+      2030,
+      2048
+     ],
+     "satirY": 2047,
+     "nMurekkep": 14,
+     "not": "bel dikisi (bodice/etek): pencerede en cok murekkepli satir"
+    },
+    "belY": 2047,
+    "torsoPX": 450,
+    "agizOmuzDikeyOverTorso": 0.601,
+    "kolBoyuOverTorso": 0.634,
+    "boy": "dirsek",
+    "boyKaynak": "urun sayfasi: \"Sleeveless bound armholes, elbow-length sleeves with deep hem\" (curl 2026-09-05 HTTP 200); cizim: agiz bel dikisinin (y~2040) ~120 px ustunde",
+    "kisa": null,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-cash-duxbury.png"
+   },
    "bhl-alix-1.jpg": {
     "dosya": "bhl-alix-1.jpg",
     "urun": "By Hand London Alix Dress (bishop kol, lastikli manset)",
@@ -4537,12 +4662,13 @@
     "yeniKume": {
      "alan": "balonOranDik",
      "duz": {
-      "n": 9,
+      "n": 10,
       "degerler": {
        "tilly-nell.jpg#kisa-duz": 0.941,
        "tilly-nell.jpg#bilezik": 1.008,
        "tilly-agnes.png#buzgulu-omuz": 1.022,
        "tilly-agnes.png#kisa": 1.041,
+       "cash-duxbury.jpg": 1.047,
        "tilly-agnes.png#uzun": 1.131,
        "tilly-coco.jpg#v1": 1.271,
        "named-ilta.png": 1.521,
@@ -4584,7 +4710,7 @@
     "birlesik": {
      "alan": "balonOranDik",
      "duz": {
-      "n": 16,
+      "n": 17,
       "degerler": {
        "cash-wyman.jpg": 0.779,
        "tilly-nell.jpg#kisa-duz": 0.941,
@@ -4595,6 +4721,7 @@
        "tilly-agnes.png#buzgulu-omuz": 1.022,
        "dd-passiflore.jpg": 1.033,
        "tilly-agnes.png#kisa": 1.041,
+       "cash-duxbury.jpg": 1.047,
        "tilly-agnes.png#uzun": 1.131,
        "06-a-line-puff-kol-varyant.png": 1.224,
        "tilly-coco.jpg#v1": 1.271,
@@ -4744,6 +4871,7 @@
        ]
       },
       "olculmedi": {
+       "cash-duxbury.jpg": "kisa=None: urun sayfasi: \"Sleeveless bound armholes, elbow-length sleeves with deep hem\" (curl 2026-09-05 HTTP 200); cizim: agiz bel dikisinin (y~2040) ~120 px ustunde",
        "tilly-mabel.jpg#bluz": "kisa=None: urun adi ELBOW LENGTH; agiz ~y 325, shirred bel bandi 405-445; SNP cizili degil (off-shoulder), torso olculemez"
       },
       "disarida_uzun": [
@@ -4815,6 +4943,7 @@
        ]
       },
       "olculmedi": {
+       "cash-duxbury.jpg": "kisa=None: urun sayfasi: \"Sleeveless bound armholes, elbow-length sleeves with deep hem\" (curl 2026-09-05 HTTP 200); cizim: agiz bel dikisinin (y~2040) ~120 px ustunde",
        "tilly-mabel.jpg#bluz": "kisa=None: urun adi ELBOW LENGTH; agiz ~y 325, shirred bel bandi 405-445; SNP cizili degil (off-shoulder), torso olculemez"
       },
       "disarida_uzun": [
@@ -4884,8 +5013,9 @@
     "yeniKume": {
      "alan": "balonOranYatay",
      "duz": {
-      "n": 9,
+      "n": 10,
       "degerler": {
+       "cash-duxbury.jpg": 1.019,
        "tilly-agnes.png#buzgulu-omuz": 1.031,
        "tilly-nell.jpg#kisa-duz": 1.044,
        "tilly-agnes.png#kisa": 1.054,
@@ -4896,7 +5026,7 @@
        "named-ilta.png": 1.735,
        "tilly-stevie-addon.jpg#tunik": 2.667
       },
-      "min": 1.031,
+      "min": 1.019,
       "max": 2.667
      },
      "buzgulu": {
@@ -4933,12 +5063,13 @@
     "birlesik": {
      "alan": "balonOranYatay",
      "duz": {
-      "n": 16,
+      "n": 17,
       "degerler": {
        "cash-wyman.jpg": 0.79,
        "cash-hampden.jpg": 0.928,
        "07-uzun-kol-akiskan-etek.png": 0.987,
        "04-a-line-puff-kol.png": 1.01,
+       "cash-duxbury.jpg": 1.019,
        "tilly-agnes.png#buzgulu-omuz": 1.031,
        "dd-passiflore.jpg": 1.032,
        "tilly-nell.jpg#kisa-duz": 1.044,
@@ -5004,7 +5135,7 @@
     "tanim": "BILGI. BOLUM 3 yatay satir tanimi; eksen dusey olmayan kollarda kol boyunu olcer (Stevie/Lucy), hukum tasimaz."
    },
    "kolBoyuOverTorso": {
-    "n": 9,
+    "n": 10,
     "degerler": [
      {
       "flat": "cash-hampden.jpg",
@@ -5019,6 +5150,13 @@
       "kisa": true,
       "dikey": 0.545,
       "kolAcisiDeg": 67.2
+     },
+     {
+      "flat": "cash-duxbury.jpg",
+      "oran": 0.634,
+      "kisa": null,
+      "dikey": 0.601,
+      "kolAcisiDeg": 71.4
      },
      {
       "flat": "07-uzun-kol-akiskan-etek.png",
@@ -5070,6 +5208,7 @@
       "kolAcisiDeg": 80.9
      }
     ],
+    "nDirsek": 1,
     "kisaMax": 0.769,
     "uzunMin": 1.135,
     "bosluk": [
@@ -5081,8 +5220,32 @@
     "esikBoslukIcinde": true,
     "tanim": "HUKUM (F1 tur 9, hakem ENGEL 2). kol boyu = omuz ucu -> agiz ortasi, kol EKSENI boyunca (hypot(dx,dy)) / torso (SNP->bel). Eski dikey deger = kolBoyu x sin(kolAcisiDeg) (degerler[].dikey, bilgi): aciya bagli oldugu icin band secen kosul olarak donguseldi; F2 grafta kol boyunu bilir, aciyi bilmez. F1 tur 10: kisa etiketi urun taniminda (boyKaynak), orandan DEGIL; oran yalniz bosluk. Esik boslugun icindeyse kalir, degilse ortaNokta."
    },
+   "dirsek": {
+    "n": 1,
+    "nBuzgulu": 0,
+    "nDuz": 1,
+    "gerekli": "n >= 3 buzgulu VE n >= 3 duz",
+    "olcumler": {
+     "cash-duxbury.jpg": {
+      "etiket": "duz",
+      "kolBoyuOverTorso": 0.634,
+      "kolAcisiDeg": 71.4,
+      "aciKonumu": "puf bandi icinde",
+      "boyKaynak": "urun sayfasi: \"Sleeveless bound armholes, elbow-length sleeves with deep hem\" (curl 2026-09-05 HTTP 200); cizim: agiz bel dikisinin (y~2040) ~120 px ustunde"
+     }
+    },
+    "sarkanIQR": [
+     74.5,
+     85.9
+    ],
+    "pufBand": [
+     32.9,
+     74.2
+    ],
+    "hukum": "HUKUM YOK: olcum yetersiz (buzgulu 0/3, duz 1/3); dirsek kollar kisa/uzun sinifina ve bosluga GIRMEZ, kosulda bosluga dusen deger adli kirmizi (contract kosul._boslukKurali)"
+   },
    "agizOmuzDikeyOverTorso": {
-    "n": 9,
+    "n": 10,
     "degerler": [
      {
       "flat": "cash-hampden.jpg",
@@ -5093,6 +5256,11 @@
       "flat": "tilly-nell.jpg#kisa-duz",
       "oran": 0.545,
       "kisa": true
+     },
+     {
+      "flat": "cash-duxbury.jpg",
+      "oran": 0.601,
+      "kisa": null
      },
      {
       "flat": "07-uzun-kol-akiskan-etek.png",
@@ -5131,7 +5299,7 @@
      }
     ],
     "kisaMax": 0.763,
-    "uzunMin": 1.132,
+    "uzunMin": 0.601,
     "tanim": "BILGI (eski tanim, F1 tur 8; hukum tasimaz). Dikey mesafe / torso; kisa etiketi artik kolBoyuOverTorso ile."
    },
    "kolAcisiDeg": {
@@ -5146,6 +5314,7 @@
      "tilly-lyra.png#uzun": 73.2
     },
     "duz": {
+     "cash-duxbury.jpg": 71.4,
      "tilly-stevie-addon.jpg#tunik": 26.0,
      "tilly-coco.jpg#v1": 75.7,
      "tilly-agnes.png#kisa": 76.4,

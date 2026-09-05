@@ -861,6 +861,17 @@ COCO_U = 'https://cdn.shopify.com/s/files/1/0364/2693/products/Cocotechnicalgarm
 AGNES_U = 'https://cdn.shopify.com/s/files/1/0364/2693/products/Tilly_and_the_Buttons_Agnes_sewing_pattern_tech_drawings.png?v=1675096946'
 FRIDA_U = 'https://cdn.shopify.com/s/files/1/0364/2693/files/frida-shirt-sewing-pattern-tilly-and-the-buttons-tech-drawing.png?v=1772114163'
 CFG5 = {
+  # ---------------- DIRSEK boyu (F1 karar ajani 2, tur 10 uygulama): satici cumlesi 'elbow-length', SNP + bel cizili, boy='dirsek', kisa=None ----------------
+  # Hedef >= 3 buzgulu + >= 3 duz. Bulunan: 1 duz (Duxbury). Aranip ELENENLER (5 Eyl 2026): Rivermont 'short, elbow, or long' ama cizimde tek kol (hangi boy
+  # belirsiz); Sew Over It Cassie 'just above the elbow' (buzgulu) — sitede teknik cizim yok, yalniz foto; Seamwork Sloan/Pomme puf (boy kelimesi yok / cizim yok);
+  # Megan Nielsen Sudley A 'above elbow sleeves' bluz (bel yok); Tilly Mabel ELBOW LENGTH (off-shoulder, SNP yok, asagida); Tilly Etta 'three-quarter';
+  # Cashmerette Roseclair 3/4 buzgulu manset (dirsek kelimesi yok); Sew Liberated Ember '3/4' (lastik dirsek USTUNDE, dirsek boyu degil); Deer&Doe Eleanor 'above the elbow' (kisa, CFG3).
+  'cash-duxbury.jpg': dict(url='https://www.cashmerette.com/cdn/shop/files/Cashmerette-1302-Duxbury-tech-ill-4x5-gray.jpg?v=1779195202',
+    sayfa='https://www.cashmerette.com/products/duxbury-dress-pdf-pattern', urun='Cashmerette Duxbury Dress (dirsek boyu set-in kol, derin bask; alt sol on gorunum)', marka='Cashmerette',
+    etiket='duz', etiketNeden='agiz acik duz kenar, kesik cizgi = derin bask dikisi (satici: deep hem), buzgu/lastik/manset yok', esik=160,
+    omuzKutu=(548, 568, 1615, 1640), kolUcu=(405, 545, 1868, 1930), kolPencere=(400, 560, 1620, 1930), boy='dirsek', torsoOlc=True,
+    boyKaynak='urun sayfasi: "Sleeveless bound armholes, elbow-length sleeves with deep hem" (curl 2026-09-05 HTTP 200); cizim: agiz bel dikisinin (y~2040) ~120 px ustunde',
+    snp=(630, 670, 1585, 1610), bel=dict(tip='yatayCizgi', pencere=(600, 800, 2030, 2048)), belNot='bel dikisi (bodice/etek): pencerede en cok murekkepli satir'),
   # ---------------- agzi buzgulu / lastikli / buzgulu mansetli ----------------
   'bhl-alix-1.jpg': dict(url='https://cdn.shopify.com/s/files/1/0289/4249/products/tech_illos2-01.jpg?v=1477044717',
     sayfa='https://byhandlondon.com/products/alix-dress-pdf-sewing-pattern', urun='By Hand London Alix Dress (bishop kol, lastikli manset)', marka='By Hand London',
@@ -1051,7 +1062,23 @@ def kisaAltKume(kume, alan):
 birlesik = {**eskiKume, **yeniKume}
 kisaOlcumler = sorted((k['kisaOlcu'], ad, k['kisa']) for ad, k in birlesik.items() if k.get('kisaOlcu') is not None)
 dikeyOlcumler = sorted((k['kisaOlcuDikey'], ad, k['kisa']) for ad, k in birlesik.items() if k.get('kisaOlcuDikey') is not None)
-kisaMax = max([v for v, _, kk in kisaOlcumler if kk] or [None]); uzunMin = min([v for v, _, kk in kisaOlcumler if not kk] or [None])
+kisaMax = max([v for v, _, kk in kisaOlcumler if kk is True] or [None]); uzunMin = min([v for v, _, kk in kisaOlcumler if kk is False] or [None])
+# --- F1 karar ajani 2 (tur 10 uygulama): DIRSEK boyu kollar (boy='dirsek', kisa=None) ayri kova; kisa/uzun sinifina GIRMEZ, bosluk hesabina girmez.
+#   Hukum yalniz n >= 3 buzgulu VE n >= 3 duz dirsek kol olculunce: buzgulu dirsek acilari sarkan IQR'a dusuyorsa dirsek = 'uzun' (kosul icin kisa=False,
+#   bosluk ustten daralir); puf bandina dusuyorsa 'kisa' (alttan daralir); ikiye bolunuyorsa ayirici yanlis (3c) ve ancak o zaman n>=3 kendi bandiyla ucuncu
+#   kosulluBant. Su an olcum sayisi yetersiz -> 'HUKUM YOK', sayilar kayitta (bilgi silme yasagi).
+dirsekKume = {ad: k for ad, k in birlesik.items() if k.get('kisa') is None and k.get('kisaOlcu') is not None}
+_sarkanIQR = f3['medyanlar']['kolAcisiDeg']['sarkan']['iqr']; _pufBand = f3['medyanlar']['kolAcisiDeg']['puf']['band']
+def _konum(a):
+    if _sarkanIQR[0] <= a <= _sarkanIQR[1]: return 'sarkan IQR icinde'
+    if _pufBand and _pufBand[0] <= a <= _pufBand[1]: return 'puf bandi icinde'
+    return 'iki bandin disinda'
+dirsekOlcum = {ad: {'etiket': k['etiket'], 'kolBoyuOverTorso': k['kisaOlcu'], 'kolAcisiDeg': k['kolAcisiDeg'], 'aciKonumu': _konum(k['kolAcisiDeg']), 'boyKaynak': k.get('boyKaynak')} for ad, k in dirsekKume.items()}
+nDirsekBuz = sum(1 for k in dirsekKume.values() if k['etiket'] == 'buzgulu'); nDirsekDuz = sum(1 for k in dirsekKume.values() if k['etiket'] == 'duz')
+dirsekHukmu = {'n': len(dirsekKume), 'nBuzgulu': nDirsekBuz, 'nDuz': nDirsekDuz, 'gerekli': 'n >= 3 buzgulu VE n >= 3 duz', 'olcumler': dirsekOlcum,
+               'sarkanIQR': _sarkanIQR, 'pufBand': _pufBand,
+               'hukum': ('HUKUM YOK: olcum yetersiz (buzgulu %d/3, duz %d/3); dirsek kollar kisa/uzun sinifina ve bosluga GIRMEZ, kosulda bosluga dusen deger adli kirmizi (contract kosul._boslukKurali)' % (nDirsekBuz, nDirsekDuz))
+                         if (nDirsekBuz < 3 or nDirsekDuz < 3) else 'OLCUM TAMAM: karar ajani 2 kurali uygulanir (buzgulu dirsek acilari -> sarkan IQR: uzun / puf bandi: kisa / bolunme: 3c)'}
 f5['medyanlar'] = {
   'balonOranDik': {'eskiKume13': boslukHukmu(eskiKume, 'balonOranDik'), 'yeniKume': boslukHukmu(yeniKume, 'balonOranDik'), 'birlesik': boslukHukmu(birlesik, 'balonOranDik'),
                    'kisaAltKume': {'eskiKume13': kisaAltKume(eskiKume, 'balonOranDik'), 'yeniKume': kisaAltKume(yeniKume, 'balonOranDik'), 'birlesik': kisaAltKume(birlesik, 'balonOranDik'),
@@ -1061,11 +1088,12 @@ f5['medyanlar'] = {
   'balonOranYatay': {'eskiKume13': boslukHukmu(eskiKume, 'balonOranYatay'), 'yeniKume': boslukHukmu(yeniKume, 'balonOranYatay'), 'birlesik': boslukHukmu(birlesik, 'balonOranYatay'),
                      'tanim': 'BILGI. BOLUM 3 yatay satir tanimi; eksen dusey olmayan kollarda kol boyunu olcer (Stevie/Lucy), hukum tasimaz.'},
   'kolBoyuOverTorso': {'n': len(kisaOlcumler), 'degerler': [{'flat': ad, 'oran': v, 'kisa': kk, 'dikey': next(d for d, a2, _ in dikeyOlcumler if a2 == ad), 'kolAcisiDeg': birlesik[ad]['kolAcisiDeg']} for v, ad, kk in kisaOlcumler],
-                       'kisaMax': kisaMax, 'uzunMin': uzunMin, 'bosluk': ([kisaMax, uzunMin] if (kisaMax is not None and uzunMin is not None and kisaMax < uzunMin) else None),
+                       'nDirsek': len(dirsekKume), 'kisaMax': kisaMax, 'uzunMin': uzunMin, 'bosluk': ([kisaMax, uzunMin] if (kisaMax is not None and uzunMin is not None and kisaMax < uzunMin) else None),
                        'ortaNokta': (round((kisaMax + uzunMin) / 2, 4) if (kisaMax is not None and uzunMin is not None and kisaMax < uzunMin) else None),
                        'esik': KISA_ESIK, 'esikBoslukIcinde': (kisaMax is not None and uzunMin is not None and kisaMax < KISA_ESIK < uzunMin),
                        'tanim': 'HUKUM (F1 tur 9, hakem ENGEL 2). kol boyu = omuz ucu -> agiz ortasi, kol EKSENI boyunca (hypot(dx,dy)) / torso (SNP->bel). Eski dikey deger = kolBoyu x sin(kolAcisiDeg) (degerler[].dikey, bilgi): '
                                 'aciya bagli oldugu icin band secen kosul olarak donguseldi; F2 grafta kol boyunu bilir, aciyi bilmez. F1 tur 10: kisa etiketi urun taniminda (boyKaynak), orandan DEGIL; oran yalniz bosluk. Esik boslugun icindeyse kalir, degilse ortaNokta.'},
+  'dirsek': dirsekHukmu,
   'agizOmuzDikeyOverTorso': {'n': len(dikeyOlcumler), 'degerler': [{'flat': ad, 'oran': v, 'kisa': kk} for v, ad, kk in dikeyOlcumler],
                              'kisaMax': max([v for v, _, kk in dikeyOlcumler if kk] or [None]), 'uzunMin': min([v for v, _, kk in dikeyOlcumler if not kk] or [None]),
                              'tanim': 'BILGI (eski tanim, F1 tur 8; hukum tasimaz). Dikey mesafe / torso; kisa etiketi artik kolBoyuOverTorso ile.'},
