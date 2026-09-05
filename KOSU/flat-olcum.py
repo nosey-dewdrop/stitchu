@@ -634,6 +634,73 @@ if os.path.exists(LOCKET):
         sx, sy = om['snapPX']; dx, dy = mid[0] - sx, mid[1] - sy
         k['kolUcu']['orta'] = [round(mid[0], 1), round(mid[1], 1)]
         k['kolAcisiDeg'] = {'deger': round(math.degrees(math.atan2(dy, abs(dx))), 1), 'tanim': 'omuz ucu -> kol agzi ortasi, yatayin ALTINA derece', 'dxdy': [round(dx, 1), round(dy, 1)]}
+    # --- 6 OKUMA (F1 tur 7; karar ajani 'Locket 6 okuma'): ayni teknik cizim 6 kumas renklendirmesinde 6 kez basilmis.
+    # Tek okuma (STRIPE, murekkep snap) okuma hatasini olcmez. Her renklendirme AYNI cizimin bir kopyasi oldugu icin
+    # 6 okuma = ayni acinin 6 bagimsiz kaydi: medyan yazilir, yayilim okuma hatasidir. Yontem renkten bagimsiz olsun diye
+    # murekkep esigi degil SILUET MASKESI kullanilir (arka plan tek renk (242,238,227); |px - bg|_1 > MASKE_ESIK = giysi).
+    # Kayit: STRIPE sablonu (ust orta) diger 5 kopyaya maske IoU ile kaydedilir (kaba: 4x kucultme +-64 px, ince: tam
+    # cozunurluk +-4 px); STRIPE tohumlari kaydirilir ve maske SINIRINA (4-komsusu arka plan olan maske pikseli) snap edilir.
+    import numpy as np
+    rgb = np.asarray(Image.open(LOCKET).convert('RGB')).astype(int)
+    BG = np.array([242, 238, 227]); MASKE_ESIK = 40
+    mask = (np.abs(rgb - BG).sum(axis=2) > MASKE_ESIK)
+    RENKLER = {'linen': (-670, 0), 'stripe': (0, 0), 'navy-stripe': (660, 0), 'polka': (-670, 945), 'plaid': (0, 945), 'denim': (660, 945)}
+    tx0, tx1, ty0, ty1 = 660, 1340, 190, 960   # STRIPE kopyasinin penceresi (tam cozunurluk)
+    tmpl = mask[ty0:ty1, tx0:tx1]
+    def iou(a, b):
+        u = (a | b).sum(); return (a & b).sum() / u if u else 0.0
+    def kaydir(dx, dy):
+        y0, y1, x0, x1 = ty0 + dy, ty1 + dy, tx0 + dx, tx1 + dx
+        if y0 < 0 or x0 < 0 or y1 > H or x1 > W: return None
+        return mask[y0:y1, x0:x1]
+    def sinir_snap(xy, r=12):
+        best = None
+        for yy in range(max(1, xy[1] - r), min(H - 1, xy[1] + r + 1)):
+            for xx in range(max(1, xy[0] - r), min(W - 1, xy[0] + r + 1)):
+                if mask[yy, xx] and not (mask[yy - 1, xx] and mask[yy + 1, xx] and mask[yy, xx - 1] and mask[yy, xx + 1]):
+                    d = math.hypot(xx - xy[0], yy - xy[1])
+                    if best is None or d < best[0]: best = (d, xx, yy)
+        return None if best is None else {'tohum': [int(xy[0]), int(xy[1])], 'snapPX': [best[1], best[2]], 'mesafePX': round(best[0], 2), 'yaricapPX': r}
+    okumalar = {}
+    for ad, (ndx, ndy) in RENKLER.items():
+        # kaba arama 4x kucultme
+        ms = mask[::4, ::4]; t4 = tmpl[::4, ::4]
+        best = None
+        for dy in range(ndy - 64, ndy + 65, 4):
+            for dx in range(ndx - 64, ndx + 65, 4):
+                y0, x0 = (ty0 + dy) // 4, (tx0 + dx) // 4
+                b = ms[y0:y0 + t4.shape[0], x0:x0 + t4.shape[1]]
+                if b.shape != t4.shape: continue
+                v = iou(t4, b)
+                if best is None or v > best[0]: best = (v, dx, dy)
+        _, bdx, bdy = best
+        fine = None
+        for dy in range(bdy - 4, bdy + 5):
+            for dx in range(bdx - 4, bdx + 5):
+                b = kaydir(dx, dy)
+                if b is None: continue
+                v = iou(tmpl, b)
+                if fine is None or v > fine[0]: fine = (v, dx, dy)
+        v, dx, dy = fine
+        om6 = sinir_snap((c['omuzUcu'][0] + dx, c['omuzUcu'][1] + dy))
+        a1 = sinir_snap((c['agizUclar'][0][0] + dx, c['agizUclar'][0][1] + dy)); a2 = sinir_snap((c['agizUclar'][1][0] + dx, c['agizUclar'][1][1] + dy))
+        kayit = {'kayitDXDY': [dx, dy], 'maskeIoU': round(v, 4), 'omuzUcu': om6, 'agizUclar': [a1 and a1['snapPX'], a2 and a2['snapPX']]}
+        if om6 and a1 and a2:
+            mid = ((a1['snapPX'][0] + a2['snapPX'][0]) / 2.0, (a1['snapPX'][1] + a2['snapPX'][1]) / 2.0)
+            ddx, ddy = mid[0] - om6['snapPX'][0], mid[1] - om6['snapPX'][1]
+            kayit['agizOrta'] = [round(mid[0], 1), round(mid[1], 1)]
+            kayit['kolAcisiDeg'] = round(math.degrees(math.atan2(ddy, abs(ddx))), 1)
+        okumalar[ad] = kayit
+    degs = sorted(o['kolAcisiDeg'] for o in okumalar.values() if 'kolAcisiDeg' in o)
+    k['okumalar'] = {'yontem': 'siluet maskesi (|px-bg|_1 > %d), STRIPE sablonu IoU kaydi, tohum -> maske siniri snap r=12' % MASKE_ESIK,
+                     'renklendirmeler': okumalar,
+                     'n': len(degs), 'medyan': medyan(degs), 'min': min(degs), 'max': max(degs), 'yayilimDeg': round(max(degs) - min(degs), 1),
+                     'stripeMurekkepOkumasi': k.get('kolAcisiDeg', {}).get('deger'),
+                     'tanim': 'ayni cizimin 6 kopyasi = ayni acinin 6 okumasi; yayilim okuma hatasidir, cizim farki degil'}
+    if degs and 'kolAcisiDeg' in k:
+        k['kolAcisiDeg']['stripeMurekkep'] = k['kolAcisiDeg']['deger']
+        k['kolAcisiDeg']['deger'] = medyan(degs)
+        k['kolAcisiDeg']['tanim'] += '; deger = 6 renklendirme okumasinin medyani (okumalar), STRIPE murekkep okumasi stripeMurekkep alaninda'
     f3['flatler']['bugra-locket'] = k
 else:
     f3['flatler']['bugra-locket'] = {'OKUNMADI': 'patterns_real/Locket Top/5 Inspirations.jpg bu makinede yok (satin alinmis kaynak, repoda degil)'}

@@ -97,6 +97,19 @@
 #   prose : .md/.txt, yorum satirlari, JSON aciklama alanlari (_*, kaynak, tanim, not, anlam, ...) — basilir, hukum yok
 # Iki kovanin toplami eski tek sayimin toplamina esittir; yontem satirlari yeniden boler, atmaz.
 # Sayac python'da (grep -w / grep -F ile birebir ayni eslesme, satir basina bir), asagida count_tree icinde.
+#
+# UCUNCU KOVA: beden (F1 tur 7, 2026-09-05; F1 dersi 'VOCAB CIRCIRI').
+# Beden landmark/halka adlari (waist/hip/bust/elbow...) enum degil, beden SOZLESMESIDIR (contract/body-v1.json);
+# ayni kelime sozlukte enum DEGERI olarak da yasadigi icin ("waist" waistline ekseninin degeri) kapi beden
+# sozlesmesine yapilan her referansi enum referansi sayiyordu — ARAC HATASI. Duzeltme kapida, tabanda degil:
+# body-v1.json'daki adlar (landmark./girth./length./width./angle. anahtarlarinin son parcasi) OKUNUR (liste
+# koda gomulmez), ve tirnakli eslesme DEGERI SAYI olan bir JSON ANAHTARI ise ('"waist": 62,') o satir 'beden'
+# kovasina gider. Enum degeri deger olarak yazilir ("waistline": "natural"); anahtar olarak gectigi 9 yerde
+# (spec-v1-v2-map '"elbow": {', knowledge '"hip": "M"', schema '"bust": {') degeri sayi DEGILDIR ve kod kovasinda
+# kalir — kural sozluk referansi kaybetmez (olculdu: 55 anahtar satirinin 46'si sayi-degerli, 9'u degil). Dosya adina bagli istisna YOK (73113fa7'nin 'beden' kovasi dosya adina
+# bagliydi ve hakem tarafindan reddedildi; bu kova kelime kaynagina + yapisal konuma bagli). beden kovasi
+# basilir, hukum tasimaz; kod kovasi bu adimla 9299 -> 9253 (46 satir: size-table 16, shape-ratios 24, preview-truth 3,
+# body.EU38 2, flat-convention _normalizedToChest 1), taban ayri commit'te ASAGI kesilir.
 set -uo pipefail
 export LC_ALL=C
 
@@ -155,6 +168,19 @@ axes = sorted(v); values = sorted(w for w in owner if len(owner[w]) == 1)
 axis_re = {a: re.compile(r"(?<![A-Za-z0-9_])" + re.escape(a) + r"(?![A-Za-z0-9_])") for a in axes}
 val_re = {w: re.compile(re.escape('"' + w + '"')) for w in values}
 PROSE_KEY = re.compile(r'^\s*"(_[^"]*|kaynak|tanim|not|anlam|derivation|source|note|why|neden|gerekce|aciklama|description|kural|law)"\s*:')
+# beden kovasi: body-v1 adlari (landmark./girth./length./width./angle. son parcasi) okunur; JSON ANAHTARI olan eslesme beden referansidir
+BODY_NAMES = set()
+try:
+    _b = json.load(open(os.path.join(root, "contract/body-v1.json")))
+    for _sec in ("landmarklar", "halkalar", "uzunluklar", "genislikler", "acilar"):
+        for _k in _b.get(_sec, {}):
+            if "." in _k and not _k.startswith("_"): BODY_NAMES.add(_k.split(".", 1)[1])
+except Exception:
+    BODY_NAMES = set()
+# yalniz DEGERI SAYI olan anahtar ('"waist": 62,' / '"bust": 0.4718'): beden olcusu sayidir; enum degeri anahtar olarak
+# gectiginde degeri nesne/dize olur ('"elbow": {' spec-v1-v2-map, '"hip": "M"' knowledge) ve KOD kovasinda kalir (olculdu: 55 anahtar
+# satirinin 9'u boyle, kural onlari birakir; 46 sayi-degerli satir beden kovasina gider).
+BODY_KEY = {w: re.compile(r'^\s*"' + re.escape(w) + r'"\s*:\s*-?[0-9][0-9.eE+-]*\s*,?\s*$') for w in BODY_NAMES}
 BARE_STR = re.compile(r'^\s*"[^"]{60,}"\s*,?\s*$')
 def files():
     for p in SCOPE:
@@ -171,7 +197,7 @@ def is_prose(path, line, pos):
         return bool(PROSE_KEY.match(line) or BARE_STR.match(line))
     c = line.find("//")
     return c >= 0 and pos > c
-counts = {"kod": collections.Counter(), "prose": collections.Counter()}
+counts = {"kod": collections.Counter(), "prose": collections.Counter(), "beden": collections.Counter()}
 for fp in files():
     try: data = open(fp, "rb").read()
     except Exception: continue
@@ -183,8 +209,11 @@ for fp in files():
         for w, rx in val_re.items():
             m = rx.search(line)
             if not m: continue
-            counts["prose" if is_prose(fp, line, m.start()) else "kod"][("value", w)] += 1
-for kova in ("kod", "prose"):
+            if is_prose(fp, line, m.start()): kova = "prose"
+            elif fp.endswith(".json") and w in BODY_KEY and BODY_KEY[w].match(line): kova = "beden"
+            else: kova = "kod"
+            counts[kova][("value", w)] += 1
+for kova in ("kod", "prose", "beden"):
     for (kind, key), n in sorted(counts[kova].items()):
         print(f"{kova}\t{kind}\t{key}\t{n}")
 PY
@@ -228,6 +257,7 @@ rows = [l.split("\t") for l in """$COUNTS""".strip().split("\n") if l.strip()]
 axes = {k: int(n) for kova, kind, k, n in rows if kova == "kod" and kind == "axis"}
 values = {k: int(n) for kova, kind, k, n in rows if kova == "kod" and kind == "value"}
 prose = {f"{kind}:{k}": int(n) for kova, kind, k, n in rows if kova == "prose"}
+beden = {f"{kind}:{k}": int(n) for kova, kind, k, n in rows if kova == "beden"}
 out = {
   "_baslik": "vocab_reference_check TABANI — kapali enum referans sayaci. Kapi: engine/tests/vocab_reference_check.sh (ctest: vocab_reference_check). Sayi YALNIZ DUSEBILIR; artiran commit KIRMIZI duser.",
   "_yasa": [
@@ -238,6 +268,7 @@ out = {
     "Deger sayimi yalniz PAYLASIM=1 kelimeler icin yapilir: 'none' 22 eksende ortak, tek basina 1178 referans veriyor ve bir ratchet'i gurultuye bogar. 100 tekil kelimenin 92'si sayilir, 8 paylasilan kelime BILEREK disarida.",
     "Sayi dustugunde kapi YESIL kalir ama bu dosya KENDILIGINDEN guncellenmez — dususu sabitlemek ayri, bilincli bir commit'tir (--baseline).",
     "Bu bir kullanim analizi DEGIL, bir imzadir: yorum satiri da uretilmis tablo da sayilir. Sart dogruluk degil, KARARLILIK.",
+    "UC KOVA (2026-09-05, F1 tur 7): 'beden' kovasi = body-v1 adlarinin (landmark/girth/length/width/angle, dosyadan okunur) JSON ANAHTARI olarak gectigi satirlar; enum degeri hic anahtar olmadigi icin sozluk referansi kaybolmaz; dosya adina bagli istisna yok; basilir, hukum tasimaz.",
     "IKI KOVA (2026-09-05, F1 duzeltme turu 2): eksenAdi/enumDegeri ve toplam* alanlari yalniz KOD kovasidir (ratchet). prose kovasi ayrica basilir, hukum tasimaz. 9c35e10b'deki yukari kesim (11037->11075, tamami landmark adi + prose carpismasi) geri alindi; 73113fa7'nin dosya-adina bagli 'beden' kovasi da SILINDI (hakem: istisna kilifinda reward hacking) — carpisma kaynaginda kesildi: body-v1 landmark anahtarlari 'landmark.<ad>' (karar ajani 4). Taban bir daha yukari kesilmez: kod kovasi artarsa kaynagi duzeltilir."
   ],
   "tabanCommit": commit,
@@ -253,13 +284,14 @@ out = {
   "eksenAdi": dict(sorted(axes.items())),
   "enumDegeri": dict(sorted(values.items())),
   "prose": {"toplam": sum(prose.values()), "sayim": dict(sorted(prose.items()))},
+  "beden": {"toplam": sum(beden.values()), "sayim": dict(sorted(beden.items())), "_tanim": "body-v1 adlarinin JSON anahtari olarak gectigi satirlar (beden sozlesmesi referansi, enum degil); hukum disi"},
 }
 open(path, "w").write(json.dumps(out, indent=2, ensure_ascii=True) + "\n")
 print("baseline written:", path)
 print("  commit", commit)
 print("  axes", len(axes), "sum", sum(axes.values()))
 print("  unique values", len(values), "sum", sum(values.values()))
-print("  TOTAL kod", out["toplam"], "| prose", out["prose"]["toplam"])
+print("  TOTAL kod", out["toplam"], "| prose", out["prose"]["toplam"], "| beden", out["beden"]["toplam"])
 PY
   exit $?
 fi
@@ -288,7 +320,7 @@ b = json.load(open(sys.argv[1]))
 subject = sys.argv[2]
 rows = [l.split("\t") for l in """$NOW""".strip().split("\n") if l.strip()]
 now = {"axis": {}, "value": {}}
-other = {"prose": 0}
+other = {"prose": 0, "beden": 0}
 for kova, kind, k, n in rows:
     if kova == "kod": now[kind][k] = int(n)
     else: other[kova] += int(n)
@@ -310,7 +342,7 @@ t_now = sum(now["axis"].values()) + sum(now["value"].values())
 print("olculen       :", subject)
 print("taban commit  :", b["tabanCommit"])
 print("taban toplam  :", b["toplam"])
-print("bugun toplam  :", t_now, "(delta %+d)" % (t_now - b["toplam"]), "— KOD kovasi; prose", other["prose"], "(taban", b.get("prose", {}).get("toplam", "?"), ") hukum disi")
+print("bugun toplam  :", t_now, "(delta %+d)" % (t_now - b["toplam"]), "— KOD kovasi; prose", other["prose"], "(taban", b.get("prose", {}).get("toplam", "?"), ") ve beden", other["beden"], "(taban", b.get("beden", {}).get("toplam", "?"), ") hukum disi")
 print()
 for kind, k, was, got in fallen:
     print("  DUSTU  %-11s %-22s %5d -> %5d" % (label[kind], k, was, got))

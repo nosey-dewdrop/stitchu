@@ -1056,12 +1056,229 @@
     "boyKaynak": "kisa puf kol (satici: Upper Sleeve buzgulu + Lower Sleeve band; 2 Pattern Cutting.jpg parca 5/6)",
     "not": "torso payda yok (SNP/bel penceresi bu gorselde olculmedi; yalniz kol acisi). Kol kepinde buzgu, agiz band ile toplanmis -> agiz ortasi omuz ucunun altinda: kol SARKAR, yana acilmaz.",
     "kolAcisiDeg": {
-     "deger": 74.7,
-     "tanim": "omuz ucu -> kol agzi ortasi, yatayin ALTINA derece",
+     "deger": 74.2,
+     "tanim": "omuz ucu -> kol agzi ortasi, yatayin ALTINA derece; deger = 6 renklendirme okumasinin medyani (okumalar), STRIPE murekkep okumasi stripeMurekkep alaninda",
      "dxdy": [
       -61.5,
       225.0
-     ]
+     ],
+     "stripeMurekkep": 74.7
+    },
+    "okumalar": {
+     "yontem": "siluet maskesi (|px-bg|_1 > 40), STRIPE sablonu IoU kaydi, tohum -> maske siniri snap r=12",
+     "renklendirmeler": {
+      "linen": {
+       "kayitDXDY": [
+        -656,
+        0
+       ],
+       "maskeIoU": 0.4582,
+       "omuzUcu": {
+        "tohum": [
+         166,
+         260
+        ],
+        "snapPX": [
+         167,
+         264
+        ],
+        "mesafePX": 4.12,
+        "yaricapPX": 12
+       },
+       "agizUclar": [
+        [
+         61,
+         439
+        ],
+        [
+         146,
+         539
+        ]
+       ],
+       "agizOrta": [
+        103.5,
+        489.0
+       ],
+       "kolAcisiDeg": 74.2
+      },
+      "stripe": {
+       "kayitDXDY": [
+        0,
+        0
+       ],
+       "maskeIoU": 1.0,
+       "omuzUcu": {
+        "tohum": [
+         822,
+         260
+        ],
+        "snapPX": [
+         823,
+         264
+        ],
+        "mesafePX": 4.12,
+        "yaricapPX": 12
+       },
+       "agizUclar": [
+        [
+         717,
+         439
+        ],
+        [
+         802,
+         539
+        ]
+       ],
+       "agizOrta": [
+        759.5,
+        489.0
+       ],
+       "kolAcisiDeg": 74.2
+      },
+      "navy-stripe": {
+       "kayitDXDY": [
+        660,
+        0
+       ],
+       "maskeIoU": 0.5249,
+       "omuzUcu": {
+        "tohum": [
+         1482,
+         260
+        ],
+        "snapPX": [
+         1487,
+         265
+        ],
+        "mesafePX": 7.07,
+        "yaricapPX": 12
+       },
+       "agizUclar": [
+        [
+         1383,
+         437
+        ],
+        [
+         1462,
+         540
+        ]
+       ],
+       "agizOrta": [
+        1422.5,
+        488.5
+       ],
+       "kolAcisiDeg": 73.9
+      },
+      "polka": {
+       "kayitDXDY": [
+        -660,
+        948
+       ],
+       "maskeIoU": 0.1678,
+       "omuzUcu": {
+        "tohum": [
+         162,
+         1208
+        ],
+        "snapPX": [
+         164,
+         1210
+        ],
+        "mesafePX": 2.83,
+        "yaricapPX": 12
+       },
+       "agizUclar": [
+        [
+         52,
+         1390
+        ],
+        [
+         142,
+         1486
+        ]
+       ],
+       "agizOrta": [
+        97.0,
+        1438.0
+       ],
+       "kolAcisiDeg": 73.6
+      },
+      "plaid": {
+       "kayitDXDY": [
+        -11,
+        949
+       ],
+       "maskeIoU": 0.5648,
+       "omuzUcu": {
+        "tohum": [
+         811,
+         1209
+        ],
+        "snapPX": [
+         812,
+         1212
+        ],
+        "mesafePX": 3.16,
+        "yaricapPX": 12
+       },
+       "agizUclar": [
+        [
+         707,
+         1389
+        ],
+        [
+         793,
+         1489
+        ]
+       ],
+       "agizOrta": [
+        750.0,
+        1439.0
+       ],
+       "kolAcisiDeg": 74.7
+      },
+      "denim": {
+       "kayitDXDY": [
+        656,
+        948
+       ],
+       "maskeIoU": 0.5632,
+       "omuzUcu": {
+        "tohum": [
+         1478,
+         1208
+        ],
+        "snapPX": [
+         1480,
+         1212
+        ],
+        "mesafePX": 4.47,
+        "yaricapPX": 12
+       },
+       "agizUclar": [
+        [
+         1374,
+         1389
+        ],
+        [
+         1460,
+         1489
+        ]
+       ],
+       "agizOrta": [
+        1417.0,
+        1439.0
+       ],
+       "kolAcisiDeg": 74.5
+      }
+     },
+     "n": 6,
+     "medyan": 74.2,
+     "min": 73.6,
+     "max": 74.7,
+     "yayilimDeg": 1.1,
+     "stripeMurekkepOkumasi": 74.7,
+     "tanim": "ayni cizimin 6 kopyasi = ayni acinin 6 okumasi; yayilim okuma hatasidir, cizim farki degil"
     }
    }
   },
@@ -1242,7 +1459,7 @@
       "kisa": false
      },
      "bugra-locket": {
-      "deg": 74.7,
+      "deg": 74.2,
       "kolTipi": "puf",
       "balonOran": null,
       "kisa": true
@@ -1276,12 +1493,12 @@
      "degerler": {
       "soi-lori.png": 63.3,
       "03-empire-dress-uc-boy.png": 32.9,
-      "bugra-locket": 74.7
+      "bugra-locket": 74.2
      },
      "medyan": 63.3,
      "band": [
       32.9,
-      74.7
+      74.2
      ],
      "bandKurali": "n >= 3 -> min/max (n < 10); n < 3 band yazilmaz (karar ajani 6)"
     }
