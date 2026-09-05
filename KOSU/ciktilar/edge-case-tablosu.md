@@ -1,6 +1,6 @@
 # EDGE CASE SÜPÜRME TABLOSU (M4-edge)
 
-üretildi: `node engine/tests/edge_case_supurme_check.mjs` · 2026-09-04
+üretildi: `node engine/tests/edge_case_supurme_check.mjs` · 2026-09-05
 
 YASA: her vaka ya geçerli bir çıktı verir ya **adıyla** reddedilir ve reddin yanında
 kullanıcının yapabileceği **sonraki adım** durur. Sessiz çöküş 0, sessiz default 0,
