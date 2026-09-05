@@ -1,6 +1,6 @@
 {
-  "_ne": "enum_dallanma_check.sh circir tabani. Uc circir: toplam(=cpp.dallanma), js.dallanma, js.sabitMM — hicbiri ARTAMAZ. Azalis bu dosyayi OTOMATIK YAZMAZ; taban --baseline ile bilincli, ayri commit'te kesilir (gerekce commit mesajinda). cpp.serializasyon (case E::X: return \"...\") bilgi icindir, toplama girmez. Sayim: case <SpecEnum>::X + [=!]= <SpecEnum>::X, engine/src/*.cpp|*.hpp, specparse.hpp ve *.gen.hpp haric; js: web/lib/flat-*.js + arka-koken.js icinde === 'kelime' (yol komutu/typeof haric) ve <AD>_MM = sayi. Hedef: cpp F3 sonu 0; js F2 sonu 0.",
-  "_kesildi": "2026-09-05 656fa9ea",
+  "_ne": "enum_dallanma_check.sh circir tabani. Uc circir: toplam(=cpp.dallanma), js.dallanma, js.sabitMM — hicbiri ARTAMAZ. Azalis bu dosyayi OTOMATIK YAZMAZ; taban --baseline ile bilincli, ayri commit'te kesilir (gerekce commit mesajinda). cpp.serializasyon (case E::X: return \"...\") bilgi icindir, toplama girmez. Sayim: case <SpecEnum>::X + [=!]= <SpecEnum>::X, engine/src/*.cpp|*.hpp, specparse.hpp ve *.gen.hpp haric; js: web/lib/flat-*.js + arka-koken.js icinde === 'kelime' (yol komutu/typeof haric) ve <AD>_MM = sayi; haric: yol komutu/typeof + contract primitif rolleri (body-v1 edgeRoles_geometry_hpp, seamKinds_flat_js; primitives-v1 primitifler). js.metin: web/lib/rehber-tr.js + pdf-core.js, ayni desen, ayri circir. Hedef: cpp F3 sonu 0; js.dallanma/sabitMM F2 sonu 0; js.metin rehber fazinda 0.",
+  "_kesildi": "2026-09-05 e4f74346",
   "specEnumSayisi": 39,
   "toplam": 436,
   "cpp": {
@@ -102,13 +102,18 @@
     }
   },
   "js": {
-    "dallanma": 21,
+    "dallanma": 18,
     "sabitMM": 2,
+    "metin": 34,
     "dosya": {
       "arka-koken.js": {"dallanma": 6, "sabitMM": 0},
-      "flat-from-pattern.js": {"dallanma": 15, "sabitMM": 2},
+      "flat-from-pattern.js": {"dallanma": 12, "sabitMM": 2},
       "flat-from-plan.js": {"dallanma": 0, "sabitMM": 0},
       "flat-geom.js": {"dallanma": 0, "sabitMM": 0}
+    },
+    "metinDosya": {
+      "pdf-core.js": 21,
+      "rehber-tr.js": 13
     }
   }
 }
