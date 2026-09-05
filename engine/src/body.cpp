@@ -101,22 +101,26 @@ Body Body::graded(const std::string& size) {
     const double arm = G("length.arm");
     const double underbustOran = gradeConst("girth.underbust_oran");
 
-    b.set("nape", 0.0, -napeDrop);
-    b.set("neckBase", r1(neckHalf), 0.0);
-    b.set("neckFront", 0.0, r1(neckHalf * gradeConst("neckFrontOverHalfNeck")));
-    b.set("shoulderTip", r1(tipX), r1(tipY));
-    b.set("underarm", bust / 4.0, r1(underarmY));
-    b.set("bustApex", r1(apexX), r1(apexY));
-    b.set("bustLine", bust / 4.0, r1(apexY));
-    b.set("underbust", r1(bust * underbustOran / 4.0), r1(r1(apexY) + gradeConst("underbustApexDropMM")));
-    b.set("waist", waist / 4.0, r1(waistY));
-    b.set("highHip", G("girth.highHip") / 4.0, r1(waistY + gradeConst("length.waistToHighHip")));
-    b.set("hip", hip / 4.0, r1(hipY));
-    b.set("crotch", 0.0, r1(waistY + G("length.bodyRise")));
-    b.set("knee", 0.0, r1(waistY + G("length.waistToKnee")));
-    b.set("ankle", 0.0, r1(waistY + G("length.waistToFloor") - gradeConst("ankleFloor")));
-    b.set("elbow", r1(tipX), r1(r1(tipY) + r1(gradeConst("length.shoulderToElbow_oran") * arm)));
-    b.set("wrist", r1(tipX), r1(r1(tipY) + arm));
+    b.set("landmark.nape", 0.0, -napeDrop);
+    b.set("landmark.neckBase", r1(neckHalf), 0.0);
+    b.set("landmark.neckFront", 0.0, r1(neckHalf * gradeConst("neckFrontOverHalfNeck")));
+    b.set("landmark.shoulderTip", r1(tipX), r1(tipY));
+    b.set("landmark.underarm", bust / 4.0, r1(underarmY));
+    b.set("landmark.bustApex", r1(apexX), r1(apexY));
+    b.set("landmark.bustLine", bust / 4.0, r1(apexY));
+    b.set("landmark.underbust", r1(bust * underbustOran / 4.0), r1(r1(apexY) + gradeConst("underbustApexDropMM")));
+    b.set("landmark.waist", waist / 4.0, r1(waistY));
+    b.set("landmark.highHip", G("girth.highHip") / 4.0, r1(waistY + gradeConst("length.waistToHighHip")));
+    b.set("landmark.hip", hip / 4.0, r1(hipY));
+    b.set("landmark.crotch", 0.0, r1(waistY + G("length.bodyRise")));
+    b.set("landmark.knee", 0.0, r1(waistY + G("length.waistToKnee")));
+    b.set("landmark.ankle", 0.0, r1(waistY + G("length.waistToFloor") - gradeConst("ankleFloor")));
+    // Kol sarkik, govdenin yanina bitisik: eksen x = koltukalti yarimi + ustkol yari kalinligi
+    // (girth.biceps / 2pi, daire kesit — contract'ta DOGRULANMADI beyanli). Eski x = shoulderTip.x
+    // govdenin icinden geciyordu (F1 hakem kusuru); gercek36 landmark.elbow/wrist kaynak alaninda.
+    const double armX = r1(bust / 4.0 + G("girth.biceps") / (2.0 * kPi));
+    b.set("landmark.elbow", armX, r1(r1(tipY) + r1(gradeConst("length.shoulderToElbow_oran") * arm)));
+    b.set("landmark.wrist", armX, r1(r1(tipY) + arm));
 
     b.setRing("girth.neckBase", G("girth.neckBase"), 0.5);
     b.setRing("girth.upperBust", bust - gradeConst("girth.upperBust_fark"), contract::kNoValue);
@@ -148,10 +152,10 @@ Body Body::graded(const std::string& size) {
 
 Body Body::croquisOf(const Body& real) {
     Body b; b.id_ = "croquis@" + real.id();
-    const double bustHalf = real.landmark("bustLine").x;
-    const double hipHalf = real.landmark("hip").x;
+    const double bustHalf = real.landmark("landmark.bustLine").x;
+    const double hipHalf = real.landmark("landmark.hip").x;
     const double stretch = croquisOran("dikeyUzatma");
-    const double torso = real.landmark("waist").y * stretch;
+    const double torso = real.landmark("landmark.waist").y * stretch;
     // Yatay oranlarin paydasi omuz ucu x'idir, bust yarimi degil (F1 duzeltme
     // turu): Zoe Hong sablonunun 'tam govde' paydasi kol-dis-kenardan
     // kol-dis-kenara olculmus izdusum genisligidir; tup yarimina (cevre/4)
@@ -165,30 +169,33 @@ Body Body::croquisOf(const Body& real) {
     const double cUnder = r1(croquisOran("underarmOverTorso") * torso);
     const double cw = r1(croquisOran("waistHalfOverBustHalf") * bustHalf);
     const double waistY = r1(torso);
-    const double hipY = r1(real.landmark("hip").y * stretch);
-    const double napeY = real.landmark("nape").y;
+    const double hipY = r1(real.landmark("landmark.hip").y * stretch);
+    const double napeY = real.landmark("landmark.nape").y;
 
-    b.set("nape", 0.0, napeY);
-    b.set("neckBase", cneck, 0.0);
-    b.set("neckFront", 0.0, r1(cneck * gradeConst("neckFrontOverHalfNeck")));
-    b.set("shoulderTip", ctip, ctipY);
-    b.set("underarm", bustHalf, cUnder);
-    b.set("bustApex", cApexX, cApex);
-    b.set("bustLine", bustHalf, cApex);
-    b.set("underbust", r1(bustHalf * gradeConst("girth.underbust_oran")), r1(cApex + croquisOran("underbustDropMM")));
-    b.set("waist", cw, waistY);
-    b.set("highHip", real.landmark("highHip").x, r1(waistY + gradeConst("length.waistToHighHip") * stretch));
-    b.set("hip", hipHalf, hipY);
-    for (const char* n : {"crotch", "knee", "ankle"}) b.set(n, 0.0, r1(real.landmark(n).y * stretch));
-    b.set("elbow", ctip, waistY);   // croquisOranlar.elbowY = waist.y
-    b.set("wrist", ctip, hipY);     // croquisOranlar.wristY = hip.y
+    b.set("landmark.nape", 0.0, napeY);
+    b.set("landmark.neckBase", cneck, 0.0);
+    b.set("landmark.neckFront", 0.0, r1(cneck * gradeConst("neckFrontOverHalfNeck")));
+    b.set("landmark.shoulderTip", ctip, ctipY);
+    b.set("landmark.underarm", bustHalf, cUnder);
+    b.set("landmark.bustApex", cApexX, cApex);
+    b.set("landmark.bustLine", bustHalf, cApex);
+    b.set("landmark.underbust", r1(bustHalf * gradeConst("girth.underbust_oran")), r1(cApex + croquisOran("underbustDropMM")));
+    b.set("landmark.waist", cw, waistY);
+    b.set("landmark.highHip", real.landmark("landmark.highHip").x, r1(waistY + gradeConst("length.waistToHighHip") * stretch));
+    b.set("landmark.hip", hipHalf, hipY);
+    for (const char* n : {"landmark.crotch", "landmark.knee", "landmark.ankle"}) b.set(n, 0.0, r1(real.landmark(n).y * stretch));
+    // Kol: sevkPoz kol acisi (croquisOranlar.kolAcisiDeg = flat-convention sevkPoz.kolAcisiDeg.taban,
+    // gen-contract --check esitligi dogrular), yatayin altina; kol boyu gercek ile ayni. Flat'in
+    // kolu bu eksende cizilir (cizim_giysi_mi data-kol-aci), croquis kolu onunla ayni yerde durur.
+    { const double th = croquisOran("kolAcisiDeg") * kPi / 180.0;
+      const double toElbow = real.scalar("length.shoulderToElbow"), arm = real.scalar("length.arm");
+      b.set("landmark.elbow", r1(ctip + toElbow * std::cos(th)), r1(ctipY + toElbow * std::sin(th)));
+      b.set("landmark.wrist", r1(ctip + arm * std::cos(th)), r1(ctipY + arm * std::sin(th))); }
 
     for (const auto& n : real.ringNames()) b.setRing(n, real.ring(n), real.ringBackFrac(n));
     b.setRing("girth.waist", r1(4.0 * cw), real.ringBackFrac("girth.waist"));
     for (const auto& s : real.sc_) b.setScalar(s.name, s.v);
     b.setScalar("length.shoulder", r1(std::hypot(ctip - cneck, ctipY)));
-    b.setScalar("length.arm", r1(hipY - ctipY));
-    b.setScalar("length.shoulderToElbow", r1(waistY - ctipY));
     b.setScalar("length.bustDepth", r1(std::hypot(cApexX - cneck, cApex)));
     b.setScalar("width.shoulderToShoulder", r1(2.0 * ctip));
     const double cross = croquisOran("crossOverShoulderToShoulder");   // contract, koda gomulu degil
@@ -230,14 +237,14 @@ double Body::scalar(const std::string& name) const {
 }
 
 std::string Body::ringOfLandmark(const std::string& lm) {
-    static const char* pairs[][2] = {{"neckBase", "girth.neckBase"}, {"bustLine", "girth.bust"}, {"underbust", "girth.underbust"},
-        {"waist", "girth.waist"}, {"highHip", "girth.highHip"}, {"hip", "girth.hip"}, {"elbow", "girth.elbow"},
-        {"wrist", "girth.wrist"}, {"knee", "girth.knee"}, {"underarm", "girth.upperBust"}};
+    static const char* pairs[][2] = {{"landmark.neckBase", "girth.neckBase"}, {"landmark.bustLine", "girth.bust"}, {"landmark.underbust", "girth.underbust"},
+        {"landmark.waist", "girth.waist"}, {"landmark.highHip", "girth.highHip"}, {"landmark.hip", "girth.hip"}, {"landmark.elbow", "girth.elbow"},
+        {"landmark.wrist", "girth.wrist"}, {"landmark.knee", "girth.knee"}, {"landmark.underarm", "girth.upperBust"}};
     for (const auto& p : pairs) if (lm == p[0]) return p[1];
     return "";
 }
 std::string Body::landmarkOfRing(const std::string& ring) {
-    for (const char* n : {"neckBase", "bustLine", "underbust", "waist", "highHip", "hip", "elbow", "wrist", "knee", "underarm"})
+    for (const char* n : {"landmark.neckBase", "landmark.bustLine", "landmark.underbust", "landmark.waist", "landmark.highHip", "landmark.hip", "landmark.elbow", "landmark.wrist", "landmark.knee", "landmark.underarm"})
         if (ringOfLandmark(n) == ring) return n;
     return "";
 }

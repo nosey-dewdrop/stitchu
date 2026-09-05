@@ -136,6 +136,8 @@
   "centik": {
     "_tanim": "Notch tipi ve olcusu. ASTM tipler: slit (4), V (4), T (80), castle (81), check (82), U (83). Indie: 'short lines at a right angle to the cutting line – or sometimes triangles' (tilly).",
     "varsayilanTip": "slitNotch",
+    "tipler": { "slitNotch": 4, "vNotch": 4, "tNotch": 80, "castleNotch": 81, "checkNotch": 82, "uNotch": 83 },
+    "_tipler": "ASTM D6673 centik tip kumesi -> DXF-AAMA katman numarasi (deger). Adlar vocab enum kelimeleriyle ciplak carpismaz (karar ajani 5: 'slit' backSlit ile carpisiyordu -> slitNotch; kural genel). F2b kalip SVG'si varsayilanTip'i ve katman'i BURADAN okur, koda ad/sayi gommez. Bekci: engine/tools/gen-contract.mjs --check — varsayilanTip kume icinde ve katman == tipler[varsayilanTip] degilse exit 1 (gen_contract_check).",
     "katman": 4,
     "uzunlukMM": 7.0,
     "_uzunlukNot": "bugra: A0/A4 icerik akisinda 184/202 tek-segment yol tam 7.0 mm (0.5 mm kovada), baska kisa segment sinifi yok -> centik 7 mm (eski 5.0 DOGRULANMADI degeri kalkti). Dikis payi 10 mm: centik dikis cizgisine 3 mm kala biter",

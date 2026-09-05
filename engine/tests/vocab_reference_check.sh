@@ -85,20 +85,17 @@
 # the baseline is re-cut by hand with --baseline, in its own commit, with the
 # reason in the message.
 #
-# UC KOVA (F1 duzeltme turu, 2026-09-05; F1 hakem kusuru + body-v1 ayniInsan.sonrakiFazKalemleri.F1[6]).
+# IKI KOVA (F1 duzeltme turu 2, 2026-09-05; karar ajani 4).
 # 9c35e10b'de taban ikinci kez YUKARI kesildi (11037 -> 11075) ve hakem bunu reward hacking saydi:
 # artisin tamami body-v1 landmark adlarinin (waist/hip/elbow/bust) ve contract prose'unun sozluk
-# kelimeleriyle CARPISMASIYDI, sozluk buyumemisti (engine/vocab.json bayt-ayni). Kural artik:
-# taban bir daha yukari kesilmez; sayim UC KOVAYA ayrilir ve ratchet yalniz KOD kovasina uygulanir:
-#   kod   : sozluge gercek referans olabilecek satirlar (eski grep ile ayni eslesme)
+# kelimeleriyle CARPISMASIYDI, sozluk buyumemisti (engine/vocab.json bayt-ayni). 73113fa7 bunu bir
+# 'beden' kovasiyla (dosya adina bagli istisna: body-v1.json, body*.hpp/.cpp) sayimdan cikardi; hakem
+# onu da reward hacking saydi (kapinin icinde dosya listesine bagli ozel-durum). Kural artik:
+# taban yukari kesilmez; carpisma KAYNAGINDA kesilir: landmark anahtarlari 'landmark.<ad>' namespace
+# (contract'taki girth./length./width./angle. ile ayni bicim), dosya istisnasi YOK. Iki kova:
+#   kod   : sozluge gercek referans olabilecek satirlar (eski grep ile ayni eslesme) — ratchet burada
 #   prose : .md/.txt, yorum satirlari, JSON aciklama alanlari (_*, kaynak, tanim, not, anlam, ...) — basilir, hukum yok
-#   beden : contract/body-v1.json landmark/halka adlariyla carpisan enum kelimeleri, YALNIZ beden modulu
-#           dosyalarinda (contract/body-v1.json, engine/src/body*.hpp/.cpp) — orada "hip" bir landmark adidir,
-#           sozluk degeri degil; liste body-v1.json'dan okunur. Eksen adlari orada da KOD sayilir.
-# Uc kovanin toplami eski tek sayimin toplamina esittir (olculdu: 9c35e10b 11075 = kod+prose+beden);
-# yontem satirlari yeniden boler, atmaz. Taban yeni yontemle ffa9e6ce'de (9c35e10b oncesi son mesru taban)
-# yeniden kesildi; HEAD'in kod kovasi o tabanin altinda ya da esit olmak zorunda (olculdu: 9301 -> 9305 idi,
-# 4 satirin tamami yeni JSON anahtar adlarinin carpismasiydi, adlar Turkce'ye cevrildi -> esit/az).
+# Iki kovanin toplami eski tek sayimin toplamina esittir; yontem satirlari yeniden boler, atmaz.
 # Sayac python'da (grep -w / grep -F ile birebir ayni eslesme, satir basina bir), asagida count_tree icinde.
 set -uo pipefail
 export LC_ALL=C
@@ -138,19 +135,14 @@ count_tree() {
   fi
   python3 - "$root" <<'PY'
 # Kullanim: python3 vocab_kova.py <agac koku>   -> "kova<TAB>kind<TAB>key<TAB>count" satirlari
-# kova: kod | prose | beden. Ratchet yalniz KOD kovasina uygulanir; prose ve beden basilir, hukum tasimaz.
+# kova: kod | prose. Ratchet yalniz KOD kovasina uygulanir; prose basilir, hukum tasimaz.
 #   prose : .md/.txt satirlari; // # * /* ile baslayan yorum satirlari; kelimenin // sonrasinda gectigi satirlar;
 #           JSON'da anahtari _ ile baslayan ya da kaynak/tanim/not/anlam/derivation/source/note/why/neden/gerekce/
 #           aciklama/description/kural/law olan satirlar; 60+ karakterlik ciplak dize satirlari (aciklama dizileri).
-#   beden : contract/body-v1.json landmark/halka adlari ile carpisan enum KELIMELERI (hip, waist, bust, elbow ...),
-#           yalniz beden modulu dosyalarinda (contract/body-v1.json, engine/src/body*.hpp/.cpp): oradaki "hip"
-#           bir sozluk degeri degil, beden sozlesmesinin landmark adidir. Liste body-v1.json'dan OKUNUR (elle degil).
-#           Eksen ADLARI (neckline, sleeveStyle ...) beden dosyalarinda da KOD kovasinda sayilir: beden modulu
-#           sozluge dokunursa ratchet gorur.
 #   kod   : geri kalan her sey — grep -w / grep -F '"<deger>"' ile AYNI eslesme (satir basina bir).
+# Dosya adina bagli istisna YOK (eski 'beden' kovasi silindi, karar ajani 4): body-v1 landmark adlari
+# 'landmark.<ad>' oldugu icin tirnakli enum degeriyle ("hip") artik carpismaz.
 # Eslesme kurali V0-0D §3 ile birebir: eksen adi kelime sinirinda (\b), enum degeri tirnakli literal.
-# Uc kovanin toplami eski tek sayimin toplamina ESITTIR (olculdu 2026-09-05: 9c35e10b 11075 = 9343 + 1732 kod/prose
-# eski ikili prototipte; ucluye ayrildiginda toplam degismez) — yontem satirlari yeniden boler, atmaz.
 import json, os, re, sys, collections
 root = sys.argv[1]
 SCOPE = "contract engine/src engine/wasm engine/tools engine/pattern-bridge engine/vocab.json web/js recipes backend knowledge".split()
@@ -164,18 +156,6 @@ axis_re = {a: re.compile(r"(?<![A-Za-z0-9_])" + re.escape(a) + r"(?![A-Za-z0-9_]
 val_re = {w: re.compile(re.escape('"' + w + '"')) for w in values}
 PROSE_KEY = re.compile(r'^\s*"(_[^"]*|kaynak|tanim|not|anlam|derivation|source|note|why|neden|gerekce|aciklama|description|kural|law)"\s*:')
 BARE_STR = re.compile(r'^\s*"[^"]{60,}"\s*,?\s*$')
-# beden landmark/halka adlari: body-v1.json'dan (dosya yoksa bos kume — kova bos kalir, kod kovasi sayar)
-BODY_WORDS = set()
-try:
-    b = json.load(open(os.path.join(root, "contract/body-v1.json")))
-    for k in b.get("landmarklar", {}): BODY_WORDS.add(k)
-    for k in b.get("halkalar", {}): BODY_WORDS.add(k.split(".")[-1])
-    BODY_WORDS.discard("_tanim")
-except Exception:
-    pass
-def is_body_file(path):
-    rel = os.path.relpath(path, root)
-    return rel == "contract/body-v1.json" or re.match(r"engine/src/body(\.gen)?\.(hpp|cpp)$", rel) is not None
 def files():
     for p in SCOPE:
         ap = os.path.join(root, p)
@@ -191,12 +171,11 @@ def is_prose(path, line, pos):
         return bool(PROSE_KEY.match(line) or BARE_STR.match(line))
     c = line.find("//")
     return c >= 0 and pos > c
-counts = {"kod": collections.Counter(), "prose": collections.Counter(), "beden": collections.Counter()}
+counts = {"kod": collections.Counter(), "prose": collections.Counter()}
 for fp in files():
     try: data = open(fp, "rb").read()
     except Exception: continue
     if b"\0" in data: continue
-    body_file = is_body_file(fp)
     for line in data.decode("utf-8", "replace").split("\n"):
         for a, rx in axis_re.items():
             m = rx.search(line)
@@ -204,11 +183,8 @@ for fp in files():
         for w, rx in val_re.items():
             m = rx.search(line)
             if not m: continue
-            if is_prose(fp, line, m.start()): kova = "prose"
-            elif body_file and w in BODY_WORDS: kova = "beden"
-            else: kova = "kod"
-            counts[kova][("value", w)] += 1
-for kova in ("kod", "prose", "beden"):
+            counts["prose" if is_prose(fp, line, m.start()) else "kod"][("value", w)] += 1
+for kova in ("kod", "prose"):
     for (kind, key), n in sorted(counts[kova].items()):
         print(f"{kova}\t{kind}\t{key}\t{n}")
 PY
@@ -252,7 +228,6 @@ rows = [l.split("\t") for l in """$COUNTS""".strip().split("\n") if l.strip()]
 axes = {k: int(n) for kova, kind, k, n in rows if kova == "kod" and kind == "axis"}
 values = {k: int(n) for kova, kind, k, n in rows if kova == "kod" and kind == "value"}
 prose = {f"{kind}:{k}": int(n) for kova, kind, k, n in rows if kova == "prose"}
-beden = {f"{kind}:{k}": int(n) for kova, kind, k, n in rows if kova == "beden"}
 out = {
   "_baslik": "vocab_reference_check TABANI — kapali enum referans sayaci. Kapi: engine/tests/vocab_reference_check.sh (ctest: vocab_reference_check). Sayi YALNIZ DUSEBILIR; artiran commit KIRMIZI duser.",
   "_yasa": [
@@ -263,7 +238,7 @@ out = {
     "Deger sayimi yalniz PAYLASIM=1 kelimeler icin yapilir: 'none' 22 eksende ortak, tek basina 1178 referans veriyor ve bir ratchet'i gurultuye bogar. 100 tekil kelimenin 92'si sayilir, 8 paylasilan kelime BILEREK disarida.",
     "Sayi dustugunde kapi YESIL kalir ama bu dosya KENDILIGINDEN guncellenmez — dususu sabitlemek ayri, bilincli bir commit'tir (--baseline).",
     "Bu bir kullanim analizi DEGIL, bir imzadir: yorum satiri da uretilmis tablo da sayilir. Sart dogruluk degil, KARARLILIK.",
-    "UC KOVA (2026-09-05, F1 duzeltme turu): eksenAdi/enumDegeri ve toplam* alanlari yalniz KOD kovasidir (ratchet). prose ve beden kovalari ayrica basilir, hukum tasimaz. 9c35e10b'deki yukari kesim (11037->11075, tamami landmark adi + prose carpismasi) bu yontemle geri alindi; taban ffa9e6ce'de yeniden kesildi. Taban bir daha yukari kesilmez: kod kovasi artarsa kaynagi duzeltilir."
+    "IKI KOVA (2026-09-05, F1 duzeltme turu 2): eksenAdi/enumDegeri ve toplam* alanlari yalniz KOD kovasidir (ratchet). prose kovasi ayrica basilir, hukum tasimaz. 9c35e10b'deki yukari kesim (11037->11075, tamami landmark adi + prose carpismasi) geri alindi; 73113fa7'nin dosya-adina bagli 'beden' kovasi da SILINDI (hakem: istisna kilifinda reward hacking) — carpisma kaynaginda kesildi: body-v1 landmark anahtarlari 'landmark.<ad>' (karar ajani 4). Taban bir daha yukari kesilmez: kod kovasi artarsa kaynagi duzeltilir."
   ],
   "tabanCommit": commit,
   "sayimKomutu": {"eksenAdi": axis_cmd, "enumDegeri": value_cmd,
@@ -278,14 +253,13 @@ out = {
   "eksenAdi": dict(sorted(axes.items())),
   "enumDegeri": dict(sorted(values.items())),
   "prose": {"toplam": sum(prose.values()), "sayim": dict(sorted(prose.items()))},
-  "beden": {"toplam": sum(beden.values()), "sayim": dict(sorted(beden.items()))},
 }
 open(path, "w").write(json.dumps(out, indent=2, ensure_ascii=True) + "\n")
 print("baseline written:", path)
 print("  commit", commit)
 print("  axes", len(axes), "sum", sum(axes.values()))
 print("  unique values", len(values), "sum", sum(values.values()))
-print("  TOTAL kod", out["toplam"], "| prose", out["prose"]["toplam"], "| beden", out["beden"]["toplam"])
+print("  TOTAL kod", out["toplam"], "| prose", out["prose"]["toplam"])
 PY
   exit $?
 fi
@@ -314,7 +288,7 @@ b = json.load(open(sys.argv[1]))
 subject = sys.argv[2]
 rows = [l.split("\t") for l in """$NOW""".strip().split("\n") if l.strip()]
 now = {"axis": {}, "value": {}}
-other = {"prose": 0, "beden": 0}
+other = {"prose": 0}
 for kova, kind, k, n in rows:
     if kova == "kod": now[kind][k] = int(n)
     else: other[kova] += int(n)
@@ -336,7 +310,7 @@ t_now = sum(now["axis"].values()) + sum(now["value"].values())
 print("olculen       :", subject)
 print("taban commit  :", b["tabanCommit"])
 print("taban toplam  :", b["toplam"])
-print("bugun toplam  :", t_now, "(delta %+d)" % (t_now - b["toplam"]), "— KOD kovasi; prose", other["prose"], "(taban", b.get("prose", {}).get("toplam", "?"), ") beden", other["beden"], "(taban", b.get("beden", {}).get("toplam", "?"), ") hukum disi")
+print("bugun toplam  :", t_now, "(delta %+d)" % (t_now - b["toplam"]), "— KOD kovasi; prose", other["prose"], "(taban", b.get("prose", {}).get("toplam", "?"), ") hukum disi")
 print()
 for kind, k, was, got in fallen:
     print("  DUSTU  %-11s %-22s %5d -> %5d" % (label[kind], k, was, got))

@@ -154,7 +154,7 @@ for (const [k, v] of Object.entries(grade)) {
   if (!Array.isArray(arr) || arr.length !== gsz.length) throw new Error(`body-v1 gradeTablosu.degerler.${k}: ${gsz.length} deger bekleniyor`);
   bh += `    {"${k}", {${arr.map(bnum).join(', ')}}},\n`;
 }
-for (const ring of ['bust', 'waist', 'hip']) bh += `    {"arkaPay.${ring}", {${grade.arkaPay[ring].map(bnum).join(', ')}}},\n`;
+for (const ring of ['bust', 'waist', 'hip']) bh += `    {"arkaPay.${ring}", {${grade.arkaPay['girth.' + ring].map(bnum).join(', ')}}},\n`;
 bh += `};\ninline constexpr BodyScalarRow kBodyGradeConst[] = {\n`;
 for (const [k, v] of Object.entries(grade._sabitler)) if (typeof v === 'number') bh += `    {"${k}", ${bnum(v)}},\n`;
 bh += `};\n\n`;
@@ -163,7 +163,52 @@ bh += `inline constexpr BodyScalarRow kCroquisOran[] = {\n`;
 for (const [k, v] of Object.entries(co)) if (typeof v === 'number') bh += `    {"${k}", ${bnum(v)}},\n`;
 bh += `};\n\ninline constexpr BodyScalarRow kBodyKesitOran[] = {\n`;
 for (const [k, v] of Object.entries(bodyV1.halkaKesitOran)) if (typeof v === 'number') bh += `    {"${k}", ${bnum(v)}},\n`;
-bh += `};\n\ninline constexpr double kBodyKapiToleransMM = ${bnum(bodyV1.ayniInsan.kapiToleransMM.deger)};\ninline constexpr double kAyniInsanToleransMM = ${bnum(bodyV1.ayniInsan.toleransMM)};\n\n} // namespace contract\n} // namespace stitchu\n`;
+bh += `};\n\n`;
+// landmarkSirasi (F1 duzeltme 2, karar ajani 1): y sirasi contract'tan okunur, testte
+// varsayim olarak yazilmaz. Tier: ayni tier icinde esit y izinli, tier'lar arasi kesin artan.
+// Iki bedenin sirasi FARKLI olabilir (HEDEF 4): croquis36'da koltukalti gogus hattinin altinda.
+bh += `struct BodyOrderRow { const char* name; int tier; };\n`;
+for (const bodyId of ['gercek36', 'croquis36']) {
+  const tiers = bodyV1.bedenler[bodyId].landmarkSirasi;
+  if (!Array.isArray(tiers) || !tiers.length) throw new Error(`body-v1 bedenler.${bodyId}.landmarkSirasi yok`);
+  bh += `inline constexpr BodyOrderRow kBodyOrder_${bodyId}[] = {\n`;
+  tiers.forEach((tier, i) => { for (const n of tier) bh += `    {"${n}", ${i}},\n`; });
+  bh += `};\n`;
+}
+// cizimYardimcisi: yalniz beden-iki.svg (body_check fig()) icin; kalip/flat okumaz. DOGRULANMADI beyanli.
+bh += `\ninline constexpr BodyScalarRow kBodyCizimYardimcisi[] = {\n`;
+for (const [k, v] of Object.entries(bodyV1.cizimYardimcisi)) if (typeof v === 'number') bh += `    {"${k}", ${bnum(v)}},\n`;
+bh += `};\n`;
+// croquis bandlari: figure-bands.json (waist/bust, bust/hip yarim genislik) + flat-convention sevkPoz
+// (omuz/gogus orani, omuz egimi). body_check (f) bunlari BURADAN okur (F1 hakem: 0.72/0.84... testte gomuluydu).
+const figureBands = JSON.parse(readFileSync(join(root, 'contract/figure-bands.json'), 'utf8'));
+const flatLaw = JSON.parse(readFileSync(join(root, 'contract/flat-convention-v1.json'), 'utf8'));
+const bandRows = [
+  ['waistHalfOverBustHalf', figureBands.ratios.waist_bust.band, 'figure-bands ratios.waist_bust.band'],
+  ['bustHalfOverHipHalf', figureBands.ratios.bust_hip.band, 'figure-bands ratios.bust_hip.band'],
+  ['shoulderTipXOverBustHalf', [flatLaw.sevkPoz.omuzGogusOran.min, flatLaw.sevkPoz.omuzGogusOran.max], 'flat-convention sevkPoz.omuzGogusOran'],
+  ['shoulderSlopeDeg', [flatLaw.sevkPoz.omuzEgimiDeg.min, flatLaw.sevkPoz.omuzEgimiDeg.max], 'flat-convention sevkPoz.omuzEgimiDeg'],
+];
+bh += `\nstruct BodyBandRow { const char* name; double lo, hi; const char* kaynak; };\ninline constexpr BodyBandRow kCroquisBand[] = {\n`;
+for (const [n, [lo, hi], src] of bandRows) {
+  if (!(Number.isFinite(lo) && Number.isFinite(hi) && lo < hi)) throw new Error(`band ${n} okunamadi (${src})`);
+  bh += `    {"${n}", ${bnum(lo)}, ${bnum(hi)}, "${src}"},\n`;
+}
+bh += `};\n`;
+// Tek kaynak bekcisi (karar ajani 1/F1 hakem kusuru 4): croquis kol acisi sevkPoz tabanidir, kopya degil.
+if (co.kolAcisiDeg !== flatLaw.sevkPoz.kolAcisiDeg.taban) throw new Error(`body-v1 croquisOranlar.kolAcisiDeg ${co.kolAcisiDeg} != flat-convention sevkPoz.kolAcisiDeg.taban ${flatLaw.sevkPoz.kolAcisiDeg.taban}`);
+bh += `\ninline constexpr double kBodyKapiToleransMM = ${bnum(bodyV1.ayniInsan.kapiToleransMM.deger)};\ninline constexpr double kAyniInsanToleransMM = ${bnum(bodyV1.ayniInsan.toleransMM)};\n\n} // namespace contract\n} // namespace stitchu\n`;
+
+// ---- pattern-sheet-v1 bekcisi (F1 duzeltme 2, karar ajani 5) ------------------
+// Centik tip kumesi ASTM D6673 adlariyla contract'ta; varsayilanTip kume icinde ve
+// katman o tipin ASTM katmani olmak zorunda. F2b kalip SVG'si bu alanlari okur.
+const patternSheet = JSON.parse(readFileSync(join(root, 'contract/pattern-sheet-v1.json'), 'utf8'));
+{
+  const c = patternSheet.centik;
+  if (!c || typeof c.tipler !== 'object') throw new Error('pattern-sheet-v1 centik.tipler yok');
+  if (!(c.varsayilanTip in c.tipler)) throw new Error(`pattern-sheet-v1 centik.varsayilanTip '${c.varsayilanTip}' tipler kumesinde degil (${Object.keys(c.tipler).join(', ')})`);
+  if (c.katman !== c.tipler[c.varsayilanTip]) throw new Error(`pattern-sheet-v1 centik.katman ${c.katman} != tipler.${c.varsayilanTip} ${c.tipler[c.varsayilanTip]} (ASTM D6673 katmani)`);
+}
 
 // ---- write / check -----------------------------------------------------------
 const outputs = [

@@ -4,238 +4,238 @@
 <text x="20" y="26" class="baslik">contract/body-v1.json — iki beden, tek sozlesme (mm, y=0 omuz cizgisi, +y asagi)</text>
 <text x="20" y="44" class="not">Sol: gercek36 (kalibin bedeni; Burda/Aldrich/Mueller). Orta: croquis36 (flat'in bedeni; Zoe Hong flat template oranlari + tech-pack poz). Sag: 34-44 kalip serisi (Body::graded). Kirmizi kesik = halka, mavi = omuz cizgisi origin.</text>
 <g class="beden" data-body="gercek36">
-<text x="320" y="110.1" text-anchor="middle" class="baslik">gercek36 — kalip (bust 840 / bel 660 / kalca 900)</text>
-<polyline class="siluet" points="347.72,150 394.55,168.606 408.2,228.12 408.2,258.906 396.188,286.206 389.3,313.8 401.9,355.8 414.5,399.06 371.975,557.4 353.075,717" />
-<polyline class="siluet" points="320,428.46 338.9,557.4 334.175,717" />
-<polyline class="kol" points="394.55,168.606 394.55,307.206 394.55,416.406" />
-<polyline class="siluet" points="292.28,150 245.45,168.606 231.8,228.12 231.8,258.906 243.812,286.206 250.7,313.8 238.1,355.8 225.5,399.06 268.025,557.4 286.925,717" />
-<polyline class="siluet" points="320,428.46 301.1,557.4 305.825,717" />
-<polyline class="kol" points="245.45,168.606 245.45,307.206 245.45,416.406" />
-<path class="siluet" d="M292.28,150 Q320,174.394 347.72,150" />
-<path class="arka" d="M292.28,150 Q320,136.56 347.72,150" />
-<circle class="apex" cx="355.7" cy="258.906" r="2.26" />
-<circle class="apex" cx="284.3" cy="258.906" r="2.26" />
-<line class="halka" x1="231.8" y1="228.12" x2="408.2" y2="228.12" />
-<text class="etiket" x="414.2" y="231.12">underarm y=186.0 x=210.0</text>
-<line class="halka" x1="231.8" y1="258.906" x2="408.2" y2="258.906" />
-<text class="etiket" x="414.2" y="261.906">bustLine y=259.3 x=210.0</text>
-<line class="halka" x1="243.812" y1="286.206" x2="396.188" y2="286.206" />
-<text class="etiket" x="402.188" y="289.206">underbust y=324.3 x=181.4</text>
-<line class="halka" x1="250.7" y1="313.8" x2="389.3" y2="313.8" />
-<text class="etiket" x="395.3" y="316.8">waist y=390.0 x=165.0</text>
-<line class="halka" x1="238.1" y1="355.8" x2="401.9" y2="355.8" />
-<text class="etiket" x="407.9" y="358.8">highHip y=490.0 x=195.0</text>
-<line class="halka" x1="225.5" y1="399.06" x2="414.5" y2="399.06" />
-<text class="etiket" x="420.5" y="402.06">hip y=593.0 x=225.0</text>
-<line class="halka" x1="277.475" y1="428.46" x2="362.525" y2="428.46" />
-<text class="etiket" x="368.525" y="431.46">crotch y=663.0</text>
-<line class="halka" x1="268.025" y1="557.4" x2="371.975" y2="557.4" />
-<text class="etiket" x="377.975" y="560.4">knee y=970.0</text>
-<line class="halka" x1="286.925" y1="717" x2="353.075" y2="717" />
-<text class="etiket" x="359.075" y="720">ankle y=1350.0</text>
-<line class="origin" x1="228.65" y1="150" x2="411.35" y2="150" />
-<text class="etiket" x="400.55" y="153">omuz cizgisi y=0 · shoulderTip (177.5,44.3) · neckBase x=66.0</text>
-<circle class="lm" cx="320" cy="141.6" r="2" /><circle class="lm" cx="347.72" cy="150" r="2" /><circle class="lm" cx="292.28" cy="150" r="2" /><circle class="lm" cx="320" cy="165.246" r="2" /><circle class="lm" cx="394.55" cy="168.606" r="2" /><circle class="lm" cx="245.45" cy="168.606" r="2" /><circle class="lm" cx="408.2" cy="228.12" r="2" /><circle class="lm" cx="231.8" cy="228.12" r="2" /><circle class="lm" cx="355.7" cy="258.906" r="2" /><circle class="lm" cx="284.3" cy="258.906" r="2" /><circle class="lm" cx="408.2" cy="258.906" r="2" /><circle class="lm" cx="231.8" cy="258.906" r="2" /><circle class="lm" cx="396.188" cy="286.206" r="2" /><circle class="lm" cx="243.812" cy="286.206" r="2" /><circle class="lm" cx="389.3" cy="313.8" r="2" /><circle class="lm" cx="250.7" cy="313.8" r="2" /><circle class="lm" cx="401.9" cy="355.8" r="2" /><circle class="lm" cx="238.1" cy="355.8" r="2" /><circle class="lm" cx="414.5" cy="399.06" r="2" /><circle class="lm" cx="225.5" cy="399.06" r="2" /><circle class="lm" cx="320" cy="428.46" r="2" /><circle class="lm" cx="320" cy="557.4" r="2" /><circle class="lm" cx="320" cy="717" r="2" /><circle class="lm" cx="394.55" cy="307.206" r="2" /><circle class="lm" cx="245.45" cy="307.206" r="2" /><circle class="lm" cx="394.55" cy="416.406" r="2" /><circle class="lm" cx="245.45" cy="416.406" r="2" />
+<text x="300" y="110.1" text-anchor="middle" class="baslik">gercek36 — kalip (bust 840 / bel 660 / kalca 900)</text>
+<polyline class="siluet" points="327.72,150 374.55,168.606 388.2,228.12 388.2,258.906 376.188,286.206 369.3,313.8 381.9,355.8 394.5,399.06 351.975,557.4 333.075,717" />
+<polyline class="siluet" points="300,428.46 318.9,557.4 314.175,717" />
+<polyline class="kol" points="374.55,168.606 406.26,307.206 406.26,416.406" />
+<polyline class="siluet" points="272.28,150 225.45,168.606 211.8,228.12 211.8,258.906 223.812,286.206 230.7,313.8 218.1,355.8 205.5,399.06 248.025,557.4 266.925,717" />
+<polyline class="siluet" points="300,428.46 281.1,557.4 285.825,717" />
+<polyline class="kol" points="225.45,168.606 193.74,307.206 193.74,416.406" />
+<path class="siluet" d="M272.28,150 Q300,174.394 327.72,150" />
+<path class="arka" d="M272.28,150 Q300,136.56 327.72,150" />
+<circle class="apex" cx="335.7" cy="258.906" r="2.26" />
+<circle class="apex" cx="264.3" cy="258.906" r="2.26" />
+<line class="halka" x1="211.8" y1="228.12" x2="388.2" y2="228.12" />
+<text class="etiket" data-landmark="landmark.underarm" x="394.2" y="231.12">underarm y=186.0 x=210.0</text>
+<line class="halka" x1="211.8" y1="258.906" x2="388.2" y2="258.906" />
+<text class="etiket" data-landmark="landmark.bustLine" x="394.2" y="261.906">bustLine y=259.3 x=210.0</text>
+<line class="halka" x1="223.812" y1="286.206" x2="376.188" y2="286.206" />
+<text class="etiket" data-landmark="landmark.underbust" x="382.188" y="289.206">underbust y=324.3 x=181.4</text>
+<line class="halka" x1="230.7" y1="313.8" x2="369.3" y2="313.8" />
+<text class="etiket" data-landmark="landmark.waist" x="375.3" y="316.8">waist y=390.0 x=165.0</text>
+<line class="halka" x1="218.1" y1="355.8" x2="381.9" y2="355.8" />
+<text class="etiket" data-landmark="landmark.highHip" x="387.9" y="358.8">highHip y=490.0 x=195.0</text>
+<line class="halka" x1="205.5" y1="399.06" x2="394.5" y2="399.06" />
+<text class="etiket" data-landmark="landmark.hip" x="400.5" y="402.06">hip y=593.0 x=225.0</text>
+<line class="halka" x1="257.475" y1="428.46" x2="342.525" y2="428.46" />
+<text class="etiket" data-landmark="landmark.crotch" x="348.525" y="431.46">crotch y=663.0</text>
+<line class="halka" x1="248.025" y1="557.4" x2="351.975" y2="557.4" />
+<text class="etiket" data-landmark="landmark.knee" x="357.975" y="560.4">knee y=970.0</text>
+<line class="halka" x1="266.925" y1="717" x2="333.075" y2="717" />
+<text class="etiket" data-landmark="landmark.ankle" x="339.075" y="720">ankle y=1350.0</text>
+<line class="origin" x1="208.65" y1="150" x2="391.35" y2="150" />
+<text class="etiket" x="380.55" y="153">omuz cizgisi y=0 · shoulderTip (177.5,44.3) · neckBase x=66.0</text>
+<circle class="lm" data-landmark="landmark.nape" cx="300" cy="141.6" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="327.72" cy="150" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="272.28" cy="150" r="2" /><circle class="lm" data-landmark="landmark.neckFront" cx="300" cy="165.246" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="374.55" cy="168.606" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="225.45" cy="168.606" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="388.2" cy="228.12" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="211.8" cy="228.12" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="335.7" cy="258.906" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="264.3" cy="258.906" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="388.2" cy="258.906" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="211.8" cy="258.906" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="376.188" cy="286.206" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="223.812" cy="286.206" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="369.3" cy="313.8" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="230.7" cy="313.8" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="381.9" cy="355.8" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="218.1" cy="355.8" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="394.5" cy="399.06" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="205.5" cy="399.06" r="2" /><circle class="lm" data-landmark="landmark.crotch" cx="300" cy="428.46" r="2" /><circle class="lm" data-landmark="landmark.knee" cx="300" cy="557.4" r="2" /><circle class="lm" data-landmark="landmark.ankle" cx="300" cy="717" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="406.26" cy="307.206" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="193.74" cy="307.206" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="406.26" cy="416.406" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="193.74" cy="416.406" r="2" />
 </g>
 <g class="beden" data-body="croquis36">
-<text x="900" y="110.1" text-anchor="middle" class="baslik">croquis36 — flat (ayni tup, template oran)</text>
-<polyline class="siluet" points="920.622,150 977.196,170.58 988.2,203.886 988.2,234.042 976.188,258.402 971.61,313.8 981.9,355.8 994.5,399.06 951.975,557.4 933.075,717" />
-<polyline class="siluet" points="900,428.46 918.9,557.4 914.175,717" />
-<polyline class="kol" points="977.196,170.58 977.196,313.8 977.196,399.06" />
-<polyline class="siluet" points="879.378,150 822.804,170.58 811.8,203.886 811.8,234.042 823.812,258.402 828.39,313.8 818.1,355.8 805.5,399.06 848.025,557.4 866.925,717" />
-<polyline class="siluet" points="900,428.46 881.1,557.4 885.825,717" />
-<polyline class="kol" points="822.804,170.58 822.804,313.8 822.804,399.06" />
-<path class="siluet" d="M879.378,150 Q900,168.144 920.622,150" />
-<path class="arka" d="M879.378,150 Q900,136.56 920.622,150" />
-<circle class="apex" cx="932.424" cy="234.042" r="2.26" />
-<circle class="apex" cx="867.576" cy="234.042" r="2.26" />
-<line class="halka" x1="811.8" y1="203.886" x2="988.2" y2="203.886" />
-<text class="etiket" x="994.2" y="206.886">underarm y=128.3 x=210.0</text>
-<line class="halka" x1="811.8" y1="234.042" x2="988.2" y2="234.042" />
-<text class="etiket" x="994.2" y="237.042">bustLine y=200.1 x=210.0</text>
-<line class="halka" x1="823.812" y1="258.402" x2="976.188" y2="258.402" />
-<text class="etiket" x="982.188" y="261.402">underbust y=258.1 x=181.4</text>
-<line class="halka" x1="828.39" y1="313.8" x2="971.61" y2="313.8" />
-<text class="etiket" x="977.61" y="316.8">waist y=390.0 x=170.5</text>
-<line class="halka" x1="818.1" y1="355.8" x2="981.9" y2="355.8" />
-<text class="etiket" x="987.9" y="358.8">highHip y=490.0 x=195.0</text>
-<line class="halka" x1="805.5" y1="399.06" x2="994.5" y2="399.06" />
-<text class="etiket" x="1000.5" y="402.06">hip y=593.0 x=225.0</text>
-<line class="halka" x1="857.475" y1="428.46" x2="942.525" y2="428.46" />
-<text class="etiket" x="948.525" y="431.46">crotch y=663.0</text>
-<line class="halka" x1="848.025" y1="557.4" x2="951.975" y2="557.4" />
-<text class="etiket" x="957.975" y="560.4">knee y=970.0</text>
-<line class="halka" x1="866.925" y1="717" x2="933.075" y2="717" />
-<text class="etiket" x="939.075" y="720">ankle y=1350.0</text>
-<line class="origin" x1="806.004" y1="150" x2="993.996" y2="150" />
-<text class="etiket" x="983.196" y="153">omuz cizgisi y=0 · shoulderTip (183.8,49.0) · neckBase x=49.1</text>
-<circle class="lm" cx="900" cy="141.6" r="2" /><circle class="lm" cx="920.622" cy="150" r="2" /><circle class="lm" cx="879.378" cy="150" r="2" /><circle class="lm" cx="900" cy="161.34" r="2" /><circle class="lm" cx="977.196" cy="170.58" r="2" /><circle class="lm" cx="822.804" cy="170.58" r="2" /><circle class="lm" cx="988.2" cy="203.886" r="2" /><circle class="lm" cx="811.8" cy="203.886" r="2" /><circle class="lm" cx="932.424" cy="234.042" r="2" /><circle class="lm" cx="867.576" cy="234.042" r="2" /><circle class="lm" cx="988.2" cy="234.042" r="2" /><circle class="lm" cx="811.8" cy="234.042" r="2" /><circle class="lm" cx="976.188" cy="258.402" r="2" /><circle class="lm" cx="823.812" cy="258.402" r="2" /><circle class="lm" cx="971.61" cy="313.8" r="2" /><circle class="lm" cx="828.39" cy="313.8" r="2" /><circle class="lm" cx="981.9" cy="355.8" r="2" /><circle class="lm" cx="818.1" cy="355.8" r="2" /><circle class="lm" cx="994.5" cy="399.06" r="2" /><circle class="lm" cx="805.5" cy="399.06" r="2" /><circle class="lm" cx="900" cy="428.46" r="2" /><circle class="lm" cx="900" cy="557.4" r="2" /><circle class="lm" cx="900" cy="717" r="2" /><circle class="lm" cx="977.196" cy="313.8" r="2" /><circle class="lm" cx="822.804" cy="313.8" r="2" /><circle class="lm" cx="977.196" cy="399.06" r="2" /><circle class="lm" cx="822.804" cy="399.06" r="2" />
+<text x="950" y="110.1" text-anchor="middle" class="baslik">croquis36 — flat (ayni tup, template oran; kol sevkPoz 30 derece)</text>
+<polyline class="siluet" points="970.622,150 1027.2,170.58 1038.2,252.396 1038.2,234.042 1026.19,258.402 1021.61,313.8 1031.9,355.8 1044.5,399.06 1001.98,557.4 983.075,717" />
+<polyline class="siluet" points="950,428.46 968.9,557.4 964.175,717" />
+<polyline class="kol" points="1027.2,170.58 1147.23,239.88 1241.82,294.48" />
+<polyline class="siluet" points="929.378,150 872.804,170.58 861.8,252.396 861.8,234.042 873.812,258.402 878.39,313.8 868.1,355.8 855.5,399.06 898.025,557.4 916.925,717" />
+<polyline class="siluet" points="950,428.46 931.1,557.4 935.825,717" />
+<polyline class="kol" points="872.804,170.58 752.768,239.88 658.184,294.48" />
+<path class="siluet" d="M929.378,150 Q950,168.144 970.622,150" />
+<path class="arka" d="M929.378,150 Q950,136.56 970.622,150" />
+<circle class="apex" cx="982.424" cy="234.042" r="2.26" />
+<circle class="apex" cx="917.576" cy="234.042" r="2.26" />
+<line class="halka" x1="861.8" y1="234.042" x2="1038.2" y2="234.042" />
+<text class="etiket" data-landmark="landmark.bustLine" x="1044.2" y="237.042">bustLine y=200.1 x=210.0</text>
+<line class="halka" x1="861.8" y1="252.396" x2="1038.2" y2="252.396" />
+<text class="etiket" data-landmark="landmark.underarm" x="1044.2" y="255.396">underarm y=243.8 x=210.0</text>
+<line class="halka" x1="873.812" y1="258.402" x2="1026.19" y2="258.402" />
+<text class="etiket" data-landmark="landmark.underbust" x="1032.19" y="267.396">underbust y=258.1 x=181.4</text>
+<line class="halka" x1="878.39" y1="313.8" x2="1021.61" y2="313.8" />
+<text class="etiket" data-landmark="landmark.waist" x="1027.61" y="316.8">waist y=390.0 x=170.5</text>
+<line class="halka" x1="868.1" y1="355.8" x2="1031.9" y2="355.8" />
+<text class="etiket" data-landmark="landmark.highHip" x="1037.9" y="358.8">highHip y=490.0 x=195.0</text>
+<line class="halka" x1="855.5" y1="399.06" x2="1044.5" y2="399.06" />
+<text class="etiket" data-landmark="landmark.hip" x="1050.5" y="402.06">hip y=593.0 x=225.0</text>
+<line class="halka" x1="907.475" y1="428.46" x2="992.525" y2="428.46" />
+<text class="etiket" data-landmark="landmark.crotch" x="998.525" y="431.46">crotch y=663.0</text>
+<line class="halka" x1="898.025" y1="557.4" x2="1001.98" y2="557.4" />
+<text class="etiket" data-landmark="landmark.knee" x="1007.98" y="560.4">knee y=970.0</text>
+<line class="halka" x1="916.925" y1="717" x2="983.075" y2="717" />
+<text class="etiket" data-landmark="landmark.ankle" x="989.075" y="720">ankle y=1350.0</text>
+<line class="origin" x1="856.004" y1="150" x2="1044" y2="150" />
+<text class="etiket" x="1033.2" y="153">omuz cizgisi y=0 · shoulderTip (183.8,49.0) · neckBase x=49.1</text>
+<circle class="lm" data-landmark="landmark.nape" cx="950" cy="141.6" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="970.622" cy="150" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="929.378" cy="150" r="2" /><circle class="lm" data-landmark="landmark.neckFront" cx="950" cy="161.34" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1027.2" cy="170.58" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="872.804" cy="170.58" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1038.2" cy="252.396" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="861.8" cy="252.396" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="982.424" cy="234.042" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="917.576" cy="234.042" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1038.2" cy="234.042" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="861.8" cy="234.042" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1026.19" cy="258.402" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="873.812" cy="258.402" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1021.61" cy="313.8" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="878.39" cy="313.8" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1031.9" cy="355.8" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="868.1" cy="355.8" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1044.5" cy="399.06" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="855.5" cy="399.06" r="2" /><circle class="lm" data-landmark="landmark.crotch" cx="950" cy="428.46" r="2" /><circle class="lm" data-landmark="landmark.knee" cx="950" cy="557.4" r="2" /><circle class="lm" data-landmark="landmark.ankle" cx="950" cy="717" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1147.23" cy="239.88" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="752.768" cy="239.88" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1241.82" cy="294.48" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="658.184" cy="294.48" r="2" />
 </g>
 <text class="baslik" x="1280" y="640" style="font-size:13px">fark croquis36 - gercek36 (dx, dy) mm</text>
-<text class="etiket" x="1280" y="655">neckBase: -16.9, 0.0</text>
-<text class="etiket" x="1280" y="670">neckFront: 0.0, -9.3</text>
-<text class="etiket" x="1280" y="685">shoulderTip: 6.3, 4.7</text>
-<text class="etiket" x="1280" y="700">underarm: 0.0, -57.7</text>
-<text class="etiket" x="1280" y="715">bustApex: -7.8, -59.2</text>
-<text class="etiket" x="1280" y="730">bustLine: 0.0, -59.2</text>
-<text class="etiket" x="1280" y="745">underbust: 0.0, -66.2</text>
-<text class="etiket" x="1280" y="760">waist: 5.5, 0.0</text>
-<text class="etiket" x="1280" y="775">elbow: 6.3, 15.7</text>
-<text class="etiket" x="1280" y="790">wrist: 6.3, -41.3</text>
+<text class="etiket" data-landmark="landmark.neckBase" x="1280" y="655">neckBase: -16.9, 0.0</text>
+<text class="etiket" data-landmark="landmark.neckFront" x="1280" y="670">neckFront: 0.0, -9.3</text>
+<text class="etiket" data-landmark="landmark.shoulderTip" x="1280" y="685">shoulderTip: 6.3, 4.7</text>
+<text class="etiket" data-landmark="landmark.underarm" x="1280" y="700">underarm: 0.0, 57.8</text>
+<text class="etiket" data-landmark="landmark.bustApex" x="1280" y="715">bustApex: -7.8, -59.2</text>
+<text class="etiket" data-landmark="landmark.bustLine" x="1280" y="730">bustLine: 0.0, -59.2</text>
+<text class="etiket" data-landmark="landmark.underbust" x="1280" y="745">underbust: 0.0, -66.2</text>
+<text class="etiket" data-landmark="landmark.waist" x="1280" y="760">waist: 5.5, 0.0</text>
+<text class="etiket" data-landmark="landmark.elbow" x="1280" y="775">elbow: 216.6, -160.3</text>
+<text class="etiket" data-landmark="landmark.wrist" x="1280" y="790">wrist: 441.8, -290.3</text>
 <text class="etiket" x="1280" y="805">digerleri 0,0 (bel/kalca/diz/ag/boy ayni)</text>
 <g class="seri">
-<text class="baslik" x="1480" y="70" text-anchor="middle" style="font-size:13px">kalip serisi EU34-44 (Body::graded)</text>
+<text class="baslik" x="1540" y="70" text-anchor="middle" style="font-size:13px">kalip serisi EU34-44 (Body::graded)</text>
 <g class="beden" data-body="EU34">
-<text x="1240" y="183.85" text-anchor="middle" class="baslik">EU34</text>
-<polyline class="siluet" points="1251.05,200 1269.61,207.378 1274,230.94 1274,242.415 1269.38,253.465 1266.35,265.45 1271.45,282.45 1276.55,299.45 1260.1,363.2 1252.79,426.95" />
-<polyline class="siluet" points="1240,310.67 1247.31,363.2 1245.48,426.95" />
-<polyline class="kol" points="1269.61,207.378 1269.61,263.478 1269.61,307.678" />
-<polyline class="siluet" points="1228.95,200 1210.39,207.378 1206,230.94 1206,242.415 1210.62,253.465 1213.65,265.45 1208.55,282.45 1203.45,299.45 1219.9,363.2 1227.21,426.95" />
-<polyline class="siluet" points="1240,310.67 1232.69,363.2 1234.52,426.95" />
-<polyline class="kol" points="1210.39,207.378 1210.39,263.478 1210.39,307.678" />
-<path class="siluet" d="M1228.95,200 Q1240,209.738 1251.05,200" />
-<path class="arka" d="M1228.95,200 Q1240,194.56 1251.05,200" />
-<circle class="apex" cx="1253.77" cy="242.415" r="1.51" />
-<circle class="apex" cx="1226.23" cy="242.415" r="1.51" />
-<line class="halka" x1="1206" y1="230.94" x2="1274" y2="230.94" />
-<line class="halka" x1="1206" y1="242.415" x2="1274" y2="242.415" />
-<line class="halka" x1="1210.62" y1="253.465" x2="1269.38" y2="253.465" />
-<line class="halka" x1="1213.65" y1="265.45" x2="1266.35" y2="265.45" />
-<line class="halka" x1="1208.55" y1="282.45" x2="1271.45" y2="282.45" />
-<line class="halka" x1="1203.45" y1="299.45" x2="1276.55" y2="299.45" />
-<line class="halka" x1="1223.55" y1="310.67" x2="1256.45" y2="310.67" />
-<line class="halka" x1="1219.9" y1="363.2" x2="1260.1" y2="363.2" />
-<line class="halka" x1="1227.21" y1="426.95" x2="1252.79" y2="426.95" />
-<line class="origin" x1="1203.59" y1="200" x2="1276.41" y2="200" />
-<circle class="lm" cx="1240" cy="196.6" r="2" /><circle class="lm" cx="1251.05" cy="200" r="2" /><circle class="lm" cx="1228.95" cy="200" r="2" /><circle class="lm" cx="1240" cy="206.086" r="2" /><circle class="lm" cx="1269.61" cy="207.378" r="2" /><circle class="lm" cx="1210.39" cy="207.378" r="2" /><circle class="lm" cx="1274" cy="230.94" r="2" /><circle class="lm" cx="1206" cy="230.94" r="2" /><circle class="lm" cx="1253.77" cy="242.415" r="2" /><circle class="lm" cx="1226.23" cy="242.415" r="2" /><circle class="lm" cx="1274" cy="242.415" r="2" /><circle class="lm" cx="1206" cy="242.415" r="2" /><circle class="lm" cx="1269.38" cy="253.465" r="2" /><circle class="lm" cx="1210.62" cy="253.465" r="2" /><circle class="lm" cx="1266.35" cy="265.45" r="2" /><circle class="lm" cx="1213.65" cy="265.45" r="2" /><circle class="lm" cx="1271.45" cy="282.45" r="2" /><circle class="lm" cx="1208.55" cy="282.45" r="2" /><circle class="lm" cx="1276.55" cy="299.45" r="2" /><circle class="lm" cx="1203.45" cy="299.45" r="2" /><circle class="lm" cx="1240" cy="310.67" r="2" /><circle class="lm" cx="1240" cy="363.2" r="2" /><circle class="lm" cx="1240" cy="426.95" r="2" /><circle class="lm" cx="1269.61" cy="263.478" r="2" /><circle class="lm" cx="1210.39" cy="263.478" r="2" /><circle class="lm" cx="1269.61" cy="307.678" r="2" /><circle class="lm" cx="1210.39" cy="307.678" r="2" />
+<text x="1345" y="183.85" text-anchor="middle" class="baslik">EU34</text>
+<polyline class="siluet" points="1356.05,200 1374.61,207.378 1379,230.94 1379,242.415 1374.38,253.465 1371.35,265.45 1376.45,282.45 1381.55,299.45 1365.1,363.2 1357.79,426.95" />
+<polyline class="siluet" points="1345,310.67 1352.31,363.2 1350.48,426.95" />
+<polyline class="kol" points="1374.61,207.378 1386.04,263.478 1386.04,307.678" />
+<polyline class="siluet" points="1333.95,200 1315.39,207.378 1311,230.94 1311,242.415 1315.62,253.465 1318.65,265.45 1313.55,282.45 1308.45,299.45 1324.9,363.2 1332.21,426.95" />
+<polyline class="siluet" points="1345,310.67 1337.69,363.2 1339.52,426.95" />
+<polyline class="kol" points="1315.39,207.378 1303.96,263.478 1303.96,307.678" />
+<path class="siluet" d="M1333.95,200 Q1345,209.738 1356.05,200" />
+<path class="arka" d="M1333.95,200 Q1345,194.56 1356.05,200" />
+<circle class="apex" cx="1358.77" cy="242.415" r="1.51" />
+<circle class="apex" cx="1331.23" cy="242.415" r="1.51" />
+<line class="halka" x1="1311" y1="230.94" x2="1379" y2="230.94" />
+<line class="halka" x1="1311" y1="242.415" x2="1379" y2="242.415" />
+<line class="halka" x1="1315.62" y1="253.465" x2="1374.38" y2="253.465" />
+<line class="halka" x1="1318.65" y1="265.45" x2="1371.35" y2="265.45" />
+<line class="halka" x1="1313.55" y1="282.45" x2="1376.45" y2="282.45" />
+<line class="halka" x1="1308.45" y1="299.45" x2="1381.55" y2="299.45" />
+<line class="halka" x1="1328.55" y1="310.67" x2="1361.45" y2="310.67" />
+<line class="halka" x1="1324.9" y1="363.2" x2="1365.1" y2="363.2" />
+<line class="halka" x1="1332.21" y1="426.95" x2="1357.79" y2="426.95" />
+<line class="origin" x1="1308.59" y1="200" x2="1381.41" y2="200" />
+<circle class="lm" data-landmark="landmark.nape" cx="1345" cy="196.6" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="1356.05" cy="200" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="1333.95" cy="200" r="2" /><circle class="lm" data-landmark="landmark.neckFront" cx="1345" cy="206.086" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1374.61" cy="207.378" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1315.39" cy="207.378" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1379" cy="230.94" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1311" cy="230.94" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="1358.77" cy="242.415" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="1331.23" cy="242.415" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1379" cy="242.415" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1311" cy="242.415" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1374.38" cy="253.465" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1315.62" cy="253.465" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1371.35" cy="265.45" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1318.65" cy="265.45" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1376.45" cy="282.45" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1313.55" cy="282.45" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1381.55" cy="299.45" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1308.45" cy="299.45" r="2" /><circle class="lm" data-landmark="landmark.crotch" cx="1345" cy="310.67" r="2" /><circle class="lm" data-landmark="landmark.knee" cx="1345" cy="363.2" r="2" /><circle class="lm" data-landmark="landmark.ankle" cx="1345" cy="426.95" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1386.04" cy="263.478" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1303.96" cy="263.478" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1386.04" cy="307.678" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1303.96" cy="307.678" r="2" />
 </g>
-<text class="etiket" x="1240" y="441.4" text-anchor="middle">80.0/62.0/86.0</text>
+<text class="etiket" x="1345" y="441.4" text-anchor="middle">80.0/62.0/86.0</text>
 <g class="beden" data-body="EU36">
-<text x="1328" y="183.85" text-anchor="middle" class="baslik">EU36</text>
-<polyline class="siluet" points="1339.22,200 1358.17,207.531 1363.7,231.62 1363.7,244.081 1358.84,255.131 1356.05,266.3 1361.15,283.3 1366.25,300.81 1349.04,364.9 1341.39,429.5" />
-<polyline class="siluet" points="1328,312.71 1335.65,364.9 1333.74,429.5" />
-<polyline class="kol" points="1358.17,207.531 1358.17,263.631 1358.17,307.831" />
-<polyline class="siluet" points="1316.78,200 1297.83,207.531 1292.3,231.62 1292.3,244.081 1297.16,255.131 1299.95,266.3 1294.85,283.3 1289.75,300.81 1306.96,364.9 1314.61,429.5" />
-<polyline class="siluet" points="1328,312.71 1320.35,364.9 1322.26,429.5" />
-<polyline class="kol" points="1297.83,207.531 1297.83,263.631 1297.83,307.831" />
-<path class="siluet" d="M1316.78,200 Q1328,209.874 1339.22,200" />
-<path class="arka" d="M1316.78,200 Q1328,194.56 1339.22,200" />
-<circle class="apex" cx="1342.45" cy="244.081" r="1.51" />
-<circle class="apex" cx="1313.55" cy="244.081" r="1.51" />
-<line class="halka" x1="1292.3" y1="231.62" x2="1363.7" y2="231.62" />
-<line class="halka" x1="1292.3" y1="244.081" x2="1363.7" y2="244.081" />
-<line class="halka" x1="1297.16" y1="255.131" x2="1358.84" y2="255.131" />
-<line class="halka" x1="1299.95" y1="266.3" x2="1356.05" y2="266.3" />
-<line class="halka" x1="1294.85" y1="283.3" x2="1361.15" y2="283.3" />
-<line class="halka" x1="1289.75" y1="300.81" x2="1366.25" y2="300.81" />
-<line class="halka" x1="1310.79" y1="312.71" x2="1345.21" y2="312.71" />
-<line class="halka" x1="1306.96" y1="364.9" x2="1349.04" y2="364.9" />
-<line class="halka" x1="1314.61" y1="429.5" x2="1341.39" y2="429.5" />
-<line class="origin" x1="1291.03" y1="200" x2="1364.97" y2="200" />
-<circle class="lm" cx="1328" cy="196.6" r="2" /><circle class="lm" cx="1339.22" cy="200" r="2" /><circle class="lm" cx="1316.78" cy="200" r="2" /><circle class="lm" cx="1328" cy="206.171" r="2" /><circle class="lm" cx="1358.17" cy="207.531" r="2" /><circle class="lm" cx="1297.83" cy="207.531" r="2" /><circle class="lm" cx="1363.7" cy="231.62" r="2" /><circle class="lm" cx="1292.3" cy="231.62" r="2" /><circle class="lm" cx="1342.45" cy="244.081" r="2" /><circle class="lm" cx="1313.55" cy="244.081" r="2" /><circle class="lm" cx="1363.7" cy="244.081" r="2" /><circle class="lm" cx="1292.3" cy="244.081" r="2" /><circle class="lm" cx="1358.84" cy="255.131" r="2" /><circle class="lm" cx="1297.16" cy="255.131" r="2" /><circle class="lm" cx="1356.05" cy="266.3" r="2" /><circle class="lm" cx="1299.95" cy="266.3" r="2" /><circle class="lm" cx="1361.15" cy="283.3" r="2" /><circle class="lm" cx="1294.85" cy="283.3" r="2" /><circle class="lm" cx="1366.25" cy="300.81" r="2" /><circle class="lm" cx="1289.75" cy="300.81" r="2" /><circle class="lm" cx="1328" cy="312.71" r="2" /><circle class="lm" cx="1328" cy="364.9" r="2" /><circle class="lm" cx="1328" cy="429.5" r="2" /><circle class="lm" cx="1358.17" cy="263.631" r="2" /><circle class="lm" cx="1297.83" cy="263.631" r="2" /><circle class="lm" cx="1358.17" cy="307.831" r="2" /><circle class="lm" cx="1297.83" cy="307.831" r="2" />
+<text x="1423" y="183.85" text-anchor="middle" class="baslik">EU36</text>
+<polyline class="siluet" points="1434.22,200 1453.17,207.531 1458.7,231.62 1458.7,244.081 1453.84,255.131 1451.05,266.3 1456.15,283.3 1461.25,300.81 1444.04,364.9 1436.39,429.5" />
+<polyline class="siluet" points="1423,312.71 1430.65,364.9 1428.74,429.5" />
+<polyline class="kol" points="1453.17,207.531 1466.01,263.631 1466.01,307.831" />
+<polyline class="siluet" points="1411.78,200 1392.83,207.531 1387.3,231.62 1387.3,244.081 1392.16,255.131 1394.95,266.3 1389.85,283.3 1384.75,300.81 1401.96,364.9 1409.61,429.5" />
+<polyline class="siluet" points="1423,312.71 1415.35,364.9 1417.26,429.5" />
+<polyline class="kol" points="1392.83,207.531 1379.99,263.631 1379.99,307.831" />
+<path class="siluet" d="M1411.78,200 Q1423,209.874 1434.22,200" />
+<path class="arka" d="M1411.78,200 Q1423,194.56 1434.22,200" />
+<circle class="apex" cx="1437.45" cy="244.081" r="1.51" />
+<circle class="apex" cx="1408.55" cy="244.081" r="1.51" />
+<line class="halka" x1="1387.3" y1="231.62" x2="1458.7" y2="231.62" />
+<line class="halka" x1="1387.3" y1="244.081" x2="1458.7" y2="244.081" />
+<line class="halka" x1="1392.16" y1="255.131" x2="1453.84" y2="255.131" />
+<line class="halka" x1="1394.95" y1="266.3" x2="1451.05" y2="266.3" />
+<line class="halka" x1="1389.85" y1="283.3" x2="1456.15" y2="283.3" />
+<line class="halka" x1="1384.75" y1="300.81" x2="1461.25" y2="300.81" />
+<line class="halka" x1="1405.79" y1="312.71" x2="1440.21" y2="312.71" />
+<line class="halka" x1="1401.96" y1="364.9" x2="1444.04" y2="364.9" />
+<line class="halka" x1="1409.61" y1="429.5" x2="1436.39" y2="429.5" />
+<line class="origin" x1="1386.03" y1="200" x2="1459.97" y2="200" />
+<circle class="lm" data-landmark="landmark.nape" cx="1423" cy="196.6" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="1434.22" cy="200" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="1411.78" cy="200" r="2" /><circle class="lm" data-landmark="landmark.neckFront" cx="1423" cy="206.171" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1453.17" cy="207.531" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1392.83" cy="207.531" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1458.7" cy="231.62" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1387.3" cy="231.62" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="1437.45" cy="244.081" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="1408.55" cy="244.081" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1458.7" cy="244.081" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1387.3" cy="244.081" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1453.84" cy="255.131" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1392.16" cy="255.131" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1451.05" cy="266.3" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1394.95" cy="266.3" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1456.15" cy="283.3" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1389.85" cy="283.3" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1461.25" cy="300.81" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1384.75" cy="300.81" r="2" /><circle class="lm" data-landmark="landmark.crotch" cx="1423" cy="312.71" r="2" /><circle class="lm" data-landmark="landmark.knee" cx="1423" cy="364.9" r="2" /><circle class="lm" data-landmark="landmark.ankle" cx="1423" cy="429.5" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1466.01" cy="263.631" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1379.99" cy="263.631" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1466.01" cy="307.831" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1379.99" cy="307.831" r="2" />
 </g>
-<text class="etiket" x="1328" y="441.4" text-anchor="middle">84.0/66.0/90.0</text>
+<text class="etiket" x="1423" y="441.4" text-anchor="middle">84.0/66.0/90.0</text>
 <g class="beden" data-body="EU38">
-<text x="1416" y="183.85" text-anchor="middle" class="baslik">EU38</text>
-<polyline class="siluet" points="1427.39,200 1446.74,207.684 1453.4,232.3 1453.4,245.747 1448.32,256.797 1445.75,267.15 1450.85,284.15 1455.95,302.17 1437.97,366.6 1429.98,432.05" />
-<polyline class="siluet" points="1416,314.75 1423.99,366.6 1421.99,432.05" />
-<polyline class="kol" points="1446.74,207.684 1446.74,264.736 1446.74,309.684" />
-<polyline class="siluet" points="1404.61,200 1385.26,207.684 1378.6,232.3 1378.6,245.747 1383.68,256.797 1386.25,267.15 1381.15,284.15 1376.05,302.17 1394.03,366.6 1402.02,432.05" />
-<polyline class="siluet" points="1416,314.75 1408.01,366.6 1410.01,432.05" />
-<polyline class="kol" points="1385.26,207.684 1385.26,264.736 1385.26,309.684" />
-<path class="siluet" d="M1404.61,200 Q1416,210.037 1427.39,200" />
-<path class="arka" d="M1404.61,200 Q1416,194.56 1427.39,200" />
-<circle class="apex" cx="1431.13" cy="245.747" r="1.51" />
-<circle class="apex" cx="1400.87" cy="245.747" r="1.51" />
-<line class="halka" x1="1378.6" y1="232.3" x2="1453.4" y2="232.3" />
-<line class="halka" x1="1378.6" y1="245.747" x2="1453.4" y2="245.747" />
-<line class="halka" x1="1383.68" y1="256.797" x2="1448.32" y2="256.797" />
-<line class="halka" x1="1386.25" y1="267.15" x2="1445.75" y2="267.15" />
-<line class="halka" x1="1381.15" y1="284.15" x2="1450.85" y2="284.15" />
-<line class="halka" x1="1376.05" y1="302.17" x2="1455.95" y2="302.17" />
-<line class="halka" x1="1398.02" y1="314.75" x2="1433.98" y2="314.75" />
-<line class="halka" x1="1394.03" y1="366.6" x2="1437.97" y2="366.6" />
-<line class="halka" x1="1402.02" y1="432.05" x2="1429.98" y2="432.05" />
-<line class="origin" x1="1378.46" y1="200" x2="1453.54" y2="200" />
-<circle class="lm" cx="1416" cy="196.6" r="2" /><circle class="lm" cx="1427.39" cy="200" r="2" /><circle class="lm" cx="1404.61" cy="200" r="2" /><circle class="lm" cx="1416" cy="206.273" r="2" /><circle class="lm" cx="1446.74" cy="207.684" r="2" /><circle class="lm" cx="1385.26" cy="207.684" r="2" /><circle class="lm" cx="1453.4" cy="232.3" r="2" /><circle class="lm" cx="1378.6" cy="232.3" r="2" /><circle class="lm" cx="1431.13" cy="245.747" r="2" /><circle class="lm" cx="1400.87" cy="245.747" r="2" /><circle class="lm" cx="1453.4" cy="245.747" r="2" /><circle class="lm" cx="1378.6" cy="245.747" r="2" /><circle class="lm" cx="1448.32" cy="256.797" r="2" /><circle class="lm" cx="1383.68" cy="256.797" r="2" /><circle class="lm" cx="1445.75" cy="267.15" r="2" /><circle class="lm" cx="1386.25" cy="267.15" r="2" /><circle class="lm" cx="1450.85" cy="284.15" r="2" /><circle class="lm" cx="1381.15" cy="284.15" r="2" /><circle class="lm" cx="1455.95" cy="302.17" r="2" /><circle class="lm" cx="1376.05" cy="302.17" r="2" /><circle class="lm" cx="1416" cy="314.75" r="2" /><circle class="lm" cx="1416" cy="366.6" r="2" /><circle class="lm" cx="1416" cy="432.05" r="2" /><circle class="lm" cx="1446.74" cy="264.736" r="2" /><circle class="lm" cx="1385.26" cy="264.736" r="2" /><circle class="lm" cx="1446.74" cy="309.684" r="2" /><circle class="lm" cx="1385.26" cy="309.684" r="2" />
+<text x="1501" y="183.85" text-anchor="middle" class="baslik">EU38</text>
+<polyline class="siluet" points="1512.39,200 1531.74,207.684 1538.4,232.3 1538.4,245.747 1533.32,256.797 1530.75,267.15 1535.85,284.15 1540.95,302.17 1522.97,366.6 1514.98,432.05" />
+<polyline class="siluet" points="1501,314.75 1508.99,366.6 1506.99,432.05" />
+<polyline class="kol" points="1531.74,207.684 1545.98,264.736 1545.98,309.684" />
+<polyline class="siluet" points="1489.61,200 1470.26,207.684 1463.6,232.3 1463.6,245.747 1468.68,256.797 1471.25,267.15 1466.15,284.15 1461.05,302.17 1479.03,366.6 1487.02,432.05" />
+<polyline class="siluet" points="1501,314.75 1493.01,366.6 1495.01,432.05" />
+<polyline class="kol" points="1470.26,207.684 1456.02,264.736 1456.02,309.684" />
+<path class="siluet" d="M1489.61,200 Q1501,210.037 1512.39,200" />
+<path class="arka" d="M1489.61,200 Q1501,194.56 1512.39,200" />
+<circle class="apex" cx="1516.13" cy="245.747" r="1.51" />
+<circle class="apex" cx="1485.87" cy="245.747" r="1.51" />
+<line class="halka" x1="1463.6" y1="232.3" x2="1538.4" y2="232.3" />
+<line class="halka" x1="1463.6" y1="245.747" x2="1538.4" y2="245.747" />
+<line class="halka" x1="1468.68" y1="256.797" x2="1533.32" y2="256.797" />
+<line class="halka" x1="1471.25" y1="267.15" x2="1530.75" y2="267.15" />
+<line class="halka" x1="1466.15" y1="284.15" x2="1535.85" y2="284.15" />
+<line class="halka" x1="1461.05" y1="302.17" x2="1540.95" y2="302.17" />
+<line class="halka" x1="1483.02" y1="314.75" x2="1518.98" y2="314.75" />
+<line class="halka" x1="1479.03" y1="366.6" x2="1522.97" y2="366.6" />
+<line class="halka" x1="1487.02" y1="432.05" x2="1514.98" y2="432.05" />
+<line class="origin" x1="1463.46" y1="200" x2="1538.54" y2="200" />
+<circle class="lm" data-landmark="landmark.nape" cx="1501" cy="196.6" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="1512.39" cy="200" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="1489.61" cy="200" r="2" /><circle class="lm" data-landmark="landmark.neckFront" cx="1501" cy="206.273" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1531.74" cy="207.684" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1470.26" cy="207.684" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1538.4" cy="232.3" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1463.6" cy="232.3" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="1516.13" cy="245.747" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="1485.87" cy="245.747" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1538.4" cy="245.747" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1463.6" cy="245.747" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1533.32" cy="256.797" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1468.68" cy="256.797" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1530.75" cy="267.15" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1471.25" cy="267.15" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1535.85" cy="284.15" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1466.15" cy="284.15" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1540.95" cy="302.17" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1461.05" cy="302.17" r="2" /><circle class="lm" data-landmark="landmark.crotch" cx="1501" cy="314.75" r="2" /><circle class="lm" data-landmark="landmark.knee" cx="1501" cy="366.6" r="2" /><circle class="lm" data-landmark="landmark.ankle" cx="1501" cy="432.05" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1545.98" cy="264.736" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1456.02" cy="264.736" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1545.98" cy="309.684" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1456.02" cy="309.684" r="2" />
 </g>
-<text class="etiket" x="1416" y="441.4" text-anchor="middle">88.0/70.0/94.0</text>
+<text class="etiket" x="1501" y="441.4" text-anchor="middle">88.0/70.0/94.0</text>
 <g class="beden" data-body="EU40">
-<text x="1504" y="183.85" text-anchor="middle" class="baslik">EU40</text>
-<polyline class="siluet" points="1515.56,200 1535.31,207.854 1543.1,232.98 1543.1,247.413 1537.78,258.463 1535.45,268 1540.55,285 1545.65,303.53 1526.91,368.3 1518.58,434.6" />
-<polyline class="siluet" points="1504,316.79 1512.33,368.3 1510.25,434.6" />
-<polyline class="kol" points="1535.31,207.854 1535.31,264.906 1535.31,309.854" />
-<polyline class="siluet" points="1492.44,200 1472.69,207.854 1464.9,232.98 1464.9,247.413 1470.22,258.463 1472.55,268 1467.45,285 1462.35,303.53 1481.09,368.3 1489.42,434.6" />
-<polyline class="siluet" points="1504,316.79 1495.67,368.3 1497.75,434.6" />
-<polyline class="kol" points="1472.69,207.854 1472.69,264.906 1472.69,309.854" />
-<path class="siluet" d="M1492.44,200 Q1504,210.173 1515.56,200" />
-<path class="arka" d="M1492.44,200 Q1504,194.56 1515.56,200" />
-<circle class="apex" cx="1519.83" cy="247.413" r="1.51" />
-<circle class="apex" cx="1488.17" cy="247.413" r="1.51" />
-<line class="halka" x1="1464.9" y1="232.98" x2="1543.1" y2="232.98" />
-<line class="halka" x1="1464.9" y1="247.413" x2="1543.1" y2="247.413" />
-<line class="halka" x1="1470.22" y1="258.463" x2="1537.78" y2="258.463" />
-<line class="halka" x1="1472.55" y1="268" x2="1535.45" y2="268" />
-<line class="halka" x1="1467.45" y1="285" x2="1540.55" y2="285" />
-<line class="halka" x1="1462.35" y1="303.53" x2="1545.65" y2="303.53" />
-<line class="halka" x1="1485.26" y1="316.79" x2="1522.74" y2="316.79" />
-<line class="halka" x1="1481.09" y1="368.3" x2="1526.91" y2="368.3" />
-<line class="halka" x1="1489.42" y1="434.6" x2="1518.58" y2="434.6" />
-<line class="origin" x1="1465.89" y1="200" x2="1542.11" y2="200" />
-<circle class="lm" cx="1504" cy="196.6" r="2" /><circle class="lm" cx="1515.56" cy="200" r="2" /><circle class="lm" cx="1492.44" cy="200" r="2" /><circle class="lm" cx="1504" cy="206.358" r="2" /><circle class="lm" cx="1535.31" cy="207.854" r="2" /><circle class="lm" cx="1472.69" cy="207.854" r="2" /><circle class="lm" cx="1543.1" cy="232.98" r="2" /><circle class="lm" cx="1464.9" cy="232.98" r="2" /><circle class="lm" cx="1519.83" cy="247.413" r="2" /><circle class="lm" cx="1488.17" cy="247.413" r="2" /><circle class="lm" cx="1543.1" cy="247.413" r="2" /><circle class="lm" cx="1464.9" cy="247.413" r="2" /><circle class="lm" cx="1537.78" cy="258.463" r="2" /><circle class="lm" cx="1470.22" cy="258.463" r="2" /><circle class="lm" cx="1535.45" cy="268" r="2" /><circle class="lm" cx="1472.55" cy="268" r="2" /><circle class="lm" cx="1540.55" cy="285" r="2" /><circle class="lm" cx="1467.45" cy="285" r="2" /><circle class="lm" cx="1545.65" cy="303.53" r="2" /><circle class="lm" cx="1462.35" cy="303.53" r="2" /><circle class="lm" cx="1504" cy="316.79" r="2" /><circle class="lm" cx="1504" cy="368.3" r="2" /><circle class="lm" cx="1504" cy="434.6" r="2" /><circle class="lm" cx="1535.31" cy="264.906" r="2" /><circle class="lm" cx="1472.69" cy="264.906" r="2" /><circle class="lm" cx="1535.31" cy="309.854" r="2" /><circle class="lm" cx="1472.69" cy="309.854" r="2" />
+<text x="1579" y="183.85" text-anchor="middle" class="baslik">EU40</text>
+<polyline class="siluet" points="1590.56,200 1610.31,207.854 1618.1,232.98 1618.1,247.413 1612.78,258.463 1610.45,268 1615.55,285 1620.65,303.53 1601.91,368.3 1593.58,434.6" />
+<polyline class="siluet" points="1579,316.79 1587.33,368.3 1585.25,434.6" />
+<polyline class="kol" points="1610.31,207.854 1625.95,264.906 1625.95,309.854" />
+<polyline class="siluet" points="1567.44,200 1547.69,207.854 1539.9,232.98 1539.9,247.413 1545.22,258.463 1547.55,268 1542.45,285 1537.35,303.53 1556.09,368.3 1564.42,434.6" />
+<polyline class="siluet" points="1579,316.79 1570.67,368.3 1572.75,434.6" />
+<polyline class="kol" points="1547.69,207.854 1532.05,264.906 1532.05,309.854" />
+<path class="siluet" d="M1567.44,200 Q1579,210.173 1590.56,200" />
+<path class="arka" d="M1567.44,200 Q1579,194.56 1590.56,200" />
+<circle class="apex" cx="1594.83" cy="247.413" r="1.51" />
+<circle class="apex" cx="1563.17" cy="247.413" r="1.51" />
+<line class="halka" x1="1539.9" y1="232.98" x2="1618.1" y2="232.98" />
+<line class="halka" x1="1539.9" y1="247.413" x2="1618.1" y2="247.413" />
+<line class="halka" x1="1545.22" y1="258.463" x2="1612.78" y2="258.463" />
+<line class="halka" x1="1547.55" y1="268" x2="1610.45" y2="268" />
+<line class="halka" x1="1542.45" y1="285" x2="1615.55" y2="285" />
+<line class="halka" x1="1537.35" y1="303.53" x2="1620.65" y2="303.53" />
+<line class="halka" x1="1560.26" y1="316.79" x2="1597.74" y2="316.79" />
+<line class="halka" x1="1556.09" y1="368.3" x2="1601.91" y2="368.3" />
+<line class="halka" x1="1564.42" y1="434.6" x2="1593.58" y2="434.6" />
+<line class="origin" x1="1540.89" y1="200" x2="1617.11" y2="200" />
+<circle class="lm" data-landmark="landmark.nape" cx="1579" cy="196.6" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="1590.56" cy="200" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="1567.44" cy="200" r="2" /><circle class="lm" data-landmark="landmark.neckFront" cx="1579" cy="206.358" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1610.31" cy="207.854" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1547.69" cy="207.854" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1618.1" cy="232.98" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1539.9" cy="232.98" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="1594.83" cy="247.413" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="1563.17" cy="247.413" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1618.1" cy="247.413" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1539.9" cy="247.413" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1612.78" cy="258.463" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1545.22" cy="258.463" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1610.45" cy="268" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1547.55" cy="268" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1615.55" cy="285" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1542.45" cy="285" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1620.65" cy="303.53" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1537.35" cy="303.53" r="2" /><circle class="lm" data-landmark="landmark.crotch" cx="1579" cy="316.79" r="2" /><circle class="lm" data-landmark="landmark.knee" cx="1579" cy="368.3" r="2" /><circle class="lm" data-landmark="landmark.ankle" cx="1579" cy="434.6" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1625.95" cy="264.906" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1532.05" cy="264.906" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1625.95" cy="309.854" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1532.05" cy="309.854" r="2" />
 </g>
-<text class="etiket" x="1504" y="441.4" text-anchor="middle">92.0/74.0/98.0</text>
+<text class="etiket" x="1579" y="441.4" text-anchor="middle">92.0/74.0/98.0</text>
 <g class="beden" data-body="EU42">
-<text x="1592" y="183.85" text-anchor="middle" class="baslik">EU42</text>
-<polyline class="siluet" points="1603.73,200 1623.88,208.007 1632.8,233.66 1632.8,249.062 1627.26,260.112 1625.15,268.85 1630.25,285.85 1635.35,304.89 1615.84,370 1607.17,437.15" />
-<polyline class="siluet" points="1592,318.83 1600.67,370 1598.5,437.15" />
-<polyline class="kol" points="1623.88,208.007 1623.88,266.011 1623.88,311.707" />
-<polyline class="siluet" points="1580.27,200 1560.12,208.007 1551.2,233.66 1551.2,249.062 1556.74,260.112 1558.85,268.85 1553.75,285.85 1548.65,304.89 1568.16,370 1576.83,437.15" />
-<polyline class="siluet" points="1592,318.83 1583.33,370 1585.5,437.15" />
-<polyline class="kol" points="1560.12,208.007 1560.12,266.011 1560.12,311.707" />
-<path class="siluet" d="M1580.27,200 Q1592,210.336 1603.73,200" />
-<path class="arka" d="M1580.27,200 Q1592,194.56 1603.73,200" />
-<circle class="apex" cx="1608.51" cy="249.062" r="1.51" />
-<circle class="apex" cx="1575.49" cy="249.062" r="1.51" />
-<line class="halka" x1="1551.2" y1="233.66" x2="1632.8" y2="233.66" />
-<line class="halka" x1="1551.2" y1="249.062" x2="1632.8" y2="249.062" />
-<line class="halka" x1="1556.74" y1="260.112" x2="1627.26" y2="260.112" />
-<line class="halka" x1="1558.85" y1="268.85" x2="1625.15" y2="268.85" />
-<line class="halka" x1="1553.75" y1="285.85" x2="1630.25" y2="285.85" />
-<line class="halka" x1="1548.65" y1="304.89" x2="1635.35" y2="304.89" />
-<line class="halka" x1="1572.49" y1="318.83" x2="1611.51" y2="318.83" />
-<line class="halka" x1="1568.16" y1="370" x2="1615.84" y2="370" />
-<line class="halka" x1="1576.83" y1="437.15" x2="1607.17" y2="437.15" />
-<line class="origin" x1="1553.33" y1="200" x2="1630.67" y2="200" />
-<circle class="lm" cx="1592" cy="196.6" r="2" /><circle class="lm" cx="1603.73" cy="200" r="2" /><circle class="lm" cx="1580.27" cy="200" r="2" /><circle class="lm" cx="1592" cy="206.46" r="2" /><circle class="lm" cx="1623.88" cy="208.007" r="2" /><circle class="lm" cx="1560.12" cy="208.007" r="2" /><circle class="lm" cx="1632.8" cy="233.66" r="2" /><circle class="lm" cx="1551.2" cy="233.66" r="2" /><circle class="lm" cx="1608.51" cy="249.062" r="2" /><circle class="lm" cx="1575.49" cy="249.062" r="2" /><circle class="lm" cx="1632.8" cy="249.062" r="2" /><circle class="lm" cx="1551.2" cy="249.062" r="2" /><circle class="lm" cx="1627.26" cy="260.112" r="2" /><circle class="lm" cx="1556.74" cy="260.112" r="2" /><circle class="lm" cx="1625.15" cy="268.85" r="2" /><circle class="lm" cx="1558.85" cy="268.85" r="2" /><circle class="lm" cx="1630.25" cy="285.85" r="2" /><circle class="lm" cx="1553.75" cy="285.85" r="2" /><circle class="lm" cx="1635.35" cy="304.89" r="2" /><circle class="lm" cx="1548.65" cy="304.89" r="2" /><circle class="lm" cx="1592" cy="318.83" r="2" /><circle class="lm" cx="1592" cy="370" r="2" /><circle class="lm" cx="1592" cy="437.15" r="2" /><circle class="lm" cx="1623.88" cy="266.011" r="2" /><circle class="lm" cx="1560.12" cy="266.011" r="2" /><circle class="lm" cx="1623.88" cy="311.707" r="2" /><circle class="lm" cx="1560.12" cy="311.707" r="2" />
+<text x="1657" y="183.85" text-anchor="middle" class="baslik">EU42</text>
+<polyline class="siluet" points="1668.73,200 1688.88,208.007 1697.8,233.66 1697.8,249.062 1692.26,260.112 1690.15,268.85 1695.25,285.85 1700.35,304.89 1680.84,370 1672.17,437.15" />
+<polyline class="siluet" points="1657,318.83 1665.67,370 1663.5,437.15" />
+<polyline class="kol" points="1688.88,208.007 1705.91,266.011 1705.91,311.707" />
+<polyline class="siluet" points="1645.27,200 1625.12,208.007 1616.2,233.66 1616.2,249.062 1621.74,260.112 1623.85,268.85 1618.75,285.85 1613.65,304.89 1633.16,370 1641.83,437.15" />
+<polyline class="siluet" points="1657,318.83 1648.33,370 1650.5,437.15" />
+<polyline class="kol" points="1625.12,208.007 1608.09,266.011 1608.09,311.707" />
+<path class="siluet" d="M1645.27,200 Q1657,210.336 1668.73,200" />
+<path class="arka" d="M1645.27,200 Q1657,194.56 1668.73,200" />
+<circle class="apex" cx="1673.51" cy="249.062" r="1.51" />
+<circle class="apex" cx="1640.49" cy="249.062" r="1.51" />
+<line class="halka" x1="1616.2" y1="233.66" x2="1697.8" y2="233.66" />
+<line class="halka" x1="1616.2" y1="249.062" x2="1697.8" y2="249.062" />
+<line class="halka" x1="1621.74" y1="260.112" x2="1692.26" y2="260.112" />
+<line class="halka" x1="1623.85" y1="268.85" x2="1690.15" y2="268.85" />
+<line class="halka" x1="1618.75" y1="285.85" x2="1695.25" y2="285.85" />
+<line class="halka" x1="1613.65" y1="304.89" x2="1700.35" y2="304.89" />
+<line class="halka" x1="1637.49" y1="318.83" x2="1676.51" y2="318.83" />
+<line class="halka" x1="1633.16" y1="370" x2="1680.84" y2="370" />
+<line class="halka" x1="1641.83" y1="437.15" x2="1672.17" y2="437.15" />
+<line class="origin" x1="1618.33" y1="200" x2="1695.67" y2="200" />
+<circle class="lm" data-landmark="landmark.nape" cx="1657" cy="196.6" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="1668.73" cy="200" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="1645.27" cy="200" r="2" /><circle class="lm" data-landmark="landmark.neckFront" cx="1657" cy="206.46" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1688.88" cy="208.007" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1625.12" cy="208.007" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1697.8" cy="233.66" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1616.2" cy="233.66" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="1673.51" cy="249.062" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="1640.49" cy="249.062" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1697.8" cy="249.062" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1616.2" cy="249.062" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1692.26" cy="260.112" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1621.74" cy="260.112" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1690.15" cy="268.85" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1623.85" cy="268.85" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1695.25" cy="285.85" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1618.75" cy="285.85" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1700.35" cy="304.89" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1613.65" cy="304.89" r="2" /><circle class="lm" data-landmark="landmark.crotch" cx="1657" cy="318.83" r="2" /><circle class="lm" data-landmark="landmark.knee" cx="1657" cy="370" r="2" /><circle class="lm" data-landmark="landmark.ankle" cx="1657" cy="437.15" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1705.91" cy="266.011" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1608.09" cy="266.011" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1705.91" cy="311.707" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1608.09" cy="311.707" r="2" />
 </g>
-<text class="etiket" x="1592" y="441.4" text-anchor="middle">96.0/78.0/102.0</text>
+<text class="etiket" x="1657" y="441.4" text-anchor="middle">96.0/78.0/102.0</text>
 <g class="beden" data-body="EU44">
-<text x="1680" y="183.85" text-anchor="middle" class="baslik">EU44</text>
-<polyline class="siluet" points="1691.9,200 1712.44,208.16 1722.5,234.34 1722.5,250.728 1716.72,261.778 1714.85,269.7 1719.95,286.7 1725.05,306.25 1704.78,371.7 1695.77,439.7" />
-<polyline class="siluet" points="1680,320.87 1689.01,371.7 1686.76,439.7" />
-<polyline class="kol" points="1712.44,208.16 1712.44,266.164 1712.44,311.86" />
-<polyline class="siluet" points="1668.1,200 1647.56,208.16 1637.5,234.34 1637.5,250.728 1643.28,261.778 1645.15,269.7 1640.05,286.7 1634.95,306.25 1655.22,371.7 1664.23,439.7" />
-<polyline class="siluet" points="1680,320.87 1670.99,371.7 1673.24,439.7" />
-<polyline class="kol" points="1647.56,208.16 1647.56,266.164 1647.56,311.86" />
-<path class="siluet" d="M1668.1,200 Q1680,210.472 1691.9,200" />
-<path class="arka" d="M1668.1,200 Q1680,194.56 1691.9,200" />
-<circle class="apex" cx="1697.2" cy="250.728" r="1.51" />
-<circle class="apex" cx="1662.8" cy="250.728" r="1.51" />
-<line class="halka" x1="1637.5" y1="234.34" x2="1722.5" y2="234.34" />
-<line class="halka" x1="1637.5" y1="250.728" x2="1722.5" y2="250.728" />
-<line class="halka" x1="1643.28" y1="261.778" x2="1716.72" y2="261.778" />
-<line class="halka" x1="1645.15" y1="269.7" x2="1714.85" y2="269.7" />
-<line class="halka" x1="1640.05" y1="286.7" x2="1719.95" y2="286.7" />
-<line class="halka" x1="1634.95" y1="306.25" x2="1725.05" y2="306.25" />
-<line class="halka" x1="1659.73" y1="320.87" x2="1700.27" y2="320.87" />
-<line class="halka" x1="1655.22" y1="371.7" x2="1704.78" y2="371.7" />
-<line class="halka" x1="1664.23" y1="439.7" x2="1695.77" y2="439.7" />
-<line class="origin" x1="1640.76" y1="200" x2="1719.24" y2="200" />
-<circle class="lm" cx="1680" cy="196.6" r="2" /><circle class="lm" cx="1691.9" cy="200" r="2" /><circle class="lm" cx="1668.1" cy="200" r="2" /><circle class="lm" cx="1680" cy="206.545" r="2" /><circle class="lm" cx="1712.44" cy="208.16" r="2" /><circle class="lm" cx="1647.56" cy="208.16" r="2" /><circle class="lm" cx="1722.5" cy="234.34" r="2" /><circle class="lm" cx="1637.5" cy="234.34" r="2" /><circle class="lm" cx="1697.2" cy="250.728" r="2" /><circle class="lm" cx="1662.8" cy="250.728" r="2" /><circle class="lm" cx="1722.5" cy="250.728" r="2" /><circle class="lm" cx="1637.5" cy="250.728" r="2" /><circle class="lm" cx="1716.72" cy="261.778" r="2" /><circle class="lm" cx="1643.28" cy="261.778" r="2" /><circle class="lm" cx="1714.85" cy="269.7" r="2" /><circle class="lm" cx="1645.15" cy="269.7" r="2" /><circle class="lm" cx="1719.95" cy="286.7" r="2" /><circle class="lm" cx="1640.05" cy="286.7" r="2" /><circle class="lm" cx="1725.05" cy="306.25" r="2" /><circle class="lm" cx="1634.95" cy="306.25" r="2" /><circle class="lm" cx="1680" cy="320.87" r="2" /><circle class="lm" cx="1680" cy="371.7" r="2" /><circle class="lm" cx="1680" cy="439.7" r="2" /><circle class="lm" cx="1712.44" cy="266.164" r="2" /><circle class="lm" cx="1647.56" cy="266.164" r="2" /><circle class="lm" cx="1712.44" cy="311.86" r="2" /><circle class="lm" cx="1647.56" cy="311.86" r="2" />
+<text x="1735" y="183.85" text-anchor="middle" class="baslik">EU44</text>
+<polyline class="siluet" points="1746.9,200 1767.44,208.16 1777.5,234.34 1777.5,250.728 1771.72,261.778 1769.85,269.7 1774.95,286.7 1780.05,306.25 1759.78,371.7 1750.77,439.7" />
+<polyline class="siluet" points="1735,320.87 1744.01,371.7 1741.76,439.7" />
+<polyline class="kol" points="1767.44,208.16 1785.88,266.164 1785.88,311.86" />
+<polyline class="siluet" points="1723.1,200 1702.56,208.16 1692.5,234.34 1692.5,250.728 1698.28,261.778 1700.15,269.7 1695.05,286.7 1689.95,306.25 1710.22,371.7 1719.23,439.7" />
+<polyline class="siluet" points="1735,320.87 1725.99,371.7 1728.24,439.7" />
+<polyline class="kol" points="1702.56,208.16 1684.12,266.164 1684.12,311.86" />
+<path class="siluet" d="M1723.1,200 Q1735,210.472 1746.9,200" />
+<path class="arka" d="M1723.1,200 Q1735,194.56 1746.9,200" />
+<circle class="apex" cx="1752.2" cy="250.728" r="1.51" />
+<circle class="apex" cx="1717.8" cy="250.728" r="1.51" />
+<line class="halka" x1="1692.5" y1="234.34" x2="1777.5" y2="234.34" />
+<line class="halka" x1="1692.5" y1="250.728" x2="1777.5" y2="250.728" />
+<line class="halka" x1="1698.28" y1="261.778" x2="1771.72" y2="261.778" />
+<line class="halka" x1="1700.15" y1="269.7" x2="1769.85" y2="269.7" />
+<line class="halka" x1="1695.05" y1="286.7" x2="1774.95" y2="286.7" />
+<line class="halka" x1="1689.95" y1="306.25" x2="1780.05" y2="306.25" />
+<line class="halka" x1="1714.73" y1="320.87" x2="1755.27" y2="320.87" />
+<line class="halka" x1="1710.22" y1="371.7" x2="1759.78" y2="371.7" />
+<line class="halka" x1="1719.23" y1="439.7" x2="1750.77" y2="439.7" />
+<line class="origin" x1="1695.76" y1="200" x2="1774.24" y2="200" />
+<circle class="lm" data-landmark="landmark.nape" cx="1735" cy="196.6" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="1746.9" cy="200" r="2" /><circle class="lm" data-landmark="landmark.neckBase" cx="1723.1" cy="200" r="2" /><circle class="lm" data-landmark="landmark.neckFront" cx="1735" cy="206.545" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1767.44" cy="208.16" r="2" /><circle class="lm" data-landmark="landmark.shoulderTip" cx="1702.56" cy="208.16" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1777.5" cy="234.34" r="2" /><circle class="lm" data-landmark="landmark.underarm" cx="1692.5" cy="234.34" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="1752.2" cy="250.728" r="2" /><circle class="lm" data-landmark="landmark.bustApex" cx="1717.8" cy="250.728" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1777.5" cy="250.728" r="2" /><circle class="lm" data-landmark="landmark.bustLine" cx="1692.5" cy="250.728" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1771.72" cy="261.778" r="2" /><circle class="lm" data-landmark="landmark.underbust" cx="1698.28" cy="261.778" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1769.85" cy="269.7" r="2" /><circle class="lm" data-landmark="landmark.waist" cx="1700.15" cy="269.7" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1774.95" cy="286.7" r="2" /><circle class="lm" data-landmark="landmark.highHip" cx="1695.05" cy="286.7" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1780.05" cy="306.25" r="2" /><circle class="lm" data-landmark="landmark.hip" cx="1689.95" cy="306.25" r="2" /><circle class="lm" data-landmark="landmark.crotch" cx="1735" cy="320.87" r="2" /><circle class="lm" data-landmark="landmark.knee" cx="1735" cy="371.7" r="2" /><circle class="lm" data-landmark="landmark.ankle" cx="1735" cy="439.7" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1785.88" cy="266.164" r="2" /><circle class="lm" data-landmark="landmark.elbow" cx="1684.12" cy="266.164" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1785.88" cy="311.86" r="2" /><circle class="lm" data-landmark="landmark.wrist" cx="1684.12" cy="311.86" r="2" />
 </g>
-<text class="etiket" x="1680" y="441.4" text-anchor="middle">100.0/82.0/106.0</text>
+<text class="etiket" x="1735" y="441.4" text-anchor="middle">100.0/82.0/106.0</text>
 </g>
-<text class="not" x="20" y="870">Kaynak: contract/body-v1.json (her sayinin yaninda kaynak; DOGRULANMADI etiketli olanlar orada adiyla). Cizim: engine/tests/body_check.cpp (C++), diz/bilek yari genisligi contract'ta yok — yalniz cizim yardimcisi.</text>
+<text class="not" x="20" y="870">Kaynak: contract/body-v1.json (her sayinin yaninda kaynak; DOGRULANMADI etiketli olanlar orada adiyla). Cizim: engine/tests/body_check.cpp (C++); diz/bilek/ag oranlari contract cizimYardimcisi (DOGRULANMADI, yalniz bu cizim). Koltukalti: gercek gogus hattinin USTUNDE, croquis ALTINDA (0.625 torso, karar 1) — sira contract landmarkSirasi.</text>
 <text class="not" x="20" y="886">Damla icin: flat'ler ORTADAKI iskelete oturur (omuz/koltukalti/gogus/bel/kalca y'leri her flat'te ayni), kaliplar SAGDAKI serinin ustune cizilir.</text>
 </svg>

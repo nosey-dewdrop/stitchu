@@ -48,7 +48,7 @@ public:
     std::vector<std::string> landmarkNames() const;
     std::vector<std::string> ringNames() const;
 
-    // Landmark'in ait oldugu halka adi ("waist" -> "girth.waist"); yoksa "".
+    // Landmark'in ait oldugu halka adi ("landmark.waist" -> "girth.waist"); yoksa "". Landmark adlari contract/body-v1.json ile ayni: "landmark.<ad>" (karar ajani 4, namespace).
     static std::string ringOfLandmark(const std::string& landmark);
     static std::string landmarkOfRing(const std::string& ring);
 

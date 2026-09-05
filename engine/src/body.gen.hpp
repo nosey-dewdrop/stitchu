@@ -13,22 +13,22 @@ struct BodyGirthRow { const char* name; double girthMM, backFrac; };
 struct BodyScalarRow { const char* name; double v; };
 
 inline constexpr BodyLandmarkRow kBodyLandmarks_gercek36[] = {
-    {"nape", 0, -20},
-    {"neckBase", 66, 0},
-    {"neckFront", 0, 36.3},
-    {"shoulderTip", 177.5, 44.3},
-    {"underarm", 210, 186},
-    {"bustApex", 85, 259.3},
-    {"bustLine", 210, 259.3},
-    {"underbust", 181.4, 324.3},
-    {"waist", 165, 390},
-    {"highHip", 195, 490},
-    {"hip", 225, 593},
-    {"crotch", 0, 663},
-    {"knee", 0, 970},
-    {"ankle", 0, 1350},
-    {"elbow", 177.5, 374.3},
-    {"wrist", 177.5, 634.3},
+    {"landmark.nape", 0, -20},
+    {"landmark.neckBase", 66, 0},
+    {"landmark.neckFront", 0, 36.3},
+    {"landmark.shoulderTip", 177.5, 44.3},
+    {"landmark.underarm", 210, 186},
+    {"landmark.bustApex", 85, 259.3},
+    {"landmark.bustLine", 210, 259.3},
+    {"landmark.underbust", 181.4, 324.3},
+    {"landmark.waist", 165, 390},
+    {"landmark.highHip", 195, 490},
+    {"landmark.hip", 225, 593},
+    {"landmark.crotch", 0, 663},
+    {"landmark.knee", 0, 970},
+    {"landmark.ankle", 0, 1350},
+    {"landmark.elbow", 253, 374.3},
+    {"landmark.wrist", 253, 634.3},
 };
 inline constexpr BodyGirthRow kBodyGirths_gercek36[] = {
     {"girth.neckBase", 360, 0.5},
@@ -69,22 +69,22 @@ inline constexpr BodyScalarRow kBodyScalars_gercek36[] = {
 };
 
 inline constexpr BodyLandmarkRow kBodyLandmarks_croquis36[] = {
-    {"nape", 0, -20},
-    {"neckBase", 49.1, 0},
-    {"neckFront", 0, 27},
-    {"shoulderTip", 183.8, 49},
-    {"underarm", 210, 128.3},
-    {"bustApex", 77.2, 200.1},
-    {"bustLine", 210, 200.1},
-    {"underbust", 181.4, 258.1},
-    {"waist", 170.5, 390},
-    {"highHip", 195, 490},
-    {"hip", 225, 593},
-    {"crotch", 0, 663},
-    {"knee", 0, 970},
-    {"ankle", 0, 1350},
-    {"elbow", 183.8, 390},
-    {"wrist", 183.8, 593},
+    {"landmark.nape", 0, -20},
+    {"landmark.neckBase", 49.1, 0},
+    {"landmark.neckFront", 0, 27},
+    {"landmark.shoulderTip", 183.8, 49},
+    {"landmark.underarm", 210, 243.8},
+    {"landmark.bustApex", 77.2, 200.1},
+    {"landmark.bustLine", 210, 200.1},
+    {"landmark.underbust", 181.4, 258.1},
+    {"landmark.waist", 170.5, 390},
+    {"landmark.highHip", 195, 490},
+    {"landmark.hip", 225, 593},
+    {"landmark.crotch", 0, 663},
+    {"landmark.knee", 0, 970},
+    {"landmark.ankle", 0, 1350},
+    {"landmark.elbow", 469.6, 214},
+    {"landmark.wrist", 694.8, 344},
 };
 inline constexpr BodyGirthRow kBodyGirths_croquis36[] = {
     {"girth.neckBase", 360, 0.5},
@@ -113,8 +113,8 @@ inline constexpr BodyScalarRow kBodyScalars_croquis36[] = {
     {"length.waistToKnee", 580},
     {"length.waistToFloor", 1030},
     {"length.waistToAnkle", 960},
-    {"length.arm", 544},
-    {"length.shoulderToElbow", 341},
+    {"length.arm", 590},
+    {"length.shoulderToElbow", 330},
     {"length.stature", 1680},
     {"width.shoulderToShoulder", 367.6},
     {"width.crossFront", 312.5},
@@ -126,22 +126,22 @@ inline constexpr BodyScalarRow kBodyScalars_croquis36[] = {
 
 // farkTablosu: croquis36 - gercek36 (dx, dy), mm
 inline constexpr BodyLandmarkRow kBodyFark[] = {
-    {"nape", 0, 0},
-    {"neckBase", -16.9, 0},
-    {"neckFront", 0, -9.3},
-    {"shoulderTip", 6.3, 4.7},
-    {"underarm", 0, -57.7},
-    {"bustApex", -7.8, -59.2},
-    {"bustLine", 0, -59.2},
-    {"underbust", 0, -66.2},
-    {"waist", 5.5, 0},
-    {"highHip", 0, 0},
-    {"hip", 0, 0},
-    {"crotch", 0, 0},
-    {"knee", 0, 0},
-    {"ankle", 0, 0},
-    {"elbow", 6.3, 15.7},
-    {"wrist", 6.3, -41.3},
+    {"landmark.nape", 0, 0},
+    {"landmark.neckBase", -16.9, 0},
+    {"landmark.neckFront", 0, -9.3},
+    {"landmark.shoulderTip", 6.3, 4.7},
+    {"landmark.underarm", 0, 57.8},
+    {"landmark.bustApex", -7.8, -59.2},
+    {"landmark.bustLine", 0, -59.2},
+    {"landmark.underbust", 0, -66.2},
+    {"landmark.waist", 5.5, 0},
+    {"landmark.highHip", 0, 0},
+    {"landmark.hip", 0, 0},
+    {"landmark.crotch", 0, 0},
+    {"landmark.knee", 0, 0},
+    {"landmark.ankle", 0, 0},
+    {"landmark.elbow", 216.6, -160.3},
+    {"landmark.wrist", 441.8, -290.3},
 };
 
 inline constexpr int kBodyGradeCount = 6;
@@ -192,11 +192,12 @@ inline constexpr BodyScalarRow kCroquisOran[] = {
     {"neckHalfOverShoulderTipX", 0.267},
     {"apexXOverShoulderTipX", 0.42},
     {"apexDropOverTorso", 0.513},
-    {"underarmOverTorso", 0.329},
+    {"underarmOverTorso", 0.625},
     {"underbustDropMM", 58},
     {"shoulderSlopeDeg", 20},
     {"crossOverShoulderToShoulder", 0.85},
     {"dikeyUzatma", 1},
+    {"kolAcisiDeg", 30},
 };
 
 inline constexpr BodyScalarRow kBodyKesitOran[] = {
@@ -212,6 +213,56 @@ inline constexpr BodyScalarRow kBodyKesitOran[] = {
     {"girth.wrist", 1},
     {"girth.knee", 1},
     {"girth.armhole", 1},
+};
+
+struct BodyOrderRow { const char* name; int tier; };
+inline constexpr BodyOrderRow kBodyOrder_gercek36[] = {
+    {"landmark.nape", 0},
+    {"landmark.neckBase", 1},
+    {"landmark.neckFront", 2},
+    {"landmark.shoulderTip", 3},
+    {"landmark.underarm", 4},
+    {"landmark.bustLine", 5},
+    {"landmark.bustApex", 5},
+    {"landmark.underbust", 6},
+    {"landmark.waist", 7},
+    {"landmark.highHip", 8},
+    {"landmark.hip", 9},
+    {"landmark.crotch", 10},
+    {"landmark.knee", 11},
+    {"landmark.ankle", 12},
+};
+inline constexpr BodyOrderRow kBodyOrder_croquis36[] = {
+    {"landmark.nape", 0},
+    {"landmark.neckBase", 1},
+    {"landmark.neckFront", 2},
+    {"landmark.shoulderTip", 3},
+    {"landmark.bustLine", 4},
+    {"landmark.bustApex", 4},
+    {"landmark.underarm", 5},
+    {"landmark.underbust", 6},
+    {"landmark.waist", 7},
+    {"landmark.highHip", 8},
+    {"landmark.hip", 9},
+    {"landmark.crotch", 10},
+    {"landmark.knee", 11},
+    {"landmark.ankle", 12},
+};
+
+inline constexpr BodyScalarRow kBodyCizimYardimcisi[] = {
+    {"bacakDisDizOverHip", 0.55},
+    {"bacakDisBilekOverHip", 0.35},
+    {"bacakIcDizOverHip", 0.2},
+    {"bacakIcBilekOverHip", 0.15},
+    {"agHalkaYarimOverHip", 0.45},
+};
+
+struct BodyBandRow { const char* name; double lo, hi; const char* kaynak; };
+inline constexpr BodyBandRow kCroquisBand[] = {
+    {"waistHalfOverBustHalf", 0.72, 0.84, "figure-bands ratios.waist_bust.band"},
+    {"bustHalfOverHipHalf", 0.88, 0.98, "figure-bands ratios.bust_hip.band"},
+    {"shoulderTipXOverBustHalf", 0.85, 0.9, "flat-convention sevkPoz.omuzGogusOran"},
+    {"shoulderSlopeDeg", 15, 22, "flat-convention sevkPoz.omuzEgimiDeg"},
 };
 
 inline constexpr double kBodyKapiToleransMM = 0.5;
