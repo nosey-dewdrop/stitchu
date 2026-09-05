@@ -95,7 +95,7 @@ Bolluk: `garment-spec-v2.json` easeBust/Waist/Hip (Threads/RTW + Aldrich), bicep
 bicepsEase 0.15`. Yan dikisler cevre/4 (ringQuarter): on/arka insadan esit. Kol oyugunun icbukey
 noktasi `width.crossFront/2` (body-v1). **Uydurulanlar adiyla** (`notes` alani): kapak yuksekligi
 orani 0.6 ve cross-front seviyesi 0.5 DOGRULANMADI; taban oyuk 359 mm Aldrich 40-44 cm bandinin
-altinda (scye depth bollugu yok) — F2b/F3 kaynakli kurar.
+altinda (scye depth bollugu yok) — F2b kaynakli kurar (asagida "F2b kapilari" 2; F3e devredilmez).
 
 `graf_dikilebilir_check` gercek36 / EU38 / croquis36: **uc bedende 0 kirmizi** — 6 dikis artigi 0.000,
 6 zincir cozuldu, 3 centik, 5 panel temiz, 5 halka kapali (yaka: omuz + kat aynasi; kol oyugu: kose +
@@ -110,7 +110,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
 {
   "id": "taban-elbise",
   "version": "graf-v1",
-  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b/F3 oyugu ve kapagi kaynakli kurar; croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).",
+  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b oyugu ve kapagi kaynakli kurar (KAPI 2, docs/GRAF-IR.md F2b kapilari; F3e devredilmez); croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).",
   "panels": [
     {
       "id": "on_beden",
@@ -1211,3 +1211,20 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
   ]
 }
 ```
+
+## F2b kapilari (karar ajani F2a-3, 5 Eyl 2026) — not degil KAPI, F3'e devredilmez
+
+F2a hakeminin devrettigi dort kusur. Her biri F2b'de `grafdogrula` kurali / test olur; kabul bicimi:
+kiran negatif ornek `graf_dikilebilir_check` negatif tablosunda + sayi. Sonuncusu gecince bu baslik
+`docs/GRAF-IR.md`'den silinir ve kural "Degismezler" tablosuna tasinir. Sayilar burada tekrar edilmez;
+kaynak dosya adiyla verilir (contract'a yazilir, koda gomulmez).
+
+| # | kapi | kural (grafdogrula) | sayi / kaynak | kiran negatif ornek |
+|---|---|---|---|---|
+| 1 | `gecis` (giyilebilirlik) | Kapanisi (closure: fermuar/dugme/yirtmac dikisi) olmayan HER halka, bedende gecmesi gereken cevreden buyuk olmali: rol `neck` -> `girth.head`; rol `waist` / `hem` (etek ucu) -> `girth.hip`; rol `wrist`/`sleeveHem` -> `girth.hand` (el varsa; yoksa kural o role uygulanmaz ve adiyla soyler). Cevre, halkanin BEDENDE degerlenmis toplam uzunlugu (`halkalar[].toplamMM`). | `girth.head` body-v1'de YOK — F2b iscisi `contract/body-v1.json` gercek36 / croquis36 / gradeTablosu EU34-44'e ANSUR II head circumference ile ekler; tek kaynaksa `tek kaynak` etiketi. HEDEF §1.4: basi gecmeyen yaka giyilebilir degil. | taban grafta yaka halkasi 154.5 mm x 2 (kat) = 309 mm cevre; `girth.head` ~ 550-580 mm -> kapanissiz yaka KIRMIZI olmali (bugun 0 kirmizi = sessiz default). Test: taban graf degismeden `gecis` kurali eklenince yaka satiri kirmizi; `suppress`/`extendTo` ile yaka acilinca ya da closure dikisi eklenince yesil. |
+| 2 | kol kapagi tepe G1 + Aldrich bandi | (a) kapak egrisi tepe noktasinda G1 surekli (sol/sag teget farki `toleranslar.tegetDeg` altinda). (b) kapak yuksekligi ve oyuk cevresi kaynakli banda: Aldrich EU38 kapak 130-150 mm, oyuk 40-44 cm; sayilar `contract/graf-v1.json` ya da `contract/garment-spec-v2.json`'a kaynak adiyla yazilir. | Fixture'daki 0.6 (kapak yuksekligi / dusus) ve 0.5 (icbukey nokta seviyesi) DOGRULANMADI oranlari `graf_ir_check.cpp` taban graftan CIKAR; yerine banda oturan kaynakli deger. Bugra kapak 149.9 mm (`KOSU/ciktilar/bugra-rapor.md:57`, motor 129.8, +20.1) KOR KONTROL: rapora yazilir, ayar hedefi degil (HEDEF §1.12). | tepe kontrol noktasi tek tarafta 15 mm kaydirilir -> G1 kirilir, kirmizi; kapak 120 mm -> band alti, kirmizi; oyuk 359 mm (bugunku taban) -> 400 alti, kirmizi. |
+| 3 | `kavsakArtigiMM` sutun adi | `dikilebilir-*.md` "kapanma (mm)" sutunu ve `dikilebilir-*.json halkalar[].kapanmaMM` -> `kavsakArtigiMM`. Olculen sey halkanin kapanmasi degil, en buyuk kavsak boslugu; 0.00 gosterip baska sey olcmek sessiz default (HEDEF §2). `halka_kapanma` kural adi kalir (halka kapaniyor mu), sutun yalniz olcumun adini soyler. | ad degisimi, sayi yok | `graf_dikilebilir_check` eski `kapanmaMM` anahtarini json'da gorurse REDDEDER (F2a Turkce-alan modeli: sema `tanimsiz alan`, okuyucu `bilinmeyen alan`). |
+| 4 | kol oyugu tepe centigi + bel pensleri | (a) `kol_oyugu` dikisinde omuz dikisinin kesisme kesiri `notchFractions`'a girer (a-zincirinde omuz dikisinin bittigi yer; b tarafinda `reverse` ile 1-f) — kapak tepe centigi buna eslesir. (b) taban grafa on/arka bel pensleri `op pens` ile `dartLeg` cifti olarak girer (apeks bustApex/arka kurek hizasi, esit bacak — `pens` kurali). | `contract/graf-v1.json toleranslar.centikMM`; pens derinligi `garment-spec-v2.json` bel bollugu farkindan (girth.bust - girth.waist payi), sabit yok | `centik`: omuz kesiri tek tarafta eksik -> kirmizi; `pens`: bacaklar 3 mm farkli -> kirmizi; iki ornek de `dikilebilir-negatif.md`'de. |
+
+Bu dordu **F2b'nin** (bedende degerleme) isidir, F3'un (cizim) degil: giyilebilirlik ve kapak/oyuk
+bandi bedende cozulen sayilardir; sutun adi ve centik/pens Edge/Panel/Stitch primitifidir (HEDEF §1.9).

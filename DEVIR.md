@@ -314,53 +314,56 @@ Mobil, hesap ve gardırop hazır olunca aynı API'yi tüketir (`backend/API.md`)
 
 ---
 
-## KABUL — önceki fazların kabul komutu ve BİLİNEN kırmızılar (F1, 5 Eyl 2026)
+## KABUL — önceki fazların kabul komutu ve BİLİNEN kırmızılar (F1+F2a, 5 Eyl 2026)
 
-Tek yer burasıdır (karar ajanı 1; HEDEF §3.3 compounding error). Her faz bu
-komutu koşar; "beklenen exit"i yazılmamış bir kırmızı = ilerleme yok.
+Tek yer burasıdır (karar ajanı F1-1; HEDEF §3.3 compounding error). Orkestratör brief'i bu
+bloğun kopyasını TAŞIMAZ; tek satır taşır: "KABUL = DEVIR.md 'KABUL' başlığı altındaki bloklar,
+literal, tamamı." (karar ajanı F2a-1: kopya bayatlar — brief'teki `tail -1` satırı bayat kopyaydı).
+
+**"exit 1 BEKLENİR" kavramı yoktur** (karar ajanı F2a-2; HEDEF §3.4). Eski zincirde `flat_ayni`
+ctest regex'inde durduğu için ctest exit≠0 veriyor, `&&` arkasındaki dört komut HİÇ KOŞMUYORDU;
+"beklenen kırmızı" bu sessizliği örtüyordu. Şimdi iki blok: (a) her şey EXIT 0 ZORUNLU, tek kırmızı =
+koşu durur; (b) iki bilinen kırmızı YALNIZ sayı piniyle doğrulanır, sayı farklı = regresyon, koşu durur.
 
 ```bash
+# (a) EXIT 0 ZORUNLU — 27 ctest + flat-olcum + primitif_ifade + enum_dallanma. Tek kirmizi = kosu durur.
 cd ~/damla_projects_2026/stitchu && cmake --build engine/build -j2 >/dev/null && \
-ctest --test-dir engine/build -R 'golden|recipe|primitif|edit_locality|manken|kumas|parca|vocab|flatten|surface|enum_dallanma|flat_ayni|body_check|gen_contract|bundle_fresh' -j1 --output-on-failure && \
-node engine/tests/cizim_giysi_mi.mjs && node engine/tests/primitif_ifade_check.mjs && \
-bash engine/tests/enum_dallanma_check.sh && node engine/tests/flat_ayni_insan_check.mjs
-# beklenen iki kirmizinin SABIT sayisi (gozle sayilmaz; sayi ya da ad farkliysa kosu durur):
+ctest --test-dir engine/build -R 'golden|recipe|primitif|edit_locality|manken|kumas|parca|vocab|flatten|surface|enum_dallanma|body_check|gen_contract|bundle_fresh|graf_ir_check|graf_op_check|graf_dikilebilir_check' -j1 --output-on-failure && \
+python3 KOSU/flat-olcum.py > /tmp/fo.txt; RC=$?; [ $RC -eq 0 ] && grep -q 'ESIK KONTROL OK' /tmp/fo.txt && \
+node engine/tests/primitif_ifade_check.mjs && bash engine/tests/enum_dallanma_check.sh && echo 'KABUL (a) exit 0'
+# (b) BILINEN IKI KIRMIZI, SABIT SAYI PINI — gozle sayilmaz; sayi ya da ad farkliysa kosu durur.
 [ "$(node KOSU/uret.mjs >/dev/null 2>&1; node engine/tests/flat_ayni_insan_check.mjs 2>&1 | grep -c 'FAIL  34 hukum kirmizi')" = 1 ] && \
 [ "$(node engine/tests/cizim_giysi_mi.mjs 2>&1 | grep -c 'FAIL cizim_giysi_mi — 1 ihlal')" = 1 ] && \
-[ "$(node engine/tests/cizim_giysi_mi.mjs 2>&1 | grep -c '^FAIL  (b) kol acisi konvansiyon bandinda')" = 1 ] && echo 'beklenen kirmizilar sabit: 34 hukum, 1 ihlal (b)'
+[ "$(node engine/tests/cizim_giysi_mi.mjs 2>&1 | grep -c '^FAIL  (b) kol acisi konvansiyon bandinda')" = 1 ] && echo 'KABUL (b) pinler sabit: 34 hukum, 1 ihlal (b)'
 ```
 
-**F2a eki (karar ajanı 1, 5 Eyl — yalnız EKLEME, üst blok değişmedi).** İki düzeltme:
-(a) Kabul zinciri #2'nin ilk adımı `python3 KOSU/flat-olcum.py | tail -1 | grep -q 'ESIK KONTROL OK'`
-BAYATTI: 'ESIK KONTROL OK' satırı f09f8e45'te eklendi, ondan sonraki `json.dumps(sonuc['oranlar'])`
-dökümü ca0ecd49'dan beri var — satır hiç son satır olmadı. Script'e dokunulmaz (döküm hakem kanıtı);
-kabul METNİ şudur ve orkestratör brief'indeki `tail -1` satırının yerini alır:
-```bash
-python3 KOSU/flat-olcum.py > /tmp/fo.txt; RC=$?; [ $RC -eq 0 ] && grep -q 'ESIK KONTROL OK' /tmp/fo.txt
-# hem cikis kodu (ESIK UYUMSUZ -> sys.exit(2)) hem satir; ikisi de yesil olmali
-```
-(b) F2a'nın üç kapısı zincire eklenir (yeşil beklenir, kırmızı = koşu durur):
-```bash
-ctest --test-dir engine/build -R 'graf_ir_check|graf_op_check|graf_dikilebilir_check' -j1 --output-on-failure
-# fixture yenileme YALNIZ graf degistiginde: engine/build/graf_ir_check contract/graf-v1.json contract/garment-spec-v2.json KOSU/ciktilar/graf-ilk/graf.json --emit
-```
+Regex 27 test seçer (`ctest -N -R ...`; 25 F1 testi eksi `flat_ayni_insan_check` artı F2a'nın üç graf
+kapısı `graf_ir_check|graf_op_check|graf_dikilebilir_check`; `body_check` alt-dizesi #160 body_check ve
+#162 wasm_body_check'i alır, #130 body_volume_check'i bilerek ALMAZ — bu fazın kapısı değil).
+`flat-olcum.py` iki kanaldan yeşil: çıkış kodu (ESIK UYUMSUZ -> `sys.exit(2)`) ve `ESIK KONTROL OK`
+satırı; `tail -1` kullanılmaz — son satır `json.dumps(sonuc['oranlar'])` dökümüdür (ca0ecd49'dan beri),
+script'e dokunulmaz (döküm hakem kanıtı). Graf fixture yenileme YALNIZ graf değiştiğinde:
+`engine/build/graf_ir_check contract/graf-v1.json contract/garment-spec-v2.json KOSU/ciktilar/graf-ilk/graf.json --emit`.
 
-Regex 25 test seçer (`ctest -N -R ...`; `body_check` alt-dizesi #160 body_check ve #162 wasm_body_check'i alır, #130 body_volume_check'i bilerek ALMAZ — bu fazın kapısı değil). F1'den sonra bu zincir **exit 1 verir ve
-bu BEKLENİR** — sebebi aşağıdaki ilk İKİ satırdır (KAPI B 34 hüküm; F1 tur 4'ten sonra
-`cizim_giysi_mi` (b) kol açısı bandı, tam 1 ihlal); başka bir test kızarırsa koşu durur.
-
-| test | beklenen | kırmızı kümesinin SABİT sayısı | kapatan |
+| test | kabul biçimi | kırmızı kümesinin SABİT sayısı (pin) | kapatan — pin gerçekleşince SİLİNİR, gevşetilmez |
 |---|---|---|---|
-| `flat_ayni_insan_check` (KAPI B) | **exit 1 BEKLENİR** | `KOSU/ciktilar/01-09` (9/9 flat, data-size EU38) üstünde **34 hüküm** kırmızı; 34'ten FARKLI bir sayı = regresyon, koşu durur. Kabul komutu iki adım: `node KOSU/uret.mjs && node engine/tests/flat_ayni_insan_check.mjs` (temiz clone'da tek adım "ölçülecek flat yok" verir — bilinen açık, F2 `flat-kume` ile kapatır, karar 5b) uret.mjs yalnız kendi 01-09 svg/png'sini siler; beden-iki.svg/png ve zemin-once.png yerinde kalır (f09f8e45); PNG basımı Chrome poll+kill, 9 flat ≈ 27 s (60 s/PNG tavan); F1 tur 10: kill sonrası child `exit` beklenir, temp dizin retry+try/catch ile silinir — 10 ardışık koşu 10/10 exit 0, 26-27 s, 9/9 png, flat_ayni 10/10 '34 hüküm' (ENOTEMPTY yarım koşusu ve sahte '14 hüküm' bitti). | F2: 9/9 flat croquis36'dan C++'ta, 0 hüküm, exit 0 |
-| `cizim_giysi_mi` | **exit 1 BEKLENİR (F1 tur 4'ten beri)** | **tam 1 ihlal**: `(b) kol acisi konvansiyon bandinda [74.5, 85.9]` — `KOSU/ciktilar/01-09` 40 açı, 8 farklı (32.36–39.59), hepsi band dışı. Band artık satılan flat ölçümünden (`KOSU/flat-olcum.py` Bölüm 2+3, n=11 sarkan kol → `contract/flat-convention-v1.json sevkPoz.kolAcisiDeg` taban 82.2, IQR band; F1 tur 5); eski flat'ler `web/lib/flat-from-pattern.js`'in 20/30/40 sabitleriyle çizilmiş ("kanat"). 1'den FARKLI ihlal sayısı = regresyon, koşu durur. Kapı gevşetilmedi; ürün bandın dışında. | F2: flat C++'ta croquis36 kolundan (kolAcisiDeg) çizilir, JS sabitleri ölür; 0 ihlal |
-| `style_check` | exit 1 | 0/31 pin (`engine/STYLE-PIN` dizini yok; `scripts/repin-style.sh --status`) | F3b (re-pin yalnız F3a iki hakemi geçince) |
-| `flat_artifact_census` | exit 1 | 1 ihlal (`[3 C1]` bel köşesi teğet farkı > 1°, araştırma hattı) | F3 |
-| `sizechart_source_check` | exit 1 | 4 kolon NONE (shoulderCM, backLengthCM, armLengthCM, neckCM) | F2 (karar 4: euSizeChart body-v1 izdüşümü) |
-| `figure_check` | exit 1 | 1 FAILURE (pin eksik) | F3b |
+| `flat_ayni_insan_check` (KAPI B) | **(b) pin** — ctest regex'inde ve `&&` zincirinde DEĞİL | `KOSU/ciktilar/01-09` (9/9 flat, data-size EU38) üstünde **34 hüküm** kırmızı (`grep -c 'FAIL  34 hukum kirmizi'` = 1); 34'ten FARKLI bir sayı = regresyon, koşu durur. İki adım: `node KOSU/uret.mjs && node engine/tests/flat_ayni_insan_check.mjs` (temiz clone'da tek adım "ölçülecek flat yok" verir — bilinen açık, F2 `flat-kume` ile kapatır, karar 5b). uret.mjs yalnız kendi 01-09 svg/png'sini siler; beden-iki.svg/png ve zemin-once.png yerinde kalır (f09f8e45); PNG basımı Chrome poll+kill, 9 flat ≈ 27 s (60 s/PNG tavan); F1 tur 10: 10 ardışık koşu 10/10 exit 0, 26-27 s, 9/9 png, flat_ayni 10/10 '34 hüküm'. | F2: 9/9 flat croquis36'dan C++'ta, 0 hüküm, exit 0 → test (a) regex'ine geri girer, pin silinir |
+| `cizim_giysi_mi` | **(b) pin** — `&&` zincirinde DEĞİL | **tam 1 ihlal**: `(b) kol acisi konvansiyon bandinda [74.5, 85.9]` (`grep -c 'FAIL cizim_giysi_mi — 1 ihlal'` = 1 VE `grep -c '^FAIL  (b) kol acisi konvansiyon bandinda'` = 1) — `KOSU/ciktilar/01-09` 40 açı, 8 farklı (32.36–39.59), hepsi band dışı. Band satılan flat ölçümünden (`KOSU/flat-olcum.py` Bölüm 2+3, n=11 sarkan kol → `contract/flat-convention-v1.json sevkPoz.kolAcisiDeg` taban 82.2, IQR band; F1 tur 5); eski flat'ler `web/lib/flat-from-pattern.js`'in 20/30/40 sabitleriyle çizilmiş ("kanat"). 1'den FARKLI ihlal sayısı = regresyon, koşu durur. Kapı gevşetilmedi; ürün bandın dışında. | F2: flat C++'ta croquis36 kolundan (kolAcisiDeg) çizilir, JS sabitleri ölür; 0 ihlal → `&&` zincirine geri girer, pin silinir |
+| `style_check` | zincirde değil (regex dışı) | 0/31 pin (`engine/STYLE-PIN` dizini yok; `scripts/repin-style.sh --status`) | F3b (re-pin yalnız F3a iki hakemi geçince) |
+| `flat_artifact_census` | zincirde değil | 1 ihlal (`[3 C1]` bel köşesi teğet farkı > 1°, araştırma hattı) | F3 |
+| `sizechart_source_check` | zincirde değil | 4 kolon NONE (shoulderCM, backLengthCM, armLengthCM, neckCM) | F2 (karar 4: euSizeChart body-v1 izdüşümü) |
+| `figure_check` | zincirde değil | 1 FAILURE (pin eksik) | F3b |
 
-Regex'teki diğer 23 test (`body_check`, `gen_contract_check`, `bundle_fresh_check`, `wasm_body_check` dahil) ve
+Regex'teki 27 test (`body_check`, `gen_contract_check`, `bundle_fresh_check`, `wasm_body_check`, üç graf kapısı dahil) ve
 `vocab_reference_check` (ÜÇ kova kod/prose/beden, ratchet yalnız kod; taban `40286351`, kod **9253**, beden kovası 46 hüküm dışı — b7516166 aşağı kesim: 46 satır body-v1 adlı sayı-değerli JSON anahtarı beden kovasına geçti, baseline `_yasa` son satırı) **yeşil**; bunlardan biri
 kızarırsa kaynağı düzelt, kapıyı değil.
+
+**F2b'ye devreden dört kapı** (karar ajanı F2a-3; not değil KAPI, her biri kıran negatif örnek + sayıyla; F3'e devredilmez):
+tam metin `docs/GRAF-IR.md` "F2b kapıları" başlığında. Kısa: (1) `gecis` kuralı — kapanışı olmayan her halka bedende geçmesi
+gereken çevreden büyük (yaka ≥ girth.head, bel/etek ucu ≥ girth.hip); girth.head body-v1'e ANSUR II ile eklenir. (2) Kol kapağı
+tepe G1 + kapak yüksekliği 130-150 mm / oyuk 40-44 cm Aldrich EU38 bandı; 0.6 / 0.5 DOĞRULANMADI oranları fixture'dan çıkar;
+Buğra 149.9 mm kör kontrol. (3) `dikilebilir-*.md/json` 'kapanma' sütunu → `kavsakArtigiMM`, eski ad reddedilir.
+(4) `kol_oyugu` tepe çentiği omuz dikişinin kesiriyle `notchFractions`'ta; ön/arka bel pensleri `dartLeg` çifti olarak taban grafta.
 
 **F1 sayılarının adresi (tek paragraf).** `contract/body-v1.json`: `bedenler.gercek36.landmarklar`
 (x = `halkaKesitOran.breadthOverGirth.<halka>` × çevre/2, ANSUR II süperelips kesit; kol ekseni x =
