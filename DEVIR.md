@@ -340,8 +340,8 @@ bu BEKLENİR** — sebebi aşağıdaki ilk İKİ satırdır (KAPI B 34 hüküm; 
 | `figure_check` | exit 1 | 1 FAILURE (pin eksik) | F3b |
 
 Regex'teki diğer 20 test ve `body_check`, `gen_contract_check`, `bundle_fresh_check`,
-`vocab_reference_check` (İKİ kova kod/prose, ratchet yalnız kod; taban `65a4b5cb`, kod **9298** —
-8bc5393a mesajındaki 9299 yazım hatası, baseline `_yasa` son satırı) **yeşil**; bunlardan biri
+`vocab_reference_check` (İKİ kova kod/prose, ratchet yalnız kod; taban `c924e934`, kod **9299** —
+829480e4'ün 9306'ya yukarı kesimi F1 tur 6'da geri alındı: +7 "flat" JSON anahtarı "dosya" oldu, kalan +1 bir testin okuduğu veri anahtarı, baseline `_yasa` son satırı) **yeşil**; bunlardan biri
 kızarırsa kaynağı düzelt, kapıyı değil.
 
 **F1 sayılarının adresi (tek paragraf).** `contract/body-v1.json`: `bedenler.gercek36.landmarklar`
