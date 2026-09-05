@@ -152,11 +152,15 @@ Body Body::croquisOf(const Body& real) {
     const double hipHalf = real.landmark("hip").x;
     const double stretch = croquisOran("dikeyUzatma");
     const double torso = real.landmark("waist").y * stretch;
-    const double cneck = r1(croquisOran("neckHalfOverBustHalf") * bustHalf);
+    // Yatay oranlarin paydasi omuz ucu x'idir, bust yarimi degil (F1 duzeltme
+    // turu): Zoe Hong sablonunun 'tam govde' paydasi kol-dis-kenardan
+    // kol-dis-kenara olculmus izdusum genisligidir; tup yarimina (cevre/4)
+    // uygulanamaz. croquisOranlar._neden_yeniden_turetildi.
     const double ctip = r1(croquisOran("shoulderTipXOverBustHalf") * bustHalf);
+    const double cneck = r1(croquisOran("neckHalfOverShoulderTipX") * ctip);
     const double cslope = croquisOran("shoulderSlopeDeg");
     const double ctipY = r1(std::tan(cslope * kPi / 180.0) * (ctip - cneck));
-    const double cApexX = r1(croquisOran("apexXOverBustHalf") * bustHalf);
+    const double cApexX = r1(croquisOran("apexXOverShoulderTipX") * ctip);
     const double cApex = r1(croquisOran("apexDropOverTorso") * torso);
     const double cUnder = r1(croquisOran("underarmOverTorso") * torso);
     const double cw = r1(croquisOran("waistHalfOverBustHalf") * bustHalf);
@@ -187,8 +191,9 @@ Body Body::croquisOf(const Body& real) {
     b.setScalar("length.shoulderToElbow", r1(waistY - ctipY));
     b.setScalar("length.bustDepth", r1(std::hypot(cApexX - cneck, cApex)));
     b.setScalar("width.shoulderToShoulder", r1(2.0 * ctip));
-    b.setScalar("width.crossFront", r1(2.0 * ctip * 0.85));
-    b.setScalar("width.crossBack", r1(2.0 * ctip * 0.85));
+    const double cross = croquisOran("crossOverShoulderToShoulder");   // contract, koda gomulu degil
+    b.setScalar("width.crossFront", r1(2.0 * ctip * cross));
+    b.setScalar("width.crossBack", r1(2.0 * ctip * cross));
     b.setScalar("width.apexToApex", r1(2.0 * cApexX));
     b.setScalar("width.neckBase", r1(2.0 * cneck));
     b.setScalar("angle.shoulderSlope", cslope);

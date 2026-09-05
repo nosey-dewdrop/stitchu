@@ -2,7 +2,7 @@
   "_contract": "body-v1 — BEDEN SOZLESMESI ISKELETI (F0, 2026-09-05). Bir giysi GRAFI, iki BEDEN, iki CIKTI (HEDEF.md madde 4, 5). Graf kenarlari mm ile degil, buradaki LANDMARK adlari + oranla tanimlanir; graf gercek36'da degerlenince KALIP, croquis36'da degerlenince FLAT cikar. Bu dosya F0'da yalniz ADLARI ve TANIMLARI tasir; her sayi null'dur. F1 sayilari kaynagiyla doldurur (kaynaksiz sayi yazilmaz; kaynak yoksa en kisitlayici deger + 'DOGRULANMADI' etiketi). F2 bu adlara karsi kod yazar: engine/src bir landmark'a bu dosyadaki adiyla erisir, baska adla degil.",
   "version": 1,
   "id": "stitchu-body-v1",
-  "_durum": "F1 (2026-09-05): SAYILAR DOLDU. gercek36 + croquis36 + 34-44 grade, mm, her sayinin yaninda kaynak. Etiketler: iki kaynak uyusan sayi duz yazildi; 'tek kaynak'; 'DOGRULANMADI' (kaynak yok, en kisitlayici/turetilmis). ayniInsan.toleransMM 2.0 doldu -> KAPI B artik hukum verir (once sayilariyla 9/9 kirmizi BEKLENEN durum; F2 kapatir). ayniInsan.once sayilari OLCUM sayisidir, beden sayisi degil (F0 hakem).",
+  "_durum": "F1 (2026-09-05): SAYILAR DOLDU. gercek36 + croquis36 + 34-44 grade, mm, her sayinin yaninda kaynak. Etiketler: iki kaynak uyusan sayi duz yazildi; 'tek kaynak'; 'DOGRULANMADI' (kaynak yok, en kisitlayici/turetilmis). ayniInsan.toleransMM 2.0 doldu -> KAPI B artik hukum verir (once sayilariyla 9/9 kirmizi BEKLENEN durum; F2 kapatir). ayniInsan.once sayilari OLCUM sayisidir, beden sayisi degil (F0 hakem). | F1 DUZELTME TURU (2026-09-05, hakem hukmu BITMEDI sonrasi): croquis36 oranlari Zoe Hong sablonundan iki olcumle yeniden turetildi (underarm 0.329, apex 0.513, boyun/apex yatay paydasi omuz ucu), figure-landmarks.json silindi, shoulderToShoulder turetilen kontrol degeri, crossOver orani contract'a, bustApex Brusttiefe yuzey etiketi, tables.json 4. celisen kolon (armLengthCM) yazildi.",
   "_ad_uyumu": {
     "_not": "Adlar mevcut koda karsi rg ile bakilarak secildi; F2'nin kod yazacagi adlar bunlardir, kod tarafindaki eski adlar sag sutunda.",
     "measurements_hpp": {
@@ -40,20 +40,11 @@
       "dikis-izi"
     ],
     "_seamKinds_not": "web/lib/flat-from-pattern.js interior[] ogelerinin turu (interior.push(['pens'|'prenses'|'orta-dikis'|'bel-dikisi'|'dikis-izi', ...])). Bunlar contract/primitives-v1.json seam/op.suppress primitifinin ornekleridir (pens = kenara uygulanan operator), menu kelimesi degil. enum_dallanma_check.sh js.dallanma sayiminda edgeRoles_geometry_hpp ile birlikte HARIC tutulur: primitif rolu kontrolu dal sayilmaz (F0 hakem, HEDEF 1.9). F2 flat'i C++'a tasiyinca bu liste motorun emit ettigi seam kind adlariyla birlesir.",
-    "figure_landmarks_json": [
-      "neckBase",
-      "shoulderTip",
-      "underarm",
-      "bustLine",
-      "bustApex",
-      "underbust",
-      "waist",
-      "highHip",
-      "hip",
-      "crotch"
-    ],
-    "_figure_landmarks_birim": "contract/figure-landmarks.json ESKI (F1 karari, dokum d): EU36 flat-px (S=5.6) biriminde, kaynagi buildHalf KOD sabitleri (konvansiyon degil); bu dosya mm'de ve kaynakli. Iki landmark tablosu yasamaz: figure-landmarks.json yalniz tarih icin durur, hic bir tuketici oradan okumaz (F2 rg ile dogrular). underarm y=112 px / bustLine y=132.2 px oradaki oran (0.847) buraya TASINMADI — kaynagi kod.",
-    "_origin_uyumu": "contract/figure-landmarks.json _koordinat.origin 'omuz cizgisi' (neckBase y=0) ve KAPI B grup koordinati (y=0 omuz cizgisi) ile bu dosyanin koordinat.origin'i AYNI cumledir; F0 ilk iskeletteki 'nape' origin'i (ikinci dikey origin) kaldirildi."
+    "figure_landmarks_json": {
+      "_not": "silinen dosyanin landmark adlari (tarih icin): neckBase, shoulderTip, underarm, bustLine, bustApex, underbust, waist, highHip, hip, crotch"
+    },
+    "_figure_landmarks_birim": "contract/figure-landmarks.json SILINDI (F1 duzeltme turu 2026-09-05, karar ajani 8; son hali git gecmisinde: commit 9c35e10b'de duruyor, 'git show 9c35e10b:contract/figure-landmarks.json'). EU36 flat-px (S=5.6) biriminde, kaynagi buildHalf KOD sabitleri idi (konvansiyon degil); tuketici sayisi silinirken rg ile 0 (yalniz bu dosyanin prose'u). Oradaki underarm y=112 px / bustLine y=132.2 px orani (0.847) buraya TASINMADI — kaynagi kod. Bu dosya tek landmark tablosudur.",
+    "_origin_uyumu": "Silinen figure-landmarks.json'un _koordinat.origin'i 'omuz cizgisi' (neckBase y=0) ile KAPI B grup koordinati (y=0 omuz cizgisi) ve bu dosyanin koordinat.origin'i AYNI cumledir; F0 ilk iskeletteki 'nape' origin'i (ikinci dikey origin) kaldirildi."
   },
   "koordinat": {
     "_tanim": "TEK dikey origin (F0 hakem: eski iskelette nape ve omuz cizgisi diye iki origin vardi, aradaki dusus tanimsizdi). Landmark noktalari, flat SVG grup koordinati (KAPI B) ve contract/figure-landmarks.json AYNI sistemde durur: x=0 on-orta (CF) / arka-orta (CB) duzlemi; y=0 OMUZ CIZGISI = neckBase (omuz-boyun noktasi, SNP) hizasi; +y asagi; birim mm. nape bu sistemde bir landmark'tir, origin degil: y'si negatif (omuz cizgisinin ustunde), F1 kaynagiyla doldurur (length.napeToShoulderLine). Halkalar (girth) cevre uzunlugudur, noktasi yoktur; halkanin y'si ayni adli landmark'in y'sidir.",
@@ -62,7 +53,6 @@
     "yEkseni": "+y asagi",
     "xEkseni": "sol/sag simetrik, yari-genislik pozitif",
     "ayniCumleyiSoyleyenler": [
-      "contract/figure-landmarks.json _koordinat.origin",
       "engine/tests/flat_ayni_insan_check.mjs basligi (Koordinat)",
       "ayniInsan.svgNitelikleri.grupKoordinati"
     ]
@@ -378,7 +368,7 @@
         "bustApex": {
           "x": 85.0,
           "y": 259.3,
-          "kaynak": "y: Burda Brusttiefe 26.0 cm (yan boyun -> gogus ucu, yuzey boyunca) egik kenar, dikey bileseni sqrt(260^2-(85-66)^2); x: width.apexToApex/2 DOGRULANMADI"
+          "kaynak": "y: Burda Brusttiefe 26.0 cm YUZEY OLCUSU (Burda Masstabelle: yan boyun -> gogus ucu, meme uzerinden mezura ile; Vordere Taillenlaenge gibi olculur), izdusum degil — DOGRULANMADI: duzlemde egik kenar olarak kullanildi (sqrt(260^2-(85-66)^2) = 259.3), 3B gogus kabarikligi yok sayildi, apex dususu ~1-2 cm abartili olabilir; ikinci dikey apex kaynagi (Mueller Brustpunkthoehe / Aldrich bust point drop) bu turda web'de aranmadi (arastirma sirasi: repo; repoda yok). x: width.apexToApex/2 DOGRULANMADI"
         },
         "bustLine": {
           "x": 210.0,
@@ -544,7 +534,7 @@
         },
         "length.arm": {
           "mm": 590.0,
-          "kaynak": "Burda Armlaenge 59 (Schulterpunkt -> Handwurzel, dirsek hafif bukulu); Mueller 59.6; Aldrich sleeve length 58.0"
+          "kaynak": "Burda Armlaenge 59 (Schulterpunkt -> Handwurzel, dirsek hafif bukulu); Mueller 59.6; Aldrich sleeve length 58.0. contract/tables.json armLengthCM 57.5 KAYNAKSIZ (sizechart_source_check NONE) — CELISIR, yanina yazildi; karar 4: F2'de euSizeChart body-v1 izdusumu olurken bu kolon da kapsanir"
         },
         "length.shoulderToElbow": {
           "mm": 330.0,
@@ -558,7 +548,7 @@
       "genislikler": {
         "width.shoulderToShoulder": {
           "mm": 355.0,
-          "kaynak": "2 x shoulderTip.x = boyun genisligi 132 + 2 x omuz 120 x cos(21.68 deg). GarmentCode graded shoulder_w EU36 32.46 cm ile CELISIR (fark ~4.7 cm) — DOGRULANMADI; Aldrich/Mueller/Burda tip-to-tip basmaz"
+          "kaynak": "TURETILEN KONTROL DEGERI (karar ajani 7c), girdi degil: 2 x (neckBase.x 66 + length.shoulder 120 x cos(21.68 deg)) = 355.0. Girdiler iki kaynakli neckBase (Mueller), length.shoulder (Aldrich/Mueller/Burda), shoulderSlope (GarmentCode). Ikinci deger: GarmentCode mean_all graded shoulder_w EU36 32.46 cm — CELISIR (fark ~3 cm), DOGRULANMADI. F2 hicbir kenari bu degerden degerlemez; omuz ucu turetilir. Ucuncu kaynak F2 kalemi: Bugra Locket-38 kesim cizgisinde omuz ucu-omuz ucu (patterns_real/geometry/geometry-full.json, yerelde)"
         },
         "width.crossFront": {
           "mm": 312.0,
@@ -589,11 +579,11 @@
         "ucuncu": "M. Mueller & Sohn Damen Masstabelle Gr. 36 (boy 168), UCUNCU TARAF KOPYASI https://modanews.ru/m.muller/woman — resmi tablo paywall, DOGRULANMADI etiketi kaynak zinciri icin",
         "arkaPay_egim": "GarmentCode mean_all.yaml (MIT) -> engine/pattern-bridge/mapping.py grade -> engine/src/shaperatios.gen.hpp EU36 satiri"
       },
-      "_kural": "Iki kaynak 1 cm icinde uyusuyorsa sayi yazildi (kaynak alaninda ikisi de adli). Tek kaynak varsa 'tek kaynak'; kaynak yoksa 'DOGRULANMADI' + en kisitlayici/turetilmis deger. tables.json ile celisen 3 kolon (neckCM 34.5 vs 36.0; backLengthCM 40.0 vs 41.0; shoulderCM 36.5 baska buyukluk) SILINMEDI, yanina yazildi: tables.json'u degistirmek F1 alani disi (sizechart_source_check kirmizisi orada duruyor)."
+      "_kural": "Iki kaynak 1 cm icinde uyusuyorsa sayi yazildi (kaynak alaninda ikisi de adli). Tek kaynak varsa 'tek kaynak'; kaynak yoksa 'DOGRULANMADI' + en kisitlayici/turetilmis deger. tables.json ile celisen 3 kolon (neckCM 34.5 vs 36.0; backLengthCM 40.0 vs 41.0; shoulderCM 36.5 baska buyukluk) SILINMEDI, yanina yazildi: tables.json'u degistirmek F1 alani disi (sizechart_source_check kirmizisi orada duruyor). | tables.json ile celisen kolonlar (4): neckCM 34.5 (bu dosya 36.0), backLengthCM 40.0 (41.0), shoulderCM 36.5 (baska buyukluk: omuzdan omuza), armLengthCM 57.5 (59.0)."
     },
     "croquis36": {
       "tanim": "Flat'in bedeni: ideal kadin croquis (moda cizim konvansiyonu), EU36 vitrin bedeni. Sabit tek beden — flat her zaman buradan cizilir (34-44 serisi yalniz kalip icin). Oranlar bas-boyu birimiyle (stature / basBoyu) tanimlanir; F1 endustri konvansiyonunu (croquis bas sayisi, ASTM D6673 flat sablonu, Zoe Hong/Shutterstock sablon olcumleri contract/figure-bands.json) kaynagiyla yazar. Bu prose'a sayi yazilmaz; sayi alanlara, kaynagiyla.",
-      "kaynakTaban": "gercek36 (Burda/Aldrich) dikey uzunluklar + Zoe Hong flat template oranlari (contract/figure-bands.json, piksel-kalibre) + tech-pack poz bandlari (contract/flat-convention-v1.json sevkPoz) + techpackwizard 7-bas teknik croquis",
+      "kaynakTaban": "gercek36 (Burda/Aldrich/Mueller) dikey uzunluklar (bel/kalca/diz/ag/boy, dikeyUzatma 1.0) + Zoe Hong FEMALE FLAT TEMPLATE TORSOS piksel olcumleri (iki bagimsiz olcum: contract/figure-bands.json figur_croquis 2026-08-05 ve F1 duzeltme turu 2026-09-05, croquisOranlar._kaynakSablon) + tech-pack poz bandlari (contract/flat-convention-v1.json sevkPoz) + techpackwizard 7-bas emsali (yanina yazildi)",
       "basBoyuBirimi": {
         "deger": 210.0,
         "kaynak": "DOGRULANMADI: stature 1680 / 8 bas (fashionillustrationtribe: gercekci figur 8 bas; techpackwizard: teknik flat 7 bas ayak bilegine kadar, 9 bas illustration). 8 bas x 210 = 1680 = Burda boy; croquis dikeyde UZATILMAZ (tech flat ≠ illustration), 'ideal' fark oran ve pozda"
@@ -605,44 +595,44 @@
           "kaynak": "gercek36 ile ayni (croquis dikey uzatilmaz: tech flat croquis, illustration degil)"
         },
         "neckBase": {
-          "x": 47.2,
+          "x": 49.1,
           "y": 0.0,
-          "kaynak": "contract/figure-bands.json template_gogus_geometrisi (Zoe Hong FEMALE FLAT TEMPLATE TORSOS, piksel-kalibre 2026-07-23): waist/bust yan-hat 0.812, apex CF uzakligi 0.348 x yari govde, apex dususu 0.441 x torso(omuz->bel), boyun genisligi 0.225 x tam govde boyun 0.225 x tam govde 420 -> yarim 47.25"
+          "kaynak": "croquisOranlar.neckHalfOverShoulderTipX 0.267 x shoulderTip.x 183.8 = 49.1 (Zoe Hong sablon, iki olcum; eski 47.2 yanlis paydadan)"
         },
         "neckFront": {
           "x": 0.0,
-          "y": 26.0,
-          "kaynak": "gercek36 ile ayni oran (0.55 x yari boyun) — DOGRULANMADI"
+          "y": 27.0,
+          "kaynak": "gercek36 ile ayni oran (neckFrontOverHalfNeck 0.55 x yari boyun) — DOGRULANMADI"
         },
         "shoulderTip": {
           "x": 183.8,
-          "y": 49.7,
-          "kaynak": "contract/flat-convention-v1.json sevkPoz (Adstronaut/Techpacker tech-pack konvansiyonu): omuzGogusOran 0.85-0.90 (orta 0.875), omuzEgimiDeg 15-22, kolAcisiDeg taban 30: x = 0.875 x gogus yarimi 210; y = tan(20 deg) x (183.75-47.25); egim 20 = tech-pack 15-22 ile literatur 18-22 kesisiminin ortasi (DOGRULANMADI: secim)"
+          "y": 49.0,
+          "kaynak": "x = sevkPoz omuzGogusOran 0.875 x gogus yarimi 210.0; y = tan(20 deg) x (183.8-49.1) = 49.0; egim 20 = tech-pack 15-22 ∩ literatur 18-22 ortasi (DOGRULANMADI: secim); sablon (ii) omuz ucu dususu 58/474.5 = 0.122 x 390 = 47.7 ile 1.3 mm icinde"
         },
         "underarm": {
           "x": 210.0,
-          "y": 156.0,
-          "kaynak": "DOGRULANMADI: techpackwizard.com/fashion-croquis/ (teknik flat croquis, 7 bas: omuz 2. bolumun ortasi, gogus 2. bolumun altinin hemen ustu, bel 3. bolumun ortasi, kalca 4. bolumun ortasi, bilek kalca hizasinda, diz 6. bolumun ortasi, bilek 7; omuz 2 bas genis, bel 1 bas) — 'gogus 2. bolumun altinin hemen ustu' 1.9 bas, omuz 1.5 bas -> koltukalti (1.9-1.5)/1.0 = 0.40 x torso 390"
+          "y": 128.3,
+          "kaynak": "x = gogus yarimi (tup yasasi); y = croquisOranlar.underarmOverTorso 0.329 x torso 390 = 128.3 — DOGRULANMADI (tek olcum; figure-bands 0.625 baska nokta, bkz. croquisOranlar._underarmOverTorso). BULGU: gercek36 koltukalti 186.0, croquis 128.3: sablonun kol oyugu tabani gercek bedenden 57.7 mm YUKARIDA"
         },
         "bustApex": {
-          "x": 73.1,
-          "y": 172.0,
-          "kaynak": "contract/figure-bands.json template_gogus_geometrisi (Zoe Hong FEMALE FLAT TEMPLATE TORSOS, piksel-kalibre 2026-07-23): waist/bust yan-hat 0.812, apex CF uzakligi 0.348 x yari govde, apex dususu 0.441 x torso(omuz->bel), boyun genisligi 0.225 x tam govde apex dususu 0.441 x torso 390 = 172.0 (techpackwizard 0.45 -> 175.5, fark 3.5 mm: UYUSUR); x 0.348 x 210"
+          "x": 77.2,
+          "y": 200.1,
+          "kaynak": "x = croquisOranlar.apexXOverShoulderTipX 0.42 x 183.8 = 77.2; y = apexDropOverTorso 0.513 x 390 = 200.1 (Zoe Hong sablon iki olcum 0.512/0.513; techpackwizard 0.40-0.45 -> 156-176 celisir, DOGRULANMADI etiketi celiski icin). BULGU: gercek36 apex 259.3, croquis 200.1: sablon gogsu 59.2 mm yukarida cizer"
         },
         "bustLine": {
           "x": 210.0,
-          "y": 172.0,
-          "kaynak": "x = gogus yarimi 210 (tup yasasi, croquis kumasla degismez); y = bustApex.y"
+          "y": 200.1,
+          "kaynak": "x = gogus yarimi 210 (tup yasasi, croquis kumasla degismez); y = bustApex.y (sablonda daire merkezlerinden gecen yatay cizgi)"
         },
         "underbust": {
           "x": 181.4,
-          "y": 230.0,
-          "kaynak": "DOGRULANMADI: apex ile bel arasinin ~%27'si; template underbust olcmedi"
+          "y": 258.1,
+          "kaynak": "DOGRULANMADI: x gercek ile ayni oran 0.864; y = apex + underbustDropMM 58 (sablon gogus alti hattini cizmiyor)"
         },
         "waist": {
           "x": 170.5,
           "y": 390.0,
-          "kaynak": "contract/figure-bands.json template_gogus_geometrisi (Zoe Hong FEMALE FLAT TEMPLATE TORSOS, piksel-kalibre 2026-07-23): waist/bust yan-hat 0.812, apex CF uzakligi 0.348 x yari govde, apex dususu 0.441 x torso(omuz->bel), boyun genisligi 0.225 x tam govde bel/gogus yan-hat 0.812 x 210 = 170.5 (figure-bands band 0.72-0.84 icinde; gercek 0.786); y = gercek36 waist.y 390 (torso boyu Burda/Aldrich)"
+          "kaynak": "x = croquisOranlar.waistHalfOverBustHalf 0.812 x 210.0 = 170.5 (sablon iki olcum 0.820/0.815; figure-bands band 0.72-0.84 icinde; gercek 0.786); y = gercek36 waist.y 390.0 (dikeyUzatma 1.0)"
         },
         "highHip": {
           "x": 195.0,
@@ -672,12 +662,12 @@
         "elbow": {
           "x": 183.8,
           "y": 390.0,
-          "kaynak": "techpackwizard.com/fashion-croquis/ (teknik flat croquis, 7 bas: omuz 2. bolumun ortasi, gogus 2. bolumun altinin hemen ustu, bel 3. bolumun ortasi, kalca 4. bolumun ortasi, bilek kalca hizasinda, diz 6. bolumun ortasi, bilek 7; omuz 2 bas genis, bel 1 bas) — moda cizim konvansiyonu dirsek bel hizasinda; DOGRULANMADI (techpackwizard dirsegi yazmiyor, yalniz bilek)"
+          "kaynak": "x = shoulderTip.x (kol sarkik); y = waist.y (croquisOranlar.elbowY, moda cizim konvansiyonu — DOGRULANMADI)"
         },
         "wrist": {
           "x": 183.8,
           "y": 593.0,
-          "kaynak": "techpackwizard.com/fashion-croquis/ (teknik flat croquis, 7 bas: omuz 2. bolumun ortasi, gogus 2. bolumun altinin hemen ustu, bel 3. bolumun ortasi, kalca 4. bolumun ortasi, bilek kalca hizasinda, diz 6. bolumun ortasi, bilek 7; omuz 2 bas genis, bel 1 bas) 'wrists about in line with the hips' -> wrist.y = hip.y 593; kol boyu croquis'te 593-49.7 = 543.3 (gercek 590)"
+          "kaynak": "x = shoulderTip.x; y = hip.y 593.0 (techpackwizard 'wrists about in line with the hips'); kol boyu croquis'te 593.0-49.0 = 544.0 (gercek 590)"
         }
       },
       "halkalar": {
@@ -760,7 +750,7 @@
           "kaynak": "Burda Vordere Taillenlaenge 44 (yan boyun -> gogus ucu -> bel). Aldrich 'front shoulder to waist' 40.6 (tanim farkli: apex uzerinden degil) — DOGRULANMADI olarak iki tanim ayri tutuldu"
         },
         "length.shoulder": {
-          "mm": 145.4,
+          "mm": 143.3,
           "kaynak": "neckBase -> shoulderTip croquis (turetildi)"
         },
         "length.armholeDepth": {
@@ -768,8 +758,8 @@
           "kaynak": "Aldrich armscye depth 20.6 (nape'ten dikey); Mueller arka kol oyugu yuksekligi 19.7"
         },
         "length.bustDepth": {
-          "mm": 173.9,
-          "kaynak": "neckBase -> bustApex croquis (turetildi)"
+          "mm": 202.1,
+          "kaynak": "neckBase -> bustApex croquis (turetildi, duzlem)"
         },
         "length.waistToHip": {
           "mm": 203.0,
@@ -792,11 +782,11 @@
           "kaynak": "DOGRULANMADI: waistToFloor 1030 - 70 (ayak bilegi yuksekligi kaynaksiz)"
         },
         "length.arm": {
-          "mm": 543.3,
+          "mm": 544.0,
           "kaynak": "bilek kalca hizasinda (techpackwizard.com/fashion-croquis/ (teknik flat croquis, 7 bas: omuz 2. bolumun ortasi, gogus 2. bolumun altinin hemen ustu, bel 3. bolumun ortasi, kalca 4. bolumun ortasi, bilek kalca hizasinda, diz 6. bolumun ortasi, bilek 7; omuz 2 bas genis, bel 1 bas))"
         },
         "length.shoulderToElbow": {
-          "mm": 340.3,
+          "mm": 341.0,
           "kaynak": "dirsek bel hizasinda — DOGRULANMADI"
         },
         "length.stature": {
@@ -807,23 +797,23 @@
       "genislikler": {
         "width.shoulderToShoulder": {
           "mm": 367.6,
-          "kaynak": "contract/flat-convention-v1.json sevkPoz (Adstronaut/Techpacker tech-pack konvansiyonu): omuzGogusOran 0.85-0.90 (orta 0.875), omuzEgimiDeg 15-22, kolAcisiDeg taban 30 0.875 x gogus genisligi 420"
+          "kaynak": "2 x shoulderTip.x (turetildi; sevkPoz 0.875 x gogus genisligi 420)"
         },
         "width.crossFront": {
           "mm": 312.5,
-          "kaynak": "DOGRULANMADI: omuz genisliginin 0.85'i (tech-pack kol oyugu icbukey kavis, sevkPoz.armholeKavis) — template olcmedi"
+          "kaynak": "croquisOranlar.crossOverShoulderToShoulder 0.85 x width.shoulderToShoulder — DOGRULANMADI (sablon olcmedi)"
         },
         "width.crossBack": {
           "mm": 312.5,
-          "kaynak": "DOGRULANMADI (crossFront ile ayni; croquis simetrik)"
+          "kaynak": "crossFront ile ayni (croquis simetrik) — DOGRULANMADI"
         },
         "width.apexToApex": {
-          "mm": 146.2,
-          "kaynak": "contract/figure-bands.json template_gogus_geometrisi (Zoe Hong FEMALE FLAT TEMPLATE TORSOS, piksel-kalibre 2026-07-23): waist/bust yan-hat 0.812, apex CF uzakligi 0.348 x yari govde, apex dususu 0.441 x torso(omuz->bel), boyun genisligi 0.225 x tam govde 0.348 x 2 x 210"
+          "mm": 154.4,
+          "kaynak": "2 x bustApex.x (croquisOranlar.apexXOverShoulderTipX)"
         },
         "width.neckBase": {
-          "mm": 94.4,
-          "kaynak": "contract/figure-bands.json template_gogus_geometrisi (Zoe Hong FEMALE FLAT TEMPLATE TORSOS, piksel-kalibre 2026-07-23): waist/bust yan-hat 0.812, apex CF uzakligi 0.348 x yari govde, apex dususu 0.441 x torso(omuz->bel), boyun genisligi 0.225 x tam govde 0.225 x 420"
+          "mm": 98.2,
+          "kaynak": "2 x neckBase.x (croquisOranlar.neckHalfOverShoulderTipX)"
         }
       },
       "acilar": {
@@ -834,18 +824,32 @@
       },
       "croquisOranlar": {
         "_tanim": "croquis36 = f(gercek36) — parametrik. Body::croquisOf(gercek) bu oranlarla degerlenir; body_check contract'taki croquis36 landmark'lariyla birebir kiyaslar. Kaynaklar landmark satirlarinda.",
+        "_kaynakSablon": "Zoe Hong FEMALE FLAT TEMPLATE TORSOS (on govde, kollar sarkik). IKI bagimsiz piksel olcumu: (i) contract/figure-bands.json figur_croquis._olculen_px (774 px ekran goruntusu, 2026-08-05: SNP y=96, omuz ucu y=125 x=112.5, bel y=320 x=70.5, kalca y=485 x=104, boyun x=30, gogus dairesi merkezi apex_y 0.441 x (omuz ucu->bel)); (ii) F1 duzeltme turu 2026-09-05, ayni sablonun magaza onizlemesi (shop.zoehong.com/products/fashion-flats-templates-female, il_fullxfull.1344169258_g95p.jpg 396x306 px, 4x LANCZOS buyutme, koyu piksel esigi <140, CF x=460 buyutulmus px): SNP y=200, omuz ucu (240,258), koltukalti = kol ic kenarinin govdeye degdigi nokta (278,356), gogus hatti (daire merkezlerinden gecen yatay cizgi) y=443, daire merkezi x=372 (CF'den 88), bel y=674.5 x=323, kalca y=970.5 x=257; kol-dis-kenar->kol-dis-kenar tam genislik 536. Cozunurluk: 1 kaynak px = 4 buyutulmus px = torso'nun %0.85'i.",
+        "_kaynakEmsal": "techpackwizard.com/fashion-croquis/ (teknik flat croquis, 7 bas: omuz 2. bolumun ortasi = 1.5 bas, 'gogus 2. bolumun altinin hemen ustu' = 1.9-1.95 bas, bel 3. bolumun ortasi = 2.5 bas, kalca 4. bolumun ortasi, bilek kalca hizasinda) -> gogus hatti (1.9-1.95-1.5)/1.0 = 0.40-0.45 x torso; koltukalti icin sayi VERMEZ",
+        "_neden_yeniden_turetildi": "F1 hakem ENGEL 1 (2026-09-05): onceki tur underarm 0.40'i techpackwizard'in GOGUS hatti sayisindan aldi (koltukalti degil) ve figure-bands'teki sablon olcumunu okumadi. Karar ajani 7b: croquis dikey oranlarinin TAMAMI Zoe Hong px'ten turetilir, techpackwizard yanina yazilir. Hakemin 0.625 turetmesi (figure-bands 'koltukalti' y=236) bu turda sablon uzerinde yeniden olculdu: figure-bands'in izledigi 'koltukalti' noktasi yari genisligi 86 px = govdenin gogus hatti altindaki en genis yan noktasi (bu dosyanin bustLine landmark'i: yan dikis uzerinde, gogus halkasi y'si), kol oyugu tabani DEGIL; kol ic kenarinin govdeye degdigi gercek koltukalti sablonda gogus hattinin 87 buyutulmus px (torso'nun %18'i) USTUNDE durur. Iki olcum de asagida; secilen deger kolun govdeye degdigi nokta (kol oyugu tabani tanimi). Yatay oranlarin paydasi bust yarimi (tup yasasi, 210) DEGIL omuz ucu x'idir: sablonun 'tam govde' ve 'yari govde' paydalari kol-dis-kenardan kol-dis-kenara olculmus genisliktir (536 px), onceki tur bunu tup yarimi 420'ye uyguladi (boyun 47.2, apex x 73.1 buradan dogmustu).",
         "waistHalfOverBustHalf": 0.812,
+        "_waistHalfOverBustHalf": "sablon (i) 70.5/86 = 0.820, (ii) 137/168 = 0.815, figure-bands ratios.waist_bust template 0.812; uyusur (eu36 gercek 0.786 yanina)",
         "shoulderTipXOverBustHalf": 0.875,
-        "neckHalfOverBustHalf": 0.225,
-        "apexXOverBustHalf": 0.348,
-        "apexDropOverTorso": 0.441,
-        "underarmOverTorso": 0.4,
+        "_shoulderTipXOverBustHalf": "contract/flat-convention-v1.json sevkPoz omuzGogusOran 0.85-0.90 (tech-pack poz konvansiyonu), orta 0.875 — sablon izdusum orani (220/168 = 1.31) tup yarimina uygulanamaz",
+        "neckHalfOverShoulderTipX": 0.267,
+        "_neckHalfOverShoulderTipX": "sablon (i) 30/112.5 = 0.267 (secilen: 774 px, yuksek cozunurluk); (ii) 62/220 = 0.282; template_gogus_geometrisi boyun_gen_tam_govde 0.225 x (536/440 = 1.218) = 0.274. Uc olcum 1 kaynak px icinde uyusur. ESKI 0.225 x bust yarimi 210 = 47.2 YANLIS payda idi",
+        "apexXOverShoulderTipX": 0.42,
+        "_apexXOverShoulderTipX": "sablon (ii) 88/220 = 0.40 (daire sag kenari 442 -> merkez 372) .. 92.5/220 = 0.42 (sol kenar 293 -> merkez 367.5); template_gogus_geometrisi apex_cf_uzaklik_yari_govde 0.348 x (268/220 = 1.218) = 0.424. Iki olcum uyusur -> 0.42. ESKI 0.348 x 210 = 73.1 yanlis payda",
+        "apexDropOverTorso": 0.513,
+        "_apexDropOverTorso": "torso = SNP (omuz cizgisi, y=0) -> bel. Sablon (i): omuz ucu 125 + 0.441 x (320-125) = 211 -> (211-96)/224 = 0.513; sablon (ii): (443-200)/474.5 = 0.512. Iki olcum uyusur. techpackwizard 0.40-0.45 (16-44 mm yukari) — DOGRULANMADI etiketi kaynak celiskisi icin durur, deger sablondan (figure-bands _ROL: template > emsal)",
+        "underarmOverTorso": 0.329,
+        "_underarmOverTorso": "kol oyugu tabani = kol ic kenarinin govdeye degdigi nokta. Sablon (ii): (356-200)/474.5 = 0.329 (+-0.01). Sablon (i) figure-bands 'koltukalti' (236-96)/224 = 0.625 AYNI NOKTA DEGIL: yari genisligi 86 px govdenin en genis yan noktasi = bustLine yan noktasi (bkz. _neden_yeniden_turetildi). techpackwizard sayi vermez. TEK OLCUM -> DOGRULANMADI; gercek36 koltukalti 186 (0.477) ile fark BULGU olarak farkTablosu.ozet'te",
         "underbustDropMM": 58.0,
+        "_underbustDropMM": "DOGRULANMADI: sablon gogus alti hattini cizmiyor; apex ile bel arasinin ~%30'u (eski tur degeri korunur)",
         "shoulderSlopeDeg": 20.0,
+        "_shoulderSlopeDeg": "tech-pack 15-22 (sevkPoz) ∩ literatur 18-22 (figure-bands) ortasi 20 — DOGRULANMADI (band kaynakli nokta secim); sablon (ii) atan(58/(400-240)) = 20.0 deg uyusur",
+        "crossOverShoulderToShoulder": 0.85,
+        "_crossOverShoulderToShoulder": "width.crossFront/crossBack = 0.85 x width.shoulderToShoulder (tech-pack kol oyugu icbukey kavis, sevkPoz.armholeKavis) — DOGRULANMADI: sablon olcmedi; F1 hakem kusuru: eskiden body.cpp'de koda gomulu idi, contract'a tasindi",
         "elbowY": "waist.y",
         "wristY": "hip.y",
+        "_elbowWristY": "techpackwizard.com/fashion-croquis/ (teknik flat croquis, 7 bas: omuz 2. bolumun ortasi = 1.5 bas, 'gogus 2. bolumun altinin hemen ustu' = 1.9-1.95 bas, bel 3. bolumun ortasi = 2.5 bas, kalca 4. bolumun ortasi, bilek kalca hizasinda) -> gogus hatti (1.9-1.95-1.5)/1.0 = 0.40-0.45 x torso; koltukalti icin sayi VERMEZ 'wrists about in line with the hips'; dirsek bel hizasi moda cizim konvansiyonu (DOGRULANMADI: techpackwizard dirsegi yazmiyor)",
         "dikeyUzatma": 1.0,
-        "_dikeyUzatmaNot": "1.0 = tech flat croquis dikeyde uzatilmaz (illustration 9-10 bas degil). Degistirilirse bel/kalca/diz/ag y'leri carpilir; F1 karari 1.0"
+        "_dikeyUzatmaNot": "1.0 = tech flat croquis dikeyde uzatilmaz (illustration 9-10 bas degil). Degistirilirse bel/kalca/diz/ag y'leri carpilir; F1 karari 1.0; karar ajani 7a: KALIR, hicbir ajan kaynaksiz degistiremez"
       }
     },
     "farkTablosu": {
@@ -856,32 +860,32 @@
           "dy": 0.0
         },
         "neckBase": {
-          "dx": -18.8,
+          "dx": -16.9,
           "dy": 0.0
         },
         "neckFront": {
           "dx": 0.0,
-          "dy": -10.3
+          "dy": -9.3
         },
         "shoulderTip": {
           "dx": 6.3,
-          "dy": 5.4
+          "dy": 4.7
         },
         "underarm": {
           "dx": 0.0,
-          "dy": -30.0
+          "dy": -57.7
         },
         "bustApex": {
-          "dx": -11.9,
-          "dy": -87.3
+          "dx": -7.8,
+          "dy": -59.2
         },
         "bustLine": {
           "dx": 0.0,
-          "dy": -87.3
+          "dy": -59.2
         },
         "underbust": {
           "dx": 0.0,
-          "dy": -94.3
+          "dy": -66.2
         },
         "waist": {
           "dx": 5.5,
@@ -916,7 +920,7 @@
           "dy": -41.3
         }
       },
-      "ozet": "Genislik (croquis-gercek): bel +5.5 (template 0.812 > gercek 0.786), omuz ucu +6.3 (0.875 x gogus vs boyun+omuz dikisi), boyun -18.8 (template boyun dar), apex -11.9. Dikey: koltukalti -30.0 (croquis kol oyugu sig), gogus hatti -87.3 (template apex torso'nun %44'unde, gercek Brusttiefe ile %66), omuz ucu +5.4, bilek -41.3 (kalca hizasi), dirsek +15.7 (bel hizasi). Bel/kalca/diz/ag/boy AYNI (tech flat dikey uzatilmaz)."
+      "ozet": "Genislik (croquis-gercek): bel +5.5 (sablon 0.812 > gercek 0.786), omuz ucu +6.3 (0.875 x gogus vs boyun+omuz dikisi), boyun -16.9 (sablon boyun dar: 0.267 x omuz ucu), apex -7.8. Dikey: koltukalti -57.7 (BULGU: sablonun kol oyugu tabani gercek bedenden 57.7 mm yukarida — Zoe Hong sablonu kolu yuksek baglar; tek olcum, DOGRULANMADI), gogus hatti -59.2 (sablon apex torso'nun %51'inde, gercek Brusttiefe ile %66: sablon gogsu yukari cizer), omuz ucu +4.7, bilek -41.3 (kalca hizasi), dirsek +15.7 (bel hizasi). Bel/kalca/diz/ag/boy AYNI (tech flat dikey uzatilmaz). Siralama iki bedende ayni: koltukalti gogus hattinin ustunde (croquis 128.3 < 200.1; gercek 186.0 < 259.3)."
     }
   },
   "gradeTablosu": {
@@ -1329,7 +1333,109 @@
       "hipY_not": "hip.y bugun her flat'te waist.y + 200.0 mm SABIT (web/lib/flat-from-pattern.js:137 MANKEN_KALCA_DERINLIK_MM, 9/9 flat ayni dusus). Bu bir olcum degil; kalca hatti y sutunu bel y'nin kopyasidir. F2 sonrasi hip.y croquis36 landmark'indan gelir.",
       "belMutabakat_not": "ciz-ilan = +12.7 (9/9 flat): cizimden olculen bel yari-genislik, ilan edilen data-manken-bel-yarim-mm'den tam 12.7 mm buyuk, yani ilan 12.7 mm EKSIK (= flat-from-pattern.js:136 MANKEN_FARK_CEYREK_MM 12.7417). Ilan carpan oncesi, cizim carpan sonrasi: ilan ile cizim ayni sey degil. Tolerans dolunca KIRMIZI.",
       "etek_not": "07-etek-a-line: bel y -49.2, omuz ucu yok, cizim ust kenari -49.2 — gorunum origin'i beden landmark'i degil (bel ustu). F2'de etek de omuz cizgisi origin'ine baglanir, istisna olmaz (karar ek dokum c).",
-      "bundle": "c43d3d4f64df9f20 (web/vendor/stitchu-engine.js source-stamp; zemin-once.png etiketi ve KAPI B basligi ayni damgayi tasir — hakem notu 5, tek kimlik)"
+      "bundle": "c43d3d4f64df9f20 (web/vendor/stitchu-engine.js source-stamp o gun; zemin-once.png etiketi ve KAPI B basligi ayni damgayi tasir — hakem notu 5, tek kimlik). F1 duzeltme turu sonrasi bundle damgasi c23d3fe816c561ea (src_stamp git ls-files tabanli, engine/build-wasm.sh; .rabadon oturum dosyalari damgaya girmez — karar ajani 6); 01-09 flat'ler yeniden BASILMADI (HEDEF 14: eski flat uzerine kurulmaz, F2 croquis36'dan yeniden cizer), once sayilari eski damgaya baglidir",
+      "yanDikisFark_mm": {
+        "_tanim": "KALIP tarafinda on/arka yan dikis uzunlugu farki (on - arka, mm), panel bazinda; kaynak engine/tests/cizim_giysi_mi.mjs (0b) satiri, EU38 draftJSON, 2026-09-05, bundle c23d3fe816c561ea. OLCUM, hukum yok (karar ajani 5a). Kural: kol oyugu rolu olan parcada kol oyugundan sonraki kenar (koltukalti->bel); etek benzeri parcada bel ucundan en dis x'li koseye. Prenses 'center' panelinde bu kenar prenses dikisidir (yan dikis degil), fark o yuzden buyuk; 'side' paneli yan dikistir. '—' = kural o parcada kenari secemedi (maxi duz etek). Anahtarlar Turkce (govde/etek/ust; merkez/yan): kalip parca adlari (Bodice/Skirt/Top) ile vocab enum kelimeleri carpismasin diye.",
+        "_spec_esleme_not": "02 KOSU spec'i neckline crew, cizim_giysi_mi satiri vNeck — yan dikis yakadan bagimsiz",
+        "01-elbise-duz-kol-bebe-yaka": {
+          "govde": {
+            "on": 166,
+            "arka": 166,
+            "fark": 0
+          },
+          "etek": {
+            "on": 650.1,
+            "arka": 650.1,
+            "fark": 0
+          }
+        },
+        "02-elbise-balon-uzun-kol-dik-yaka": {
+          "govde": {
+            "on": 166,
+            "arka": 166,
+            "fark": 0
+          }
+        },
+        "03-elbise-kolsuz": {
+          "govde": {
+            "on": 172,
+            "arka": 172,
+            "fark": 0
+          },
+          "etek": {
+            "on": 650.1,
+            "arka": 650.1,
+            "fark": 0
+          }
+        },
+        "04-elbise-uzun-kol-yatik-yaka-mini": {
+          "govde": {
+            "on": 166,
+            "arka": 166,
+            "fark": 0
+          },
+          "etek": {
+            "on": 453.6,
+            "arka": 453.6,
+            "fark": 0
+          }
+        },
+        "05-ust-balon-uzun-kol": {
+          "ust": {
+            "on": 166.7,
+            "arka": 166,
+            "fark": 0.7
+          }
+        },
+        "06-ust-kolsuz": {
+          "ust": {
+            "on": 172.7,
+            "arka": 172,
+            "fark": 0.7
+          }
+        },
+        "07-etek-a-line": {
+          "govde": {
+            "on": 650.1,
+            "arka": 650.1,
+            "fark": 0
+          }
+        },
+        "08-elbise-prenses": {
+          "govde merkez": {
+            "on": 139,
+            "arka": 90.3,
+            "fark": 48.7
+          },
+          "govde yan": {
+            "on": 166,
+            "arka": 166,
+            "fark": 0
+          },
+          "etek merkez": {
+            "on": 654.8,
+            "arka": 655.4,
+            "fark": -0.6
+          },
+          "etek yan": {
+            "on": 650,
+            "arka": 650.1,
+            "fark": -0.1
+          }
+        },
+        "09-elbise-gomlek-yaka": {
+          "govde": {
+            "on": 166,
+            "arka": 166,
+            "fark": 0
+          },
+          "etek": {
+            "on": 650.1,
+            "arka": 650.1,
+            "fark": 0
+          }
+        }
+      }
     },
     "onArka": {
       "_tanim": "ON/ARKA MUTABAKATI (F0 hakem ENGEL 1; hic bir listede yoktu). Flat'te yan dikis TEK cizgidir: ayni giysinin on ve arka gorunumu ayni bedende, ayni omuzda, ayni boyda olmak zorunda; degilse rafta 'iki ayri giysi' okunur ve dikilemez. KAPI B her SVG'de front VE back siluetini okur, uc fark basar: dBel = |waist.y_on - waist.y_arka| (ilan), dOmuz = |shoulderTip.x_on - shoulderTip.x_arka| (ilan), dAlt = |altKenar.y_on - altKenar.y_arka| (cizimden, siluet yolunun en alt y'si). toleransMM null iken yalniz olcer; F1 doldurunca fark > tolerans olan flat KIRMIZI. Kok (F0 hakem): web/lib/flat-from-pattern.js mankenWarp gorunum basina, waistPt her parcadan ayri — on ile arka ortak croquis36 landmark'indan degil kendi kalip parcasinin CF/CB uzunlugundan degerleniyor. Kalip tarafinda on/arka yan dikis uzunlugu farki DOGRULANMADI (F1: cizim_giysi_mi'ye tek olcum satiri, once sayisi alinir).",
@@ -1368,11 +1474,11 @@
       "F1": [
         "flat-kume.mjs: KOSU/uret.mjs SVG uretimi ortak module cikar; flat_ayni_insan_check argumansiz kosunca SVG'leri engine/build/flat-ayni-insan/ altina KENDI uretir (Chrome'suz); temiz clone'da ctest -R flat_ayni_insan exit 0 (karar #2)",
         "ayniInsan.toleransMM ve ayniInsan.onArka.toleransMM kaynakli doldurulur (endustri konvansiyonu, sayiyla); dolunca 9/9 kirmizi beklenir (once sayilari yukarida)",
-        "croquis36 landmark sayilari kaynakli doldurulur; contract/figure-landmarks.json EU36 flat-px (S=5.6) birimi ile bu dosyanin mm'si tek birime baglanir ya da figure-landmarks 'eski' isaretlenir — iki landmark tablosu yasamaz (dokum d)",
+        "croquis36 landmark sayilari kaynakli doldurulur; figure-landmarks.json git rm (YAPILDI, F1 duzeltme turu; karar ajani 8) — iki landmark tablosu yasamaz",
         "contract/flat-convention-v1.json:25 _law 'gogus (koltukalti) hatti' -> 'koltukalti hatti ve gogus hatti' (karar #1c); :42 chestY 276 'ACIK' sayisi body-v1 underarm.y'ye kaynakli tasinmadan doldurulmaz (dokum c)",
-        "kalip tarafinda on/arka yan dikis uzunlugu farki: cizim_giysi_mi'ye tek olcum satiri, once sayisi alinir (hakem notu 2)",
-        "kabul regex'i '...|surface|enum_dallanma|flat_ayni_insan' (21 test) DEVIR.md kabul bolumune tek yerde (karar #3)",
-        "vocab-reference tabani bir daha yukari kesilmez; vocab_reference_check kod ve prose'u iki kovaya ayirir (enum_dallanma modeli) ya da tests/*.mjs basliklarini ve contract _tanim alanlarini sayimdan cikarir"
+        "kalip tarafinda on/arka yan dikis uzunlugu farki: cizim_giysi_mi'ye tek olcum satiri, once sayisi alinir (hakem notu 2) — YAPILDI (F1 duzeltme turu): once.yanDikisFark_mm",
+        "kabul regex'i '...|surface|enum_dallanma|flat_ayni_insan' (21 test) DEVIR.md kabul bolumune tek yerde (karar #3) — YAPILDI: DEVIR.md '## KABUL'",
+        "vocab-reference tabani bir daha yukari kesilmez; vocab_reference_check kod ve prose'u iki kovaya ayirir (enum_dallanma modeli) ya da tests/*.mjs basliklarini ve contract _tanim alanlarini sayimdan cikarir — YAPILDI: vocab_reference_check.sh kod/prose/beden uc kova, taban ffa9e6ce'de yeni sayimla yeniden kesildi (9c35e10b yukari kesimi geri alindi)"
       ],
       "F2": [
         "mankenWarp + MANKEN_FARK_CEYREK_MM + MANKEN_KALCA_DERINLIK_MM silinir; kabul: KAPI B ciz-ilan 0.0 (9/9), hipY != waistY+200",
@@ -1408,6 +1514,6 @@
     "girth.wrist": 1.0,
     "girth.knee": 1.0,
     "girth.armhole": 1.0,
-    "kaynak": "engine/src/bodysurface.cpp kAspectNeck/Bust/Waist/Hip (beyanli varsayim); kol/bacak 1.0 (daire) varsayim — DOGRULANMADI"
+    "kaynak": "engine/src/bodysurface.cpp kAspectNeck/Bust/Waist/Hip (beyanli varsayim); kol/bacak 1.0 (daire) varsayim — DOGRULANMADI | F1 hakem kusuru (kesit): Aldrich crossFront 312 / crossBack 334 kol oyugundan kol oyuguna genisliktir, gogus kesitinin tam yatay ekseni degil (kol oyugu genisligi eksik) — kesiti kisitlamaya YETMEZ; antropometrik derinlik/genislik (EN 13402 chest depth, ANSUR chest breadth/depth) bu turda repoda yok, web'de aranmadi. Sayilar beyanli varsayim olarak kalir; Body::point() kesit cevresi %0.5 icinde (body_check a). Kapatan: taranmis beden ya da ANSUR tablosu (F3+ kalemi)"
   }
 }

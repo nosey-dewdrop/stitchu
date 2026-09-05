@@ -1494,3 +1494,11 @@ add_test(NAME flat_ayni_insan_check COMMAND ${NODE_EXECUTABLE}
 add_executable(body_check tests/body_check.cpp)
 target_link_libraries(body_check PRIVATE engine)
 add_test(NAME body_check COMMAND body_check)
+
+# gen_contract_check (F1 duzeltme turu, karar ajani 2): contract/*.json ->
+# engine/tools/gen-contract.mjs -> contract.gen.hpp / composition.gen.hpp /
+# body.gen.hpp / web+backend contract.gen.js. Tek uretec, tek --check: uretilen
+# dosya kaynagindan sapmissa (elle duzenlenmis ya da contract degisip uretim
+# kosulmamis) exit 1. specv1v2_map_check ile ayni desen; generated-paths.sha256
+# manifesti *.gen.* ciktilarini tasimiyordu, bekci bu satirdir.
+add_test(NAME gen_contract_check COMMAND ${NODE_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/gen-contract.mjs --check)

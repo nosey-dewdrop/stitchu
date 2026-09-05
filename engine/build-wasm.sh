@@ -25,8 +25,17 @@ mkdir -p dist
 # the exact failure being fixed. The digest is also DETERMINISTIC: the same
 # sources produce the same byte, so a rebuild with no source change produces no
 # diff. It is a JS line comment on line 1, so the glue's behaviour is untouched.
+# WHICH FILES. `git ls-files --cached --others --exclude-standard`, not `find`:
+# measured 2026-09-05 (F0/F1 judges, decision 6) — `find src wasm -type f` also
+# hashed engine/src/.rabadon/ (gitignored agent session dumps: state.json,
+# net.json, handoff.md, sessions/*.json), so the stamp was a function of THIS
+# MACHINE's session history: find gave 66d450caa37ae393, the tracked+untracked-
+# not-ignored set gave d7cd104b38eb0e02, and a clean clone would have computed
+# yet another. git's own view of the tree is the only one every checkout shares:
+# tracked files plus new files not yet added (a body.cpp being written still
+# moves the stamp), minus everything .gitignore hides.
 src_stamp() {
-  { find src wasm -type f -print0 | sort -z | xargs -0 shasum -a 256
+  { git ls-files -z --cached --others --exclude-standard src wasm | sort -z | xargs -0 shasum -a 256
     shasum -a 256 build-wasm.sh; } | shasum -a 256 | cut -c1-16
 }
 STAMP="$(src_stamp)"
