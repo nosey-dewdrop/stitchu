@@ -31,8 +31,16 @@
 #      web/lib/arka-koken.js): `=== 'kelime'` / `!== 'kelime'` string-literal
 #      dallari. Haric: yol komutu turleri (close/move/line/curve — CmdType'in JS
 #      karsiligi) ve typeof sonuclari (number/object/string/undefined/function/
-#      boolean). Kalan her literal (tur === 'gomlek', 'dik', 'yatik', 'pens',
-#      which === 'on', yon === 'disari' ...) bir menu/ozel-durum dalidir.
+#      boolean) VE PRIMITIF ROLLERI: contract/body-v1.json _ad_uyumu
+#      .edgeRoles_geometry_hpp (armhole_front/back, sleeve_cap, sleeve_underarm)
+#      + .seamKinds_flat_js (pens, prenses, orta-dikis, bel-dikisi, dikis-izi)
+#      + contract/primitives-v1.json primitifler anahtarlari (edge/panel/seam/op.*).
+#      Bunlar DOSYADAN okunur, elle liste degil. Neden haric: HEDEF madde 9 tam da
+#      bu Edge/Seam primitifleriyle ilerlenmesini ister; `r.role === 'sleeve_cap'`
+#      bir menu kelimesi degil, primitif rol kontroludur. Sayilsaydi F2'nin 0 hedefi
+#      rol kontrolunu yasaklar ya da gizli yeniden adlandirmaya iterdi (F0 hakem).
+#      Kalan her literal (tur === 'gomlek', 'dik', 'yatik', which === 'on',
+#      yon === 'disari' ...) bir menu/ozel-durum dalidir.
 #      F0 hakemi [ENGEL]: satilacak flat'i cizen kalem web/lib/flat-from-pattern.js
 #      (2551 satir) ve kapi ona kordu. F2 flat'i C++'a tasiyinca bu kova 0 olur
 #      (dosya silinir ya da yalniz SVG serializasyonu kalir).
@@ -41,6 +49,15 @@
 #      satirlari: koda gomulu mm sabiti (MANKEN_FARK_CEYREK_MM = 12.7417,
 #      MANKEN_KALCA_DERINLIK_MM = 200). HEDEF madde 4/5: beden sayisi
 #      contract/body-v1.json'dan okunur, koda gomulmez. Hedef 0.
+#
+#  (4) js.metin — rehber ve PDF katmani (web/lib/rehber-tr.js, web/lib/pdf-core.js):
+#      ayni grep deseni, ayni haric listesi, AYRI kova (karar ajani #4). Buradaki
+#      `kumas === 'woven'` tarzi dallar fabric-catalog-v1.json'dan okunacak veriyi
+#      koda gomen menudur (HEDEF 1.6/1.10); ama F2'nin 0 hedefi flat kalemiyle
+#      sinirli, rehber kovasinin 0 hedefi rehberi yapan fazdadir. Kovalar
+#      birlesirse F2'nin flat ilerlemesi PDF gurultusune karisir (HEDEF 3.3).
+#      web/js/download.js DISARIDA: iki literali (source.kind === 'recipe'/'spec')
+#      giris turu, giysi sozlugu degil; flat cizmez.
 #
 # SPEC ENUM NEDIR. engine/src/*.hpp icinde `enum class` ile tanimlanan her tip,
 # su UC istisna disinda: CmdType (geometry.hpp, yol komutu — cizim cekirdegi,
@@ -52,9 +69,10 @@
 #
 # TABAN. engine/tests/enum-dallanma-baseline.json:
 #   {"toplam": N, "cpp": {"dallanma", "serializasyon", "dosya", "enum"},
-#    "js": {"dallanma", "sabitMM", "dosya"}}
+#    "js": {"dallanma", "sabitMM", "metin", "dosya", "metinDosya"}}
 #   toplam = cpp.dallanma (ana circir; F3 hedefi 0)
 #   js.dallanma ve js.sabitMM ayri circir (her biri kendi tabanini ASAMAZ; F2 hedefi 0)
+#   js.metin ayri circir (rehber/PDF; 0 hedefi rehber fazinda)
 #   cpp.serializasyon bilgi icindir, circir degil.
 # Gate modu:
 #   herhangi bir circir > taban -> KIRMIZI (menuye dal / sabite sayi eklendi)
@@ -72,6 +90,7 @@ set -uo pipefail
 cd "$(dirname "$0")/../.."
 SRC=engine/src
 JSFILES=$(ls web/lib/flat-*.js web/lib/arka-koken.js 2>/dev/null | sort)
+JSMETIN=$(ls web/lib/rehber-tr.js web/lib/pdf-core.js 2>/dev/null | sort)
 BASE=engine/tests/enum-dallanma-baseline.json
 MODE="${1:-gate}"
 
@@ -112,7 +131,16 @@ rm -f "$TMP" "$TMPS"
 
 # --- JS kovalari --------------------------------------------------------------
 RE_JS_CMP="[=!]==[[:space:]]*'[A-Za-z_]+'"
-RE_JS_EXCL="'(close|move|line|curve|number|object|string|undefined|function|boolean)'"
+# primitif rolleri: contract'tan okunur (elle liste yok). Eksikse kapi FAIL (sessiz
+# gevseme yok: liste bos kalsa roller dal sayilir ve sayi sicrar, taban gizli asilir).
+PRIM_ROLES=$(python3 -c "
+import json
+b=json.load(open('contract/body-v1.json'))['_ad_uyumu']
+p=json.load(open('contract/primitives-v1.json'))['primitifler']
+names=list(b['edgeRoles_geometry_hpp'])+list(b['seamKinds_flat_js'])+list(p.keys())
+import re; print('|'.join(re.escape(n) for n in names))" 2>/dev/null)
+[ -n "$PRIM_ROLES" ] || { echo "FAIL  primitif rol listesi contract'tan okunamadi (body-v1 _ad_uyumu.edgeRoles_geometry_hpp/seamKinds_flat_js, primitives-v1 primitifler)"; exit 2; }
+RE_JS_EXCL="'(close|move|line|curve|number|object|string|undefined|function|boolean|${PRIM_ROLES})'"
 RE_JS_MM="^[[:space:]]*(const|let|var)[[:space:]]+[A-Za-z_]+_MM[[:space:]]*=[[:space:]]*[0-9]"
 JS_CMP=0; JS_MM=0; JS_DIST=""
 for f in $JSFILES; do
@@ -123,11 +151,19 @@ for f in $JSFILES; do
 "
 done
 JS_DIST=$(printf "%s" "$JS_DIST" | sed '$ s/,$//')
+JS_MET=0; JS_MET_DIST=""
+for f in $JSMETIN; do
+  c=$(grep -oE "$RE_JS_CMP" "$f" 2>/dev/null | grep -vE "$RE_JS_EXCL" | wc -l | tr -d ' ')
+  JS_MET=$((JS_MET + c))
+  JS_MET_DIST="${JS_MET_DIST}      \"$(basename "$f")\": $c,
+"
+done
+JS_MET_DIST=$(printf "%s" "$JS_MET_DIST" | sed '$ s/,$//')
 
 write_baseline() {
   {
     echo "{"
-    echo "  \"_ne\": \"enum_dallanma_check.sh circir tabani. Uc circir: toplam(=cpp.dallanma), js.dallanma, js.sabitMM — hicbiri ARTAMAZ. Azalis bu dosyayi OTOMATIK YAZMAZ; taban --baseline ile bilincli, ayri commit'te kesilir (gerekce commit mesajinda). cpp.serializasyon (case E::X: return \\\"...\\\") bilgi icindir, toplama girmez. Sayim: case <SpecEnum>::X + [=!]= <SpecEnum>::X, engine/src/*.cpp|*.hpp, specparse.hpp ve *.gen.hpp haric; js: web/lib/flat-*.js + arka-koken.js icinde === 'kelime' (yol komutu/typeof haric) ve <AD>_MM = sayi. Hedef: cpp F3 sonu 0; js F2 sonu 0.\","
+    echo "  \"_ne\": \"enum_dallanma_check.sh circir tabani. Uc circir: toplam(=cpp.dallanma), js.dallanma, js.sabitMM — hicbiri ARTAMAZ. Azalis bu dosyayi OTOMATIK YAZMAZ; taban --baseline ile bilincli, ayri commit'te kesilir (gerekce commit mesajinda). cpp.serializasyon (case E::X: return \\\"...\\\") bilgi icindir, toplama girmez. Sayim: case <SpecEnum>::X + [=!]= <SpecEnum>::X, engine/src/*.cpp|*.hpp, specparse.hpp ve *.gen.hpp haric; js: web/lib/flat-*.js + arka-koken.js icinde === 'kelime' (yol komutu/typeof haric) ve <AD>_MM = sayi; haric: yol komutu/typeof + contract primitif rolleri (body-v1 edgeRoles_geometry_hpp, seamKinds_flat_js; primitives-v1 primitifler). js.metin: web/lib/rehber-tr.js + pdf-core.js, ayni desen, ayri circir. Hedef: cpp F3 sonu 0; js.dallanma/sabitMM F2 sonu 0; js.metin rehber fazinda 0.\","
     echo "  \"_kesildi\": \"$(date +%Y-%m-%d) $(git rev-parse --short HEAD 2>/dev/null || echo '?')\","
     echo "  \"specEnumSayisi\": $N_ENUM,"
     echo "  \"toplam\": $TOTAL,"
@@ -141,7 +177,9 @@ write_baseline() {
     echo "  \"js\": {"
     echo "    \"dallanma\": $JS_CMP,"
     echo "    \"sabitMM\": $JS_MM,"
-    echo "    \"dosya\": {"; echo "$JS_DIST"; echo "    }"
+    echo "    \"metin\": $JS_MET,"
+    echo "    \"dosya\": {"; echo "$JS_DIST"; echo "    },"
+    echo "    \"metinDosya\": {"; echo "$JS_MET_DIST"; echo "    }"
     echo "  }"
     echo "}"
   } > "$BASE"
@@ -150,28 +188,32 @@ write_baseline() {
 echo "spec enum ($N_ENUM): $(echo "$ENUMS" | paste -sd' ' -)"
 echo "kapsam cpp: $(echo "$FILES" | wc -l | tr -d ' ') dosya (engine/src, specparse/gen haric)"
 echo "kapsam js : $(echo "$JSFILES" | wc -l | tr -d ' ') dosya ($(echo "$JSFILES" | xargs -n1 basename | paste -sd' ' -))"
+echo "kapsam js.metin: $(echo "$JSMETIN" | wc -l | tr -d ' ') dosya ($(echo "$JSMETIN" | xargs -n1 basename | paste -sd' ' -))"
+echo "haric primitif rolleri (contract'tan): $(echo "$PRIM_ROLES" | tr '|' ' ' | sed 's/\\//g')"
 echo "cpp.dallanma (toplam, circir): $TOTAL"
 echo "cpp.serializasyon (bilgi, toplama girmez): $SER"
 echo "js.dallanma (circir): $JS_CMP"
 echo "js.sabitMM (circir): $JS_MM"
+echo "js.metin (circir, rehber/PDF): $JS_MET"
 
 if [ "$MODE" = "--measure" ]; then
   echo "--- cpp dosya dagilimi"; echo "$DIST_FILE" | sed 's/^ *//; s/,$//'
   echo "--- cpp serializasyon dagilimi"; echo "$DIST_SER" | sed 's/^ *//; s/,$//'
   echo "--- cpp enum dagilimi"; echo "$DIST_ENUM" | sed 's/^ *//; s/,$//'
   echo "--- js dagilimi"; echo "$JS_DIST" | sed 's/^ *//; s/,$//'
+  echo "--- js.metin dagilimi"; echo "$JS_MET_DIST" | sed 's/^ *//; s/,$//'
   exit 0
 fi
 
 if [ "$MODE" = "--baseline" ]; then
-  write_baseline; echo "taban yazildi: $BASE (cpp.dallanma $TOTAL, cpp.serializasyon $SER, js.dallanma $JS_CMP, js.sabitMM $JS_MM)"; exit 0
+  write_baseline; echo "taban yazildi: $BASE (cpp.dallanma $TOTAL, cpp.serializasyon $SER, js.dallanma $JS_CMP, js.sabitMM $JS_MM, js.metin $JS_MET)"; exit 0
 fi
 
 [ -f "$BASE" ] || { echo "FAIL  taban yok: $BASE  (once --baseline)"; exit 1; }
-read -r FLOOR FLOOR_JS FLOOR_MM <<< "$(python3 -c "
+read -r FLOOR FLOOR_JS FLOOR_MM FLOOR_MET <<< "$(python3 -c "
 import json; b=json.load(open('$BASE')); js=b.get('js') or {}
-print(b['toplam'], js.get('dallanma', -1), js.get('sabitMM', -1))")"
-echo "taban: cpp.dallanma $FLOOR, js.dallanma $FLOOR_JS, js.sabitMM $FLOOR_MM"
+print(b['toplam'], js.get('dallanma', -1), js.get('sabitMM', -1), js.get('metin', -1))")"
+echo "taban: cpp.dallanma $FLOOR, js.dallanma $FLOOR_JS, js.sabitMM $FLOOR_MM, js.metin $FLOOR_MET"
 
 FAILS=0; DROPS=0
 ratchet() { # ad bugun taban
@@ -190,6 +232,7 @@ ratchet() { # ad bugun taban
 ratchet cpp.dallanma "$TOTAL" "$FLOOR"
 ratchet js.dallanma "$JS_CMP" "$FLOOR_JS"
 ratchet js.sabitMM "$JS_MM" "$FLOOR_MM"
+ratchet js.metin "$JS_MET" "$FLOOR_MET"
 if [ "$FAILS" -gt 0 ]; then
   echo "      hangi dosya: bash engine/tests/enum_dallanma_check.sh --measure  | diff ile $BASE"
   exit 1

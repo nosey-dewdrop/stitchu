@@ -194,7 +194,11 @@ for (const r of rows) {
   if (r.belMutabakat != null) {
     const asti = TOL != null && Math.abs(r.belMutabakat) > TOL;
     if (asti) fails++;
-    if (asti || Math.abs(r.belMutabakat) > 0.5) bulgular.push(`${asti ? 'FAIL ' : ''}${r.flat}: bel yari-genislik ilan ${r.belYarimIlan.toFixed(1)} vs cizim ${r.cizimBelYarim.toFixed(1)} (fark ${r.belMutabakat.toFixed(1)} mm) — ilan ile cizim ayri${asti ? `, tolerans ${TOL} mm asildi` : ''}`);
+    // HAKEM CIZIMDIR (karar ajani #3, body-v1 ayniInsan._tanim): nitelik "bel hattinda
+    // siluet yari-genisligi" adini tasiyorsa dosyadaki yolun olcusunu tasimak zorunda.
+    // Ilan carpan ONCESI ara degeri tasiyor (flat-from-pattern.js:136 MANKEN_FARK_CEYREK_MM);
+    // bu "baska seyin dogru degeri" degil, YANLIS etikettir. Adiyla basilir.
+    if (asti || Math.abs(r.belMutabakat) > 0.5) bulgular.push(`${asti ? 'FAIL ' : ''}${r.flat}: ilan YANLIS ${(-r.belMutabakat).toFixed(1)} mm (carpan oncesi, flat-from-pattern.js:136) — bel yari-genislik ilan ${r.belYarimIlan.toFixed(1)} vs cizim ${r.cizimBelYarim.toFixed(1)}; hakem cizimdir${asti ? `, tolerans ${TOL} mm asildi` : ''}`);
   }
   if (TOL != null && SIZE_BEKLENEN != null && r.size !== SIZE_BEKLENEN) {
     fails++;

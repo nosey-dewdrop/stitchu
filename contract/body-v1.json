@@ -12,6 +12,8 @@
     },
     "tables_json_euSizeChart_fields": ["bustCM", "waistCM", "hipCM", "shoulderCM", "backLengthCM", "armLengthCM", "neckCM"],
     "edgeRoles_geometry_hpp": ["armhole_front", "armhole_back", "sleeve_cap", "sleeve_underarm"],
+    "seamKinds_flat_js": ["pens", "prenses", "orta-dikis", "bel-dikisi", "dikis-izi"],
+    "_seamKinds_not": "web/lib/flat-from-pattern.js interior[] ogelerinin turu (interior.push(['pens'|'prenses'|'orta-dikis'|'bel-dikisi'|'dikis-izi', ...])). Bunlar contract/primitives-v1.json seam/op.suppress primitifinin ornekleridir (pens = kenara uygulanan operator), menu kelimesi degil. enum_dallanma_check.sh js.dallanma sayiminda edgeRoles_geometry_hpp ile birlikte HARIC tutulur: primitif rolu kontrolu dal sayilmaz (F0 hakem, HEDEF 1.9). F2 flat'i C++'a tasiyinca bu liste motorun emit ettigi seam kind adlariyla birlesir.",
     "figure_landmarks_json": ["neckBase", "shoulderTip", "underarm", "bustLine", "bustApex", "underbust", "waist", "highHip", "hip", "crotch"],
     "_origin_uyumu": "contract/figure-landmarks.json _koordinat.origin 'omuz cizgisi' (neckBase y=0) ve KAPI B grup koordinati (y=0 omuz cizgisi) ile bu dosyanin koordinat.origin'i AYNI cumledir; F0 ilk iskeletteki 'nape' origin'i (ikinci dikey origin) kaldirildi."
   },
