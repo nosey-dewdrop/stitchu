@@ -275,6 +275,9 @@ def omuzGenisligi(px, W, H, c, omuzXY, agizOrta, esik):
 # sonundaki contract-uretici karsilastirmasinda okunur. FLAT_CONTRACT ortam degiskeni negatif test icin baska bir contract
 # dosyasi gosterir (beyan: 1.713/[1.51,1.916] ve 0.7/[0.656,0.704] -> exit 2).
 CONTRACT_FC = os.environ.get('FLAT_CONTRACT') or os.path.join(HERE, '..', 'contract', 'flat-convention-v1.json')
+# F1 karar 6 (5 Eyl 2026): negatif test (FLAT_CONTRACT tanimli) normal ciktiyi EZMEZ; kendi dosyasina yazar (_yerel git-ignore, telifsiz sayi).
+# Normal kosu ciktisi kosu sirasina bagli degil: negatif testten sonra bayat/yanlis json ile kapi yesil gorunemez (HEDEF 2 sessiz default yok).
+if os.environ.get('FLAT_CONTRACT'): OUT = os.path.join(HERE, 'ciktilar', '_yerel', 'flat-olcum.negatif.json')
 KOSUL = json.load(open(CONTRACT_FC))['sevkPoz']['kolAcisiDeg']['kosulluBant'][0]['kosul']
 PUF_ESIK, KISA_ESIK = KOSUL['agizBuzguOranMin'], KOSUL.get('kolBoyuOverOmuzMax', KOSUL.get('kolBoyuOverTorsoMax'))   # F1 tur 11: payda omuz genisligi
 EGRI_ESIK, EGRI_PENCERE, APEX_TOL, APEX_PENCERE = 0.12, 12, 2, 6
@@ -1283,8 +1286,10 @@ for anahtar in ('n', 'min', 'max', 'medyan', 'aktif'):
     if BANT0.get(anahtar) != yanaAcilanBand[anahtar]: uyumsuz.append('kosulluBant[0].%s contract %r != uretici %r' % (anahtar, BANT0.get(anahtar), yanaAcilanBand[anahtar]))
 if uyumsuz:
     print('ESIK UYUMSUZ (contract/flat-convention-v1.json kosulluBant[0] vs flat-olcum.json f1Tur8):'); [print('  -', u) for u in uyumsuz]
+    print('OUT:', os.path.relpath(OUT, os.path.join(HERE, '..')))
     import sys; sys.exit(2)
 print('ESIK KONTROL OK: agizBuzguOranMin %s = kisa alt kume orta (bosluk %s); kolBoyuOverOmuzMax %s = yana-acilan/sarkan orta (bosluk %s); kosulluBant[0] n=%s aktif=%s' % (KOSUL['agizBuzguOranMin'], hK['bosluk'], KOSUL.get('kolBoyuOverOmuzMax'), kb['bosluk'], yanaAcilanBand['n'], yanaAcilanBand['aktif']))
+print('OUT:', os.path.relpath(OUT, os.path.join(HERE, '..')))
 print(json.dumps(sonuc['oranlar'], indent=1, ensure_ascii=False))
 for ad, k in f1['flatler'].items():
     if 'OLCULEMEDI' in k: print(ad, 'OLCULEMEDI:', k['OLCULEMEDI']); continue
