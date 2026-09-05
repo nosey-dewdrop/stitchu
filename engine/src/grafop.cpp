@@ -180,7 +180,7 @@ OpResult opDart(const Garment& g0, const JVal& a, const OpCtx&) {
     };
     for (Seam& s : g.seams) { expand(s.a); expand(s.b); }
     for (Ring& r : g.rings) expand(r.edges);
-    return done(g, "dart", a);
+    return done(g, "pens", a);
 }
 
 OpResult opGather(const Garment& g0, const JVal& a, const OpCtx& ctx) {
@@ -414,7 +414,7 @@ OpResult opBulge(const Garment& g0, const JVal& a, const OpCtx&) {
 
 struct OpEntry { const char* ad; OpResult (*fn)(const Garment&, const JVal&, const OpCtx&); };
 const OpEntry kOps[] = {
-    {"subdivide", opSubdivide}, {"dart", opDart}, {"gather", opGather}, {"flare", opFlare},
+    {"subdivide", opSubdivide}, {"pens", opDart}, {"gather", opGather}, {"flare", opFlare},
     {"extend", opExtend}, {"shorten", opShorten}, {"extendTo", opExtendTo}, {"split", opSplit},
     {"overlay", opOverlay}, {"attach", opAttach}, {"reshapeEdge", opReshapeEdge}, {"moveVertex", opMoveVertex},
     {"mirror", opMirror}, {"closure", opClosure}, {"bulge", opBulge},
@@ -446,7 +446,7 @@ OpResult dart(const Garment& g, const std::string& panel, const std::string& edg
               const RefPoint& apex, const std::string& legId, const OpCtx& ctx) {
     JVal a = A(); a.set("panel", JVal::str(panel)); a.set("edge", JVal::str(edge)); a.set("atFraction", JVal::num(atFraction));
     a.set("intakeOran", JVal::num(intakeOran)); a.set("apex", toJSON(apex)); a.set("legId", JVal::str(legId));
-    return applyOp(g, {"dart", a}, ctx);
+    return applyOp(g, {"pens", a}, ctx);
 }
 OpResult gather(const Garment& g, const std::string& panel, const std::string& edge, double ratio, const OpCtx& ctx) {
     JVal a = A(); a.set("panel", JVal::str(panel)); a.set("edge", JVal::str(edge)); a.set("ratio", JVal::num(ratio));

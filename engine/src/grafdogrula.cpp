@@ -137,7 +137,7 @@ double chainLength(const Garment& g, const std::vector<EdgeRef>& refs, const Bod
 }
 
 DogrulamaRaporu dogrula(const Garment& g, const Body& body, const JVal& contract, bool onArkaEsit) {
-    DogrulamaRaporu R; R.garment = g.id; R.bodyId = body.id(); R.onArkaEsit = onArkaEsit;
+    DogrulamaRaporu R; R.grafId = g.id; R.bodyId = body.id(); R.onArkaEsit = onArkaEsit;
     auto H = [&](const std::string& k, const std::string& hedef, const std::string& deger, bool gecti, bool bilgi = false) {
         R.hukumler.push_back({k, hedef, deger, gecti, bilgi});
     };
@@ -364,7 +364,7 @@ DogrulamaRaporu dogrula(const Garment& g, const Body& body, const JVal& contract
 
 JVal DogrulamaRaporu::toJSON() const {
     JVal o = JVal::obj();
-    o.set("garment", JVal::str(garment)); o.set("body", JVal::str(bodyId)); o.set("onArkaEsit", JVal::boolean(onArkaEsit));
+    o.set("graf", JVal::str(grafId)); o.set("body", JVal::str(bodyId)); o.set("onArkaEsit", JVal::boolean(onArkaEsit));
     o.set("dikilebilir", JVal::boolean(dikilebilir())); o.set("kirmizi", JVal::num(kirmizi()));
     JVal hs = JVal::arr();
     for (const Hukum& h : hukumler) { JVal x = JVal::obj(); x.set("kural", JVal::str(h.kural)); x.set("hedef", JVal::str(h.hedef)); x.set("deger", JVal::str(h.deger)); x.set("gecti", JVal::boolean(h.gecti)); x.set("bilgi", JVal::boolean(h.bilgi)); hs.push(x); }
@@ -383,7 +383,7 @@ JVal DogrulamaRaporu::toJSON() const {
 
 std::string DogrulamaRaporu::toMarkdown() const {
     std::string m;
-    m += "# Dikilebilirlik — " + garment + " @ " + bodyId + (onArkaEsit ? " (on/arka esit)" : "") + "\n\n";
+    m += "# Dikilebilirlik — " + grafId + " @ " + bodyId + (onArkaEsit ? " (on/arka esit)" : "") + "\n\n";
     m += std::string("**Sonuc: ") + (dikilebilir() ? "DIKILEBILIR" : "DIKILEBILIR DEGIL") + "** — kirmizi hukum " + std::to_string(kirmizi()) + " / " + std::to_string(hukumler.size()) + " satir.\n\n";
     m += "## Dikisler\n\n| dikis | a (mm) | hedef = ratio x b + ease | artik (mm) | uc boslugu (bilgi) | centik sapma (mm) | hukum |\n|---|---|---|---|---|---|---|\n";
     for (const DikisSatir& d : dikisler) {

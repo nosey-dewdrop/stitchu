@@ -62,7 +62,7 @@ struct PanelPoz {
     double alanMM2 = 0, cevreMM = 0;
 };
 struct DogrulamaRaporu {
-    std::string garment, bodyId;
+    std::string grafId, bodyId;
     bool onArkaEsit = false;
     std::vector<Hukum> hukumler;
     std::vector<DikisSatir> dikisler;
