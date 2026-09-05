@@ -1,7 +1,10 @@
 # stitchu, koşu belgesi 1
 
+> **5 Eyl gece: koşu `0509-kosu.md` + `KOSU/0509-kosu.js`'e taşındı.** Faz listesi P1-P9 → 4.0-4.11; K6 (hakem yok) iptal, gerekçe `0509-kosu.md` §5.5. Bu belgenin §10 tuzakları ve §11 K1-K15 (K6 hariç) geçerli; `KOSU/sinyal.sh` mühürlü kalır, `0509-kapi.sh` onu çağırır.
+
 2026-09-05. Biçim rabadon koşu belgesi 5 ile aynı: istekler numaralı, kullanıcının yolu adım adım, her faz bir adımı gerçek yapar, kabul komutu fazdan önce yazılı ve mühürlü. Bu belge kendi kendine yeter.
-Otorite: `HEDEF.md` > bu belge (§11 karar defteri dahil). Başka plan/devir dosyası yoktur; `DEVIR.md`, `DEVIR-PROMPT.md`, `KARARLAR.md`, `KOSU-v8.md` bu belgeye katlandı ve silindi (git geçmişinde).
+Otorite: `HEDEF.md` > bu belge (§11 karar defteri dahil). Başka plan/devir/kanun dosyası yoktur; `DEVIR.md`, `DEVIR-PROMPT.md`, `KARARLAR.md`, `KOSU-v8.md`, `RULES.md`, `ENV.md`, `ANAYASA.md` bu belgeye katlandı ve silindi (git geçmişinde). Kökte kalan: `HEDEF.md`, bu belge, `DERSLER.md`, `README.md`.
+**Dosya kuralı (Damla, 5 Eyl):** yeni dosya doğurulmaz; şartsa adı tarihle başlar (`0509-<konu>`). Plan/karar/devir buraya, script `KOSU/sinyal.sh`'a.
 
 <!-- sinyal.taban dallanma=436 kapanan= -->
 
@@ -218,6 +221,25 @@ Hepsinin altındaki kural: **üstüne kat çıkma, temeli ölç.** Her iş emrin
 - 4 ilanlı kırmızı ctest: `flat_artifact_census`, `style_check`, `sizechart_source_check`, `figure_check` — deploy bunlara izin verir, beşinciye vermez.
 - `git stash list`'te iki eski stash var, dokunma. Session/API 500 düşerse taahhütsüz iyi iş silinmez: kapıları koş, geçiyorsa commit.
 - Backend `/api/draft` ve `/api/analyze` AÇIK (Turnstile + IP limiti + 300/gün); "kapalı" raporu yanlıştı.
+
+### Değişmezler (RULES.md'den, hâlâ geçerli olanlar)
+- Bilinmeyen değer → açık ret (Err / "absent"), sessiz düşürme/ikame yok. Yazılı garanti kodda zorlanmıyorsa yoktur.
+- Her alan round-trip eder: giriş → graf → çizim; edemeyen adıyla reddedilir.
+- Görsel doğrulama bir ÇIKTIDIR: png dosya yolu raporda; "baktım/looked correct" yasak.
+- Sayılar test çıktısında yaşar, doküman "0.00 mm / hepsi geçti" iddiası taşımaz; aracın adını verir.
+- Miras kırmızı KÜMESİ (test adları) büyümez; yeni kırmızı ad → revert.
+- Kapsamı "ne iyiyse o" belirler (Damla 27 Tem); Damla'nın açık vetosu kalıcı; çelişki dürüstçe önüne konur.
+
+### Makine ve yollar (ENV.md'den)
+- Motor: `cmake --build engine/build -j2` (rebuild hep `-DCMAKE_BUILD_TYPE=Release`), `ctest --test-dir engine/build -R <hedef> -j1`. wasm: `bash engine/build-wasm.sh`; toolchain `engine/setup-toolchain.sh`.
+- Golden: `engine/golden-reference.csv` + `engine/golden-diff.py`; yeniden pin `scripts/repin-golden.sh` (gerekçe commit'te).
+- Render: `engine/tools/render-flat.mjs`, `render-pages.mjs`. Site sağlığı: `node engine/tools/site-health.mjs`.
+- Web düz JS, framework yok; `web/vendor/stitchu-engine.js` wasm bundle. Backend Cloudflare Worker (`backend/`), `wrangler deploy` Damla'nın adımı.
+- Deploy: `scripts/deploy.sh` (style-lint → header-diff → contract → tam ctest → subtree → `origin/gh-pages` force push → canlı curl). `?v` bump sonrası `git add web/` TÜMÜ.
+- Python testleri: kökteki `conftest.py` + `engine/tests/py/`. Raporlar repo içinde (`KOSU/ciktilar/`), merkezi reports klasörü yok.
+
+### Zevk damarı (ANAYASA.md'den, 27 Tem; emsal artık `flat-secim.md`)
+Pastel, düz-önden teknik flat; ince koyu kontur + tek renk dolgu; ön+arka çift; "önden masum, arkadan olay" (derin sırt, fiyonk, lace-up); coquette / balletcore / 60'lar; metal ve sertlik yok. Başarı beyanı = Damla'nın evet'i; makine testi gerekli ama yeterli değil.
 
 11. Damla'ya giden tek şey: faz sonunda png yolu + `sinyal.sh` hükmü + defterde ne değişti. Damla'nın tek hükmü isteğe bağlı: "satarım / satmam"; "satmam"ın cümlesi deftere, faz yeniden açılır.
 
