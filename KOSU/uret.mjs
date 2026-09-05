@@ -7,8 +7,8 @@
 //
 // PNG'ler headless Chrome ile basiliyor (repoda rsvg/imagemagick yok).
 
-import { mkdirSync, writeFileSync, readdirSync, existsSync, rmSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
+import { mkdirSync, writeFileSync, readdirSync, existsSync, rmSync, statSync } from 'node:fs';
+import { execFileSync, spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -62,27 +62,47 @@ const kendiAdlar = new Set(SPECS.map(([ad]) => ad));
 for (const f of readdirSync(OUT)) { const m = /^(.+)\.(svg|png)$/.exec(f); if (m && kendiAdlar.has(m[1])) rmSync(join(OUT, f)); }
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-function png(svgPath, pngPath, w, h) {
+const bekle = (ms) => new Promise((r) => setTimeout(r, ms));
+async function png(svgPath, pngPath, w, h) {
   if (!existsSync(CHROME)) return false;
   const d = join(tmpdir(), `flatshot-${Math.random().toString(36).slice(2)}`);
   mkdirSync(d, { recursive: true });
   execFileSync('cp', [svgPath, join(d, 'a.svg')]);
   writeFileSync(join(d, 'i.html'),
     `<html><body style="margin:0;background:#fff"><img src="a.svg" style="width:${w}px;display:block"></body></html>`);
-  try {
-    // --user-data-dir izole: profil verilmeyince headless Chrome, ACIK duran
-    // kullanici Chrome'unun SingletonLock'una takilip suresiz asili kaliyordu
-    // (2026-09-02'de olculdu: 9 PNG'lik kosu 20+ dk asili kaldi, uc kez).
-    execFileSync(CHROME, ['--headless', '--disable-gpu', '--hide-scrollbars',
-      `--user-data-dir=${d}/profil`,
-      `--screenshot=${pngPath}`, `--window-size=${w},${h}`,
-      '--no-sandbox', '--default-background-color=FFFFFF', `file://${d}/i.html`],
-      // killSignal SIGKILL (2026-09-02 hakem karari 4): timeout'un varsayilan
-      // SIGTERM'ini headless Chrome bazen yutup PNG basina 60 sn surundugu
-      // icin; SIGKILL yutulamaz.
-      { stdio: 'ignore', timeout: 60000, killSignal: 'SIGKILL' });
-    return true;
-  } catch { return false; } finally { rmSync(d, { recursive: true, force: true }); }
+  rmSync(pngPath, { force: true });
+  // --user-data-dir izole: profil verilmeyince headless Chrome, ACIK duran
+  // kullanici Chrome'unun SingletonLock'una takilip suresiz asili kaliyordu
+  // (2026-09-02'de olculdu: 9 PNG'lik kosu 20+ dk asili kaldi, uc kez).
+  const cp = spawn(CHROME, ['--headless', '--disable-gpu', '--hide-scrollbars',
+    `--user-data-dir=${d}/profil`,
+    `--screenshot=${pngPath}`, `--window-size=${w},${h}`,
+    '--no-sandbox', '--default-background-color=FFFFFF', `file://${d}/i.html`],
+    { stdio: 'ignore' });
+  let cikti = false;
+  cp.on('exit', () => { cikti = true; });
+  // POLL + KILL (F1 karar ajani, 5 Eyl 2026): markali Chrome 152 PNG'yi ~2.6 s'de
+  // yaziyor ama kapanmiyor — --enable-logging: acilista GoogleUpdater --wake-all
+  // baslatiliyor, takilma sayfada degil ikilinin kapanisinda; her PNG 60 s
+  // timeout + SIGKILL yiyordu (9 flat = 9 dk). --timeout / --virtual-time-budget /
+  // --headless=old / img sarmalayicisiz svg / ag-updater bayraklari denendi,
+  // hicbiri kapatmadi. Cozum: dosyayi 100 ms'de bir yokla, boyutu 3 ardisik
+  // okumada sabitlenince (>0 B) SIGKILL. Olculdu: 2.6 s'de cikan dosya 60 s
+  // sonundakiyle byte-byte ayni (cmp). 60 s dis tavan kalir.
+  const TAVAN = 60000, ADIM = 100;
+  let onceki = -1, sabit = 0, ok = false;
+  for (let t = 0; t < TAVAN && !cikti; t += ADIM) {
+    await bekle(ADIM);
+    let boy = 0;
+    try { boy = statSync(pngPath).size; } catch { boy = 0; }
+    if (boy > 0 && boy === onceki) sabit++; else sabit = 0;
+    onceki = boy;
+    if (sabit >= 2) { ok = true; break; } // 3 ardisik ayni okuma (ilk + 2 tekrar)
+  }
+  if (!cikti) { try { cp.kill('SIGKILL'); } catch {} }
+  if (!ok) { try { ok = statSync(pngPath).size > 0; } catch { ok = false; } }
+  rmSync(d, { recursive: true, force: true });
+  return ok;
 }
 
 const made = [];
@@ -103,9 +123,11 @@ for (const [ad, baslik, spec] of SPECS) {
   const wmm = dim ? parseFloat(dim[1]) : 760, hmm = dim ? parseFloat(dim[2]) : 900;
   const pxW = Math.min(1700, Math.round(wmm * 1.6));
   const pxH = Math.round(pxW * hmm / wmm);
-  png(svgPath, join(OUT, `${ad}.png`), pxW, pxH);
+  const pngT0 = Date.now();
+  const pngOk = await png(svgPath, join(OUT, `${ad}.png`), pxW, pxH);
+  const pngMs = Date.now() - pngT0;
   made.push({ ad, baslik, ms, yol: `${ad}.png` });
-  console.log(`${ad}  ${ms} ms  ${(svg.match(/<path/g) || []).length} path`);
+  console.log(`${ad}  ${ms} ms  ${(svg.match(/<path/g) || []).length} path  png ${pngOk ? 'ok' : 'YOK'} ${pngMs} ms`);
 }
 
 // -------- VITRIN: bizim ciktimiz ile satici referanslari YAN YANA, yazi yok --
