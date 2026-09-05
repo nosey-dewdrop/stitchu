@@ -191,10 +191,13 @@
       "kosulluBant": [
         {
           "kosul": {
-            "agizBuzguOranMin": 1.28,
+            "agizBuzguOranMin": 1.21,
             "agizOmuzDikeyOverTorsoMax": 0.6,
-            "_tanim": "agizBuzguOran = kol govdesinin en genis yatay olcusu / kol agzi uzunlugu (>= esik: agiz buzgulu ya da bantli, kol govdesi agizdan genis). agizOmuzDikeyOverTorso = kol agzi ortasi ile omuz ucu arasindaki dikey mesafe / torso (SNP->bel). Iki kosul da grafin kendi geometrisinden HESAPLANIR (kol paneli genisligi, agiz kenari uzunlugu, kol boyu); giysi tipi kelimesi (puf/balon) okunmaz. HEDEF 1.9 / F1 dersi: giysi-tipi adina bagli sabit contract'a girmez, sabit beden/konvansiyon OZELLIGINE baglanir.",
-            "_esikKaynak": "KOSU/flat-olcum.py BOLUM 3 PUF_ESIK 1.28 (olculen kumede duz/klos kollarin maksimumu 1.231 ile agzi buzgulu kollarin minimumu 1.334 ortasi; 13 kol) ve KISA_ESIK 0.6 (dirsek ~0.85 torso; agiz dirsegin ustunde). Ikisi de veri bosluguna kondu, yayin kaynagi yok: DOGRULANMADI."
+            "agizBuzguOranBosluk": [1.041, 1.378],
+            "agizOmuzDikeyOverTorsoBosluk": [0.545, 0.636],
+            "_tanim": "agizBuzguOran = kol govdesinin kol EKSENINE DIK en genis kesiti (grafta: kol paneli genisligi) / kol agzi kenar uzunlugu (F1 tur 8: yatay satir degil dik kesit; dusuk omuzlu ya da yana acilan kolda yatay satir kol boyunu olcuyordu, Stevie 2.67 yatay vs 1.67 dik) (>= esik: agiz buzgulu ya da bantli, kol govdesi agizdan genis). agizOmuzDikeyOverTorso = kol agzi ortasi ile omuz ucu arasindaki dikey mesafe / torso (SNP->bel). Iki kosul da grafin kendi geometrisinden HESAPLANIR (kol paneli genisligi, agiz kenari uzunlugu, kol boyu); giysi tipi kelimesi (puf/balon) okunmaz. HEDEF 1.9 / F1 dersi: giysi-tipi adina bagli sabit contract'a girmez, sabit beden/konvansiyon OZELLIGINE baglanir.",
+            "_esikKaynak": "IKI KAYNAK (F1 tur 8, karar ajani 3; KOSU/flat-olcum.py BOLUM 5 -> KOSU/ciktilar/flat-olcum.json f1Tur8). (1) Eski kume 13 kol (Cashmerette/Deer&Doe/Sew Over It/Folkwear/Helen's Closet ailesi, BOLUM 3), dik kesitle yeniden olculdu; (2) yeni kume 17 kol, 3 yeni marka ailesi: By Hand London (Alix, Marie, Loren, Lucy), Tilly and the Buttons (Marnie, Mabel, Nell x3, Lyra, Stevie, Coco, Agnes x3, Frida), Named (Ilta); URL'ler f1Tur8.flatler.*.gorselURL. Etiket cizim konvansiyonundan (agizda buzgu/lastik/buzgulu manset var mi), olcum etiketi bilmeden. BULGU: butun kollar uzerinde skaler agizBuzguOran AYIRICI DEGIL (karar 3c durumu): duz sinifin uzun kollarinda 1.52 (Ilta gomlek manseti, pliseli), 1.55 (Frida gomlek manseti), 1.67 (Stevie dusuk omuz, ucu daralan duz tup) buzgulu sinifin 1.33 (Alix) / 1.345 (05) / 1.378 (Mabel dirsek) degerlerinin USTUNDE. Ayirici bu yuzden tek skaler degil, KOSULUN KENDISI: kisa (agizOmuzDikeyOverTorso < 0.6) VE agizBuzguOran >= esik. Kisa kollar alt kumesinde iki kaynak ayri ayri bosluk verir: eski kume duz max 1.033 (Passiflore) / buzgulu min 1.51 (03 empire); yeni kume duz max 1.041 (Agnes cropped) / buzgulu min 1.378 (Mabel, dirsek boyu) [Lucy 1.916, Nell puffball 2.69]; birlesik bosluk [1.041, 1.378], esik = orta nokta 1.21 (eski 1.28 bosluk icindeydi, DOGRULANMADI etiketi dustu). KISA_ESIK 0.6: torso paydasi olculebilen 9 kolda kisa max 0.545 (Nell short straight; eski kume 0.513 Hampden), uzun min 0.636 (07; yeni kume 1.388 Nell bracelet, 1.411 Alix) -> 0.6 bosluk [0.545, 0.636] icinde, KALDI. Uzun kollarda agizBuzguOran band SECMEZ (kosul kisa ister); uzun kolun ucu daralmasi (gomlek manseti / pliseli manset / tup) sarkan bandi degistirmez.",
+            "_boslukKurali": "Karar ajani 3d: urun kolunun olculen agizBuzguOran degeri agizBuzguOranBosluk (1.041, 1.378) ARALIGINA dusuyorsa ya da agizOmuzDikeyOverTorso degeri agizOmuzDikeyOverTorsoBosluk (0.545, 0.636) araligina dusuyorsa cizim_giysi_mi band SECMEZ, 'kol tipi belirlenemedi: balonOran X, bosluk [a, b]' diye adiyla kirmizi verir; iki bandin birlesimine dusmek sessiz kabul degildir. Esikler (1.21 / 0.6) boslugun icindeki secim noktasidir, hukum boslugun tamamina bakar."
           },
           "n": 3,
           "min": 32.9,
@@ -204,7 +207,7 @@
           "_eskiAd": "pufKol (F1 tur 6) — giysi-tipi adi; F1 tur 7'de kosula baglandi, sayilar ayni (Locket 74.7 -> 74.2 6 okuma medyani)."
         }
       ],
-      "_bantSecimi": "Uygulanan band: kosulluBant icinde kosulu saglayan ilk kayit; hicbiri saglamiyorsa min/max/taban (sarkan kol). Secim giysi tipi kelimesinden degil grafin olculen ozelliginden yapilir."
+      "_bantSecimi": "Uygulanan band: kosulluBant icinde kosulu saglayan ilk kayit; hicbiri saglamiyorsa min/max/taban (sarkan kol). Secim giysi tipi kelimesinden degil grafin olculen ozelliginden yapilir. Kosul degerlerinden biri kendi bosluk araligina dusuyorsa band secilmez, adiyla kirmizi (kosul._boslukKurali)."
     },
     "omuzEgimiDeg": {
       "min": 15,

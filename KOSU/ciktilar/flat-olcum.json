@@ -2460,5 +2460,2361 @@
     }
    }
   }
+ },
+ "f1Tur8": {
+  "_ne": "F1 tur 8 (karar ajani 3): kosulluBant esiklerine ikinci kaynak. 3 yeni marka ailesi (By Hand London, Tilly and the Buttons, Named Clothing), 8 agzi buzgulu + 9 duz/klos kol; etiket cizim konvansiyonundan (agizda buzgu/lastik/buzgulu manset var mi), balonOran etiketi bilmeden olculur. Yontem BOLUM 3 (agiz PCA / omuz) + eksene DIK kesit (kolGenislikDik; gerekce dosya basliginda). Dosyalar ve overlay kontrol gorselleri KOSU/ciktilar/_yerel/yeni-flat/ (telif; commit edilmez).",
+  "olculmedi": {
+   "bhl-anna-1.jpg": "kimono kol: kol ile govde tek parca, kol govdesinin en genis kesiti tanimsiz (BHL Anna Dress, https://cdn.shopify.com/s/files/1/0289/4249/products/Anna_Tech_1.jpg)",
+   "bhl-zeena-short.jpg": "teknik flat degil, figurlu illustrasyon (BHL Zeena)",
+   "tilly-lyra.png#kisa": "kisa duz kol penceresi 50 px gridde guvenle okunamadi; duz sinif n >= 5 zaten sagli",
+   "tilly-frida.png#kisa": "ayni",
+   "tilly-mabel.jpg#elbise": "Mabel bluzla ayni kol cizimi (uzun hali), ikinci kez sayilmadi",
+   "tilly-coco.jpg#v2": "turn-back mansetli 3/4 kol: manset bolgesi 50 px gridde guvenle okunamadi (kol x 830-950, y 60-390 olculdu ama manset penceresi yok); duz sinif n >= 5 zaten sagli"
+  },
+  "flatler": {
+   "bhl-alix-1.jpg": {
+    "dosya": "bhl-alix-1.jpg",
+    "urun": "By Hand London Alix Dress (bishop kol, lastikli manset)",
+    "marka": "By Hand London",
+    "sayfa": "https://byhandlondon.com/products/alix-dress-pdf-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0289/4249/products/tech_illos2-01.jpg?v=1477044717",
+    "boyutPX": [
+     492,
+     655
+    ],
+    "esik": 160,
+    "etiket": "buzgulu",
+    "etiketNeden": "agizda lastik + buzgu cizgileri, altinda kucuk firfir",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      135,
+      165,
+      8,
+      30
+     ],
+     "xy": [
+      163,
+      16
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      22,
+      74,
+      250,
+      270
+     ],
+     "uclar": [
+      [
+       24,
+       260
+      ],
+      [
+       73,
+       263
+      ]
+     ],
+     "orta": [
+      48.5,
+      261.5
+     ],
+     "nMurekkep": 229
+    },
+    "kolAcisiDeg": {
+     "deger": 65.0,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -114.5,
+      245.5
+     ]
+    },
+    "agizPX": 49.1,
+    "kolPencere": [
+     12,
+     150,
+     110,
+     240
+    ],
+    "enGenisYataySatir": {
+     "y": 172,
+     "genislikPX": 73,
+     "x": [
+      56,
+      129
+     ]
+    },
+    "balonOranYatay": 1.487,
+    "enGenisDikKesit": {
+     "genislikPX": 65.3,
+     "eksenS": 151,
+     "uclar": [
+      [
+       131.1,
+       167.7
+      ],
+      [
+       71.9,
+       140.1
+      ]
+     ],
+     "eksenAciDeg": 65.0
+    },
+    "balonOranDik": 1.33,
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      150,
+      240,
+      10,
+      25
+     ],
+     "xy": [
+      163,
+      16
+     ]
+    },
+    "snpY": 16,
+    "bel": {
+     "yontem": "bel dikisi: pencerede en cok murekkepli satir",
+     "pencere": [
+      165,
+      265,
+      183,
+      192
+     ],
+     "satirY": 190,
+     "nMurekkep": 46,
+     "not": "bel bandi cizgisi (yatayCizgi: bandin ust ya da alt cizgisi, +-7 px)"
+    },
+    "belY": 190,
+    "torsoPX": 174,
+    "agizOmuzDikeyOverTorso": 1.411,
+    "kisa": false,
+    "boy": "uzun",
+    "boyKaynak": "olculdu: agizOmuzDikeyOverTorso 1.411 (KISA_ESIK 0.6)",
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-bhl-alix-1.png"
+   },
+   "bhl-marie-dress.jpg": {
+    "dosya": "bhl-marie-dress.jpg",
+    "urun": "By Hand London Marie Dress B (bishop kol, buzgulu manset + firfir)",
+    "marka": "By Hand London",
+    "sayfa": "https://byhandlondon.com/products/marie-shirt-dress-pdf-sewing-pattern-uk-2-38",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0289/4249/products/Technicalillustrations_Dress_B.jpg?v=1639823609",
+    "boyutPX": [
+     2681,
+     1809
+    ],
+    "esik": 120,
+    "etiket": "buzgulu",
+    "etiketNeden": "agizda buzgu cizgileri, manset bandi, firfir",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      300,
+      370,
+      200,
+      240
+     ],
+     "xy": [
+      369,
+      212
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      135,
+      275,
+      1030,
+      1075
+     ],
+     "uclar": [
+      [
+       138,
+       1072
+      ],
+      [
+       274,
+       1058
+      ]
+     ],
+     "orta": [
+      206.0,
+      1065.0
+     ],
+     "nMurekkep": 727,
+     "not": "manset bandi dikdortgeni PCA: ana eksen bandin uzun kenari; band yuksekligi 35 px oldugundan uzunluk en cok %6 fazla okunur"
+    },
+    "kolAcisiDeg": {
+     "deger": 79.2,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -163.0,
+      853.0
+     ]
+    },
+    "agizPX": 136.7,
+    "kolPencere": [
+     90,
+     340,
+     230,
+     1030
+    ],
+    "enGenisYataySatir": {
+     "y": 942,
+     "genislikPX": 198,
+     "x": [
+      132,
+      330
+     ]
+    },
+    "balonOranYatay": 1.448,
+    "enGenisDikKesit": {
+     "genislikPX": 198.7,
+     "eksenS": 778,
+     "uclar": [
+      [
+       325.1,
+       995.7
+      ],
+      [
+       129.9,
+       958.4
+      ]
+     ],
+     "eksenAciDeg": 79.2
+    },
+    "balonOranDik": 1.453,
+    "boy": "uzun",
+    "boyKaynak": "bilek boyu bishop: agiz omuzun ~830 px altinda, elbise etek ucu 1750; bel dikisi yok",
+    "kisa": false,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-bhl-marie-dress.png"
+   },
+   "bhl-loren-1.png": {
+    "dosya": "bhl-loren-1.png",
+    "urun": "By Hand London Loren Dress (raglan kol, buzgulu manset + firfir)",
+    "marka": "By Hand London",
+    "sayfa": "https://byhandlondon.com/products/loren-blouse-dress-pdf-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0289/4249/products/Technicalillustrations-01.png?v=1621505173",
+    "boyutPX": [
+     3509,
+     2481
+    ],
+    "esik": 120,
+    "etiket": "buzgulu",
+    "etiketNeden": "agizda buzgulu lastik bandi + firfir",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      520,
+      660,
+      170,
+      210
+     ],
+     "xy": [
+      655,
+      170
+     ],
+     "not": "raglan: omuz ucu yok; kol ust konturunun tepesi"
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      105,
+      250,
+      735,
+      825
+     ],
+     "uclar": [
+      [
+       175,
+       824
+      ],
+      [
+       228,
+       735
+      ]
+     ],
+     "orta": [
+      201.5,
+      779.5
+     ],
+     "nMurekkep": 720
+    },
+    "kolAcisiDeg": {
+     "deger": 53.3,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -453.5,
+      609.5
+     ]
+    },
+    "agizPX": 103.6,
+    "kolPencere": [
+     100,
+     470,
+     450,
+     720
+    ],
+    "enGenisYataySatir": {
+     "y": 581,
+     "genislikPX": 186,
+     "x": [
+      283,
+      469
+     ]
+    },
+    "balonOranYatay": 1.796,
+    "enGenisDikKesit": {
+     "genislikPX": 171.4,
+     "eksenS": 450,
+     "uclar": [
+      [
+       465.2,
+       589.7
+      ],
+      [
+       327.7,
+       487.4
+      ]
+     ],
+     "eksenAciDeg": 53.3
+    },
+    "balonOranDik": 1.655,
+    "boy": "uzun",
+    "boyKaynak": "bilek boyu: agiz omuzun ~600 px altinda; bel dikisi yok",
+    "kisa": false,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-bhl-loren-1.png"
+   },
+   "bhl-lucy-puff.jpg": {
+    "dosya": "bhl-lucy-puff.jpg",
+    "urun": "By Hand London Lucy Dress (kisa puf kol, lastikli agiz + firfir; kol yana ~yatay acilir)",
+    "marka": "By Hand London",
+    "sayfa": "https://byhandlondon.com/products/bhl-draft-it-yourself-lucy-dress",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0289/4249/files/Technicalillustrations_puffsleeve_colour.jpg?v=1689767047",
+    "boyutPX": [
+     746,
+     988
+    ],
+    "esik": 130,
+    "etiket": "buzgulu",
+    "etiketNeden": "agizda lastik + firfir, kep buzgulu",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      255,
+      275,
+      95,
+      130
+     ],
+     "xy": [
+      259,
+      103
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      150,
+      170,
+      140,
+      200
+     ],
+     "uclar": [
+      [
+       150,
+       198
+      ],
+      [
+       169,
+       145
+      ]
+     ],
+     "orta": [
+      159.5,
+      171.5
+     ],
+     "nMurekkep": 120
+    },
+    "kolAcisiDeg": {
+     "deger": 34.5,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -99.5,
+      68.5
+     ]
+    },
+    "agizPX": 56.3,
+    "kolPencere": [
+     150,
+     248,
+     95,
+     225
+    ],
+    "enGenisYataySatir": {
+     "y": 220,
+     "genislikPX": 96,
+     "x": [
+      151,
+      247
+     ]
+    },
+    "balonOranYatay": 1.705,
+    "enGenisDikKesit": {
+     "genislikPX": 107.9,
+     "eksenS": 81,
+     "uclar": [
+      [
+       244.0,
+       224.0
+      ],
+      [
+       182.8,
+       135.1
+      ]
+     ],
+     "eksenAciDeg": 34.5
+    },
+    "balonOranDik": 1.916,
+    "boy": "kisa",
+    "boyKaynak": "kisa puf: agiz omuz hizasinda yana acilir, empire dikis 265, figur bel yok",
+    "kisa": true,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-bhl-lucy-puff.png"
+   },
+   "tilly-marnie.png": {
+    "dosya": "tilly-marnie.png",
+    "urun": "Tilly and the Buttons Marnie Blouse (bishop kol, lastikli agiz)",
+    "marka": "Tilly and the Buttons",
+    "sayfa": "https://tillyandthebuttons.com/products/marnie-blouse-dress-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0364/2693/products/Tilly_and_the_Buttons_Marnie_sewing_pattern_tech.png?v=1660047282",
+    "boyutPX": [
+     1537,
+     2048
+    ],
+    "esik": 200,
+    "etiket": "buzgulu",
+    "etiketNeden": "agizda lastik + buzgu cizgileri",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      225,
+      260,
+      335,
+      360
+     ],
+     "xy": [
+      256,
+      341
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      38,
+      140,
+      636,
+      700
+     ],
+     "uclar": [
+      [
+       42,
+       637
+      ],
+      [
+       139,
+       675
+      ]
+     ],
+     "orta": [
+      90.5,
+      656.0
+     ],
+     "nMurekkep": 897
+    },
+    "kolAcisiDeg": {
+     "deger": 62.3,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -165.5,
+      315.0
+     ]
+    },
+    "agizPX": 104.2,
+    "kolPencere": [
+     35,
+     225,
+     450,
+     640
+    ],
+    "enGenisYataySatir": {
+     "y": 620,
+     "genislikPX": 175,
+     "x": [
+      46,
+      221
+     ]
+    },
+    "balonOranYatay": 1.68,
+    "enGenisDikKesit": {
+     "genislikPX": 168.2,
+     "eksenS": 281,
+     "uclar": [
+      [
+       217.0,
+       637.9
+      ],
+      [
+       68.1,
+       559.7
+      ]
+     ],
+     "eksenAciDeg": 62.3
+    },
+    "balonOranDik": 1.615,
+    "boy": "uzun",
+    "boyKaynak": "bilek boyu: agiz omuzun ~330 px altinda, bluz etegi 800; bel dikisi yok",
+    "kisa": false,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-marnie.png"
+   },
+   "tilly-mabel.jpg#bluz": {
+    "dosya": "tilly-mabel.jpg",
+    "urun": "Tilly and the Buttons Mabel Blouse (dirsek boyu puf kol, buzgulu (shirred) manset)",
+    "marka": "Tilly and the Buttons",
+    "sayfa": "https://tillyandthebuttons.com/products/mabel-dress-blouse-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0364/2693/products/Tilly_and_Buttons_Mabel_Dress_Blouse_sewing_pattern_tech.jpg?v=1679905178",
+    "boyutPX": [
+     1536,
+     2048
+    ],
+    "esik": 200,
+    "etiket": "buzgulu",
+    "etiketNeden": "agizda shirring bandi + firfir",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      255,
+      300,
+      85,
+      105
+     ],
+     "xy": [
+      292,
+      85
+     ],
+     "not": "omuz acik (off-shoulder): kol kepinin tepesi"
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      160,
+      225,
+      296,
+      352
+     ],
+     "uclar": [
+      [
+       165,
+       351
+      ],
+      [
+       219,
+       296
+      ]
+     ],
+     "orta": [
+      192.0,
+      323.5
+     ],
+     "nMurekkep": 1000
+    },
+    "kolAcisiDeg": {
+     "deger": 67.3,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -100.0,
+      238.5
+     ]
+    },
+    "agizPX": 77.1,
+    "kolPencere": [
+     175,
+     318,
+     130,
+     295
+    ],
+    "enGenisYataySatir": {
+     "y": 197,
+     "genislikPX": 107,
+     "x": [
+      210,
+      317
+     ]
+    },
+    "balonOranYatay": 1.388,
+    "enGenisDikKesit": {
+     "genislikPX": 106.2,
+     "eksenS": 195,
+     "uclar": [
+      [
+       286.9,
+       294.3
+      ],
+      [
+       188.9,
+       253.2
+      ]
+     ],
+     "eksenAciDeg": 67.3
+    },
+    "balonOranDik": 1.378,
+    "boy": "dirsek",
+    "boyKaynak": "urun adi ELBOW LENGTH; agiz ~y 325, shirred bel bandi 405-445; SNP cizili degil (off-shoulder), torso olculemez",
+    "kisa": null,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-mabel_bluz.png"
+   },
+   "tilly-nell.jpg#puf": {
+    "dosya": "tilly-nell.jpg",
+    "urun": "Tilly and the Buttons Nell Blouse (puffball kisa kol: agiz icine katlanmis, govdeden dar)",
+    "marka": "Tilly and the Buttons",
+    "sayfa": "https://tillyandthebuttons.com/products/nell-blouse-dress-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0364/2693/files/Nell-sewing-pattern-technical-drawing.jpg?v=1756997194",
+    "boyutPX": [
+     1537,
+     2048
+    ],
+    "esik": 200,
+    "etiket": "buzgulu",
+    "etiketNeden": "puffball: agiz govdeden dar, buzgu cizgileri agizda",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      280,
+      340,
+      280,
+      310
+     ],
+     "xy": [
+      338,
+      297
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      262,
+      312,
+      486,
+      520
+     ],
+     "uclar": [
+      [
+       262,
+       506
+      ],
+      [
+       311,
+       488
+      ]
+     ],
+     "orta": [
+      286.5,
+      497.0
+     ],
+     "nMurekkep": 230
+    },
+    "kolAcisiDeg": {
+     "deger": 75.6,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -51.5,
+      200.0
+     ]
+    },
+    "agizPX": 52.2,
+    "kolPencere": [
+     200,
+     340,
+     300,
+     490
+    ],
+    "enGenisYataySatir": {
+     "y": 476,
+     "genislikPX": 132,
+     "x": [
+      207,
+      339
+     ]
+    },
+    "balonOranYatay": 2.529,
+    "enGenisDikKesit": {
+     "genislikPX": 140.4,
+     "eksenS": 173,
+     "uclar": [
+      [
+       339.0,
+       475.9
+      ],
+      [
+       203.0,
+       440.9
+      ]
+     ],
+     "eksenAciDeg": 75.6
+    },
+    "balonOranDik": 2.69,
+    "boy": "kisa",
+    "boyKaynak": "kisa: agiz omuzun ~230 px altinda, bluz etegi 740",
+    "kisa": true,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-nell_puf.png"
+   },
+   "tilly-lyra.png#uzun": {
+    "dosya": "tilly-lyra.png",
+    "urun": "Tilly and the Buttons Lyra Dress (uzun kol, lastikli agiz)",
+    "marka": "Tilly and the Buttons",
+    "sayfa": "https://tillyandthebuttons.com/products/lyra-dress-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0364/2693/products/Lyra6-34techimage.png?v=1658821438",
+    "boyutPX": [
+     1537,
+     2048
+    ],
+    "esik": 200,
+    "etiket": "buzgulu",
+    "etiketNeden": "agizda lastik + buzgu, kucuk firfir",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      295,
+      330,
+      105,
+      125
+     ],
+     "xy": [
+      328,
+      110
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      150,
+      240,
+      530,
+      590
+     ],
+     "uclar": [
+      [
+       156,
+       530
+      ],
+      [
+       239,
+       555
+      ]
+     ],
+     "orta": [
+      197.5,
+      542.5
+     ],
+     "nMurekkep": 628
+    },
+    "kolAcisiDeg": {
+     "deger": 73.2,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -130.5,
+      432.5
+     ]
+    },
+    "agizPX": 86.7,
+    "kolPencere": [
+     170,
+     312,
+     280,
+     470
+    ],
+    "enGenisYataySatir": {
+     "y": 465,
+     "genislikPX": 133,
+     "x": [
+      175,
+      308
+     ]
+    },
+    "balonOranYatay": 1.534,
+    "enGenisDikKesit": {
+     "genislikPX": 125.3,
+     "eksenS": 349,
+     "uclar": [
+      [
+       306.9,
+       468.2
+      ],
+      [
+       187.0,
+       432.0
+      ]
+     ],
+     "eksenAciDeg": 73.2
+    },
+    "balonOranDik": 1.445,
+    "boy": "uzun",
+    "boyKaynak": "bilek boyu: agiz omuzun ~470 px altinda, yaka altindaki buzgulu dikis 390",
+    "kisa": false,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-lyra_uzun.png"
+   },
+   "tilly-stevie-addon.jpg#tunik": {
+    "dosya": "tilly-stevie-addon.jpg",
+    "urun": "Tilly and the Buttons Stevie Add-On tunik (dusuk omuz, 3/4 duz kol)",
+    "marka": "Tilly and the Buttons",
+    "sayfa": "https://tillyandthebuttons.com/products/stevie-add-on-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0364/2693/products/Tilly_and_the_Buttons_Stevie_add-on_Sewing_Pattern_tech.jpg?v=1665478696",
+    "boyutPX": [
+     1537,
+     2048
+    ],
+    "esik": 200,
+    "etiket": "duz",
+    "etiketNeden": "agiz acik duz kenar",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      175,
+      200,
+      805,
+      830
+     ],
+     "xy": [
+      195,
+      813
+     ],
+     "not": "dusuk omuz: kol dikisinin ust ucu"
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      8,
+      30,
+      862,
+      920
+     ],
+     "uclar": [
+      [
+       27,
+       871
+      ],
+      [
+       27,
+       919
+      ]
+     ],
+     "orta": [
+      27.0,
+      895.0
+     ],
+     "nMurekkep": 79
+    },
+    "kolAcisiDeg": {
+     "deger": 26.0,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -168.0,
+      82.0
+     ]
+    },
+    "agizPX": 48.0,
+    "kolPencere": [
+     8,
+     150,
+     800,
+     920
+    ],
+    "enGenisYataySatir": {
+     "y": 911,
+     "genislikPX": 128,
+     "x": [
+      21,
+      149
+     ]
+    },
+    "balonOranYatay": 2.667,
+    "enGenisDikKesit": {
+     "genislikPX": 80.1,
+     "eksenS": 86,
+     "uclar": [
+      [
+       147.7,
+       912.1
+      ],
+      [
+       112.6,
+       840.2
+      ]
+     ],
+     "eksenAciDeg": 26.0
+    },
+    "balonOranDik": 1.669,
+    "boy": "uzun",
+    "boyKaynak": "THREE-QUARTER LENGTH: agiz dirsegin altinda",
+    "kisa": false,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-stevie-addon_tunik.png"
+   },
+   "tilly-coco.jpg#v1": {
+    "dosya": "tilly-coco.jpg",
+    "urun": "Tilly and the Buttons Coco Top v1 (3/4 duz oturan kol)",
+    "marka": "Tilly and the Buttons",
+    "sayfa": "https://tillyandthebuttons.com/products/coco-top-dress-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0364/2693/products/Cocotechnicalgarmentillustrations2020.jpg?v=1652170339",
+    "boyutPX": [
+     1537,
+     2048
+    ],
+    "esik": 200,
+    "etiket": "duz",
+    "etiketNeden": "agiz acik duz kenar",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      260,
+      300,
+      70,
+      100
+     ],
+     "xy": [
+      297,
+      84
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      128,
+      212,
+      608,
+      640
+     ],
+     "uclar": [
+      [
+       128,
+       614
+      ],
+      [
+       196,
+       610
+      ]
+     ],
+     "orta": [
+      162.0,
+      612.0
+     ],
+     "nMurekkep": 345
+    },
+    "kolAcisiDeg": {
+     "deger": 75.7,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -135.0,
+      528.0
+     ]
+    },
+    "agizPX": 68.1,
+    "kolPencere": [
+     135,
+     270,
+     380,
+     580
+    ],
+    "enGenisYataySatir": {
+     "y": 466,
+     "genislikPX": 90,
+     "x": [
+      151,
+      241
+     ]
+    },
+    "balonOranYatay": 1.321,
+    "enGenisDikKesit": {
+     "genislikPX": 86.6,
+     "eksenS": 448,
+     "uclar": [
+      [
+       221.9,
+       527.2
+      ],
+      [
+       138.1,
+       505.8
+      ]
+     ],
+     "eksenAciDeg": 75.7
+    },
+    "balonOranDik": 1.271,
+    "boy": "uzun",
+    "boyKaynak": "3/4 kol: agiz (y~605) etek ucuna (700) yakin, dirsegin altinda",
+    "kisa": false,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-coco_v1.png"
+   },
+   "tilly-agnes.png#kisa": {
+    "dosya": "tilly-agnes.png",
+    "urun": "Tilly and the Buttons Agnes (straight cropped sleeve)",
+    "marka": "Tilly and the Buttons",
+    "sayfa": "https://tillyandthebuttons.com/products/agnes-jersey-top-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0364/2693/products/Tilly_and_the_Buttons_Agnes_sewing_pattern_tech_drawings.png?v=1675096946",
+    "boyutPX": [
+     1536,
+     2048
+    ],
+    "esik": 200,
+    "etiket": "duz",
+    "etiketNeden": "agiz acik duz kenar",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      150,
+      200,
+      232,
+      262
+     ],
+     "xy": [
+      196,
+      234
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      75,
+      175,
+      522,
+      552
+     ],
+     "uclar": [
+      [
+       79,
+       528
+      ],
+      [
+       171,
+       528
+      ]
+     ],
+     "orta": [
+      125.0,
+      528.0
+     ],
+     "nMurekkep": 672
+    },
+    "kolAcisiDeg": {
+     "deger": 76.4,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -71.0,
+      294.0
+     ]
+    },
+    "agizPX": 92.0,
+    "kolPencere": [
+     0,
+     195,
+     300,
+     535
+    ],
+    "enGenisYataySatir": {
+     "y": 422,
+     "genislikPX": 97,
+     "x": [
+      97,
+      194
+     ]
+    },
+    "balonOranYatay": 1.054,
+    "enGenisDikKesit": {
+     "genislikPX": 95.8,
+     "eksenS": 184,
+     "uclar": [
+      [
+       194.0,
+       422.8
+      ],
+      [
+       100.9,
+       400.3
+      ]
+     ],
+     "eksenAciDeg": 76.4
+    },
+    "balonOranDik": 1.041,
+    "boy": "kisa",
+    "boyKaynak": "CROPPED SLEEVE: agiz dirsegin ustunde (etek ucu 750, agiz 550)",
+    "kisa": true,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-agnes_kisa.png"
+   },
+   "tilly-agnes.png#buzgulu-omuz": {
+    "dosya": "tilly-agnes.png",
+    "urun": "Tilly and the Buttons Agnes (ruched cropped sleeve: OMUZDA buzgu, agiz acik)",
+    "marka": "Tilly and the Buttons",
+    "sayfa": "https://tillyandthebuttons.com/products/agnes-jersey-top-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0364/2693/products/Tilly_and_the_Buttons_Agnes_sewing_pattern_tech_drawings.png?v=1675096946",
+    "boyutPX": [
+     1536,
+     2048
+    ],
+    "esik": 200,
+    "etiket": "duz",
+    "etiketNeden": "buzgu omuzda, agiz acik duz kenar (BOLUM 3 kurali: omuz buzgusu tipi degistirmez)",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      890,
+      960,
+      205,
+      230
+     ],
+     "xy": [
+      924,
+      214
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      858,
+      962,
+      514,
+      540
+     ],
+     "uclar": [
+      [
+       861,
+       516
+      ],
+      [
+       957,
+       515
+      ]
+     ],
+     "orta": [
+      909.0,
+      515.5
+     ],
+     "nMurekkep": 657
+    },
+    "kolAcisiDeg": {
+     "deger": 87.2,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -15.0,
+      301.5
+     ]
+    },
+    "agizPX": 96.0,
+    "kolPencere": [
+     855,
+     970,
+     240,
+     500
+    ],
+    "enGenisYataySatir": {
+     "y": 455,
+     "genislikPX": 99,
+     "x": [
+      870,
+      969
+     ]
+    },
+    "balonOranYatay": 1.031,
+    "enGenisDikKesit": {
+     "genislikPX": 98.1,
+     "eksenS": 239,
+     "uclar": [
+      [
+       969.0,
+       455.5
+      ],
+      [
+       871.0,
+       450.7
+      ]
+     ],
+     "eksenAciDeg": 87.2
+    },
+    "balonOranDik": 1.022,
+    "boy": "kisa",
+    "boyKaynak": "CROPPED SLEEVE: agiz dirsegin ustunde",
+    "kisa": true,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-agnes_buzgulu-omuz.png"
+   },
+   "tilly-agnes.png#uzun": {
+    "dosya": "tilly-agnes.png",
+    "urun": "Tilly and the Buttons Agnes (straight long sleeve)",
+    "marka": "Tilly and the Buttons",
+    "sayfa": "https://tillyandthebuttons.com/products/agnes-jersey-top-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0364/2693/products/Tilly_and_the_Buttons_Agnes_sewing_pattern_tech_drawings.png?v=1675096946",
+    "boyutPX": [
+     1536,
+     2048
+    ],
+    "esik": 200,
+    "etiket": "duz",
+    "etiketNeden": "agiz acik duz kenar",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      150,
+      200,
+      1065,
+      1100
+     ],
+     "xy": [
+      196,
+      1071
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      44,
+      135,
+      1610,
+      1634
+     ],
+     "uclar": [
+      [
+       47,
+       1620
+      ],
+      [
+       126,
+       1612
+      ]
+     ],
+     "orta": [
+      86.5,
+      1616.0
+     ],
+     "nMurekkep": 570
+    },
+    "kolAcisiDeg": {
+     "deger": 78.6,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -109.5,
+      545.0
+     ]
+    },
+    "agizPX": 79.4,
+    "kolPencere": [
+     40,
+     180,
+     1300,
+     1400
+    ],
+    "enGenisYataySatir": {
+     "y": 1337,
+     "genislikPX": 90,
+     "x": [
+      89,
+      179
+     ]
+    },
+    "balonOranYatay": 1.133,
+    "enGenisDikKesit": {
+     "genislikPX": 89.8,
+     "eksenS": 268,
+     "uclar": [
+      [
+       179.0,
+       1340.9
+      ],
+      [
+       90.9,
+       1323.2
+      ]
+     ],
+     "eksenAciDeg": 78.6
+    },
+    "balonOranDik": 1.131,
+    "boy": "uzun",
+    "boyKaynak": "LONG SLEEVE",
+    "kisa": false,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-agnes_uzun.png"
+   },
+   "tilly-nell.jpg#kisa-duz": {
+    "dosya": "tilly-nell.jpg",
+    "urun": "Tilly and the Buttons Nell Midi Dress (short straight sleeves)",
+    "marka": "Tilly and the Buttons",
+    "sayfa": "https://tillyandthebuttons.com/products/nell-blouse-dress-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0364/2693/files/Nell-sewing-pattern-technical-drawing.jpg?v=1756997194",
+    "boyutPX": [
+     1537,
+     2048
+    ],
+    "esik": 200,
+    "etiket": "duz",
+    "etiketNeden": "agiz acik duz kenar",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      600,
+      665,
+      1095,
+      1125
+     ],
+     "xy": [
+      661,
+      1098
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      560,
+      650,
+      1214,
+      1250
+     ],
+     "uclar": [
+      [
+       563,
+       1214
+      ],
+      [
+       647,
+       1249
+      ]
+     ],
+     "orta": [
+      605.0,
+      1231.5
+     ],
+     "nMurekkep": 231
+    },
+    "kolAcisiDeg": {
+     "deger": 67.2,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -56.0,
+      133.5
+     ]
+    },
+    "agizPX": 91.0,
+    "kolPencere": [
+     560,
+     672,
+     1105,
+     1215
+    ],
+    "enGenisYataySatir": {
+     "y": 1210,
+     "genislikPX": 95,
+     "x": [
+      565,
+      660
+     ]
+    },
+    "balonOranYatay": 1.044,
+    "enGenisDikKesit": {
+     "genislikPX": 85.6,
+     "eksenS": 107,
+     "uclar": [
+      [
+       658.9,
+       1213.2
+      ],
+      [
+       580.0,
+       1180.0
+      ]
+     ],
+     "eksenAciDeg": 67.2
+    },
+    "balonOranDik": 0.941,
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      700,
+      745,
+      1085,
+      1100
+     ],
+     "xy": [
+      710,
+      1090
+     ]
+    },
+    "snpY": 1090,
+    "bel": {
+     "yontem": "bel dikisi: pencerede en cok murekkepli satir",
+     "pencere": [
+      640,
+      760,
+      1325,
+      1345
+     ],
+     "satirY": 1335,
+     "nMurekkep": 57,
+     "not": "bel dikisi (etek buzgusunun ustu)"
+    },
+    "belY": 1335,
+    "torsoPX": 245,
+    "agizOmuzDikeyOverTorso": 0.545,
+    "kisa": true,
+    "boy": "kisa",
+    "boyKaynak": "olculdu: agizOmuzDikeyOverTorso 0.545 (KISA_ESIK 0.6)",
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-nell_kisa-duz.png"
+   },
+   "tilly-nell.jpg#bilezik": {
+    "dosya": "tilly-nell.jpg",
+    "urun": "Tilly and the Buttons Nell Knee-length Dress (bracelet sleeves)",
+    "marka": "Tilly and the Buttons",
+    "sayfa": "https://tillyandthebuttons.com/products/nell-blouse-dress-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0364/2693/files/Nell-sewing-pattern-technical-drawing.jpg?v=1756997194",
+    "boyutPX": [
+     1537,
+     2048
+    ],
+    "esik": 200,
+    "etiket": "duz",
+    "etiketNeden": "agiz acik duz kenar",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      170,
+      215,
+      1095,
+      1115
+     ],
+     "xy": [
+      213,
+      1095
+     ]
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      45,
+      120,
+      1434,
+      1462
+     ],
+     "uclar": [
+      [
+       49,
+       1436
+      ],
+      [
+       118,
+       1434
+      ]
+     ],
+     "orta": [
+      83.5,
+      1435.0
+     ],
+     "nMurekkep": 178
+    },
+    "kolAcisiDeg": {
+     "deger": 69.1,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -129.5,
+      340.0
+     ]
+    },
+    "agizPX": 69.0,
+    "kolPencere": [
+     40,
+     170,
+     1150,
+     1330
+    ],
+    "enGenisYataySatir": {
+     "y": 1276,
+     "genislikPX": 73,
+     "x": [
+      96,
+      169
+     ]
+    },
+    "balonOranYatay": 1.058,
+    "enGenisDikKesit": {
+     "genislikPX": 69.6,
+     "eksenS": 187,
+     "uclar": [
+      [
+       168.0,
+       1278.0
+      ],
+      [
+       102.9,
+       1253.2
+      ]
+     ],
+     "eksenAciDeg": 69.1
+    },
+    "balonOranDik": 1.008,
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      240,
+      280,
+      1085,
+      1102
+     ],
+     "xy": [
+      243,
+      1090
+     ]
+    },
+    "snpY": 1090,
+    "bel": {
+     "yontem": "bel dikisi: pencerede en cok murekkepli satir",
+     "pencere": [
+      150,
+      320,
+      1325,
+      1345
+     ],
+     "satirY": 1335,
+     "nMurekkep": 89,
+     "not": "bel dikisi (etek buzgusunun ustu)"
+    },
+    "belY": 1335,
+    "torsoPX": 245,
+    "agizOmuzDikeyOverTorso": 1.388,
+    "kisa": false,
+    "boy": "uzun",
+    "boyKaynak": "olculdu: agizOmuzDikeyOverTorso 1.388 (KISA_ESIK 0.6)",
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-nell_bilezik.png"
+   },
+   "named-ilta.png": {
+    "dosya": "named-ilta.png",
+    "urun": "Named Clothing Ilta Ruched Shirt Dress (dusuk omuz uzun kol, yirtmacli DUZ gomlek manseti)",
+    "marka": "Named Clothing",
+    "sayfa": "https://www.namedclothing.com/en-us/products/ilta-ruched-shirt-dress",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0414/6003/9840/files/api.ILTAdress_linedrawing.png?v=1763639851",
+    "boyutPX": [
+     800,
+     1200
+    ],
+    "esik": 160,
+    "etiket": "duz",
+    "etiketNeden": "gomlek manseti: kapali dikdortgen kontur, agizda buzgu cizgisi yok",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      135,
+      165,
+      40,
+      65
+     ],
+     "xy": [
+      163,
+      58
+     ],
+     "not": "dusuk omuz: kol dikisinin ust ucu"
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      0,
+      70,
+      350,
+      376
+     ],
+     "uclar": [
+      [
+       1,
+       350
+      ],
+      [
+       69,
+       352
+      ]
+     ],
+     "orta": [
+      35.0,
+      351.0
+     ],
+     "nMurekkep": 202
+    },
+    "kolAcisiDeg": {
+     "deger": 66.4,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -128.0,
+      293.0
+     ]
+    },
+    "agizPX": 68.0,
+    "kolPencere": [
+     5,
+     165,
+     60,
+     300
+    ],
+    "enGenisYataySatir": {
+     "y": 248,
+     "genislikPX": 118,
+     "x": [
+      46,
+      164
+     ]
+    },
+    "balonOranYatay": 1.735,
+    "enGenisDikKesit": {
+     "genislikPX": 103.5,
+     "eksenS": 176,
+     "uclar": [
+      [
+       163.0,
+       250.1
+      ],
+      [
+       68.2,
+       208.6
+      ]
+     ],
+     "eksenAciDeg": 66.4
+    },
+    "balonOranDik": 1.521,
+    "boy": "uzun",
+    "boyKaynak": "bilek boyu, manset alt kenari y~350, bel kusagi 230-260",
+    "kisa": false,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-named-ilta.png"
+   },
+   "tilly-frida.png#uzun": {
+    "dosya": "tilly-frida.png",
+    "urun": "Tilly and the Buttons Frida Shirt (uzun kol, DUZ gomlek manseti)",
+    "marka": "Tilly and the Buttons",
+    "sayfa": "https://tillyandthebuttons.com/products/frida-shirt-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0364/2693/files/frida-shirt-sewing-pattern-tilly-and-the-buttons-tech-drawing.png?v=1772114163",
+    "boyutPX": [
+     1537,
+     2048
+    ],
+    "esik": 200,
+    "etiket": "duz",
+    "etiketNeden": "gomlek manseti: kapali dikdortgen kontur, agizda buzgu cizgisi yok",
+    "omuzUcu": {
+     "yontem": "omuzKutu penceresinde en ust murekkep (kol kepi tepesi)",
+     "pencere": [
+      170,
+      200,
+      385,
+      410
+     ],
+     "xy": [
+      188,
+      385
+     ],
+     "not": "dusuk omuz: kol dikisinin ust ucu"
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      48,
+      130,
+      822,
+      856
+     ],
+     "uclar": [
+      [
+       48,
+       824
+      ],
+      [
+       126,
+       824
+      ]
+     ],
+     "orta": [
+      87.0,
+      824.0
+     ],
+     "nMurekkep": 198
+    },
+    "kolAcisiDeg": {
+     "deger": 77.0,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -101.0,
+      439.0
+     ]
+    },
+    "agizPX": 78.0,
+    "kolPencere": [
+     40,
+     245,
+     450,
+     600
+    ],
+    "enGenisYataySatir": {
+     "y": 593,
+     "genislikPX": 126,
+     "x": [
+      105,
+      231
+     ]
+    },
+    "balonOranYatay": 1.615,
+    "enGenisDikKesit": {
+     "genislikPX": 121.0,
+     "eksenS": 194,
+     "uclar": [
+      [
+       231.0,
+       594.0
+      ],
+      [
+       113.0,
+       566.8
+      ]
+     ],
+     "eksenAciDeg": 77.0
+    },
+    "balonOranDik": 1.551,
+    "boy": "uzun",
+    "boyKaynak": "LONG SLEEVES, manset alt kenari y~860, gomlek etegi 720 (manset etegin altinda)",
+    "kisa": false,
+    "overlay": "KOSU/ciktilar/_yerel/yeni-flat/overlay-tilly-frida_uzun.png"
+   }
+  },
+  "eskiKumeDik": {
+   "_ne": "BOLUM 3 kollari eksene dik kesitle yeniden olculdu (pencereler/omuz/agiz BOLUM 3 kaydindan, degismedi)",
+   "flatler": {
+    "cash-wyman.jpg": {
+     "enGenisDikKesit": {
+      "genislikPX": 192.5,
+      "eksenS": 704,
+      "uclar": [
+       [
+        329.0,
+        1498.9
+       ],
+       [
+        139.0,
+        1468.3
+       ]
+      ],
+      "eksenAciDeg": 80.9
+     },
+     "balonOranDik": 0.779,
+     "balonOranYatay": 0.79
+    },
+    "cash-hampden.jpg": {
+     "enGenisDikKesit": {
+      "genislikPX": 177.6,
+      "eksenS": 332,
+      "uclar": [
+       [
+        333.1,
+        1045.5
+       ],
+       [
+        162.0,
+        997.9
+       ]
+      ],
+      "eksenAciDeg": 74.5
+     },
+     "balonOranDik": 0.958,
+     "balonOranYatay": 0.928
+    },
+    "soi-lori.png": {
+     "enGenisDikKesit": {
+      "genislikPX": 115.4,
+      "eksenS": 164,
+      "uclar": [
+       [
+        231.1,
+        248.7
+       ],
+       [
+        128.1,
+        196.8
+       ]
+      ],
+      "eksenAciDeg": 63.3
+     },
+     "balonOranDik": 2.435,
+     "balonOranYatay": 2.111
+    },
+    "dd-orage.png": {
+     "enGenisDikKesit": {
+      "genislikPX": 65.0,
+      "eksenS": 252,
+      "uclar": [
+       [
+        199.0,
+        478.7
+       ],
+       [
+        134.0,
+        479.1
+       ]
+      ],
+      "eksenAciDeg": 89.7
+     },
+     "balonOranDik": 1.441,
+     "balonOranYatay": 1.441
+    },
+    "dd-passiflore.jpg": {
+     "enGenisDikKesit": {
+      "genislikPX": 54.0,
+      "eksenS": 55,
+      "uclar": [
+       [
+        214.0,
+        205.0
+       ],
+       [
+        160.0,
+        206.8
+       ]
+      ],
+      "eksenAciDeg": 88.1
+     },
+     "balonOranDik": 1.033,
+     "balonOranYatay": 1.032
+    },
+    "dd-magnolia.jpg": {
+     "enGenisDikKesit": {
+      "genislikPX": 69.7,
+      "eksenS": 108,
+      "uclar": [
+       [
+        249.0,
+        247.1
+       ],
+       [
+        179.9,
+        256.5
+       ]
+      ],
+      "eksenAciDeg": 82.2
+     },
+     "balonOranDik": 1.137,
+     "balonOranYatay": 1.126
+    },
+    "03-empire-dress-uc-boy.png": {
+     "enGenisDikKesit": {
+      "genislikPX": 70.2,
+      "eksenS": 53,
+      "uclar": [
+       [
+        79.4,
+        396.8
+       ],
+       [
+        41.2,
+        337.8
+       ]
+      ],
+      "eksenAciDeg": 32.9
+     },
+     "balonOranDik": 1.51,
+     "balonOranYatay": 1.334
+    },
+    "04-a-line-puff-kol.png": {
+     "enGenisDikKesit": {
+      "genislikPX": 69.5,
+      "eksenS": 124,
+      "uclar": [
+       [
+        270.9,
+        216.4
+       ],
+       [
+        202.0,
+        208.3
+       ]
+      ],
+      "eksenAciDeg": 83.3
+     },
+     "balonOranDik": 1.003,
+     "balonOranYatay": 1.01
+    },
+    "06-a-line-puff-kol-varyant.png": {
+     "enGenisDikKesit": {
+      "genislikPX": 76.0,
+      "eksenS": 136,
+      "uclar": [
+       [
+        199.9,
+        231.4
+       ],
+       [
+        127.0,
+        210.1
+       ]
+      ],
+      "eksenAciDeg": 73.7
+     },
+     "balonOranDik": 1.224,
+     "balonOranYatay": 1.094
+    },
+    "02-uzun-robe-dress.png": {
+     "enGenisDikKesit": {
+      "genislikPX": 65.1,
+      "eksenS": 237,
+      "uclar": [
+       [
+        169.0,
+        422.2
+       ],
+       [
+        104.0,
+        417.6
+       ]
+      ],
+      "eksenAciDeg": 85.9
+     },
+     "balonOranDik": 1.252,
+     "balonOranYatay": 1.231
+    },
+    "05-a-line-top-ve-elbise.png": {
+     "enGenisDikKesit": {
+      "genislikPX": 86.6,
+      "eksenS": 216,
+      "uclar": [
+       [
+        183.0,
+        496.0
+       ],
+       [
+        96.9,
+        486.5
+       ]
+      ],
+      "eksenAciDeg": 83.7
+     },
+     "balonOranDik": 1.345,
+     "balonOranYatay": 1.351
+    },
+    "07-uzun-kol-akiskan-etek.png": {
+     "enGenisDikKesit": {
+      "genislikPX": 49.5,
+      "eksenS": 119,
+      "uclar": [
+       [
+        188.9,
+        181.4
+       ],
+       [
+        140.9,
+        169.3
+       ]
+      ],
+      "eksenAciDeg": 75.8
+     },
+     "balonOranDik": 0.998,
+     "balonOranYatay": 0.987
+    },
+    "10-princess-a-line.png": {
+     "enGenisDikKesit": {
+      "genislikPX": 415.0,
+      "eksenS": 789,
+      "uclar": [
+       [
+        699.1,
+        1284.5
+       ],
+       [
+        300.0,
+        1171.2
+       ]
+      ],
+      "eksenAciDeg": 74.1
+     },
+     "balonOranDik": 1.747,
+     "balonOranYatay": 1.679
+    }
+   }
+  },
+  "medyanlar": {
+   "balonOranDik": {
+    "eskiKume13": {
+     "alan": "balonOranDik",
+     "duz": {
+      "n": 8,
+      "degerler": {
+       "cash-wyman.jpg": 0.779,
+       "cash-hampden.jpg": 0.958,
+       "07-uzun-kol-akiskan-etek.png": 0.998,
+       "04-a-line-puff-kol.png": 1.003,
+       "dd-passiflore.jpg": 1.033,
+       "dd-magnolia.jpg": 1.137,
+       "06-a-line-puff-kol-varyant.png": 1.224,
+       "02-uzun-robe-dress.png": 1.252
+      },
+      "min": 0.779,
+      "max": 1.252
+     },
+     "buzgulu": {
+      "n": 5,
+      "degerler": {
+       "05-a-line-top-ve-elbise.png": 1.345,
+       "dd-orage.png": 1.441,
+       "03-empire-dress-uc-boy.png": 1.51,
+       "10-princess-a-line.png": 1.747,
+       "soi-lori.png": 2.435
+      },
+      "min": 1.345,
+      "max": 2.435
+     },
+     "bosluk": [
+      1.252,
+      1.345
+     ],
+     "ortaNokta": 1.298,
+     "hukum": "BOSLUK KALDI: skaler esik ayirici; yeni esik = boslugun ortasi"
+    },
+    "yeniKume": {
+     "alan": "balonOranDik",
+     "duz": {
+      "n": 9,
+      "degerler": {
+       "tilly-nell.jpg#kisa-duz": 0.941,
+       "tilly-nell.jpg#bilezik": 1.008,
+       "tilly-agnes.png#buzgulu-omuz": 1.022,
+       "tilly-agnes.png#kisa": 1.041,
+       "tilly-agnes.png#uzun": 1.131,
+       "tilly-coco.jpg#v1": 1.271,
+       "named-ilta.png": 1.521,
+       "tilly-frida.png#uzun": 1.551,
+       "tilly-stevie-addon.jpg#tunik": 1.669
+      },
+      "min": 0.941,
+      "max": 1.669
+     },
+     "buzgulu": {
+      "n": 8,
+      "degerler": {
+       "bhl-alix-1.jpg": 1.33,
+       "tilly-mabel.jpg#bluz": 1.378,
+       "tilly-lyra.png#uzun": 1.445,
+       "bhl-marie-dress.jpg": 1.453,
+       "tilly-marnie.png": 1.615,
+       "bhl-loren-1.png": 1.655,
+       "bhl-lucy-puff.jpg": 1.916,
+       "tilly-nell.jpg#puf": 2.69
+      },
+      "min": 1.33,
+      "max": 2.69
+     },
+     "bosluk": null,
+     "ortusenler": {
+      "bhl-alix-1.jpg": 1.33,
+      "bhl-marie-dress.jpg": 1.453,
+      "bhl-loren-1.png": 1.655,
+      "tilly-marnie.png": 1.615,
+      "tilly-mabel.jpg#bluz": 1.378,
+      "tilly-lyra.png#uzun": 1.445,
+      "tilly-stevie-addon.jpg#tunik": 1.669,
+      "named-ilta.png": 1.521,
+      "tilly-frida.png#uzun": 1.551
+     },
+     "hukum": "ORTUSME: iki sinif bu eksende ayrilmiyor; skaler esik yanlis ayirici (karar ajani 3c)"
+    },
+    "birlesik": {
+     "alan": "balonOranDik",
+     "duz": {
+      "n": 17,
+      "degerler": {
+       "cash-wyman.jpg": 0.779,
+       "tilly-nell.jpg#kisa-duz": 0.941,
+       "cash-hampden.jpg": 0.958,
+       "07-uzun-kol-akiskan-etek.png": 0.998,
+       "04-a-line-puff-kol.png": 1.003,
+       "tilly-nell.jpg#bilezik": 1.008,
+       "tilly-agnes.png#buzgulu-omuz": 1.022,
+       "dd-passiflore.jpg": 1.033,
+       "tilly-agnes.png#kisa": 1.041,
+       "tilly-agnes.png#uzun": 1.131,
+       "dd-magnolia.jpg": 1.137,
+       "06-a-line-puff-kol-varyant.png": 1.224,
+       "02-uzun-robe-dress.png": 1.252,
+       "tilly-coco.jpg#v1": 1.271,
+       "named-ilta.png": 1.521,
+       "tilly-frida.png#uzun": 1.551,
+       "tilly-stevie-addon.jpg#tunik": 1.669
+      },
+      "min": 0.779,
+      "max": 1.669
+     },
+     "buzgulu": {
+      "n": 13,
+      "degerler": {
+       "bhl-alix-1.jpg": 1.33,
+       "05-a-line-top-ve-elbise.png": 1.345,
+       "tilly-mabel.jpg#bluz": 1.378,
+       "dd-orage.png": 1.441,
+       "tilly-lyra.png#uzun": 1.445,
+       "bhl-marie-dress.jpg": 1.453,
+       "03-empire-dress-uc-boy.png": 1.51,
+       "tilly-marnie.png": 1.615,
+       "bhl-loren-1.png": 1.655,
+       "10-princess-a-line.png": 1.747,
+       "bhl-lucy-puff.jpg": 1.916,
+       "soi-lori.png": 2.435,
+       "tilly-nell.jpg#puf": 2.69
+      },
+      "min": 1.33,
+      "max": 2.69
+     },
+     "bosluk": null,
+     "ortusenler": {
+      "dd-orage.png": 1.441,
+      "03-empire-dress-uc-boy.png": 1.51,
+      "05-a-line-top-ve-elbise.png": 1.345,
+      "bhl-alix-1.jpg": 1.33,
+      "bhl-marie-dress.jpg": 1.453,
+      "bhl-loren-1.png": 1.655,
+      "tilly-marnie.png": 1.615,
+      "tilly-mabel.jpg#bluz": 1.378,
+      "tilly-lyra.png#uzun": 1.445,
+      "tilly-stevie-addon.jpg#tunik": 1.669,
+      "named-ilta.png": 1.521,
+      "tilly-frida.png#uzun": 1.551
+     },
+     "hukum": "ORTUSME: iki sinif bu eksende ayrilmiyor; skaler esik yanlis ayirici (karar ajani 3c)"
+    },
+    "tanim": "HUKUM EKSENI. kol eksenine dik en genis kesit / agiz uzunlugu; etiket cizim konvansiyonundan. Bosluk = duz maksimumu ile buzgulu minimumu arasi."
+   },
+   "balonOranYatay": {
+    "eskiKume13": {
+     "alan": "balonOranYatay",
+     "duz": {
+      "n": 8,
+      "degerler": {
+       "cash-wyman.jpg": 0.79,
+       "cash-hampden.jpg": 0.928,
+       "07-uzun-kol-akiskan-etek.png": 0.987,
+       "04-a-line-puff-kol.png": 1.01,
+       "dd-passiflore.jpg": 1.032,
+       "06-a-line-puff-kol-varyant.png": 1.094,
+       "dd-magnolia.jpg": 1.126,
+       "02-uzun-robe-dress.png": 1.231
+      },
+      "min": 0.79,
+      "max": 1.231
+     },
+     "buzgulu": {
+      "n": 5,
+      "degerler": {
+       "03-empire-dress-uc-boy.png": 1.334,
+       "05-a-line-top-ve-elbise.png": 1.351,
+       "dd-orage.png": 1.441,
+       "10-princess-a-line.png": 1.679,
+       "soi-lori.png": 2.111
+      },
+      "min": 1.334,
+      "max": 2.111
+     },
+     "bosluk": [
+      1.231,
+      1.334
+     ],
+     "ortaNokta": 1.283,
+     "hukum": "BOSLUK KALDI: skaler esik ayirici; yeni esik = boslugun ortasi"
+    },
+    "yeniKume": {
+     "alan": "balonOranYatay",
+     "duz": {
+      "n": 9,
+      "degerler": {
+       "tilly-agnes.png#buzgulu-omuz": 1.031,
+       "tilly-nell.jpg#kisa-duz": 1.044,
+       "tilly-agnes.png#kisa": 1.054,
+       "tilly-nell.jpg#bilezik": 1.058,
+       "tilly-agnes.png#uzun": 1.133,
+       "tilly-coco.jpg#v1": 1.321,
+       "tilly-frida.png#uzun": 1.615,
+       "named-ilta.png": 1.735,
+       "tilly-stevie-addon.jpg#tunik": 2.667
+      },
+      "min": 1.031,
+      "max": 2.667
+     },
+     "buzgulu": {
+      "n": 8,
+      "degerler": {
+       "tilly-mabel.jpg#bluz": 1.388,
+       "bhl-marie-dress.jpg": 1.448,
+       "bhl-alix-1.jpg": 1.487,
+       "tilly-lyra.png#uzun": 1.534,
+       "tilly-marnie.png": 1.68,
+       "bhl-lucy-puff.jpg": 1.705,
+       "bhl-loren-1.png": 1.796,
+       "tilly-nell.jpg#puf": 2.529
+      },
+      "min": 1.388,
+      "max": 2.529
+     },
+     "bosluk": null,
+     "ortusenler": {
+      "bhl-alix-1.jpg": 1.487,
+      "bhl-marie-dress.jpg": 1.448,
+      "bhl-loren-1.png": 1.796,
+      "bhl-lucy-puff.jpg": 1.705,
+      "tilly-marnie.png": 1.68,
+      "tilly-mabel.jpg#bluz": 1.388,
+      "tilly-nell.jpg#puf": 2.529,
+      "tilly-lyra.png#uzun": 1.534,
+      "tilly-stevie-addon.jpg#tunik": 2.667,
+      "named-ilta.png": 1.735,
+      "tilly-frida.png#uzun": 1.615
+     },
+     "hukum": "ORTUSME: iki sinif bu eksende ayrilmiyor; skaler esik yanlis ayirici (karar ajani 3c)"
+    },
+    "birlesik": {
+     "alan": "balonOranYatay",
+     "duz": {
+      "n": 17,
+      "degerler": {
+       "cash-wyman.jpg": 0.79,
+       "cash-hampden.jpg": 0.928,
+       "07-uzun-kol-akiskan-etek.png": 0.987,
+       "04-a-line-puff-kol.png": 1.01,
+       "tilly-agnes.png#buzgulu-omuz": 1.031,
+       "dd-passiflore.jpg": 1.032,
+       "tilly-nell.jpg#kisa-duz": 1.044,
+       "tilly-agnes.png#kisa": 1.054,
+       "tilly-nell.jpg#bilezik": 1.058,
+       "06-a-line-puff-kol-varyant.png": 1.094,
+       "dd-magnolia.jpg": 1.126,
+       "tilly-agnes.png#uzun": 1.133,
+       "02-uzun-robe-dress.png": 1.231,
+       "tilly-coco.jpg#v1": 1.321,
+       "tilly-frida.png#uzun": 1.615,
+       "named-ilta.png": 1.735,
+       "tilly-stevie-addon.jpg#tunik": 2.667
+      },
+      "min": 0.79,
+      "max": 2.667
+     },
+     "buzgulu": {
+      "n": 13,
+      "degerler": {
+       "03-empire-dress-uc-boy.png": 1.334,
+       "05-a-line-top-ve-elbise.png": 1.351,
+       "tilly-mabel.jpg#bluz": 1.388,
+       "dd-orage.png": 1.441,
+       "bhl-marie-dress.jpg": 1.448,
+       "bhl-alix-1.jpg": 1.487,
+       "tilly-lyra.png#uzun": 1.534,
+       "10-princess-a-line.png": 1.679,
+       "tilly-marnie.png": 1.68,
+       "bhl-lucy-puff.jpg": 1.705,
+       "bhl-loren-1.png": 1.796,
+       "soi-lori.png": 2.111,
+       "tilly-nell.jpg#puf": 2.529
+      },
+      "min": 1.334,
+      "max": 2.529
+     },
+     "bosluk": null,
+     "ortusenler": {
+      "soi-lori.png": 2.111,
+      "dd-orage.png": 1.441,
+      "03-empire-dress-uc-boy.png": 1.334,
+      "05-a-line-top-ve-elbise.png": 1.351,
+      "10-princess-a-line.png": 1.679,
+      "bhl-alix-1.jpg": 1.487,
+      "bhl-marie-dress.jpg": 1.448,
+      "bhl-loren-1.png": 1.796,
+      "bhl-lucy-puff.jpg": 1.705,
+      "tilly-marnie.png": 1.68,
+      "tilly-mabel.jpg#bluz": 1.388,
+      "tilly-nell.jpg#puf": 2.529,
+      "tilly-lyra.png#uzun": 1.534,
+      "tilly-stevie-addon.jpg#tunik": 2.667,
+      "named-ilta.png": 1.735,
+      "tilly-frida.png#uzun": 1.615
+     },
+     "hukum": "ORTUSME: iki sinif bu eksende ayrilmiyor; skaler esik yanlis ayirici (karar ajani 3c)"
+    },
+    "tanim": "BILGI. BOLUM 3 yatay satir tanimi; eksen dusey olmayan kollarda kol boyunu olcer (Stevie/Lucy), hukum tasimaz."
+   },
+   "agizOmuzDikeyOverTorso": {
+    "n": 9,
+    "degerler": [
+     {
+      "flat": "cash-hampden.jpg",
+      "oran": 0.513,
+      "kisa": true
+     },
+     {
+      "flat": "tilly-nell.jpg#kisa-duz",
+      "oran": 0.545,
+      "kisa": true
+     },
+     {
+      "flat": "07-uzun-kol-akiskan-etek.png",
+      "oran": 0.636,
+      "kisa": false
+     },
+     {
+      "flat": "06-a-line-puff-kol-varyant.png",
+      "oran": 0.676,
+      "kisa": false
+     },
+     {
+      "flat": "04-a-line-puff-kol.png",
+      "oran": 0.763,
+      "kisa": false
+     },
+     {
+      "flat": "02-uzun-robe-dress.png",
+      "oran": 1.132,
+      "kisa": false
+     },
+     {
+      "flat": "tilly-nell.jpg#bilezik",
+      "oran": 1.388,
+      "kisa": false
+     },
+     {
+      "flat": "bhl-alix-1.jpg",
+      "oran": 1.411,
+      "kisa": false
+     },
+     {
+      "flat": "cash-wyman.jpg",
+      "oran": 1.539,
+      "kisa": false
+     }
+    ],
+    "kisaMax": 0.545,
+    "uzunMin": 0.636,
+    "tanim": "torso paydasi olculebilen kollar (SNP + bel dikisi cizili). KISA_ESIK 0.6: dirsek ~0.85 torso. kisaMax < 0.6 < uzunMin ise 0.6 bosluk icinde."
+   },
+   "kolAcisiDeg": {
+    "buzgulu": {
+     "bhl-alix-1.jpg": 65.0,
+     "bhl-marie-dress.jpg": 79.2,
+     "bhl-loren-1.png": 53.3,
+     "bhl-lucy-puff.jpg": 34.5,
+     "tilly-marnie.png": 62.3,
+     "tilly-mabel.jpg#bluz": 67.3,
+     "tilly-nell.jpg#puf": 75.6,
+     "tilly-lyra.png#uzun": 73.2
+    },
+    "duz": {
+     "tilly-stevie-addon.jpg#tunik": 26.0,
+     "tilly-coco.jpg#v1": 75.7,
+     "tilly-agnes.png#kisa": 76.4,
+     "tilly-agnes.png#buzgulu-omuz": 87.2,
+     "tilly-agnes.png#uzun": 78.6,
+     "tilly-nell.jpg#kisa-duz": 67.2,
+     "tilly-nell.jpg#bilezik": 69.1,
+     "named-ilta.png": 66.4,
+     "tilly-frida.png#uzun": 77.0
+    },
+    "not": "bilgi: raglan/dusuk omuz/off-shoulder kollarin omuz ucu set-in ile ayni nokta degil (omuzNot), banda girmez"
+   }
+  }
  }
 }
