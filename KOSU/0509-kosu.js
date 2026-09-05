@@ -41,11 +41,11 @@ HEDEF: fotograf veya prompt -> dikilebilir kalip + satilir flat; Midjourney gibi
 KURALLAR (biri kirilirsa is reddedilir):
  1. KANIT = dosya yolu + komut ciktisi. "Baktim/calisiyor" yasak. Teslim ekranda bakilacak png/pdf; gorselsiz adim bitmemis.
  2. Esik gevsetme, test degistirme, ozel-durum if'i, uydurma sabit, Bugra'ya sabit, hakemden once golden pin, JS'e kacan geometri, alan disi dosya = reward hacking, faz duser. Sayi contract'tan; kaynak yoksa DOGRULANMADI.
- 3. engine/tests/**, ${KAPI}, contract'taki esikler SALT OKUNUR. Degistirmen gerekiyorsa yapma, acikSorular'a yaz.
+ 3. REFERANS KILIDI: contract/, engine/tests/**, ${KAPI}, engine/golden-reference.csv isletim sistemi seviyesinde salt okunur (chmod); yalniz brief'teki IZIN LISTESI acik. Izin disina dokunursan (git diff tag..HEAD) REWARD_HACKING: deneme duser, diff geri alinir. Degistirmen gerekiyorsa yapma, acikSorular'a yaz.
  4. Sessiz default yok: bilinmeyen -> adiyla ret ("absent" / hata kodu) + yapilabilir en yakin op. Baska giysiye donmek yasak.
  5. ALT-AJAN YOK (Agent/Task araci kullanma). Tek basinasin.
  6. Ayni engel icin 3 commit ya da ayni dosyaya 5 dokunus = DUR, raporda "yanlis seyi onariyorum" + kok katman (vision/prompt-parse/JSON okuyucu/derleyici/graf/degerleme/flat/pdf). Arac iki kez engellediyse araci onar, "arac onarimi" diye ayir.
- 7. BUTCE: ${BUTCE_COMMIT} commit ya da ${BUTCE_SAAT} saat. Asarsan dur, commit at, yarim=true ile raporla. Context'in doluyorsa (ayni dosyayi ikinci kez okuyorsun) ayni sey: commit, yarim=true, ol. Yarim birakmak hata degil.
+ 7. BUTCE: ${BUTCE_COMMIT} commit ya da ${BUTCE_SAAT} saat. Asarsan dur, commit at, yarim=true ile raporla. Context'in doluyorsa (ayni dosyayi ikinci kez okuyorsun, %70 gectin) ayni sey: commit, KOSU/0509-devir-notu.md'ye iki satir (ne yapmaya calisiyordum; hangi yolu neden biraktim, kaldigim satir), yarim=true, ol. Resume isen ILK IS o notu oku. Yarim birakmak hata degil.
  8. Makine MacBook Air 8GB: build -j2, ctest hedefli -j1, tek Chrome (timeout 90, izole --user-data-dir, bitince kendi sureclerini oldur), arka plan surec yok. Motor degistiyse: cmake --build engine/build -j2 VE bash engine/build-wasm.sh (web/vendor + engine/dist taze, ls -la ile).
  9. Repoyu butun okuma: rg ile hedefli, satir araligiyla oku, bir dosyayi iki kez okuma; build/test ciktisi son 40 satir.
 10. LLM yalniz fotograf/cumle/edit okumada; cikti her zaman graf-v1 JSON, sema + dogrulayici; cizim deterministik. Ayni girdi KOSU/onbellek/<sha>.json'dan okunur, yeniden odenmez. Cagri sayisini raporla (llmCagri).
@@ -54,6 +54,7 @@ KURALLAR (biri kirilirsa is reddedilir):
 13. Damla'ya soru yok. Karar gereken sey acikSorular'a; yapilabilen kismi yap. Kararsizlikta en zoru/dogruyu sec.
 14. Ikinci deneme isen is buyuk olcude yapilmis: git log + KOSU/ciktilar'a bak, sifirdan yapma, yalniz ENGEL'leri kapat, savunma yazma, yeni is acma.
 15. Bittiginde StructuredOutput: kanit ve gorselCiktilar bos olamaz; kabulKomutu tek satir, deterministik, exit 0/1.
+16. METRIK IZI: her commit'ten sonra bash ${KAPI} --kisa >> KOSU/0509-metrik.jsonl (tek satir JSON: commit, ana sapma mm, enum, kirmizi sayisi). Kosucu ivmeye bakar: 3 commit'te sapma %20 kapanmiyorsa kesilirsin (8.4), yaklasimi kokten degistirmen istenir.
 TUZAKLAR (hepsi yasandi): wasm derleme yolu engine/build-wasm.sh; rebuild -DCMAKE_BUILD_TYPE=Release; aciklanamayan SEGFAULT = bayat build; deploy scripts/deploy.sh git fetch'te asilir (pgrep -P, pkill -f 'git fetch origin main'); vocab_reference_check kizarirsa once git diff -- engine/vocab.json (bayt-ayniysa prose, tabani --baseline ile kes; gercekten buyuduyse KESME, madde 9 ihlali); 4 ilanli kirmizi: flat_artifact_census, style_check, sizechart_source_check, figure_check; backend /api/draft ve /api/analyze ACIK (Turnstile + IP limiti); .gitignore KOSU/ciktilar/*.png'yi (yalniz kok) yok sayar, teslim png'ler alt klasore.
 `
 
@@ -133,15 +134,19 @@ const EL_SEMA = {
     regresyonFarki: { type: 'array', items: { type: 'string' }, description: 'sessiz regresyon setinde onceki adima gore degisen ciktilar' },
     yapilan: { type: 'array', items: { type: 'string' }, description: 'kosulan komutlar + yazilan dosyalar' },
     yok: { type: 'array', items: { type: 'string' }, description: 'bulunamayan script/dosya' },
+    kilitIhlali: { type: 'array', items: { type: 'string' }, description: 'izin listesi disinda dokunulan contract/engine/tests/golden dosyalari (bos = temiz)' },
+    yerelMinimum: { type: 'boolean', description: '8.4: KOSU/0509-metrik.jsonl son 3 commit\'te ana sapma %20 kapanmadi' },
+    metrikSerisi: { type: 'string', description: 'son 3 commit ana sapma degerleri, kisa' },
   },
-  required: ['gecitYesil', 'kirmizilar', 'commitSayisi', 'saat', 'regresyonFarki', 'yapilan', 'yok'],
+  required: ['gecitYesil', 'kirmizilar', 'commitSayisi', 'saat', 'regresyonFarki', 'yapilan', 'yok', 'kilitIhlali', 'yerelMinimum', 'metrikSerisi'],
 }
 
 // ============================================================ ADIMLAR (4.0b - 4.11) ============================================================
 const A40 = {
   no: '4.0', urunSorusu: false, effort: 'high',
   ad: '4.0b Gecit',
-  alan: `${KAPI} (yeni), engine/tests/0509-emsal-olcum.mjs (yeni), KOSU/regresyon/ (yeni: girdiler + beklenen ciktilar), ${STATE} (yeni), ${ILERLEME} (yeni), KOSU/onbellek/ (yeni, .gitignore'a GIRMEZ, commit edilir), .gitignore (yalniz ekleme), CMakeLists (yalniz add_test ekleme)`,
+  alan: `${KAPI} (yeni), engine/tests/0509-emsal-olcum.mjs (yeni), engine/tests/0509-wasm-sanity.mjs (yeni), KOSU/regresyon/ (yeni: girdiler + beklenen ciktilar), ${STATE} (yeni), ${ILERLEME} (yeni), KOSU/0509-devir-notu.md (yeni), KOSU/onbellek/ (yeni, .gitignore'a GIRMEZ, commit edilir), .gitignore (yalniz ekleme), CMakeLists (yalniz add_test ekleme), contract/body-v1.json (YALNIZ olcek araligi ekleme, kaynakli)`,
+  izin: 'engine/tests/0509-* contract/body-v1.json engine/CMakeLists.txt',
   tarif: `
 ADIM 4.0b — GECIT ALTYAPISI. Kosucu (0509-kosu.js) zaten uyarlandi; senin isin gecit scripti, emsal olcumu, sessiz regresyon seti, state.json, fotograf hatti saglik kontrolu. URUN DEGISMEZ; motor koduna dokunma.
  1. ${KAPI}: TEK deterministik script, tek JSON basar (her gecit: ad, gecti/kalmadi, sayi, esik, esigin kaynagi contract satiri) ve exit 0/1. Kostugu gecitler (hepsi bugun var; adlari ctest/CMakeLists'te): enum_dallanma_check (--measure; taban 436, yalniz duser), graf_ir_check, graf_op_check, graf_dikilebilir_check, flat_convention_check, parca_sayisi_check, edit_locality_check, flat_ayni_insan_check, edge_case_supurme_check, graf JSON sema dogrulama (contract/graf-v1.json), bash KOSU/sinyal.sh tam (DEVIR KABUL zinciri; sinyal.sh'a DOKUNMA, muhurlu), emsal mm olcumu (madde 2). Henuz olculemeyen gecit (ornek: graf'tan cizim yokken flat_ayni_insan) "henuz-yok" durumuyla basilir, kirmizi sayilmaz; ilk yesil oldugu adimdan sonra kirmizi sayilir (state.json'da "ilkYesil" alani).
@@ -150,6 +155,10 @@ ADIM 4.0b — GECIT ALTYAPISI. Kosucu (0509-kosu.js) zaten uyarlandi; senin isin
  4. ${STATE}: {adim, durum, deneme, butce:{commit,saat}, banned:[], devredilen:[], ilkYesil:{}, kabulKomutlari:[]} — ilk hal. ${ILERLEME}: baslik + ilk satir.
  5. FOTOGRAF HATTI SAGLIK (8.7 erken yakalansin): backend/worker.js yerelde kosulabiliyor mu (wrangler dev ya da node ile analyze-core.js dogrudan; anahtar .env.local'da CLAUDE_API_KEY adiyla mi — DEGERINI YAZMA, yalniz var/yok), Turnstile/CORS yerel bypass yolu; 1 fotograf (biba-O1194418-dress.jpg) -> 1 Claude cagrisi -> ham JSON KOSU/onbellek/<sha256(girdi)>.json. Kurulamiyorsa acikSorular'a adiyla: hangi katman (anahtar/CORS/Turnstile/worker), hata mesaji. llmCagri en fazla 2.
  6. KOSU/onbellek/ girdi hash'iyle saklanir, commit edilir (kabul komutlari ve testler oradan okur, ayni girdi yeniden odenmez). .gitignore'a "!KOSU/onbellek/" eklemen gerekiyorsa ekle.
+ 7. OLCEK GECIDI (v2): giysi grafinin gercek36'da degerlenmis mutlak sinir kutusu contract'taki insan araligi disindaysa (elbise boyu 400-1800 mm gibi; sayilar contract/body-v1.json'a kaynakli eklenir, izin listesinde) ERR_SCALE_MISMATCH; topoloji yesil olsa da kirmizi. Bugun graftan cizim yokken "henuz-yok".
+ 8. WASM_SANITY GECIDI (v2): regresyon seti native yaninda bellek limitli Node worker'inda (--max-old-space-size, worker_threads resourceLimits) wasm olarak da kosar; trap, panic, bellek asimi ya da native ile cikti farki kirmizi. Bugun graf wasm binding'i yoksa "henuz-yok".
+ 9. REFERANS KILIDI (v2): bash ${KAPI} --kilit <izin listesi> => contract/, engine/tests/**, engine/golden-reference.csv chmod a-w, izin listesi u+w; bash ${KAPI} --kilit-diff <tag> => git diff --name-only <tag>..HEAD ile bu alanlarda izin disi dokunulan dosyalari basar (bos = temiz). bash ${KAPI} --kisa => tek satir JSON (commit, ana sapma mm, enum, kirmizi) — iscinin her commit sonrasi KOSU/0509-metrik.jsonl'a ekledigi metrik izi. bash ${KAPI} --ivme => son 3 satirdan yerel minimum hukmu (sapma %20 kapanmadi: true/false).
+10. KOSU/0509-devir-notu.md: bos sablon (iki satir basligi). Yarim kalan isci buraya yazar, sonraki isci ilk bunu okur (9.4).
 TESLIM: bash ${KAPI} ciktisi (JSON, tum gecitler listeli) + KOSU/regresyon/cikti/4.0/ taban + saglik raporu KOSU/ciktilar/0509-saglik.md (anahtar var/yok, worker kostu/kosmadi, hata). Degisen satirlarin diff'i raporda (git show --stat).
 KIRILMA: kosucu mekanigi degisikligi gerekiyorsa YAPMA, acikSorular'a yaz; kosu 4.1'e gecmez.
 `}
@@ -157,13 +166,17 @@ KIRILMA: kosucu mekanigi degisikligi gerekiyorsa YAPMA, acikSorular'a yaz; kosu 
 const A41 = {
   no: '4.1', urunSorusu: false, effort: 'high',
   ad: '4.1 Ilk gecis',
-  alan: 'engine/src/grafdegerle.*, engine/src/panelkaynak.*, engine/src/flatsvg.*, engine/src/kalipsvg.*, engine/src/grafciz-cli.cpp (CLI: engine/build/grafciz <graf.json> <bodyId> flat|kalip; engine/build/grafdogrula <graf.json> <bodyId>), engine/wasm/bindings.cpp (yalniz yeni binding), backend/** (yalniz prompt -> graf-v1 ucu), contract/graf-v1.json (yalniz ekleme), KOSU/ciktilar/graf-ilk/, CMakeLists (ekleme)',
+  izin: 'engine/tests/0509-* contract/graf-v1.json engine/CMakeLists.txt',
+  alan: 'engine/src/solver_utils.*, engine/src/grafdogrula.* (yalniz topoloji kurallari ekleme), engine/src/grafdegerle.*, engine/src/panelkaynak.*, engine/src/flatsvg.*, engine/src/kalipsvg.*, engine/src/grafciz-cli.cpp (CLI: engine/build/grafciz <graf.json> <bodyId> flat|kalip; engine/build/grafdogrula <graf.json> <bodyId>), engine/wasm/bindings.cpp (yalniz yeni binding), backend/** (yalniz prompt -> graf-v1 ucu), contract/graf-v1.json (yalniz ekleme), KOSU/ciktilar/graf-ilk/, CMakeLists (ekleme)',
   tarif: `
 ADIM 4.1 — ILK UCTAN UCA GECIS, KOTU DE OLSA. Madde 1, 3, 9.
 Girdi TEK CUMLE: "bel dikisli, kolsuz, yuvarlak yakali, etek ucu genisleyen, arkadan kapanan elbise". Claude cumleyi panel-kenar-dikis tarifine cevirir (contract/graf-v1.json semasi; semaya uymayan cevap kabul edilmez, hata mesaji prompta eklenip en fazla 2 kez yeniden istenir, yine uymuyorsa "okunamadi"); motor grafi gercek36'da degerleyip kalip, croquis36'da degerleyip flat cikarir.
 Once oku (satir araligiyla): engine/src/graf.hpp, grafop.hpp, grafdogrula.hpp; docs/GRAF-IR.md ("F2b kapilari" bolumu bu adimin isidir); engine/src/body.hpp; contract/body-v1.json, flat-convention-v1.json, pattern-sheet-v1.json; bodice.cpp/skirt.cpp/sleeve.cpp FORMUL kaynagi (dallanma degil, iyi hesaplari tasi, enum'u tasima); web/lib/flat-from-pattern.js'teki konvansiyon kurallari C++'a tasinir.
-Yaz:
- 1. panelkaynak.hpp: PanelKaynak { paneller(graf, body) -> 2B paneller } takilabilir arayuz; ilk uygulama Halka2B (grafdegerle.cpp): halka cevreleri + landmark'lardan 2B; pens bel/gogus halka farkindan; kol oyugu ve kol kapagi ayni Seam, esleme yapica. (4.11 Yuzey3B ayni arayuzu doldurur.)
+Kosucu bu adimi iki isciye verir (ALT ADIM satirina bak):
+4.1a SOLVER_UTILS: engine/src/solver_utils.hpp/.cpp — KISIT COZUCU ISKELETI, algoritma DIKTE (matematik icat etme): iteratif yay-kutle gevsetme; hedef oranlar YUMUSAK (yay); dikis cifti uzunluk esitligi ve panel kapalilik SERT (her iterasyonda projeksiyonla zorlanir); MAX_ITER ve sure tavani contract/graf-v1.json'dan (izin listesinde, kaynakli); tavan asilinca yumusak hedefler birakilir, sert kisitlar kalir, hangi hedefin birakildigi doner; cozum yoksa ERR_UNSOLVABLE + en yakin cozum + hangi kisit gevsetilmeli; asla asili kalmaz (sure tavani). Kendi birim testi engine/tests/0509-solver_check.cpp (ucgen/dortgen panel cifti, uzunluk esitligi, kapalilik, tavan davranisi, ERR_UNSOLVABLE). 4.1a bitmeden 4.1b baslamaz.
+4.1b GRAF -> KALIP + FLAT:
+ 1. panelkaynak.hpp: PanelKaynak { paneller(graf, body) -> 2B paneller } takilabilir arayuz; ilk uygulama Halka2B (grafdegerle.cpp): halka cevreleri + landmark'lardan 2B ilk tahmin, sonra solver_utils ile kisitlar cozulur (isci yalniz oranlari ve kisitlari baglar); pens bel/gogus halka farkindan; kol oyugu ve kol kapagi ayni Seam, esleme yapica. (4.11 Yuzey3B ayni arayuzu doldurur.)
+ 1b. grafdogrula'ya TOPOLOJIK MANTIK (12.31): kenar rolu uyumlulugu, dikis cifti benzersizligi, kapanma zorunlulugu, panel komsuluk grafi bagli; ihlal ERR_IMPOSSIBLE_TOPOLOGY + hangi kural + hangi kenar; Claude tarifi buradan gecmeden cizilmez, yeniden istemede hata prompta eklenir. OLCEK: gercek36 sinir kutusu contract araligi disinda ise ERR_SCALE_MISMATCH.
  2. flatsvg: croquis36, katmanli <g id="outline|seams|topstitch|details">, on + arka. kalipsvg: pattern-sheet-v1 stiliyle etiket, grain, notch, kat, kesim/dikis cizgisi. Iki CLI (grafciz, grafdogrula) — KOSU/sinyal.sh kabul_P1 bu CLI adlarini bekler.
  3. PatternPiece koprusu: graf -> DraftedPattern (nest/dxf/pdf/rehber degismeden). wasm binding: grafDraft, flatSVG, kalipSVG; wasm = native (ayni JSON ayni SVG, bayt-ayni).
  4. Contract'taki giysi tipine bagli sabit (rg ile bul: pufKol, garment type anahtarli bandlar) kaldirilir; sabit ya beden/konvansiyon ozelligine baglanir ya da gider.
@@ -176,10 +189,12 @@ KIRILMA: kol oyugu/pervaz eslesmez -> kapanmayan giysi teslim degil; kapanmayan 
 const A42 = {
   no: '4.2', urunSorusu: false, effort: 'high',
   ad: '4.2 Fotograf',
+  izin: 'engine/tests/0509-* contract/vision-graf-v1.json',
   alan: 'web/js/vision-bridge.js, web/js/vision-landmark.js (yeni), web/js/vision-siluet.js (yeni), web/vendor/ (model dosyalari), backend/analyze-core.js, backend/worker.js (analyze ucu), contract/vision-graf-v1.json (yeni; graf-v1 + guven puani + celiski tablosu), engine/tests/0509-foto_*.mjs (yeni), KOSU/onbellek/, KOSU/ciktilar/giris/, KOSU/ciktilar/_yerel/giris/',
   tarif: `
 ADIM 4.2 — FOTOGRAF DA OKUNSUN. Madde 1, 8, 11. 4.1'deki cumlenin fotograf hali: Claude fotografa bakar, AYNI semada (graf-v1) tarif yazar: isim degil geometri (paneller, kenarlar landmark + oran, seam ratio, buzgu araligi, kapanma yeri, katman, simetri); bilinen isim yalniz kisaltma, cozumu op demeti. Guven puani kalem basina. 37 eksenli spec ciktisi bu adimda YENI KOD ALMAZ (4.5'te kalkar).
-Uc kaynak: (a) tarayicida poz landmark'i (MediaPipe Tasks Vision pose landmarker ya da esdegeri; sec, gerekce docs'a; model self-host web/vendor; headless Chrome'da da yuklenmeli); (b) giysi silueti -> oranlar (etek boyu, kol boyu, genislik; landmark'a gore ORAN, sayi degil); (c) Claude semantigi. Claude NE oldugunu soyler, olcum NE KADAR oldugunu; celiskide OLCUM kazanir, celiski tabloya (onizleme 4.4'te gosterir).
+Uc kaynak: (a) tarayicida poz landmark'i (MediaPipe Tasks Vision pose landmarker ya da esdegeri; sec, gerekce docs'a; model self-host web/vendor; headless Chrome'da da yuklenmeli); (b) giysi silueti -> oranlar (etek boyu, kol boyu, genislik; landmark'a gore ORAN, sayi degil); (c) Claude semantigi. Claude NE oldugunu soyler, olcum NE KADAR oldugunu; celiskide OLCUM kazanir, celiski tabloya (onizleme 4.4'te gosterir). Oranlar grafa DOGRUDAN YAZILMAZ: 4.1 kisit cozucusune hedef olarak girer; etek ucu orani bel dikisini koparamaz, cozucu dikis esitligini koruyarak en yakin orani bulur, sapma onizlemeye.
+GUVENLI TABAN (8.8): tarif semaya uyuyor ama ERR_IMPOSSIBLE_TOPOLOGY iki yeniden istemede de kalkmiyorsa ret DEGIL: 4.1'in en sade dikilebilir giysi GRAFI yuklenir, siluet oranlari cozucuye hedef, onizlemede acikca "fotografin tam okunamadi, sade bir tabandan basladim, yaziyla duzelt"; ERR_FALLBACK_BASE, test guvenli-taban.
 Arka: ikinci fotograf alani; yoksa en sade dikilebilir arka (duz, orta arka kapanma) + gorunur ilan + neden (arka_koken_check yesil).
 Hat YERELDE kosar (4.0b saglik raporunu oku: KOSU/ciktilar/0509-saglik.md). Her fotograf okumasi KOSU/onbellek/<sha256>.json; ayni girdi yeniden odenmez. llmCagri raporla; bu adimda en fazla 8 onbellek disi cagri.
 Sema disi cevap: 8.8 — en fazla 2 yeniden isteme, sonra "okunamadi" + edge case tablosuna satir.
@@ -191,6 +206,7 @@ KIRILMA: hat kurulamaz -> acikSorular + her teslim png'nin kapaginda "FOTOGRAF H
 const A43 = {
   no: '4.3', urunSorusu: false, effort: 'high',
   ad: '4.3 Cizim',
+  izin: 'contract/flat-convention-v1.json contract/pattern-sheet-v1.json contract/body-v1.json engine/tests/0509-*',
   alan: 'engine/src/flatsvg.*, engine/src/kalipsvg.*, engine/src/grafdegerle.* (yalniz cizim kalitesi), contract/flat-convention-v1.json ve contract/pattern-sheet-v1.json (yalniz ekleme, kaynakli), engine/tests/0509-emsal-olcum.mjs (SALT OKUNUR; degismesi gerekiyorsa acikSorular), KOSU/ciktilar/cizim/',
   tarif: `
 ADIM 4.3 — CIZIM GUZELLESSIN. Madde 4, 5, 11, 14.
@@ -205,11 +221,12 @@ TESLIM: cizim/tur-<son>.png, cizim/kalip-36.png, cizim/seri.png, cizim/mm-tablos
 const A44 = {
   no: '4.4', urunSorusu: false, effort: 'high',
   ad: '4.4 Duzeltme',
+  izin: 'contract/edit-v1.json contract/hata-v1.json engine/tests/0509-*',
   alan: 'engine/src/editparse.* (yeni; dogal dil -> op, TR+EN), backend/** (yalniz edit LLM ucu), contract/edit-v1.json (yeni), contract/hata-v1.json (yeni, 12.0 semasi), web/js/create.js, web/create.html (onizleme + duzeltme kutusu + gecmis + geri al), web/js/i18n.js (yalniz ekleme), engine/tests/0509-edit_*.mjs (yeni), KOSU/ciktilar/edit/',
   tarif: `
 ADIM 4.4 — DUZELTME. Madde 2. Kullanici yazar; Claude ya da deterministik parcalayici yaziyi op'a cevirir (once deterministik editparse C++; yetmezse backend LLM, cikti YINE op JSON contract/edit-v1.json); op grafa uygulanir; iki cikti yenilenir; BOLGE DISI PANELLER BAYT-AYNI (edit_locality_check); edit gecmisi op listesi olarak saklanir (geri al = son op'u dusur; gardirop hazirligi: ayni liste ayni cikti).
 8 edit, once/sonra: "etek 8 cm uzasin", "etek ucuna firfir", "yaka V olsun", "kol kisalsin" (4.1 elbisesi kolsuz: bu edit icin once "kol ekle" op'u; ikisi de gecmiste gorunur), "bele fiyonk", "yan cep", "kol basina buzgu", "yaka 2 cm derinlessin".
-Belirsiz niteleyici (12.30): "biraz/cok" contract'ta sabit kategorik eslemedir (az/orta/cok -> oran); Claude serbest sayi uretmez; eslenemeyen ERR_FUZZY_MODIFIER + "kac cm?".
+Belirsiz niteleyici (12.30): "biraz/cok" contract'ta sabit kategorik eslemedir (az/orta/cok -> oran); Claude serbest sayi uretmez, kategori secer; her kategorinin CIPASI C++ parcalayicida sabittir: uzat/kisalt = ilgili panelin Y sinir kutusunun yuzdesi, daralt/genislet = ilgili kenar uzunlugunun yuzdesi, derinlestir = yaka kenarinin panel boyuna orani; hangi panel oldugu op'ta acik yazilir, Claude cipa secmez; eslenemeyen ERR_FUZZY_MODIFIER + "kac cm?".
 Hata sozlesmesi (12.0): contract/hata-v1.json tek sema — kod (tipli enum C++'ta: ERR_UNKNOWN_EDIT, ERR_EDIT_CONFLICT, ERR_DEGENERATE_GEOMETRY, ERR_FUZZY_MODIFIER, ERR_SCHEMA, ERR_LLM ... 12.0 listesi), kullanici cumlesi TR + EN, yapilabilir adim, guveni dusuk kalemler. Bilinmeyen edit ("kanat ekle") -> adiyla ret + en yakin yapilabilir op; geometri cokerse (yaka derinligi panel boyunu asiyor) ERR_DEGENERATE_GEOMETRY + hangi kenar hangi siniri asti + en yakin deger; onaysiz uygulanmaz.
 ONIZLEME EKRANI (create.html): motorun okudugu tarif DUZ CUMLELERLE ("kolsuz, yuvarlak yaka, bel dikisi, genisleyen etek, arka fermuar (uyduruldu)"), flat, duzeltme kutusu, guveni dusuk kalemler isaretli, fotografla celiski (4.2 tablosu) gosterilir, ikinci (arka) fotograf alani. Iki dilde.
 TESLIM: KOSU/ciktilar/edit/kontak.png (8 edit once/sonra, kalip + flat) + edit/ekran-{okudu,duzelttim,yenilendi}.png (yerel sunucu + headless Chrome) + edit/ret-3.png (3 bilinmeyen/dejenere edit: ret ekrani).
@@ -219,12 +236,16 @@ KABUL: edit_locality_check tum 8 edit'te bayt-ayni bolge disi; 0509-edit_check: 
 const A45 = {
   no: '4.5', urunSorusu: false, effort: 'high',
   ad: '4.5 Her giysi',
-  alan: 'engine/src/** (graf*, grafop*, grafdogrula*, grafdegerle*, panelkaynak*, flatsvg*, kalipsvg*, editparse* dahil), engine/wasm/**, engine/tests/** (YALNIZ ekleme; mevcut test silme/degistirme ayri alt adim, hakem satir satir okur), web/js/prompt-parse.js, web/js/engine.js, web/lib/flat-from-pattern.js, web/lib/flat-geom.js, backend/analyze-core.js, KOSU/uret.mjs, KOSU/ciktilar/{her-giysi/, edge-case-tablosu.md, silinenler.md}, CMakeLists',
+  izin: 'engine/tests/0509-* engine/CMakeLists.txt contract/hata-v1.json contract/vocab-resolution-v1.json',
+  izinAlt: { '4.5e SILME + PIN': 'engine/tests/** engine/CMakeLists.txt engine/golden-reference.csv' },
+  alan: 'engine/src/** (graf*, grafop*, grafdogrula*, grafdegerle*, panelkaynak*, flatsvg*, kalipsvg*, editparse* dahil), engine/wasm/**, engine/tests/** (YALNIZ ekleme; silme yalniz 4.5e), web/js/prompt-parse.js, web/js/engine.js, web/lib/flat-from-pattern.js, web/lib/flat-geom.js, backend/analyze-core.js, KOSU/uret.mjs, KOSU/ciktilar/{her-giysi/, edge-case-tablosu.md, silinenler.md}, CMakeLists',
   tarif: `
-ADIM 4.5 — HER GIYSI, TEK HAT. Madde 7, 9, 13, 14. Buyuk adim; kosucu bunu 4.5a/4.5b/4.5c olarak uc isciye verir (9.7), sen hangisi oldugunu brief'in basindaki ALT ADIM satirindan bilirsin; yalniz onu yap.
-4.5a TEK HAT: garment.cpp switch'leri ve enum'a bakan post-pass'ler kalkar; draft = (giris) -> graf -> dogrula -> degerle -> PatternPiece; flat = flatsvg. bash engine/tests/enum_dallanma_check.sh --measure => cpp.dallanma 0 (taban 436 yalniz duser; 0 olmadan alt adim bitmez). prompt-parse'in 37 ekseni ve vision'in spec ciktisi kalkar: ikisi de dogrudan graf-v1 tarifi (4.1/4.2'nin uclari sevk yolu olur). Golden pinler (golden_check, recipe_golden_*) KIZARIR, beklenen; DOKUNMA (4.5c). Baska yeni kirmizi ad yok.
-4.5b KOL KAPISI + EDGE CASE: kol oyugu ve kol kapagi ayni seam, kapanma tolerans icinde (contract); gecmeyen kompozisyon "absent" adiyla + eksik op listesi (KOSU/ciktilar/her-giysi/eksik-op.md), sessiz atlama yok. K2 prenses+roba, K5 kup korse dahil 9 kompozisyon graf ile. Edge case'ler adiyla (12.1-12.30; edge_case_supurme_check her satir icin girdi verir, donenin hata-v1 semasina uydugunu ve dogru kodu tasidigini test eder; yakalanmayan istisna = kirmizi): bulanik, giysi degil, coklu, kismi, celiskili prompt, uc beden, strec asimi, dar en, prompt-kisa, sozluk-disi, prompt-olcu, iki giysi, manken, desenli, katmanli, poz, aksesuar.
-4.5c SILME + PIN (hakem 4.5a/b'yi gectikten sonra, ayri commit'ler): eski blok dosyalari (engine/src'de enum dallanmali 40+ .cpp/.hpp: collar, peplum, keyhole, ...), web/lib/flat-from-pattern.js + flat-geom.js, recipe hatti sevk yolunda degilse, her biri rg kanitli ("hicbir yerden cagrilmiyor": bindings, tests, tools, web); cagrilan tek yer varsa SILME, "kaldi: cunku". CMakeLists'ten olu testler. KOSU/ciktilar/silinenler.md (dosya, satir, wasm boyutu once/sonra). Sonra golden yeniden pin: once fark raporu (KOSU/ciktilar/golden-fark.md: hangi olcu kac mm neden), scripts/repin-golden.sh, tek commit, gerekce mesajda; aciklanamayan fark varsa DUR, acikSorular.
+ADIM 4.5 — HER GIYSI, TEK HAT. Madde 7, 9, 13, 14. Tek isciye sigmaz; kosucu 4.5a-e alt adimlarini ayri iscilere verir, her biri kendi butcesiyle (2.5), eski enum hatti YANINDA dururken; brief'in basindaki ALT ADIM satirina bak, yalniz onu yap. Parite eski enum ciktisina degil GECITLERE (madde 14).
+4.5a GRAFDERLE KOPRUSU: engine/src/grafderle.hpp/.cpp — GarmentSpec -> op dizisi -> graf (contract/vocab-resolution-v1.json tarif ediyorsa oradan). Ilk 3 kompozisyon (01, 03, 07) graftan gecitlerden gecer (grafdogrula, sanal dikis, olcek, flat_ayni_insan). Enum hattina dokunma.
+4.5b KALAN KOMPOZISYONLAR + KOL KAPISI: 9 kompozisyonun kalani + prompt-01..03 graftan, her biri gecitten. Kol kapisi (Temmuz G5): kol oyugu ve kol kapagi ayni seam, kapanma contract toleransinda; gecmeyen kompozisyon "absent" adiyla + eksik op (KOSU/ciktilar/her-giysi/eksik-op.md), sessiz atlama yok. K2 prenses+roba, K5 kup korse dahil.
+4.5c GIRISLER DOGRUDAN GRAF: backend/analyze-core.js (vision) ve web/js/prompt-parse.js dogrudan graf-v1 tarifi uretir; 37 eksenli spec ciktisi ve enum alanlari gider; spec katmani yalniz gecis. Edge case'ler adiyla (12.1-12.31; edge_case_supurme_check her satir icin girdi verir, donenin contract/hata-v1.json semasina uydugunu ve dogru kodu tasidigini test eder; yakalanmayan istisna = kirmizi): bulanik, giysi degil, coklu, kismi, celiskili prompt, uc beden, strec asimi, dar en, prompt-kisa, sozluk-disi, prompt-olcu, iki giysi, manken, desenli, katmanli, poz, aksesuar, guvenli-taban, topoloji.
+4.5d TEK HAT: 4.5a-c yesilse garment.cpp switch'leri ve enum'a bakan post-pass'ler TEK commit'te kalkar; draft = giris -> graf -> dogrula -> degerle -> PatternPiece; flat = flatsvg. bash engine/tests/enum_dallanma_check.sh --measure => cpp.dallanma 0. Golden pinler (golden_check, recipe_golden_*) KIZARIR, beklenen; DOKUNMA. Baska yeni kirmizi ad yok.
+4.5e SILME + PIN (hakem 4.5d'yi gectikten sonra, ayri commit'ler): eski blok dosyalari (engine/src'de enum dallanmali 40+ .cpp/.hpp), web/lib/flat-from-pattern.js + flat-geom.js, recipe hatti sevk yolunda degilse; her biri rg kanitli ("hicbir yerden cagrilmiyor": bindings, tests, tools, web); cagrilan tek yer varsa SILME, "kaldi: cunku". CMakeLists'ten olu testler (bu alt adimda engine/tests silme IZINLI, hakem diff'i satir satir okur). KOSU/ciktilar/silinenler.md (dosya, satir, wasm boyutu once/sonra). Sonra golden yeniden pin: once fark raporu (KOSU/ciktilar/golden-fark.md), scripts/repin-golden.sh, tek commit, gerekce mesajda; aciklanamayan fark varsa DUR, acikSorular.
 TESLIM: KOSU/ciktilar/her-giysi/kontak.png = 10 fotograf (2 on+arka) + 10 prompt (4 sozluk disi: "bel hizasinda fiyonklu tek omuz asimetrik elbise", "kimono kollu wrap", "korse ustlu balon etek", "keyhole yakali dropped waist") -> flat + kalip; bel/gogus/kalca cizgisi hepsinde ayni yerden (flat_ayni_insan_check); edge-case-tablosu.md guncel (her 12.x satiri: girdi, kod, cumle TR/EN); silinenler.md.
 KIRILMA: cizilemeyen kompozisyon -> adiyla "absent" + eksik op; devredilen kusur (8.11), engel degil.
 `}
@@ -232,6 +253,7 @@ KIRILMA: cizilemeyen kompozisyon -> adiyla "absent" + eksik op; devredilen kusur
 const A46 = {
   no: '4.6', urunSorusu: false, effort: 'high',
   ad: '4.6 Kumas',
+  izin: 'contract/fabric-catalog-v1.json contract/terzilik-v1.json engine/tests/0509-*',
   alan: 'contract/fabric-catalog-v1.json (ekleme, kaynakli), contract/terzilik-v1.json (yeni), engine/src/bolluk.*, engine/src/pervaz.*, engine/src/enbolme.*, engine/src/malzeme.*, engine/src/rehber.hpp, engine/src/fabricease.hpp, engine/pattern-bridge/{cutplan,seamrules,instructions}.py, web/js/guide-tr.js, engine/tests/0509-kumas_*.mjs (yeni), KOSU/ciktilar/kumas-farki/',
   tarif: `
 ADIM 4.6 — KUMAS VE REHBER. Madde 6, 7, 10. "Ayni elbise, iki kumas, iki kalip."
@@ -244,6 +266,7 @@ KABUL: kumas_kalip_check + 0509-kumas_check (3 kalip ikiser ikiser farkli, flat.
 const A47 = {
   no: '4.7', urunSorusu: false, effort: 'high',
   ad: '4.7 Bugra',
+  izin: 'engine/tests/0509-*',
   alan: 'KOSU/ciktilar/bugra/ (graf JSON + rapor.md), KOSU/ciktilar/_yerel/bugra/ (bindirme png, telifli), engine/tools/bugra-blind-compare.mjs (varsa oku; yoksa yaz), engine/src/grafop.* (YALNIZ yeni op ekleme; eksik op yol haritasina), engine/tests/0509-bugra_check.mjs (yeni)',
   tarif: `
 ADIM 4.7 — BUGRA. Madde 12 (referans, ayar hedefi degil; Bugra'ya sabit = reward hacking, K13).
@@ -285,6 +308,7 @@ KABUL: tam ctest ilanli 4 disinda 0 kirmizi; canli curl 200 + wasm damgasi HEAD 
 const A411 = {
   no: '4.11', urunSorusu: false, effort: 'high',
   ad: '4.11 Yuzey3B',
+  izin: 'engine/tests/0509-yuzey* contract/yuzey-v1.json engine/CMakeLists.txt',
   alan: 'engine/yuzey/** (yeni), engine/tests/0509-yuzey_*.cpp (yeni), contract/yuzey-v1.json (yeni), docs/YUZEY.md, KOSU/ciktilar/yuzey/; gecerse: contract kaynak secimi, wasm, KOSU/ciktilar yeniden uretim',
   tarif: `
 ADIM 4.11 — TAVAN DENEMESI, URUN CANLIYKEN. Madde 8. Yuzey3B ikinci PanelKaynak; kendi klasoru; MIMARI DEGISMEZ (graf ayni, arayuz ayni).
@@ -337,13 +361,14 @@ async function el(gorev, adim, ek) {
   const stateOzet = JSON.stringify({ adim: adim ? adim.no : null, kabulKomutlari: gecmisKabuller, devredilen: devredilenKusurlar.slice(-20), banned, kararDefteri: kararDefteri.slice(-10) }, null, 0)
   const gorevler = {
     basla: `ADIM BASLANGICI ${adim.ad} (11.5):
- 1. git tag adim-${adim.no}-once (varsa: adim-${adim.no}-once-<sayac>); push --tags.
+ 1. git tag adim-${adim.no}-once (varsa: adim-${adim.no}-once-<sayac>); push --tags. REFERANS KILIDI: bash ${KAPI} --kilit ${JSON.stringify(ek && ek.izin || '')} (yoksa: chmod -R a-w contract engine/tests engine/golden-reference.csv 2>/dev/null; izin listesindekilere chmod u+w). Faz yolu ${STATE}.yol dizisine eklenir (11.7 makro-ABA).
  2. bash ${KAPI} (yoksa "yok"); onceki adimlarin kabul komutlarini SIRAYLA kos: ${gecmisKabuller.length ? gecmisKabuller.map((k, i) => `(${i + 1}) ${k}`).join(' ; ') : '(yok)'}; sapma metrikleri: bash engine/tests/enum_dallanma_check.sh --measure (cpp.dallanma; taban ${STATE} icindeki taban, yuksekse kirmizi), bash ${KAPI} --regresyon (fark listesi).
  3. ${STATE} guncelle: adim=${adim.no}, durum=ISCI, deneme=${ek && ek.deneme || 1}, butce sifirla, tag adi; ilerleme satiri ${ILERLEME}'ye: tarih-saat (date), adim, BASLADI.
  4. Commit + push. gecitYesil = (2)'de hicbir sey kirmizi degilse.`,
-    olc: `BUTCE OLCUMU ${adim.ad} (8.25): commitSayisi = git rev-list --count adim-${adim.no}-once..HEAD; saat = (date +%s - git log -1 --format=%ct adim-${adim.no}-once)/3600. Ayrica bash ${KAPI} kos (gecitYesil), bash ${KAPI} --regresyon (regresyonFarki), git log --since=<tag> --name-only -- engine/tests ${KAPI} contract | uniq (degisen gecit dosyasi varsa kirmizilar'a "GECIT DOKUNULDU: <dosya>"). ${STATE} butce alanini yaz. Commit + push.`,
+    olc: `BUTCE OLCUMU ${adim.ad} (8.25): commitSayisi = git rev-list --count adim-${adim.no}-once..HEAD; saat = (date +%s - git log -1 --format=%ct adim-${adim.no}-once)/3600. Ayrica bash ${KAPI} kos (gecitYesil), bash ${KAPI} --regresyon (regresyonFarki). KILIT: bash ${KAPI} --kilit-diff adim-${adim.no}-once (yoksa: git diff --name-only adim-${adim.no}-once..HEAD -- contract engine/tests engine/golden-reference.csv), izin listesi ${JSON.stringify(ek && ek.izin || '')} disindakiler kilitIhlali'na. IVME (8.4): bash ${KAPI} --ivme (yoksa: KOSU/0509-metrik.jsonl son 3 satir; ana sapma 3 commit'te %20 kapanmadiysa yerelMinimum=true), metrikSerisi'ne sayilar. ${STATE} butce alanini yaz. Commit + push.`,
     kapat: `ADIM KAPANISI ${adim.ad} (11.2): bash ${KAPI} + tum kabul komutlari + --regresyon son kez; ${STATE}: durum=GECTI, kabulKomutlari += ${JSON.stringify(ek && ek.kabulKomutu || '')}, devredilen, ilkYesil guncelle; ${ILERLEME} satiri: tarih-saat, adim, GECTI, commit sayisi, saat, hakem tek cumle: ${JSON.stringify((ek && ek.hukum) || '')}; ${DOC} §5 defterini guncelle: 5.1 kapanan maddeler += ${JSON.stringify((ek && ek.kapananMaddeler) || [])}, 5.2 acik, 5.3 acik sorular, 5.4 devredilen, 5.5 karar degisiklikleri (kararDefteri). git tag adim-${adim.no}-gecti. Commit + push.`,
     durdu: `KOSU DURDU (8.29): ${DURDU} yaz: hangi adim (${adim.ad}), hangi kusur, hangi katman, ne denendi (banned + hakem hukmu asagida), ne denenmedi, resume komutu: Workflow scriptPath=KOSU/0509-kosu.js args={"baslat":"${adim.no}"} (isci "kaldigin yerden, git log'a bak" ile baslar). Soru icermez. ${STATE}: durum=DURDU; ${ILERLEME} satiri. ${DOC} §5 guncelle. Commit + push.\n# SEBEP\n${ek && ek.sebep || ''}`,
+    geriAl: `KILIT IHLALI GERI ALINIYOR (v2 referans kilidi): ${adim.ad} iscisi izin disi dosyalara dokundu: ${JSON.stringify(ek && ek.dosyalar || [])}. Her biri icin git checkout adim-${adim.no}-once -- <dosya>; commit "revert reference-lock violation in ${adim.no}: <dosyalar>"; push. ${STATE} banned += "izin disi dokunus: <dosyalar>". Baska hicbir seye dokunma.`,
     provaBekle: `4.8 ONCESI DAMLA HUKMU (8.13, 10.6): kosu 4.8'e geldi, Damla'nin "satarim/satmam" hukmu bekleniyor. ${DURDU} yaz (baslik "4.8 PROVA HUKMU BEKLIYOR"): 4.7'ye kadar ne var (${ILERLEME}'den), Damla'nin bakacagi png'ler (KOSU/ciktilar/cizim/, her-giysi/kontak.png, kumas-farki/, bugra/rapor.md), resume: "satarim" ise Workflow args={"baslat":"4.8","satarim":true}; "satmam" ise cumlesi ${DOC} §5.5'e yazilir ve kosu 4.3'ten yeniden acilir. Soru cumlesi yok, iki komut var. ${STATE} durum=PROVA-BEKLIYOR. Commit + push.`,
     yenidenAcGecit: `YENIDEN AC (11.7): ${adim.ad} yeniden acildi ve onarildi. Aradaki adimlarin gecitlerini sirayla yeniden kos: ${ek && ek.aradakiler || ''} — her biri icin o adimin kabul komutu + bash ${KAPI}; kizaran adim adini kirmizilar'a yaz. ${ILERLEME} satiri. Commit + push.`,
     bitti: `KOSU BITTI (8.23-8.24): ${DOC} §0 devir promptu ve §5 defter guncel; ${ILERLEME} son satir; ${STATE} durum=BITTI. Damla'ya tek mesaj metni KOSU/ciktilar/kosu-yol-a.md icinde: ne degisti, kapi tablosu (bash ${KAPI}), acik kalanlar, silinenler. Commit + push.\n# OZET\n${ek && ek.ozet || ''}`,
@@ -379,15 +404,29 @@ async function fazKos(faz, ekNot, altAdim) {
     if (isci.yarim || isci.makine) {   // 0509 (9.4, 8.17): yarim/makine -> ayni adim resume, deneme sayilmaz (tavan 4)
       yarim++; gunluk.push(`${faz.ad}: isci yarim/makine (${yarim}/4): ${isci.ozet.slice(0, 160)}`)
       if (yarim >= 4) return { gecti: false, isci, hukum: { neden: 'dort kez yarim kaldi; adim cok buyuk ya da makine', kusurlar: [], rewardHacking: [] } }
-      hakemNotu = `RESUME: onceki isci yarim birakti (commit'li). Kaldigi yer: ${isci.ozet}\nAtlananlar: ${(isci.atlananlar || []).join('; ')}`
+      hakemNotu = `RESUME: onceki isci yarim birakti (commit'li). ILK IS: KOSU/0509-devir-notu.md oku (9.4). Kaldigi yer: ${isci.ozet}\nAtlananlar: ${(isci.atlananlar || []).join('; ')}`
       deneme--; continue
     }
-    const olcum = await el('olc', faz)   // 0509 (8.25): butce olcumu isci bittikten sonra (kosucu ajani kesemez; isci kendini keser, 7. kural)
+    const izin = (faz.izinAlt && altAdim && faz.izinAlt[altAdim]) || faz.izin || ''
+    const olcum = await el('olc', faz, { izin })   // 0509 (8.25): butce olcumu isci bittikten sonra (kosucu ajani kesemez; isci kendini keser, 7. kural)
     if (olcum && (olcum.commitSayisi > BUTCE_COMMIT || olcum.saat > BUTCE_SAAT)) {
       gunluk.push(`${faz.ad}: BUTCE ASILDI (${olcum.commitSayisi} commit / ${olcum.saat} saat)`)
       return { gecti: false, isci, hukum: { neden: `BUTCE ASILDI: ${olcum.commitSayisi} commit, ${olcum.saat} saat (8.5: protokol hatasi sinyali)`, kusurlar: [], rewardHacking: [] }, butce: true }
     }
-    if (olcum && olcum.kirmizilar.some(k => /GECIT DOKUNULDU/.test(k))) hakemNotu += `\nEL OLCUMU: ${olcum.kirmizilar.join('; ')}`
+    if (olcum && olcum.kilitIhlali && olcum.kilitIhlali.length) {   // v2 referans kilidi: isci kesilir, diff geri alinir, deneme duser
+      await el('geriAl', faz, { dosyalar: olcum.kilitIhlali })
+      banned[faz.no] = banned[faz.no] || []; banned[faz.no].push(`izin disi dokunus -> referans kilidi -> ${olcum.kilitIhlali.join(', ')}`)
+      hakemNotu = `REWARD_HACKING (referans kilidi): onceki isci izin listesi disinda su dosyalara dokundu, geri alindi: ${olcum.kilitIhlali.join(', ')}. Bu dosyalara DOKUNMA; gereken degisiklik varsa acikSorular'a yaz.`
+      gunluk.push(`${faz.ad}: kilit ihlali, deneme ${deneme + 1} dustu: ${olcum.kilitIhlali.join(', ')}`); continue
+    }
+    if (olcum && olcum.yerelMinimum) {   // v2 8.4: ivme yok -> BANNED + karar ajani 'kokten degistir'
+      banned[faz.no] = banned[faz.no] || []; banned[faz.no].push(`${(isci.ozet || '').slice(0, 60)} -> ivme (8.4) -> sapma 3 commit'te %20 kapanmadi: ${olcum.metrikSerisi}`)
+      const kk = await agent(KARAR_ORTAK + `\n# DURUM (8.4 yerel minimum)\n${faz.ad}: son 3 commit'te ana sapma %20 kapanmadi (${olcum.metrikSerisi}). Isci ozeti: ${isci.ozet}\n# SORU\nYaklasimi KOKTEN degistiren tek bir karar ver (hangi katman, hangi yontem, neden); ayni yolu incelterek devam etme secenegi YOK.`, { label: `${faz.ad} karar-ivme`, phase: faz.ad, schema: KARAR_SEMA, effort: 'high' })
+      kararNotu = kk && kk.kararlar[0] ? `- (8.4 yerel minimum) ${kk.kararlar[0].karar}\n  GEREKCE: ${kk.kararlar[0].gerekce}` : kararNotu
+      if (kk) kararDefteri.push(...kk.kararlar.map(k => `[${faz.no}] 8.4 -> ${k.karar} (${k.gerekce})`))
+      hakemNotu = `YEREL MINIMUM (8.4): onceki yaklasim kesildi (${olcum.metrikSerisi}). Karar ajaninin kokten-degistir karari yukarida; onu uygula.`
+      gunluk.push(`${faz.ad}: yerel minimum, deneme ${deneme + 1} kesildi`); continue
+    }
 
     if (isci.acikSorular && isci.acikSorular.length) {
       const karar = await agent(
@@ -459,7 +498,7 @@ async function fazVeyaDur(faz, ekNot, altAdim) {
 
 // ============================================================ AKIS (SIRALI) ============================================================
 const SIRA = [A40, A41, A42, A43, A44, A45, A46, A47, A48, A49]
-const ALT = { '4.5': ['4.5a TEK HAT', '4.5b KOL KAPISI + EDGE CASE', '4.5c SILME + PIN'], '4.8': ['4.8a PAKET-03', '4.8b TARAYICI + TEMIZLIK'] }   // 9.7
+const ALT = { '4.1': ['4.1a SOLVER_UTILS', '4.1b GRAF -> KALIP + FLAT'], '4.5': ['4.5a GRAFDERLE KOPRUSU', '4.5b KALAN KOMPOZISYONLAR + KOL KAPISI', '4.5c GIRISLER DOGRUDAN GRAF', '4.5d TEK HAT', '4.5e SILME + PIN'], '4.8': ['4.8a PAKET-03', '4.8b TARAYICI + TEMIZLIK'] }   // 9.7, v2
 const sonuclar = []
 const kaydet = (ad, r) => sonuclar.push({ faz: ad, gecti: !!(r && r.gecti), devamKarari: !!(r && r.devamKarari), hukum: r && r.hukum && r.hukum.neden })
 const ilerle = r => r && (r.gecti || r.devamKarari)
@@ -488,7 +527,7 @@ for (let i = 0; i < SIRA.length; i++) {
   if (atla) { if (faz.no === BASLAT || faz.ad.startsWith(BASLAT)) atla = false; else { gunluk.push(`${faz.ad}: onceki kosuda gecti (commit'li), atlandi`); continue } }
   if (faz === A48 && !SATARIM) { await el('provaBekle', faz); gunluk.push('4.8: Damla hukmu bekleniyor (args.satarim yok)'); durdu = true; break }
   phase(faz.ad)
-  const bas = await el('basla', faz)
+  const bas = await el('basla', faz, { izin: faz.izin || '' })
   let ekNot = [oncekiNot ? `Onceki adimin hakem notu: ${oncekiNot}` : ''].filter(Boolean).join('\n')
   if (bas && !bas.gecitYesil) ekNot = `ONCE ONAR (7.5): adim baslamadan onceki kabul komutlari/gecitler KIRMIZI: ${bas.kirmizilar.join('; ')}. Bunlari kok sebepten onar (bu onarim bu adimin butcesinden duser), sonra adimin isine gec.\n` + ekNot
   const r = await adimKos(faz, ekNot)
