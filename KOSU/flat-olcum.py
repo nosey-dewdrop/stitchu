@@ -137,45 +137,47 @@ oyukFizikDisi = []   # (ad, oran) medyan disi kalanlar
 #   pens:    (x0,x1,y0,y1) CF'ye en yakin murekkep (cf verilir)
 #   omuzUcu: (x,y) goz tohumu, snap
 #   kolUcu:  (x0,x1,y0,y1) kol agzi penceresi, PCA orta noktasi
-#   kolTipi: 'setin' | 'puf' | 'bishop' | 'kap' | 'kimono' | 'yok'
+#   kolTipi: F1 karar ajani 3b (tur 10 uygulama): BOLUM 2'de ELLE kolTipi YOK; kollu flatlerin kolTipi'si CFG3.etiket x CFG3.boy'dan
+#            kolTipiEtiketten ile turetilir (f1Kapanis == f1Tur5, defterde tek etiket). Yalniz CFG3'te olmayan kolsuz/kap kayitlar (13 'yok',
+#            15 'kap') kolTipi'ni burada tasir, kolTipiKaynak='tarihce'. Tur 9 elle etiketleri (02 robe setin, 07 Celia setin) git 918c103a'da.
 CFG2 = {
   '01-kaftan-maxi-uzun-kol.png': dict(olculemez='kaftan: omuz dikisi, kol oyugu ve dogal bel cizimde yok (govde hatti gorunmez)'),
   '02-uzun-robe-dress.png': dict(
-    urun='Folkwear robe (tarama, 1036 px)', esik=160, cf=246, snap=8, kolTipi='setin',
+    urun='Folkwear robe (tarama, 1036 px)', esik=160, cf=246, snap=8,
     snpTohum=(203, 168), omuzUcu=(145, 180), oyuk=dict(tip='tohum', xy=(169, 323)),
     bel=dict(x=(100, 400), bant=(360, 400)), kolUcu=(100, 156, 410, 452),
     not_='tarama kalitesi dusuk: SNP ve oyuk tohumla (snap); sal yaka SNP penceresini bozar. Kol oyugu 1940 robe: dusuk oyuk'),
   '03-empire-dress-uc-boy.png': dict(
-    urun='Folkwear empire (Simple Version Front, ~200 px figur)', esik=160, cf=157, snap=6, kolTipi='puf',
+    urun='Folkwear empire (Simple Version Front, ~200 px figur)', esik=160, cf=157, snap=6,
     omuzUcu=(98, 328), kolUcu=(22, 60, 340, 385),
     olculemezTorso='empire kesim: dogal bel cizimde yok; kare yaka: SNP yok; oyuk puf altinda',
     not_='yalniz kol acisi (kisa PUF kol: kol yana acilir, sarkan kol degil — medyanda ayri etiketle)'),
   '04-a-line-puff-kol.png': dict(
-    urun="Helen's Closet Holmes, view A", esik=160, cf=350, snap=6, kolTipi='setin',
+    urun="Helen's Closet Holmes, view A", esik=160, cf=350, snap=6,
     snp=(290, 312, 55, 85), omuzUcu=(249, 89),
     oyukOlculemez='kol ic kenari govde yan dikisiyle CAKISIK (tek cizgi x~271, y 175-232), kol agzi ic kosesi govdeye deger: oyuk tabani kosesi cizimde yok; zoom ile bakildi (2026-09-05)',
     bel=dict(x=(190, 510), bant=(232, 262)), pens=(270, 296, 174, 196), kolUcu=(195, 266, 195, 235),
     not_='kisa set-in kol, V yaka, buzgulu bel; pens: gogus altindan yana pens, ucu apex vekili'),
   '05-a-line-top-ve-elbise.png': dict(
-    urun="Helen's Closet March, view A (gri croquis ustunde)", esik=100, cf=304, snap=6, kolTipi='bishop',
+    urun="Helen's Closet March, view A (gri croquis ustunde)", esik=100, cf=304, snap=6,
     snp=(232, 252, 245, 272), omuzUcu=(167, 277), oyuk=dict(tip='bosluk', x=(180, 206), y=(350, 400)),
     kolUcu=(100, 165, 590, 636),
     olculemezTorso='empire/yoke kesim: dogal bel cizimde yok',
     not_='esik 100: arkadaki croquis govde acik gri, murekkep koyu; uzun bishop kol manset'),
   '06-a-line-puff-kol-varyant.png': dict(
-    urun='Deer&Doe Eleanor, view A', esik=160, cf=283, snap=6, kolTipi='setin',
+    urun='Deer&Doe Eleanor, view A', esik=160, cf=283, snap=6,
     snp=(225, 250, 60, 95), omuzUcu=(194, 88), oyuk=dict(tip='bosluk', x=(176, 206), y=(150, 230)),
     bel=dict(x=(111, 475), bant=(230, 300)), pens=(205, 230, 172, 195), kolUcu=(125, 190, 200, 240),
     not_='set-in kisa kol (omuzda hafif buzgu); pens: kol oyugundan gogse pens (armhole dart), ucu apex vekili. Oyuk penceresi x<=206: pens cizgisi (x 193-222, y 183-193) dikise bagli, pencereye girse tek parca sayilir'),
   '07-uzun-kol-akiskan-etek.png': dict(
-    urun='Deer&Doe Celia, gorunum A', esik=160, cf=278, snap=6, kolTipi='setin',
+    urun='Deer&Doe Celia, gorunum A', esik=160, cf=278, snap=6,
     snp=(245, 265, 15, 45), omuzUcu=(195, 60), oyuk=dict(tip='bosluk', x=(185, 215), y=(120, 190)),
     bel=dict(x=(51, 443), bant=(194, 240)), kolUcu=(140, 190, 170, 200),
     not_='kisa set-in kol (omuzda buzgu), V yaka, bel dikisi; pens yok (buzgu)'),
   '08-empire-buzgu-etek.png': dict(olculemez='kimono kol: omuz ucu ve kol oyugu yok'),
   '09-a-line-puff-kol-midi.png': dict(olculemez='kare yaka omuzsuz: SNP yok; balon kol bagli, kol ekseni tanimsiz'),
   '10-princess-a-line.png': dict(
-    urun='Alice (4375 px)', esik=160, cf=1104, snap=12, kolTipi='bishop',
+    urun='Alice (4375 px)', esik=160, cf=1104, snap=12,
     snp=(900, 940, 395, 430), omuzUcu=(695, 460), kolUcu=(330, 520, 1350, 1500),
     olculemezTorso='empire/yoke: dogal bel yok; kol oyugu tabani kolun altinda (kol ic kenari govdeye bel dikisinde deger)',
     not_='uzun bishop kol, manset; yalniz kol acisi'),
@@ -315,7 +317,7 @@ CFG3 = {
     not_='mansetli kisa puf kol (yalniz kol tipi + acisi)'),
   'dd-orage.png': dict(
     url='https://cdn.shopify.com/s/files/1/0632/8217/files/D0046S-dessin_technique.png?v=1710965602',
-    sayfa='https://www.deer-and-doe.fr/products/orage-dress-top-skirt-pattern', urun='Deer&Doe Orage Dress, gorunum A (siyah dolgu)',
+    sayfa='https://www.deer-and-doe.fr/products/orage-dress-top-skirt-pattern', sayfaYonlenme='https://closetcorepatterns.com/products/orage-dress-top-skirt-pattern (deer-and-doe.fr tumden 301; curl 2026-09-05 HTTP 200)', urun='Deer&Doe Orage Dress, gorunum A (siyah dolgu)',
     esik=100, cf=262, snap=15, omuzUcu=(163, 222),
     olculemezTorso='siyah dolgu: pens/dikis okunmaz (yalniz siluet); yalniz kol',
     kolUcu=(128, 178, 478, 500), kolPencere=(110, 200, 300, 480), boy='uzun', boyKaynak='uzun kol: agiz bel dikisinin (y 375) 120 px altinda; urun sayfasi (Closet Core): "Version A has long sleeves"',
@@ -323,7 +325,7 @@ CFG3 = {
     not_='uzun set-in kol, bel dikisi (beyaz cizgi)'),
   'dd-passiflore.jpg': dict(
     url='https://cdn.shopify.com/s/files/1/0632/8217/files/Passiflore-dress-pattern_Deer-and-doe_techflat.jpg?v=1710966857',
-    sayfa='https://www.deer-and-doe.fr/products/passiflore-dress-shirt-pattern', urun='Deer&Doe Passiflore Dress, gorunum A (siyah dolgu)',
+    sayfa='https://www.deer-and-doe.fr/products/passiflore-dress-shirt-pattern', sayfaYonlenme='https://closetcorepatterns.com/products/passiflore-dress-shirt-pattern (deer-and-doe.fr tumden 301; curl 2026-09-05 HTTP 200)', urun='Deer&Doe Passiflore Dress, gorunum A (siyah dolgu)',
     esik=100, cf=262, snap=15, omuzUcu=(175, 150),
     olculemezTorso='siyah dolgu; yalniz kol',
     kolUcu=(150, 205, 190, 250), kolPencere=(140, 215, 160, 250), boy='kisa', boyKaynak='kisa kol: agiz omuzun ~85 px altinda, bel bandi (y 275) ustunde',
@@ -331,7 +333,7 @@ CFG3 = {
     not_='kisa set-in kol'),
   'dd-magnolia.jpg': dict(
     url='https://cdn.shopify.com/s/files/1/0632/8217/files/magnolia-dress-pattern-tech-flat.jpg?v=1710966606',
-    sayfa='https://www.deer-and-doe.fr/products/magnolia-dress-pattern', urun='Deer&Doe Magnolia Dress, gorunum A (siyah dolgu)',
+    sayfa='https://www.deer-and-doe.fr/products/magnolia-dress-pattern', sayfaYonlenme='https://closetcorepatterns.com/products/magnolia-dress-pattern (deer-and-doe.fr tumden 301; curl 2026-09-05 HTTP 200)', urun='Deer&Doe Magnolia Dress, gorunum A (siyah dolgu)',
     esik=100, cf=262, snap=15, omuzUcu=(178, 142),
     olculemezTorso='siyah dolgu; yalniz kol',
     kolUcu=(190, 245, 322, 352), kolPencere=(180, 250, 200, 352), boy='uzun', boyKaynak='uzun kol: agiz bel bandinin (y 250) 90 px altinda; urun sayfasi: "a long set-in sleeve"',
@@ -353,7 +355,7 @@ CFG3 = {
   '05-a-line-top-ve-elbise.png': dict(eski=True, kolPencere=(95, 185, 400, 636), boy='uzun', boyKaynak='agiz omuzun 325 px altinda, figur govdesi ~300 px',
     etiket='buzgulu', etiketNeden="Helen's Closet March: agizda manset bandi + buzgu cizgileri (bishop)"),
   '07-uzun-kol-akiskan-etek.png': dict(eski=True, kolPencere=(135, 190, 130, 200), boy='kisa', torsoOlc=True,
-    boyKaynak='Deer&Doe Celia (Closet Core blog: "gently puffed sleeves ... shaped with inverted box pleats at the hem"); cizim: agiz bel dikisinin ustunde, dirsek ustu; urun sayfasi 404 (DOGRULANMADI: yalniz blog + cizim)',
+    boyKaynak='satici tech flat (birincil; GIRDI/iyi-flat/adaylar/KAYNAKLAR.md satir 25, CDN Crew_Celia_Dress_Tech_Flats_0-20.jpg?v=1761925539, HTTP 200): agiz bel dikisinin ustunde, dirsek ustu; urun sayfasi https://www.deer-and-doe.fr/products/2025-11-this-month (301 -> https://closetcorepatterns.com/products/2025-11-this-month, HTTP 200, "Celia Dress - Crew Pattern") "gently puffed sleeves taper at the hem with an inverted box pleat", boy kelimesi yok (musteri yorumu ikincil, kanit degil). Olcum kolBoyuOverTorso 0.656 kisa kumesinde. F1 karar ajani 4: DOGRULANMADI kalkti (eski slug 404 idi, kaynak satir 25 dogru)',
     etiket='duz', etiketNeden='buzgu omuzda; agizda pili (inverted box pleat), buzgu/lastik/manset cizgisi yok -> agiz duz sayilir'),
   '10-princess-a-line.png': dict(eski=True, kolPencere=(300, 700, 700, 1500), boy='uzun', boyKaynak='agiz omuzun ~1000 px altinda (4375 px goruntu)',
     etiket='buzgulu', etiketNeden='Alice: agizda manset bandi + buzgu cizgileri (bishop)'),
@@ -432,7 +434,10 @@ for ad, c in CFG2.items():
     im = Image.open(os.path.join(BASE, ad)).convert('L')
     px, (W, H) = im.load(), im.size
     esik, r = c['esik'], c['snap']
-    k = {'urun': c['urun'], 'boyutPX': [W, H], 'esik': esik, 'kolTipi': c['kolTipi'], 'cfX': c['cf'], 'not': c['not_']}
+    # kolTipi tek kaynaktan (karar ajani 3b): CFG3 etiket/boy varsa oradan turetilir, yoksa (kolsuz/kap) CFG2 tarihce
+    if ad in CFG3: kolTipi, kolTipiKaynak = kolTipiEtiketten(CFG3[ad]['etiket'], boyEtiket(CFG3[ad]['boy'])), 'CFG3.etiket x CFG3.boy (kolTipiEtiketten)'
+    else: kolTipi, kolTipiKaynak = c['kolTipi'], 'tarihce (BOLUM 2 elle; CFG3\'te kol kaydi yok)'
+    k = {'urun': c['urun'], 'boyutPX': [W, H], 'esik': esik, 'kolTipi': kolTipi, 'kolTipiKaynak': kolTipiKaynak, 'cfX': c['cf'], 'not': c['not_']}
     # SNP
     snpY = None
     if 'snp' in c:
@@ -516,8 +521,8 @@ for ad, c in CFG2.items():
         k['kolUcu'] = {'yontem': 'kol agzi penceresi PCA ana ekseni uclari, ortasi', 'pencere': list(c['kolUcu']),
                        'uclar': [list(a), list(b)], 'orta': list(mid), 'nMurekkep': len(pts)}
         k['kolAcisiDeg'] = {'deger': aci, 'tanim': 'omuz ucu -> kol ucu ortasi, yatayin ALTINA derece', 'dxdy': [round(dx, 1), round(dy, 1)]}
-        acilarHepsi.append((ad, aci, c['kolTipi']))
-        if c['kolTipi'] in ('setin', 'bishop'): acilarSarkan.append((ad, aci))
+        acilarHepsi.append((ad, aci, kolTipi))
+        if kolTipi in ('setin', 'bishop'): acilarSarkan.append((ad, aci))
     f1['flatler'][ad] = k
 
 def medyan(v):
@@ -551,7 +556,9 @@ f1['medyanlar'] = {
 #   agiz buzgulu/mansetli kol: balonOran >= PUF_ESIK (1.28) — kol govdesi agizdan genis. 1.28 = olculen kumede
 #   duz/klos kollarin maksimumu (1.231, 02 robe) ile buzgulu kollarin minimumu (1.334, 03 empire puf) ortasi;
 #   DOGRULANMADI: yayin kaynagi yok, veri bosluguna kondu (kume: 13 kol).
-#   kol boyu: agiz ortasi omuz ucundan  < KISA_ESIK x torso asagidaysa KISA (dirsek ~0.85 torso; 0.6 secildi).
+#   (tarihce) kol boyu: agiz ortasi omuz ucundan  < KISA_ESIK x torso asagidaysa KISA (0.6 secilmisti). F1 karar ajani 2 (tur 10):
+#   kolBoyuOverTorso boslugu bir SINIF degil OLCUM EKSIGIDIR; bosluga dusen deger (dirsek boyu dahil) 'kisa' SAYILMAZ, band secmez,
+#   adiyla kirmizi verir (contract kosul._boslukKurali). Dirsek kollar BOLUM 5'te boy='dirsek', kisa=None ile OLCULUR (CFG5).
 #   F1 tur 9 (hakem ENGEL 2): 'kisa' olcusu DIKEY mesafe degil, KOL EKSENI BOYUNCA kol boyu (omuz ucu -> agiz ortasi,
 #   hypot(dx, dy)) / torso. Dikey = kolBoyu x sin(kolAcisi) idi: kosul, sececegi bandin acisina bagliydi (dongusel) ve F2 grafi
 #   kol boyunu bilir, dikeyi bilmez. kisaOlcu = kolBoyu/torso (HUKUM), kisaOlcuDikey = eski dikey deger (BILGI).
@@ -588,13 +595,14 @@ for ad, c in CFG3.items():
             k['kisaOlcu'] = round(kb / eski['torsoPX'], 3); k['kisaOlcuDikey'] = round(dy / eski['torsoPX'], 3)
         k['boy'] = c['boy']; k['boyKaynak'] = c['boyKaynak']; k['kisa'] = boyEtiket(c['boy'])
         k['etiket'] = c['etiket']; k['etiketNeden'] = c['etiketNeden']; k['kolTipi'] = kolTipiEtiketten(k['etiket'], k['kisa'])
-        k['kolTipiEski'] = c2['kolTipi']; k['kolAcisiDeg'] = eski['kolAcisiDeg']['deger']
+        k['kolAcisiDeg'] = eski['kolAcisiDeg']['deger']   # kolTipiEski kalkti: BOLUM 2 artik ayni turetimi kullanir (karar ajani 3b)
         f3['flatler'][ad] = k
         continue
     yol = indir(c['url'], ad)
     im = Image.open(yol).convert('L'); px, (W, H) = im.load(), im.size
     esik, r = c['esik'], c['snap']
     k = {'urun': c['urun'], 'sayfa': c['sayfa'], 'gorselURL': c['url'], 'boyutPX': [W, H], 'esik': esik, 'cfX': c['cf'], 'not': c['not_']}
+    if 'sayfaYonlenme' in c: k['sayfaYonlenme'] = c['sayfaYonlenme']
     snpY = None
     if 'snp' in c:
         pts = inkPts(px, W, H, *c['snp'], esik)
@@ -857,7 +865,7 @@ CFG5 = {
   'bhl-alix-1.jpg': dict(url='https://cdn.shopify.com/s/files/1/0289/4249/products/tech_illos2-01.jpg?v=1477044717',
     sayfa='https://byhandlondon.com/products/alix-dress-pdf-sewing-pattern', urun='By Hand London Alix Dress (bishop kol, lastikli manset)', marka='By Hand London',
     etiket='buzgulu', etiketNeden='agizda lastik + buzgu cizgileri, altinda kucuk firfir', esik=160,
-    omuzKutu=(135, 165, 8, 30), kolUcu=(22, 74, 250, 270), kolPencere=(12, 150, 110, 240), boy='uzun', torsoOlc=True,
+    omuzKutu=(135, 165, 8, 30), omuzNot='raglan (satici: "raglan sleeves"): omuz ucu yok; kol ust konturunun tepesi (F1 karar ajani 3c: not eksikti, eklendi)', kolUcu=(22, 74, 250, 270), kolPencere=(12, 150, 110, 240), boy='uzun', torsoOlc=True,
     boyKaynak='urun sayfasi: "long, billowing raglan sleeves secured at the wrist with a delicate elasticated cuff" (bitmis kol boyu 61-64.5 cm)',
     snp=(150, 240, 10, 25), bel=dict(tip='yatayCizgi', pencere=(165, 265, 183, 192)), belNot='bel bandi cizgisi (yatayCizgi: bandin ust ya da alt cizgisi, +-7 px)'),
   'bhl-marie-dress.jpg': dict(url='https://cdn.shopify.com/s/files/1/0289/4249/products/Technicalillustrations_Dress_B.jpg?v=1639823609',

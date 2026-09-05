@@ -632,6 +632,7 @@
     "esik": 100,
     "cfX": 262,
     "not": "uzun set-in kol, bel dikisi (beyaz cizgi)",
+    "sayfaYonlenme": "https://closetcorepatterns.com/products/orage-dress-top-skirt-pattern (deer-and-doe.fr tumden 301; curl 2026-09-05 HTTP 200)",
     "omuzUcu": {
      "yontem": "goz tohumu + snap",
      "tohum": [
@@ -714,6 +715,7 @@
     "esik": 100,
     "cfX": 262,
     "not": "kisa set-in kol",
+    "sayfaYonlenme": "https://closetcorepatterns.com/products/passiflore-dress-shirt-pattern (deer-and-doe.fr tumden 301; curl 2026-09-05 HTTP 200)",
     "omuzUcu": {
      "yontem": "goz tohumu + snap",
      "tohum": [
@@ -796,6 +798,7 @@
     "esik": 100,
     "cfX": 262,
     "not": "uzun set-in kol, mansetli",
+    "sayfaYonlenme": "https://closetcorepatterns.com/products/magnolia-dress-pattern (deer-and-doe.fr tumden 301; curl 2026-09-05 HTTP 200)",
     "omuzUcu": {
      "yontem": "goz tohumu + snap",
      "tohum": [
@@ -891,7 +894,6 @@
     "etiket": "buzgulu",
     "etiketNeden": "Folkwear empire Simple Version: agizda buzgulu band, kep buzgulu (puf)",
     "kolTipi": "puf",
-    "kolTipiEski": "puf",
     "kolAcisiDeg": 32.9
    },
    "04-a-line-puff-kol.png": {
@@ -920,7 +922,6 @@
     "etiket": "duz",
     "etiketNeden": "agiz acik duz kenar (bastirma dikisi kesik cizgi), buzgu/manset yok",
     "kolTipi": "setin",
-    "kolTipiEski": "setin",
     "kolAcisiDeg": 83.3
    },
    "06-a-line-puff-kol-varyant.png": {
@@ -949,7 +950,6 @@
     "etiket": "duz",
     "etiketNeden": "buzgu OMUZDA, agiz acik duz kenar (BOLUM 3 kurali: omuz buzgusu tipi degistirmez)",
     "kolTipi": "setin",
-    "kolTipiEski": "setin",
     "kolAcisiDeg": 73.7
    },
    "02-uzun-robe-dress.png": {
@@ -978,7 +978,6 @@
     "etiket": "buzgulu",
     "etiketNeden": "alt kolda yatay buzgu (shirring) cizgileri, agiz buzgulu manset gibi toplanmis (tur 9 kolTipi setin etiketi orandan gelmisti, konvansiyonla BUZGULU)",
     "kolTipi": "bishop",
-    "kolTipiEski": "setin",
     "kolAcisiDeg": 85.9
    },
    "05-a-line-top-ve-elbise.png": {
@@ -1005,7 +1004,6 @@
     "etiket": "buzgulu",
     "etiketNeden": "Helen's Closet March: agizda manset bandi + buzgu cizgileri (bishop)",
     "kolTipi": "bishop",
-    "kolTipiEski": "bishop",
     "kolAcisiDeg": 83.7
    },
    "07-uzun-kol-akiskan-etek.png": {
@@ -1029,12 +1027,11 @@
     "kisaOlcu": 0.656,
     "kisaOlcuDikey": 0.636,
     "boy": "kisa",
-    "boyKaynak": "Deer&Doe Celia (Closet Core blog: \"gently puffed sleeves ... shaped with inverted box pleats at the hem\"); cizim: agiz bel dikisinin ustunde, dirsek ustu; urun sayfasi 404 (DOGRULANMADI: yalniz blog + cizim)",
+    "boyKaynak": "satici tech flat (birincil; GIRDI/iyi-flat/adaylar/KAYNAKLAR.md satir 25, CDN Crew_Celia_Dress_Tech_Flats_0-20.jpg?v=1761925539, HTTP 200): agiz bel dikisinin ustunde, dirsek ustu; urun sayfasi https://www.deer-and-doe.fr/products/2025-11-this-month (301 -> https://closetcorepatterns.com/products/2025-11-this-month, HTTP 200, \"Celia Dress - Crew Pattern\") \"gently puffed sleeves taper at the hem with an inverted box pleat\", boy kelimesi yok (musteri yorumu ikincil, kanit degil). Olcum kolBoyuOverTorso 0.656 kisa kumesinde. F1 karar ajani 4: DOGRULANMADI kalkti (eski slug 404 idi, kaynak satir 25 dogru)",
     "kisa": true,
     "etiket": "duz",
     "etiketNeden": "buzgu omuzda; agizda pili (inverted box pleat), buzgu/lastik/manset cizgisi yok -> agiz duz sayilir",
     "kolTipi": "setin",
-    "kolTipiEski": "setin",
     "kolAcisiDeg": 75.8
    },
    "10-princess-a-line.png": {
@@ -1061,7 +1058,6 @@
     "etiket": "buzgulu",
     "etiketNeden": "Alice: agizda manset bandi + buzgu cizgileri (bishop)",
     "kolTipi": "bishop",
-    "kolTipiEski": "bishop",
     "kolAcisiDeg": 74.1
    },
    "bugra-locket": {
@@ -1592,7 +1588,8 @@
      1021
     ],
     "esik": 160,
-    "kolTipi": "setin",
+    "kolTipi": "bishop",
+    "kolTipiKaynak": "CFG3.etiket x CFG3.boy (kolTipiEtiketten)",
     "cfX": 246,
     "not": "tarama kalitesi dusuk: SNP ve oyuk tohumla (snap); sal yaka SNP penceresini bozar. Kol oyugu 1940 robe: dusuk oyuk",
     "snp": {
@@ -1699,6 +1696,7 @@
     ],
     "esik": 160,
     "kolTipi": "puf",
+    "kolTipiKaynak": "CFG3.etiket x CFG3.boy (kolTipiEtiketten)",
     "cfX": 157,
     "not": "yalniz kol acisi (kisa PUF kol: kol yana acilir, sarkan kol degil — medyanda ayri etiketle)",
     "omuzUcu": {
@@ -1758,6 +1756,7 @@
     ],
     "esik": 160,
     "kolTipi": "setin",
+    "kolTipiKaynak": "CFG3.etiket x CFG3.boy (kolTipiEtiketten)",
     "cfX": 350,
     "not": "kisa set-in kol, V yaka, buzgulu bel; pens: gogus altindan yana pens, ucu apex vekili",
     "snp": {
@@ -1860,6 +1859,7 @@
     ],
     "esik": 100,
     "kolTipi": "bishop",
+    "kolTipiKaynak": "CFG3.etiket x CFG3.boy (kolTipiEtiketten)",
     "cfX": 304,
     "not": "esik 100: arkadaki croquis govde acik gri, murekkep koyu; uzun bishop kol manset",
     "snp": {
@@ -1952,6 +1952,7 @@
     ],
     "esik": 160,
     "kolTipi": "setin",
+    "kolTipiKaynak": "CFG3.etiket x CFG3.boy (kolTipiEtiketten)",
     "cfX": 283,
     "not": "set-in kisa kol (omuzda hafif buzgu); pens: kol oyugundan gogse pens (armhole dart), ucu apex vekili. Oyuk penceresi x<=206: pens cizgisi (x 193-222, y 183-193) dikise bagli, pencereye girse tek parca sayilir",
     "snp": {
@@ -2079,6 +2080,7 @@
     ],
     "esik": 160,
     "kolTipi": "setin",
+    "kolTipiKaynak": "CFG3.etiket x CFG3.boy (kolTipiEtiketten)",
     "cfX": 278,
     "not": "kisa set-in kol (omuzda buzgu), V yaka, bel dikisi; pens yok (buzgu)",
     "snp": {
@@ -2198,6 +2200,7 @@
     ],
     "esik": 160,
     "kolTipi": "bishop",
+    "kolTipiKaynak": "CFG3.etiket x CFG3.boy (kolTipiEtiketten)",
     "cfX": 1104,
     "not": "uzun bishop kol, manset; yalniz kol acisi",
     "snp": {
@@ -2276,6 +2279,7 @@
     ],
     "esik": 160,
     "kolTipi": "yok",
+    "kolTipiKaynak": "tarihce (BOLUM 2 elle; CFG3'te kol kaydi yok)",
     "cfX": 547,
     "not": "kolsuz: oyuk tabani = kontur bukum noktasi (F1 tur 5; eski en-genis-satir yontemi gogus hattini olcuyordu, 0.581 REDDEDILDI); pens: bel pensi ucu (apex vekili, apexin ~2-3 cm altinda; medyanda -0.06 duzeltme)",
     "snp": {
@@ -2370,6 +2374,7 @@
     ],
     "esik": 160,
     "kolTipi": "kap",
+    "kolTipiKaynak": "tarihce (BOLUM 2 elle; CFG3'te kol kaydi yok)",
     "cfX": 135,
     "not": "kap kol (govdeden uzanti): omuz ucu = kap dis kosesi, oyuk = kap alt kenarinin yan dikise degdigi kose (tohum+snap); kol ekseni tanimsiz",
     "snp": {
@@ -2466,7 +2471,7 @@
     "hepsi": {
      "02-uzun-robe-dress.png": {
       "deg": 85.9,
-      "kolTipi": "setin"
+      "kolTipi": "bishop"
      },
      "03-empire-dress-uc-boy.png": {
       "deg": 32.9,
@@ -2547,7 +2552,8 @@
      "xy": [
       163,
       16
-     ]
+     ],
+     "not": "raglan (satici: \"raglan sleeves\"): omuz ucu yok; kol ust konturunun tepesi (F1 karar ajani 3c: not eksikti, eklendi)"
     },
     "kolUcu": {
      "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
