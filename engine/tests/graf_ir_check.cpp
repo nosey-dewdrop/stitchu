@@ -10,14 +10,18 @@
 //      graded EU34..EU44 monoton (bel kenari x artar); kenar uzunlugu > 0; dogru kenar uzunlugu ==
 //      iki uc arasi uzaklik (1e-9); subdivide parcalarinin toplami butune esit (kubikte duzlestirme
 //      artigi icinde); rol PARCALI tasindi (k/n); bilinmeyen landmark adiyla firlatir
-//  (e) op kaydi: taban + kayitli op'lar (replay) == yazilan graf (spec-diff deseni)
+//  (e) op kaydi: taban + kayitli op'lar (replay) == yazilan graf (spec-diff deseni); fitLength KISIT olarak kayitli
+//      (mm yok), cozumle() gercek36'da kapagi 1.04 x oyuga getirir (karar 6)
+//  (g) karar 3: xOf widthHalf + width alani; carpik kombinasyon (widthHalf+ring, ring*+width) parse VE sema'da adiyla
+//  (h) karar 7: Seam.reverse zorunlu (eksikse parse reddi), zincirler yapisal cozulur
 //  (f) KOSU/ciktilar/graf-ilk/graf.json: --emit ile yazilir; emit'siz koşuda dosya metni tabanla
 //      BAYT-AYNI olmali (pin: taban degisti ama dosya yenilenmedi -> kirmizi)
 //
 // argv: <contract/graf-v1.json> <contract/garment-spec-v2.json> <KOSU/ciktilar/graf-ilk/graf.json> [--emit]
 // Sayilar: bolluk mm contract/garment-spec-v2.json quantities.ease*MM (Threads/RTW + Aldrich kaynakli);
 // kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x biceps (Brian default); Bezier ceyrek daire
-// katsayisi kappa = 4(sqrt2 - 1)/3 turetilmis; kol kapagi yuksekligi ORANI 0.6 DOGRULANMADI (asagida notes).
+// katsayisi kappa = 4(sqrt2 - 1)/3 turetilmis; kol kapagi yuksekligi ORANI 0.6 DOGRULANMADI (asagida notes; karar 4:
+// F2b'de Aldrich oyuk formulu + kisitla bedende cozulur, oran body-v1'e yazilmaz).
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -74,9 +78,9 @@ static Panel govde(bool on, const Ease& ez) {
     Edge side = E("side_" + s, "seam", "side_" + s, vWaistS, vUnder); side.notches = {0.5};
     // kol oyugu IKI kenar (rol parcali 1/2, 2/2): alt = koltukaltindan cross-front/back noktasina (yatay ->
     // dusey teget), ust = oradan omuz ucuna (hafif icbukey). Icbukey nokta x = width.crossFront/2 (body-v1
-    // genislikler, Aldrich/Mueller), y = koltukalti->omuz ucu dususunun ortasi (0.5, DOGRULANMADI: notes).
+    // genislikler, Aldrich/Mueller; xOf widthHalf + width alani, karar 3), y = koltukalti->omuz ucu dususunun ortasi (0.5, DOGRULANMADI: notes).
     const std::string crossW = on ? "width.crossFront" : "width.crossBack";
-    Anchor crossA; crossA.landmark = "landmark.underarm"; crossA.xOf = "scalarHalf"; crossA.ring = crossW; crossA.oran = 1.0;
+    Anchor crossA; crossA.landmark = "landmark.underarm"; crossA.xOf = "widthHalf"; crossA.width = crossW; crossA.oran = 1.0;
     const RefPoint vCross = P(Y(crossA, "landmark.underarm", "landmark.shoulderTip", 0.5));
     const RefPoint pCrossUnderY = P(crossA);                                  // cross x, koltukalti y
     const RefPoint a1c1 = affine({{1.0 - kKappa, vUnder}, {kKappa, pCrossUnderY}});
@@ -145,17 +149,23 @@ static Garment tabanBase(const Ease& ez) {
               "kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi "
               "koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku "
               "taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 "
-              "(body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b/F3 oyugu ve kapagi kaynakli kurar. (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). "
-              "Kapak uzunlugu fitLength ile gercek36'da kol oyugu x 1.04'e (sleeve.hpp capEase) cozuldu; kaydi ops'ta (bulge).";
+              "(body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b/F3 oyugu ve kapagi kaynakli kurar; croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder "
+              "(body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). "
+              "Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).";
     g.panels = {govde(true, ez), govde(false, ez), etek(true, ez), etek(false, ez), kol(ez)};
-    Seam omuz; omuz.id = "omuz"; omuz.a = {{"on_beden", "shoulder"}}; omuz.b = {{"arka_beden", "shoulder"}}; omuz.gerekce = "omuz dikisi";
-    Seam yan; yan.id = "yan_beden"; yan.a = {{"on_beden", "side_front"}}; yan.b = {{"arka_beden", "side_back"}}; yan.notchFractions = {0.5}; yan.gerekce = "govde yan dikisi";
-    Seam oyuk; oyuk.id = "kol_oyugu"; oyuk.a = {{"kol", "cap_back"}, {"kol", "cap_front"}}; oyuk.b = {{"arka_beden", "armhole_back.1"}, {"arka_beden", "armhole_back.2"}, {"on_beden", "armhole_front.1"}, {"on_beden", "armhole_front.2"}};
-    oyuk.ratio = 1.04; oyuk.gerekce = "kol kapagi -> kol oyugu; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)";
-    Seam bel; bel.id = "bel"; bel.a = {{"on_beden", "waist_front"}, {"arka_beden", "waist_back"}}; bel.b = {{"on_etek", "waist_front"}, {"arka_etek", "waist_back"}};
-    bel.notchFractions = {0.25, 0.75}; bel.gerekce = "bel dikisi (govde -> etek)";
-    Seam yanE; yanE.id = "yan_etek"; yanE.a = {{"on_etek", "side_front.1"}, {"on_etek", "side_front.2"}}; yanE.b = {{"arka_etek", "side_back.1"}, {"arka_etek", "side_back.2"}}; yanE.gerekce = "etek yan dikisi";
-    Seam kolAlti; kolAlti.id = "kol_alti"; kolAlti.a = {{"kol", "underarm_front"}}; kolAlti.b = {{"kol", "underarm_back"}}; kolAlti.gerekce = "kol alti dikisi";
+    // Dikisler SIRALI zincir + ilan edilen yon (karar 7). reverse=false: a.bas <-> b.bas.
+    Seam omuz; omuz.id = "omuz"; omuz.a = {{"on_beden", "shoulder"}}; omuz.b = {{"arka_beden", "shoulder"}}; omuz.reverse = false; omuz.gerekce = "omuz dikisi: omuz ucu <-> omuz ucu, boyun <-> boyun";
+    Seam yan; yan.id = "yan_beden"; yan.a = {{"on_beden", "side_front"}}; yan.b = {{"arka_beden", "side_back"}}; yan.reverse = false; yan.notchFractions = {0.5}; yan.gerekce = "govde yan dikisi: bel <-> bel, koltukalti <-> koltukalti";
+    // kapak zinciri arka koseden (cap_back) tepeye, oradan on koseye (cap_front); oyuk zinciri arka koltukaltindan omuz ucuna,
+    // omuz dikisinden on omuz ucuna gecip on koltukaltina iner (armhole_front.2 ve .1 kendi yonlerine TERS yurunur)
+    Seam oyuk; oyuk.id = "kol_oyugu"; oyuk.a = {{"kol", "cap_back"}, {"kol", "cap_front"}}; oyuk.b = {{"arka_beden", "armhole_back.1"}, {"arka_beden", "armhole_back.2"}, {"on_beden", "armhole_front.2"}, {"on_beden", "armhole_front.1"}};
+    oyuk.reverse = false; oyuk.ratio = 1.04; oyuk.gerekce = "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)";
+    // bel zinciri CF'den yan dikise, yan dikisten (yan_beden / yan_etek esleri) CB'ye
+    Seam bel; bel.id = "bel"; bel.a = {{"on_beden", "waist_front"}, {"arka_beden", "waist_back"}}; bel.b = {{"on_etek", "waist_front"}, {"arka_etek", "waist_back"}}; bel.reverse = false;
+    bel.notchFractions = {0.25, 0.75}; bel.gerekce = "bel dikisi (govde -> etek): CF <-> CF, yan <-> yan, CB <-> CB";
+    Seam yanE; yanE.id = "yan_etek"; yanE.a = {{"on_etek", "side_front.1"}, {"on_etek", "side_front.2"}}; yanE.b = {{"arka_etek", "side_back.1"}, {"arka_etek", "side_back.2"}}; yanE.reverse = false; yanE.gerekce = "etek yan dikisi: etek ucu <-> etek ucu, bel <-> bel";
+    // kol alti: on kenar kose->agiz (vF->hF), arka kenar agiz->kose (hB->vB): a.bas (kose) <-> b.son (kose) => reverse
+    Seam kolAlti; kolAlti.id = "kol_alti"; kolAlti.a = {{"kol", "underarm_front"}}; kolAlti.b = {{"kol", "underarm_back"}}; kolAlti.reverse = true; kolAlti.gerekce = "kol alti dikisi: kose <-> kose, agiz <-> agiz (reverse)";
     g.seams = {omuz, yan, oyuk, bel, yanE, kolAlti};
     g.rings = {
         {"yaka", "neck", {{"arka_beden", "neck_back"}, {"on_beden", "neck_front"}}},
@@ -183,21 +193,30 @@ int main(int argc, char** argv) {
     const OpCtx octx = OpCtx::fromContract(contract);
     ok(octx.dolu, "OpCtx araliklari contract'tan doldu");
 
-    // taban + kapak fit (gercek36)
+    // taban + kapak KISITI (karar 6): mm yok, dikise baglanir; cozum degerleme aninda bedende
     Garment base = tabanBase(ez);
-    const double armhole = chainLen(base, {{"arka_beden", "armhole_back.1"}, {"arka_beden", "armhole_back.2"}, {"on_beden", "armhole_front.1"}, {"on_beden", "armhole_front.2"}}, gercek);
-    const double capTarget = 1.04 * armhole;
-    // iki kapak yarisi ayni bulge ile: once on yariya, hedef = capTarget/2
-    OpResult r1 = fitLength(base, "kol", "cap_front", capTarget / 2.0, gercek, false, 120.0, 0.05, octx);
-    ok(r1.ok, "fitLength cap_front -> " + f2(capTarget / 2.0) + " mm: " + (r1.ok ? "cozuldu" : r1.hata));
+    const std::vector<EdgeRef> oyukRefs = {{"arka_beden", "armhole_back.1"}, {"arka_beden", "armhole_back.2"}, {"on_beden", "armhole_front.2"}, {"on_beden", "armhole_front.1"}};
+    OpResult r1 = fitLength(base, "kol", "cap_front", "kol_oyugu", 1.04, 0.0, octx);
+    ok(r1.ok, "fitLength cap_front -> kol_oyugu (ratio 1.04): " + (r1.ok ? "kisit kaydedildi" : r1.hata));
     if (!r1.ok) return 1;
-    OpResult r2 = fitLength(r1.g, "kol", "cap_back", capTarget / 2.0, gercek, false, 120.0, 0.05, octx);
-    ok(r2.ok, "fitLength cap_back  -> " + f2(capTarget / 2.0) + " mm: " + (r2.ok ? "cozuldu" : r2.hata));
+    OpResult r2 = fitLength(r1.g, "kol", "cap_back", "kol_oyugu", 1.04, 0.0, octx);
+    ok(r2.ok, "fitLength cap_back  -> kol_oyugu (ratio 1.04): " + (r2.ok ? "kisit kaydedildi" : r2.hata));
     if (!r2.ok) return 1;
     Garment g = r2.g;
-    ok(g.ops.size() == 2 && g.ops[0].op == "bulge" && g.ops[1].op == "bulge", "op gecmisi: 2 bulge kaydi");
-    { const double capLen = chainLen(g, {{"kol", "cap_back"}, {"kol", "cap_front"}}, gercek);
-      ok(std::fabs(capLen - capTarget) <= 0.1, "kol kapagi " + f2(capLen) + " == 1.04 x oyuk " + f2(armhole) + " = " + f2(capTarget) + " (gercek36)"); }
+    ok(g.ops.size() == 2 && g.ops[0].op == "fitLength" && g.ops[1].op == "fitLength", "op gecmisi: 2 fitLength kaydi (mm yok)");
+    ok(g.panel("kol")->edge("cap_front")->fitSeam == "kol_oyugu" && g.panel("kol")->edge("cap_back")->fitSeam == "kol_oyugu", "iki kapak kenari fitSeam=kol_oyugu tasiyor");
+    { const std::string t = toJSONText(g); ok(t.find("dMM") == std::string::npos && t.find("bulge") == std::string::npos, "grafta mm cozum yok (dMM/bulge gecmiyor)"); }
+    for (const std::string& bid : {std::string("gercek36"), std::string("EU38"), std::string("croquis36")}) {
+        const Body b = bid == "gercek36" ? gercek : bid == "croquis36" ? croquis : Body::graded(bid);
+        const bool oe = bid == "croquis36";
+        CozumSonucu cz = cozumle(g, b, oe, octx);
+        ok(cz.ok && cz.cozumler.size() == 2, "cozumle @" + bid + ": " + (cz.ok ? "2 kisit cozuldu" : cz.hata));
+        if (!cz.ok) continue;
+        const double armhole = chainLength(cz.g, oyukRefs, b, oe), capLen = chainLength(cz.g, {{"kol", "cap_back"}, {"kol", "cap_front"}}, b, oe);
+        ok(std::fabs(capLen - 1.04 * armhole) <= 0.1, "  kol kapagi " + f2(capLen) + " == 1.04 x oyuk " + f2(armhole) + " = " + f2(1.04 * armhole) + " @" + bid + " (kontrol kaymasi " + f2(cz.cozumler[0].dMM) + " / " + f2(cz.cozumler[1].dMM) + " mm, bu bedende)");
+        CozumSonucu cz2 = cozumle(g, b, oe, octx);
+        ok(cz2.ok && toJSONText(cz2.g) == toJSONText(cz.g), "  ayni beden -> ayni cozum (bayt-ayni)");
+    }
 
     // (a) gidis-donus bayt-ayni
     const std::string t1 = toJSONText(g);
@@ -220,8 +239,23 @@ int main(int argc, char** argv) {
       ok(!semaDogrula(v, contract, hs) && !hs.empty() && hs[0].find("uydurma") != std::string::npos, "sema negatif: bilinmeyen alan adiyla yakalandi: " + (hs.empty() ? "" : hs[0]));
       JVal v2 = toJSON(g); const_cast<JVal&>(*const_cast<JVal&>(*v2.get("panels")).a[0].get("edges")).a[0].set("kind", JVal::str("zigzag")); hs.clear();
       ok(!semaDogrula(v2, contract, hs) && !hs.empty() && hs[0].find("zigzag") != std::string::npos, "sema negatif: enum disi kind yakalandi: " + (hs.empty() ? "" : hs[0]));
-      JVal v3 = toJSON(g); JVal& s0 = const_cast<JVal&>(*v3.get("seams")).a[0]; s0.o.erase(s0.o.begin() + 3); hs.clear();   // ratio sil
+      JVal v3 = toJSON(g); JVal& s0 = const_cast<JVal&>(*v3.get("seams")).a[0]; for (size_t i = 0; i < s0.o.size(); ++i) if (s0.o[i].first == "ratio") { s0.o.erase(s0.o.begin() + i); break; } hs.clear();   // ratio sil (adiyla; reverse eklendikten sonra indeks kaydi)
       ok(!semaDogrula(v3, contract, hs) && !hs.empty() && hs[0].find("ratio") != std::string::npos, "sema negatif: eksik zorunlu alan (ratio) yakalandi: " + (hs.empty() ? "" : hs[0]));
+      // karar 3: xOf/ring/width carpik kombinasyonlari sema'da VE parse'ta adiyla
+      { JVal v4 = toJSON(g); JVal& e3 = const_cast<JVal&>(*const_cast<JVal&>(*v4.get("panels")).a[0].get("edges")).a[3];   // armhole_front.1 (to = cross noktasi, widthHalf)
+        const_cast<JVal&>(*e3.get("to")).set("ring", JVal::str("girth.bust")); hs.clear();
+        ok(!semaDogrula(v4, contract, hs) && !hs.empty() && hs[0].find("widthHalf") != std::string::npos && hs[0].find("ring") != std::string::npos, "sema negatif (karar 3): widthHalf + ring dolu adiyla: " + (hs.empty() ? "" : hs[0]));
+        Garment gx; std::string e4; ok(!fromJSONText(emit(v4), gx, e4) && e4.find("widthHalf") != std::string::npos, "parse reddi (karar 3): widthHalf + ring dolu: " + e4);
+        JVal v5 = toJSON(g); JVal& e1 = const_cast<JVal&>(*const_cast<JVal&>(*v5.get("panels")).a[0].get("edges")).a[1];   // waist_front.to ringQuarter
+        const_cast<JVal&>(*e1.get("to")).set("width", JVal::str("width.crossFront")); hs.clear();
+        ok(!semaDogrula(v5, contract, hs) && !hs.empty() && hs[0].find("width") != std::string::npos, "sema negatif (karar 3): ringQuarter + width dolu adiyla: " + (hs.empty() ? "" : hs[0]));
+        JVal v6 = toJSON(g); JVal& e3b = const_cast<JVal&>(*const_cast<JVal&>(*v6.get("panels")).a[0].get("edges")).a[3];
+        JVal& to6 = const_cast<JVal&>(*e3b.get("to")); for (size_t i = 0; i < to6.o.size(); ++i) if (to6.o[i].first == "width") { to6.o.erase(to6.o.begin() + i); break; } hs.clear();
+        ok(!semaDogrula(v6, contract, hs) && !hs.empty() && hs[0].find("width bos") != std::string::npos, "sema negatif (karar 3): widthHalf ile width bos adiyla: " + (hs.empty() ? "" : hs[0])); }
+      // karar 7: reverse zorunlu
+      { JVal v7 = toJSON(g); JVal& s0 = const_cast<JVal&>(*v7.get("seams")).a[0]; for (size_t i = 0; i < s0.o.size(); ++i) if (s0.o[i].first == "reverse") { s0.o.erase(s0.o.begin() + i); break; }
+        hs.clear(); ok(!semaDogrula(v7, contract, hs) && !hs.empty() && hs[0].find("reverse") != std::string::npos, "sema negatif (karar 7): reverse eksik adiyla: " + (hs.empty() ? "" : hs[0]));
+        Garment gx; std::string e7; ok(!fromJSONText(emit(v7), gx, e7) && e7.find("reverse") != std::string::npos, "parse reddi (karar 7): reverse eksik: " + e7); }
       // contract op tablosu == kodun op adlari
       const JVal* oplar = contract.get("oplar"); bool allOps = oplar != nullptr;
       for (const std::string& ad : opAdlari()) if (!oplar || !oplar->get(ad)) { allOps = false; std::printf("      contract oplar eksik: %s\n", ad.c_str()); }
@@ -263,6 +297,15 @@ int main(int argc, char** argv) {
     // (e) replay
     { OpResult rr = replay(base, g.ops, octx);
       ok(rr.ok && toJSONText(rr.g) == t1, "replay(taban, ops) == graf (spec-diff: kayitlar yeniden oynatilabilir)"); }
+    // (h) zincirler yapisal cozuluyor (karar 7)
+    { const ZincirCozumu zc = zincirleriCoz(g);
+      ok(zc.ok && zc.dikisler.size() == 6, "6 dikisin zinciri yapisal cozuldu (beden gerekmeden)");
+      const DikisZincir& oy = zc.dikisler.at("kol_oyugu");
+      ok(oy.ok && oy.b.kenarlar.size() == 4 && !oy.b.kenarlar[0].ters && !oy.b.kenarlar[1].ters && oy.b.kenarlar[2].ters && oy.b.kenarlar[3].ters,
+         "kol_oyugu.b yonleri: armhole_back.1> .2> =omuz= armhole_front.2< .1< : " + oy.b.metin());
+      ok(oy.ok && oy.b.kavsaklar.size() == 3 && oy.b.kavsaklar[1].tur == "dikis" && oy.b.kavsaklar[1].dikis == "omuz", "  arka->on gecisi omuz dikisinin ilan edilen ucuyla");
+      const DikisZincir& bl = zc.dikisler.at("bel");
+      ok(bl.ok && bl.a.kavsaklar[0].dikis == "yan_beden" && bl.b.kavsaklar[0].dikis == "yan_etek", "bel zincirleri yan dikislerin esleriyle: a " + bl.a.metin() + " | b " + bl.b.metin()); }
     // (f) dosya
     if (emitMode) {
         std::ofstream f(outPath); f << t1; f.close();

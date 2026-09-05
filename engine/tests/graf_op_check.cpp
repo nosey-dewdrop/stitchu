@@ -75,14 +75,15 @@ int main(int argc, char** argv) {
       OpResult n2 = subdivide(g, "on_beden", "yok", {0.5}, ctx);
       ok(!n2.ok && n2.hata.find("yok") != std::string::npos, "  negatif: olmayan kenar: " + n2.hata); }
 
-    // ---- dart
-    // pens apeksi agiz ortasinin ustunde (x = bel kenarinin 0.5'i, ringQuarter), y gogus ucu -> bel dususunun 0.15'i: bacaklar insadan esit
+    // ---- suppress (primitives-v1 op.suppress; karar 2)
+    // apeks y: gogus ucu -> bel dususunun 0.15'i. trueLegs=true: x agiz ortasindan kurulur (verilen x yok sayilir) -> bacaklar insadan esit
     Anchor apexA; apexA.landmark = "landmark.waist"; apexA.xOf = "ringQuarter"; apexA.oran = 0.5; apexA.yLandmark = "landmark.bustApex"; apexA.yLandmark2 = "landmark.waist"; apexA.yOran = 0.15;
     const RefPoint apex = RefPoint::of(apexA);
     Garment gDart;
     { const double W0 = len(g, "on_beden", "waist_front", body); const size_t n0 = g.panel("on_beden")->edges.size();
-      OpResult r = dart(g, "on_beden", "waist_front", 0.5, 0.2, apex, "pens_bel", ctx);
-      ok(r.ok, "dart waist_front @0.5 intake 0.2: " + (r.ok ? "ok" : r.hata)); if (!r.ok) return 1;
+      OpResult r = suppress(g, "on_beden", "waist_front", 0.5, 0.2, apex, "pens_bel", true, ctx);
+      ok(r.ok, "suppress waist_front @0.5 intake 0.2 trueLegs: " + (r.ok ? "ok" : r.hata)); if (!r.ok) return 1;
+      ok(r.g.ops.back().op == "suppress" && r.g.ops.back().args.boolOr("trueLegs", false), "  kayit adi 'suppress' (primitives-v1 op.suppress), trueLegs true");
       gDart = r.g;
       const Panel* p = r.g.panel("on_beden");
       ok(p->edges.size() == n0 + 3, "  kenar sayisi " + std::to_string(n0) + " -> " + std::to_string(p->edges.size()) + " (+3: sol, 2 bacak, sag)");
@@ -96,12 +97,22 @@ int main(int argc, char** argv) {
       const Seam* s = r.g.seam("bel");
       ok(hasRef(s->a, "on_beden", "waist_front.1") && hasRef(s->a, "on_beden", "waist_front.3") && !hasRef(s->a, "on_beden", "waist_front"), "  bel dikisi referanslari sol/sag parcaya");
       ok(locality(g, r.g, {"on_beden"}, why), "  locality " + why);
-      OpResult n = dart(g, "on_beden", "cf", 0.5, 0.2, apex, "x", ctx);
+      OpResult n = suppress(g, "on_beden", "cf", 0.5, 0.2, apex, "x", true, ctx);
       ok(!n.ok && n.hata.find("fold") != std::string::npos, "  negatif: kat kenarina pens reddi: " + n.hata);
-      OpResult n2 = dart(g, "on_beden", "waist_front", 0.5, 1.2, apex, "x", ctx);
+      OpResult n2 = suppress(g, "on_beden", "waist_front", 0.5, 1.2, apex, "x", true, ctx);
       ok(!n2.ok, "  negatif: intake 1.2 reddi: " + n2.hata);
-      OpResult n3 = dart(g, "on_beden", "waist_front", 0.95, 0.2, apex, "x", ctx);
-      ok(!n3.ok && n3.hata.find("disina") != std::string::npos, "  negatif: agiz kenar disina tasar: " + n3.hata); }
+      OpResult n3 = suppress(g, "on_beden", "waist_front", 0.95, 0.2, apex, "x", true, ctx);
+      ok(!n3.ok && n3.hata.find("disina") != std::string::npos, "  negatif: agiz kenar disina tasar: " + n3.hata);
+      // trueLegs=true agiz ortasini kullanir: kaydirilmis x'li apeks de esit bacak verir; trueLegs=false ayni apeks esit vermez
+      Anchor off = apexA; off.oran = 0.8; const RefPoint apexOff = RefPoint::of(off);
+      OpResult t1 = suppress(g, "on_beden", "waist_front", 0.5, 0.2, apexOff, "p", true, ctx);
+      OpResult t0 = suppress(g, "on_beden", "waist_front", 0.5, 0.2, apexOff, "p", false, ctx);
+      const Panel* p1 = t1.g.panel("on_beden"); const Panel* p0 = t0.g.panel("on_beden");
+      const double d1 = std::fabs(p1->edge("p.1")->length(p1->ctxFor(body)) - p1->edge("p.2")->length(p1->ctxFor(body)));
+      const double d0 = std::fabs(p0->edge("p.1")->length(p0->ctxFor(body)) - p0->edge("p.2")->length(p0->ctxFor(body)));
+      ok(t1.ok && t0.ok && d1 < 1e-6 && d0 > 1.0, "  trueLegs: kaydirilmis apeks x'i ile bacak farki true " + f2(d1) + " / false " + f2(d0) + " mm (insa vs verilen)");
+      OpResult n4 = suppress(g, "on_beden", "waist_front", 0.5, 0.2, lerp(apex, RefPoint::of(off), 0.5), "q", true, ctx);
+      ok(!n4.ok && n4.hata.find("tek landmark") != std::string::npos, "  negatif: trueLegs ile cok terimli apeks reddi: " + n4.hata); }
 
     // ---- gather
     { const double W0 = len(g, "on_etek", "waist_front", body);
@@ -252,22 +263,43 @@ int main(int argc, char** argv) {
       OpResult n2 = closure(g, "yok", "zipper", 0.0, 0.6, ctx);
       ok(!n2.ok, "  negatif: olmayan dikis: " + n2.hata); }
 
-    // ---- fitLength (croquis36'da kapak = 1.04 x oyuk)
-    { const Body cro = Body::fromContract("croquis36");
-      const double arm = chainLength(g, {{"arka_beden", "armhole_back.1"}, {"arka_beden", "armhole_back.2"}, {"on_beden", "armhole_front.1"}, {"on_beden", "armhole_front.2"}}, cro, false);
-      OpResult r = fitLength(g, "kol", "cap_front", 1.04 * arm / 2.0, cro, false, 120.0, 0.05, ctx);
-      ok(r.ok, "fitLength cap_front croquis36 hedef " + f2(1.04 * arm / 2.0) + ": " + (r.ok ? "cozuldu" : r.hata));
-      if (r.ok) { ok(std::fabs(len(r.g, "kol", "cap_front", cro) - 1.04 * arm / 2.0) <= 0.05, "  kapak yarisi hedefe 0.05 mm icinde (" + f2(len(r.g, "kol", "cap_front", cro)) + ")");
-                  ok(r.g.ops.back().op == "bulge" && r.g.ops.back().args.strOr("bodyId", "") == "croquis36", "  kayit: bulge, bodyId croquis36 (denetlenebilir)");
-                  ok(locality(g, r.g, {"kol"}, why), "  locality " + why); }
-      OpResult n = fitLength(g, "on_beden", "shoulder", 500.0, cro, false, 120.0, 0.05, ctx);
-      ok(!n.ok && n.hata.find("kubik") != std::string::npos, "  negatif: dogru kenara fit reddi: " + n.hata);
-      OpResult n2 = fitLength(g, "kol", "cap_front", 5000.0, cro, false, 120.0, 0.05, ctx);
-      ok(!n2.ok && n2.hata.find("ulasilamadi") != std::string::npos, "  negatif: ulasilamayan hedef adiyla: " + n2.hata); }
+    // ---- fitLength KISIT (karar 6): mm yok; cozum bedende. Taban kisitini SILIP yeniden koy: ayni JSON'a doner
+    { Garment g0 = g; for (Panel& p : g0.panels) for (Edge& e : p.edges) e.fitSeam.clear(); g0.ops.clear();
+      OpResult r = fitLength(g0, "kol", "cap_front", "kol_oyugu", 1.04, 0.0, ctx);
+      ok(r.ok, "fitLength cap_front -> kol_oyugu ratio 1.04: " + (r.ok ? "kisit kaydedildi" : r.hata)); if (!r.ok) return 1;
+      ok(r.g.panel("kol")->edge("cap_front")->fitSeam == "kol_oyugu" && r.g.seam("kol_oyugu")->ratio == 1.04, "  Edge.fitSeam yazildi, Seam.ratio 1.04");
+      ok(r.g.ops.back().op == "fitLength" && r.g.ops.back().args.get("target") && r.g.ops.back().args.get("target")->strOr("seam", "") == "kol_oyugu", "  kayit: fitLength {panel, edge, target{seam, ratio, easeMM}} — bodyId/mm yok");
+      ok(locality(g0, r.g, {"kol"}, why), "  locality " + why);
+      OpResult r2 = fitLength(r.g, "kol", "cap_back", "kol_oyugu", 1.04, 0.0, ctx);
+      ok(r2.ok && toJSONText(r2.g) == toJSONText(g), "  iki kisit -> taban graf.json ile bayt-ayni (kisit = graf durumu)");
+      // ayni graf uc bedende: her birinde kapak = 1.04 x oyuk, kaymalar farkli
+      double dPrev = NAN; bool allOk = true; std::string ds;
+      for (const std::string& bid : {std::string("gercek36"), std::string("EU38"), std::string("croquis36")}) {
+          const Body b = bid == "gercek36" ? body : bid == "croquis36" ? Body::fromContract("croquis36") : Body::graded(bid);
+          const bool oe = bid == "croquis36";
+          CozumSonucu cz = cozumle(r2.g, b, oe, ctx);
+          if (!cz.ok) { allOk = false; ds += bid + ": " + cz.hata + " "; continue; }
+          const double capF = cz.g.panel("kol")->edge("cap_front")->length(cz.g.panel("kol")->ctxFor(b, oe));
+          const double arm = chainLength(cz.g, {{"arka_beden", "armhole_back.1"}, {"arka_beden", "armhole_back.2"}, {"on_beden", "armhole_front.2"}, {"on_beden", "armhole_front.1"}}, b, oe);
+          if (std::fabs(capF - 1.04 * arm / 2.0) > 0.05) allOk = false;
+          ds += bid + " d=" + f2(cz.cozumler[0].dMM) + " "; if (!std::isnan(dPrev) && std::fabs(cz.cozumler[0].dMM - dPrev) < 1e-6) allOk = false; dPrev = cz.cozumler[0].dMM;
+      }
+      ok(allOk, "  cozumle uc bedende: kapak yarisi = 1.04 x oyuk / 2 (0.05 mm), kaymalar bedene gore farkli: " + ds);
+      OpResult n = fitLength(g0, "on_beden", "shoulder", "omuz", 1.0, 0.0, ctx);
+      ok(!n.ok && n.hata.find("kubik") != std::string::npos, "  negatif: dogru kenara kisit reddi: " + n.hata);
+      OpResult n2 = fitLength(g0, "kol", "cap_front", "bel", 1.0, 0.0, ctx);
+      ok(!n2.ok && n2.hata.find("tarafinda degil") != std::string::npos, "  negatif: kenar dikisin tarafinda degil: " + n2.hata);
+      OpResult n3 = fitLength(r2.g, "on_beden", "armhole_front.1", "kol_oyugu", 1.04, 0.0, ctx);
+      ok(!n3.ok && n3.hata.find("dongu") != std::string::npos, "  negatif: obur taraf da kisitli (dongu) reddi: " + n3.hata);
+      OpResult n4 = fitLength(g0, "kol", "cap_front", "kol_oyugu", 3.5, 0.0, ctx);
+      CozumSonucu cz4 = cozumle(n4.g, body, false, ctx);
+      ok(n4.ok && !cz4.ok && cz4.hata.find("ulasilamadi") != std::string::npos, "  negatif: ratio 3.5 kisiti bu bedende cozulemez, adiyla: " + cz4.hata);
+      OpCtx bos; CozumSonucu cz5 = cozumle(g, body, false, bos);
+      ok(!cz5.ok && cz5.hata.find("OpCtx") != std::string::npos, "  negatif: contract cozucu yuklenmeden cozumle reddi: " + cz5.hata); }
 
     // ---- replay + bilinmeyen op
     { OpResult a1 = subdivide(g, "on_beden", "armhole_front.1", {0.4}, ctx);
-      OpResult a2 = dart(a1.g, "on_beden", "waist_front", 0.5, 0.2, apex, "pens_bel", ctx);
+      OpResult a2 = suppress(a1.g, "on_beden", "waist_front", 0.5, 0.2, apex, "pens_bel", true, ctx);
       OpResult a3 = gather(a2.g, "on_etek", "waist_front", 1.5, ctx);
       OpResult a4 = extend(a3.g, "on_etek", "hem_front", 50.0, ctx);
       ok(a1.ok && a2.ok && a3.ok && a4.ok, "replay hazirlik: 4 op zinciri");
@@ -280,11 +312,11 @@ int main(int argc, char** argv) {
       OpCtx bos; OpResult n2 = gather(g, "on_etek", "waist_front", 1.5, bos);
       ok(!n2.ok && n2.hata.find("OpCtx") != std::string::npos, "contract araligi yuklenmeden gather reddi: " + n2.hata); }
 
-    // dart sonrasi dikilebilirlik: bel dikisi ADIYLA kirmizi (etekte pens yok) — op'un durust sonucu
+    // suppress sonrasi dikilebilirlik: bel dikisi ADIYLA kirmizi (etekte pens yok) — op'un durust sonucu
     { DogrulamaRaporu R = dogrula(gDart, body, contract);
       bool belRed = false; std::string satir;
       for (const Hukum& h : R.hukumler) if (h.kural == "dikis_uzunluk" && h.hedef == "bel" && !h.gecti) { belRed = true; satir = h.deger; }
-      ok(belRed, "dart yalniz govdede -> dogrulayici bel dikisini adiyla kirmizi yakar: " + satir); }
+      ok(belRed, "suppress yalniz govdede -> dogrulayici bel dikisini adiyla kirmizi yakar: " + satir); }
 
     std::printf("%s graf_op_check — %d kirmizi\n", fails ? "FAIL" : "PASS", fails);
     return fails ? 1 : 0;

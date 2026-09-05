@@ -1,43 +1,61 @@
 # Dikilebilirlik — taban-elbise @ croquis36 (on/arka esit)
 
-**Sonuc: DIKILEBILIR DEGIL** — kirmizi hukum 1 / 61 satir.
+**Sonuc: DIKILEBILIR** — kirmizi hukum 0 / 72 satir.
+
+## Esikler (contract/graf-v1.json toleranslar)
+
+| tolerans | mm | kaynak |
+|---|---|---|
+| dikisUzunlukMM | 2.00 | contract/body-v1.json ayniInsan.toleransMM ile AYNI zincir: URBN Apparel Technical Manual 'Position points, olcu <5 in' = 1/8 in = 3.175 mm ust sinir (knowledge/POM-TOLERANS-URBN-2026-08-23.md); repodaki CLO sayisi engine/src/validator.hpp:23 pairedSeamTolerance 3.0 (yayin degil, yazilim varsayilani); GarmentCode StitchingRule.isMatching tol=0.05 GORELI (500 mm'de 25 mm — bizim kapimizin esigi degil, knowledge/TEKNOLOJI-2026-08-23.md:66). En kisitlayici yayinli degerin altinda, cizim cozunurlugunun (1 mm) ustunde: 2.0 — DOGRULANMADI etiketi ayniInsan ile ayni, gevsetme yonunde degil. |
+| centikMM | 0.50 | engine/tests/notch_alignment_check.cpp (2026-09-03): 'dikisin ustunde yurunen mm ... 0.5mm icinde' — motorun mevcut centik kapisi, repo konvansiyonu (yayin yok, DOGRULANMADI). En kisitlayici var olan deger. |
+| halkaKapanmaMM | 2.00 | dikisUzunlukMM ile ayni: halka bir dikisin uzunluk artigi ya da bir kavsakta iki dikisin farkiyla kapanir; ayni buyukluk, ayni dayanak. |
+| pensBacakMM | 2.00 | engine/src/validator.hpp dartSumTolerance 2.0 (repo konvansiyonu) ve dikisUzunlukMM ile ayni zincir; pens bacaklari insadan esit oldugu icin fark yalniz sayisal artiktir. |
+
+## Uydurma (grafin notes'unda DOGRULANMADI — HEDEF §2: uydurdugunu soyle)
+
+- UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI
+- oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI)
+- croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil)
 
 ## Dikisler
 
-| dikis | a (mm) | hedef = ratio x b + ease | artik (mm) | uc boslugu (bilgi) | centik sapma (mm) | hukum |
-|---|---|---|---|---|---|---|
-| omuz | 143.34 | 143.34 (b 143.34) | 0.00 | 0.00 | - | gecti |
-| yan_beden | 155.77 | 155.77 (b 155.77) | 0.00 | 0.00 | 0.00 | gecti |
-| kol_oyugu | 417.10 | 490.37 (b 471.51) | -73.27 | 103.43 | - | KIRMIZI |
-| bel | 342.50 | 342.50 (b 342.50) | 0.00 | 0.00 | 0.00, 0.00 | gecti |
-| yan_etek | 590.54 | 590.54 (b 590.54) | 0.00 | 0.00 | - | gecti |
-| kol_alti | 132.10 | 132.10 (b 132.10) | 0.00 | 0.00 | - | gecti |
+| dikis | reverse | a (mm) | hedef = ratio x b + ease | artik (mm) | uc boslugu (bilgi) | centik sapma (mm) | hukum |
+|---|---|---|---|---|---|---|---|
+| omuz | false | 143.34 | 143.34 (b 143.34) | 0.00 | 0.00 | - | gecti |
+| yan_beden | false | 155.77 | 155.77 (b 155.77) | 0.00 | 0.00 | 0.00 | gecti |
+| kol_oyugu | false | 490.37 | 490.37 (b 471.51) | 0.00 | 310.50 | - | gecti |
+| bel | false | 342.50 | 342.50 (b 342.50) | 0.00 | 0.00 | 0.00, 0.00 | gecti |
+| yan_etek | false | 590.54 | 590.54 (b 590.54) | 0.00 | 0.00 | - | gecti |
+| kol_alti | true | 132.10 | 132.10 (b 132.10) | 0.00 | 0.00 | - | gecti |
 
 ## Halkalar (sanal dikis)
 
 | halka | rol | toplam (mm) | kapanma (mm) | kavsaklar | hukum |
 |---|---|---|---|---|---|
-| yaka | neck | 117.74 | 0.00 | arka_beden/neck_back -> on_beden/neck_front: kat aynasi | on_beden/neck_front -> arka_beden/neck_back: dikis omuz (0.00) | gecti |
-| kol_oyugu_halka | armhole | 471.51 | 0.00 | on_beden/armhole_front.1 -> on_beden/armhole_front.2: kose | on_beden/armhole_front.2 -> arka_beden/armhole_back.2: dikis omuz (0.00) | arka_beden/armhole_back.2 -> arka_beden/armhole_back.1: kose | arka_beden/armhole_back.1 -> on_beden/armhole_front.1: dikis yan_beden (0.00) | gecti |
-| bel_halka | waist_ring | 342.50 | 0.00 | on_beden/waist_front -> arka_beden/waist_back: dikis yan_beden (0.00) | arka_beden/waist_back -> on_beden/waist_front: kat aynasi | gecti |
-| etek_ucu | hem | 475.00 | 0.00 | on_etek/hem_front -> arka_etek/hem_back: dikis yan_etek (0.00) | arka_etek/hem_back -> on_etek/hem_front: kat aynasi | gecti |
-| kol_agzi | sleeve_hem | 310.50 | 0.00 | kol/hem -> kol/hem: dikis kol_alti (0.00) | gecti |
+| yaka | neck | 117.74 | 0.00 | arka_beden/neck_back< -> on_beden/neck_front: dikis omuz (0.00) | on_beden/neck_front> -> arka_beden/neck_back: kat aynasi | gecti |
+| kol_oyugu_halka | armhole | 471.51 | 0.00 | on_beden/armhole_front.1> -> on_beden/armhole_front.2: kose | on_beden/armhole_front.2> -> arka_beden/armhole_back.2: dikis omuz (0.00) | arka_beden/armhole_back.2< -> arka_beden/armhole_back.1: kose | arka_beden/armhole_back.1< -> on_beden/armhole_front.1: dikis yan_beden (0.00) | gecti |
+| bel_halka | waist_ring | 342.50 | 0.00 | on_beden/waist_front> -> arka_beden/waist_back: dikis yan_beden (0.00) | arka_beden/waist_back< -> on_beden/waist_front: kat aynasi | gecti |
+| etek_ucu | hem | 475.00 | 0.00 | on_etek/hem_front> -> arka_etek/hem_back: dikis yan_etek (0.00) | arka_etek/hem_back< -> on_etek/hem_front: kat aynasi | gecti |
+| kol_agzi | sleeve_hem | 310.50 | 0.00 | kol/hem> -> kol/hem: dikis kol_alti (0.00) | gecti |
 
-## Paneller (rijit 2B yerlestirme, bilgi)
+## Paneller (2B yerlestirme, bilgi)
 
-| panel | yerlesti | dikis | theta (deg) | t (mm) | alan (cm2) | cevre (mm) |
-|---|---|---|---|---|---|---|
-| on_beden | evet | kok | 0.00 | (0.00, 0.00) | 662.37 | 1130.14 |
-| arka_beden | evet | omuz | 180.00 | (232.90, 49.00) | 680.48 | 1172.81 |
-| on_etek | evet | bel | -98.53 | (-298.65, -113.82) | 1310.26 | 1579.29 |
-| arka_etek | evet | bel | 0.00 | (0.00, 0.00) | 1310.26 | 1579.29 |
-| kol | evet | kol_oyugu | -123.04 | (-105.22, 51.76) | 676.25 | 991.80 |
+| panel | yerlesti | dikis | theta (deg) | ayna | t (mm) | alan (cm2) | cevre (mm) |
+|---|---|---|---|---|---|---|---|
+| on_beden | evet | kok | 0.00 | - | (0.00, 0.00) | 662.37 | 1130.14 |
+| arka_beden | evet | omuz | 39.98 | evet | (11.48, -31.55) | 680.48 | 1172.81 |
+| on_etek | evet | bel | 0.00 | - | (0.00, 0.00) | 1310.26 | 1579.29 |
+| arka_etek | evet | bel | 97.18 | evet | (-194.27, 171.32) | 1310.26 | 1579.29 |
+| kol | evet | kol_oyugu | 104.95 | evet | (64.94, 13.31) | 766.11 | 1065.07 |
 
 ## Hukumler
 
 | kural | hedef | deger | sonuc |
 |---|---|---|---|
-| tolerans | contract | dikis 2.00 · centik 0.50 · halka 2.00 · pens 2.00 mm; ratio [1.00, 3.50] | bilgi |
+| tolerans | contract | dikis 2.00 · centik 0.50 · halka 2.00 · pens 2.00 mm; ratio [1.00, 3.50] (kaynaklar tablo basliginda) | bilgi |
+| uydurma | taban-elbise | UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI | bilgi |
+| uydurma | taban-elbise | oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI) | bilgi |
+| uydurma | taban-elbise | croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil) | bilgi |
 | sema | taban-elbise | sozlesmeyle uyumlu | gecti |
 | panel_kapali | on_beden | 7 kenar, halka kapali | gecti |
 | panel_kapali | arka_beden | 7 kenar, halka kapali | gecti |
@@ -45,6 +63,8 @@
 | panel_kapali | arka_etek | 5 kenar, halka kapali | gecti |
 | panel_kapali | kol | 5 kenar, halka kapali | gecti |
 | referans | taban-elbise | 6 dikis, 5 halka; tum referanslar cozuldu | gecti |
+| kisit | kol/cap_front | dikis kol_oyugu: hedef 245.19 mm, kontrol kaymasi -35.41 mm @ croquis36, artik 0.0000 mm | bilgi |
+| kisit | kol/cap_back | dikis kol_oyugu: hedef 245.19 mm, kontrol kaymasi -35.41 mm @ croquis36, artik 0.0000 mm | bilgi |
 | kenar_turu | on_beden/cf | kat kenari x=0, panel onFold | gecti |
 | kenar_turu | on_beden/waist_front | seam kenari, dikis: bel | gecti |
 | kenar_turu | on_beden/side_front | seam kenari, dikis: yan_beden | gecti |
@@ -79,22 +99,28 @@
 | kendini_kesme | on_etek | kontur temiz | gecti |
 | kendini_kesme | arka_etek | kontur temiz | gecti |
 | kendini_kesme | kol | kontur temiz | gecti |
+| dikis_zincir | omuz | a: on_beden/shoulder> | b: arka_beden/shoulder> | reverse false (a.bas<->b.bas) | gecti |
+| dikis_zincir | yan_beden | a: on_beden/side_front> | b: arka_beden/side_back> | reverse false (a.bas<->b.bas) | gecti |
+| dikis_zincir | kol_oyugu | a: kol/cap_back> kol/cap_front> | b: arka_beden/armhole_back.1> arka_beden/armhole_back.2> =omuz= on_beden/armhole_front.2< on_beden/armhole_front.1< | reverse false (a.bas<->b.bas) | gecti |
+| dikis_zincir | bel | a: on_beden/waist_front> =yan_beden= arka_beden/waist_back< | b: on_etek/waist_front< =yan_etek= arka_etek/waist_back> | reverse false (a.bas<->b.bas) | gecti |
+| dikis_zincir | yan_etek | a: on_etek/side_front.1> on_etek/side_front.2> | b: arka_etek/side_back.1> arka_etek/side_back.2> | reverse false (a.bas<->b.bas) | gecti |
+| dikis_zincir | kol_alti | a: kol/underarm_front> | b: kol/underarm_back> | reverse true (a.bas<->b.son) | gecti |
 | dikis_uzunluk | omuz | a 143.34 mm, hedef 143.34 (ratio 1.0000 x b 143.34 + ease 0.00), artik 0.00 mm | gecti |
 | dikis_uzunluk | yan_beden | a 155.77 mm, hedef 155.77 (ratio 1.0000 x b 155.77 + ease 0.00), artik 0.00 mm | gecti |
 | centik | yan_beden @0.5000 | iki tarafta en kotu sapma 0.00 mm | gecti |
-| dikis_uzunluk | kol_oyugu | a 417.10 mm, hedef 490.37 (ratio 1.0400 x b 471.51 + ease 0.00), artik -73.27 mm | KIRMIZI |
+| dikis_uzunluk | kol_oyugu | a 490.37 mm, hedef 490.37 (ratio 1.0400 x b 471.51 + ease 0.00), artik 0.00 mm | gecti |
 | dikis_uzunluk | bel | a 342.50 mm, hedef 342.50 (ratio 1.0000 x b 342.50 + ease 0.00), artik 0.00 mm | gecti |
 | centik | bel @0.2500 | iki tarafta en kotu sapma 0.00 mm | gecti |
 | centik | bel @0.7500 | iki tarafta en kotu sapma 0.00 mm | gecti |
 | dikis_uzunluk | yan_etek | a 590.54 mm, hedef 590.54 (ratio 1.0000 x b 590.54 + ease 0.00), artik 0.00 mm | gecti |
 | dikis_uzunluk | kol_alti | a 132.10 mm, hedef 132.10 (ratio 1.0000 x b 132.10 + ease 0.00), artik 0.00 mm | gecti |
-| yerlestirme | on_beden | rijit poz (kok) theta 0.00 deg, t (0.00, 0.00); alan 662.37 cm2, cevre 1130.14 mm | bilgi |
-| yerlestirme | arka_beden | rijit poz (omuz) theta 180.00 deg, t (232.90, 49.00); alan 680.48 cm2, cevre 1172.81 mm | bilgi |
-| yerlestirme | on_etek | rijit poz (bel) theta -98.53 deg, t (-298.65, -113.82); alan 1310.26 cm2, cevre 1579.29 mm | bilgi |
-| yerlestirme | arka_etek | rijit poz (bel) theta 0.00 deg, t (0.00, 0.00); alan 1310.26 cm2, cevre 1579.29 mm | bilgi |
-| yerlestirme | kol | rijit poz (kol_oyugu) theta -123.04 deg, t (-105.22, 51.76); alan 676.25 cm2, cevre 991.80 mm | bilgi |
-| halka_kapanma | yaka (neck) | toplam 117.74 mm, en buyuk kavsak boslugu 0.00 mm | gecti |
-| halka_kapanma | kol_oyugu_halka (armhole) | toplam 471.51 mm, en buyuk kavsak boslugu 0.00 mm | gecti |
-| halka_kapanma | bel_halka (waist_ring) | toplam 342.50 mm, en buyuk kavsak boslugu 0.00 mm | gecti |
-| halka_kapanma | etek_ucu (hem) | toplam 475.00 mm, en buyuk kavsak boslugu 0.00 mm | gecti |
-| halka_kapanma | kol_agzi (sleeve_hem) | toplam 310.50 mm, en buyuk kavsak boslugu 0.00 mm | gecti |
+| yerlestirme | on_beden | 2B poz (kok) theta 0.00 deg, t (0.00, 0.00); alan 662.37 cm2, cevre 1130.14 mm | bilgi |
+| yerlestirme | arka_beden | 2B poz (omuz) theta 39.98 deg AYNA, t (11.48, -31.55); alan 680.48 cm2, cevre 1172.81 mm | bilgi |
+| yerlestirme | on_etek | 2B poz (bel) theta 0.00 deg, t (0.00, 0.00); alan 1310.26 cm2, cevre 1579.29 mm | bilgi |
+| yerlestirme | arka_etek | 2B poz (bel) theta 97.18 deg AYNA, t (-194.27, 171.32); alan 1310.26 cm2, cevre 1579.29 mm | bilgi |
+| yerlestirme | kol | 2B poz (kol_oyugu) theta 104.95 deg AYNA, t (64.94, 13.31); alan 766.11 cm2, cevre 1065.07 mm | bilgi |
+| halka_kapanma | yaka (neck) | toplam 117.74 mm, en buyuk kavsak boslugu 0.00 mm — arka_beden/neck_back< -> on_beden/neck_front: dikis omuz (0.00) | on_beden/neck_front> -> arka_beden/neck_back: kat aynasi | gecti |
+| halka_kapanma | kol_oyugu_halka (armhole) | toplam 471.51 mm, en buyuk kavsak boslugu 0.00 mm — on_beden/armhole_front.1> -> on_beden/armhole_front.2: kose | on_beden/armhole_front.2> -> arka_beden/armhole_back.2: dikis omuz (0.00) | arka_beden/armhole_back.2< -> arka_beden/armhole_back.1: kose | arka_beden/armhole_back.1< -> on_beden/armhole_front.1: dikis yan_beden (0.00) | gecti |
+| halka_kapanma | bel_halka (waist_ring) | toplam 342.50 mm, en buyuk kavsak boslugu 0.00 mm — on_beden/waist_front> -> arka_beden/waist_back: dikis yan_beden (0.00) | arka_beden/waist_back< -> on_beden/waist_front: kat aynasi | gecti |
+| halka_kapanma | etek_ucu (hem) | toplam 475.00 mm, en buyuk kavsak boslugu 0.00 mm — on_etek/hem_front> -> arka_etek/hem_back: dikis yan_etek (0.00) | arka_etek/hem_back< -> on_etek/hem_front: kat aynasi | gecti |
+| halka_kapanma | kol_agzi (sleeve_hem) | toplam 310.50 mm, en buyuk kavsak boslugu 0.00 mm — kol/hem> -> kol/hem: dikis kol_alti (0.00) | gecti |

@@ -75,8 +75,9 @@ std::string fmtNum(double v);
 // ---------------------------------------------------------------- Nokta: landmark + oran
 struct Anchor {
     std::string landmark;          // "landmark.waist" (contract/body-v1.json adlari)
-    std::string xOf = "landmark";  // landmark | ringFront | ringBack | ringQuarter | scalarHalf (contract enum xOf)
-    std::string ring;              // xOf ring* icin halka adi (bos -> Body::ringOfLandmark(landmark)); scalarHalf icin genislik olcusu adi (width.crossFront)
+    std::string xOf = "landmark";  // landmark | ringFront | ringBack | ringQuarter | widthHalf (contract enum xOf)
+    std::string ring;              // YALNIZ xOf ring* icin halka adi (bos -> Body::ringOfLandmark(landmark)); baska xOf'ta dolu olmasi sema hatasi
+    std::string width;             // YALNIZ xOf widthHalf icin beden genislik olcusu adi ("width.crossFront"); x tabani = olcu/2 (karar 3: bir alan tek anlam)
     double oran = 1.0;             // x = oran x taban(x) + ofsetMM
     double ofsetMM = 0.0;
     std::string yLandmark;         // y tabani; bos -> landmark
@@ -101,6 +102,8 @@ RefPoint affine(const std::vector<std::pair<double, RefPoint>>& terms);  // sum 
 RefPoint scaleX(const RefPoint& p, double k);                            // x -> k x, y sabit (kat ekseni x=0 etrafinda)
 RefPoint shiftY(const RefPoint& p, double dyMM);                         // yOfsetMM += dy
 RefPoint mirrorX(const RefPoint& p);                                     // x -> -x
+// Karar 3: xOf/ring/width tek anlam — carpik kombinasyon adiyla (parse ve sema ayni kural)
+bool anchorXOfTutarli(const std::string& xOf, const std::string& ring, const std::string& width, std::string& why);
 
 // Degerleme baglami: beden + halka basina bolluk (cevre mm). onArkaEsit: on/arka payi 0.5
 // say (croquis flat: on+arka ust uste iki kat — body.gen.hpp kCroquisOmuzHukmu cumlesi).
@@ -126,6 +129,9 @@ struct Edge {
     std::string finish;            // cut kenar icin bitirme gerekcesi (contract enum finish); dikisli kenarda bos
     std::vector<double> notches;   // kenar uzerinde kesir (0..1), yay uzunluguyla
     double gatherRatio = 1.0;      // bu kenar buzgu icin oranla uzatildiysa (op.gather/overlay) — bilgi, dikis orani Seam'de
+    std::string fitSeam;           // dolu ise KISIT (op fitLength, karar 6): bu kubik kenarin kontrolleri degerleme aninda, verilen
+                                   // Body'de, fitSeam dikisinin len(a) = ratio x len(b) + easeMM esitligini kapatacak sekilde cozulur
+                                   // (grafop.hpp cozumle). mm grafa yazilmaz; ayni beden -> ayni cozum.
 
     bool isLine() const { return control.empty(); }
     Edge reversed() const;
@@ -170,11 +176,12 @@ struct Closure {
 };
 struct Seam {
     std::string id;
-    std::vector<EdgeRef> a;        // buzulen taraf (ratio >= 1)
-    std::vector<EdgeRef> b;
+    std::vector<EdgeRef> a;        // buzulen taraf (ratio >= 1). SIRALI ZINCIR: ardisik kenarlar bir tepe paylasir (karar 7)
+    std::vector<EdgeRef> b;        // SIRALI ZINCIR
+    bool reverse = false;          // false: a'nin basi b'nin BASIYLA dikilir; true: a'nin basi b'nin SONUYLA (karar 7, GarmentCode Interface.reverse)
     double ratio = 1.0;            // len(a) = ratio x len(b) + easeMM
     double easeMM = 0.0;
-    std::vector<double> notchFractions;  // dikis boyunca kesir; iki tarafta AYNI kesir
+    std::vector<double> notchFractions;  // dikis boyunca kesir, a'nin BASINDAN olculur; b'ye reverse ile tasinir
     Closure closure;
     std::string gerekce;
 };

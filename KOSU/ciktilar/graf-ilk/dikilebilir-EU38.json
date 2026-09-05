@@ -4,11 +4,55 @@
   "onArkaEsit": false,
   "dikilebilir": true,
   "kirmizi": 0,
+  "toleranslar": [
+    {
+      "ad": "dikisUzunlukMM",
+      "mm": 2,
+      "kaynak": "contract/body-v1.json ayniInsan.toleransMM ile AYNI zincir: URBN Apparel Technical Manual 'Position points, olcu <5 in' = 1/8 in = 3.175 mm ust sinir (knowledge/POM-TOLERANS-URBN-2026-08-23.md); repodaki CLO sayisi engine/src/validator.hpp:23 pairedSeamTolerance 3.0 (yayin degil, yazilim varsayilani); GarmentCode StitchingRule.isMatching tol=0.05 GORELI (500 mm'de 25 mm — bizim kapimizin esigi degil, knowledge/TEKNOLOJI-2026-08-23.md:66). En kisitlayici yayinli degerin altinda, cizim cozunurlugunun (1 mm) ustunde: 2.0 — DOGRULANMADI etiketi ayniInsan ile ayni, gevsetme yonunde degil."
+    },
+    {
+      "ad": "centikMM",
+      "mm": 0.5,
+      "kaynak": "engine/tests/notch_alignment_check.cpp (2026-09-03): 'dikisin ustunde yurunen mm ... 0.5mm icinde' — motorun mevcut centik kapisi, repo konvansiyonu (yayin yok, DOGRULANMADI). En kisitlayici var olan deger."
+    },
+    {
+      "ad": "halkaKapanmaMM",
+      "mm": 2,
+      "kaynak": "dikisUzunlukMM ile ayni: halka bir dikisin uzunluk artigi ya da bir kavsakta iki dikisin farkiyla kapanir; ayni buyukluk, ayni dayanak."
+    },
+    {
+      "ad": "pensBacakMM",
+      "mm": 2,
+      "kaynak": "engine/src/validator.hpp dartSumTolerance 2.0 (repo konvansiyonu) ve dikisUzunlukMM ile ayni zincir; pens bacaklari insadan esit oldugu icin fark yalniz sayisal artiktir."
+    }
+  ],
+  "uydurma": ["UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI", "oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI)", "croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil)"],
   "hukumler": [
     {
       "kural": "tolerans",
       "hedef": "contract",
-      "deger": "dikis 2.00 · centik 0.50 · halka 2.00 · pens 2.00 mm; ratio [1.00, 3.50]",
+      "deger": "dikis 2.00 · centik 0.50 · halka 2.00 · pens 2.00 mm; ratio [1.00, 3.50] (kaynaklar tablo basliginda)",
+      "gecti": true,
+      "bilgi": true
+    },
+    {
+      "kural": "uydurma",
+      "hedef": "taban-elbise",
+      "deger": "UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI",
+      "gecti": true,
+      "bilgi": true
+    },
+    {
+      "kural": "uydurma",
+      "hedef": "taban-elbise",
+      "deger": "oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI)",
+      "gecti": true,
+      "bilgi": true
+    },
+    {
+      "kural": "uydurma",
+      "hedef": "taban-elbise",
+      "deger": "croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil)",
       "gecti": true,
       "bilgi": true
     },
@@ -60,6 +104,20 @@
       "deger": "6 dikis, 5 halka; tum referanslar cozuldu",
       "gecti": true,
       "bilgi": false
+    },
+    {
+      "kural": "kisit",
+      "hedef": "kol/cap_front",
+      "deger": "dikis kol_oyugu: hedef 192.19 mm, kontrol kaymasi 9.94 mm @ EU38, artik 0.0000 mm",
+      "gecti": true,
+      "bilgi": true
+    },
+    {
+      "kural": "kisit",
+      "hedef": "kol/cap_back",
+      "deger": "dikis kol_oyugu: hedef 192.19 mm, kontrol kaymasi 9.94 mm @ EU38, artik 0.0000 mm",
+      "gecti": true,
+      "bilgi": true
     },
     {
       "kural": "kenar_turu",
@@ -300,6 +358,48 @@
       "bilgi": false
     },
     {
+      "kural": "dikis_zincir",
+      "hedef": "omuz",
+      "deger": "a: on_beden/shoulder> | b: arka_beden/shoulder> | reverse false (a.bas<->b.bas)",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "dikis_zincir",
+      "hedef": "yan_beden",
+      "deger": "a: on_beden/side_front> | b: arka_beden/side_back> | reverse false (a.bas<->b.bas)",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "dikis_zincir",
+      "hedef": "kol_oyugu",
+      "deger": "a: kol/cap_back> kol/cap_front> | b: arka_beden/armhole_back.1> arka_beden/armhole_back.2> =omuz= on_beden/armhole_front.2< on_beden/armhole_front.1< | reverse false (a.bas<->b.bas)",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "dikis_zincir",
+      "hedef": "bel",
+      "deger": "a: on_beden/waist_front> =yan_beden= arka_beden/waist_back< | b: on_etek/waist_front< =yan_etek= arka_etek/waist_back> | reverse false (a.bas<->b.bas)",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "dikis_zincir",
+      "hedef": "yan_etek",
+      "deger": "a: on_etek/side_front.1> on_etek/side_front.2> | b: arka_etek/side_back.1> arka_etek/side_back.2> | reverse false (a.bas<->b.bas)",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
+      "kural": "dikis_zincir",
+      "hedef": "kol_alti",
+      "deger": "a: kol/underarm_front> | b: kol/underarm_back> | reverse true (a.bas<->b.son)",
+      "gecti": true,
+      "bilgi": false
+    },
+    {
       "kural": "dikis_uzunluk",
       "hedef": "omuz",
       "deger": "a 122.45 mm, hedef 122.45 (ratio 1.0000 x b 122.45 + ease 0.00), artik 0.00 mm",
@@ -323,7 +423,7 @@
     {
       "kural": "dikis_uzunluk",
       "hedef": "kol_oyugu",
-      "deger": "a 384.89 mm, hedef 384.38 (ratio 1.0400 x b 369.59 + ease 0.00), artik 0.51 mm",
+      "deger": "a 384.38 mm, hedef 384.38 (ratio 1.0400 x b 369.59 + ease 0.00), artik 0.00 mm",
       "gecti": true,
       "bilgi": false
     },
@@ -365,70 +465,70 @@
     {
       "kural": "yerlestirme",
       "hedef": "on_beden",
-      "deger": "rijit poz (kok) theta 0.00 deg, t (0.00, 0.00); alan 713.31 cm2, cevre 1147.62 mm",
+      "deger": "2B poz (kok) theta 0.00 deg, t (0.00, 0.00); alan 713.31 cm2, cevre 1147.62 mm",
       "gecti": true,
       "bilgi": true
     },
     {
       "kural": "yerlestirme",
       "hedef": "arka_beden",
-      "deger": "rijit poz (omuz) theta -180.00 deg, t (247.80, 45.20); alan 754.44 cm2, cevre 1183.06 mm",
+      "deger": "2B poz (omuz) theta 43.32 deg AYNA, t (18.26, -45.97); alan 754.44 cm2, cevre 1183.06 mm",
       "gecti": true,
       "bilgi": true
     },
     {
       "kural": "yerlestirme",
       "hedef": "on_etek",
-      "deger": "rijit poz (bel) theta -98.75 deg, t (-296.26, -110.54); alan 1379.64 cm2, cevre 1609.14 mm",
+      "deger": "2B poz (bel) theta 0.00 deg, t (0.00, 0.00); alan 1379.64 cm2, cevre 1609.14 mm",
       "gecti": true,
       "bilgi": true
     },
     {
       "kural": "yerlestirme",
       "hedef": "arka_etek",
-      "deger": "rijit poz (bel) theta 0.00 deg, t (0.00, 0.00); alan 1379.64 cm2, cevre 1609.14 mm",
+      "deger": "2B poz (bel) theta 98.44 deg AYNA, t (-182.88, 157.76); alan 1379.64 cm2, cevre 1609.14 mm",
       "gecti": true,
       "bilgi": true
     },
     {
       "kural": "yerlestirme",
       "hedef": "kol",
-      "deger": "rijit poz (kol_oyugu) theta 99.93 deg, t (340.31, 235.82); alan 812.27 cm2, cevre 1086.99 mm",
+      "deger": "2B poz (kol_oyugu) theta 125.34 deg AYNA, t (71.90, -2.13); alan 811.40 cm2, cevre 1086.48 mm",
       "gecti": true,
       "bilgi": true
     },
     {
       "kural": "halka_kapanma",
       "hedef": "yaka (neck)",
-      "deger": "toplam 156.73 mm, en buyuk kavsak boslugu 0.00 mm",
+      "deger": "toplam 156.73 mm, en buyuk kavsak boslugu 0.00 mm — arka_beden/neck_back< -> on_beden/neck_front: dikis omuz (0.00) | on_beden/neck_front> -> arka_beden/neck_back: kat aynasi",
       "gecti": true,
       "bilgi": false
     },
     {
       "kural": "halka_kapanma",
       "hedef": "kol_oyugu_halka (armhole)",
-      "deger": "toplam 369.59 mm, en buyuk kavsak boslugu 0.00 mm",
+      "deger": "toplam 369.59 mm, en buyuk kavsak boslugu 0.00 mm — on_beden/armhole_front.1> -> on_beden/armhole_front.2: kose | on_beden/armhole_front.2> -> arka_beden/armhole_back.2: dikis omuz (0.00) | arka_beden/armhole_back.2< -> arka_beden/armhole_back.1: kose | arka_beden/armhole_back.1< -> on_beden/armhole_front.1: dikis yan_beden (0.00)",
       "gecti": true,
       "bilgi": false
     },
     {
       "kural": "halka_kapanma",
       "hedef": "bel_halka (waist_ring)",
-      "deger": "toplam 362.50 mm, en buyuk kavsak boslugu 0.00 mm",
+      "deger": "toplam 362.50 mm, en buyuk kavsak boslugu 0.00 mm — on_beden/waist_front> -> arka_beden/waist_back: dikis yan_beden (0.00) | arka_beden/waist_back< -> on_beden/waist_front: kat aynasi",
       "gecti": true,
       "bilgi": false
     },
     {
       "kural": "halka_kapanma",
       "hedef": "etek_ucu (hem)",
-      "deger": "toplam 495.00 mm, en buyuk kavsak boslugu 0.00 mm",
+      "deger": "toplam 495.00 mm, en buyuk kavsak boslugu 0.00 mm — on_etek/hem_front> -> arka_etek/hem_back: dikis yan_etek (0.00) | arka_etek/hem_back< -> on_etek/hem_front: kat aynasi",
       "gecti": true,
       "bilgi": false
     },
     {
       "kural": "halka_kapanma",
       "hedef": "kol_agzi (sleeve_hem)",
-      "deger": "toplam 320.50 mm, en buyuk kavsak boslugu 0.00 mm",
+      "deger": "toplam 320.50 mm, en buyuk kavsak boslugu 0.00 mm — kol/hem> -> kol/hem: dikis kol_alti (0.00)",
       "gecti": true,
       "bilgi": false
     }
@@ -436,6 +536,7 @@
   "dikisler": [
     {
       "seam": "omuz",
+      "reverse": false,
       "lenA": 122.44786645752552,
       "lenB": 122.44786645752552,
       "hedefA": 122.44786645752552,
@@ -446,6 +547,7 @@
     },
     {
       "seam": "yan_beden",
+      "reverse": false,
       "lenA": 211.92938092676062,
       "lenB": 211.92938092676062,
       "hedefA": 211.92938092676062,
@@ -456,16 +558,18 @@
     },
     {
       "seam": "kol_oyugu",
-      "lenA": 384.8878789846944,
-      "lenB": 369.5921005069445,
-      "hedefA": 384.3757845272223,
-      "artikMM": 0.5120944574720738,
+      "reverse": false,
+      "lenA": 384.375784552596,
+      "lenB": 369.5921005069446,
+      "hedefA": 384.3757845272224,
+      "artikMM": 2.53735947808309e-08,
       "gecti": true,
-      "ucBoslukMM": 159.70416084985283,
+      "ucBoslukMM": 320.5,
       "centikArtikMM": []
     },
     {
       "seam": "bel",
+      "reverse": false,
       "lenA": 362.5,
       "lenB": 362.5,
       "hedefA": 362.5,
@@ -476,6 +580,7 @@
     },
     {
       "seam": "yan_etek",
+      "reverse": false,
       "lenA": 595.3909944983848,
       "lenB": 595.3909944983848,
       "hedefA": 595.3909944983848,
@@ -486,6 +591,7 @@
     },
     {
       "seam": "kol_alti",
+      "reverse": true,
       "lenA": 190.8,
       "lenB": 190.8,
       "hedefA": 190.8,
@@ -503,7 +609,7 @@
       "kapanmaMM": 0,
       "enKotuKavsak": "",
       "gecti": true,
-      "kavsaklar": "arka_beden/neck_back -> on_beden/neck_front: kat aynasi | on_beden/neck_front -> arka_beden/neck_back: dikis omuz (0.00)"
+      "kavsaklar": "arka_beden/neck_back< -> on_beden/neck_front: dikis omuz (0.00) | on_beden/neck_front> -> arka_beden/neck_back: kat aynasi"
     },
     {
       "ring": "kol_oyugu_halka",
@@ -512,7 +618,7 @@
       "kapanmaMM": 0,
       "enKotuKavsak": "",
       "gecti": true,
-      "kavsaklar": "on_beden/armhole_front.1 -> on_beden/armhole_front.2: kose | on_beden/armhole_front.2 -> arka_beden/armhole_back.2: dikis omuz (0.00) | arka_beden/armhole_back.2 -> arka_beden/armhole_back.1: kose | arka_beden/armhole_back.1 -> on_beden/armhole_front.1: dikis yan_beden (0.00)"
+      "kavsaklar": "on_beden/armhole_front.1> -> on_beden/armhole_front.2: kose | on_beden/armhole_front.2> -> arka_beden/armhole_back.2: dikis omuz (0.00) | arka_beden/armhole_back.2< -> arka_beden/armhole_back.1: kose | arka_beden/armhole_back.1< -> on_beden/armhole_front.1: dikis yan_beden (0.00)"
     },
     {
       "ring": "bel_halka",
@@ -521,7 +627,7 @@
       "kapanmaMM": 0,
       "enKotuKavsak": "",
       "gecti": true,
-      "kavsaklar": "on_beden/waist_front -> arka_beden/waist_back: dikis yan_beden (0.00) | arka_beden/waist_back -> on_beden/waist_front: kat aynasi"
+      "kavsaklar": "on_beden/waist_front> -> arka_beden/waist_back: dikis yan_beden (0.00) | arka_beden/waist_back< -> on_beden/waist_front: kat aynasi"
     },
     {
       "ring": "etek_ucu",
@@ -530,7 +636,7 @@
       "kapanmaMM": 0,
       "enKotuKavsak": "",
       "gecti": true,
-      "kavsaklar": "on_etek/hem_front -> arka_etek/hem_back: dikis yan_etek (0.00) | arka_etek/hem_back -> on_etek/hem_front: kat aynasi"
+      "kavsaklar": "on_etek/hem_front> -> arka_etek/hem_back: dikis yan_etek (0.00) | arka_etek/hem_back< -> on_etek/hem_front: kat aynasi"
     },
     {
       "ring": "kol_agzi",
@@ -539,17 +645,20 @@
       "kapanmaMM": 0,
       "enKotuKavsak": "",
       "gecti": true,
-      "kavsaklar": "kol/hem -> kol/hem: dikis kol_alti (0.00)"
+      "kavsaklar": "kol/hem> -> kol/hem: dikis kol_alti (0.00)"
     }
   ],
   "pozlar": [
     {
       "panel": "on_beden",
       "yerlesti": true,
-      "cosT": 1,
-      "sinT": 0,
+      "a": 1,
+      "b": 0,
+      "c": 0,
+      "d": 1,
       "tx": 0,
       "ty": 0,
+      "ayna": false,
       "yerlestiren": "kok",
       "alanMM2": 71331.12677580242,
       "cevreMM": 1147.6151169833447
@@ -557,10 +666,13 @@
     {
       "panel": "arka_beden",
       "yerlesti": true,
-      "cosT": -1,
-      "sinT": -3.216245299353273e-16,
-      "tx": 247.79999999999998,
-      "ty": 45.20000000000006,
+      "a": 0.7274762096591318,
+      "b": 0.6861329057697079,
+      "c": 0.6861329057697079,
+      "d": -0.7274762096591317,
+      "tx": 18.259093952838157,
+      "ty": -45.970904686570435,
+      "ayna": true,
       "yerlestiren": "omuz",
       "alanMM2": 75444.33032873877,
       "cevreMM": 1183.0622548168963
@@ -568,10 +680,13 @@
     {
       "panel": "on_etek",
       "yerlesti": true,
-      "cosT": -0.15220675751720736,
-      "sinT": -0.9883486747935154,
-      "tx": -296.26025174344466,
-      "ty": -110.54013347437845,
+      "a": 1,
+      "b": 0,
+      "c": 0,
+      "d": 1,
+      "tx": 0,
+      "ty": 0,
+      "ayna": false,
       "yerlestiren": "bel",
       "alanMM2": 137963.75,
       "cevreMM": 1609.1409944983848
@@ -579,10 +694,13 @@
     {
       "panel": "arka_etek",
       "yerlesti": true,
-      "cosT": 1,
-      "sinT": 0,
-      "tx": 0,
-      "ty": 0,
+      "a": -0.14672373795759122,
+      "b": 0.9891775092063871,
+      "c": 0.9891775092063871,
+      "d": 0.14672373795759122,
+      "tx": -182.88143863170956,
+      "ty": 157.75569996309383,
+      "ayna": true,
       "yerlestiren": "bel",
       "alanMM2": 137963.75,
       "cevreMM": 1609.1409944983848
@@ -590,13 +708,16 @@
     {
       "panel": "kol",
       "yerlesti": true,
-      "cosT": -0.17248858848113605,
-      "sinT": 0.985011516097038,
-      "tx": 340.31089175433516,
-      "ty": 235.8209272659662,
+      "a": -0.5784291469696452,
+      "b": 0.8157326289514037,
+      "c": 0.8157326289514039,
+      "d": 0.5784291469696452,
+      "tx": 71.89878501632626,
+      "ty": -2.130535800694247,
+      "ayna": true,
       "yerlestiren": "kol_oyugu",
-      "alanMM2": 81226.54842207565,
-      "cevreMM": 1086.9878789846941
+      "alanMM2": 81140.34523206743,
+      "cevreMM": 1086.4757845525958
     }
   ]
 }

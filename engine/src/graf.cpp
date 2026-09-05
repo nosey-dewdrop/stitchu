@@ -192,6 +192,7 @@ int cmpAnchor(const Anchor& x, const Anchor& y) {
     if (x.landmark != y.landmark) return x.landmark < y.landmark ? -1 : 1;
     if (x.xOf != y.xOf) return x.xOf < y.xOf ? -1 : 1;
     if (x.ring != y.ring) return x.ring < y.ring ? -1 : 1;
+    if (x.width != y.width) return x.width < y.width ? -1 : 1;
     if (!feq(x.oran, y.oran)) return x.oran < y.oran ? -1 : 1;
     if (!feq(x.ofsetMM, y.ofsetMM)) return x.ofsetMM < y.ofsetMM ? -1 : 1;
     if (x.yLandmark != y.yLandmark) return x.yLandmark < y.yLandmark ? -1 : 1;
@@ -252,6 +253,21 @@ RefPoint shiftY(const RefPoint& p, double dyMM) {
 }
 RefPoint mirrorX(const RefPoint& p) { return scaleX(p, -1.0); }
 
+// Karar 3: bir alan tek anlam tasir. ring yalniz ring* icin, width yalniz widthHalf icin; carpik
+// kombinasyon ADIYLA reddedilir (parse + sema ayni cumleyi kullanir).
+bool anchorXOfTutarli(const std::string& xOf, const std::string& ring, const std::string& width, std::string& why) {
+    const bool ringX = xOf == "ringFront" || xOf == "ringBack" || xOf == "ringQuarter";
+    if (xOf == "widthHalf") {
+        if (width.empty()) { why = "xOf widthHalf ama width bos (genislik olcusu adi gerekir)"; return false; }
+        if (!ring.empty()) { why = "xOf widthHalf ile ring dolu ('" + ring + "'): ring yalniz ring* icin"; return false; }
+        return true;
+    }
+    if (!width.empty()) { why = "width dolu ('" + width + "') ama xOf '" + xOf + "' widthHalf degil"; return false; }
+    if (xOf == "landmark" && !ring.empty()) return true;   // landmark x'i, bolluk halkasi adiyla — izinli
+    if (!ringX && !ring.empty() && xOf != "landmark") { why = "ring dolu ('" + ring + "') ama xOf '" + xOf + "' ring* degil"; return false; }
+    return true;
+}
+
 double EvalCtx::bolluk(const std::string& ring) const {
     for (const auto& kv : bollukMM) if (kv.first == ring) return kv.second;
     return 0.0;
@@ -276,11 +292,11 @@ Point eval(const Anchor& a, const EvalCtx& ctx) {
         const double backFrac = ctx.onArkaEsit ? 0.5 : body.ringBackFrac(ring);
         const double pay = a.xOf == "ringFront" ? (1.0 - backFrac) : a.xOf == "ringBack" ? backFrac : 0.5;
         baseX = G * pay / 2.0;
-    } else if (a.xOf == "scalarHalf") {
-        // beden GENISLIK olcusunun yarisi (width.crossFront gibi): ring alani olcunun adini tasir
-        if (a.ring.empty() || !body.hasScalar(a.ring))
-            throw std::runtime_error("graf eval: " + a.landmark + " icin genislik olcusu yok (scalarHalf, ring='" + a.ring + "', " + body.id() + ")");
-        baseX = body.scalar(a.ring) / 2.0;
+    } else if (a.xOf == "widthHalf") {
+        // beden GENISLIK olcusunun yarisi (width.crossFront gibi): width alani olcunun adini tasir (karar 3)
+        if (a.width.empty() || !body.hasScalar(a.width))
+            throw std::runtime_error("graf eval: " + a.landmark + " icin genislik olcusu yok (widthHalf, width='" + a.width + "', " + body.id() + ")");
+        baseX = body.scalar(a.width) / 2.0;
     } else {
         throw std::runtime_error("graf eval: bilinmeyen xOf '" + a.xOf + "' (" + a.landmark + ")");
     }
@@ -438,6 +454,7 @@ void anchorInto(JVal& o, const Anchor& a) {
     o.set("landmark", JVal::str(a.landmark));
     if (a.xOf != "landmark") o.set("xOf", JVal::str(a.xOf));
     if (!a.ring.empty()) o.set("ring", JVal::str(a.ring));
+    if (!a.width.empty()) o.set("width", JVal::str(a.width));
     o.set("oran", JVal::num(a.oran));
     o.set("ofsetMM", JVal::num(a.ofsetMM));
     if (!a.yLandmark.empty()) o.set("yLandmark", JVal::str(a.yLandmark));
@@ -446,7 +463,7 @@ void anchorInto(JVal& o, const Anchor& a) {
 }
 bool anchorFrom(const JVal& v, Anchor& a, std::string& err, const char* where, bool allowW) {
     if (!v.isObj()) { err = std::string(where) + ": nokta nesne degil"; return false; }
-    static const char* const kAllowed[] = {"landmark", "xOf", "ring", "oran", "ofsetMM", "yLandmark", "yLandmark2", "yOran", "yOfsetMM"};
+    static const char* const kAllowed[] = {"landmark", "xOf", "ring", "width", "oran", "ofsetMM", "yLandmark", "yLandmark2", "yOran", "yOfsetMM"};
     for (const auto& kv : v.o) {
         bool ok = allowW && kv.first == "w";
         for (const char* k : kAllowed) if (kv.first == k) ok = true;
@@ -456,6 +473,8 @@ bool anchorFrom(const JVal& v, Anchor& a, std::string& err, const char* where, b
     a.landmark = v.get("landmark")->s;
     a.xOf = v.strOr("xOf", "landmark");
     a.ring = v.strOr("ring", "");
+    a.width = v.strOr("width", "");
+    { std::string why; if (!anchorXOfTutarli(a.xOf, a.ring, a.width, why)) { err = std::string(where) + ": " + why + " (" + a.landmark + ")"; return false; } }
     if (!v.get("oran") || !v.get("oran")->isNum()) { err = std::string(where) + ": oran eksik (" + a.landmark + ")"; return false; }
     a.oran = v.get("oran")->n;
     a.ofsetMM = v.numOr("ofsetMM", 0.0);
@@ -544,12 +563,13 @@ JVal toJSON(const Edge& e) {
     if (!e.finish.empty()) o.set("finish", JVal::str(e.finish));
     if (!e.notches.empty()) o.set("notches", numArr(e.notches));
     if (e.gatherRatio != 1.0) o.set("gatherRatio", JVal::num(e.gatherRatio));
+    if (!e.fitSeam.empty()) o.set("fitSeam", JVal::str(e.fitSeam));
     return o;
 }
 bool fromJSON(const JVal& v, Edge& out, std::string& err) {
     out = Edge();
     const std::string where = "Edge " + v.strOr("id", "?");
-    if (!onlyKeys(v, {"id", "kind", "role", "rolePart", "roleCount", "from", "to", "control", "finish", "notches", "gatherRatio"}, err, where)) return false;
+    if (!onlyKeys(v, {"id", "kind", "role", "rolePart", "roleCount", "from", "to", "control", "finish", "notches", "gatherRatio", "fitSeam"}, err, where)) return false;
     if (!needStr(v, "id", out.id, err, where) || !needStr(v, "kind", out.kind, err, where)) return false;
     out.role = v.strOr("role", "");
     out.rolePart = static_cast<int>(v.numOr("rolePart", 0));
@@ -566,6 +586,8 @@ bool fromJSON(const JVal& v, Edge& out, std::string& err) {
     if (!numArrFrom(v.get("notches"), out.notches, err, where + " notches")) return false;
     for (double f : out.notches) if (!(f > 0.0 && f < 1.0)) { err = where + ": notch kesri (0,1) disinda " + fmtNum(f); return false; }
     out.gatherRatio = v.numOr("gatherRatio", 1.0);
+    out.fitSeam = v.strOr("fitSeam", "");
+    if (!out.fitSeam.empty() && out.control.size() != 2) { err = where + ": fitSeam yalniz kubik kenarda (control 2 nokta)"; return false; }
     return true;
 }
 
@@ -618,6 +640,7 @@ JVal toJSON(const Seam& s) {
     o.set("id", JVal::str(s.id));
     JVal a = JVal::arr(); for (const EdgeRef& r : s.a) a.push(refJSON(r)); o.set("a", a);
     JVal b = JVal::arr(); for (const EdgeRef& r : s.b) b.push(refJSON(r)); o.set("b", b);
+    o.set("reverse", JVal::boolean(s.reverse));
     o.set("ratio", JVal::num(s.ratio));
     o.set("easeMM", JVal::num(s.easeMM));
     if (!s.notchFractions.empty()) o.set("notchFractions", numArr(s.notchFractions));
@@ -634,10 +657,11 @@ JVal toJSON(const Seam& s) {
 bool fromJSON(const JVal& v, Seam& out, std::string& err) {
     out = Seam();
     const std::string where = "Seam " + v.strOr("id", "?");
-    if (!onlyKeys(v, {"id", "a", "b", "ratio", "easeMM", "notchFractions", "closure", "gerekce"}, err, where)) return false;
+    if (!onlyKeys(v, {"id", "a", "b", "reverse", "ratio", "easeMM", "notchFractions", "closure", "gerekce"}, err, where)) return false;
     if (!needStr(v, "id", out.id, err, where)) return false;
     if (!refsFrom(v.get("a"), out.a, err, where + " a") || !refsFrom(v.get("b"), out.b, err, where + " b")) return false;
     if (out.a.empty() || out.b.empty()) { err = where + ": iki taraf da en az bir kenar tasimali"; return false; }
+    { const JVal* rv = v.get("reverse"); if (!rv || !rv->isBool()) { err = where + ": 'reverse' (bool) zorunlu — a'nin basi b'nin hangi ucuyla dikiliyor, sessiz varsayim yok"; return false; } out.reverse = rv->b; }
     out.ratio = v.numOr("ratio", 1.0);
     out.easeMM = v.numOr("easeMM", 0.0);
     if (!numArrFrom(v.get("notchFractions"), out.notchFractions, err, where + " notchFractions")) return false;
@@ -717,6 +741,8 @@ bool fromJSON(const JVal& v, Garment& out, std::string& err) {
     };
     for (const Seam& s : out.seams) if (!checkRefs(s.a, where + " Seam " + s.id) || !checkRefs(s.b, where + " Seam " + s.id)) return false;
     for (const Ring& r : out.rings) if (!checkRefs(r.edges, where + " Ring " + r.id)) return false;
+    for (const Panel& p : out.panels) for (const Edge& e : p.edges)
+        if (!e.fitSeam.empty() && !out.seam(e.fitSeam)) { err = where + " Panel " + p.id + "/" + e.id + ": fitSeam dikisi yok " + e.fitSeam; return false; }
     return true;
 }
 bool fromJSONText(const std::string& text, Garment& out, std::string& err) {
@@ -773,6 +799,10 @@ struct Sema {
         }
         for (const auto& fk : alanlar->o)
             if (fk.second.boolOr("zorunlu", false) && !v.has(fk.first)) hata(yol + ": zorunlu alan eksik '" + fk.first + "' (" + t + ")");
+        if (t == "Anchor" || t == "Term") {   // karar 3: xOf / ring / width carpik kombinasyonu adiyla
+            std::string why;
+            if (!anchorXOfTutarli(v.strOr("xOf", "landmark"), v.strOr("ring", ""), v.strOr("width", ""), why)) hata(yol + ": " + why);
+        }
     }
 };
 } // namespace

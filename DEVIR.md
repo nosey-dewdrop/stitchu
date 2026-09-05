@@ -330,6 +330,21 @@ bash engine/tests/enum_dallanma_check.sh && node engine/tests/flat_ayni_insan_ch
 [ "$(node engine/tests/cizim_giysi_mi.mjs 2>&1 | grep -c '^FAIL  (b) kol acisi konvansiyon bandinda')" = 1 ] && echo 'beklenen kirmizilar sabit: 34 hukum, 1 ihlal (b)'
 ```
 
+**F2a eki (karar ajanı 1, 5 Eyl — yalnız EKLEME, üst blok değişmedi).** İki düzeltme:
+(a) Kabul zinciri #2'nin ilk adımı `python3 KOSU/flat-olcum.py | tail -1 | grep -q 'ESIK KONTROL OK'`
+BAYATTI: 'ESIK KONTROL OK' satırı f09f8e45'te eklendi, ondan sonraki `json.dumps(sonuc['oranlar'])`
+dökümü ca0ecd49'dan beri var — satır hiç son satır olmadı. Script'e dokunulmaz (döküm hakem kanıtı);
+kabul METNİ şudur ve orkestratör brief'indeki `tail -1` satırının yerini alır:
+```bash
+python3 KOSU/flat-olcum.py > /tmp/fo.txt; RC=$?; [ $RC -eq 0 ] && grep -q 'ESIK KONTROL OK' /tmp/fo.txt
+# hem cikis kodu (ESIK UYUMSUZ -> sys.exit(2)) hem satir; ikisi de yesil olmali
+```
+(b) F2a'nın üç kapısı zincire eklenir (yeşil beklenir, kırmızı = koşu durur):
+```bash
+ctest --test-dir engine/build -R 'graf_ir_check|graf_op_check|graf_dikilebilir_check' -j1 --output-on-failure
+# fixture yenileme YALNIZ graf degistiginde: engine/build/graf_ir_check contract/graf-v1.json contract/garment-spec-v2.json KOSU/ciktilar/graf-ilk/graf.json --emit
+```
+
 Regex 25 test seçer (`ctest -N -R ...`; `body_check` alt-dizesi #160 body_check ve #162 wasm_body_check'i alır, #130 body_volume_check'i bilerek ALMAZ — bu fazın kapısı değil). F1'den sonra bu zincir **exit 1 verir ve
 bu BEKLENİR** — sebebi aşağıdaki ilk İKİ satırdır (KAPI B 34 hüküm; F1 tur 4'ten sonra
 `cizim_giysi_mi` (b) kol açısı bandı, tam 1 ihlal); başka bir test kızarırsa koşu durur.

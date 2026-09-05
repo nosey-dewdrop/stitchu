@@ -2,12 +2,14 @@
 #include "grafdogrula.hpp"
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <limits>
-#include <map>
 #include <set>
 #include <stdexcept>
+
+#include "grafop.hpp"
 
 namespace stitchu {
 namespace graf {
@@ -17,7 +19,11 @@ Tolerans Tolerans::fromContract(const JVal& contract) {
     const double nan = std::numeric_limits<double>::quiet_NaN();
     t.dikisUzunlukMM = t.centikMM = t.halkaKapanmaMM = t.pensBacakMM = t.ratioMin = t.ratioMax = nan;
     if (const JVal* tl = contract.get("toleranslar")) {
-        auto rd = [&](const char* k, double& out) { const JVal* v = tl->get(k); if (v) { const JVal* d = v->get("deger"); if (d && d->isNum()) out = d->n; } };
+        auto rd = [&](const char* k, double& out) {
+            const JVal* v = tl->get(k); if (!v) return;
+            const JVal* d = v->get("deger"); if (d && d->isNum()) out = d->n;
+            t.tablo.push_back({k, v->strOr("kaynak", "KAYNAK YOK"), (d && d->isNum()) ? d->n : nan});
+        };
         rd("dikisUzunlukMM", t.dikisUzunlukMM); rd("centikMM", t.centikMM); rd("halkaKapanmaMM", t.halkaKapanmaMM); rd("pensBacakMM", t.pensBacakMM);
     }
     if (const JVal* ar = contract.get("araliklar")) {
@@ -32,9 +38,30 @@ Tolerans Tolerans::fromContract(const JVal& contract) {
 
 int DogrulamaRaporu::kirmizi() const { int n = 0; for (const Hukum& h : hukumler) if (!h.bilgi && !h.gecti) ++n; return n; }
 
+std::vector<std::string> uydurmaKalemleri(const std::string& notes) {
+    // ';' ve '. ' sinirlarinda bol; DOGRULANMADI gecen parcalari kirp ve dondur
+    std::vector<std::string> parts; std::string cur;
+    for (size_t i = 0; i < notes.size(); ++i) {
+        const char c = notes[i];
+        if (c == ';' || (c == '.' && i + 1 < notes.size() && notes[i + 1] == ' ' && !(i > 0 && std::isdigit(static_cast<unsigned char>(notes[i - 1])) && i + 2 < notes.size() && std::isdigit(static_cast<unsigned char>(notes[i + 2]))))) {
+            parts.push_back(cur); cur.clear();
+        } else cur += c;
+    }
+    parts.push_back(cur);
+    std::vector<std::string> out;
+    for (std::string p : parts) {
+        if (p.find("DOGRULANMADI") == std::string::npos) continue;
+        const size_t b = p.find_first_not_of(" \t\n"), e = p.find_last_not_of(" \t\n");
+        if (b == std::string::npos) continue;
+        out.push_back(p.substr(b, e - b + 1));
+    }
+    return out;
+}
+
 namespace {
 std::string f2(double v) { char b[48]; std::snprintf(b, sizeof b, "%.2f", v); return b; }
 std::string f4(double v) { char b[48]; std::snprintf(b, sizeof b, "%.4f", v); return b; }
+std::string rs(const EdgeRef& r) { return r.panel + "/" + r.edge; }
 
 // Kenar konturunu noktalara ac (24 adim, motorun pathLength adimi)
 std::vector<Point> flattenEdge(const Edge& e, const EvalCtx& ctx) {
@@ -42,22 +69,28 @@ std::vector<Point> flattenEdge(const Edge& e, const EvalCtx& ctx) {
     if (e.isLine()) return {a, b};
     return flattenCubic(a, b, eval(e.control[0], ctx), eval(e.control[1], ctx), 24);
 }
-struct Chain {   // bir dikis tarafi: kenarlar, kumulatif uzunluklar, dunya noktalari (poz uygulanmamis)
-    std::vector<EdgeRef> refs;
-    std::vector<std::vector<Point>> pts;   // her kenar icin duzlestirilmis noktalar (yerel)
+struct Chain {   // bir dikis tarafi YURUYUS yonunde: kenarlar, kumulatif uzunluklar, yerel noktalar
+    std::vector<ZincirKenar> kenarlar;
+    std::vector<std::vector<Point>> pts;   // her kenar icin duzlestirilmis noktalar (yerel; ters kenar ters sirada)
+    std::vector<std::vector<double>> notch; // her kenar icin yuruyus yonunde centik kesirleri
     std::vector<double> cum;               // cum[i] = i. kenarin baslangicinin yay konumu
     double total = 0;
 };
-Chain chainOf(const Garment& g, const std::vector<EdgeRef>& refs, const Body& body, bool onArkaEsit) {
-    Chain c; c.refs = refs;
-    for (const EdgeRef& r : refs) {
-        const Panel* p = g.panel(r.panel); const Edge* e = g.edge(r);
-        if (!p || !e) throw std::runtime_error("chain: referans cozulmedi " + r.panel + "/" + r.edge);
-        const std::vector<Point> pts = flattenEdge(*e, p->ctxFor(body, onArkaEsit));
+Chain chainOf(const Garment& g, const Zincir& z, const Body& body, bool onArkaEsit) {
+    Chain c; c.kenarlar = z.kenarlar;
+    for (const ZincirKenar& zk : z.kenarlar) {
+        const Panel* p = g.panel(zk.ref.panel); const Edge* e = g.edge(zk.ref);
+        if (!p || !e) throw std::runtime_error("chain: referans cozulmedi " + rs(zk.ref));
+        std::vector<Point> pts = flattenEdge(*e, p->ctxFor(body, onArkaEsit));
+        std::vector<double> nf = e->notches;
+        if (zk.ters) { std::reverse(pts.begin(), pts.end()); for (double& f : nf) f = 1.0 - f; }
         double L = 0; for (size_t i = 1; i < pts.size(); ++i) L += distance(pts[i - 1], pts[i]);
-        c.cum.push_back(c.total); c.pts.push_back(pts); c.total += L;
+        c.cum.push_back(c.total); c.pts.push_back(pts); c.notch.push_back(nf); c.total += L;
     }
     return c;
+}
+Zincir duzZincir(const std::vector<EdgeRef>& refs) {   // yon cozumu olmadan (uzunluk icin yeter)
+    Zincir z; for (const EdgeRef& r : refs) z.kenarlar.push_back({r, false}); z.ok = true; return z;
 }
 // Zincir uzerinde yay konumu s'deki nokta (yerel, kenarin panel koordinatinda) + hangi kenar
 Point chainPointAt(const Chain& c, double s, size_t* edgeIdx) {
@@ -82,15 +115,27 @@ Point chainPointAt(const Chain& c, double s, size_t* edgeIdx) {
     if (edgeIdx) *edgeIdx = c.pts.size() - 1;
     return c.pts.back().back();
 }
-struct Pose { double c = 1, s = 0, tx = 0, ty = 0; bool set = false; std::string by; };
-Point apply(const Pose& p, Point q) { return {p.c * q.x - p.s * q.y + p.tx, p.s * q.x + p.c * q.y + p.ty}; }
-// q0->A, yon (q1-q0) -> (B-A): rijit (olceksiz)
-Pose rigidFrom(Point q0, Point q1, Point A, Point B) {
-    Pose p; p.set = true;
+struct Pose { double a = 1, b = 0, c = 0, d = 1, tx = 0, ty = 0; bool set = false; bool ayna = false; std::string by; };
+Point apply(const Pose& p, Point q) { return {p.a * q.x + p.b * q.y + p.tx, p.c * q.x + p.d * q.y + p.ty}; }
+// q0->A, yon (q1-q0) -> (B-A): rijit (olceksiz); ayna=true ise once q0q1 dogrusuna gore yansit
+Pose poseFrom(Point q0, Point q1, Point A, Point B, bool ayna) {
+    Pose p; p.set = true; p.ayna = ayna;
+    // (1) istenirse q0q1 dogrusuna gore yansitma: x' = M x + tr, dogru ustundeki noktalar sabit
+    double ma = 1, mb = 0, mc = 0, md = 1, trx = 0, tr_y = 0;
+    if (ayna) {
+        const double ux = q1.x - q0.x, uy = q1.y - q0.y, L2 = ux * ux + uy * uy;
+        if (L2 > 0) {
+            ma = (ux * ux - uy * uy) / L2; mb = 2 * ux * uy / L2; mc = mb; md = (uy * uy - ux * ux) / L2;
+            trx = q0.x - (ma * q0.x + mb * q0.y); tr_y = q0.y - (mc * q0.x + md * q0.y);
+        }
+    }
+    // (2) yon hizalama donusu (yansitma dogru yonunu korur) + q0 -> A otelemesi
     const double a1 = std::atan2(q1.y - q0.y, q1.x - q0.x), a2 = std::atan2(B.y - A.y, B.x - A.x);
-    const double th = a2 - a1; p.c = std::cos(th); p.s = std::sin(th);
-    const Point r = apply(Pose{p.c, p.s, 0, 0, true, ""}, q0);
-    p.tx = A.x - r.x; p.ty = A.y - r.y;
+    const double th = a2 - a1, cs = std::cos(th), sn = std::sin(th);
+    p.a = cs * ma - sn * mc; p.b = cs * mb - sn * md; p.c = sn * ma + cs * mc; p.d = sn * mb + cs * md;
+    const double rtx = cs * trx - sn * tr_y, rty = sn * trx + cs * tr_y;      // Rot x tr
+    const double rq0x = cs * q0.x - sn * q0.y, rq0y = sn * q0.x + cs * q0.y;  // Rot x q0 (yansitma q0'i sabit tutar)
+    p.tx = rtx + (A.x - rq0x); p.ty = rty + (A.y - rq0y);
     return p;
 }
 
@@ -113,7 +158,106 @@ std::vector<Point> flattenOutline(const std::vector<PathCommand>& cmds, int step
     if (!out.empty() && distance(out.front(), out.back()) < 1e-9) out.pop_back();
     return out;
 }
+Point centroid(const std::vector<Point>& P) { Point c{0, 0}; if (P.empty()) return c; for (const Point& p : P) { c.x += p.x; c.y += p.y; } c.x /= P.size(); c.y /= P.size(); return c; }
+
+// ---------------------------------------------------------------- kavsak tanima (karar 7)
+// Tepe (panel, RefPoint) ile tepe (panel, RefPoint) bulusur mu: ayni panelde esitlik (kose), ilan
+// edilen dikis esi (dikis), iki kat cizgisi ucu (kat). Oncelik: kose > dikis > kat (kat ancak baska
+// baglanti yoksa; iki x=0 ucunun rastlantisi degil, halkanin ayna kapanisi olsun diye).
+Kavsak kavsakBul(const Garment& g, const std::string& pi, const RefPoint& A, const std::string& pj, const RefPoint& B, const ZincirCozumu& cz, bool katIzin) {
+    if (pi == pj && A == B) return {"kose", ""};
+    for (const ZincirCozumu::Es& e : cz.esler) {
+        if ((e.panelP == pi && e.P == A && e.panelQ == pj && e.Q == B) || (e.panelQ == pi && e.Q == A && e.panelP == pj && e.P == B)) return {"dikis", e.dikis};
+    }
+    if (katIzin) {
+        const Panel* P = g.panel(pi); const Panel* Q = g.panel(pj);
+        if (P && Q && P->onFold && Q->onFold && A.xSifir() && B.xSifir()) return {"kat", ""};
+    }
+    return {"", ""};
+}
 } // namespace
+
+std::string Zincir::metin() const {
+    std::string s;
+    for (size_t i = 0; i < kenarlar.size(); ++i) { if (i) s += (kavsaklar.size() > i - 1 && kavsaklar[i - 1].tur == "dikis" ? " =" + kavsaklar[i - 1].dikis + "= " : " "); s += rs(kenarlar[i].ref) + (kenarlar[i].ters ? "<" : ">"); }
+    return s;
+}
+
+Zincir zincirCoz(const Garment& g, const std::vector<EdgeRef>& refs, const ZincirCozumu& cz, bool halka) {
+    Zincir z;
+    if (refs.empty()) { z.hata = "bos zincir"; return z; }
+    for (const EdgeRef& r : refs) if (!g.edge(r)) { z.hata = "referans cozulmedi " + rs(r); return z; }
+    const size_t n = refs.size();
+    auto entry = [&](const EdgeRef& r, bool ters) -> RefPoint { const Edge* e = g.edge(r); return ters ? e->to : e->from; };
+    auto exit_ = [&](const EdgeRef& r, bool ters) -> RefPoint { const Edge* e = g.edge(r); return ters ? e->from : e->to; };
+    // ilk kenarin yonu: tek kenar -> duz. Cok kenar -> (duz, sonraki) once, (ters, sonraki) sonra; kose>dikis>kat onceligi
+    std::vector<bool> ters(n, false); std::vector<Kavsak> kav;
+    if (n == 1) {
+        z.kenarlar.push_back({refs[0], false});
+        if (halka) {
+            const Kavsak k = kavsakBul(g, refs[0].panel, exit_(refs[0], false), refs[0].panel, entry(refs[0], false), cz, true);
+            // tek kenarli halkada kose (from==to) zaten kapali kenar olamaz; dikis ya da kat
+            if (k.tur.empty()) { z.hata = "tek kenarli halka kapanmiyor: " + rs(refs[0]) + " iki ucu dikis/kat ile bulusmuyor"; }
+            else z.ok = true;
+            z.kavsaklar.push_back(k);
+        } else z.ok = true;
+        z.basPanel = z.sonPanel = refs[0].panel; z.bas = entry(refs[0], false); z.son = exit_(refs[0], false);
+        return z;
+    }
+    auto rank = [](const std::string& t) { return t == "kose" ? 0 : t == "dikis" ? 1 : t == "kat" ? 2 : 9; };
+    // i = 0: dort kombinasyon icinden EN IYI kavsak (tur onceligi, esitlikte duz-duz)
+    {
+        int best = 9; bool bt0 = false, bt1 = false; Kavsak bk;
+        for (bool t0 : {false, true}) for (bool t1 : {false, true}) {
+            const Kavsak k = kavsakBul(g, refs[0].panel, exit_(refs[0], t0), refs[1].panel, entry(refs[1], t1), cz, false);
+            if (k.tur.empty()) continue;
+            if (rank(k.tur) < best) { best = rank(k.tur); bt0 = t0; bt1 = t1; bk = k; }
+        }
+        if (best == 9) { z.hata = "zincir kopuk: " + rs(refs[0]) + " -> " + rs(refs[1]) + " tepe paylasmiyor (kose/dikis yok)"; for (const EdgeRef& r : refs) z.kenarlar.push_back({r, false}); return z; }
+        ters[0] = bt0; ters[1] = bt1; kav.push_back(bk);
+    }
+    for (size_t i = 1; i + 1 < n; ++i) {
+        int best = 9; bool bt = false; Kavsak bk;
+        for (bool t1 : {false, true}) {
+            const Kavsak k = kavsakBul(g, refs[i].panel, exit_(refs[i], ters[i]), refs[i + 1].panel, entry(refs[i + 1], t1), cz, false);
+            if (k.tur.empty()) continue;
+            if (rank(k.tur) < best) { best = rank(k.tur); bt = t1; bk = k; }
+        }
+        if (best == 9) { z.hata = "zincir kopuk: " + rs(refs[i]) + (ters[i] ? "<" : ">") + " -> " + rs(refs[i + 1]) + " tepe paylasmiyor"; for (size_t j = 0; j < n; ++j) z.kenarlar.push_back({refs[j], ters[j]}); z.kavsaklar = kav; return z; }
+        ters[i + 1] = bt; kav.push_back(bk);
+    }
+    for (size_t j = 0; j < n; ++j) z.kenarlar.push_back({refs[j], ters[j]});
+    z.basPanel = refs[0].panel; z.bas = entry(refs[0], ters[0]);
+    z.sonPanel = refs[n - 1].panel; z.son = exit_(refs[n - 1], ters[n - 1]);
+    if (halka) {
+        const Kavsak k = kavsakBul(g, z.sonPanel, z.son, z.basPanel, z.bas, cz, true);
+        if (k.tur.empty()) { z.hata = "halka kapanmiyor: " + rs(refs[n - 1]) + " -> " + rs(refs[0]) + " kavsak yok (dikis/kose/kat)"; z.kavsaklar = kav; z.kavsaklar.push_back(k); return z; }
+        kav.push_back(k);
+    }
+    z.kavsaklar = kav; z.ok = true;
+    return z;
+}
+
+ZincirCozumu zincirleriCoz(const Garment& g) {
+    ZincirCozumu cz;
+    std::set<std::string> done;
+    bool progress = true;
+    while (progress && done.size() < g.seams.size()) {
+        progress = false;
+        for (const Seam& s : g.seams) {
+            if (done.count(s.id)) continue;
+            DikisZincir dz; dz.a = zincirCoz(g, s.a, cz, false); dz.b = zincirCoz(g, s.b, cz, false);
+            if (!dz.a.ok || !dz.b.ok) { dz.hata = (!dz.a.ok ? "a: " + dz.a.hata : "") + (!dz.b.ok ? (dz.a.ok ? "" : " | ") + std::string("b: ") + dz.b.hata : ""); cz.dikisler[s.id] = dz; continue; }
+            dz.ok = true; cz.dikisler[s.id] = dz; done.insert(s.id); progress = true;
+            // ilan edilen uc esleri: reverse=false -> bas<->bas, son<->son; true -> bas<->son, son<->bas
+            const Zincir& A = dz.a; const Zincir& B = dz.b;
+            if (!s.reverse) { cz.esler.push_back({A.basPanel, B.basPanel, s.id, A.bas, B.bas}); cz.esler.push_back({A.sonPanel, B.sonPanel, s.id, A.son, B.son}); }
+            else { cz.esler.push_back({A.basPanel, B.sonPanel, s.id, A.bas, B.son}); cz.esler.push_back({A.sonPanel, B.basPanel, s.id, A.son, B.bas}); }
+        }
+    }
+    for (const Seam& s : g.seams) if (!done.count(s.id)) cz.ok = false;
+    return cz;
+}
 
 bool outlineSelfIntersects(const std::vector<PathCommand>& outline, std::string* where) {
     // 16 adim: motorun kendini-kesme konvansiyonu (docs/ARCHITECTURE.md §1)
@@ -133,42 +277,54 @@ bool outlineSelfIntersects(const std::vector<PathCommand>& outline, std::string*
 }
 
 double chainLength(const Garment& g, const std::vector<EdgeRef>& refs, const Body& body, bool onArkaEsit) {
-    return chainOf(g, refs, body, onArkaEsit).total;
+    return chainOf(g, duzZincir(refs), body, onArkaEsit).total;
 }
 
-DogrulamaRaporu dogrula(const Garment& g, const Body& body, const JVal& contract, bool onArkaEsit) {
-    DogrulamaRaporu R; R.grafId = g.id; R.bodyId = body.id(); R.onArkaEsit = onArkaEsit;
+DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contract, bool onArkaEsit) {
+    DogrulamaRaporu R; R.grafId = g0.id; R.bodyId = body.id(); R.onArkaEsit = onArkaEsit;
     auto H = [&](const std::string& k, const std::string& hedef, const std::string& deger, bool gecti, bool bilgi = false) {
         R.hukumler.push_back({k, hedef, deger, gecti, bilgi});
     };
     const Tolerans tol = Tolerans::fromContract(contract);
+    R.toleranslar = tol.tablo;
     if (!tol.dolu) { H("tolerans", "contract", "toleranslar/araliklar eksik ya da NaN — dogrulayici reddetti", false); return R; }
-    H("tolerans", "contract", "dikis " + f2(tol.dikisUzunlukMM) + " · centik " + f2(tol.centikMM) + " · halka " + f2(tol.halkaKapanmaMM) + " · pens " + f2(tol.pensBacakMM) + " mm; ratio [" + f2(tol.ratioMin) + ", " + f2(tol.ratioMax) + "]", true, true);
+    H("tolerans", "contract", "dikis " + f2(tol.dikisUzunlukMM) + " · centik " + f2(tol.centikMM) + " · halka " + f2(tol.halkaKapanmaMM) + " · pens " + f2(tol.pensBacakMM) + " mm; ratio [" + f2(tol.ratioMin) + ", " + f2(tol.ratioMax) + "] (kaynaklar tablo basliginda)", true, true);
+    R.uydurmalar = uydurmaKalemleri(g0.notes);
+    for (const std::string& u : R.uydurmalar) H("uydurma", g0.id, u, true, true);
+    if (R.uydurmalar.empty()) H("uydurma", g0.id, "notes'ta DOGRULANMADI kalemi yok", true, true);
 
     // ---- sema
-    { std::vector<std::string> hs; const bool ok = semaDogrula(toJSON(g), contract, hs);
-      H("sema", g.id, ok ? "sozlesmeyle uyumlu" : (std::to_string(hs.size()) + " hata: " + hs.front()), ok); }
+    { std::vector<std::string> hs; const bool ok = semaDogrula(toJSON(g0), contract, hs);
+      H("sema", g0.id, ok ? "sozlesmeyle uyumlu" : (std::to_string(hs.size()) + " hata: " + hs.front()), ok); }
 
     // ---- panel_kapali + referans
     std::set<std::string> pids;
-    for (const Panel& p : g.panels) {
+    for (const Panel& p : g0.panels) {
         std::string why; const bool ok = p.closed(&why);
         H("panel_kapali", p.id, ok ? (std::to_string(p.edges.size()) + " kenar, halka kapali") : why, ok);
         if (!pids.insert(p.id).second) H("referans", p.id, "tekrar eden panel id", false);
     }
     auto refsOk = [&](const std::vector<EdgeRef>& refs, const std::string& hedef) {
-        for (const EdgeRef& r : refs) if (!g.edge(r)) { H("referans", hedef, "cozulmeyen referans " + r.panel + "/" + r.edge, false); return false; }
+        for (const EdgeRef& r : refs) if (!g0.edge(r)) { H("referans", hedef, "cozulmeyen referans " + rs(r), false); return false; }
         return true;
     };
     bool refsAllOk = true;
-    for (const Seam& s : g.seams) { if (!refsOk(s.a, "seam " + s.id) || !refsOk(s.b, "seam " + s.id)) refsAllOk = false; }
-    for (const Ring& r : g.rings) if (!refsOk(r.edges, "ring " + r.id)) refsAllOk = false;
+    for (const Seam& s : g0.seams) { if (!refsOk(s.a, "seam " + s.id) || !refsOk(s.b, "seam " + s.id)) refsAllOk = false; }
+    for (const Ring& r : g0.rings) if (!refsOk(r.edges, "ring " + r.id)) refsAllOk = false;
     if (!refsAllOk) return R;   // gerisi referanssiz olculemez
-    H("referans", g.id, std::to_string(g.seams.size()) + " dikis, " + std::to_string(g.rings.size()) + " halka; tum referanslar cozuldu", true);
+    H("referans", g0.id, std::to_string(g0.seams.size()) + " dikis, " + std::to_string(g0.rings.size()) + " halka; tum referanslar cozuldu", true);
+
+    // ---- kisit: fitLength kisitlari bu bedende cozulur (karar 6); cozulen graf G ile olculur
+    const OpCtx octx = OpCtx::fromContract(contract);
+    CozumSonucu cz = cozumle(g0, body, onArkaEsit, octx);
+    const Garment& g = cz.ok ? cz.g : g0;
+    if (!cz.ok) H("kisit", g0.id, cz.hata, false);
+    else for (const Cozum& c : cz.cozumler) H("kisit", c.panel + "/" + c.edge, "dikis " + c.seam + ": hedef " + f2(c.hedefMM) + " mm, kontrol kaymasi " + f2(c.dMM) + " mm @ " + body.id() + ", artik " + f4(c.artikMM) + " mm", true, true);
+    if (cz.ok && cz.cozumler.empty()) H("kisit", g0.id, "fitLength kisiti yok", true, true);
 
     // ---- kenar_turu
     std::map<std::string, std::vector<std::string>> inSeam;   // "panel/edge" -> seam ids
-    for (const Seam& s : g.seams) { for (const EdgeRef& r : s.a) inSeam[r.panel + "/" + r.edge].push_back(s.id); for (const EdgeRef& r : s.b) inSeam[r.panel + "/" + r.edge].push_back(s.id); }
+    for (const Seam& s : g.seams) { for (const EdgeRef& r : s.a) inSeam[rs(r)].push_back(s.id); for (const EdgeRef& r : s.b) inSeam[rs(r)].push_back(s.id); }
     const JVal* finishEnum = contract.get("enumlar") ? contract.get("enumlar")->get("finish") : nullptr;
     for (const Panel& p : g.panels) {
         const EvalCtx ctx = p.ctxFor(body, onArkaEsit);
@@ -205,6 +361,7 @@ DogrulamaRaporu dogrula(const Garment& g, const Body& body, const JVal& contract
 
     // ---- kendini_kesme + alan/cevre
     std::map<std::string, Pose> poses;
+    std::map<std::string, Point> merkez;
     for (const Panel& p : g.panels) {
         const EvalCtx ctx = p.ctxFor(body, onArkaEsit);
         std::string where; bool si = false, evalOk = true; std::vector<PathCommand> ol;
@@ -215,148 +372,121 @@ DogrulamaRaporu dogrula(const Garment& g, const Body& body, const JVal& contract
             const std::vector<Point> P = flattenOutline(ol, 24);
             double A = 0, L = 0;
             for (size_t i = 0; i < P.size(); ++i) { const Point& a = P[i]; const Point& b = P[(i + 1) % P.size()]; A += a.x * b.y - b.x * a.y; L += distance(a, b); }
-            pz.alanMM2 = std::fabs(A) / 2.0; pz.cevreMM = L;
+            pz.alanMM2 = std::fabs(A) / 2.0; pz.cevreMM = L; merkez[p.id] = centroid(P);
         }
         R.pozlar.push_back(pz);
     }
 
-    // ---- dikis_uzunluk + centik
-    std::map<std::string, double> seamArtik;
+    // ---- dikis_zincir (karar 7): yapisal, beden gerekmez
+    const ZincirCozumu zc = zincirleriCoz(g);
     for (const Seam& s : g.seams) {
-        DikisSatir d; d.seam = s.id;
+        const DikisZincir& dz = zc.dikisler.at(s.id);
+        H("dikis_zincir", s.id, dz.ok ? ("a: " + dz.a.metin() + " | b: " + dz.b.metin() + " | reverse " + (s.reverse ? "true (a.bas<->b.son)" : "false (a.bas<->b.bas)")) : dz.hata, dz.ok);
+    }
+
+    // ---- dikis_uzunluk + centik (zincir yonunde; b tarafi reverse ile)
+    std::map<std::string, double> seamArtik;
+    std::map<std::string, std::pair<Chain, Chain>> chains;
+    for (const Seam& s : g.seams) {
+        DikisSatir d; d.seam = s.id; d.reverse = s.reverse;
+        const DikisZincir& dz = zc.dikisler.at(s.id);
         Chain ca, cb;
-        try { ca = chainOf(g, s.a, body, onArkaEsit); cb = chainOf(g, s.b, body, onArkaEsit); }
+        try { ca = chainOf(g, dz.ok ? dz.a : duzZincir(s.a), body, onArkaEsit); cb = chainOf(g, dz.ok ? dz.b : duzZincir(s.b), body, onArkaEsit); }
         catch (const std::exception& ex) { H("dikis_uzunluk", s.id, std::string("degerlenemedi: ") + ex.what(), false); continue; }
         d.lenA = ca.total; d.lenB = cb.total; d.hedefA = s.ratio * cb.total + s.easeMM; d.artikMM = ca.total - d.hedefA;
         const bool ratioOk = s.ratio >= tol.ratioMin && s.ratio <= tol.ratioMax;
         d.gecti = ratioOk && std::fabs(d.artikMM) <= tol.dikisUzunlukMM;
         seamArtik[s.id] = std::fabs(d.artikMM);
         H("dikis_uzunluk", s.id, "a " + f2(d.lenA) + " mm, hedef " + f2(d.hedefA) + " (ratio " + f4(s.ratio) + " x b " + f2(d.lenB) + " + ease " + f2(s.easeMM) + "), artik " + f2(d.artikMM) + " mm" + (ratioOk ? "" : " — ratio aralik disi"), d.gecti);
-        // uc boslugu (bilgi): b'yi a'nin basina rijit hizala, obur uc farki
+        // uc boslugu (bilgi): kiris uyumsuzlugu
         if (!ca.pts.empty() && !cb.pts.empty()) {
             const Point A0 = ca.pts.front().front(), A1 = ca.pts.back().back();
             const Point B0 = cb.pts.front().front(), B1 = cb.pts.back().back();
-            const double chordA = distance(A0, A1), chordB = distance(B0, B1);
-            d.ucBoslukMM = std::fabs(chordA - chordB * s.ratio);
+            d.ucBoslukMM = std::fabs(distance(A0, A1) - distance(B0, B1) * s.ratio);
         }
-        // centikler
+        // centikler: a'nin basindan f; b'de reverse ise (1-f)
         for (double f : s.notchFractions) {
-            double worst = 0; bool okN = f > 0.0 && f < 1.0;
+            double worst = 0; bool okN = f > 0.0 && f < 1.0 && dz.ok;
             for (int side = 0; side < 2 && okN; ++side) {
-                const Chain& c = side == 0 ? ca : cb; const double target = f * c.total;
+                const Chain& c = side == 0 ? ca : cb;
+                const double fs = (side == 1 && s.reverse) ? (1.0 - f) : f;
+                const double target = fs * c.total;
                 double best = std::numeric_limits<double>::infinity();
-                for (size_t i = 0; i < c.refs.size(); ++i) {
-                    const Edge* e = g.edge(c.refs[i]);
-                    const double L = (i + 1 < c.refs.size() ? c.cum[i + 1] : c.total) - c.cum[i];
-                    for (double nf : e->notches) best = std::min(best, std::fabs(c.cum[i] + nf * L - target));
+                for (size_t i = 0; i < c.kenarlar.size(); ++i) {
+                    const double L = (i + 1 < c.kenarlar.size() ? c.cum[i + 1] : c.total) - c.cum[i];
+                    for (double nf : c.notch[i]) best = std::min(best, std::fabs(c.cum[i] + nf * L - target));
                 }
                 worst = std::max(worst, best);
             }
             if (!(worst <= tol.centikMM)) okN = false;
             d.centikArtikMM.push_back(worst);
-            H("centik", s.id + " @" + f4(f), std::isinf(worst) ? "bir tarafta panel centigi yok" : ("iki tarafta en kotu sapma " + f2(worst) + " mm"), okN);
+            H("centik", s.id + " @" + f4(f), !dz.ok ? "zincir cozulmedi, centik yeri tanimsiz" : std::isinf(worst) ? "bir tarafta panel centigi yok" : ("iki tarafta en kotu sapma " + f2(worst) + " mm" + (s.reverse ? " (b'de 1-f)" : "")), okN);
         }
         R.dikisler.push_back(d);
+        chains[s.id] = {ca, cb};
     }
 
-    // ---- sanal dikis: rijit yerlestirme (bilgi)
+    // ---- sanal dikis: 2B yerlestirme (bilgi), ilan edilen eslesmeyle; gerekirse ayna (kitap gibi acilis)
     if (!g.panels.empty()) {
-        poses[g.panels[0].id] = Pose{1, 0, 0, 0, true, "kok"};
+        poses[g.panels[0].id] = Pose{1, 0, 0, 1, 0, 0, true, false, "kok"};
         bool progress = true;
         while (progress) {
             progress = false;
             for (const Seam& s : g.seams) {
+                if (!chains.count(s.id) || !zc.dikisler.at(s.id).ok) continue;
                 for (int dir = 0; dir < 2; ++dir) {
-                    const std::vector<EdgeRef>& X = dir == 0 ? s.a : s.b;   // yerlesik taraf
-                    const std::vector<EdgeRef>& Y = dir == 0 ? s.b : s.a;   // yerlestirilecek
-                    bool xPlaced = !X.empty(); for (const EdgeRef& r : X) if (!poses[r.panel].set) xPlaced = false;
-                    if (!xPlaced) continue;
-                    Chain cx, cy;
-                    try { cx = chainOf(g, X, body, onArkaEsit); cy = chainOf(g, Y, body, onArkaEsit); } catch (...) { continue; }
-                    if (cx.total <= 0 || cy.total <= 0) continue;
-                    for (size_t i = 0; i < Y.size(); ++i) {
-                        if (poses[Y[i].panel].set) continue;
-                        const double s0 = cy.cum[i], s1 = (i + 1 < Y.size() ? cy.cum[i + 1] : cy.total);
-                        const double k = cx.total / cy.total;   // oran: b tarafi a'ya yayilir
-                        // karsi zincirde ters yon (iki parca kitap gibi acilir)
+                    const Chain& cx = dir == 0 ? chains[s.id].first : chains[s.id].second;   // yerlesik taraf
+                    const Chain& cy = dir == 0 ? chains[s.id].second : chains[s.id].first;   // yerlestirilecek
+                    bool xPlaced = !cx.kenarlar.empty(); for (const ZincirKenar& zk : cx.kenarlar) if (!poses[zk.ref.panel].set) xPlaced = false;
+                    if (!xPlaced || cx.total <= 0 || cy.total <= 0) continue;
+                    for (size_t i = 0; i < cy.kenarlar.size(); ++i) {
+                        const std::string& yp = cy.kenarlar[i].ref.panel;
+                        if (poses[yp].set) continue;
+                        const double s0 = cy.cum[i], s1 = (i + 1 < cy.kenarlar.size() ? cy.cum[i + 1] : cy.total);
+                        const double k = cx.total / cy.total;
+                        // ilan edilen eslesme: reverse=false -> bas<->bas (ayni yon); true -> bas<->son
+                        auto mapS = [&](double sy) { return s.reverse ? (cx.total - sy * k) : (sy * k); };
                         size_t ex0 = 0, ex1 = 0;
-                        const Point T0l = chainPointAt(cx, cx.total - s0 * k, &ex0), T1l = chainPointAt(cx, cx.total - s1 * k, &ex1);
-                        const Point T0 = apply(poses[X[ex0].panel], T0l), T1 = apply(poses[X[ex1].panel], T1l);
+                        const Point T0l = chainPointAt(cx, mapS(s0), &ex0), T1l = chainPointAt(cx, mapS(s1), &ex1);
+                        const Point T0 = apply(poses[cx.kenarlar[ex0].ref.panel], T0l), T1 = apply(poses[cx.kenarlar[ex1].ref.panel], T1l);
                         const Point q0 = cy.pts[i].front(), q1 = cy.pts[i].back();
-                        Pose pz = rigidFrom(q0, q1, T0, T1); pz.by = s.id;
-                        poses[Y[i].panel] = pz; progress = true;
+                        // iki aday: rijit / aynali; parcanin merkezi dikis dogrusunun OBUR yanina dusen alinir (acilmis kitap)
+                        const Point cX = apply(poses[cx.kenarlar[ex0].ref.panel], merkez[cx.kenarlar[ex0].ref.panel]);
+                        auto side = [&](Point P) { return (T1.x - T0.x) * (P.y - T0.y) - (T1.y - T0.y) * (P.x - T0.x); };
+                        Pose pr = poseFrom(q0, q1, T0, T1, false), pm = poseFrom(q0, q1, T0, T1, true);
+                        const double sX = side(cX), sR = side(apply(pr, merkez[yp]));
+                        Pose pz = (sX * sR > 0) ? pm : pr; pz.by = s.id;
+                        poses[yp] = pz; progress = true;
                     }
                 }
             }
         }
         for (PanelPoz& pz : R.pozlar) {
             const Pose& p = poses[pz.panel];
-            pz.yerlesti = p.set; pz.cosT = p.c; pz.sinT = p.s; pz.tx = p.tx; pz.ty = p.ty; pz.yerlestiren = p.by;
-            H("yerlestirme", pz.panel, p.set ? ("rijit poz (" + p.by + ") theta " + f2(std::atan2(p.s, p.c) * 180.0 / M_PI) + " deg, t (" + f2(p.tx) + ", " + f2(p.ty) + "); alan " + f2(pz.alanMM2 / 100.0) + " cm2, cevre " + f2(pz.cevreMM) + " mm") : "dikis agacina bagli degil (kopuk parca)", p.set, true);
+            pz.yerlesti = p.set; pz.a = p.a; pz.b = p.b; pz.c = p.c; pz.d = p.d; pz.tx = p.tx; pz.ty = p.ty; pz.ayna = p.ayna; pz.yerlestiren = p.by;
+            H("yerlestirme", pz.panel, p.set ? ("2B poz (" + p.by + ") theta " + f2(std::atan2(p.c, p.a) * 180.0 / M_PI) + " deg" + (p.ayna ? " AYNA" : "") + ", t (" + f2(p.tx) + ", " + f2(p.ty) + "); alan " + f2(pz.alanMM2 / 100.0) + " cm2, cevre " + f2(pz.cevreMM) + " mm") : "dikis agacina bagli degil (kopuk parca)", p.set, true);
         }
     }
 
-    // ---- halka_kapanma (sanal dikis kavsaklari)
+    // ---- halka_kapanma (sanal dikis kavsaklari, ilan edilen yonle)
     for (const Ring& ring : g.rings) {
         HalkaSatir hs; hs.ring = ring.id; hs.role = ring.role;
         if (ring.edges.empty()) { H("halka_kapanma", ring.id, "halkada kenar yok", false); R.halkalar.push_back(hs); continue; }
         try { hs.toplamMM = chainLength(g, ring.edges, body, onArkaEsit); } catch (const std::exception& ex) { H("halka_kapanma", ring.id, std::string("degerlenemedi: ") + ex.what(), false); R.halkalar.push_back(hs); continue; }
+        const Zincir z = zincirCoz(g, ring.edges, zc, true);
+        double worst = 0; std::string desc;
         const size_t n = ring.edges.size();
-        double worst = 0; bool broken = false; std::string desc;
-        // Kavsak: ardisik iki halka kenarinin BIRER ucu ayni yerde bulusur. Halka yuruyusu kenarin
-        // kendi yonuyle ters de olabilir; bu yuzden dort uc kombinasyonu denenir ve bir onceki
-        // kavsakta kullanilan uc (giris) disindaki uc (cikis) tercih edilir.
-        auto identify = [&](const EdgeRef& ri, const RefPoint& A, const EdgeRef& rj, const RefPoint& B, double& gap) -> std::string {
-            gap = 0.0;
-            if (ri.panel == rj.panel && A == B) return "kose";
-            for (const Seam& s : g.seams) {
-                for (int dir = 0; dir < 2; ++dir) {
-                    const std::vector<EdgeRef>& X = dir == 0 ? s.a : s.b; const std::vector<EdgeRef>& Y = dir == 0 ? s.b : s.a;
-                    bool xi = false, yj = false;
-                    for (const EdgeRef& r : X) { const Edge* e = g.edge(r); if (r.panel == ri.panel && (e->from == A || e->to == A)) xi = true; }
-                    for (const EdgeRef& r : Y) { const Edge* e = g.edge(r); if (r.panel == rj.panel && (e->from == B || e->to == B)) yj = true; }
-                    if (xi && yj) { gap = seamArtik.count(s.id) ? seamArtik[s.id] : 0.0; return "dikis " + s.id; }
-                }
-            }
-            const Panel* P = g.panel(ri.panel); const Panel* Q = g.panel(rj.panel);
-            if (P->onFold && Q->onFold && A.xSifir() && B.xSifir()) return "kat aynasi";
-            return "";
-        };
-        // Yuruyus: her kenara bir uctan girilir, OBUR uctan cikilir (ayni ucu iki kez kullanmak halkayi
-        // sahte kapatir). Ilk kenarin cikis ucu bilinmez: iki aday yuruyus denenir, kapanan alinir.
-        auto walk = [&](int startExit, double& worstOut, std::string& descOut, std::string& worstJunction) -> bool {
-            worstOut = 0; descOut.clear(); worstJunction.clear();
-            int exitEnd = startExit; bool okAll = true; int entry0 = -1;
-            for (size_t i = 0; i < n; ++i) {
-                const EdgeRef& ri = ring.edges[i]; const EdgeRef& rj = ring.edges[(i + 1) % n];
-                const Edge* ei = g.edge(ri); const Edge* ej = g.edge(rj);
-                const RefPoint A = exitEnd == 0 ? ei->from : ei->to;
-                std::string how; double gap = 0; int usedB = -1;
-                for (int b : {0, 1}) {
-                    if (n == 1 && b == exitEnd) continue;   // tek kenarli halka: obur uca baglanmali
-                    double gp; const std::string h = identify(ri, A, rj, b == 0 ? ej->from : ej->to, gp);
-                    if (!h.empty()) { how = h; gap = gp; usedB = b; break; }
-                }
-                if (how.empty()) { okAll = false; how = "KAVSAK YOK"; }
-                if (i + 1 == n) entry0 = usedB;
-                exitEnd = usedB < 0 ? 1 : 1 - usedB;
-                if (gap > worstOut) { worstOut = gap; worstJunction = ri.panel + "/" + ri.edge + " -> " + rj.panel + "/" + rj.edge; }
-                if (!descOut.empty()) descOut += " | ";
-                descOut += ri.panel + "/" + ri.edge + " -> " + rj.panel + "/" + rj.edge + ": " + how + (how.rfind("dikis", 0) == 0 ? " (" + f2(gap) + ")" : "");
-            }
-            if (okAll && n > 1 && entry0 >= 0 && entry0 != 1 - startExit) { okAll = false; descOut += " | ilk kenara donus ucu tutmuyor"; }
-            return okAll;
-        };
-        std::string desc1, wj1; double w1 = 0; const bool ok1 = walk(1, w1, desc1, wj1);
-        if (ok1) { worst = w1; desc = desc1; hs.enKotuKavsak = wj1; }
-        else {
-            std::string desc0, wj0; double w0 = 0; const bool ok0 = walk(0, w0, desc0, wj0);
-            if (ok0) { worst = w0; desc = desc0; hs.enKotuKavsak = wj0; }
-            else { broken = true; worst = std::max(w0, w1); desc = desc1; hs.enKotuKavsak = wj1; }
+        for (size_t i = 0; i < z.kavsaklar.size(); ++i) {
+            const Kavsak& k = z.kavsaklar[i];
+            const EdgeRef& ri = z.kenarlar[i].ref; const EdgeRef& rj = z.kenarlar[(i + 1) % n].ref;
+            const double gap = k.tur == "dikis" ? (seamArtik.count(k.dikis) ? seamArtik[k.dikis] : 0.0) : 0.0;
+            if (gap > worst) { worst = gap; hs.enKotuKavsak = rs(ri) + " -> " + rs(rj); }
+            if (!desc.empty()) desc += " | ";
+            desc += rs(ri) + (z.kenarlar[i].ters ? "<" : ">") + " -> " + rs(rj) + ": " + (k.tur.empty() ? "KAVSAK YOK" : k.tur == "dikis" ? "dikis " + k.dikis + " (" + f2(gap) + ")" : k.tur == "kat" ? "kat aynasi" : "kose");
         }
-        hs.kapanmaMM = worst; hs.kavsaklar = desc;
-        hs.gecti = !broken && worst <= tol.halkaKapanmaMM;
-        H("halka_kapanma", ring.id + " (" + ring.role + ")", broken ? ("halka KOPUK: " + desc) : ("toplam " + f2(hs.toplamMM) + " mm, en buyuk kavsak boslugu " + f2(worst) + " mm" + (worst > 0 ? " @ " + hs.enKotuKavsak : "")), hs.gecti);
+        hs.kapanmaMM = worst; hs.kavsaklar = z.ok ? desc : (z.hata + (desc.empty() ? "" : " | " + desc));
+        hs.gecti = z.ok && worst <= tol.halkaKapanmaMM;
+        H("halka_kapanma", ring.id + " (" + ring.role + ")", !z.ok ? ("halka KOPUK: " + hs.kavsaklar) : ("toplam " + f2(hs.toplamMM) + " mm, en buyuk kavsak boslugu " + f2(worst) + " mm" + (worst > 0 ? " @ " + hs.enKotuKavsak : "") + " — " + desc), hs.gecti);
         R.halkalar.push_back(hs);
     }
     return R;
@@ -366,17 +496,21 @@ JVal DogrulamaRaporu::toJSON() const {
     JVal o = JVal::obj();
     o.set("graf", JVal::str(grafId)); o.set("body", JVal::str(bodyId)); o.set("onArkaEsit", JVal::boolean(onArkaEsit));
     o.set("dikilebilir", JVal::boolean(dikilebilir())); o.set("kirmizi", JVal::num(kirmizi()));
+    JVal ts = JVal::arr();
+    for (const ToleransSatir& t : toleranslar) { JVal x = JVal::obj(); x.set("ad", JVal::str(t.ad)); x.set("mm", JVal::num(t.deger)); x.set("kaynak", JVal::str(t.kaynak)); ts.push(x); }
+    o.set("toleranslar", ts);
+    JVal us = JVal::arr(); for (const std::string& u : uydurmalar) us.push(JVal::str(u)); o.set("uydurma", us);
     JVal hs = JVal::arr();
     for (const Hukum& h : hukumler) { JVal x = JVal::obj(); x.set("kural", JVal::str(h.kural)); x.set("hedef", JVal::str(h.hedef)); x.set("deger", JVal::str(h.deger)); x.set("gecti", JVal::boolean(h.gecti)); x.set("bilgi", JVal::boolean(h.bilgi)); hs.push(x); }
     o.set("hukumler", hs);
     JVal ds = JVal::arr();
-    for (const DikisSatir& d : dikisler) { JVal x = JVal::obj(); x.set("seam", JVal::str(d.seam)); x.set("lenA", JVal::num(d.lenA)); x.set("lenB", JVal::num(d.lenB)); x.set("hedefA", JVal::num(d.hedefA)); x.set("artikMM", JVal::num(d.artikMM)); x.set("gecti", JVal::boolean(d.gecti)); x.set("ucBoslukMM", JVal::num(d.ucBoslukMM)); JVal c = JVal::arr(); for (double v : d.centikArtikMM) c.push(JVal::num(std::isinf(v) ? -1 : v)); x.set("centikArtikMM", c); ds.push(x); }
+    for (const DikisSatir& d : dikisler) { JVal x = JVal::obj(); x.set("seam", JVal::str(d.seam)); x.set("reverse", JVal::boolean(d.reverse)); x.set("lenA", JVal::num(d.lenA)); x.set("lenB", JVal::num(d.lenB)); x.set("hedefA", JVal::num(d.hedefA)); x.set("artikMM", JVal::num(d.artikMM)); x.set("gecti", JVal::boolean(d.gecti)); x.set("ucBoslukMM", JVal::num(d.ucBoslukMM)); JVal c = JVal::arr(); for (double v : d.centikArtikMM) c.push(JVal::num(std::isinf(v) ? -1 : v)); x.set("centikArtikMM", c); ds.push(x); }
     o.set("dikisler", ds);
-    JVal rs = JVal::arr();
-    for (const HalkaSatir& h : halkalar) { JVal x = JVal::obj(); x.set("ring", JVal::str(h.ring)); x.set("role", JVal::str(h.role)); x.set("toplamMM", JVal::num(h.toplamMM)); x.set("kapanmaMM", JVal::num(h.kapanmaMM)); x.set("enKotuKavsak", JVal::str(h.enKotuKavsak)); x.set("gecti", JVal::boolean(h.gecti)); x.set("kavsaklar", JVal::str(h.kavsaklar)); rs.push(x); }
-    o.set("halkalar", rs);
+    JVal rs_ = JVal::arr();
+    for (const HalkaSatir& h : halkalar) { JVal x = JVal::obj(); x.set("ring", JVal::str(h.ring)); x.set("role", JVal::str(h.role)); x.set("toplamMM", JVal::num(h.toplamMM)); x.set("kapanmaMM", JVal::num(h.kapanmaMM)); x.set("enKotuKavsak", JVal::str(h.enKotuKavsak)); x.set("gecti", JVal::boolean(h.gecti)); x.set("kavsaklar", JVal::str(h.kavsaklar)); rs_.push(x); }
+    o.set("halkalar", rs_);
     JVal ps = JVal::arr();
-    for (const PanelPoz& p : pozlar) { JVal x = JVal::obj(); x.set("panel", JVal::str(p.panel)); x.set("yerlesti", JVal::boolean(p.yerlesti)); x.set("cosT", JVal::num(p.cosT)); x.set("sinT", JVal::num(p.sinT)); x.set("tx", JVal::num(p.tx)); x.set("ty", JVal::num(p.ty)); x.set("yerlestiren", JVal::str(p.yerlestiren)); x.set("alanMM2", JVal::num(p.alanMM2)); x.set("cevreMM", JVal::num(p.cevreMM)); ps.push(x); }
+    for (const PanelPoz& p : pozlar) { JVal x = JVal::obj(); x.set("panel", JVal::str(p.panel)); x.set("yerlesti", JVal::boolean(p.yerlesti)); x.set("a", JVal::num(p.a)); x.set("b", JVal::num(p.b)); x.set("c", JVal::num(p.c)); x.set("d", JVal::num(p.d)); x.set("tx", JVal::num(p.tx)); x.set("ty", JVal::num(p.ty)); x.set("ayna", JVal::boolean(p.ayna)); x.set("yerlestiren", JVal::str(p.yerlestiren)); x.set("alanMM2", JVal::num(p.alanMM2)); x.set("cevreMM", JVal::num(p.cevreMM)); ps.push(x); }
     o.set("pozlar", ps);
     return o;
 }
@@ -385,15 +519,20 @@ std::string DogrulamaRaporu::toMarkdown() const {
     std::string m;
     m += "# Dikilebilirlik — " + grafId + " @ " + bodyId + (onArkaEsit ? " (on/arka esit)" : "") + "\n\n";
     m += std::string("**Sonuc: ") + (dikilebilir() ? "DIKILEBILIR" : "DIKILEBILIR DEGIL") + "** — kirmizi hukum " + std::to_string(kirmizi()) + " / " + std::to_string(hukumler.size()) + " satir.\n\n";
-    m += "## Dikisler\n\n| dikis | a (mm) | hedef = ratio x b + ease | artik (mm) | uc boslugu (bilgi) | centik sapma (mm) | hukum |\n|---|---|---|---|---|---|---|\n";
+    m += "## Esikler (contract/graf-v1.json toleranslar)\n\n| tolerans | mm | kaynak |\n|---|---|---|\n";
+    for (const ToleransSatir& t : toleranslar) m += "| " + t.ad + " | " + f2(t.deger) + " | " + t.kaynak + " |\n";
+    m += "\n## Uydurma (grafin notes'unda DOGRULANMADI — HEDEF §2: uydurdugunu soyle)\n\n";
+    if (uydurmalar.empty()) m += "- yok\n";
+    for (const std::string& u : uydurmalar) m += "- " + u + "\n";
+    m += "\n## Dikisler\n\n| dikis | reverse | a (mm) | hedef = ratio x b + ease | artik (mm) | uc boslugu (bilgi) | centik sapma (mm) | hukum |\n|---|---|---|---|---|---|---|---|\n";
     for (const DikisSatir& d : dikisler) {
         std::string c; for (double v : d.centikArtikMM) { if (!c.empty()) c += ", "; c += std::isinf(v) ? "yok" : f2(v); }
-        m += "| " + d.seam + " | " + f2(d.lenA) + " | " + f2(d.hedefA) + " (b " + f2(d.lenB) + ") | " + f2(d.artikMM) + " | " + f2(d.ucBoslukMM) + " | " + (c.empty() ? "-" : c) + " | " + (d.gecti ? "gecti" : "KIRMIZI") + " |\n";
+        m += "| " + d.seam + " | " + (d.reverse ? "true" : "false") + " | " + f2(d.lenA) + " | " + f2(d.hedefA) + " (b " + f2(d.lenB) + ") | " + f2(d.artikMM) + " | " + f2(d.ucBoslukMM) + " | " + (c.empty() ? "-" : c) + " | " + (d.gecti ? "gecti" : "KIRMIZI") + " |\n";
     }
     m += "\n## Halkalar (sanal dikis)\n\n| halka | rol | toplam (mm) | kapanma (mm) | kavsaklar | hukum |\n|---|---|---|---|---|---|\n";
     for (const HalkaSatir& h : halkalar) m += "| " + h.ring + " | " + h.role + " | " + f2(h.toplamMM) + " | " + f2(h.kapanmaMM) + " | " + h.kavsaklar + " | " + (h.gecti ? "gecti" : "KIRMIZI") + " |\n";
-    m += "\n## Paneller (rijit 2B yerlestirme, bilgi)\n\n| panel | yerlesti | dikis | theta (deg) | t (mm) | alan (cm2) | cevre (mm) |\n|---|---|---|---|---|---|---|\n";
-    for (const PanelPoz& p : pozlar) m += "| " + p.panel + " | " + (p.yerlesti ? "evet" : "HAYIR") + " | " + p.yerlestiren + " | " + f2(std::atan2(p.sinT, p.cosT) * 180.0 / M_PI) + " | (" + f2(p.tx) + ", " + f2(p.ty) + ") | " + f2(p.alanMM2 / 100.0) + " | " + f2(p.cevreMM) + " |\n";
+    m += "\n## Paneller (2B yerlestirme, bilgi)\n\n| panel | yerlesti | dikis | theta (deg) | ayna | t (mm) | alan (cm2) | cevre (mm) |\n|---|---|---|---|---|---|---|---|\n";
+    for (const PanelPoz& p : pozlar) m += "| " + p.panel + " | " + (p.yerlesti ? "evet" : "HAYIR") + " | " + p.yerlestiren + " | " + f2(std::atan2(p.c, p.a) * 180.0 / M_PI) + " | " + (p.ayna ? "evet" : "-") + " | (" + f2(p.tx) + ", " + f2(p.ty) + ") | " + f2(p.alanMM2 / 100.0) + " | " + f2(p.cevreMM) + " |\n";
     m += "\n## Hukumler\n\n| kural | hedef | deger | sonuc |\n|---|---|---|---|\n";
     for (const Hukum& h : hukumler) m += "| " + h.kural + " | " + h.hedef + " | " + h.deger + " | " + (h.bilgi ? "bilgi" : (h.gecti ? "gecti" : "KIRMIZI")) + " |\n";
     return m;

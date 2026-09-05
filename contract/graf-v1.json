@@ -1,16 +1,19 @@
 {
   "_contract": "graf-v1 — GRAF IR SOZLESMESI (F2a, 2026-09-05). HEDEF.md madde 9: sozluk Edge/Panel/Stitch primitifleriyle kurulur, sabit menu yok. Madde 4-5: BIR giysi grafi, IKI beden (gercek36 = kalip, croquis36 = flat), iki cikti. Madde 2: edit = grafa op, kaydi tekrar oynatilabilir. Bu dosya alan adlarinin, enum'larin, toleranslarin ve op tablosunun TEK kaynagidir: engine/src/graf.hpp (tipler + JSON gidis-donus), engine/src/grafop.hpp (op'lar), engine/src/grafdogrula.hpp (dogrulayici + sanal dikis) buradan okur. F4a (fotograf) ve F4b (prompt) hedef semasi da BU dosyadir: vision/prompt katmani dogrudan bu belgeyi uretir. Alan adlari Ingilizce, aciklamalar TR+EN. Kaynagi olmayan sayi 'DOGRULANMADI' tasir ve en kisitlayici secildi.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "id": "graf-v1",
   "_yasa": [
     "1. Nokta mm ile DEGIL beden landmark'i + oranla tanimlanir (Anchor). mm yalniz ofsetMM/yOfsetMM alanlarinda durur ve bedenden bagimsiz bir eklemedir (pay, kayma). Bir nokta birden cok landmark teriminin afin birlesimi olabilir (combo, agirliklar 1'e toplanir): kesirle bolme ve oranla uzatma grafi mm'ye dusurmez.",
     "2. Ayni graf iki bedende degerlenir: Body('gercek36' / graded EU34-44) -> KALIP, Body('croquis36') -> FLAT. Graf hangi bedende oldugunu bilmez; degerleme baglami (EvalCtx) bedeni ve halka basina bollugu tasir. Kumas = bedene bolluk alani: bolluk halkanin cevresini orantili buyutur.",
     "3. Panel kapali kenar halkasidir: edges[i].to == edges[i+1].from yapisal olarak (landmark terimleri esit), sayiyla degil. Kenar turleri: seam (bir Seam'de dikilir), cut (serbest kenar, finish gerekcesi zorunlu), fold (x=0 kat cizgisi, panel onFold), dartLeg (pens bacagi; iki bacak ortak apeks, esit uzunluk).",
-    "4. Seam iki kenar KUMESI arasinda bir oran tasir: len(a) = ratio x len(b) + easeMM. Buzgu bir stil adi degil bu orandir (GarmentCode Interface.ruffle; contract/primitives-v1.json seam.ratio). a tarafi buzulen taraftir, ratio >= 1.",
+    "4. Seam iki kenar ZINCIRI arasinda bir oran tasir: len(a) = ratio x len(b) + easeMM. Buzgu bir stil adi degil bu orandir (GarmentCode Interface.ruffle; contract/primitives-v1.json seam.ratio). a tarafi buzulen taraftir, ratio >= 1. a ve b SIRALI zincirdir: ardisik kenarlar bir tepe paylasir (ayni panelde kose; panel gecisinde baska bir dikisin ilan edilen uc esi). Yon zincirden turetilir; `reverse` a'nin basinin b'nin basiyla (false) mi sonuyla (true) mi dikildigini ILAN eder (karar 7; GarmentCode Interface.reverse/needsFlipping, knowledge/TEKNOLOJI-2026-08-23.md:52-59). notchFractions a'nin basindan olculur, b'ye reverse ile tasinir. Yon olmadan centik kesri tanimsizdir; tahmin yok.",
     "5. Bir kenar bolununce ROLU kaybolmaz, PARCALI tasinir (rolePart/roleCount). K2/K5'in kok sebebi (KOSU/ciktilar/primitif-DUSEN-*.txt: yoke/cup bolmesi kol oyugunun adini dusuruyordu) bu alanla kapanir: oyuk = parcalarin toplami.",
-    "6. Her op saf fonksiyondur ve yalniz adiyla dokundugu panel(ler)i degistirir; diger paneller BAYT-AYNI kalir (edit-locality, contract/edit-locality-v1.json yasasi grafa tasindi). Op kaydi grafa eklenir; kayitlarin tabana yeniden oynatilmasi ayni JSON'u verir (spec-diff deseni, Zoo/KittyCAD).",
+    "6. Her op saf fonksiyondur ve yalniz adiyla dokundugu panel(ler)i degistirir; diger paneller BAYT-AYNI kalir (edit-locality, contract/edit-locality-v1.json yasasi grafa tasindi). Op kaydi grafa eklenir; kayitlarin tabana yeniden oynatilmasi ayni JSON'u verir (spec-diff deseni, Zoo/KittyCAD). Op adlari contract/primitives-v1.json operator adlariyla birdir (suppress/gather/flare/extend/shorten/split/overlay/attach); Turkce ya da vocab.json enum degeriyle carpisan ad yok (karar 2).",
+    "6b. KISIT (karar 6): grafa mm cozum yazilmaz. `fitLength` bir kubik kenari bir dikise BAGLAR (Edge.fitSeam); kontrol noktasi kaymasi degerleme aninda verilen Body'de bisection ile cozulur (grafop.hpp cozumle, sinirlar `cozucu` blogunda). Boylece ayni graf gercek36 / EU34-44 / croquis36'da ayri ayri kapanir; tek bedende cozulmus sabit yoktur.",
     "7. Dikilebilirlik bir Body verilince olculur: dikis uzunluk artigi, centik eslesmesi, kendini kesme, halka kapanmasi (sanal dikis). Kapanmayan giysi dikilebilir DEGILDIR. Sonuc bir tablodur (JSON + markdown) ve F6 paketine girer.",
-    "8. Giysi TIPI kelimesine bagli sabit bu dosyaya GIRMEZ (HEDEF 1.9). Enum'lar dikis tarzi ve bitirme teknigidir, giysi adlari degil."
+    "8. Giysi TIPI kelimesine bagli sabit bu dosyaya GIRMEZ (HEDEF 1.9). Enum'lar dikis tarzi ve bitirme teknigidir, giysi adlari degil.",
+    "9. Bir alan TEK anlam tasir (karar 3): Anchor.ring yalniz xOf ring* icin halka adi, Anchor.width yalniz xOf widthHalf icin genislik olcusu adi. Carpik kombinasyon (widthHalf+ring dolu, ring*+width dolu, widthHalf+width bos) sema ve parse'ta ADIYLA reddedilir. F4a/F4b vision-prompt katmani bu semayi uretir; bir alanin iki anlami modele ogretilemez.",
+    "10. Dogrulayici ciktisi grafin notes'undaki DOGRULANMADI kalemlerini 'uydurma' bolumu olarak basar (karar 4a; HEDEF §2 sessiz default yok) ve esikleri kaynak sutunuyla basliga yazar (karar 5)."
   ],
   "koordinat": "contract/body-v1.json koordinat blogu ile ayni cumle: x=0 CF/CB duzlemi, y=0 omuz cizgisi (landmark.neckBase), +y asagi, mm. Panel yerel koordinati bedenin koordinatidir; kalip sayfasina yerlestirme F2b'nin isidir.",
   "kokTip": "Garment",
@@ -53,15 +56,17 @@
         "control": {"tip": "RefPoint[]", "aciklama": {"tr": "0 ya da 2 kontrol noktasi (kubik Bezier).", "en": "0 or 2 control points (cubic Bezier)."}},
         "finish": {"tip": "enum:finish", "aciklama": {"tr": "cut kenar icin bitirme gerekcesi; dikisli kenarda bos.", "en": "Finishing reason for a cut edge; empty on a sewn edge."}},
         "notches": {"tip": "number[]", "aciklama": {"tr": "Kenar uzerinde centik kesirleri (0,1), yay uzunluguyla.", "en": "Notch fractions along the edge (0,1) by arc length."}},
-        "gatherRatio": {"tip": "number", "aciklama": {"tr": "Bu kenar buzgu icin kac kat uzatildi (bilgi; hukum Seam.ratio'da).", "en": "How much this edge was lengthened for gathering (info; the judgement lives in Seam.ratio)."}}
+        "gatherRatio": {"tip": "number", "aciklama": {"tr": "Bu kenar buzgu icin kac kat uzatildi (bilgi; hukum Seam.ratio'da).", "en": "How much this edge was lengthened for gathering (info; the judgement lives in Seam.ratio)."}},
+        "fitSeam": {"tip": "string", "aciklama": {"tr": "KISIT (op fitLength, yasa 6b): bu kubik kenarin kontrolleri degerleme aninda, verilen bedende, bu dikisi kapatacak sekilde cozulur. mm yazilmaz. Yalniz control 2 nokta olan kenarda.", "en": "Constraint: this cubic edge's controls are solved at evaluation time, in the given body, to close the named seam. No mm stored."}}
       }
     },
     "Anchor": {
-      "aciklama": {"tr": "Tek landmark terimi. x = oran x taban + ofsetMM; taban xOf'a gore landmark.x ya da halka payi. y = yLandmark.y (+ yOran x (yLandmark2.y - yLandmark.y)) + yOfsetMM.", "en": "One landmark term. x = oran x base + ofsetMM; base is landmark.x or a ring share per xOf. y from yLandmark, optionally interpolated toward yLandmark2, plus yOfsetMM."},
+      "aciklama": {"tr": "Tek landmark terimi. x = oran x taban + ofsetMM; taban xOf'a gore landmark.x, halka payi ya da genislik/2. y = yLandmark.y (+ yOran x (yLandmark2.y - yLandmark.y)) + yOfsetMM.", "en": "One landmark term. x = oran x base + ofsetMM; base is landmark.x, a ring share or half a body width per xOf. y from yLandmark, optionally interpolated toward yLandmark2, plus yOfsetMM."},
       "alanlar": {
         "landmark": {"tip": "string", "zorunlu": true, "aciklama": {"tr": "contract/body-v1.json landmark adi ('landmark.<ad>').", "en": "A body-v1 landmark name."}},
-        "xOf": {"tip": "enum:xOf", "aciklama": {"tr": "x tabani. landmark: landmark.x (croquis'te cevre/4 tup). ringFront: G x (1 - arkaPay) / 2; ringBack: G x arkaPay / 2; ringQuarter: G / 4. G = halka cevresi + bolluk. scalarHalf: genislik olcusu / 2 (ring alaninda olcunun adi).", "en": "x base: the landmark's x, a share of the ring circumference (front / back / quarter), or half of a named body width."}},
-        "ring": {"tip": "string", "aciklama": {"tr": "xOf ring* icin halka ('girth.<ad>'); bos = landmark'in kendi halkasi. xOf scalarHalf icin genislik olcusu adi ('width.<ad>').", "en": "Ring for xOf ring* (empty = the landmark's own ring); for scalarHalf, the width measure name."}},
+        "xOf": {"tip": "enum:xOf", "aciklama": {"tr": "x tabani. landmark: landmark.x (croquis'te cevre/4 tup). ringFront: G x (1 - arkaPay) / 2; ringBack: G x arkaPay / 2; ringQuarter: G / 4. G = halka cevresi + bolluk. widthHalf: width alanindaki genislik olcusu / 2.", "en": "x base: the landmark's x, a share of the ring circumference (front / back / quarter), or half of the body width named in `width`."}},
+        "ring": {"tip": "string", "aciklama": {"tr": "YALNIZ xOf ring* (ve landmark: bolluk halkasi) icin halka ('girth.<ad>'); bos = landmark'in kendi halkasi. widthHalf ile dolu olmasi sema hatasi.", "en": "Ring for xOf ring* (and the ease ring for landmark); empty = the landmark's own ring. Filled with widthHalf = schema error."}},
+        "width": {"tip": "string", "aciklama": {"tr": "YALNIZ xOf widthHalf icin beden genislik olcusu adi ('width.crossFront', 'width.crossBack' — contract/body-v1.json). Baska xOf ile dolu olmasi sema hatasi.", "en": "Only for xOf widthHalf: the body width measure name. Filled with any other xOf = schema error."}},
         "oran": {"tip": "number", "zorunlu": true, "aciklama": {"tr": "x carpani. 0 = CF/CB, 1 = landmark kenari.", "en": "x multiplier. 0 = centre line, 1 = the landmark edge."}},
         "ofsetMM": {"tip": "number", "zorunlu": true, "aciklama": {"tr": "x'e mutlak ekleme, mm (bedenden bagimsiz pay).", "en": "Absolute x addition, mm."}},
         "yLandmark": {"tip": "string", "aciklama": {"tr": "y tabani; bos = landmark.", "en": "y base; empty = landmark."}},
@@ -83,6 +88,7 @@
         "landmark": {"tip": "string", "zorunlu": true},
         "xOf": {"tip": "enum:xOf"},
         "ring": {"tip": "string"},
+        "width": {"tip": "string"},
         "oran": {"tip": "number", "zorunlu": true},
         "ofsetMM": {"tip": "number", "zorunlu": true},
         "yLandmark": {"tip": "string"},
@@ -105,14 +111,15 @@
       }
     },
     "Seam": {
-      "aciklama": {"tr": "Iki kenar kumesini birlestiren dikis. len(a) = ratio x len(b) + easeMM.", "en": "A seam joining two edge sets. len(a) = ratio x len(b) + easeMM."},
+      "aciklama": {"tr": "Iki kenar ZINCIRINI birlestiren dikis. len(a) = ratio x len(b) + easeMM. Zincir sirali: ardisik kenarlar tepe paylasir (yasa 4).", "en": "A seam joining two ordered edge chains. len(a) = ratio x len(b) + easeMM."},
       "alanlar": {
         "id": {"tip": "string", "zorunlu": true},
-        "a": {"tip": "EdgeRef[]", "zorunlu": true, "aciklama": {"tr": "Buzulen taraf (ratio >= 1).", "en": "The gathered side (ratio >= 1)."}},
-        "b": {"tip": "EdgeRef[]", "zorunlu": true},
+        "a": {"tip": "EdgeRef[]", "zorunlu": true, "aciklama": {"tr": "Buzulen taraf (ratio >= 1). SIRALI zincir; yon ardisik tepe paylasimindan turetilir.", "en": "The gathered side (ratio >= 1). Ordered chain; direction derived from shared vertices."}},
+        "b": {"tip": "EdgeRef[]", "zorunlu": true, "aciklama": {"tr": "SIRALI zincir.", "en": "Ordered chain."}},
+        "reverse": {"tip": "boolean", "zorunlu": true, "aciklama": {"tr": "false: a'nin basi b'nin BASIYLA dikilir (uclar bas-bas, son-son); true: a'nin basi b'nin SONUYLA. Zorunlu: sessiz varsayim yok (yasa 4, karar 7).", "en": "false: a's start is sewn to b's start; true: to b's end. Required — no silent default."}},
         "ratio": {"tip": "number", "zorunlu": true, "aciklama": {"tr": "araliklar.ratio icinde.", "en": "Within araliklar.ratio."}},
         "easeMM": {"tip": "number", "zorunlu": true, "aciklama": {"tr": "Oran disi mutlak fazlalik (kol kapagi payi gibi).", "en": "Absolute extra beyond the ratio (cap ease)."}},
-        "notchFractions": {"tip": "number[]", "aciklama": {"tr": "Dikis boyunca kesirler; iki tarafta ayni kesirde centik bulunmali (toleranslar.centikMM).", "en": "Fractions along the seam; both sides must carry a notch at the same fraction."}},
+        "notchFractions": {"tip": "number[]", "aciklama": {"tr": "Dikis boyunca kesirler, a'nin BASINDAN olculur; b'de reverse ise 1-f. Iki tarafta o kesirde centik bulunmali (toleranslar.centikMM).", "en": "Fractions along the seam from a's start (1-f on b when reverse); both sides must carry a notch there."}},
         "closure": {"tip": "Closure", "aciklama": {"tr": "Kapama (fermuar/dugme) bu dikisin bir bolumudur.", "en": "A closure lives on a part of this seam."}},
         "gerekce": {"tip": "string"}
       }
@@ -141,16 +148,16 @@
   },
   "enumlar": {
     "edgeKind": ["cut", "seam", "fold", "dartLeg"],
-    "_edgeKind": "cut = serbest kenar (finish zorunlu); seam = bir Seam'de dikilir; fold = x=0 kat cizgisi; dartLeg = pens bacagi (brief'teki 'dart' turu: pens bir kenar degil iki bacak + apeks oldugu icin bacak adiyla). ASTM D6673: kesim cizgisi (1) ve dikis cizgisi (14) ayri katman; ayrim burada kind'da.",
-    "xOf": ["landmark", "ringFront", "ringBack", "ringQuarter", "scalarHalf"],
-    "_xOf": "scalarHalf: x = oran x (beden genislik olcusu)/2; olcunun adi Anchor.ring alaninda (width.crossFront, width.crossBack — contract/body-v1.json genislikler). Kol oyugunun icbukey noktasi (cross front/back) buradan gelir, uydurma oran degil.",
+    "_edgeKind": "cut = serbest kenar (finish zorunlu); seam = bir Seam'de dikilir; fold = x=0 kat cizgisi; dartLeg = pens bacagi (op suppress'in urettigi kenar turu: pens bir kenar degil iki bacak + apeks oldugu icin bacak adiyla). ASTM D6673: kesim cizgisi (1) ve dikis cizgisi (14) ayri katman; ayrim burada kind'da.",
+    "xOf": ["landmark", "ringFront", "ringBack", "ringQuarter", "widthHalf"],
+    "_xOf": "widthHalf: x = oran x (beden genislik olcusu)/2; olcunun adi Anchor.width alaninda (width.crossFront, width.crossBack — contract/body-v1.json genislikler, ad ailesi ayni). Kol oyugunun icbukey noktasi (cross front/back) buradan gelir, uydurma oran degil. Anchor.ring yalniz ring* icin (yasa 9).",
     "finish": ["hem", "faced", "bound", "rolled", "raw"],
     "_finish": "Serbest kenarin bitirme teknigi: hem = kivrilip dikilir; faced = pervaz; bound = biye; rolled = rulo kenar; raw = bitirilmez (kumas gerekcesi). Giysi adi degil, dikis teknigi.",
     "closureType": ["zipper", "buttons", "hooks", "ties", "open"],
     "_closureType": "Kapama donanimi; 'open' = dikilmeyen acik bolum (yirtmac). Yirtmac derinligi contract/primitives-v1.json seam.sewnToFraction ile ayni sayidir: closure.fromFraction..toFraction."
   },
   "toleranslar": {
-    "_tanim": "grafdogrula.hpp Tolerans::fromContract buradan okur; NaN kalirsa dogrulayici adiyla reddeder. Hepsi mm.",
+    "_tanim": "grafdogrula.hpp Tolerans::fromContract buradan okur; NaN kalirsa dogrulayici adiyla reddeder. Hepsi mm. Karar 5 (F2a): 2.0 mm uc kuralda ayni zincir ayni etiket; centik 0.5 mm kalir ve ASIL hukum kesir esitligidir (notchFractions iki tarafta ayni sayi; 0.5 mm yalniz sayisal artik siniri). Dogrulayici bu tabloyu kaynak sutunuyla F6 raporunun basligina basar.",
     "dikisUzunlukMM": {
       "deger": 2.0,
       "kaynak": "contract/body-v1.json ayniInsan.toleransMM ile AYNI zincir: URBN Apparel Technical Manual 'Position points, olcu <5 in' = 1/8 in = 3.175 mm ust sinir (knowledge/POM-TOLERANS-URBN-2026-08-23.md); repodaki CLO sayisi engine/src/validator.hpp:23 pairedSeamTolerance 3.0 (yayin degil, yazilim varsayilani); GarmentCode StitchingRule.isMatching tol=0.05 GORELI (500 mm'de 25 mm — bizim kapimizin esigi degil, knowledge/TEKNOLOJI-2026-08-23.md:66). En kisitlayici yayinli degerin altinda, cizim cozunurlugunun (1 mm) ustunde: 2.0 — DOGRULANMADI etiketi ayniInsan ile ayni, gevsetme yonunde degil."
@@ -172,10 +179,17 @@
     "ratio": {"aralik": [1.0, 3.5], "kaynak": "contract/primitives-v1.json seam.ratio ve op.gather.ratio aralik 1.0..3.5 (Bugra Locket olcumu %29-35 buzgu bandin icinde)."},
     "flareFactor": {"aralik": [1.0, 4.0], "kaynak": "contract/primitives-v1.json op.flare.hemFactor aralik 1.0..4.0."}
   },
+  "cozucu": {
+    "_tanim": "grafop.hpp cozumle (karar 6): fitSeam tasiyan kubik kenarin kontrol noktalari kiris normali boyunca d mm kaydirilir, d bisection ile bulunur. Bu sayilar fizik degil ARAMA sinirlaridir; NaN kalirsa cozucu adiyla reddeder.",
+    "fitLength": {
+      "dMaxMM": {"deger": 120, "kaynak": "Arama siniri: |d| <= 120 mm. DOGRULANMADI (fizik kaynagi yok): Aldrich kol kapagi yuksekligi bandi 130-150 mm'nin altinda secildi ki kontrol kaymasi tek basina bir kapak yuksekligi kadar olamasin; kok yoksa cozucu 'ulasilamadi' der, sinir gevsetilmez."},
+      "tolMM": {"deger": 0.05, "kaynak": "Cozum toleransi 0.05 mm = cizim cozunurlugu 1 mm'nin 1/20'si; kapinin dikisUzunlukMM 2.0'inin 1/40'i — cozucu artigi kapida gorunmez. Sayisal, gevsetme yonunde degil."}
+    }
+  },
   "oplar": {
     "_tanim": "engine/src/grafop.hpp applyOp(op, args). Her op saf: yalniz adi gecen panel(ler)/dikis degisir; kaydi Garment.ops'a eklenir. Kesir = 0..1 yay parametresi; oran boyutsuz.",
     "subdivide": {"args": {"panel": "string", "edge": "string", "fractions": "number[]"}, "tr": "Kenari kesirlerde boler; rol PARCALI tasinir; dikis/halka referanslari parcalara acilir.", "en": "Split an edge at fractions; the role is carried as parts."},
-    "pens": {"args": {"panel": "string", "edge": "string", "atFraction": "number", "intakeOran": "number", "apex": "RefPoint", "legId": "string"}, "tr": "PENS (EN dart; op adi TR cunku tirnakli dart kelimesi kapali sozluk enum degeri, vocab_reference_check circiri). Kenardan intakeOran kadar (kenar uzunlugunun kesri) iceri alir; iki dartLeg + apeks. Aci parametre degil: intake ve apeks, aciyi beden verir.", "en": "Take in a fraction of the edge as a dart: two dartLeg edges to the apex."},
+    "suppress": {"args": {"panel": "string", "edge": "string", "atFraction": "number", "intakeOran": "number", "apex": "RefPoint", "legId": "string", "trueLegs": "boolean (varsayilan true)"}, "tr": "Pens = kenara uygulanan operator (HEDEF 1.9; ad contract/primitives-v1.json op.suppress, karar 2). Kenardan intakeOran kadar (kenar uzunlugunun kesri) iceri alir; iki dartLeg + apeks. Aci parametre DEGIL (primitives-v1 ile ayni): intake ve apeks, aciyi beden verir. trueLegs=true: apeks agzin dik ortayina kurulur (x agiz ortasindan, y verilen apeksten) -> bacaklar insadan esit; false: apeks oldugu gibi, kenar_turu kurali yargilar.", "en": "Take in a fraction of the edge as a dart: two dartLeg edges to the apex; trueLegs puts the apex on the mouth's bisector."},
     "gather": {"args": {"panel": "string", "edge": "string", "ratio": "number"}, "tr": "Kenari kendi dogrultusunda ratio kat uzatir (kat kenarina dayaniyorsa x=0 etrafinda); tasidigi dikisin orani guncellenir (a = buzulen taraf).", "en": "Lengthen the edge along itself by ratio; the seam ratio follows."},
     "flare": {"args": {"panel": "string", "edge": "string", "factor": "number"}, "tr": "Serbest (cut) kenari factor kat acar (klos). Dikisli kenar icin gather.", "en": "Widen a free edge by factor."},
     "extend": {"args": {"panel": "string", "edge": "string", "deltaMM": "number"}, "tr": "Kenari +y'ye deltaMM tasir (uzatma).", "en": "Move the edge down by deltaMM."},
@@ -188,6 +202,6 @@
     "moveVertex": {"args": {"panel": "string", "edge": "string", "to": "RefPoint"}, "tr": "Kenar baslangic kosesini tasir (komsu kenar birlikte).", "en": "Move a vertex (shared by two edges)."},
     "mirror": {"args": {"panel": "string", "newId": "string"}, "tr": "Panelin x-aynasi yeni panel (asimetri icin).", "en": "Mirror a panel across x=0 into a new panel."},
     "closure": {"args": {"seam": "string", "type": "enum:closureType", "fromFraction": "number", "toFraction": "number"}, "tr": "Dikisin bir bolumune kapama yazar.", "en": "Mark a closure on part of a seam."},
-    "bulge": {"args": {"panel": "string", "edge": "string", "dMM": "number", "nx": "number", "ny": "number", "hedefMM": "number", "bodyId": "string"}, "tr": "Kubik kenarin kontrol noktalarini (nx,ny) yonunde dMM kaydirir. fitLength'in sayisal cozumu bu kayitla saklanir (hedef + beden bilgi).", "en": "Shift a cubic edge's controls; the stored form of fitLength's numeric solution."}
+    "fitLength": {"args": {"panel": "string", "edge": "string", "target": {"seam": "string", "ratio": "number", "easeMM": "number"}}, "tr": "KISIT (karar 6): kubik kenari dikise baglar (Edge.fitSeam), dikisin ratio/easeMM'ini yazar; mm YAZMAZ. Degerleme aninda cozumle() her bedende ayri cozer (cozucu blogu). Kenar dikisin bir tarafinda olmali; iki tarafi da kisitli dikis (dongu) reddedilir.", "en": "Constraint: bind a cubic edge to a seam so its controls are solved per body at evaluation time; no mm stored."}
   }
 }

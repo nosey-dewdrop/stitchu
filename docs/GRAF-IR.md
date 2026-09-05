@@ -1,4 +1,4 @@
-# GRAF IR — bir giysi grafi, iki beden, iki cikti (F2a, 2026-09-05)
+# GRAF IR — bir giysi grafi, iki beden, iki cikti (F2a, 2026-09-05; karar turu uygulandi: suppress · widthHalf/width · fitLength kisiti · Seam.reverse zincir · uydurma/esik tablosu)
 
 Kaynak: `contract/graf-v1.json` (sozlesme) · `engine/src/graf.hpp` (tipler, JSON, degerleme) ·
 `engine/src/grafop.hpp` (op'lar) · `engine/src/grafdogrula.hpp` (dogrulayici + sanal dikis).
@@ -16,11 +16,11 @@ oynatilir (HEDEF 2). Sozluk yok, menu yok: her giysi kenar/panel/dikis kompozisy
 
 | tip | ne | alanlar |
 |---|---|---|
-| **Anchor** | tek landmark terimi | `landmark`, `xOf` (landmark · ringFront · ringBack · ringQuarter · scalarHalf), `ring`, `oran`, `ofsetMM`, `yLandmark`, `yLandmark2`, `yOran`, `yOfsetMM` |
+| **Anchor** | tek landmark terimi | `landmark`, `xOf` (landmark · ringFront · ringBack · ringQuarter · widthHalf), `ring` (YALNIZ ring*/landmark bolluk halkasi), `width` (YALNIZ widthHalf: `width.crossFront`), `oran`, `ofsetMM`, `yLandmark`, `yLandmark2`, `yOran`, `yOfsetMM` — bir alan tek anlam (karar 3), carpik kombinasyon parse+sema'da adiyla |
 | **RefPoint** | nokta = Anchor'larin afin birlesimi (agirliklar 1'e toplanir) | tek terim: Anchor nesnesi; cok terim: `{"combo":[{w,...}]}` |
-| **Edge** | iki RefPoint arasi dogru (control bos) ya da kubik (2 control) | `id`, `kind` (cut · seam · fold · dartLeg), `role`, `rolePart/roleCount`, `from`, `to`, `control`, `finish`, `notches`, `gatherRatio` |
+| **Edge** | iki RefPoint arasi dogru (control bos) ya da kubik (2 control) | `id`, `kind` (cut · seam · fold · dartLeg), `role`, `rolePart/roleCount`, `from`, `to`, `control`, `finish`, `notches`, `gatherRatio`, `fitSeam` (KISIT: kontroller degerleme aninda bu dikisi kapatacak sekilde bedende cozulur, mm yok — karar 6) |
 | **Panel** | kapali kenar halkasi = bir kez kesilecek parca | `id`, `edges`, `grainDeg`, `onFold`, `cutCount`, `seamAllowanceMM`, `bolluk[]` (halka basina cevre mm), `gerekce` |
-| **Seam** | iki kenar KUMESI + oran: `len(a) = ratio x len(b) + easeMM` | `id`, `a[]`, `b[]`, `ratio`, `easeMM`, `notchFractions`, `closure{type,from,to}`, `gerekce` |
+| **Seam** | iki SIRALI kenar ZINCIRI + oran: `len(a) = ratio x len(b) + easeMM` | `id`, `a[]`, `b[]` (ardisik kenarlar tepe paylasir; yon zincirden turer), `reverse` (ZORUNLU: false a.bas<->b.bas, true a.bas<->b.son — karar 7), `ratio`, `easeMM`, `notchFractions` (a'nin basindan; b'de reverse ise 1-f), `closure{type,from,to}`, `gerekce` |
 | **Ring** | aciklik (yaka, kol oyugu, bel, etek ucu, kol agzi) — sanal dikis kapanmasini olcer | `id`, `role`, `edges[]` |
 | **Garment** | paneller + dikisler + halkalar + op gecmisi | `id`, `version`, `notes`, `panels`, `seams`, `rings`, `ops[{op,args}]` |
 
@@ -37,21 +37,25 @@ oynatilir (HEDEF 2). Sozluk yok, menu yok: her giysi kenar/panel/dikis kompozisy
 | `panel_kapali` | `edges[i].to == edges[i+1].from` YAPISAL (landmark terimleri esit), >= 3 kenar, tekil id | — |
 | `referans` | her EdgeRef var olan panel/kenara gider | — |
 | `kenar_turu` | seam -> bir Seam'de; cut -> dikissiz + `finish`; fold -> `onFold` + x=0; dartLeg -> cift, ortak apeks, esit bacak | pens 2.0 mm (validator.hpp dartSumTolerance + URBN zinciri) |
+| `kisit` | her `fitSeam` kisiti bu bedende cozuldu (`cozumle`: kontrol kaymasi bisection, `cozucu.fitLength` dMax 120 / tol 0.05); cozulemeyen adiyla kirmizi, cozulen bilgi satirinda kayma mm | contract `cozucu` (arama siniri, DOGRULANMADI etiketli) |
+| `dikis_zincir` | `Seam.a`/`Seam.b` sirali zincir: ardisik kenarlar tepe paylasir — ayni panelde kose, panel gecisinde baska dikisin ILAN EDILEN uc esi; yon turetilir (`>` duz, `<` ters); zincirler yapisal cozulur (`zincirleriCoz`, beden gerekmez) | — |
 | `dikis_uzunluk` | `\|len(a) - (ratio x len(b) + ease)\| <= tol`, ratio aralikta | 2.0 mm (body-v1 ayniInsan ile ayni URBN 1/8 in zinciri; CLO 3.0 ustu; DOGRULANMADI etiketi ayni) · ratio [1.0, 3.5] (primitives-v1) |
-| `centik` | `seam.notchFractions` iki tarafta da panel centigiyle bulusur | 0.5 mm (notch_alignment_check.cpp repo konvansiyonu) |
+| `centik` | `seam.notchFractions` (a'nin basindan) iki tarafta da panel centigiyle bulusur; b'de `reverse` ise `1-f` | 0.5 mm (notch_alignment_check.cpp repo konvansiyonu; ASIL hukum kesir esitligi — karar 5) |
 | `kendini_kesme` | degerlenen kontur (16 adim) kendini kesmez | — |
-| `halka_kapanma` | **sanal dikis**: halkanin ardisik kenarlari kavsaklarda bulusur (dikis / kose / kat aynasi); kavsak boslugu = o dikisin uzunluk artigi; her kenara bir uctan girilir obur uctan cikilir; kavsagi olmayan halka KOPUK | 2.0 mm |
+| `halka_kapanma` | **sanal dikis**: halka da bir zincirdir (`zincirCoz(halka=true)`); kavsaklar kose / dikisin ILAN EDILEN uc esi / kat aynasi (kat yalniz baska baglanti yoksa); kavsak boslugu = o dikisin uzunluk artigi; tahmin yok (eski dort-uc-kombinasyonu silindi); kavsagi olmayan halka KOPUK | 2.0 mm |
 
-Bilgi satirlari (hukum degil): rijit 2B yerlestirme pozlari (dikis agaci BFS, F6 patlatilmis gorunum
-icin), dikis uc boslugu (kiris uyumsuzlugu — egri/dogru dikilebilir), panel alan/cevre.
-Tolerans NaN ise dogrulayici **adiyla reddeder** (sayi koda gomulu degil).
+Bilgi satirlari (hukum degil): kisit cozumleri (kayma mm, bu bedende), 2B yerlestirme pozlari (dikis
+agaci BFS, ilan edilen eslesmeyle; parca dikis dogrusunun obur yanina dusmesi icin gerekirse AYNA — kitap
+gibi acilis), dikis uc boslugu, panel alan/cevre, **uydurma** (grafin `notes`'undaki DOGRULANMADI
+kalemleri — karar 4a; rapor JSON `uydurma[]` + markdown `## Uydurma`). Rapor basligi esikleri **kaynak
+sutunuyla** basar (karar 5). Tolerans NaN ise dogrulayici **adiyla reddeder** (sayi koda gomulu degil).
 
 ## Op tablosu (`grafop.hpp`, hepsi saf: `Garment -> OpResult{ok, hata, g}`)
 
 | op | args | ne yapar | degismez |
 |---|---|---|---|
 | `subdivide` | panel, edge, fractions[] | kenari kesirlerde boler (De Casteljau, RefPoint uzayinda) | rol PARCALI (k/n), toplam uzunluk korunur, dikis/halka referanslari parcalara acilir |
-| `pens` (dart) | panel, edge, atFraction, intakeOran, apex, legId | kenardan intakeOran kadar iceri alir: sol + 2 dartLeg + sag | bacaklar insadan esit (apeks agiz ortasinin ustundeyse), kalan kenar (1-intake) x eski |
+| `suppress` | panel, edge, atFraction, intakeOran, apex, legId, trueLegs (varsayilan true) | pens = kenara operator (ad `primitives-v1 op.suppress`, karar 2): kenardan intakeOran kadar iceri alir: sol + 2 dartLeg + sag; `trueLegs` apeksi agzin dik ortayina kurar (x agiz ortasindan, y verilen apeksten) | trueLegs ile bacaklar insadan esit (yatay agizda tam; egik agizda `kenar_turu` yargilar), kalan kenar (1-intake) x eski; aci parametre degil |
 | `gather` | panel, edge, ratio | kenari kendi dogrultusunda ratio kat uzatir (kat kenarina dayaniyorsa x=0 etrafinda) | uzunluk tam ratio kat; tasidigi Seam.ratio guncellenir, buzulen taraf a |
 | `flare` | panel, edge, factor | serbest (cut) kenari factor kat acar | dikisli kenara reddedilir (gather onerir) |
 | `extend` / `shorten` | panel, edge, deltaMM | kenari +y / -y tasir (komsu kenarlar birlikte) | dusey komsu kenar tam delta uzar/kisalir |
@@ -63,8 +67,7 @@ Tolerans NaN ise dogrulayici **adiyla reddeder** (sayi koda gomulu degil).
 | `moveVertex` | panel, edge, to | kenar baslangic kosesini tasir | iki komsu kenar ayni noktada |
 | `mirror` | panel, newId | x-aynasi yeni panel | kenar sayisi ayni, x -> -x |
 | `closure` | seam, type, fromFraction, toFraction | dikisin bir bolumune kapama (zipper/buttons/hooks/ties/open) | paneller bayt-ayni |
-| `bulge` | panel, edge, dMM, nx, ny, hedefMM, bodyId | kubik kenarin kontrollerini (nx,ny) yonunde kaydirir — `fitLength`'in sayisal cozumunun kaydi | — |
-| `fitLength` (cozucu) | panel, edge, hedefMM, body, dMax, tol | kenar yay uzunlugunu verilen bedende hedefe getiren bulge'i tarama + bisection ile bulur | bulunamazsa adiyla reddeder |
+| `fitLength` (KISIT) | panel, edge, target{seam, ratio, easeMM} | kubik kenari dikise baglar (`Edge.fitSeam`), dikisin ratio/easeMM'ini yazar; **mm yazmaz** (karar 6) | kenar dikisin bir tarafinda; obur taraf kisitliysa (dongu) ret; cozum `cozumle(g, body)` ile her bedende ayri: gercek36 d=+9.49, EU38 +9.94, croquis36 -35.41 mm — hepsinde kapak = 1.04 x oyuk |
 
 **Edit modeli.** Her op yalniz adi gecen panel(ler)i degistirir; digerleri **bayt-ayni** kalir
 (edit-locality yasasi grafa tasindi; `graf_op_check` her opta olcer). Kayit `Garment.ops`'a eklenir;
@@ -80,18 +83,20 @@ de gorur.
 ## Taban graf (fixture) ve dikilebilirlik
 
 `graf_ir_check` taban elbiseyi kurar (on/arka govde + on/arka etek, kat; kol 2 kes), kol kapagini
-`fitLength` ile gercek36'da `1.04 x kol oyugu`na (sleeve.hpp capEase) cozer, `graf.json`'u yazar.
+`fitLength` KISITIYLA `kol_oyugu` dikisine baglar (ratio 1.04 = sleeve.hpp capEase; cozum bedende), `graf.json`'u yazar.
+Dikisler sirali zincir + `reverse`: omuz/yan/oyuk/bel/yan_etek false, kol_alti true (kose<->kose, agiz<->agiz).
 Bolluk: `garment-spec-v2.json` easeBust/Waist/Hip (Threads/RTW + Aldrich), biceps `sleeve.hpp
 bicepsEase 0.15`. Yan dikisler cevre/4 (ringQuarter): on/arka insadan esit. Kol oyugunun icbukey
 noktasi `width.crossFront/2` (body-v1). **Uydurulanlar adiyla** (`notes` alani): kapak yuksekligi
 orani 0.6 ve cross-front seviyesi 0.5 DOGRULANMADI; taban oyuk 359 mm Aldrich 40-44 cm bandinin
 altinda (scye depth bollugu yok) — F2b/F3 kaynakli kurar.
 
-`graf_dikilebilir_check` gercek36: **61 hukum, 0 kirmizi** — 6 dikis artigi 0.000, 3 centik, 5 panel
-temiz, 5 halka kapali (yaka: kat aynasi + omuz; kol oyugu: omuz + yan; bel: yan + kat; etek ucu:
-yan_etek + kat; kol agzi: kol_alti). EU38: 0 kirmizi (kapak artigi +0.51 mm). croquis36: yalniz
-`kol_oyugu` kirmizi (-73 mm — fit gercek36'ya yapildi; flat icin F3 croquis'te yeniden fit eder).
-Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin kiran ornek).
+`graf_dikilebilir_check` gercek36 / EU38 / croquis36: **uc bedende 0 kirmizi** — 6 dikis artigi 0.000,
+6 zincir cozuldu, 3 centik, 5 panel temiz, 5 halka kapali (yaka: omuz + kat aynasi; kol oyugu: kose +
+omuz + kose + yan; bel: yan + kat; etek ucu: yan_etek + kat; kol agzi: kol_alti reverse). Kapak kisiti
+her bedende cozuldu (karar 6): kol_oyugu artigi uc bedende 0.000 mm; eski "croquis36 -73 mm istisnasi"
+yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin kiran ornek;
+`dikis_zincir` sira bozma, `reverse` yanlis ilan -> kol agzi KOPUK dahil).
 
 ### KOSU/ciktilar/graf-ilk/graf.json
 
@@ -99,7 +104,7 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
 {
   "id": "taban-elbise",
   "version": "graf-v1",
-  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b/F3 oyugu ve kapagi kaynakli kurar. (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak uzunlugu fitLength ile gercek36'da kol oyugu x 1.04'e (sleeve.hpp capEase) cozuldu; kaydi ops'ta (bulge).",
+  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b/F3 oyugu ve kapagi kaynakli kurar; croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).",
   "panels": [
     {
       "id": "on_beden",
@@ -170,8 +175,8 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
           },
           "to": {
             "landmark": "landmark.underarm",
-            "xOf": "scalarHalf",
-            "ring": "width.crossFront",
+            "xOf": "widthHalf",
+            "width": "width.crossFront",
             "oran": 1,
             "ofsetMM": 0,
             "yLandmark": "landmark.underarm",
@@ -192,8 +197,8 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
                 {
                   "w": 0.5522847498307936,
                   "landmark": "landmark.underarm",
-                  "xOf": "scalarHalf",
-                  "ring": "width.crossFront",
+                  "xOf": "widthHalf",
+                  "width": "width.crossFront",
                   "oran": 1,
                   "ofsetMM": 0
                 }
@@ -201,8 +206,8 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
             },
             {
               "landmark": "landmark.underarm",
-              "xOf": "scalarHalf",
-              "ring": "width.crossFront",
+              "xOf": "widthHalf",
+              "width": "width.crossFront",
               "oran": 1,
               "ofsetMM": 0,
               "yLandmark": "landmark.underarm",
@@ -219,8 +224,8 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
           "roleCount": 2,
           "from": {
             "landmark": "landmark.underarm",
-            "xOf": "scalarHalf",
-            "ring": "width.crossFront",
+            "xOf": "widthHalf",
+            "width": "width.crossFront",
             "oran": 1,
             "ofsetMM": 0,
             "yLandmark": "landmark.underarm",
@@ -235,8 +240,8 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
           "control": [
             {
               "landmark": "landmark.underarm",
-              "xOf": "scalarHalf",
-              "ring": "width.crossFront",
+              "xOf": "widthHalf",
+              "width": "width.crossFront",
               "oran": 1,
               "ofsetMM": 0,
               "yLandmark": "landmark.underarm",
@@ -254,8 +259,8 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
                 {
                   "w": 0.5522847498307936,
                   "landmark": "landmark.underarm",
-                  "xOf": "scalarHalf",
-                  "ring": "width.crossFront",
+                  "xOf": "widthHalf",
+                  "width": "width.crossFront",
                   "oran": 1,
                   "ofsetMM": 0,
                   "yLandmark": "landmark.shoulderTip"
@@ -397,8 +402,8 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
           },
           "to": {
             "landmark": "landmark.underarm",
-            "xOf": "scalarHalf",
-            "ring": "width.crossBack",
+            "xOf": "widthHalf",
+            "width": "width.crossBack",
             "oran": 1,
             "ofsetMM": 0,
             "yLandmark": "landmark.underarm",
@@ -419,8 +424,8 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
                 {
                   "w": 0.5522847498307936,
                   "landmark": "landmark.underarm",
-                  "xOf": "scalarHalf",
-                  "ring": "width.crossBack",
+                  "xOf": "widthHalf",
+                  "width": "width.crossBack",
                   "oran": 1,
                   "ofsetMM": 0
                 }
@@ -428,8 +433,8 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
             },
             {
               "landmark": "landmark.underarm",
-              "xOf": "scalarHalf",
-              "ring": "width.crossBack",
+              "xOf": "widthHalf",
+              "width": "width.crossBack",
               "oran": 1,
               "ofsetMM": 0,
               "yLandmark": "landmark.underarm",
@@ -446,8 +451,8 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
           "roleCount": 2,
           "from": {
             "landmark": "landmark.underarm",
-            "xOf": "scalarHalf",
-            "ring": "width.crossBack",
+            "xOf": "widthHalf",
+            "width": "width.crossBack",
             "oran": 1,
             "ofsetMM": 0,
             "yLandmark": "landmark.underarm",
@@ -462,8 +467,8 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
           "control": [
             {
               "landmark": "landmark.underarm",
-              "xOf": "scalarHalf",
-              "ring": "width.crossBack",
+              "xOf": "widthHalf",
+              "width": "width.crossBack",
               "oran": 1,
               "ofsetMM": 0,
               "yLandmark": "landmark.underarm",
@@ -481,8 +486,8 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
                 {
                   "w": 0.5522847498307936,
                   "landmark": "landmark.underarm",
-                  "xOf": "scalarHalf",
-                  "ring": "width.crossBack",
+                  "xOf": "widthHalf",
+                  "width": "width.crossBack",
                   "oran": 1,
                   "ofsetMM": 0,
                   "yLandmark": "landmark.shoulderTip"
@@ -805,24 +810,23 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
               "xOf": "ringQuarter",
               "ring": "girth.biceps",
               "oran": 1.1045694996615871,
-              "ofsetMM": -4.5558767562912434,
+              "ofsetMM": 0,
               "yLandmark": "landmark.underarm",
               "yLandmark2": "landmark.shoulderTip",
-              "yOran": 0.6,
-              "yOfsetMM": 8.319217436064639
+              "yOran": 0.6
             },
             {
               "landmark": "landmark.underarm",
               "xOf": "ringQuarter",
               "ring": "girth.biceps",
               "oran": 2,
-              "ofsetMM": -4.5558767562912434,
+              "ofsetMM": 0,
               "yLandmark": "landmark.underarm",
               "yLandmark2": "landmark.shoulderTip",
-              "yOran": 0.33137084989847615,
-              "yOfsetMM": 8.319217436064639
+              "yOran": 0.33137084989847615
             }
-          ]
+          ],
+          "fitSeam": "kol_oyugu"
         },
         {
           "id": "underarm_front",
@@ -915,24 +919,23 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
               "xOf": "ringQuarter",
               "ring": "girth.biceps",
               "oran": -2,
-              "ofsetMM": 4.5558767562912434,
+              "ofsetMM": 0,
               "yLandmark": "landmark.underarm",
               "yLandmark2": "landmark.shoulderTip",
-              "yOran": 0.33137084989847615,
-              "yOfsetMM": 8.319217436064639
+              "yOran": 0.33137084989847615
             },
             {
               "landmark": "landmark.underarm",
               "xOf": "ringQuarter",
               "ring": "girth.biceps",
               "oran": -1.1045694996615871,
-              "ofsetMM": 4.5558767562912434,
+              "ofsetMM": 0,
               "yLandmark": "landmark.underarm",
               "yLandmark2": "landmark.shoulderTip",
-              "yOran": 0.6,
-              "yOfsetMM": 8.319217436064639
+              "yOran": 0.6
             }
-          ]
+          ],
+          "fitSeam": "kol_oyugu"
         }
       ],
       "grainDeg": 0,
@@ -963,9 +966,10 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
           "edge": "shoulder"
         }
       ],
+      "reverse": false,
       "ratio": 1,
       "easeMM": 0,
-      "gerekce": "omuz dikisi"
+      "gerekce": "omuz dikisi: omuz ucu <-> omuz ucu, boyun <-> boyun"
     },
     {
       "id": "yan_beden",
@@ -981,10 +985,11 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
           "edge": "side_back"
         }
       ],
+      "reverse": false,
       "ratio": 1,
       "easeMM": 0,
       "notchFractions": [0.5],
-      "gerekce": "govde yan dikisi"
+      "gerekce": "govde yan dikisi: bel <-> bel, koltukalti <-> koltukalti"
     },
     {
       "id": "kol_oyugu",
@@ -1009,16 +1014,17 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
         },
         {
           "panel": "on_beden",
-          "edge": "armhole_front.1"
+          "edge": "armhole_front.2"
         },
         {
           "panel": "on_beden",
-          "edge": "armhole_front.2"
+          "edge": "armhole_front.1"
         }
       ],
+      "reverse": false,
       "ratio": 1.04,
       "easeMM": 0,
-      "gerekce": "kol kapagi -> kol oyugu; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)"
+      "gerekce": "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)"
     },
     {
       "id": "bel",
@@ -1042,10 +1048,11 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
           "edge": "waist_back"
         }
       ],
+      "reverse": false,
       "ratio": 1,
       "easeMM": 0,
       "notchFractions": [0.25, 0.75],
-      "gerekce": "bel dikisi (govde -> etek)"
+      "gerekce": "bel dikisi (govde -> etek): CF <-> CF, yan <-> yan, CB <-> CB"
     },
     {
       "id": "yan_etek",
@@ -1069,9 +1076,10 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
           "edge": "side_back.2"
         }
       ],
+      "reverse": false,
       "ratio": 1,
       "easeMM": 0,
-      "gerekce": "etek yan dikisi"
+      "gerekce": "etek yan dikisi: etek ucu <-> etek ucu, bel <-> bel"
     },
     {
       "id": "kol_alti",
@@ -1087,9 +1095,10 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
           "edge": "underarm_back"
         }
       ],
+      "reverse": true,
       "ratio": 1,
       "easeMM": 0,
-      "gerekce": "kol alti dikisi"
+      "gerekce": "kol alti dikisi: kose <-> kose, agiz <-> agiz (reverse)"
     }
   ],
   "rings": [
@@ -1170,27 +1179,27 @@ Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural icin k
   ],
   "ops": [
     {
-      "op": "bulge",
+      "op": "fitLength",
       "args": {
         "panel": "kol",
         "edge": "cap_front",
-        "dMM": 9.485008791089058,
-        "nx": -0.480323936080205,
-        "ny": 0.8770911676835078,
-        "hedefMM": 186.8118704234968,
-        "bodyId": "gercek36"
+        "target": {
+          "seam": "kol_oyugu",
+          "ratio": 1.04,
+          "easeMM": 0
+        }
       }
     },
     {
-      "op": "bulge",
+      "op": "fitLength",
       "args": {
         "panel": "kol",
         "edge": "cap_back",
-        "dMM": 9.485008791089058,
-        "nx": 0.480323936080205,
-        "ny": 0.8770911676835078,
-        "hedefMM": 186.8118704234968,
-        "bodyId": "gercek36"
+        "target": {
+          "seam": "kol_oyugu",
+          "ratio": 1.04,
+          "easeMM": 0
+        }
       }
     }
   ]

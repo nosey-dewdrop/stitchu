@@ -13,7 +13,7 @@ namespace graf {
 OpCtx OpCtx::fromContract(const JVal& contract) {
     OpCtx c;
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    c.ratioMin = c.ratioMax = c.flareMin = c.flareMax = nan;
+    c.ratioMin = c.ratioMax = c.flareMin = c.flareMax = c.fitDMaxMM = c.fitTolMM = nan;
     const JVal* ar = contract.get("araliklar");
     if (!ar) return c;
     auto rng = [&](const char* k, double& lo, double& hi) {
@@ -24,7 +24,13 @@ OpCtx OpCtx::fromContract(const JVal& contract) {
     };
     rng("ratio", c.ratioMin, c.ratioMax);
     rng("flareFactor", c.flareMin, c.flareMax);
-    c.dolu = !std::isnan(c.ratioMin) && !std::isnan(c.ratioMax) && !std::isnan(c.flareMin) && !std::isnan(c.flareMax);
+    if (const JVal* cz = contract.get("cozucu")) if (const JVal* fl = cz->get("fitLength")) {
+        const JVal* a = fl->get("dMaxMM"); const JVal* b = fl->get("tolMM");
+        if (a) c.fitDMaxMM = a->numOr("deger", nan);
+        if (b) c.fitTolMM = b->numOr("deger", nan);
+    }
+    c.dolu = !std::isnan(c.ratioMin) && !std::isnan(c.ratioMax) && !std::isnan(c.flareMin) && !std::isnan(c.flareMax) &&
+             !std::isnan(c.fitDMaxMM) && !std::isnan(c.fitTolMM);
     return c;
 }
 
@@ -145,27 +151,41 @@ OpResult opSubdivide(const Garment& g0, const JVal& a, const OpCtx&) {
     return done(g, "subdivide", a);
 }
 
-OpResult opDart(const Garment& g0, const JVal& a, const OpCtx&) {
+OpResult opSuppress(const Garment& g0, const JVal& a, const OpCtx&) {
     std::string pid, eid, legId, err; double at, intake; RefPoint apex;
     if (!needS(a, "panel", pid, err) || !needS(a, "edge", eid, err) || !needN(a, "atFraction", at, err) ||
-        !needN(a, "intakeOran", intake, err) || !needP(a, "apex", apex, err) || !needS(a, "legId", legId, err)) return fail("dart: " + err);
-    if (!(intake > 0.0 && intake < 1.0)) return fail("dart: intakeOran (0,1) disinda " + fmtNum(intake));
+        !needN(a, "intakeOran", intake, err) || !needP(a, "apex", apex, err) || !needS(a, "legId", legId, err)) return fail("suppress: " + err);
+    const bool trueLegs = a.boolOr("trueLegs", true);   // primitives-v1 op.suppress.trueLegs varsayilan true
+    if (a.has("trueLegs") && !a.get("trueLegs")->isBool()) return fail("suppress: trueLegs bool degil");
+    if (!(intake > 0.0 && intake < 1.0)) return fail("suppress: intakeOran (0,1) disinda " + fmtNum(intake));
     const double f0 = at - intake / 2.0, f1 = at + intake / 2.0;
-    if (!(f0 > 0.0 && f1 < 1.0)) return fail("dart: pens agzi kenarin disina tasiyor [" + fmtNum(f0) + ", " + fmtNum(f1) + "]");
+    if (!(f0 > 0.0 && f1 < 1.0)) return fail("suppress: pens agzi kenarin disina tasiyor [" + fmtNum(f0) + ", " + fmtNum(f1) + "]");
     Garment g = g0;
-    Panel* p = g.panel(pid); if (!p) return fail("dart: panel yok " + pid);
-    const int idx = p->edgeIndex(eid); if (idx < 0) return fail("dart: kenar yok " + refStr(pid, eid));
-    if (p->edges[idx].kind == "fold" || p->edges[idx].kind == "dartLeg") return fail("dart: " + p->edges[idx].kind + " kenarina pens acilmaz");
-    if (p->edgeIndex(legId + ".1") >= 0 || p->edgeIndex(legId + ".2") >= 0) return fail("dart: bacak id catisiyor " + legId);
+    Panel* p = g.panel(pid); if (!p) return fail("suppress: panel yok " + pid);
+    const int idx = p->edgeIndex(eid); if (idx < 0) return fail("suppress: kenar yok " + refStr(pid, eid));
+    if (p->edges[idx].kind == "fold" || p->edges[idx].kind == "dartLeg") return fail("suppress: " + p->edges[idx].kind + " kenarina pens acilmaz");
+    if (p->edgeIndex(legId + ".1") >= 0 || p->edgeIndex(legId + ".2") >= 0) return fail("suppress: bacak id catisiyor " + legId);
     std::vector<Edge> parts;
-    try { parts = p->edges[idx].subdivide({f0, f1}); } catch (const std::exception& ex) { return fail(std::string("dart: ") + ex.what()); }
+    try { parts = p->edges[idx].subdivide({f0, f1}); } catch (const std::exception& ex) { return fail(std::string("suppress: ") + ex.what()); }
     // parts[0] sol, parts[1] pens agzi (atilir), parts[2] sag
+    if (trueLegs) {
+        // apeks agzin dik ortayinda: x agiz orta noktasinin terimlerinden, y verilen apeksten (tek terim olmali)
+        if (!apex.tekTerim()) return fail("suppress: trueLegs icin apeks tek landmark terimi olmali (y'si okunur)");
+        const Anchor ay = apex.terms[0].a;
+        RefPoint mid = lerp(parts[1].from, parts[1].to, 0.5);
+        for (Term& t : mid.terms) {
+            t.a.yLandmark = ay.yLandmark.empty() ? ay.landmark : ay.yLandmark;
+            t.a.yLandmark2 = ay.yLandmark2; t.a.yOran = ay.yOran; t.a.yOfsetMM = ay.yOfsetMM;
+        }
+        mid.normalize();
+        apex = mid;
+    }
     Edge leg1; leg1.id = legId + ".1"; leg1.kind = "dartLeg"; leg1.from = parts[1].from; leg1.to = apex;
     Edge leg2; leg2.id = legId + ".2"; leg2.kind = "dartLeg"; leg2.from = apex; leg2.to = parts[1].to;
     // sol ve sag parcalar orijinal kenarin adini ve rolunu korur (id .1/.2 ile), agiz parcasi kaybolur:
     Edge sol = parts[0], sag = parts[2];
     sol.rolePart = parts[0].rolePart; sag.rolePart = parts[2].rolePart;
-    if (p->edgeIndex(sol.id) >= 0 || p->edgeIndex(sag.id) >= 0) return fail("dart: uretilen kenar id catisiyor");
+    if (p->edgeIndex(sol.id) >= 0 || p->edgeIndex(sag.id) >= 0) return fail("suppress: uretilen kenar id catisiyor");
     p->edges.erase(p->edges.begin() + idx);
     std::vector<Edge> ins = {sol, leg1, leg2, sag};
     p->edges.insert(p->edges.begin() + idx, ins.begin(), ins.end());
@@ -180,7 +200,7 @@ OpResult opDart(const Garment& g0, const JVal& a, const OpCtx&) {
     };
     for (Seam& s : g.seams) { expand(s.a); expand(s.b); }
     for (Ring& r : g.rings) expand(r.edges);
-    return done(g, "pens", a);
+    return done(g, "suppress", a);
 }
 
 OpResult opGather(const Garment& g0, const JVal& a, const OpCtx& ctx) {
@@ -398,26 +418,38 @@ OpResult opClosure(const Garment& g0, const JVal& a, const OpCtx&) {
     return done(g, "closure", a);
 }
 
-OpResult opBulge(const Garment& g0, const JVal& a, const OpCtx&) {
-    std::string pid, eid, err; double d, nx, ny;
-    if (!needS(a, "panel", pid, err) || !needS(a, "edge", eid, err) || !needN(a, "dMM", d, err) || !needN(a, "nx", nx, err) || !needN(a, "ny", ny, err)) return fail("bulge: " + err);
+// KISIT op'u (karar 6): mm yazmaz; Edge.fitSeam + Seam.ratio/easeMM
+OpResult opFitLength(const Garment& g0, const JVal& a, const OpCtx& ctx) {
+    std::string pid, eid, err;
+    if (!needS(a, "panel", pid, err) || !needS(a, "edge", eid, err)) return fail("fitLength: " + err);
+    const JVal* tg = a.get("target");
+    if (!tg || !tg->isObj()) return fail("fitLength: target {seam, ratio, easeMM} eksik");
+    std::string sid; double ratio, ease;
+    if (!needS(*tg, "seam", sid, err) || !needN(*tg, "ratio", ratio, err) || !needN(*tg, "easeMM", ease, err)) return fail("fitLength target: " + err);
+    if (!checkRatio(ratio, ctx, "fitLength", err)) return fail(err);
     Garment g = g0;
-    Panel* p = g.panel(pid); if (!p) return fail("bulge: panel yok " + pid);
-    Edge* e = p->edge(eid); if (!e) return fail("bulge: kenar yok " + refStr(pid, eid));
-    if (e->control.size() != 2) return fail("bulge: kenar kubik degil " + eid);
-    for (RefPoint& c : e->control) {
-        for (Term& t : c.terms) { t.a.ofsetMM += d * nx; t.a.yOfsetMM += d * ny; }
-        c.normalize();
-    }
-    return done(g, "bulge", a);
+    Panel* p = g.panel(pid); if (!p) return fail("fitLength: panel yok " + pid);
+    Edge* e = p->edge(eid); if (!e) return fail("fitLength: kenar yok " + refStr(pid, eid));
+    if (e->control.size() != 2) return fail("fitLength: kenar kubik degil " + eid);
+    Seam* s = g.seam(sid); if (!s) return fail("fitLength: dikis yok " + sid);
+    bool inA = false, inB = false;
+    for (const EdgeRef& r : s->a) if (r.panel == pid && r.edge == eid) inA = true;
+    for (const EdgeRef& r : s->b) if (r.panel == pid && r.edge == eid) inB = true;
+    if (!inA && !inB) return fail("fitLength: " + refStr(pid, eid) + " dikis " + sid + "'in hic bir tarafinda degil");
+    // obur taraf kisitli olamaz (dongu)
+    const std::vector<EdgeRef>& other = inA ? s->b : s->a;
+    for (const EdgeRef& r : other) { const Edge* oe = g.edge(r); if (oe && !oe->fitSeam.empty()) return fail("fitLength: dikis " + sid + "'in obur tarafi da kisitli (" + r.panel + "/" + r.edge + " -> " + oe->fitSeam + "): dongu"); }
+    if (!e->fitSeam.empty() && e->fitSeam != sid) return fail("fitLength: kenar zaten " + e->fitSeam + " dikisine kisitli");
+    e->fitSeam = sid; s->ratio = ratio; s->easeMM = ease;
+    return done(g, "fitLength", a);
 }
 
 struct OpEntry { const char* ad; OpResult (*fn)(const Garment&, const JVal&, const OpCtx&); };
 const OpEntry kOps[] = {
-    {"subdivide", opSubdivide}, {"pens", opDart}, {"gather", opGather}, {"flare", opFlare},
+    {"subdivide", opSubdivide}, {"suppress", opSuppress}, {"gather", opGather}, {"flare", opFlare},
     {"extend", opExtend}, {"shorten", opShorten}, {"extendTo", opExtendTo}, {"split", opSplit},
     {"overlay", opOverlay}, {"attach", opAttach}, {"reshapeEdge", opReshapeEdge}, {"moveVertex", opMoveVertex},
-    {"mirror", opMirror}, {"closure", opClosure}, {"bulge", opBulge},
+    {"mirror", opMirror}, {"closure", opClosure}, {"fitLength", opFitLength},
 };
 JVal A() { return JVal::obj(); }
 } // namespace
@@ -442,11 +474,11 @@ OpResult subdivide(const Garment& g, const std::string& panel, const std::string
     JVal f = JVal::arr(); for (double x : fr) f.push(JVal::num(x)); a.set("fractions", f);
     return applyOp(g, {"subdivide", a}, ctx);
 }
-OpResult dart(const Garment& g, const std::string& panel, const std::string& edge, double atFraction, double intakeOran,
-              const RefPoint& apex, const std::string& legId, const OpCtx& ctx) {
+OpResult suppress(const Garment& g, const std::string& panel, const std::string& edge, double atFraction, double intakeOran,
+                  const RefPoint& apex, const std::string& legId, bool trueLegs, const OpCtx& ctx) {
     JVal a = A(); a.set("panel", JVal::str(panel)); a.set("edge", JVal::str(edge)); a.set("atFraction", JVal::num(atFraction));
-    a.set("intakeOran", JVal::num(intakeOran)); a.set("apex", toJSON(apex)); a.set("legId", JVal::str(legId));
-    return applyOp(g, {"pens", a}, ctx);
+    a.set("intakeOran", JVal::num(intakeOran)); a.set("apex", toJSON(apex)); a.set("legId", JVal::str(legId)); a.set("trueLegs", JVal::boolean(trueLegs));
+    return applyOp(g, {"suppress", a}, ctx);
 }
 OpResult gather(const Garment& g, const std::string& panel, const std::string& edge, double ratio, const OpCtx& ctx) {
     JVal a = A(); a.set("panel", JVal::str(panel)); a.set("edge", JVal::str(edge)); a.set("ratio", JVal::num(ratio));
@@ -507,49 +539,72 @@ OpResult closure(const Garment& g, const std::string& seam, const std::string& t
     JVal a = A(); a.set("seam", JVal::str(seam)); a.set("type", JVal::str(type)); a.set("fromFraction", JVal::num(fromFraction)); a.set("toFraction", JVal::num(toFraction));
     return applyOp(g, {"closure", a}, ctx);
 }
-OpResult bulge(const Garment& g, const std::string& panel, const std::string& edge, double dMM, double nx, double ny,
-               double hedefMM, const std::string& bodyId, const OpCtx& ctx) {
-    JVal a = A(); a.set("panel", JVal::str(panel)); a.set("edge", JVal::str(edge)); a.set("dMM", JVal::num(dMM));
-    a.set("nx", JVal::num(nx)); a.set("ny", JVal::num(ny)); a.set("hedefMM", JVal::num(hedefMM)); a.set("bodyId", JVal::str(bodyId));
-    return applyOp(g, {"bulge", a}, ctx);
+OpResult fitLength(const Garment& g, const std::string& panel, const std::string& edge, const std::string& seam,
+                   double ratio, double easeMM, const OpCtx& ctx) {
+    JVal a = A(); a.set("panel", JVal::str(panel)); a.set("edge", JVal::str(edge));
+    JVal t = A(); t.set("seam", JVal::str(seam)); t.set("ratio", JVal::num(ratio)); t.set("easeMM", JVal::num(easeMM)); a.set("target", t);
+    return applyOp(g, {"fitLength", a}, ctx);
 }
 
-OpResult fitLength(const Garment& g, const std::string& panel, const std::string& edge, double hedefMM, const Body& body,
-                   bool onArkaEsit, double dMaxMM, double tolMM, const OpCtx& ctx) {
-    const Panel* p = g.panel(panel); if (!p) return fail("fitLength: panel yok " + panel);
-    const Edge* e = p->edge(edge); if (!e) return fail("fitLength: kenar yok " + panel + "/" + edge);
-    if (e->control.size() != 2) return fail("fitLength: kenar kubik degil " + edge);
-    if (!(dMaxMM > 0) || !(tolMM > 0)) return fail("fitLength: dMaxMM/tolMM pozitif olmali");
-    const EvalCtx ectx = p->ctxFor(body, onArkaEsit);
-    Point f, t;
-    try { f = eval(e->from, ectx); t = eval(e->to, ectx); } catch (const std::exception& ex) { return fail(std::string("fitLength: ") + ex.what()); }
-    const double L = std::hypot(t.x - f.x, t.y - f.y);
-    if (L < 1e-9) return fail("fitLength: kiris sifir");
-    // kiris normali (sol el): kontrol noktalari bu yonde kayar
-    const double nx = -(t.y - f.y) / L, ny = (t.x - f.x) / L;
-    auto lenAt = [&](double d) -> double {
-        Edge c = *e;
-        for (RefPoint& cp : c.control) { for (Term& tm : cp.terms) { tm.a.ofsetMM += d * nx; tm.a.yOfsetMM += d * ny; } cp.normalize(); }
-        return c.length(ectx);
-    };
-    // (len(d) - hedef) isaret degistiren en dar aralik: [-dMax, dMax] uzerinde 80 adimlik tarama,
-    // sifira en yakin koku bisection ile bul. Kubik uzunlugu d'de surekli; kok yoksa ulasilamaz.
-    const int N = 80; double best = 0, bestErr = std::fabs(lenAt(0) - hedefMM); bool found = false;
-    for (int i = 0; i < N; ++i) {
-        const double d0 = -dMaxMM + 2.0 * dMaxMM * i / N, d1 = -dMaxMM + 2.0 * dMaxMM * (i + 1) / N;
-        const double f0 = lenAt(d0) - hedefMM, f1 = lenAt(d1) - hedefMM;
-        if (f0 == 0.0) { if (!found || std::fabs(d0) < std::fabs(best)) { best = d0; bestErr = 0; found = true; } continue; }
-        if ((f0 < 0) == (f1 < 0)) continue;
-        double lo = d0, hi = d1, flo = f0;
-        for (int it = 0; it < 80 && (hi - lo) > 1e-7; ++it) {
-            const double mid = 0.5 * (lo + hi), fm = lenAt(mid) - hedefMM;
-            if ((fm < 0) == (flo < 0)) { lo = mid; flo = fm; } else hi = mid;
+// ---------------------------------------------------------------- degerleme-ani cozum
+namespace {
+double edgeLen(const Garment& g, const EdgeRef& r, const Body& body, bool onArkaEsit) {
+    const Panel* p = g.panel(r.panel); const Edge* e = g.edge(r);
+    if (!p || !e) throw std::runtime_error("cozumle: referans cozulmedi " + r.panel + "/" + r.edge);
+    return e->length(p->ctxFor(body, onArkaEsit));
+}
+}
+
+CozumSonucu cozumle(const Garment& g, const Body& body, bool onArkaEsit, const OpCtx& ctx) {
+    CozumSonucu R; R.g = g;
+    if (!ctx.dolu) { R.hata = "cozumle: contract cozucu/araliklar yuklenmedi (OpCtx bos)"; return R; }
+    const double dMaxMM = ctx.fitDMaxMM, tolMM = ctx.fitTolMM;
+    for (const Panel& p : g.panels) for (const Edge& e : p.edges) {
+        if (e.fitSeam.empty()) continue;
+        const Seam* s = g.seam(e.fitSeam);
+        if (!s) { R.hata = "cozumle: " + p.id + "/" + e.id + " fitSeam yok " + e.fitSeam; return R; }
+        if (e.control.size() != 2) { R.hata = "cozumle: " + p.id + "/" + e.id + " kubik degil"; return R; }
+        bool inA = false; for (const EdgeRef& r : s->a) if (r.panel == p.id && r.edge == e.id) inA = true;
+        bool inB = false; for (const EdgeRef& r : s->b) if (r.panel == p.id && r.edge == e.id) inB = true;
+        if (!inA && !inB) { R.hata = "cozumle: " + p.id + "/" + e.id + " dikis " + s->id + "'de degil"; return R; }
+        const std::vector<EdgeRef>& mine = inA ? s->a : s->b; const std::vector<EdgeRef>& other = inA ? s->b : s->a;
+        double Lo = 0, Lu = 0; int nFit = 0;
+        try {
+            for (const EdgeRef& r : other) { const Edge* oe = g.edge(r); if (oe && !oe->fitSeam.empty()) { R.hata = "cozumle: dikis " + s->id + " iki tarafi kisitli (dongu)"; return R; } Lo += edgeLen(g, r, body, onArkaEsit); }
+            for (const EdgeRef& r : mine) { const Edge* me = g.edge(r); if (me && me->fitSeam == s->id) ++nFit; else Lu += edgeLen(g, r, body, onArkaEsit); }
+        } catch (const std::exception& ex) { R.hata = ex.what(); return R; }
+        const double sideTarget = inA ? (s->ratio * Lo + s->easeMM) : ((Lo - s->easeMM) / s->ratio);
+        const double hedef = (sideTarget - Lu) / nFit;
+        if (!(hedef > 0)) { R.hata = "cozumle: " + p.id + "/" + e.id + " hedef uzunluk pozitif degil (" + fmtNum(hedef) + ")"; return R; }
+        const EvalCtx ectx = p.ctxFor(body, onArkaEsit);
+        Point f, t;
+        try { f = eval(e.from, ectx); t = eval(e.to, ectx); } catch (const std::exception& ex) { R.hata = std::string("cozumle: ") + ex.what(); return R; }
+        const double L = std::hypot(t.x - f.x, t.y - f.y);
+        if (L < 1e-9) { R.hata = "cozumle: " + p.id + "/" + e.id + " kiris sifir"; return R; }
+        const double nx = -(t.y - f.y) / L, ny = (t.x - f.x) / L;   // kiris normali (sol el)
+        auto shifted = [&](double d) { Edge c = e; for (RefPoint& cp : c.control) { for (Term& tm : cp.terms) { tm.a.ofsetMM += d * nx; tm.a.yOfsetMM += d * ny; } cp.normalize(); } return c; };
+        auto lenAt = [&](double d) { return shifted(d).length(ectx); };
+        // (len(d) - hedef) isaret degistiren en dar aralik: [-dMax, dMax] uzerinde 80 adimlik tarama, sifira en yakin kok
+        const int N = 80; double best = 0, bestErr = std::fabs(lenAt(0) - hedef); bool found = false;
+        for (int i = 0; i < N; ++i) {
+            const double d0 = -dMaxMM + 2.0 * dMaxMM * i / N, d1 = -dMaxMM + 2.0 * dMaxMM * (i + 1) / N;
+            const double f0 = lenAt(d0) - hedef, f1 = lenAt(d1) - hedef;
+            if (f0 == 0.0) { if (!found || std::fabs(d0) < std::fabs(best)) { best = d0; bestErr = 0; found = true; } continue; }
+            if ((f0 < 0) == (f1 < 0)) continue;
+            double lo = d0, hi = d1, flo = f0;
+            for (int it = 0; it < 80 && (hi - lo) > 1e-7; ++it) {
+                const double mid = 0.5 * (lo + hi), fm = lenAt(mid) - hedef;
+                if ((fm < 0) == (flo < 0)) { lo = mid; flo = fm; } else hi = mid;
+            }
+            const double d = 0.5 * (lo + hi), err = std::fabs(lenAt(d) - hedef);
+            if (!found || std::fabs(d) < std::fabs(best)) { best = d; bestErr = err; found = true; }
         }
-        const double d = 0.5 * (lo + hi), err = std::fabs(lenAt(d) - hedefMM);
-        if (!found || std::fabs(d) < std::fabs(best)) { best = d; bestErr = err; found = true; }
+        if (bestErr > tolMM) { R.hata = "cozumle: " + p.id + "/" + e.id + " (" + s->id + ") hedef " + fmtNum(hedef) + " mm'ye |d| <= " + fmtNum(dMaxMM) + " ile " + body.id() + "'de ulasilamadi (en iyi hata " + fmtNum(bestErr) + " mm)"; return R; }
+        *R.g.panel(p.id)->edge(e.id) = shifted(best);
+        R.cozumler.push_back({p.id, e.id, s->id, hedef, best, lenAt(best) - hedef});
     }
-    if (bestErr > tolMM) return fail("fitLength: hedef " + fmtNum(hedefMM) + " mm'ye |d| <= " + fmtNum(dMaxMM) + " ile ulasilamadi (en iyi hata " + fmtNum(bestErr) + " mm)");
-    return bulge(g, panel, edge, best, nx, ny, hedefMM, body.id(), ctx);
+    R.ok = true;
+    return R;
 }
 
 } // namespace graf

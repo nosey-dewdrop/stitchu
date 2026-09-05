@@ -5,8 +5,11 @@
 //      beklenenler); sanal dikis: yan dikis uzatilinca kol oyugu ve bel halkalari kavsakta acilir,
 //      omuz dikisi silinince yaka halkasi KOPUK
 //  (c) tolerans sozlesmeden: toleranslar bloğu bosaltilmis contract ile dogrulayici ADIYLA reddeder
-//  (d) EU38 ve croquis36'da ayni graf: kapak fit'i gercek36'ya yapildi, kol_oyugu artigi BILGI olarak
-//      basilir (F3 bedene gore yeniden fit eder) — hukum degil, sayi ekranda
+//  (d) EU38 ve croquis36'da AYNI graf 0 kirmizi (karar 6): kapak kisiti her bedende degerleme aninda cozulur,
+//      kol_oyugu artigi uc bedende de tolerans icinde; istisna yok
+//  (e) karar 7: dikis_zincir 6 dikiste yesil; zincir sirasi bozulunca adiyla kirmizi; reverse yanlis ilan edilince
+//      halka (kol agzi) KOPUK
+//  (f) karar 4a/5: rapor 'uydurma' kalemlerini (notes DOGRULANMADI) ve esik+kaynak tablosunu tasir
 //  --emit: KOSU/ciktilar/graf-ilk/dikilebilir-<beden>.json/.md + dikilebilir-negatif.md yazar
 // argv: <contract/graf-v1.json> <graf.json> <cikti-dizini> [--emit]
 #include <cmath>
@@ -62,6 +65,13 @@ int main(int argc, char** argv) {
     ok(count("kendini_kesme", true) == 5, "5 panel kendini kesmiyor");
     ok(count("halka_kapanma", true) == 5, "5 halka kapaniyor (yaka, kol oyugu, bel, etek ucu, kol agzi)");
     ok(count("panel_kapali", true) == 5, "5 panel kapali");
+    ok(count("dikis_zincir", true) == 6, "6 dikis zinciri yapisal cozuldu (karar 7): " + std::to_string(count("dikis_zincir", true)));
+    ok(R.uydurmalar.size() >= 2 && R.toJSON().get("uydurma") && R.toJSON().get("uydurma")->a.size() == R.uydurmalar.size() && R.toMarkdown().find("## Uydurma") != std::string::npos,
+       "rapor 'uydurma' bolumu: " + std::to_string(R.uydurmalar.size()) + " DOGRULANMADI kalemi (JSON + markdown)");
+    for (const std::string& u : R.uydurmalar) std::printf("      uydurma: %s\n", u.c_str());
+    ok(R.toleranslar.size() == 4 && R.toMarkdown().find("| tolerans | mm | kaynak |") != std::string::npos, "rapor basliginda 4 esik kaynak sutunuyla (karar 5)");
+    { int fit = 0; for (const Hukum& h : R.hukumler) if (h.kural == "kisit" && h.bilgi && h.gecti && h.hedef.rfind("kol/", 0) == 0) ++fit;
+      ok(fit == 2, "2 kisit (cap_front/cap_back) gercek36'da cozuldu, bilgi satirinda kontrol kaymasi mm"); }
     for (const DikisSatir& d : R.dikisler) std::printf("      dikis %-12s a %8.2f hedef %8.2f artik %+7.3f  uc-bosluk %6.2f\n", d.seam.c_str(), d.lenA, d.hedefA, d.artikMM, d.ucBoslukMM);
     for (const HalkaSatir& h : R.halkalar) std::printf("      halka %-16s %-11s toplam %8.2f kapanma %6.3f  %s\n", h.ring.c_str(), h.role.c_str(), h.toplamMM, h.kapanmaMM, h.kavsaklar.c_str());
     bool allPlaced = true; for (const PanelPoz& p : R.pozlar) if (!p.yerlesti) allPlaced = false;
@@ -70,16 +80,15 @@ int main(int argc, char** argv) {
       ok(oy && std::fabs(oy->artikMM) <= 0.1, "kol kapagi = 1.04 x oyuk gercek36'da (artik " + (oy ? f2(oy->artikMM) : "?") + " mm; fitLength kaydi ops'ta)"); }
     if (emitMode) { writeFile(outDir + "/dikilebilir-gercek36.json", emit(R.toJSON()) + "\n"); writeFile(outDir + "/dikilebilir-gercek36.md", R.toMarkdown()); }
 
-    // (d) diger bedenler: bilgi
+    // (d) diger bedenler: AYNI graf, 0 kirmizi (karar 6: kisit her bedende cozulur)
     for (const std::string& bid : {std::string("EU38"), std::string("croquis36")}) {
         const Body b = bid == "croquis36" ? Body::fromContract("croquis36") : Body::graded(bid);
         DogrulamaRaporu Rb = dogrula(g, b, contract, bid == "croquis36");
         const DikisSatir* oy = nullptr; for (const DikisSatir& d : Rb.dikisler) if (d.seam == "kol_oyugu") oy = &d;
-        std::printf("      BILGI %s: %d kirmizi; kol_oyugu artik %+.2f mm (fit gercek36'ya yapildi, F3 bedene gore yeniden fit eder)\n", bid.c_str(), Rb.kirmizi(), oy ? oy->artikMM : NAN);
-        for (const std::string& s : reds(Rb)) std::printf("        %s\n", s.c_str());
-        std::vector<std::string> other = reds(Rb); bool onlyOyuk = true;
-        for (const std::string& s : other) if (s.find("kol_oyugu") == std::string::npos) onlyOyuk = false;
-        ok(onlyOyuk, bid + ": kol_oyugu disinda kirmizi yok (ayni graf baska bedende de kapali/tutarli)");
+        std::printf("      %s: %d kirmizi; kol_oyugu a %.2f hedef %.2f artik %+.3f mm (kisit bu bedende cozuldu)\n", bid.c_str(), Rb.kirmizi(), oy ? oy->lenA : NAN, oy ? oy->hedefA : NAN, oy ? oy->artikMM : NAN);
+        for (const std::string& s : reds(Rb)) std::printf("        KIRMIZI %s\n", s.c_str());
+        ok(Rb.dikilebilir(), bid + ": 0 kirmizi — ayni graf bu bedende de DIKILEBILIR (istisna yok)");
+        ok(oy && std::fabs(oy->artikMM) <= 0.1, bid + ": kol kapagi = 1.04 x oyuk (artik " + (oy ? f2(oy->artikMM) : "?") + " mm)");
         if (emitMode) { writeFile(outDir + "/dikilebilir-" + bid + ".json", emit(Rb.toJSON()) + "\n"); writeFile(outDir + "/dikilebilir-" + bid + ".md", Rb.toMarkdown()); }
     }
 
@@ -103,7 +112,7 @@ int main(int argc, char** argv) {
       negs.push_back({"halka_kapanma", "omuz dikisi silindi -> yaka halkasi kopuk", reds(Rx), yakaKopuk}); }
     { Garment x = g; x.panel("on_beden")->onFold = false; neg("kenar_turu", "on_beden onFold=false ama cf fold kenari", x); }
     { Anchor apexA; apexA.landmark = "landmark.waist"; apexA.xOf = "ringQuarter"; apexA.oran = 0.5; apexA.yLandmark = "landmark.bustApex"; apexA.yLandmark2 = "landmark.waist"; apexA.yOran = 0.15;
-      OpResult d = dart(g, "on_beden", "waist_front", 0.5, 0.2, RefPoint::of(apexA), "pens", ctx);
+      OpResult d = suppress(g, "on_beden", "waist_front", 0.5, 0.2, RefPoint::of(apexA), "pens", true, ctx);
       ok(d.ok, "negatif hazirlik: govdeye pens acildi");
       neg("dikis_uzunluk", "yalniz govdede bel pensi (etekte yok) -> bel dikisi kisa", d.g);
       Garment x = d.g; Panel* p = x.panel("on_beden"); Edge* l1 = p->edge("pens.1");
@@ -122,6 +131,14 @@ int main(int argc, char** argv) {
       const DikisSatir* yan = nullptr; for (const DikisSatir& d : Rx.dikisler) if (d.seam == "yan_beden") yan = &d;
       ok(oy && yan && !oy->gecti && std::fabs(oy->kapanmaMM - std::fabs(yan->artikMM)) < 1e-6 && oy->kapanmaMM > 20.0 && oy->enKotuKavsak.find("armhole") != std::string::npos,
          "  kol oyugu halkasi kapanma " + (oy ? f2(oy->kapanmaMM) : "?") + " mm == yan_beden artigi " + (yan ? f2(yan->artikMM) : "?") + " @ " + (oy ? oy->enKotuKavsak : "") + " (dikis artigi kavsaga tasindi; egik yan dikis 25 mm dusey kaymayla 24.3 uzar)"); }
+    // karar 7 negatifleri: zincir sirasi bozuk -> dikis_zincir; reverse yanlis ilan -> halka KOPUK
+    { Garment x = g; Seam* s = x.seam("kol_oyugu"); std::swap(s->b[1], s->b[2]);   // back.1, front.2, back.2, front.1
+      neg("dikis_zincir", "kol_oyugu.b sirasi bozuldu (armhole_back.1, armhole_front.2, ...) -> tepe paylasmiyor", x); }
+    { Garment x = g; x.seam("kol_alti")->reverse = false;
+      DogrulamaRaporu Rx = dogrula(x, gercek, contract); bool agizKopuk = false; std::string satir;
+      for (const Hukum& h : Rx.hukumler) if (h.kural == "halka_kapanma" && h.hedef.rfind("kol_agzi", 0) == 0 && !h.gecti) { agizKopuk = true; satir = h.deger; }
+      ok(agizKopuk, "negatif [halka_kapanma] kol_alti reverse=false ilan edilince (kose<->agiz dikilmis olur) kol agzi halkasi kapanmaz: " + satir);
+      negs.push_back({"halka_kapanma", "kol_alti reverse yanlis ilan -> kol agzi kopuk", reds(Rx), agizKopuk}); }
     // (c) tolerans yoksa reddet
     { JVal c2 = contract; c2.set("toleranslar", JVal::obj());
       DogrulamaRaporu Rx = dogrula(g, gercek, c2);
