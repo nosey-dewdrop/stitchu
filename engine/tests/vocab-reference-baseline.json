@@ -9,7 +9,7 @@
     "Sayi dustugunde kapi YESIL kalir ama bu dosya KENDILIGINDEN guncellenmez \u2014 dususu sabitlemek ayri, bilincli bir commit'tir (--baseline).",
     "Bu bir kullanim analizi DEGIL, bir imzadir: yorum satiri da uretilmis tablo da sayilir. Sart dogruluk degil, KARARLILIK."
   ],
-  "tabanCommit": "533c3d7c9f73f52e2f641f5d12d58135aa7bb53e",
+  "tabanCommit": "ffa9e6cea8a974a62fd7606456000fe9a703dd04",
   "sayimKomutu": {
     "eksenAdi": "grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe --exclude-dir=.rabadon --exclude-dir=.wrangler -w <AXIS> <SCOPE> | wc -l",
     "enumDegeri": "grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe --exclude-dir=.rabadon --exclude-dir=.wrangler -F \"\\\"<VALUE>\\\"\" <SCOPE> | wc -l",
@@ -17,9 +17,9 @@
     "yeniden_uret": "engine/tests/vocab_reference_check.sh --baseline <commit>",
     "kirli_agaci_denetle": "engine/tests/vocab_reference_check.sh --tree ."
   },
-  "toplam": 11032,
+  "toplam": 11037,
   "toplamEksenAdi": 7963,
-  "toplamEnumDegeri": 3069,
+  "toplamEnumDegeri": 3074,
   "eksenSayisi": 37,
   "paylasim1KelimeSayisi": 92,
   "eksenAdi": {
@@ -86,7 +86,7 @@
     "dart": 87,
     "decorative": 10,
     "drawstring": 20,
-    "dress": 134,
+    "dress": 136,
     "dropped": 9,
     "elbow": 20,
     "empire": 39,
@@ -135,7 +135,7 @@
     "shirttail": 11,
     "short": 79,
     "sideSeam": 33,
-    "skirt": 99,
+    "skirt": 101,
     "slash": 8,
     "sleeve": 46,
     "slit": 15,
@@ -146,7 +146,7 @@
     "surplice": 11,
     "sweetheart": 37,
     "tieBack": 29,
-    "top": 136,
+    "top": 137,
     "tunic": 22,
     "vNeck": 39,
     "vent": 9,
