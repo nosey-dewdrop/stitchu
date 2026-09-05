@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="602" viewBox="0 0 1180 602">
+  <style>
+    text { font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; }
+    .baslik { font-size: 21px; font-weight: 600; fill: #1a1a18; }
+    .altbaslik { font-size: 12.5px; fill: #6b6b63; }
+    .hukum { font-size: 15px; font-weight: 600; }
+    .sutun { font-size: 10.5px; font-weight: 600; fill: #8a8a80; letter-spacing: .06em; }
+    .ad { font-size: 12.5px; fill: #1a1a18; font-family: ui-monospace, Menlo, monospace; }
+    .durum { font-size: 10.5px; font-weight: 600; letter-spacing: .04em; }
+    .sayi { font-size: 12px; fill: #3a3a36; font-family: ui-monospace, Menlo, monospace; }
+    .kaynak { font-size: 10.5px; fill: #6b6b63; font-family: ui-monospace, Menlo, monospace; }
+    .not { font-size: 10.5px; fill: #5a5a54; }
+    .ayak { font-size: 10.5px; fill: #8a8a80; }
+  </style>
+  <rect width="1180" height="602" fill="#ffffff"/>
+  <text x="24" y="36" class="baslik">0509 koşusu — geçit tablosu</text>
+  <text x="24" y="56" class="altbaslik">commit 366b27ee · 2026-09-06 02:59:32 · 14 geçit · 2 kırmızı · 4 henüz-yok</text>
+  <text x="24" y="80" class="hukum" fill="#a02020">KALMADI</text>
+  <text x="102" y="80" class="altbaslik">eşikler contract/ ve *-baseline.json'dan okunur; koda gömülü eşik yok</text>
+  <line x1="12" y1="98" x2="1168" y2="98" stroke="#e3e3de"/>
+  <text x="24" y="118" class="sutun">GEÇİT</text>
+  <text x="300" y="118" class="sutun">DURUM</text>
+  <text x="458" y="118" class="sutun" text-anchor="end">SAYI</text>
+  <text x="526" y="118" class="sutun" text-anchor="end">EŞİK</text>
+  <text x="560" y="118" class="sutun">EŞİĞİN KAYNAĞI</text>
+  <text x="862" y="118" class="sutun">NOT</text>
+  <g>
+    <rect x="12" y="128" width="1156" height="26" fill="#ffffff"/>
+    <text x="24" y="147" class="ad">graf_ir_check</text>
+    <rect x="300" y="132" width="98" height="18" rx="3" fill="#e7f4ec"/>
+    <text x="349" y="147" class="durum" fill="#186a3b" text-anchor="middle">YESIL</text>
+    <text x="458" y="147" class="sayi" text-anchor="end">0</text>
+    <text x="526" y="147" class="sayi" text-anchor="end">0</text>
+    <text x="560" y="147" class="kaynak">engine/CMakeLists.txt:1523 add_test(graf_ir…</text>
+    <text x="862" y="147" class="not">graf IR + contract/graf-v1.json sema dogrulam…</text>
+  </g>
+  <g>
+    <rect x="12" y="158" width="1156" height="26" fill="#fbfbfa"/>
+    <text x="24" y="177" class="ad">graf_op_check</text>
+    <rect x="300" y="162" width="98" height="18" rx="3" fill="#e7f4ec"/>
+    <text x="349" y="177" class="durum" fill="#186a3b" text-anchor="middle">YESIL</text>
+    <text x="458" y="177" class="sayi" text-anchor="end">0</text>
+    <text x="526" y="177" class="sayi" text-anchor="end">0</text>
+    <text x="560" y="177" class="kaynak">engine/CMakeLists.txt:1529 add_test(graf_op…</text>
+    <text x="862" y="177" class="not">op araliklari contract/graf-v1.json'dan: 0 ha…</text>
+  </g>
+  <g>
+    <rect x="12" y="188" width="1156" height="26" fill="#ffffff"/>
+    <text x="24" y="207" class="ad">graf_dikilebilir_check</text>
+    <rect x="300" y="192" width="98" height="18" rx="3" fill="#e7f4ec"/>
+    <text x="349" y="207" class="durum" fill="#186a3b" text-anchor="middle">YESIL</text>
+    <text x="458" y="207" class="sayi" text-anchor="end">0</text>
+    <text x="526" y="207" class="sayi" text-anchor="end">0</text>
+    <text x="560" y="207" class="kaynak">engine/CMakeLists.txt:1534 add_test(graf_di…</text>
+    <text x="862" y="207" class="not">sanal dikis: 0 kapanmayan halka</text>
+  </g>
+  <g>
+    <rect x="12" y="218" width="1156" height="26" fill="#fbfbfa"/>
+    <text x="24" y="237" class="ad">flat_convention_check</text>
+    <rect x="300" y="222" width="98" height="18" rx="3" fill="#e7f4ec"/>
+    <text x="349" y="237" class="durum" fill="#186a3b" text-anchor="middle">YESIL</text>
+    <text x="458" y="237" class="sayi" text-anchor="end">0</text>
+    <text x="526" y="237" class="sayi" text-anchor="end">0</text>
+    <text x="560" y="237" class="kaynak">engine/CMakeLists.txt:174 add_test(flat_con…</text>
+    <text x="862" y="237" class="not">flat konvansiyonu: contract/flat-convention-v…</text>
+  </g>
+  <g>
+    <rect x="12" y="248" width="1156" height="26" fill="#ffffff"/>
+    <text x="24" y="267" class="ad">parca_sayisi_check</text>
+    <rect x="300" y="252" width="98" height="18" rx="3" fill="#e7f4ec"/>
+    <text x="349" y="267" class="durum" fill="#186a3b" text-anchor="middle">YESIL</text>
+    <text x="458" y="267" class="sayi" text-anchor="end">0</text>
+    <text x="526" y="267" class="sayi" text-anchor="end">0</text>
+    <text x="560" y="267" class="kaynak">engine/CMakeLists.txt:381 add_test(parca_sa…</text>
+    <text x="862" y="267" class="not">parca sayisi kaliptaki ile ayni</text>
+  </g>
+  <g>
+    <rect x="12" y="278" width="1156" height="26" fill="#fbfbfa"/>
+    <text x="24" y="297" class="ad">edit_locality_check</text>
+    <rect x="300" y="282" width="98" height="18" rx="3" fill="#e7f4ec"/>
+    <text x="349" y="297" class="durum" fill="#186a3b" text-anchor="middle">YESIL</text>
+    <text x="458" y="297" class="sayi" text-anchor="end">0</text>
+    <text x="526" y="297" class="sayi" text-anchor="end">0</text>
+    <text x="560" y="297" class="kaynak">engine/CMakeLists.txt:1257 add_test(edit_lo…</text>
+    <text x="862" y="297" class="not">edit locality: contract/edit-locality-v1.json</text>
+  </g>
+  <g>
+    <rect x="12" y="308" width="1156" height="26" fill="#ffffff"/>
+    <text x="24" y="327" class="ad">flat_ayni_insan_check</text>
+    <rect x="300" y="312" width="98" height="18" rx="3" fill="#fdeaea"/>
+    <text x="349" y="327" class="durum" fill="#a02020" text-anchor="middle">KIRMIZI</text>
+    <text x="458" y="327" class="sayi" text-anchor="end">1</text>
+    <text x="526" y="327" class="sayi" text-anchor="end">0</text>
+    <text x="560" y="327" class="kaynak">engine/CMakeLists.txt:1490 add_test(flat_ay…</text>
+    <text x="862" y="327" class="not">flat'ler ayni insana: contract ayniInsan, tol…</text>
+  </g>
+  <g>
+    <rect x="12" y="338" width="1156" height="26" fill="#fbfbfa"/>
+    <text x="24" y="357" class="ad">edge_case_supurme_check</text>
+    <rect x="300" y="342" width="98" height="18" rx="3" fill="#e7f4ec"/>
+    <text x="349" y="357" class="durum" fill="#186a3b" text-anchor="middle">YESIL</text>
+    <text x="458" y="357" class="sayi" text-anchor="end">0</text>
+    <text x="526" y="357" class="sayi" text-anchor="end">0</text>
+    <text x="560" y="357" class="kaynak">engine/CMakeLists.txt:498 add_test(edge_cas…</text>
+    <text x="862" y="357" class="not">kenar durum supurmesi: 0 sessiz default</text>
+  </g>
+  <g>
+    <rect x="12" y="368" width="1156" height="26" fill="#ffffff"/>
+    <text x="24" y="387" class="ad">enum_dallanma_check</text>
+    <rect x="300" y="372" width="98" height="18" rx="3" fill="#e7f4ec"/>
+    <text x="349" y="387" class="durum" fill="#186a3b" text-anchor="middle">YESIL</text>
+    <text x="458" y="387" class="sayi" text-anchor="end">436</text>
+    <text x="526" y="387" class="sayi" text-anchor="end">436</text>
+    <text x="560" y="387" class="kaynak">engine/tests/enum-dallanma-baseline.json:to…</text>
+    <text x="862" y="387" class="not">cpp.dallanma &lt;= taban</text>
+  </g>
+  <g>
+    <rect x="12" y="398" width="1156" height="26" fill="#fbfbfa"/>
+    <text x="24" y="417" class="ad">emsal_mm_olcum</text>
+    <rect x="300" y="402" width="98" height="18" rx="3" fill="#f2f2ef"/>
+    <text x="349" y="417" class="durum" fill="#6b6b63" text-anchor="middle">HENUZ-YOK</text>
+    <text x="458" y="417" class="sayi" text-anchor="end">—</text>
+    <text x="526" y="417" class="sayi" text-anchor="end">—</text>
+    <text x="560" y="417" class="kaynak">contract/flat-convention-v1.json + KOSU/cik…</text>
+    <text x="862" y="417" class="not">engine/tests/0509-emsal-olcum.mjs yok (A1b ya…</text>
+  </g>
+  <g>
+    <rect x="12" y="428" width="1156" height="26" fill="#ffffff"/>
+    <text x="24" y="447" class="ad">olcek_check</text>
+    <rect x="300" y="432" width="98" height="18" rx="3" fill="#f2f2ef"/>
+    <text x="349" y="447" class="durum" fill="#6b6b63" text-anchor="middle">HENUZ-YOK</text>
+    <text x="458" y="447" class="sayi" text-anchor="end">—</text>
+    <text x="526" y="447" class="sayi" text-anchor="end">—</text>
+    <text x="560" y="447" class="kaynak">contract/body-v1.json olcekAraligi</text>
+    <text x="862" y="447" class="not">olcek araligi contract'ta yok (A1b kaynakli e…</text>
+  </g>
+  <g>
+    <rect x="12" y="458" width="1156" height="26" fill="#fbfbfa"/>
+    <text x="24" y="477" class="ad">wasm_sanity</text>
+    <rect x="300" y="462" width="98" height="18" rx="3" fill="#f2f2ef"/>
+    <text x="349" y="477" class="durum" fill="#6b6b63" text-anchor="middle">HENUZ-YOK</text>
+    <text x="458" y="477" class="sayi" text-anchor="end">—</text>
+    <text x="526" y="477" class="sayi" text-anchor="end">—</text>
+    <text x="560" y="477" class="kaynak">engine/build-wasm.sh + engine/tests/0509-wa…</text>
+    <text x="862" y="477" class="not">engine/tests/0509-wasm-sanity.mjs yok (A1b ya…</text>
+  </g>
+  <g>
+    <rect x="12" y="488" width="1156" height="26" fill="#ffffff"/>
+    <text x="24" y="507" class="ad">regresyon</text>
+    <rect x="300" y="492" width="98" height="18" rx="3" fill="#f2f2ef"/>
+    <text x="349" y="507" class="durum" fill="#6b6b63" text-anchor="middle">HENUZ-YOK</text>
+    <text x="458" y="507" class="sayi" text-anchor="end">—</text>
+    <text x="526" y="507" class="sayi" text-anchor="end">—</text>
+    <text x="560" y="507" class="kaynak">KOSU/regresyon/girdiler.json</text>
+    <text x="862" y="507" class="not">kosmadi: KOSU/regresyon/girdiler.json yok (A1…</text>
+  </g>
+  <g>
+    <rect x="12" y="518" width="1156" height="26" fill="#fbfbfa"/>
+    <text x="24" y="537" class="ad">sinyal_tam</text>
+    <rect x="300" y="522" width="98" height="18" rx="3" fill="#fdeaea"/>
+    <text x="349" y="537" class="durum" fill="#a02020" text-anchor="middle">KIRMIZI</text>
+    <text x="458" y="537" class="sayi" text-anchor="end">2</text>
+    <text x="526" y="537" class="sayi" text-anchor="end">0</text>
+    <text x="560" y="537" class="kaynak">KOSU/sinyal.sh (muhurlu; DEVIR KABUL zincir…</text>
+    <text x="862" y="537" class="not">2 KIRMIZI satiri (exit 1)</text>
+  </g>
+  <line x1="12" y1="550" x2="1168" y2="550" stroke="#e3e3de"/>
+  <text x="24" y="572" class="ayak">HENÜZ-YOK kırmızı sayılmaz; state.json ilkYeşil'de kayıtlı bir geçidin yokluğu kırmızıdır. CRASH = alt süreç çöktü (araç onarımı, eşik gevşetme değil).</text>
+  <text x="24" y="588" class="ayak">alt süreç çıktısı: KOSU/0509-kapi.log · üreten: bash engine/tests/0509-kapi.sh | node engine/tests/0509-kapi-tablo.mjs</text>
+</svg>
