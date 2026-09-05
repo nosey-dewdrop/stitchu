@@ -234,7 +234,14 @@ def pca_uclar(pts):
     return a, b, (round((a[0] + b[0]) / 2, 1), round((a[1] + b[1]) / 2, 1))
 
 # --- Bolum 3 yardimcilari (Bolum 2'nin 13 Mica egrilik yontemi de kullanir) ---
-PUF_ESIK, KISA_ESIK, EGRI_ESIK, EGRI_PENCERE, APEX_TOL, APEX_PENCERE = 1.28, 0.6, 0.12, 12, 2, 6
+# F1 tur 9 (hakem ENGEL 1+2): PUF_ESIK ve KISA_ESIK TEK KAYNAKTAN okunur — contract/flat-convention-v1.json
+# sevkPoz.kolAcisiDeg.kosulluBant[0].kosul (agizBuzguOranMin, kolBoyuOverTorsoMax). Bu dosya BOLUM 5'te kisa alt kume
+# boslugunu ve kol boyu boslugunu URETIR ve dosyanin sonunda contract'taki sayiyla KARSILASTIRIR: fark varsa 'ESIK UYUMSUZ'
+# basar, exit 2. Ayni esik icin repoda iki sayi olamaz (tur 8'de PUF_ESIK 1.28 / contract 1.21 ikiligi buradan cikti).
+CONTRACT_FC = os.path.join(HERE, '..', 'contract', 'flat-convention-v1.json')
+KOSUL = json.load(open(CONTRACT_FC))['sevkPoz']['kolAcisiDeg']['kosulluBant'][0]['kosul']
+PUF_ESIK, KISA_ESIK = KOSUL['agizBuzguOranMin'], KOSUL['kolBoyuOverTorsoMax']
+EGRI_ESIK, EGRI_PENCERE, APEX_TOL, APEX_PENCERE = 0.12, 12, 2, 6
 YEREL = os.path.join(HERE, 'ciktilar', '_yerel', 'yeni-flat')
 os.makedirs(YEREL, exist_ok=True)
 
@@ -504,6 +511,9 @@ f1['medyanlar'] = {
 #   duz/klos kollarin maksimumu (1.231, 02 robe) ile buzgulu kollarin minimumu (1.334, 03 empire puf) ortasi;
 #   DOGRULANMADI: yayin kaynagi yok, veri bosluguna kondu (kume: 13 kol).
 #   kol boyu: agiz ortasi omuz ucundan  < KISA_ESIK x torso asagidaysa KISA (dirsek ~0.85 torso; 0.6 secildi).
+#   F1 tur 9 (hakem ENGEL 2): 'kisa' olcusu DIKEY mesafe degil, KOL EKSENI BOYUNCA kol boyu (omuz ucu -> agiz ortasi,
+#   hypot(dx, dy)) / torso. Dikey = kolBoyu x sin(kolAcisi) idi: kosul, sececegi bandin acisina bagliydi (dongusel) ve F2 grafi
+#   kol boyunu bilir, dikeyi bilmez. kisaOlcu = kolBoyu/torso (HUKUM), kisaOlcuDikey = eski dikey deger (BILGI).
 #   kolTipi: 'puf'   = balon + kisa   (yana acilan; sarkma bandina GIRMEZ)
 #            'bishop'= balon + uzun   (sarkan; banda girer)
 #            'setin' = balon degil    (duz, kloş ya da omuzda buzgulu ama agzi acik; sarkan; banda girer)
@@ -519,7 +529,7 @@ f3 = {'_ne': 'F1 tur 5: yeni acik teknik cizimler (indie kalip markalari; URL he
              'Dosyalar KOSU/ciktilar/_yerel/yeni-flat/ (telif; commit edilmez).',
       'tanimlar': {'PUF_ESIK': PUF_ESIK, 'KISA_ESIK': KISA_ESIK, 'EGRI_ESIK': EGRI_ESIK, 'EGRI_PENCERE': EGRI_PENCERE, 'APEX_PENCERE': APEX_PENCERE,
                    'kolTipi': 'balonOran = kol govdesinin en genis satiri / agiz PCA uzunlugu; >= PUF_ESIK -> agiz buzgulu; kisa+balon = puf (banda girmez), uzun+balon = bishop, degilse setin',
-                   'kisa': 'agiz ortasi - omuz ucu dikey mesafesi < KISA_ESIK x torso (torso yoksa boyKaynak ile elle)'},
+                   'kisa': 'kol boyu (omuz ucu -> agiz ortasi, kol EKSENI boyunca, hypot) / torso < KISA_ESIK (torso yoksa boyKaynak ile elle); F1 tur 9: dikey yerine eksen boyu, kisaOlcuDikey eski dikey deger bilgi icin durur'},
       'flatler': {}}
 apexKayit = []   # (ad, oran, vekilTipi)
 for ad, c in CFG3.items():
@@ -533,7 +543,8 @@ for ad, c in CFG3.items():
         k['balonOran'] = round(b[1] / agizW, 3)
         dy = eski['kolUcu']['orta'][1] - eski['omuzUcu']['snapPX'][1]
         if c['boy'] == 'torso':
-            k['kisa'] = dy < KISA_ESIK * eski['torsoPX']; k['kisaOlcu'] = round(dy / eski['torsoPX'], 3)
+            kb = math.hypot(eski['kolUcu']['orta'][0] - eski['omuzUcu']['snapPX'][0], dy)
+            k['kisaOlcu'] = round(kb / eski['torsoPX'], 3); k['kisaOlcuDikey'] = round(dy / eski['torsoPX'], 3); k['kisa'] = k['kisaOlcu'] < KISA_ESIK
         else:
             k['kisa'] = c['boy'] == 'kisa'; k['boyKaynak'] = c['boyKaynak']
         balon = k['balonOran'] >= PUF_ESIK
@@ -606,7 +617,8 @@ for ad, c in CFG3.items():
         bal = kolBalon(px, W, H, *c['kolPencere'], esik); agizW = math.hypot(b2[0] - a[0], b2[1] - a[1])
         k['kolPencere'] = list(c['kolPencere']); k['enGenisSatir'] = {'y': bal[0], 'genislikPX': bal[1], 'x': [bal[2], bal[3]]}; k['agizPX'] = round(agizW, 1)
         k['balonOran'] = round(bal[1] / agizW, 3)
-        if c['boy'] == 'torso' and 'torsoPX' in k: k['kisa'] = dy < KISA_ESIK * k['torsoPX']; k['kisaOlcu'] = round(dy / k['torsoPX'], 3)
+        if c['boy'] == 'torso' and 'torsoPX' in k:
+            k['kisaOlcu'] = round(math.hypot(dx, dy) / k['torsoPX'], 3); k['kisaOlcuDikey'] = round(dy / k['torsoPX'], 3); k['kisa'] = k['kisaOlcu'] < KISA_ESIK
         else: k['kisa'] = c['boy'] == 'kisa'; k['boyKaynak'] = c.get('boyKaynak')
         balon = k['balonOran'] >= PUF_ESIK
         k['kolTipi'] = 'puf' if (balon and k['kisa']) else 'bishop' if balon else 'setin'
@@ -780,6 +792,11 @@ sonuc['f1Kapanis'] = f1
 #                    F2 grafta panel genisligi zaten eksene diktir; hukum balonOranDik'e baglanir, yatay kayit kalir.
 #                    Eski 13 kol da ayni dik yontemle YENIDEN olculur (kendi pencereleriyle) ki birlesik kume tek olcuyle kiyaslansin.
 #   agizOmuzDikeyOverTorso = (agiz ortasi.y - omuz ucu.y) / (bel.y - SNP.y); torso yoksa boy elle + boyKaynak (BOLUM 3 gibi).
+#   F1 tur 9 (hakem ENGEL 2): HUKUM olcusu kolBoyuOverTorso = hypot(dx, dy) / torso (kol ekseni boyunca kol boyu); dikey
+#                    deger BILGI olarak kalir (dikey = kolBoyu x sin(aci): banda bagli, dongusel). 'kisa' bununla karar verilir.
+#   F1 tur 9 (hakem ENGEL 1): kisa alt kume boslugu ELLE degil BURADA hesaplanir (kisaAltKume): yalniz kisa == True kollar
+#                    (olculen kolBoyuOverTorso < KISA_ESIK ya da boyKaynak ile acikca kisa); kisa None (dirsek boyu, torso yok:
+#                    Mabel) 'olculmedi' listesine ADIYLA girer, sinifa sayilmaz. Contract esigi bu alandan kopyalanir.
 #   Duz mansetli kolda (Coco turn-back, Ilta/Frida gomlek manseti) agiz = mansetin ALT kenari, kolPencere manseti DISLAR.
 # Omuz ucu: 'omuzKutu' penceresinde EN UST murekkep (kol kepinin tepesi = omuz dikisi noktasi; BOLUM 2 SNP yontemiyle ayni).
 # Pencereler ORIJINAL piksel, 50/20 px grid ustunde gozle okundu; her olcum icin kontrol overlay'i
@@ -935,8 +952,9 @@ for ad, c in CFG5.items():
         y, n = yatayCizgiSatiri(px, W, *c['bel']['pencere'], esik)
         k['bel'] = {'yontem': 'bel dikisi: pencerede en cok murekkepli satir', 'pencere': list(c['bel']['pencere']), 'satirY': y, 'nMurekkep': n, 'not': c.get('belNot')}; k['belY'] = y
         k['torsoPX'] = y - top[1]
-        k['agizOmuzDikeyOverTorso'] = round(dy / k['torsoPX'], 3); k['kisa'] = k['agizOmuzDikeyOverTorso'] < KISA_ESIK
-        k['boy'] = 'kisa' if k['kisa'] else 'uzun'; k['boyKaynak'] = 'olculdu: agizOmuzDikeyOverTorso %s (KISA_ESIK %s)' % (k['agizOmuzDikeyOverTorso'], KISA_ESIK)
+        k['agizOmuzDikeyOverTorso'] = round(dy / k['torsoPX'], 3)   # BILGI: eski tanim (dikey), hukum tasimaz (F1 tur 9)
+        k['kolBoyuOverTorso'] = round(math.hypot(dx, dy) / k['torsoPX'], 3); k['kisa'] = k['kolBoyuOverTorso'] < KISA_ESIK
+        k['boy'] = 'kisa' if k['kisa'] else 'uzun'; k['boyKaynak'] = 'olculdu: kolBoyuOverTorso %s (KISA_ESIK %s)' % (k['kolBoyuOverTorso'], KISA_ESIK)
     else:
         k['boy'] = c['boy']; k['boyKaynak'] = c['boyKaynak']; k['kisa'] = (c['boy'] == 'kisa')
         if c['boy'] == 'dirsek': k['kisa'] = None
@@ -958,9 +976,11 @@ f5['eskiKumeDik'] = {'_ne': 'BOLUM 3 kollari eksene dik kesitle yeniden olculdu 
 
 # --- birlesik kume: eski 13 (etiket kolTipi'nden: setin -> duz, puf/bishop -> buzgulu; gorsel okuma ile ayni) + yeni ---
 eskiKume = {ad: {'balonOranDik': eskiDik[ad]['balonOranDik'], 'balonOranYatay': k['balonOran'], 'etiket': ('duz' if k['kolTipi'] == 'setin' else 'buzgulu'),
-                 'kisaOlcu': k.get('kisaOlcu'), 'kisa': k.get('kisa'), 'kolAcisiDeg': (k['kolAcisiDeg']['deger'] if isinstance(k['kolAcisiDeg'], dict) else k['kolAcisiDeg'])}
+                 'kisaOlcu': k.get('kisaOlcu'), 'kisaOlcuDikey': k.get('kisaOlcuDikey'), 'kisa': k.get('kisa'), 'boyKaynak': k.get('boyKaynak'),
+                 'kolAcisiDeg': (k['kolAcisiDeg']['deger'] if isinstance(k['kolAcisiDeg'], dict) else k['kolAcisiDeg'])}
            for ad, k in f3['flatler'].items() if ad in eskiDik}
-yeniKume = {ad: {'balonOranDik': k['balonOranDik'], 'balonOranYatay': k['balonOranYatay'], 'etiket': k['etiket'], 'kisaOlcu': k.get('agizOmuzDikeyOverTorso'), 'kisa': k.get('kisa'), 'kolAcisiDeg': k['kolAcisiDeg']['deger'], 'marka': k['marka']}
+yeniKume = {ad: {'balonOranDik': k['balonOranDik'], 'balonOranYatay': k['balonOranYatay'], 'etiket': k['etiket'], 'kisaOlcu': k.get('kolBoyuOverTorso'), 'kisaOlcuDikey': k.get('agizOmuzDikeyOverTorso'),
+                 'kisa': k.get('kisa'), 'boyKaynak': k.get('boyKaynak'), 'kolAcisiDeg': k['kolAcisiDeg']['deger'], 'marka': k['marka']}
             for ad, k in f5['flatler'].items() if k.get('balonOranDik') is not None}
 def sinifOzet(kume, etiket, alan):
     v = sorted((k[alan], ad) for ad, k in kume.items() if k['etiket'] == etiket)
@@ -968,35 +988,75 @@ def sinifOzet(kume, etiket, alan):
 def boslukHukmu(kume, alan):
     duz, buz = sinifOzet(kume, 'duz', alan), sinifOzet(kume, 'buzgulu', alan)
     if duz['n'] and buz['n'] and duz['max'] < buz['min']:
-        return {'alan': alan, 'duz': duz, 'buzgulu': buz, 'bosluk': [duz['max'], buz['min']], 'ortaNokta': round((duz['max'] + buz['min']) / 2, 3), 'hukum': 'BOSLUK KALDI: skaler esik ayirici; yeni esik = boslugun ortasi'}
+        return {'alan': alan, 'duz': duz, 'buzgulu': buz, 'bosluk': [duz['max'], buz['min']], 'ortaNokta': round((duz['max'] + buz['min']) / 2, 4), 'hukum': 'BOSLUK KALDI: skaler esik ayirici; yeni esik = boslugun ortasi'}
     ortusen = {ad: k[alan] for ad, k in kume.items() if (k['etiket'] == 'duz' and k[alan] >= (buz['min'] or 0)) or (k['etiket'] == 'buzgulu' and k[alan] <= (duz['max'] or 9))}
     return {'alan': alan, 'duz': duz, 'buzgulu': buz, 'bosluk': None, 'ortusenler': ortusen, 'hukum': 'ORTUSME: iki sinif bu eksende ayrilmiyor; skaler esik yanlis ayirici (karar ajani 3c)'}
+def kisaAltKume(kume, alan):
+    # F1 tur 9 (hakem ENGEL 1): kosulun IKI bacagi birlikte: yalniz kisa == True kollar sinifa girer. kisa None (torso
+    # olculemedi ve boy 'dirsek': ne kisa ne uzun) ADIYLA 'olculmedi'ye yazilir; olculemeyen ornek olculmus sayilmaz.
+    kisa = {ad: k for ad, k in kume.items() if k.get('kisa') is True}
+    h = boslukHukmu(kisa, alan)
+    h['duzMax'], h['buzMin'] = h['duz']['max'], h['buzgulu']['min']
+    h['uyeler'] = {'duz': sorted(ad for ad, k in kisa.items() if k['etiket'] == 'duz'), 'buzgulu': sorted(ad for ad, k in kisa.items() if k['etiket'] == 'buzgulu')}
+    h['olculmedi'] = {ad: 'kisa=None: ' + str(k.get('boyKaynak')) for ad, k in kume.items() if k.get('kisa') is None}
+    h['disarida_uzun'] = sorted(ad for ad, k in kume.items() if k.get('kisa') is False)
+    return h
 birlesik = {**eskiKume, **yeniKume}
 kisaOlcumler = sorted((k['kisaOlcu'], ad, k['kisa']) for ad, k in birlesik.items() if k.get('kisaOlcu') is not None)
+dikeyOlcumler = sorted((k['kisaOlcuDikey'], ad, k['kisa']) for ad, k in birlesik.items() if k.get('kisaOlcuDikey') is not None)
+kisaMax = max([v for v, _, kk in kisaOlcumler if kk] or [None]); uzunMin = min([v for v, _, kk in kisaOlcumler if not kk] or [None])
 f5['medyanlar'] = {
   'balonOranDik': {'eskiKume13': boslukHukmu(eskiKume, 'balonOranDik'), 'yeniKume': boslukHukmu(yeniKume, 'balonOranDik'), 'birlesik': boslukHukmu(birlesik, 'balonOranDik'),
-                   'tanim': 'HUKUM EKSENI. kol eksenine dik en genis kesit / agiz uzunlugu; etiket cizim konvansiyonundan. Bosluk = duz maksimumu ile buzgulu minimumu arasi.'},
+                   'kisaAltKume': {'eskiKume13': kisaAltKume(eskiKume, 'balonOranDik'), 'yeniKume': kisaAltKume(yeniKume, 'balonOranDik'), 'birlesik': kisaAltKume(birlesik, 'balonOranDik'),
+                                   'tanim': 'HUKUM (F1 tur 9). kosulluBant kosulu kisa VE agiz buzgulu oldugu icin esik KISA alt kumeden kesilir: kisa == True kollarda duz max / buzgulu min / bosluk / ortaNokta. '
+                                            'contract kosul.agizBuzguOranMin = birlesik.ortaNokta, kosul.agizBuzguOranBosluk = birlesik.bosluk (kopya; dosya sonu kontrol eder). kisa None kollar olculmedi listesinde.'},
+                   'tanim': 'HUKUM EKSENI. kol eksenine dik en genis kesit / agiz uzunlugu; etiket cizim konvansiyonundan. Bosluk = duz maksimumu ile buzgulu minimumu arasi. TUM kume boslugu bilgi (ortusur), hukum kisaAltKume.'},
   'balonOranYatay': {'eskiKume13': boslukHukmu(eskiKume, 'balonOranYatay'), 'yeniKume': boslukHukmu(yeniKume, 'balonOranYatay'), 'birlesik': boslukHukmu(birlesik, 'balonOranYatay'),
                      'tanim': 'BILGI. BOLUM 3 yatay satir tanimi; eksen dusey olmayan kollarda kol boyunu olcer (Stevie/Lucy), hukum tasimaz.'},
-  'agizOmuzDikeyOverTorso': {'n': len(kisaOlcumler), 'degerler': [{'flat': ad, 'oran': v, 'kisa': kk} for v, ad, kk in kisaOlcumler],
-                             'kisaMax': max([v for v, _, kk in kisaOlcumler if kk] or [None]), 'uzunMin': min([v for v, _, kk in kisaOlcumler if not kk] or [None]),
-                             'tanim': 'torso paydasi olculebilen kollar (SNP + bel dikisi cizili). KISA_ESIK 0.6: dirsek ~0.85 torso. kisaMax < 0.6 < uzunMin ise 0.6 bosluk icinde.'},
+  'kolBoyuOverTorso': {'n': len(kisaOlcumler), 'degerler': [{'flat': ad, 'oran': v, 'kisa': kk, 'dikey': next(d for d, a2, _ in dikeyOlcumler if a2 == ad), 'kolAcisiDeg': birlesik[ad]['kolAcisiDeg']} for v, ad, kk in kisaOlcumler],
+                       'kisaMax': kisaMax, 'uzunMin': uzunMin, 'bosluk': ([kisaMax, uzunMin] if (kisaMax is not None and uzunMin is not None and kisaMax < uzunMin) else None),
+                       'ortaNokta': (round((kisaMax + uzunMin) / 2, 4) if (kisaMax is not None and uzunMin is not None and kisaMax < uzunMin) else None),
+                       'esik': KISA_ESIK, 'esikBoslukIcinde': (kisaMax is not None and uzunMin is not None and kisaMax < KISA_ESIK < uzunMin),
+                       'tanim': 'HUKUM (F1 tur 9, hakem ENGEL 2). kol boyu = omuz ucu -> agiz ortasi, kol EKSENI boyunca (hypot(dx,dy)) / torso (SNP->bel). Eski dikey deger = kolBoyu x sin(kolAcisiDeg) (degerler[].dikey, bilgi): '
+                                'aciya bagli oldugu icin band secen kosul olarak donguseldi; F2 grafta kol boyunu bilir, aciyi bilmez. kisa = oran < esik. Esik boslugun icindeyse kalir, degilse ortaNokta.'},
+  'agizOmuzDikeyOverTorso': {'n': len(dikeyOlcumler), 'degerler': [{'flat': ad, 'oran': v, 'kisa': kk} for v, ad, kk in dikeyOlcumler],
+                             'kisaMax': max([v for v, _, kk in dikeyOlcumler if kk] or [None]), 'uzunMin': min([v for v, _, kk in dikeyOlcumler if not kk] or [None]),
+                             'tanim': 'BILGI (eski tanim, F1 tur 8; hukum tasimaz). Dikey mesafe / torso; kisa etiketi artik kolBoyuOverTorso ile.'},
   'kolAcisiDeg': {'buzgulu': {ad: k['kolAcisiDeg'] for ad, k in yeniKume.items() if k['etiket'] == 'buzgulu'}, 'duz': {ad: k['kolAcisiDeg'] for ad, k in yeniKume.items() if k['etiket'] == 'duz'},
                   'not': 'bilgi: raglan/dusuk omuz/off-shoulder kollarin omuz ucu set-in ile ayni nokta degil (omuzNot), banda girmez'},
 }
 sonuc['f1Tur8'] = f5
 print('\n=== BOLUM 5 (F1 tur 8) balonOran ===')
 for ad, k in f5['flatler'].items():
-    print('%-30s %-8s dik %-6s yatay %-6s aci %-5s eksen %-5s boy %-6s kisaOlcu %s' % (ad, k.get('etiket'), k.get('balonOranDik'), k.get('balonOranYatay'), (k.get('kolAcisiDeg') or {}).get('deger'), (k.get('enGenisDikKesit') or {}).get('eksenAciDeg'), k.get('boy'), k.get('agizOmuzDikeyOverTorso')))
+    print('%-30s %-8s dik %-6s yatay %-6s aci %-5s eksen %-5s boy %-6s kolBoyu/torso %s (dikey %s)' % (ad, k.get('etiket'), k.get('balonOranDik'), k.get('balonOranYatay'), (k.get('kolAcisiDeg') or {}).get('deger'), (k.get('enGenisDikKesit') or {}).get('eksenAciDeg'), k.get('boy'), k.get('kolBoyuOverTorso'), k.get('agizOmuzDikeyOverTorso')))
 print('--- eski kume dik / yatay')
 for ad, v in eskiDik.items(): print('%-34s dik %-6s yatay %-6s %s' % (ad, v['balonOranDik'], v['balonOranYatay'], eskiKume[ad]['etiket']))
 for alan in ('balonOranDik', 'balonOranYatay'):
     h = f5['medyanlar'][alan]['birlesik']; print(alan, 'BIRLESIK:', h['hukum'], 'bosluk', h.get('bosluk'), 'orta', h.get('ortaNokta'), 'duzMax', h['duz']['max'], 'buzMin', h['buzgulu']['min'], 'ortusen', h.get('ortusenler'))
-print('agizOmuzDikeyOverTorso:', json.dumps(f5['medyanlar']['agizOmuzDikeyOverTorso']['degerler']), 'kisaMax', f5['medyanlar']['agizOmuzDikeyOverTorso']['kisaMax'], 'uzunMin', f5['medyanlar']['agizOmuzDikeyOverTorso']['uzunMin'])
+for kum in ('eskiKume13', 'yeniKume', 'birlesik'):
+    h = f5['medyanlar']['balonOranDik']['kisaAltKume'][kum]
+    print('KISA ALT KUME', kum, h['hukum'], 'duzMax', h['duzMax'], 'buzMin', h['buzMin'], 'bosluk', h.get('bosluk'), 'orta', h.get('ortaNokta'), 'uyeler', h['uyeler'], 'olculmedi', h['olculmedi'])
+kb = f5['medyanlar']['kolBoyuOverTorso']
+print('kolBoyuOverTorso:', json.dumps(kb['degerler']), 'kisaMax', kb['kisaMax'], 'uzunMin', kb['uzunMin'], 'bosluk', kb['bosluk'], 'orta', kb['ortaNokta'], 'esik', kb['esik'], 'icinde', kb['esikBoslukIcinde'])
 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, 'w') as f:
     json.dump(sonuc, f, indent=1, ensure_ascii=False)
+
+# --- F1 tur 9: contract esikleri ile URETICI ciktisi ayni mi? (tek kaynak kontrolu; JSON yazildiktan sonra, fark exit 2) ---
+hK = f5['medyanlar']['balonOranDik']['kisaAltKume']['birlesik']; uyumsuz = []
+if hK.get('bosluk') is None: uyumsuz.append('kisa alt kume boslugu KAPANDI: skaler esik ayirici degil (karar ajani 3c), contract esigi gecersiz')
+else:
+    if KOSUL['agizBuzguOranMin'] != hK['ortaNokta']: uyumsuz.append('agizBuzguOranMin contract %s != uretici ortaNokta %s' % (KOSUL['agizBuzguOranMin'], hK['ortaNokta']))
+    if list(KOSUL['agizBuzguOranBosluk']) != list(hK['bosluk']): uyumsuz.append('agizBuzguOranBosluk contract %s != uretici %s' % (KOSUL['agizBuzguOranBosluk'], hK['bosluk']))
+if kb['bosluk'] is None: uyumsuz.append('kolBoyuOverTorso kisa/uzun boslugu KAPANDI')
+else:
+    if not kb['esikBoslukIcinde']: uyumsuz.append('kolBoyuOverTorsoMax %s bosluk %s DISINDA; ortaNokta %s' % (KISA_ESIK, kb['bosluk'], kb['ortaNokta']))
+    if list(KOSUL['kolBoyuOverTorsoBosluk']) != list(kb['bosluk']): uyumsuz.append('kolBoyuOverTorsoBosluk contract %s != uretici %s' % (KOSUL['kolBoyuOverTorsoBosluk'], kb['bosluk']))
+if uyumsuz:
+    print('ESIK UYUMSUZ (contract/flat-convention-v1.json kosulluBant[0].kosul vs flat-olcum.json f1Tur8):'); [print('  -', u) for u in uyumsuz]
+    import sys; sys.exit(2)
+print('ESIK KONTROL OK: agizBuzguOranMin %s = kisa alt kume orta, bosluk %s; kolBoyuOverTorsoMax %s bosluk %s icinde' % (KOSUL['agizBuzguOranMin'], hK['bosluk'], KISA_ESIK, kb['bosluk']))
 print(json.dumps(sonuc['oranlar'], indent=1, ensure_ascii=False))
 for ad, k in f1['flatler'].items():
     if 'OLCULEMEDI' in k: print(ad, 'OLCULEMEDI:', k['OLCULEMEDI']); continue

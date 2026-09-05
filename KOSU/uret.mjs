@@ -55,7 +55,11 @@ const SPECS = [
 ];
 
 mkdirSync(OUT, { recursive: true });
-for (const f of readdirSync(OUT)) if (/\.(svg|png)$/.test(f)) rmSync(join(OUT, f));
+// Yalniz KENDI urettigi dosyalar silinir (SPECS'teki adlar). Eski hal /\.(svg|png)$/ ile klasordeki HER svg/png'yi
+// siliyordu: F1'in teslimati beden-iki.svg/png ve zemin-once.png ayni klasorde, KABUL komutu kosan her ajan onlari
+// calisma agacindan siliyordu (F1 hakem tur 8 kusur 3).
+const kendiAdlar = new Set(SPECS.map(([ad]) => ad));
+for (const f of readdirSync(OUT)) { const m = /^(.+)\.(svg|png)$/.exec(f); if (m && kendiAdlar.has(m[1])) rmSync(join(OUT, f)); }
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 function png(svgPath, pngPath, w, h) {
