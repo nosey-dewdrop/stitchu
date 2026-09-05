@@ -376,7 +376,9 @@ function birlestir(hs) {
 // 0509: mekanik el — kosucunun dosya/shell erisimi yok; gecit, tag, butce, state, ilerleme, DURDU hep buradan
 async function el(gorev, adim, ek) {
   if (KURU) { log(`[kuru] el: ${gorev} ${adim ? adim.ad : ''}`); return { gecitYesil: true, kirmizilar: [], commitSayisi: 0, saat: 0, regresyonFarki: [], yapilan: [], yok: [] } }
-  const stateOzet = JSON.stringify({ adim: adim ? adim.no : null, kabulKomutlari: gecmisKabuller, devredilen: devredilenKusurlar.slice(-30), banned: Object.entries(banned).flatMap(([no, l]) => l.map(x => `${no}|${x}`)), kararDefteri: kararDefteri.slice(-10) }, null, 0)
+  const _adimGercek = adim
+  if (!adim) adim = { ad: 'kosu (adimsiz)', no: 'kosu' }   // 0509 fix: el('yukle', null) — gorev metinleri adim.ad/adim.no okuyor
+  const stateOzet = JSON.stringify({ adim: _adimGercek ? _adimGercek.no : null, kabulKomutlari: gecmisKabuller, devredilen: devredilenKusurlar.slice(-30), banned: Object.entries(banned).flatMap(([no, l]) => l.map(x => `${no}|${x}`)), kararDefteri: kararDefteri.slice(-10) }, null, 0)
   const gorevler = {
     basla: `ADIM BASLANGICI ${adim.ad} (11.5):
  1. git tag -f adim-${adim.no}-once (yeniden acilis/tekrar ise tag ILERI tasinir: butce bu acilistan sayilir); git push -f origin --tags. REFERANS KILIDI: bash ${KAPI} --kilit ${JSON.stringify(ek && ek.izin || '')} (yoksa: chmod -R a-w contract engine/tests engine/golden-reference.csv engine/src/grafdogrula.* engine/src/solver_utils.* 2>/dev/null; izin listesindekilere chmod u+w). Faz yolu ${STATE}.yol dizisine eklenir (11.7 makro-ABA).
@@ -393,10 +395,10 @@ async function el(gorev, adim, ek) {
     bitti: `KOSU BITTI (8.23-8.24): bash ${KAPI} --kilit-ac (yoksa chmod -R u+w contract engine/tests engine/src/grafdogrula.* engine/src/solver_utils.*; Damla'nin elle duzenlemesi icin kilit acilir; DURDU'da da ayni). ${DOC} §0 devir promptu ve §5 defter guncel; ${ILERLEME} son satir; ${STATE} durum=BITTI. Damla'ya tek mesaj metni KOSU/ciktilar/kosu-yol-a.md icinde: ne degisti, kapi tablosu (bash ${KAPI}), acik kalanlar, silinenler. Commit + push.\n# OZET\n${ek && ek.ozet || ''}`,
   }
   const prompt = EL_ORTAK + `\n# DURUM (makine okunur)\n${stateOzet}\n# GOREV\n${gorevler[gorev]}\n`
-  const r1 = await agent(prompt, { label: `${adim ? adim.ad : 'kosu'} el:${gorev}`, phase: adim ? adim.ad : 'A1 Gecit', schema: EL_SEMA, effort: 'low' })
+  const r1 = await agent(prompt, { label: `${_adimGercek ? _adimGercek.ad : 'kosu'} el:${gorev}`, phase: _adimGercek ? _adimGercek.ad : 'A1 Gecit', schema: EL_SEMA, effort: 'low' })
   if (r1) return r1
   gunluk.push(`el:${gorev} oldu, bir kez daha`)
-  return agent(prompt + '\n# (ikinci cagri; ilk el ajani oldu)\n', { label: `${adim ? adim.ad : 'kosu'} el:${gorev}#2`, phase: adim ? adim.ad : 'A1 Gecit', schema: EL_SEMA, effort: 'low' })
+  return agent(prompt + '\n# (ikinci cagri; ilk el ajani oldu)\n', { label: `${_adimGercek ? _adimGercek.ad : 'kosu'} el:${gorev}#2`, phase: _adimGercek ? _adimGercek.ad : 'A1 Gecit', schema: EL_SEMA, effort: 'low' })
 }
 
 async function fazKos(faz, ekNot, altAdim) {
