@@ -28,6 +28,11 @@ double croquisOran(const char* name) {
     throw std::runtime_error(std::string("body: croquisOranlar yok: ") + name);
 }
 double r1(double v) { return std::round(v * 10.0) / 10.0; }
+// croquis tek genislik yasasi (F1 tur 5): bolluk yalniz contract'ta yazili halkada, yoksa 0.
+double croquisBolluk(const std::string& ring) {
+    for (const auto& c : contract::kCroquisBolluk) if (ring == c.name) return c.v;
+    return 0.0;
+}
 } // namespace
 
 double ellipsePerimeterRamanujan(double a, double b) {
@@ -95,8 +100,9 @@ Body Body::graded(const std::string& size) {
     const double waistY = G("length.backNapeToWaist") - napeDrop;
     const double underarmY = G("length.armholeDepth") - napeDrop;
     const double apexX = gradeConst("width.apexToApex_oran") * bust / 2.0;
-    const double bustDepth = G("length.bustDepth");
-    const double apexY = std::sqrt(bustDepth * bustDepth - (apexX - neckHalf) * (apexX - neckHalf));
+    // Gogus ucu dikeyi: ANSUR II (cervicale -> gogus ucu) / (cervicale -> bel) orani x arka boy (F1 tur 5).
+    // Brusttiefe (length.bustDepth) YUZEY olcusudur, apex.y ondan turetilmez (eski sqrt formulu 59 mm hataliydi).
+    const double apexY = gradeConst("cervicaleToApexOverNapeToWaist") * G("length.backNapeToWaist") - napeDrop;
     const double hipY = waistY + G("length.waistToHip");
     const double arm = G("length.arm");
     const double underbustOran = gradeConst("girth.underbust_oran");
@@ -174,7 +180,9 @@ Body Body::croquisOf(const Body& real) {
     const double cApexX = r1(croquisOran("apexXOverShoulderTipX") * ctip);
     const double cApex = r1(croquisOran("apexDropOverTorso") * torso);
     const double cUnder = r1(croquisOran("underarmOverTorso") * torso);
-    const double cw = r1(croquisOran("waistHalfOverBustHalf") * bustHalf);
+    // Tek genislik yasasi (F1 tur 5): her girth x = cevre/4 x (1 + croquisBolluk); bolluk yalniz belde
+    // (sablon/satilan flat bel/gogus 0.812 vs beden 0.786 = %3.3 giysi bollugu). waistHalfOverBustHalf artik bilgi.
+    const double cw = r1(real.ring("girth.waist") / 4.0 * (1.0 + croquisBolluk("girth.waist")));
     const double waistY = r1(torso);
     const double hipY = r1(real.landmark("landmark.hip").y * stretch);
     const double napeY = real.landmark("landmark.nape").y;
@@ -199,8 +207,7 @@ Body Body::croquisOf(const Body& real) {
       b.set("landmark.elbow", r1(ctip + toElbow * std::cos(th)), r1(ctipY + toElbow * std::sin(th)));
       b.set("landmark.wrist", r1(ctip + arm * std::cos(th)), r1(ctipY + arm * std::sin(th))); }
 
-    for (const auto& n : real.ringNames()) b.setRing(n, real.ring(n), real.ringBackFrac(n));
-    b.setRing("girth.waist", r1(4.0 * cw), real.ringBackFrac("girth.waist"));
+    for (const auto& n : real.ringNames()) b.setRing(n, real.ring(n), real.ringBackFrac(n));   // halkalar BEDENIN cevresi (bel 660 dahil)
     for (const auto& s : real.sc_) b.setScalar(s.name, s.v);
     b.setScalar("length.shoulder", r1(std::hypot(ctip - cneck, ctipY)));
     b.setScalar("length.bustDepth", r1(std::hypot(cApexX - cneck, cApex)));
@@ -287,6 +294,18 @@ double Body::ringHalfWidth(const std::string& ringName) const {
     const double k = ringAspect(ringName);
     return P / ellipsePerimeterRamanujan(1.0, 1.0 / k);
 }
+// On lob (F1 tur 5, halkaKesitOran.lobYukseklikMM.<halka>): yoksa 0.
+double Body::ringLobHeight(const std::string& ringName) const {
+    double h; return kesitVal("lobYukseklikMM.", ringName, h) ? h : 0.0;
+}
+double Body::ringLobSigma(const std::string& ringName) const {
+    if (ringLobHeight(ringName) <= 0) return 0.0;
+    double k; if (!kesitVal("lobSigmaOverApexX", "", k)) throw std::runtime_error("body: halkaKesitOran lobSigmaOverApexX yok");
+    return k * landmark("landmark.bustApex").x;
+}
+// Kaburga yari derinligi: lob'lu halkada (D - h)/2, D = 2 x ringHalfDepth (ANSUR chest depth gogus ucuna kadar).
+double Body::ringRibHalfDepth(const std::string& ringName) const { return ringHalfDepth(ringName) - ringLobHeight(ringName) / 2.0; }
+
 double Body::ringHalfDepth(const std::string& ringName) const {
     double dg;
     if (kesitVal("depthOverGirth.", ringName, dg)) return dg * ring(ringName) / 2.0;
@@ -294,15 +313,21 @@ double Body::ringHalfDepth(const std::string& ringName) const {
 }
 
 namespace {
-// point() ile ayni orneklemede kesit cevresi (arka pay dahil); body_check (a) da 2000 adimla olcer.
-double sectionPerimeter(double a, double b, double bf, double n) {
-    const int N = 2000; double per = 0; double px = a, pz = 0;
-    for (int k = 1; k <= N; ++k) {
-        const double t = 2.0 * kPi * k / N;
-        const double bz = std::sin(t) >= 0 ? b * (1.0 - bf) / 0.5 : b * bf / 0.5;
-        const double x = a * sePow(std::cos(t), 2.0 / n), z = bz * sePow(std::sin(t), 2.0 / n);
-        per += std::hypot(x - px, z - pz); px = x; pz = z;
-    }
+struct Sec { double a, b, bf, n, h, sig, ax; };
+// Kesit noktasi: superelips kaburga (arka pay ile on/arka derinlik olcekli) + ON yarimda iki Gauss lob
+// (merkez +-ax, sigma sig, yukseklik h; sin(t) ile yanlarda sifira iner). h=0 -> eski superelips.
+BodyPoint secPoint(const Sec& s, double t) {
+    const double sn = std::sin(t);
+    const double bz = sn >= 0 ? s.b * (1.0 - s.bf) / 0.5 : s.b * s.bf / 0.5;
+    const double x = s.a * sePow(std::cos(t), 2.0 / s.n);
+    double z = bz * sePow(sn, 2.0 / s.n);
+    if (s.h > 0 && sn > 0) z += s.h * sn * (std::exp(-((x - s.ax) * (x - s.ax)) / (2 * s.sig * s.sig)) + std::exp(-((x + s.ax) * (x + s.ax)) / (2 * s.sig * s.sig)));
+    return {x, 0.0, z};
+}
+// point() ile ayni orneklemede kesit cevresi; body_check (a) da 2000 adimla olcer.
+double sectionPerimeter(const Sec& s) {
+    const int N = 2000; double per = 0; BodyPoint p0 = secPoint(s, 0);
+    for (int k = 1; k <= N; ++k) { BodyPoint p = secPoint(s, 2.0 * kPi * k / N); per += std::hypot(p.x - p0.x, p.z - p0.z); p0 = p; }
     return per;
 }
 } // namespace
@@ -310,13 +335,16 @@ double sectionPerimeter(double a, double b, double bf, double n) {
 double Body::ringExponent(const std::string& ringName) const {
     if (!ringHasBreadth(ringName)) return 2.0;
     for (const auto& c : expCache_) if (c.first == ringName) return c.second;
-    const double P = ring(ringName), a = ringHalfWidth(ringName), b = ringHalfDepth(ringName), bf = ringBackFrac(ringName);
+    const double P = ring(ringName);
+    const double h = ringLobHeight(ringName);
+    Sec s{ringHalfWidth(ringName), ringRibHalfDepth(ringName), ringBackFrac(ringName), 2.0, h, ringLobSigma(ringName), h > 0 ? landmark("landmark.bustApex").x : 0.0};
     // n=2 elips cevreyi eksik kapatir (ANSUR: %5-13), n->inf dikdortgen 4(a+b) fazla; arada tek kok (cevre n'de monoton).
+    // Lob'lu halkada (gogus) lob cevreye dahil: h=60'ta n 5.43 -> ~4.98 (halkaKesitOran._lob: n<=3 ANSUR sayilariyla olanaksiz).
     double lo = 2.0, hi = 40.0;
-    if (sectionPerimeter(a, b, bf, lo) > P) hi = lo;               // elips zaten fazla: n=2 kalir (sapma body_check'te gorunur)
+    s.n = lo; if (sectionPerimeter(s) > P) hi = lo;               // elips zaten fazla: n=2 kalir (sapma body_check'te gorunur)
     for (int i = 0; i < 60 && hi - lo > 1e-9; ++i) {
-        const double mid = 0.5 * (lo + hi);
-        if (sectionPerimeter(a, b, bf, mid) < P) lo = mid; else hi = mid;
+        s.n = 0.5 * (lo + hi);
+        if (sectionPerimeter(s) < P) lo = s.n; else hi = s.n;
     }
     const double n = 0.5 * (lo + hi);
     expCache_.push_back({ringName, n});
@@ -327,12 +355,11 @@ BodyPoint Body::point(const std::string& ringName, double aciDeg) const {
     const std::string lm = landmarkOfRing(ringName);
     if (lm.empty()) throw std::runtime_error("body: halkanin landmark'i yok: " + ringName);
     const BodyPoint c = landmark(lm);
-    const double a = ringHalfWidth(ringName), b = ringHalfDepth(ringName), n = ringExponent(ringName);
-    const double t = aciDeg * kPi / 180.0;
-    // arka yay payi: arka yarim (z<0) derinligi backFrac/0.5, on yarim (1-backFrac)/0.5 ile olceklenir
-    const double bf = ringBackFrac(ringName);
-    const double bz = std::sin(t) >= 0 ? b * (1.0 - bf) / 0.5 : b * bf / 0.5;
-    return {a * sePow(std::cos(t), 2.0 / n), c.y, bz * sePow(std::sin(t), 2.0 / n)};
+    // arka yay payi: arka yarim (z<0) derinligi backFrac/0.5, on yarim (1-backFrac)/0.5 ile olceklenir; gogus halkasinda on lob eklenir
+    const double h = ringLobHeight(ringName);
+    Sec s{ringHalfWidth(ringName), ringRibHalfDepth(ringName), ringBackFrac(ringName), ringExponent(ringName), h, ringLobSigma(ringName), h > 0 ? landmark("landmark.bustApex").x : 0.0};
+    BodyPoint p = secPoint(s, aciDeg * kPi / 180.0);
+    return {p.x, c.y, p.z};
 }
 
 std::vector<std::string> Body::landmarkNames() const {

@@ -124,6 +124,1051 @@
   "sinir": "n=2 — kollu uc referansta gogus olculemedigi icin oran iki kolsuz referanstan geliyor; Damla baska referans isaretlerse bu dosya yeniden kosulur ve contract v2 guncellenir"
  },
  "kalca": "OLCULMEDI — bes referansin besinde de bel alti giysi klosu (A etek) govdeyi ortuyor; olculecek sey mankenin kalcasi degil etegin klosu olurdu. En kisitlayici deger: fark 0 (contract v2 kalcayi ve gogsu insan cizelgesinde birakir, yalniz bel donusur)",
+ "f1Tur5": {
+  "_ne": "F1 tur 5: yeni acik teknik cizimler (indie kalip markalari; URL her kayitta) + eski flatlerin kolTipi yeniden etiketi. Yontem Bolum 2 ile ayni (SNP->bel payda; on gorunum sol yari); ek yontemler bu dosyanin BOLUM 3 basliginda. Dosyalar KOSU/ciktilar/_yerel/yeni-flat/ (telif; commit edilmez).",
+  "tanimlar": {
+   "PUF_ESIK": 1.28,
+   "KISA_ESIK": 0.6,
+   "EGRI_ESIK": 0.12,
+   "EGRI_PENCERE": 12,
+   "APEX_PENCERE": 6,
+   "kolTipi": "balonOran = kol govdesinin en genis satiri / agiz PCA uzunlugu; >= PUF_ESIK -> agiz buzgulu; kisa+balon = puf (banda girmez), uzun+balon = bishop, degilse setin",
+   "kisa": "agiz ortasi - omuz ucu dikey mesafesi < KISA_ESIK x torso (torso yoksa boyKaynak ile elle)"
+  },
+  "flatler": {
+   "cash-wyman.jpg": {
+    "urun": "Cashmerette Wyman Dress Sloper (12-32 kalibi)",
+    "sayfa": "https://www.cashmerette.com/products/wyman-dress-sloper-pdf-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0735/5719/files/Cashmerette-1112Wyman-tech-ill-IG.jpg?v=1780417777",
+    "boyutPX": [
+     2500,
+     3125
+    ],
+    "esik": 160,
+    "cfX": 655,
+    "not": "sloper: yan gogus pensi + bel pensleri + bel dikisi + KESIK GOGUS HATTI cizgisi (apex seviyesi dogrudan). Uzun set-in kol.",
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      480,
+      520,
+      730,
+      770
+     ],
+     "xy": [
+      508,
+      745
+     ]
+    },
+    "bel": {
+     "yontem": "bel dikisi: pencerede en cok murekkepli satir",
+     "pencere": [
+      560,
+      760,
+      1280,
+      1320
+     ],
+     "satirY": 1302,
+     "nMurekkep": 200
+    },
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      355,
+      790
+     ],
+     "snapPX": [
+      355,
+      790
+     ],
+     "mesafePX": 0.0,
+     "yaricapPX": 8
+    },
+    "oyukTabani": {
+     "yontem": "kol ic kenari - yan dikis arasinda beyaz boslugun ilk satiri",
+     "satirY": 1130,
+     "parcalar": [
+      [
+       356,
+       357
+      ],
+      [
+       362,
+       371
+      ]
+     ],
+     "pencere": [
+      280,
+      380,
+      1130,
+      1230
+     ]
+    },
+    "pensUcu": {
+     "yontem": "pencerede CF'ye en yakin murekkep (pens ucu)",
+     "pencere": [
+      440,
+      500,
+      1085,
+      1125
+     ],
+     "xy": [
+      460,
+      1111
+     ]
+    },
+    "gogusHattiCizgisi": {
+     "yontem": "kesik gogus hatti: pencerede en cok murekkepli satir",
+     "pencere": [
+      560,
+      760,
+      1090,
+      1120
+     ],
+     "satirY": 1109,
+     "nMurekkep": 109
+    },
+    "torsoPX": 557,
+    "oyukOverTorso": 0.6912,
+    "apexVekilOverTorso": 0.6571,
+    "apexVekilTipi": "yan pens ucu",
+    "gogusHattiOverTorso": 0.6535,
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      100,
+      335,
+      1600,
+      1720
+     ],
+     "uclar": [
+      [
+       100,
+       1687
+      ],
+      [
+       334,
+       1608
+      ]
+     ],
+     "orta": [
+      217.0,
+      1647.5
+     ],
+     "nMurekkep": 1490
+    },
+    "kolAcisiDeg": {
+     "deger": 80.9,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -138.0,
+      857.5
+     ]
+    },
+    "kolPencere": [
+     0,
+     330,
+     1150,
+     1600
+    ],
+    "enGenisSatir": {
+     "y": 1495,
+     "genislikPX": 195,
+     "x": [
+      134,
+      329
+     ]
+    },
+    "agizPX": 247.0,
+    "balonOran": 0.79,
+    "kisa": false,
+    "kisaOlcu": 1.539,
+    "kolTipi": "setin"
+   },
+   "cash-hampden.jpg": {
+    "urun": "Cashmerette Hampden Dress",
+    "sayfa": "https://www.cashmerette.com/products/hampden-dress-pdf-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0735/5719/files/Cashmerette-1111Hampden-tech-ill-IG.jpg?v=1780419534",
+    "boyutPX": [
+     2500,
+     3125
+    ],
+    "esik": 200,
+    "cfX": 655,
+    "not": "kol oyugu prenses dikisi + bel bandi + kisa set-in kol",
+    "snp": {
+     "yontem": "pencerede en ust murekkep",
+     "pencere": [
+      430,
+      470,
+      650,
+      690
+     ],
+     "xy": [
+      446,
+      666
+     ]
+    },
+    "bel": {
+     "yontem": "bel bandi: >= %70 murekkepli satirlarin ilk/son ortasi (band ortasi = dogal bel)",
+     "pencere": [
+      560,
+      760,
+      1240,
+      1330
+     ],
+     "bantSatirlari": [
+      1264,
+      1316
+     ],
+     "satirY": 1290.0
+    },
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      337,
+      702
+     ],
+     "snapPX": [
+      337,
+      702
+     ],
+     "mesafePX": 0.0,
+     "yaricapPX": 10
+    },
+    "oyukTabani": {
+     "yontem": "goz tohumu + snap (kose)",
+     "not": "kisa kol: kol agzi ic kosesi = kol oyugu dikisi + yan dikis kesisimi (uc cizgi bir noktada)",
+     "tohum": [
+      330,
+      1052
+     ],
+     "snapPX": [
+      330,
+      1052
+     ],
+     "mesafePX": 0.0,
+     "yaricapPX": 10
+    },
+    "prensesApex": {
+     "yontem": "prenses dikisi x(y): yataydan dikeye dondugu dirsek, |dx/dy| = 1 (45 derece) kestigi ilk satir",
+     "pencere": [
+      400,
+      560,
+      945,
+      1262
+     ],
+     "satirY": 1003,
+     "x": 458,
+     "egimDxDy": 1.0,
+     "maxX": 518,
+     "n": 298,
+     "yontemNot": "45 derece dirsegi"
+    },
+    "torsoPX": 624.0,
+    "oyukOverTorso": 0.6186,
+    "apexVekilOverTorso": 0.5401,
+    "apexVekilTipi": "prenses 45 derece",
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      150,
+      340,
+      985,
+      1060
+     ],
+     "uclar": [
+      [
+       163,
+       985
+      ],
+      [
+       333,
+       1059
+      ]
+     ],
+     "orta": [
+      248.0,
+      1022.0
+     ],
+     "nMurekkep": 881
+    },
+    "kolAcisiDeg": {
+     "deger": 74.5,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -89.0,
+      320.0
+     ]
+    },
+    "kolPencere": [
+     150,
+     335,
+     720,
+     1052
+    ],
+    "enGenisSatir": {
+     "y": 995,
+     "genislikPX": 172,
+     "x": [
+      162,
+      334
+     ]
+    },
+    "agizPX": 185.4,
+    "balonOran": 0.928,
+    "kisa": true,
+    "kisaOlcu": 0.513,
+    "kolTipi": "setin"
+   },
+   "cash-lenox.jpg": {
+    "urun": "Cashmerette Lenox Shirtdress (kolsuz gorunum)",
+    "sayfa": "https://www.cashmerette.com/products/lenox-shirtdress-12-32-pdf-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0735/5719/files/Cashmerette-Lenox-tech-ill-4x5-v2.jpg?v=1780419002",
+    "boyutPX": [
+     2500,
+     3125
+    ],
+    "esik": 160,
+    "cfX": 675,
+    "not": "kolsuz: kol oyugu prenses dikisi + bel bandi; oyuk tabani egrilik yontemi",
+    "snp": {
+     "yontem": "goz tohumu + snap",
+     "not": "SNP yaka bandinin altinda: yaka bandi tabani ile omuz cizgisinin kesisimi",
+     "tohum": [
+      585,
+      1660
+     ],
+     "snapPX": [
+      585,
+      1660
+     ],
+     "mesafePX": 0.0,
+     "yaricapPX": 10
+    },
+    "bel": {
+     "yontem": "bel bandi: >= %70 murekkepli satirlarin ilk/son ortasi (band ortasi = dogal bel)",
+     "pencere": [
+      560,
+      800,
+      2140,
+      2190
+     ],
+     "bantSatirlari": [
+      2155,
+      2185
+     ],
+     "satirY": 2170.0
+    },
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      414,
+      1729
+     ],
+     "snapPX": [
+      414,
+      1729
+     ],
+     "mesafePX": 0.0,
+     "yaricapPX": 10
+    },
+    "oyukTabani": {
+     "yontem": "goz tohumu + snap (kose)",
+     "not": "kolsuz, kol oyugu kesimi dar: sol kontur omuz ucundan bele neredeyse duz iner (egrilik isareti degismez); oyuk tabani = prenses dikisinin kontura degdigi nokta (kol oyugu prensesi tanim geregi oyuktan cikar)",
+     "tohum": [
+      427,
+      1902
+     ],
+     "snapPX": [
+      427,
+      1903
+     ],
+     "mesafePX": 1.0,
+     "yaricapPX": 10
+    },
+    "prensesApex": {
+     "yontem": "prenses dikisi x(y): yataydan dikeye dondugu dirsek, |dx/dy| = 1 (45 derece) kestigi ilk satir",
+     "pencere": [
+      440,
+      600,
+      1900,
+      2150
+     ],
+     "satirY": 1936,
+     "x": 526,
+     "egimDxDy": 1.0,
+     "maxX": 592,
+     "n": 248,
+     "yontemNot": "45 derece dirsegi"
+    },
+    "torsoPX": 510.0,
+    "oyukOverTorso": 0.4765,
+    "apexVekilOverTorso": 0.5412,
+    "apexVekilTipi": "prenses 45 derece",
+    "kolTipi": "yok"
+   },
+   "soi-lori.png": {
+    "urun": "Sew Over It Lori Dress",
+    "sayfa": "https://www.sewoverit.com/products/lori-dress-pdf-sewing-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0628/1278/2766/files/Lori_Dress_line_drawing_1200px.png?v=1750235990",
+    "boyutPX": [
+     1200,
+     1800
+    ],
+    "esik": 160,
+    "cfX": 305,
+    "not": "mansetli kisa puf kol (yalniz kol tipi + acisi)",
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      222,
+      62
+     ],
+     "snapPX": [
+      221,
+      60
+     ],
+     "mesafePX": 2.24,
+     "yaricapPX": 6
+    },
+    "torso": {
+     "OLCULEMEDI": "anvelop: SNP yaka altinda, bel dikisi egik; pens isaretleri 2 px kalem — apex olculmedi"
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      125,
+      162,
+      195,
+      250
+     ],
+     "uclar": [
+      [
+       128,
+       195
+      ],
+      [
+       161,
+       229
+      ]
+     ],
+     "orta": [
+      144.5,
+      212.0
+     ],
+     "nMurekkep": 153
+    },
+    "kolAcisiDeg": {
+     "deger": 63.3,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      -76.5,
+      152.0
+     ]
+    },
+    "kolPencere": [
+     120,
+     232,
+     70,
+     250
+    ],
+    "enGenisSatir": {
+     "y": 205,
+     "genislikPX": 100,
+     "x": [
+      128,
+      228
+     ]
+    },
+    "agizPX": 47.4,
+    "balonOran": 2.111,
+    "kisa": true,
+    "boyKaynak": "kisa mansetli puf kol; agiz omuz ucunun ~190 px altinda, figur bel ~250 px: dirsegin ustunde",
+    "kolTipi": "puf"
+   },
+   "dd-orage.png": {
+    "urun": "Deer&Doe Orage Dress, gorunum A (siyah dolgu)",
+    "sayfa": "https://www.deer-and-doe.fr/products/orage-dress-top-skirt-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0632/8217/files/D0046S-dessin_technique.png?v=1710965602",
+    "boyutPX": [
+     940,
+     1410
+    ],
+    "esik": 100,
+    "cfX": 262,
+    "not": "uzun set-in kol, bel dikisi (beyaz cizgi)",
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      163,
+      222
+     ],
+     "snapPX": [
+      153,
+      227
+     ],
+     "mesafePX": 11.18,
+     "yaricapPX": 15
+    },
+    "torso": {
+     "OLCULEMEDI": "siyah dolgu: pens/dikis okunmaz (yalniz siluet); yalniz kol"
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      128,
+      178,
+      478,
+      500
+     ],
+     "uclar": [
+      [
+       132,
+       496
+      ],
+      [
+       177,
+       499
+      ]
+     ],
+     "orta": [
+      154.5,
+      497.5
+     ],
+     "nMurekkep": 596
+    },
+    "kolAcisiDeg": {
+     "deger": 89.7,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      1.5,
+      270.5
+     ]
+    },
+    "kolPencere": [
+     110,
+     200,
+     300,
+     480
+    ],
+    "enGenisSatir": {
+     "y": 479,
+     "genislikPX": 65,
+     "x": [
+      134,
+      199
+     ]
+    },
+    "agizPX": 45.1,
+    "balonOran": 1.441,
+    "kisa": false,
+    "boyKaynak": "uzun kol: agiz bel dikisinin (y 375) 120 px altinda",
+    "kolTipi": "bishop"
+   },
+   "dd-passiflore.jpg": {
+    "urun": "Deer&Doe Passiflore Dress, gorunum A (siyah dolgu)",
+    "sayfa": "https://www.deer-and-doe.fr/products/passiflore-dress-shirt-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0632/8217/files/Passiflore-dress-pattern_Deer-and-doe_techflat.jpg?v=1710966857",
+    "boyutPX": [
+     940,
+     1410
+    ],
+    "esik": 100,
+    "cfX": 262,
+    "not": "kisa set-in kol",
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      175,
+      150
+     ],
+     "snapPX": [
+      183,
+      151
+     ],
+     "mesafePX": 8.06,
+     "yaricapPX": 15
+    },
+    "torso": {
+     "OLCULEMEDI": "siyah dolgu; yalniz kol"
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      150,
+      205,
+      190,
+      250
+     ],
+     "uclar": [
+      [
+       166,
+       192
+      ],
+      [
+       204,
+       228
+      ]
+     ],
+     "orta": [
+      185.0,
+      210.0
+     ],
+     "nMurekkep": 1169
+    },
+    "kolAcisiDeg": {
+     "deger": 88.1,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      2.0,
+      59.0
+     ]
+    },
+    "kolPencere": [
+     140,
+     215,
+     160,
+     250
+    ],
+    "enGenisSatir": {
+     "y": 207,
+     "genislikPX": 54,
+     "x": [
+      160,
+      214
+     ]
+    },
+    "agizPX": 52.3,
+    "balonOran": 1.032,
+    "kisa": true,
+    "boyKaynak": "kisa kol: agiz omuzun ~85 px altinda, bel bandi (y 275) ustunde",
+    "kolTipi": "setin"
+   },
+   "dd-magnolia.jpg": {
+    "urun": "Deer&Doe Magnolia Dress, gorunum A (siyah dolgu)",
+    "sayfa": "https://www.deer-and-doe.fr/products/magnolia-dress-pattern",
+    "gorselURL": "https://cdn.shopify.com/s/files/1/0632/8217/files/magnolia-dress-pattern-tech-flat.jpg?v=1710966606",
+    "boyutPX": [
+     940,
+     1410
+    ],
+    "esik": 100,
+    "cfX": 262,
+    "not": "uzun set-in kol, mansetli",
+    "omuzUcu": {
+     "yontem": "goz tohumu + snap",
+     "tohum": [
+      178,
+      142
+     ],
+     "snapPX": [
+      191,
+      146
+     ],
+     "mesafePX": 13.6,
+     "yaricapPX": 15
+    },
+    "torso": {
+     "OLCULEMEDI": "siyah dolgu; yalniz kol"
+    },
+    "kolUcu": {
+     "yontem": "kol agzi penceresi PCA ana ekseni uclari, ortasi",
+     "pencere": [
+      190,
+      245,
+      322,
+      352
+     ],
+     "uclar": [
+      [
+       190,
+       322
+      ],
+      [
+       244,
+       351
+      ]
+     ],
+     "orta": [
+      217.0,
+      336.5
+     ],
+     "nMurekkep": 1355
+    },
+    "kolAcisiDeg": {
+     "deger": 82.2,
+     "tanim": "omuz ucu -> kol ucu ortasi, yatayin ALTINA derece",
+     "dxdy": [
+      26.0,
+      190.5
+     ]
+    },
+    "kolPencere": [
+     180,
+     250,
+     200,
+     352
+    ],
+    "enGenisSatir": {
+     "y": 202,
+     "genislikPX": 69,
+     "x": [
+      180,
+      249
+     ]
+    },
+    "agizPX": 61.3,
+    "balonOran": 1.126,
+    "kisa": false,
+    "boyKaynak": "uzun kol: agiz bel bandinin (y 250) 90 px altinda",
+    "kolTipi": "setin"
+   },
+   "03-empire-dress-uc-boy.png": {
+    "eskiKayit": "Bolum 2",
+    "kolPencere": [
+     25,
+     92,
+     318,
+     398
+    ],
+    "enGenisSatir": {
+     "y": 356,
+     "genislikPX": 62,
+     "x": [
+      29,
+      91
+     ]
+    },
+    "agizPX": 46.5,
+    "balonOran": 1.334,
+    "kisa": true,
+    "boyKaynak": "agiz omuz ucunun 34 px altinda, figur ~200 px: dirsek ustu",
+    "kolTipi": "puf",
+    "kolTipiEski": "puf",
+    "kolAcisiDeg": 32.9
+   },
+   "04-a-line-puff-kol.png": {
+    "eskiKayit": "Bolum 2",
+    "kolPencere": [
+     195,
+     272,
+     100,
+     240
+    ],
+    "enGenisSatir": {
+     "y": 206,
+     "genislikPX": 70,
+     "x": [
+      201,
+      271
+     ]
+    },
+    "agizPX": 69.3,
+    "balonOran": 1.01,
+    "kisa": false,
+    "kisaOlcu": 0.763,
+    "kolTipi": "setin",
+    "kolTipiEski": "setin",
+    "kolAcisiDeg": 83.3
+   },
+   "06-a-line-puff-kol-varyant.png": {
+    "eskiKayit": "Bolum 2",
+    "kolPencere": [
+     125,
+     203,
+     110,
+     235
+    ],
+    "enGenisSatir": {
+     "y": 209,
+     "genislikPX": 68,
+     "x": [
+      127,
+      195
+     ]
+    },
+    "agizPX": 62.1,
+    "balonOran": 1.094,
+    "kisa": false,
+    "kisaOlcu": 0.676,
+    "kolTipi": "setin",
+    "kolTipiEski": "setin",
+    "kolAcisiDeg": 73.7
+   },
+   "02-uzun-robe-dress.png": {
+    "eskiKayit": "Bolum 2",
+    "kolPencere": [
+     100,
+     170,
+     330,
+     452
+    ],
+    "enGenisSatir": {
+     "y": 421,
+     "genislikPX": 64,
+     "x": [
+      105,
+      169
+     ]
+    },
+    "agizPX": 52.0,
+    "balonOran": 1.231,
+    "kisa": false,
+    "kisaOlcu": 1.132,
+    "kolTipi": "setin",
+    "kolTipiEski": "setin",
+    "kolAcisiDeg": 85.9
+   },
+   "05-a-line-top-ve-elbise.png": {
+    "eskiKayit": "Bolum 2",
+    "kolPencere": [
+     95,
+     185,
+     400,
+     636
+    ],
+    "enGenisSatir": {
+     "y": 484,
+     "genislikPX": 87,
+     "x": [
+      97,
+      184
+     ]
+    },
+    "agizPX": 64.4,
+    "balonOran": 1.351,
+    "kisa": false,
+    "boyKaynak": "agiz omuzun 325 px altinda, figur govdesi ~300 px",
+    "kolTipi": "bishop",
+    "kolTipiEski": "bishop",
+    "kolAcisiDeg": 83.7
+   },
+   "07-uzun-kol-akiskan-etek.png": {
+    "eskiKayit": "Bolum 2",
+    "kolPencere": [
+     135,
+     190,
+     130,
+     200
+    ],
+    "enGenisSatir": {
+     "y": 174,
+     "genislikPX": 49,
+     "x": [
+      140,
+      189
+     ]
+    },
+    "agizPX": 49.6,
+    "balonOran": 0.987,
+    "kisa": false,
+    "kisaOlcu": 0.636,
+    "kolTipi": "setin",
+    "kolTipiEski": "setin",
+    "kolAcisiDeg": 75.8
+   },
+   "10-princess-a-line.png": {
+    "eskiKayit": "Bolum 2",
+    "kolPencere": [
+     300,
+     700,
+     700,
+     1500
+    ],
+    "enGenisSatir": {
+     "y": 1261,
+     "genislikPX": 399,
+     "x": [
+      300,
+      699
+     ]
+    },
+    "agizPX": 237.6,
+    "balonOran": 1.679,
+    "kisa": false,
+    "boyKaynak": "agiz omuzun ~1000 px altinda (4375 px goruntu)",
+    "kolTipi": "bishop",
+    "kolTipiEski": "bishop",
+    "kolAcisiDeg": 74.1
+   }
+  },
+  "medyanlar": {
+   "apexOverTorso": {
+    "n": 7,
+    "medyanHepsi": 0.6535,
+    "kayitlar": [
+     {
+      "flat": "04-a-line-puff-kol.png",
+      "oran": 0.6826,
+      "vekil": "pens ucu"
+     },
+     {
+      "flat": "06-a-line-puff-kol-varyant.png",
+      "oran": 0.5934,
+      "vekil": "pens ucu"
+     },
+     {
+      "flat": "13-yuksek-bel-a-line.png",
+      "oran": 0.71,
+      "vekil": "pens ucu (bel pensi, duzeltilmis -0.06)"
+     },
+     {
+      "flat": "cash-wyman.jpg",
+      "oran": 0.6571,
+      "vekil": "yan pens ucu"
+     },
+     {
+      "flat": "cash-wyman.jpg",
+      "oran": 0.6535,
+      "vekil": "gogus hatti cizgisi"
+     },
+     {
+      "flat": "cash-hampden.jpg",
+      "oran": 0.5401,
+      "vekil": "prenses 45 derece"
+     },
+     {
+      "flat": "cash-lenox.jpg",
+      "oran": 0.5412,
+      "vekil": "prenses 45 derece"
+     }
+    ],
+    "pensUcu": {
+     "n": 4,
+     "medyan": 0.6699
+    },
+    "prenses": {
+     "n": 2,
+     "medyan": 0.5407
+    },
+    "gogusHattiCizgisi": {
+     "n": 1,
+     "medyan": 0.6535
+    },
+    "ikiVekilFarki": 0.1292,
+    "micaDuzeltme": -0.06
+   },
+   "kolAcisiDeg": {
+    "hepsi": {
+     "cash-wyman.jpg": {
+      "deg": 80.9,
+      "kolTipi": "setin",
+      "balonOran": 0.79,
+      "kisa": false
+     },
+     "cash-hampden.jpg": {
+      "deg": 74.5,
+      "kolTipi": "setin",
+      "balonOran": 0.928,
+      "kisa": true
+     },
+     "soi-lori.png": {
+      "deg": 63.3,
+      "kolTipi": "puf",
+      "balonOran": 2.111,
+      "kisa": true
+     },
+     "dd-orage.png": {
+      "deg": 89.7,
+      "kolTipi": "bishop",
+      "balonOran": 1.441,
+      "kisa": false
+     },
+     "dd-passiflore.jpg": {
+      "deg": 88.1,
+      "kolTipi": "setin",
+      "balonOran": 1.032,
+      "kisa": true
+     },
+     "dd-magnolia.jpg": {
+      "deg": 82.2,
+      "kolTipi": "setin",
+      "balonOran": 1.126,
+      "kisa": false
+     },
+     "03-empire-dress-uc-boy.png": {
+      "deg": 32.9,
+      "kolTipi": "puf",
+      "balonOran": 1.334,
+      "kisa": true
+     },
+     "04-a-line-puff-kol.png": {
+      "deg": 83.3,
+      "kolTipi": "setin",
+      "balonOran": 1.01,
+      "kisa": false
+     },
+     "06-a-line-puff-kol-varyant.png": {
+      "deg": 73.7,
+      "kolTipi": "setin",
+      "balonOran": 1.094,
+      "kisa": false
+     },
+     "02-uzun-robe-dress.png": {
+      "deg": 85.9,
+      "kolTipi": "setin",
+      "balonOran": 1.231,
+      "kisa": false
+     },
+     "05-a-line-top-ve-elbise.png": {
+      "deg": 83.7,
+      "kolTipi": "bishop",
+      "balonOran": 1.351,
+      "kisa": false
+     },
+     "07-uzun-kol-akiskan-etek.png": {
+      "deg": 75.8,
+      "kolTipi": "setin",
+      "balonOran": 0.987,
+      "kisa": false
+     },
+     "10-princess-a-line.png": {
+      "deg": 74.1,
+      "kolTipi": "bishop",
+      "balonOran": 1.679,
+      "kisa": false
+     }
+    },
+    "sarkan": {
+     "n": 11,
+     "medyan": 82.2,
+     "min": 73.7,
+     "max": 89.7,
+     "iqr": [
+      74.5,
+      85.9
+     ],
+     "degerler": {
+      "cash-wyman.jpg": 80.9,
+      "cash-hampden.jpg": 74.5,
+      "dd-orage.png": 89.7,
+      "dd-passiflore.jpg": 88.1,
+      "dd-magnolia.jpg": 82.2,
+      "04-a-line-puff-kol.png": 83.3,
+      "06-a-line-puff-kol-varyant.png": 73.7,
+      "02-uzun-robe-dress.png": 85.9,
+      "05-a-line-top-ve-elbise.png": 83.7,
+      "07-uzun-kol-akiskan-etek.png": 75.8,
+      "10-princess-a-line.png": 74.1
+     }
+    },
+    "puf": {
+     "n": 2,
+     "degerler": {
+      "soi-lori.png": 63.3,
+      "03-empire-dress-uc-boy.png": 32.9
+     },
+     "medyan": 48.1
+    }
+   },
+   "oyukOverTorso": {
+    "cash-wyman.jpg": 0.6912,
+    "cash-hampden.jpg": 0.6186,
+    "cash-lenox.jpg": 0.4765
+   }
+  }
+ },
  "f1Kapanis": {
   "_ne": "F1 kapanis: 15 flat, on gorunum, SOL yari. Sayilar orijinal piksel. Oranlar: (y - SNP.y) / (bel.y - SNP.y).",
   "flatler": {
@@ -801,7 +1846,7 @@
     "esik": 160,
     "kolTipi": "yok",
     "cfX": 547,
-    "not": "kolsuz: oyuk tabani = en genis satir (kol oyugu egrisi yan dikise doner); pens: bel pensi ucu (apex vekili, apexin ~2 cm altinda)",
+    "not": "kolsuz: oyuk tabani = kontur bukum noktasi (F1 tur 5; eski en-genis-satir yontemi gogus hattini olcuyordu, 0.581 REDDEDILDI); pens: bel pensi ucu (apex vekili, apexin ~2-3 cm altinda; medyanda -0.06 duzeltme)",
     "snp": {
      "yontem": "pencerede en ust murekkep",
      "pencere": [
@@ -844,17 +1889,19 @@
      "yaricapPX": 10
     },
     "oyukTabani": {
-     "yontem": "kolsuz: sol siluet kenarinin en dista oldugu ilk satir (kol oyugu egrisi yan dikise doner)",
+     "yontem": "kolsuz, kosesiz kontur: egriligin isaret degistirdigi satir (bukum: |dx/dy| tepe)",
      "pencereX": [
       300,
       560
      ],
      "bant": [
-      250,
+      130,
       420
      ],
-     "satirY": 344,
-     "solX": 364
+     "satirY": 226,
+     "solX": 406,
+     "maxEgim": 0.417,
+     "pencere": 12
     },
     "pensUcu": {
      "yontem": "pencerede CF'ye en yakin murekkep (pens ucu)",
@@ -870,7 +1917,7 @@
      ]
     },
     "torsoPX": 413,
-    "oyukOverTorso": 0.5811,
+    "oyukOverTorso": 0.2954,
     "pensUcuOverTorso": 0.77
    },
    "14-uzun-kol-maxi.png": {
@@ -951,11 +1998,11 @@
      "02-uzun-robe-dress.png": 0.7561,
      "06-a-line-puff-kol-varyant.png": 0.6099,
      "07-uzun-kol-akiskan-etek.png": 0.75,
-     "13-yuksek-bel-a-line.png": 0.5811,
+     "13-yuksek-bel-a-line.png": 0.2954,
      "15-maxi-akiskan.png": 0.5342
     },
     "medyan": 0.6099,
-    "min": 0.5342,
+    "min": 0.2954,
     "max": 0.7561,
     "tanim": "kol oyugu tabani y / (SNP->bel); croquisOranlar.underarmOverTorso adayi"
    },

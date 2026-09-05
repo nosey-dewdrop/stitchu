@@ -18,7 +18,11 @@
 //      gercek36'da koltukalti gogus hattinin ustunde (Aldrich armscye depth < Brusttiefe)
 //  (g) gercek+graded: shoulderTip.x >= bustLine.x ve >= underarm.x (omuz gogsun disinda; ANSUR II), kol ekseni
 //      elbow/wrist x >= underarm x (iki beden), landmark.x == ringHalfWidth (tek genislik); croquis girth x == cevre/4
+//  (g) croquis: TUM girth landmark'lari x == cevre/4 x (1 + kCroquisBolluk) (tek genislik yasasi, F1 tur 5);
+//      croquis omuz istisnasi SOZLESMEDEN okunur ve basilir (kCroquisOmuzHukmu, karar ajani 2)
 //  (h) siluet dizisi (fig) bedenin kendi y sirasinda ve monoton — sabit dizi zikzak cizerdi
+//  (i) gogus kesiti (F1 tur 5): on lob h contract'ta (MDPI 50-71 bandinda), n basilir; on/arka yay payi
+//      arkaPay ile 0.05 icinde (DOGRULANMADI tolerans: arkaPay KALIP payi, beden yay payi degil — halkaKesitOran._lob)
 //
 // argv[1] verilirse KOSU/ciktilar/beden-iki.svg cizer: iki bedenin on gorunusu
 // yan yana (halka cizgileri + landmark etiketleri) + 34-44 serisinin siluetleri.
@@ -122,9 +126,19 @@ static std::string fig(const Body& b, double ox, double oy, double s, bool label
         o << X(side * h.x * dizDis) << "," << Y(k.y) << " " << X(side * h.x * bilekDis) << "," << Y(a.y) << "\" />\n";
         // ic bacak
         o << "<polyline class=\"siluet\" points=\"" << X(0) << "," << Y(c.y) << " " << X(side * h.x * dizIc) << "," << Y(k.y) << " " << X(side * h.x * bilekIc) << "," << Y(a.y) << "\" />\n";
-        // kol: shoulderTip -> elbow -> wrist
-        BodyPoint t = P("landmark.shoulderTip"), e = P("landmark.elbow"), w = P("landmark.wrist");
-        o << "<polyline class=\"kol\" points=\"" << X(side * t.x) << "," << Y(t.y) << " " << X(side * e.x) << "," << Y(e.y) << " " << X(side * w.x) << "," << Y(w.y) << "\" />\n";
+        // kol: shoulderTip -> elbow -> wrist EKSENI + kalinlik (ustkol yaricapi biceps/2pi, bilek wrist/2pi), AYRI rol
+        // (data-rol="kol"): govde siluetiyle ayni cizgi degil (F1 hakem tur 4 kusuru 10: eksen cizgisi kol degildir).
+        { BodyPoint t = P("landmark.shoulderTip"), e = P("landmark.elbow"), w = P("landmark.wrist");
+          const double rB = b.ring("girth.biceps") / (2.0 * 3.14159265358979323846), rW = b.ring("girth.wrist") / (2.0 * 3.14159265358979323846);
+          auto seg = [&](BodyPoint p, BodyPoint q, double rp, double rq, int sgn) {
+              const double dx = q.x - p.x, dy = q.y - p.y, L = std::hypot(dx, dy); const double nx = -dy / L, ny = dx / L;
+              return std::vector<BodyPoint>{{p.x + sgn * nx * rp, p.y + sgn * ny * rp}, {q.x + sgn * nx * rq, q.y + sgn * ny * rq}}; };
+          o << "<polyline class=\"kolEksen\" data-rol=\"kol\" points=\"" << X(side * t.x) << "," << Y(t.y) << " " << X(side * e.x) << "," << Y(e.y) << " " << X(side * w.x) << "," << Y(w.y) << "\" />\n";
+          for (int sgn : {1, -1}) {
+              auto u = seg(t, e, rB, rB, sgn), v = seg(e, w, rB, rW, sgn);
+              o << "<polyline class=\"kol\" data-rol=\"kol\" points=\"" << X(side * u[0].x) << "," << Y(u[0].y) << " " << X(side * u[1].x) << "," << Y(u[1].y) << " " << X(side * v[1].x) << "," << Y(v[1].y) << "\" />\n"; }
+          // bilek kapagi
+          { auto u = seg(e, w, rW, rW, 1), v = seg(e, w, rW, rW, -1); o << "<line class=\"kol\" data-rol=\"kol\" x1=\"" << X(side * u[1].x) << "\" y1=\"" << Y(u[1].y) << "\" x2=\"" << X(side * v[1].x) << "\" y2=\"" << Y(v[1].y) << "\" />\n"; } }
     }
     // boyun + nape
     { BodyPoint nb = P("landmark.neckBase"), nf = P("landmark.neckFront"), np = P("landmark.nape");
@@ -159,13 +173,13 @@ static void writeSvg(const std::string& path) {
     std::ostringstream o;
     const int W = 1800, H = 900;
     o << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" << W << "\" height=\"" << H << "\" viewBox=\"0 0 " << W << " " << H << "\" data-unit-mm=\"" << 1.0 / s << "\">\n";
-    o << "<style>text{font:12px -apple-system,Helvetica,Arial,sans-serif;fill:#222}.baslik{font-size:16px;font-weight:600}.etiket{font-size:10.5px;fill:#444}.siluet{fill:none;stroke:#1a1a1a;stroke-width:1.6}.arka{fill:none;stroke:#1a1a1a;stroke-width:0.8;stroke-dasharray:3 3}.kol{fill:none;stroke:#1a1a1a;stroke-width:1.2}.halka{stroke:#b3261e;stroke-width:0.8;stroke-dasharray:4 3}.origin{stroke:#1d4ed8;stroke-width:1}.apex{fill:none;stroke:#b3261e;stroke-width:0.8}.lm{fill:#1d4ed8}.seri .siluet{stroke-width:1}.seri .halka{stroke:#999}.not{font-size:11px;fill:#555}</style>\n";
+    o << "<style>text{font:12px -apple-system,Helvetica,Arial,sans-serif;fill:#222}.baslik{font-size:16px;font-weight:600}.etiket{font-size:10.5px;fill:#444}.siluet{fill:none;stroke:#1a1a1a;stroke-width:1.6}.arka{fill:none;stroke:#1a1a1a;stroke-width:0.8;stroke-dasharray:3 3}.kol{fill:none;stroke:#1a1a1a;stroke-width:1.2}.kolEksen{fill:none;stroke:#888;stroke-width:0.6;stroke-dasharray:2 3}.halka{stroke:#b3261e;stroke-width:0.8;stroke-dasharray:4 3}.origin{stroke:#1d4ed8;stroke-width:1}.apex{fill:none;stroke:#b3261e;stroke-width:0.8}.lm{fill:#1d4ed8}.seri .siluet{stroke-width:1}.seri .halka{stroke:#999}.not{font-size:11px;fill:#555}</style>\n";
     o << "<rect width=\"100%\" height=\"100%\" fill=\"#fff\"/>\n";
     o << "<text x=\"20\" y=\"26\" class=\"baslik\">contract/body-v1.json — iki beden, tek sozlesme (mm, y=0 omuz cizgisi, +y asagi)</text>\n";
     o << "<text x=\"20\" y=\"44\" class=\"not\">Sol: gercek36 (kalibin bedeni; Burda/Aldrich/Mueller). Orta: croquis36 (flat'in bedeni; Zoe Hong flat template oranlari + tech-pack poz). Sag: 34-44 kalip serisi (Body::graded). Kirmizi kesik = halka, mavi = omuz cizgisi origin.</text>\n";
     o << fig(g, 300, 150, s, true, "gercek36 — kalip (bust 840 / bel 660 / kalca 900; on izdusum ANSUR II)");
     { double kol = 0; for (const auto& r : stitchu::contract::kCroquisOran) if (std::string(r.name) == "kolAcisiDeg") kol = r.v;
-      o << fig(c, 950, 150, s, true, "croquis36 — flat (girth x = cevre/4 tup; kol satilan flat medyani " + f1(kol) + " derece)"); }
+      o << fig(c, 950, 150, s, true, "croquis36 — flat (girth x = cevre/4, bel +%3.3 bolluk; kol satilan flat medyani " + f1(kol) + " derece, n=11)"); }
     // fark tablosu
     { double y = 640; o << "<text class=\"baslik\" x=\"1280\" y=\"" << y << "\" style=\"font-size:13px\">fark croquis36 - gercek36 (dx, dy) mm</text>\n";
       for (const auto& r : stitchu::contract::kBodyFark) { if (r.x == 0 && r.y == 0) continue; y += 15; o << "<text class=\"etiket\" data-landmark=\"" << r.name << "\" x=\"1280\" y=\"" << y << "\">" << kisa(r.name) << ": " << f1(r.x) << ", " << f1(r.y) << "</text>\n"; }
@@ -180,7 +194,7 @@ static void writeSvg(const std::string& path) {
         x += 78;
     }
     o << "</g>\n";
-    o << "<text class=\"not\" x=\"20\" y=\"" << H - 30 << "\">Kaynak: contract/body-v1.json (her sayinin yaninda kaynak; DOGRULANMADI etiketli olanlar orada adiyla). Cizim: engine/tests/body_check.cpp (C++); diz/bilek/ag oranlari contract cizimYardimcisi (DOGRULANMADI, yalniz bu cizim). Gercek x = ANSUR II on izdusum (superelips kesit), croquis x = cevre/4 (duz serilmis giysi). Koltukalti iki bedende gogus hattinin ustunde (croquis 0.625 torso: sablon + satilan flat medyani 0.61) — sira contract landmarkSirasi.</text>\n";
+    o << "<text class=\"not\" x=\"20\" y=\"" << H - 30 << "\">Kaynak: contract/body-v1.json (her sayinin yaninda kaynak; DOGRULANMADI etiketli olanlar orada adiyla). Cizim: engine/tests/body_check.cpp (C++); diz/bilek/ag oranlari contract cizimYardimcisi (DOGRULANMADI, yalniz bu cizim). Gercek x = ANSUR II on izdusum (superelips + on lob kesit), gercek gogus ucu y = ANSUR cervicale->gogus ucu (200.2); croquis x = cevre/4 (duz serilmis giysi), croquis gogus hatti = satilan flat pens/prenses medyani (254.9: giysi gogsu bedenin 55 mm altinda cizer). Kol kalinligi biceps/bilek cevresinden, ayri rol. Sira contract landmarkSirasi.</text>\n";
     o << "<text class=\"not\" x=\"20\" y=\"" << H - 14 << "\">Damla icin: flat'ler ORTADAKI iskelete oturur (omuz/koltukalti/gogus/bel/kalca y'leri her flat'te ayni), kaliplar SAGDAKI serinin ustune cizilir.</text>\n";
     o << "</svg>\n";
     std::ofstream f(path); f << o.str();
@@ -250,9 +264,15 @@ int main(int argc, char** argv) {
       const double cside = c.landmark("landmark.underarm").x;
       ok(c.landmark("landmark.elbow").x >= cside && c.landmark("landmark.wrist").x >= cside,
          c.id() + ": kol ekseni elbow.x " + f1(c.landmark("landmark.elbow").x) + " / wrist.x " + f1(c.landmark("landmark.wrist").x) + " >= koltukalti yarimi " + f1(cside));
-      for (const char* n : {"landmark.bustLine", "landmark.hip", "landmark.underarm"})
-          ok(std::fabs(c.landmark(n).x - c.ring(Body::ringOfLandmark(n) == "girth.upperBust" ? "girth.bust" : Body::ringOfLandmark(n)) / 4.0) < 1e-9,
-             c.id() + ": " + std::string(n) + ".x " + f1(c.landmark(n).x) + " == cevre/4 (tup yasasi)");
+      std::printf("  [..] %s\n", stitchu::contract::kCroquisOmuzHukmu);
+      auto bolluk = [&](const std::string& ring) { for (const auto& r : stitchu::contract::kCroquisBolluk) if (ring == r.name) return r.v; return 0.0; };
+      // TEK GENISLIK YASASI: her girth landmark'i (bel ve gogus alti dahil) x == cevre/4 x (1 + bolluk); bolluk yalniz contract'ta yazili halkada
+      for (const char* n : {"landmark.bustLine", "landmark.hip", "landmark.underarm", "landmark.underbust", "landmark.waist", "landmark.highHip"}) {
+          const std::string ring = Body::ringOfLandmark(n) == "girth.upperBust" ? "girth.bust" : Body::ringOfLandmark(n);
+          const double want = c.ring(ring) / 4.0 * (1.0 + bolluk(ring));
+          ok(std::fabs(c.landmark(n).x - want) <= 0.05 + 1e-9,
+             c.id() + ": " + std::string(n) + ".x " + f1(c.landmark(n).x) + " == " + ring + "/4 x (1+" + f1(bolluk(ring) * 100) + "%) = " + f1(want) + " (tek genislik yasasi)");
+      }
     }
 
     std::printf("(h) siluet dizisi y'de monoton (beden-iki.svg zikzak yapmaz)\n");
@@ -262,6 +282,20 @@ int main(int argc, char** argv) {
         std::string dizi; for (const auto& n : seq) dizi += kisa(n) + "(" + f1(b->landmark(n).y) + ") ";
         ok(mono, b->id() + ": siluet " + dizi);
     }
+
+    std::printf("(i) gogus kesiti: on lob + superelips, on/arka yay payi (F1 tur 5)\n");
+    { std::vector<Body> reals = {g}; for (const auto& sz : Body::gradeSizes()) reals.push_back(Body::graded(sz));
+      for (const Body& b : reals) {
+          const double h = b.ringLobHeight("girth.bust");
+          ok(h >= 50.0 && h <= 71.0, b.id() + ": gogus lob yuksekligi " + f1(h) + " mm MDPI 3B tarama bandinda [50, 71] (halkaKesitOran._lob)");
+          double on = 0, arka = 0; BodyPoint prev = b.point("girth.bust", 0.0);
+          for (int k = 1; k <= 2000; ++k) { BodyPoint p = b.point("girth.bust", 360.0 * k / 2000.0); const double d = std::hypot(p.x - prev.x, p.z - prev.z); if (0.5 * (p.z + prev.z) >= 0) on += d; else arka += d; prev = p; }
+          const double pay = arka / (on + arka), bf = b.ringBackFrac("girth.bust");
+          // Hukum yalniz gercek36'da (sozlesmenin bedeni); graded bedenlerde arkaPay GarmentCode kalip grade'i, lob h sabit ->
+          // pay kucuk bedende buyur (EU34 0.421): karar ajanina acik soru (halkaKesitOran._lob), burada bilgi olarak basilir.
+          const std::string msg = b.id() + ": gogus arka yay payi " + f1(pay * 1000) + "/1000 vs arkaPay " + f1(bf * 1000) + "/1000 (fark " + f1(std::fabs(pay - bf) * 1000) + "/1000; n=" + f1(b.ringExponent("girth.bust")) + ", kaburga b=" + f1(b.ringRibHalfDepth("girth.bust")) + ", D/2=" + f1(b.ringHalfDepth("girth.bust")) + ")";
+          if (b.id() == "gercek36") ok(std::fabs(pay - bf) <= 0.05, msg + " <= 50/1000 (DOGRULANMADI tolerans)"); else std::printf("  [..] %s (bilgi)\n", msg.c_str());
+      } }
 
     if (argc > 1) writeSvg(argv[1]);
     std::printf("%s — %d FAIL\n", fails ? "FAIL" : "OK", fails);

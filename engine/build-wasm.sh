@@ -88,6 +88,7 @@ ENGINE_SRCS=(
   src/curvefit.cpp
   src/surfacepattern.cpp
   src/bodysurface.cpp
+  src/body.cpp   # F1 tur 5 (karar ajani 5): iki beden, contract body.gen.hpp; wasm bindings yok, F2 flat C++ a gecince baglanir
   src/garmentshell.cpp
   src/flatten.cpp
   src/shellprojection.cpp

@@ -18,9 +18,9 @@ inline constexpr BodyLandmarkRow kBodyLandmarks_gercek36[] = {
     {"landmark.neckFront", 0, 36.3},
     {"landmark.shoulderTip", 177.5, 44.3},
     {"landmark.underarm", 114.1, 186},
-    {"landmark.bustApex", 85, 259.3},
-    {"landmark.bustLine", 124.5, 259.3},
-    {"landmark.underbust", 118.1, 324.3},
+    {"landmark.bustApex", 85, 200.2},
+    {"landmark.bustLine", 124.5, 200.2},
+    {"landmark.underbust", 118.1, 265.2},
     {"landmark.waist", 117, 390},
     {"landmark.highHip", 137.2, 490},
     {"landmark.hip", 156.9, 593},
@@ -74,24 +74,24 @@ inline constexpr BodyLandmarkRow kBodyLandmarks_croquis36[] = {
     {"landmark.neckFront", 0, 27},
     {"landmark.shoulderTip", 183.8, 49},
     {"landmark.underarm", 210, 243.8},
-    {"landmark.bustApex", 77.2, 266.2},
-    {"landmark.bustLine", 210, 266.2},
-    {"landmark.underbust", 181.4, 324.2},
+    {"landmark.bustApex", 77.2, 254.9},
+    {"landmark.bustLine", 210, 254.9},
+    {"landmark.underbust", 181.4, 312.9},
     {"landmark.waist", 170.5, 390},
     {"landmark.highHip", 195, 490},
     {"landmark.hip", 225, 593},
     {"landmark.crotch", 0, 663},
     {"landmark.knee", 0, 970},
     {"landmark.ankle", 0, 1350},
-    {"landmark.elbow", 243.7, 373.5},
-    {"landmark.wrist", 290.8, 629.2},
+    {"landmark.elbow", 228.6, 375.9},
+    {"landmark.wrist", 263.9, 633.5},
 };
 inline constexpr BodyGirthRow kBodyGirths_croquis36[] = {
     {"girth.neckBase", 360, 0.5},
     {"girth.upperBust", 770, kNoValue},
     {"girth.bust", 840, 0.473232},
     {"girth.underbust", 725.8, kNoValue},
-    {"girth.waist", 682, 0.455643},
+    {"girth.waist", 660, 0.455643},
     {"girth.highHip", 780, kNoValue},
     {"girth.hip", 900, 0.535263},
     {"girth.biceps", 270, kNoValue},
@@ -107,7 +107,7 @@ inline constexpr BodyScalarRow kBodyScalars_croquis36[] = {
     {"length.frontShoulderToWaistOverApex", 440},
     {"length.shoulder", 143.3},
     {"length.armholeDepth", 206},
-    {"length.bustDepth", 267.7},
+    {"length.bustDepth", 256.4},
     {"length.waistToHip", 203},
     {"length.waistToHighHip", 100},
     {"length.waistToKnee", 580},
@@ -131,17 +131,17 @@ inline constexpr BodyLandmarkRow kBodyFark[] = {
     {"landmark.neckFront", 0, -9.3},
     {"landmark.shoulderTip", 6.3, 4.7},
     {"landmark.underarm", 95.9, 57.8},
-    {"landmark.bustApex", -7.8, 6.9},
-    {"landmark.bustLine", 85.5, 6.9},
-    {"landmark.underbust", 63.3, -0.1},
+    {"landmark.bustApex", -7.8, 54.7},
+    {"landmark.bustLine", 85.5, 54.7},
+    {"landmark.underbust", 63.3, 47.7},
     {"landmark.waist", 53.5, 0},
     {"landmark.highHip", 57.8, 0},
     {"landmark.hip", 68.1, 0},
     {"landmark.crotch", 0, 0},
     {"landmark.knee", 0, 0},
     {"landmark.ankle", 0, 0},
-    {"landmark.elbow", 66.2, -0.8},
-    {"landmark.wrist", 113.3, -5.1},
+    {"landmark.elbow", 51.1, 1.6},
+    {"landmark.wrist", 86.4, -0.8},
 };
 
 inline constexpr int kBodyGradeCount = 6;
@@ -184,6 +184,7 @@ inline constexpr BodyScalarRow kBodyGradeConst[] = {
     {"ankleFloor", 70},
     {"underbustApexDropMM", 65},
     {"neckFrontOverHalfNeck", 0.55},
+    {"cervicaleToApexOverNapeToWaist", 0.5371},
 };
 
 inline constexpr BodyScalarRow kCroquisOran[] = {
@@ -191,14 +192,18 @@ inline constexpr BodyScalarRow kCroquisOran[] = {
     {"shoulderTipXOverBustHalf", 0.875},
     {"neckHalfOverShoulderTipX", 0.267},
     {"apexXOverShoulderTipX", 0.42},
-    {"apexDropOverTorso", 0.6826},
+    {"apexDropOverTorso", 0.6535},
     {"underarmOverTorso", 0.625},
     {"underbustDropMM", 58},
     {"shoulderSlopeDeg", 20},
     {"crossOverShoulderToShoulder", 0.85},
     {"dikeyUzatma", 1},
-    {"kolAcisiDeg", 79.55},
+    {"kolAcisiDeg", 82.2},
 };
+inline constexpr BodyScalarRow kCroquisBolluk[] = {
+    {"girth.waist", 0.0333},
+};
+inline constexpr const char* kCroquisOmuzHukmu = "croquis36 OMUZ HUKMU (karar ajani 2, F1 tur 5): croquis girth x = cevre/4 (duz serilmis giysi, on+arka ust uste, iki kat), omuz cizgisi duz serilince KATLANMAZ; bu yuzden croquis omuz ucu (sevkPoz omuzGogusOran x gogus yarimi) gogus yariminin ICINDE kalir ve body_check (g) 'shoulderTip.x >= bustLine.x' hukmu GERCEK bedene (ANSUR on izdusum: 1986/1986 kadinda biacromial > chestbreadth) aittir, croquis'e uygulanmaz; croquis omuz/gogus yalniz (f) sevkPoz bandi [0.85, 0.90] ile yargilanir. Kaynak: satilan flat 13 Mica omuz ucu / oyuk yarimi 0.67; Bugra Locket-38 kesim cizgisi omuz ucu / gogus yarimi 0.957 (flat-convention sevkPoz.omuzGogusOran._kaynak). farkTablosu.ozet 'omuz ucu +6.3' bu hukmun sayisidir.";
 
 inline constexpr BodyScalarRow kBodyKesitOran[] = {
     {"girth.neckBase", 1.05},
@@ -225,6 +230,8 @@ inline constexpr BodyScalarRow kBodyKesitOran[] = {
     {"depthOverGirth.girth.highHip", 0.2346},
     {"breadthOverGirth.girth.hip", 0.3487},
     {"depthOverGirth.girth.hip", 0.222},
+    {"lobYukseklikMM.girth.bust", 60},
+    {"lobSigmaOverApexX", 0.5},
 };
 
 struct BodyOrderRow { const char* name; int tier; };

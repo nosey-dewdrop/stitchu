@@ -162,6 +162,17 @@ const co = bodyV1.bedenler.croquis36.croquisOranlar;
 bh += `inline constexpr BodyScalarRow kCroquisOran[] = {\n`;
 for (const [k, v] of Object.entries(co)) if (typeof v === 'number') bh += `    {"${k}", ${bnum(v)}},\n`;
 bh += `};\n\ninline constexpr BodyScalarRow kBodyKesitOran[] = {\n`;
+// F1 tur 5: croquis tek genislik yasasi (bolluk yalniz belde) + omuz hukmu SOZLESMEDE (karar ajani 2), body_check okur/basar
+{
+  const cb = bodyV1.bedenler.croquis36.croquisBolluk;
+  if (!cb || typeof cb['girth.waist'] !== 'number') throw new Error('body-v1 croquis36.croquisBolluk.girth.waist yok');
+  const oh = bodyV1.bedenler.croquis36._omuzHukmu;
+  if (typeof oh !== 'string' || oh.length < 40) throw new Error('body-v1 croquis36._omuzHukmu yok (karar ajani 2)');
+  bh = bh.replace(/\n\ninline constexpr BodyScalarRow kBodyKesitOran\[\] = \{\n$/, '');
+  bh += `\ninline constexpr BodyScalarRow kCroquisBolluk[] = {\n`;
+  for (const [k, v] of Object.entries(cb)) if (typeof v === 'number') bh += `    {"${k}", ${bnum(v)}},\n`;
+  bh += `};\ninline constexpr const char* kCroquisOmuzHukmu = ${JSON.stringify(oh)};\n\ninline constexpr BodyScalarRow kBodyKesitOran[] = {\n`;
+}
 for (const [k, v] of Object.entries(bodyV1.halkaKesitOran)) if (typeof v === 'number') bh += `    {"${k}", ${bnum(v)}},\n`;
 bh += `};\n\n`;
 // landmarkSirasi (F1 duzeltme 2, karar ajani 1): y sirasi contract'tan okunur, testte

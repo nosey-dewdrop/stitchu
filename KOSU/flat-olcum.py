@@ -169,9 +169,9 @@ CFG2 = {
   '12-empire-uzun-kol.png': dict(olculemez='kimono kol: omuz ucu ve kol oyugu yok'),
   '13-yuksek-bel-a-line.png': dict(
     urun='Deer&Doe Mica, view A (2188 px)', esik=160, cf=547, snap=10, kolTipi='yok',
-    snp=(460, 490, 90, 122), omuzUcu=(425, 130), oyuk=dict(tip='enGenis', x=(300, 560), bant=(250, 420)),
+    snp=(460, 490, 90, 122), omuzUcu=(425, 130), oyuk=dict(tip='bukum', x=(300, 560), bant=(130, 420)),
     bel=dict(x=(300, 800), bant=(480, 580)), pens=(440, 472, 395, 430),
-    not_='kolsuz: oyuk tabani = en genis satir (kol oyugu egrisi yan dikise doner); pens: bel pensi ucu (apex vekili, apexin ~2 cm altinda)'),
+    not_='kolsuz: oyuk tabani = kontur bukum noktasi (F1 tur 5; eski en-genis-satir yontemi gogus hattini olcuyordu, 0.581 REDDEDILDI); pens: bel pensi ucu (apex vekili, apexin ~2-3 cm altinda; medyanda -0.06 duzeltme)'),
   '14-uzun-kol-maxi.png': dict(olculemez='askili kare yaka: SNP yok (payda yok); gorunum B uzun kollu ama govde figuru kucuk ve askili ust ayni'),
   '15-maxi-akiskan.png': dict(
     urun='Sallie jumpsuit, view A', esik=160, cf=135, snap=6, kolTipi='kap',
@@ -219,6 +219,151 @@ def pca_uclar(pts):
     a = min(pr)[1]; b = max(pr)[1]
     return a, b, (round((a[0] + b[0]) / 2, 1), round((a[1] + b[1]) / 2, 1))
 
+# --- Bolum 3 yardimcilari (Bolum 2'nin 13 Mica egrilik yontemi de kullanir) ---
+PUF_ESIK, KISA_ESIK, EGRI_ESIK, EGRI_PENCERE, APEX_TOL, APEX_PENCERE = 1.28, 0.6, 0.12, 12, 2, 6
+YEREL = os.path.join(HERE, 'ciktilar', '_yerel', 'yeni-flat')
+os.makedirs(YEREL, exist_ok=True)
+
+def indir(url, ad):
+    yol = os.path.join(YEREL, ad)
+    if not os.path.exists(yol):
+        import urllib.request, ssl
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        open(yol, 'wb').write(urllib.request.urlopen(req, timeout=60, context=ssl.create_default_context()).read())
+    return yol
+
+CFG3 = {
+  # --- yeni flat'ler ---
+  'cash-wyman.jpg': dict(
+    url='https://cdn.shopify.com/s/files/1/0735/5719/files/Cashmerette-1112Wyman-tech-ill-IG.jpg?v=1780417777',
+    sayfa='https://www.cashmerette.com/products/wyman-dress-sloper-pdf-pattern', urun='Cashmerette Wyman Dress Sloper (12-32 kalibi)',
+    esik=160, cf=655, snap=8, snp=(480, 520, 730, 770), omuzUcu=(355, 790),
+    oyuk=dict(tip='bosluk', x=(280, 380), y=(1130, 1230)),
+    bel=dict(tip='yatayCizgi', pencere=(560, 760, 1280, 1320)),
+    pens=(440, 500, 1085, 1125), pensTipi='yan pens ucu',
+    apexCizgi=(560, 760, 1090, 1120),
+    kolUcu=(100, 335, 1600, 1720), kolPencere=(0, 330, 1150, 1600), boy='torso',
+    not_='sloper: yan gogus pensi + bel pensleri + bel dikisi + KESIK GOGUS HATTI cizgisi (apex seviyesi dogrudan). Uzun set-in kol.'),
+  'cash-hampden.jpg': dict(
+    url='https://cdn.shopify.com/s/files/1/0735/5719/files/Cashmerette-1111Hampden-tech-ill-IG.jpg?v=1780419534',
+    sayfa='https://www.cashmerette.com/products/hampden-dress-pdf-pattern', urun='Cashmerette Hampden Dress',
+    esik=200, cf=655, snap=10, snp=(430, 470, 650, 690), omuzUcu=(337, 702),
+    oyuk=dict(tip='tohum', xy=(330, 1052)), oyukNot='kisa kol: kol agzi ic kosesi = kol oyugu dikisi + yan dikis kesisimi (uc cizgi bir noktada)',
+    bel=dict(tip='bant', pencere=(560, 760, 1240, 1330)),
+    prenses=dict(x=(400, 560), y=(945, 1262)), pensTipi='prenses 45 derece',
+    kolUcu=(150, 340, 985, 1060), kolPencere=(150, 335, 720, 1052), boy='torso',
+    not_='kol oyugu prenses dikisi + bel bandi + kisa set-in kol'),
+  'cash-lenox.jpg': dict(
+    url='https://cdn.shopify.com/s/files/1/0735/5719/files/Cashmerette-Lenox-tech-ill-4x5-v2.jpg?v=1780419002',
+    sayfa='https://www.cashmerette.com/products/lenox-shirtdress-12-32-pdf-pattern', urun='Cashmerette Lenox Shirtdress (kolsuz gorunum)',
+    esik=160, cf=675, snap=10, snpTohum=(585, 1660), snpNot='SNP yaka bandinin altinda: yaka bandi tabani ile omuz cizgisinin kesisimi',
+    omuzUcu=(414, 1729),
+    oyuk=dict(tip='tohum', xy=(427, 1902)), oyukNot='kolsuz, kol oyugu kesimi dar: sol kontur omuz ucundan bele neredeyse duz iner (egrilik isareti degismez); oyuk tabani = prenses dikisinin kontura degdigi nokta (kol oyugu prensesi tanim geregi oyuktan cikar)',
+    bel=dict(tip='bant', pencere=(560, 800, 2140, 2190)),
+    prenses=dict(x=(440, 600), y=(1900, 2150)), pensTipi='prenses 45 derece',
+    kolTipi='yok',
+    not_='kolsuz: kol oyugu prenses dikisi + bel bandi; oyuk tabani egrilik yontemi'),
+  'soi-lori.png': dict(
+    url='https://cdn.shopify.com/s/files/1/0628/1278/2766/files/Lori_Dress_line_drawing_1200px.png?v=1750235990',
+    sayfa='https://www.sewoverit.com/products/lori-dress-pdf-sewing-pattern', urun='Sew Over It Lori Dress',
+    esik=160, cf=305, snap=6, omuzUcu=(222, 62),
+    olculemezTorso='anvelop: SNP yaka altinda, bel dikisi egik; pens isaretleri 2 px kalem — apex olculmedi',
+    kolUcu=(125, 162, 195, 250), kolPencere=(120, 232, 70, 250), boy='kisa', boyKaynak='kisa mansetli puf kol; agiz omuz ucunun ~190 px altinda, figur bel ~250 px: dirsegin ustunde',
+    not_='mansetli kisa puf kol (yalniz kol tipi + acisi)'),
+  'dd-orage.png': dict(
+    url='https://cdn.shopify.com/s/files/1/0632/8217/files/D0046S-dessin_technique.png?v=1710965602',
+    sayfa='https://www.deer-and-doe.fr/products/orage-dress-top-skirt-pattern', urun='Deer&Doe Orage Dress, gorunum A (siyah dolgu)',
+    esik=100, cf=262, snap=15, omuzUcu=(163, 222),
+    olculemezTorso='siyah dolgu: pens/dikis okunmaz (yalniz siluet); yalniz kol',
+    kolUcu=(128, 178, 478, 500), kolPencere=(110, 200, 300, 480), boy='uzun', boyKaynak='uzun kol: agiz bel dikisinin (y 375) 120 px altinda',
+    not_='uzun set-in kol, bel dikisi (beyaz cizgi)'),
+  'dd-passiflore.jpg': dict(
+    url='https://cdn.shopify.com/s/files/1/0632/8217/files/Passiflore-dress-pattern_Deer-and-doe_techflat.jpg?v=1710966857',
+    sayfa='https://www.deer-and-doe.fr/products/passiflore-dress-shirt-pattern', urun='Deer&Doe Passiflore Dress, gorunum A (siyah dolgu)',
+    esik=100, cf=262, snap=15, omuzUcu=(175, 150),
+    olculemezTorso='siyah dolgu; yalniz kol',
+    kolUcu=(150, 205, 190, 250), kolPencere=(140, 215, 160, 250), boy='kisa', boyKaynak='kisa kol: agiz omuzun ~85 px altinda, bel bandi (y 275) ustunde',
+    not_='kisa set-in kol'),
+  'dd-magnolia.jpg': dict(
+    url='https://cdn.shopify.com/s/files/1/0632/8217/files/magnolia-dress-pattern-tech-flat.jpg?v=1710966606',
+    sayfa='https://www.deer-and-doe.fr/products/magnolia-dress-pattern', urun='Deer&Doe Magnolia Dress, gorunum A (siyah dolgu)',
+    esik=100, cf=262, snap=15, omuzUcu=(178, 142),
+    olculemezTorso='siyah dolgu; yalniz kol',
+    kolUcu=(190, 245, 322, 352), kolPencere=(180, 250, 200, 352), boy='uzun', boyKaynak='uzun kol: agiz bel bandinin (y 250) 90 px altinda',
+    not_='uzun set-in kol, mansetli'),
+  # --- eski flat'lerin kolTipi yeniden etiketi (ayni GIRDI dosyalari) ---
+  '03-empire-dress-uc-boy.png': dict(eski=True, kolPencere=(25, 92, 318, 398), boy='kisa', boyKaynak='agiz omuz ucunun 34 px altinda, figur ~200 px: dirsek ustu'),
+  '04-a-line-puff-kol.png': dict(eski=True, kolPencere=(195, 272, 100, 240), boy='torso'),
+  '06-a-line-puff-kol-varyant.png': dict(eski=True, kolPencere=(125, 203, 110, 235), boy='torso'),
+  '02-uzun-robe-dress.png': dict(eski=True, kolPencere=(100, 170, 330, 452), boy='torso'),
+  '05-a-line-top-ve-elbise.png': dict(eski=True, kolPencere=(95, 185, 400, 636), boy='uzun', boyKaynak='agiz omuzun 325 px altinda, figur govdesi ~300 px'),
+  '07-uzun-kol-akiskan-etek.png': dict(eski=True, kolPencere=(135, 190, 130, 200), boy='torso'),
+  '10-princess-a-line.png': dict(eski=True, kolPencere=(300, 700, 700, 1500), boy='uzun', boyKaynak='agiz omuzun ~1000 px altinda (4375 px goruntu)'),
+}
+
+def yatayCizgiSatiri(px, W, x0, x1, y0, y1, esik):
+    best = None
+    for y in range(y0, y1):
+        n = sum(1 for x in range(x0, min(x1, W)) if px[x, y] < esik)
+        if best is None or n > best[1]: best = (y, n)
+    return best
+
+def bantSatirlari(px, W, x0, x1, y0, y1, esik, oran=0.7):
+    rows = [y for y in range(y0, y1) if sum(1 for x in range(x0, min(x1, W)) if px[x, y] < esik) >= oran * (min(x1, W) - x0)]
+    return rows
+
+def solKenar(px, W, x0, x1, y, esik):
+    for x in range(x0, min(x1, W)):
+        if px[x, y] < esik: return x
+    return None
+
+def egrilikOyuk(px, W, x0, x1, bant, esik):
+    xs = [(y, solKenar(px, W, x0, x1, y, esik)) for y in range(*bant)]
+    xs = [(y, x) for y, x in xs if x is not None]
+    # kayan ortalama egim |dx/dy| EGRI_PENCERE satir uzerinde
+    for i in range(EGRI_PENCERE, len(xs) - EGRI_PENCERE):
+        egim = abs(xs[i + EGRI_PENCERE][1] - xs[i - EGRI_PENCERE][1]) / (2.0 * EGRI_PENCERE)
+        ust = abs(xs[max(0, i - 3 * EGRI_PENCERE)][1] - xs[i - EGRI_PENCERE][1]) / max(1, (2 * EGRI_PENCERE))
+        if egim < EGRI_ESIK and ust > 2 * EGRI_ESIK:
+            return {'satirY': xs[i][0], 'solX': xs[i][1], 'egim': round(egim, 3), 'ustEgim': round(ust, 3)}
+    return None
+
+def bukumOyuk(px, W, x0, x1, bant, esik, pencere=12):
+    # Kolsuz, kosesiz kontur (13 Mica): kol oyugu icbukey kavisi yan dikisin disbukey gogus kavisine
+    # KOSESIZ baglanir; oyuk tabani = egriligin isaret degistirdigi satir = |dx/dy| egiminin tepe yaptigi
+    # satir (bukum noktasi). Kayan ortalama 'pencere' satir.
+    xs = [(y, solKenar(px, W, x0, x1, y, esik)) for y in range(*bant)]
+    xs = [(y, x) for y, x in xs if x is not None]
+    best = None
+    for i in range(pencere, len(xs) - pencere):
+        egim = (xs[i - pencere][1] - xs[i + pencere][1]) / (2.0 * pencere)   # iceri dogru pozitif
+        if best is None or egim > best[1]: best = (xs[i][0], egim, xs[i][1])
+    return {'satirY': best[0], 'solX': best[2], 'maxEgim': round(best[1], 3), 'pencere': pencere} if best else None
+
+def prensesApex(px, W, H, x0, x1, y0, y1, esik):
+    # her satirda pencere icindeki murekkebin EN SAG (CF'ye en yakin) pikseli = dikis x(y).
+    # Kol oyugu prensesi bele kadar CF'ye yaklasmayi surdurur (max x bel dikisinde): 'CF'ye en yakin nokta'
+    # apex DEGILDIR. Apex vekili = dikisin YATAYDAN DIKEYE dondugu dirsek: |dx/dy| = 1 (45 derece) kestigi
+    # ilk satir (kayan ortalama APEX_PENCERE satir). Ustte dikis yatik (|dx/dy| > 1), altta dik (< 1).
+    pts = []
+    for y in range(y0, min(y1, H)):
+        xs = [x for x in range(x0, min(x1, W)) if px[x, y] < esik]
+        if xs: pts.append((y, max(xs)))
+    if len(pts) < 2 * APEX_PENCERE + 1: return None
+    mx = max(x for _, x in pts)
+    for i in range(APEX_PENCERE, len(pts) - APEX_PENCERE):
+        egim = abs(pts[i + APEX_PENCERE][1] - pts[i - APEX_PENCERE][1]) / float(pts[i + APEX_PENCERE][0] - pts[i - APEX_PENCERE][0])
+        if egim <= 1.0:
+            return {'satirY': pts[i][0], 'x': pts[i][1], 'egimDxDy': round(egim, 3), 'maxX': mx, 'n': len(pts), 'yontemNot': '45 derece dirsegi'}
+    return {'BULUNAMADI': 'dikis hic 45 dereceyi kesmiyor', 'maxX': mx, 'n': len(pts)}
+
+def kolBalon(px, W, H, x0, x1, y0, y1, esik):
+    best = None
+    for y in range(y0, min(y1, H)):
+        xs = [x for x in range(x0, min(x1, W)) if px[x, y] < esik]
+        if len(xs) >= 2 and (best is None or xs[-1] - xs[0] > best[1]): best = (y, xs[-1] - xs[0], xs[0], xs[-1])
+    return best
+
 f1 = {'_ne': 'F1 kapanis: 15 flat, on gorunum, SOL yari. Sayilar orijinal piksel. Oranlar: (y - SNP.y) / (bel.y - SNP.y).',
       'flatler': {}, 'medyanlar': {}}
 oyukOran, pensOran, acilarHepsi, acilarSarkan = [], [], [], []
@@ -262,6 +407,10 @@ for ad, c in CFG2.items():
             b = boslukSatiri(px, W, o['x'][0], o['x'][1], o['y'][0], o['y'][1], esik)
             k['oyukTabani'] = {'yontem': 'kol ic kenari - yan dikis arasinda beyaz boslugun ilk satiri', **(b or {'BULUNAMADI': o})}
             oyukY = b and b['satirY']
+        elif o['tip'] == 'bukum':
+            e = bukumOyuk(px, W, o['x'][0], o['x'][1], o['bant'], esik)
+            k['oyukTabani'] = {'yontem': 'kolsuz, kosesiz kontur: egriligin isaret degistirdigi satir (bukum: |dx/dy| tepe)', 'pencereX': list(o['x']), 'bant': list(o['bant']), **e}
+            oyukY = e['satirY']
         elif o['tip'] == 'enGenis':
             # sol yari: siluetin SOL kenarinin en kucuk x'e ulastigi ilk satir (en genis nokta)
             e = None
@@ -324,6 +473,156 @@ f1['medyanlar'] = {
                              'min': min(a for _, a in acilarSarkan), 'max': max(a for _, a in acilarSarkan),
                              'tanim': 'set-in ve bishop (sarkan) kollar; kisa puf yana acilir, sarkma acisi degil'}},
 }
+
+# ---------------------------------------------------------------- BOLUM 3 (F1 tur 5, 2026-09-05; hakem kusurlari 3/5/6)
+# Yeni acik teknik cizimler (indie kalip markalarinin urun sayfasi gorselleri; URL asagida, dosya
+# KOSU/ciktilar/_yerel/yeni-flat/ altina indirilir — telif: repoya girmez, .gitignore). Hedef:
+#   apex vekili n >= 6 (pens ucu / prenses kavis tepesi / gogus hatti cizgisi AYRI etiket),
+#   kol acisi n >= 10, kolTipi OLCULEBILIR tanimla yeniden etiketlenir, kolsuz oyuk tabani yontemi.
+# KOL TIPI TANIMI (olculebilir; hakem: 'puf = omuzda buzgu mu, agizda mi?'):
+#   balonOran = kolPencere icindeki EN GENIS murekkep satiri (kolun govdesi) / kol agzi PCA uzunlugu.
+#   agiz buzgulu/mansetli kol: balonOran >= PUF_ESIK (1.28) — kol govdesi agizdan genis. 1.28 = olculen kumede
+#   duz/klos kollarin maksimumu (1.231, 02 robe) ile buzgulu kollarin minimumu (1.334, 03 empire puf) ortasi;
+#   DOGRULANMADI: yayin kaynagi yok, veri bosluguna kondu (kume: 13 kol).
+#   kol boyu: agiz ortasi omuz ucundan  < KISA_ESIK x torso asagidaysa KISA (dirsek ~0.85 torso; 0.6 secildi).
+#   kolTipi: 'puf'   = balon + kisa   (yana acilan; sarkma bandina GIRMEZ)
+#            'bishop'= balon + uzun   (sarkan; banda girer)
+#            'setin' = balon degil    (duz, kloş ya da omuzda buzgulu ama agzi acik; sarkan; banda girer)
+#   Omuzdaki buzgu tipi DEGISTIRMEZ (06 Eleanor omuzda buzgu, agzi acik -> setin; kol ekseni sarkar).
+#   torso yoksa (03/05/10) boy 'boyKaynak' alaniyla elle yazilir ve gerekcesi durur.
+# KOLSUZ OYUK TABANI: yan siluet egriliginin isaret degistirdigi satir (oyuk icbukey -> yan dikis)
+#   'egrilik' yontemi: sol kenar x(y) bantta; |dx/dy| art arda EGRI_PENCERE satirda < EGRI_ESIK olan
+#   ilk satir. Yaninda goz tohumu + snap; iki yontem KAYIT edilir, egrilik birincil.
+# PRENSES APEX: dikis x(y) pencerede; kol oyugu prensesi bele kadar CF'ye yaklasir (max x belde), o yuzden
+#   'CF'ye en yakin nokta' apex degil; vekil = dikisin yataydan dikeye dondugu DIRSEK (|dx/dy| = 1, 45 derece).
+f3 = {'_ne': 'F1 tur 5: yeni acik teknik cizimler (indie kalip markalari; URL her kayitta) + eski flatlerin kolTipi yeniden etiketi. '
+             'Yontem Bolum 2 ile ayni (SNP->bel payda; on gorunum sol yari); ek yontemler bu dosyanin BOLUM 3 basliginda. '
+             'Dosyalar KOSU/ciktilar/_yerel/yeni-flat/ (telif; commit edilmez).',
+      'tanimlar': {'PUF_ESIK': PUF_ESIK, 'KISA_ESIK': KISA_ESIK, 'EGRI_ESIK': EGRI_ESIK, 'EGRI_PENCERE': EGRI_PENCERE, 'APEX_PENCERE': APEX_PENCERE,
+                   'kolTipi': 'balonOran = kol govdesinin en genis satiri / agiz PCA uzunlugu; >= PUF_ESIK -> agiz buzgulu; kisa+balon = puf (banda girmez), uzun+balon = bishop, degilse setin',
+                   'kisa': 'agiz ortasi - omuz ucu dikey mesafesi < KISA_ESIK x torso (torso yoksa boyKaynak ile elle)'},
+      'flatler': {}}
+apexKayit = []   # (ad, oran, vekilTipi)
+for ad, c in CFG3.items():
+    if c.get('eski'):
+        im = Image.open(os.path.join(BASE, ad)).convert('L'); px, (W, H) = im.load(), im.size
+        eski = f1['flatler'][ad]; c2 = CFG2[ad]
+        k = {'eskiKayit': 'Bolum 2', 'kolPencere': list(c['kolPencere'])}
+        b = kolBalon(px, W, H, *c['kolPencere'], c2['esik'])
+        agiz = eski['kolUcu']['uclar']; agizW = math.hypot(agiz[1][0] - agiz[0][0], agiz[1][1] - agiz[0][1])
+        k['enGenisSatir'] = {'y': b[0], 'genislikPX': b[1], 'x': [b[2], b[3]]}; k['agizPX'] = round(agizW, 1)
+        k['balonOran'] = round(b[1] / agizW, 3)
+        dy = eski['kolUcu']['orta'][1] - eski['omuzUcu']['snapPX'][1]
+        if c['boy'] == 'torso':
+            k['kisa'] = dy < KISA_ESIK * eski['torsoPX']; k['kisaOlcu'] = round(dy / eski['torsoPX'], 3)
+        else:
+            k['kisa'] = c['boy'] == 'kisa'; k['boyKaynak'] = c['boyKaynak']
+        balon = k['balonOran'] >= PUF_ESIK
+        k['kolTipi'] = 'puf' if (balon and k['kisa']) else 'bishop' if balon else 'setin'
+        k['kolTipiEski'] = c2['kolTipi']; k['kolAcisiDeg'] = eski['kolAcisiDeg']['deger']
+        f3['flatler'][ad] = k
+        continue
+    yol = indir(c['url'], ad)
+    im = Image.open(yol).convert('L'); px, (W, H) = im.load(), im.size
+    esik, r = c['esik'], c['snap']
+    k = {'urun': c['urun'], 'sayfa': c['sayfa'], 'gorselURL': c['url'], 'boyutPX': [W, H], 'esik': esik, 'cfX': c['cf'], 'not': c['not_']}
+    snpY = None
+    if 'snp' in c:
+        pts = inkPts(px, W, H, *c['snp'], esik)
+        top = min(pts, key=lambda p: (p[1], p[0])); k['snp'] = {'yontem': 'pencerede en ust murekkep', 'pencere': list(c['snp']), 'xy': list(top)}; snpY = top[1]
+    elif 'snpTohum' in c:
+        s = snap(px, W, H, c['snpTohum'], r, esik); k['snp'] = {'yontem': 'goz tohumu + snap', 'not': c.get('snpNot'), **s}; snpY = s['snapPX'][1]
+    belY = None
+    if 'bel' in c:
+        b = c['bel']
+        if b['tip'] == 'yatayCizgi':
+            y, n = yatayCizgiSatiri(px, W, *b['pencere'], esik); k['bel'] = {'yontem': 'bel dikisi: pencerede en cok murekkepli satir', 'pencere': list(b['pencere']), 'satirY': y, 'nMurekkep': n}; belY = y
+        elif b['tip'] == 'bant':
+            rows = bantSatirlari(px, W, *b['pencere'], esik)
+            belY = round((rows[0] + rows[-1]) / 2.0, 1)
+            k['bel'] = {'yontem': 'bel bandi: >= %70 murekkepli satirlarin ilk/son ortasi (band ortasi = dogal bel)', 'pencere': list(b['pencere']), 'bantSatirlari': [rows[0], rows[-1]], 'satirY': belY}
+    om = snap(px, W, H, c['omuzUcu'], r, esik)
+    if om is None:
+        print('UYARI', ad, 'omuz ucu tohumu murekkep bulamadi', c['omuzUcu']); k['omuzUcu'] = {'BULUNAMADI': list(c['omuzUcu'])}; f3['flatler'][ad] = k; continue
+    k['omuzUcu'] = {'yontem': 'goz tohumu + snap', **om}
+    oyukY = None
+    if 'oyuk' in c:
+        o = c['oyuk']
+        if o['tip'] == 'bosluk':
+            bb = boslukSatiri(px, W, o['x'][0], o['x'][1], o['y'][0], o['y'][1], esik)
+            k['oyukTabani'] = {'yontem': 'kol ic kenari - yan dikis arasinda beyaz boslugun ilk satiri', **(bb or {'BULUNAMADI': o})}; oyukY = bb and bb['satirY']
+        elif o['tip'] == 'egrilik':
+            e = egrilikOyuk(px, W, o['x'][0], o['x'][1], o['bant'], esik)
+            s = snap(px, W, H, o['tohum'], r, esik)
+            k['oyukTabani'] = {'yontem': 'kolsuz: sol kenar egriliginin dikeye dondugu ilk satir (birincil) + goz tohumu (kayit)', 'pencereX': list(o['x']), 'bant': list(o['bant']), 'egrilik': e, 'tohum': s}
+            oyukY = e['satirY'] if e else s['snapPX'][1]
+        else:
+            s = snap(px, W, H, o['xy'], r, esik); k['oyukTabani'] = {'yontem': 'goz tohumu + snap (kose)', 'not': c.get('oyukNot'), **s}; oyukY = s['snapPX'][1]
+    apexY, vekil = None, None
+    if 'pens' in c:
+        pts = inkPts(px, W, H, *c['pens'], esik)
+        p = min(pts, key=lambda q: (abs(q[0] - c['cf']), q[1]))
+        k['pensUcu'] = {'yontem': "pencerede CF'ye en yakin murekkep (pens ucu)", 'pencere': list(c['pens']), 'xy': list(p)}; apexY, vekil = p[1], c['pensTipi']
+    if 'prenses' in c:
+        pa = prensesApex(px, W, H, c['prenses']['x'][0], c['prenses']['x'][1], c['prenses']['y'][0], c['prenses']['y'][1], esik)
+        k['prensesApex'] = {'yontem': 'prenses dikisi x(y): yataydan dikeye dondugu dirsek, |dx/dy| = 1 (45 derece) kestigi ilk satir', 'pencere': [*c['prenses']['x'], *c['prenses']['y']], **pa}; apexY, vekil = pa['satirY'], c['pensTipi']
+    if 'apexCizgi' in c:
+        y, n = yatayCizgiSatiri(px, W, *c['apexCizgi'], esik); k['gogusHattiCizgisi'] = {'yontem': 'kesik gogus hatti: pencerede en cok murekkepli satir', 'pencere': list(c['apexCizgi']), 'satirY': y, 'nMurekkep': n}
+    if snpY is not None and belY is not None:
+        torso = belY - snpY; k['torsoPX'] = torso
+        if oyukY is not None: k['oyukOverTorso'] = round((oyukY - snpY) / torso, 4)
+        if apexY is not None: k['apexVekilOverTorso'] = round((apexY - snpY) / torso, 4); k['apexVekilTipi'] = vekil; apexKayit.append((ad, k['apexVekilOverTorso'], vekil))
+        if 'gogusHattiCizgisi' in k:
+            k['gogusHattiOverTorso'] = round((k['gogusHattiCizgisi']['satirY'] - snpY) / torso, 4); apexKayit.append((ad, k['gogusHattiOverTorso'], 'gogus hatti cizgisi'))
+    elif 'olculemezTorso' in c:
+        k['torso'] = {'OLCULEMEDI': c['olculemezTorso']}
+    if 'kolUcu' in c:
+        pts = inkPts(px, W, H, *c['kolUcu'], esik); a, b2, mid = pca_uclar(pts)
+        sx, sy = om['snapPX']; dx, dy = mid[0] - sx, mid[1] - sy
+        k['kolUcu'] = {'yontem': 'kol agzi penceresi PCA ana ekseni uclari, ortasi', 'pencere': list(c['kolUcu']), 'uclar': [list(a), list(b2)], 'orta': list(mid), 'nMurekkep': len(pts)}
+        k['kolAcisiDeg'] = {'deger': round(math.degrees(math.atan2(dy, abs(dx))), 1), 'tanim': 'omuz ucu -> kol ucu ortasi, yatayin ALTINA derece', 'dxdy': [round(dx, 1), round(dy, 1)]}
+        bal = kolBalon(px, W, H, *c['kolPencere'], esik); agizW = math.hypot(b2[0] - a[0], b2[1] - a[1])
+        k['kolPencere'] = list(c['kolPencere']); k['enGenisSatir'] = {'y': bal[0], 'genislikPX': bal[1], 'x': [bal[2], bal[3]]}; k['agizPX'] = round(agizW, 1)
+        k['balonOran'] = round(bal[1] / agizW, 3)
+        if c['boy'] == 'torso' and 'torsoPX' in k: k['kisa'] = dy < KISA_ESIK * k['torsoPX']; k['kisaOlcu'] = round(dy / k['torsoPX'], 3)
+        else: k['kisa'] = c['boy'] == 'kisa'; k['boyKaynak'] = c.get('boyKaynak')
+        balon = k['balonOran'] >= PUF_ESIK
+        k['kolTipi'] = 'puf' if (balon and k['kisa']) else 'bishop' if balon else 'setin'
+    elif 'kolTipi' in c: k['kolTipi'] = c['kolTipi']
+    f3['flatler'][ad] = k
+
+# --- medyanlar: Bolum 2 + Bolum 3 birlesik ---
+apexHepsi = [(ad, v, 'pens ucu') for ad, v in pensOran] + apexKayit
+# 13 Mica bel pensi ucu: apexin ~2-3 cm altinda biter -> duzeltme (hakem: ham 0.77 degil ~0.71). Duzeltme = -0.06 torso
+# (torso 390 mm'de 23 mm; 13'un kendi notu '2-3 cm'). Ham deger de kayitta durur.
+MICA_DUZELTME = -0.06
+apexHepsi = [(ad, (round(v + MICA_DUZELTME, 4) if ad.startswith('13-') else v), (t + ' (bel pensi, duzeltilmis %+.2f)' % MICA_DUZELTME if ad.startswith('13-') else t)) for ad, v, t in apexHepsi]
+pensV = [v for _, v, t in apexHepsi if t.startswith('pens') or t.startswith('yan pens')]
+prensesV = [v for _, v, t in apexHepsi if t.startswith('prenses')]
+cizgiV = [v for _, v, t in apexHepsi if t.startswith('gogus')]
+tumV = [v for _, v, _ in apexHepsi]
+# kol acisi: Bolum 2 flat'lerin tipi YENI tanimla (Bolum 3 eski kayitlari), Bolum 3 yeni flat'ler
+aci = {}
+for ad, k in f3['flatler'].items():
+    if 'kolAcisiDeg' in k:
+        d = k['kolAcisiDeg']['deger'] if isinstance(k['kolAcisiDeg'], dict) else k['kolAcisiDeg']
+        aci[ad] = {'deg': d, 'kolTipi': k['kolTipi'], 'balonOran': k.get('balonOran'), 'kisa': k.get('kisa')}
+sarkan = {ad: v['deg'] for ad, v in aci.items() if v['kolTipi'] in ('setin', 'bishop')}
+puf = {ad: v['deg'] for ad, v in aci.items() if v['kolTipi'] == 'puf'}
+sv = sorted(sarkan.values())
+def iqr(v):
+    s = sorted(v); n = len(s); q1 = s[n // 4]; q3 = s[(3 * n) // 4]; return q1, q3
+f3['medyanlar'] = {
+  'apexOverTorso': {'n': len(tumV), 'medyanHepsi': medyan(tumV), 'kayitlar': [{'flat': ad, 'oran': v, 'vekil': t} for ad, v, t in apexHepsi],
+                    'pensUcu': {'n': len(pensV), 'medyan': medyan(pensV)}, 'prenses': {'n': len(prensesV), 'medyan': medyan(prensesV)},
+                    'gogusHattiCizgisi': {'n': len(cizgiV), 'medyan': medyan(cizgiV)},
+                    'ikiVekilFarki': (round(abs(medyan(pensV) - medyan(prensesV)), 4) if pensV and prensesV else None),
+                    'micaDuzeltme': MICA_DUZELTME},
+  'kolAcisiDeg': {'hepsi': aci, 'sarkan': {'n': len(sv), 'medyan': medyan(sv), 'min': min(sv), 'max': max(sv), 'iqr': iqr(sv), 'degerler': sarkan},
+                  'puf': {'n': len(puf), 'degerler': puf, 'medyan': medyan(list(puf.values())) if puf else None}},
+  'oyukOverTorso': {ad: k['oyukOverTorso'] for ad, k in f3['flatler'].items() if 'oyukOverTorso' in k},
+}
+sonuc['f1Tur5'] = f3
 sonuc['f1Kapanis'] = f1
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, 'w') as f:

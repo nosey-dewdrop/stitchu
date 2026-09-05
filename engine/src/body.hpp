@@ -40,13 +40,19 @@ public:
     bool hasScalar(const std::string& name) const;
     // Halka uzerinde nokta: halkanin y'sinde. Kesit (contract halkaKesitOran):
     //  - ANSUR II'li halkalar: a = breadthOverGirth x cevre/2, b = depthOverGirth x cevre/2,
-    //    SUPERELIPS |x/a|^n + |z/b|^n = 1, n cevre kapanacak sekilde cozulur (ringExponent);
+    //    SUPERELIPS |x/a|^n + |z/b|^n = 1, n cevre kapanacak sekilde cozulur (ringExponent); gogus: + on lob (asagida)
     //  - digerleri: ELIPS, a/b = halkaKesitOran, a cevreden (Ramanujan).
     // aciDeg 0 = sag yan (+x), 90 = on (+z), 180 = sol, 270 = arka.
     // gercek36/graded landmark.x == ringHalfWidth(halka): TEK genislik tanimi (F1 tur 4).
     BodyPoint point(const std::string& ringName, double aciDeg) const;
     double ringHalfWidth(const std::string& ringName) const;     // a, mm (on izdusum yari genisligi)
-    double ringHalfDepth(const std::string& ringName) const;     // b, mm
+    double ringHalfDepth(const std::string& ringName) const;     // D/2, mm (ANSUR chest depth: gogus ucuna kadar)
+    // F1 tur 5 — gogus kesiti ON YARIM CIKINTILI: superelips kaburga (yari derinlik ringRibHalfDepth = D/2 - h/2)
+    // + on yarimda iki Gauss lob (yukseklik h = halkaKesitOran.lobYukseklikMM.<halka>, sigma = lobSigmaOverApexX x apex.x,
+    // merkez +-bustApex.x). Lob'suz halkada h = 0, eski superelips. Bkz. halkaKesitOran._lob (n <= 3 olanaksizligi sayiyla).
+    double ringLobHeight(const std::string& ringName) const;     // h, mm (0 = lob yok)
+    double ringLobSigma(const std::string& ringName) const;      // mm
+    double ringRibHalfDepth(const std::string& ringName) const;  // b_kaburga, mm
     double ringExponent(const std::string& ringName) const;      // superelips n (elips halkada 2.0)
     static double ringAspect(const std::string& ringName);       // a/b, contract halkaKesitOran
     static bool ringHasBreadth(const std::string& ringName);     // breadthOverGirth.<halka> contract'ta var mi
