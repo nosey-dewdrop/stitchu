@@ -128,7 +128,7 @@
   "_ne": "F1 tur 5: yeni acik teknik cizimler (indie kalip markalari; URL her kayitta) + eski flatlerin kolTipi yeniden etiketi. Yontem Bolum 2 ile ayni (SNP->bel payda; on gorunum sol yari); ek yontemler bu dosyanin BOLUM 3 basliginda. Dosyalar KOSU/ciktilar/_yerel/yeni-flat/ (telif; commit edilmez).",
   "tanimlar": {
    "PUF_ESIK": 1.367,
-   "KISA_ESIK": 0.6455,
+   "KISA_ESIK": null,
    "EGRI_ESIK": 0.12,
    "EGRI_PENCERE": 12,
    "APEX_PENCERE": 6,
@@ -1250,7 +1250,14 @@
         103.5,
         489.0
        ],
-       "kolAcisiDeg": 74.2
+       "kolAcisiDeg": 74.2,
+       "omuzGenisligi": {
+        "simetriX": 343.5,
+        "genislikPX": 353.0,
+        "kaynak": "siluet maskesi, omuz ucu satirlari y..y+4 medyani, pencere 4-684"
+       },
+       "kolBoyuPX": 233.8,
+       "kolBoyuOverOmuz": 0.662
       },
       "stripe": {
        "kayitDXDY": [
@@ -1284,7 +1291,14 @@
         759.5,
         489.0
        ],
-       "kolAcisiDeg": 74.2
+       "kolAcisiDeg": 74.2,
+       "omuzGenisligi": {
+        "simetriX": 999.5,
+        "genislikPX": 353.0,
+        "kaynak": "siluet maskesi, omuz ucu satirlari y..y+4 medyani, pencere 660-1340"
+       },
+       "kolBoyuPX": 233.8,
+       "kolBoyuOverOmuz": 0.662
       },
       "navy-stripe": {
        "kayitDXDY": [
@@ -1318,7 +1332,14 @@
         1422.5,
         488.5
        ],
-       "kolAcisiDeg": 73.9
+       "kolAcisiDeg": 73.9,
+       "omuzGenisligi": {
+        "simetriX": 1667.0,
+        "genislikPX": 360.0,
+        "kaynak": "siluet maskesi, omuz ucu satirlari y..y+4 medyani, pencere 1320-2000"
+       },
+       "kolBoyuPX": 232.6,
+       "kolBoyuOverOmuz": 0.646
       },
       "polka": {
        "kayitDXDY": [
@@ -1352,7 +1373,14 @@
         97.0,
         1438.0
        ],
-       "kolAcisiDeg": 73.6
+       "kolAcisiDeg": 73.6,
+       "omuzGenisligi": {
+        "simetriX": 332.5,
+        "genislikPX": 337.0,
+        "kaynak": "siluet maskesi, omuz ucu satirlari y..y+4 medyani, pencere 0-680"
+       },
+       "kolBoyuPX": 237.6,
+       "kolBoyuOverOmuz": 0.705
       },
       "plaid": {
        "kayitDXDY": [
@@ -1386,7 +1414,14 @@
         750.0,
         1439.0
        ],
-       "kolAcisiDeg": 74.7
+       "kolAcisiDeg": 74.7,
+       "omuzGenisligi": {
+        "simetriX": 988.5,
+        "genislikPX": 353.0,
+        "kaynak": "siluet maskesi, omuz ucu satirlari y..y+4 medyani, pencere 649-1329"
+       },
+       "kolBoyuPX": 235.3,
+       "kolBoyuOverOmuz": 0.667
       },
       "denim": {
        "kayitDXDY": [
@@ -1420,7 +1455,14 @@
         1417.0,
         1439.0
        ],
-       "kolAcisiDeg": 74.5
+       "kolAcisiDeg": 74.5,
+       "omuzGenisligi": {
+        "simetriX": 1656.0,
+        "genislikPX": 352.0,
+        "kaynak": "siluet maskesi, omuz ucu satirlari y..y+4 medyani, pencere 1316-1996"
+       },
+       "kolBoyuPX": 235.6,
+       "kolBoyuOverOmuz": 0.669
       }
      },
      "n": 6,
@@ -1429,6 +1471,22 @@
      "max": 74.7,
      "yayilimDeg": 1.1,
      "stripeMurekkepOkumasi": 74.7,
+     "kolBoyuOverOmuz": {
+      "n": 6,
+      "degerler": {
+       "linen": 0.662,
+       "stripe": 0.662,
+       "navy-stripe": 0.646,
+       "polka": 0.705,
+       "plaid": 0.667,
+       "denim": 0.669
+      },
+      "medyan": 0.6645,
+      "min": 0.646,
+      "max": 0.705,
+      "yayilim": 0.059,
+      "tanim": "F1 karar 2 (tur 12): ayni cizimin 6 kopyasinda kol boyu / omuz genisligi; yayilim (max - min) = oranin OKUMA HATASI. contract kosul.olcumHatasi.kolBoyuOverOmuz buradan (dosya sonu kontrol eder)."
+     },
      "tanim": "ayni cizimin 6 kopyasi = ayni acinin 6 okumasi; yayilim okuma hatasidir, cizim farki degil"
     },
     "etiket": "buzgulu",
@@ -6618,7 +6676,14 @@
      0.655
     ],
     "ortaNokta": 0.6455,
-    "tanim": "HUKUM (F1 tur 11). kol boyu = omuz ucu -> agiz ortasi, kol EKSENI boyunca / omuz genisligi (iki omuz ucu arasi; croquis36 2 x 183.8 = 367.6 mm). Kosul esigi = yana acilan buzgulu kumenin max orani ile sarkan buzgulu kumenin min orani arasindaki boslugun ortasi. Boy kelimesi (kisa/dirsek/uzun) kumeyi BELIRLEMEZ (boySinifiOrtusme: ortusuyor); cizilen aci kumesi belirler."
+    "ayirici": "AYIRICI YOK: kolBoyuOverOmuz boslugu 0.019 <= okuma hatasi 0.059 (Locket 6 kopya yayilimi) -> ORTUSME (karar ajani 3c), kol boyu bacagi kosuldan duser",
+    "okumaHatasi": {
+     "kolBoyuOverOmuz": 0.059,
+     "kolAcisiDeg": 1.1,
+     "_kaynak": "Locket 6 kopya, tek cizim (KOSU/flat-olcum.py BOLUM 4 okumalar; yayilim = max - min)"
+    },
+    "boslukGenisligi": 0.019,
+    "tanim": "F1 tur 11 HUKUM adayi; F1 karar 2 (tur 12): bosluk genisligi okuma hatasiyla test edilir (ayirici). kol boyu = omuz ucu -> agiz ortasi, kol EKSENI boyunca / omuz genisligi (iki omuz ucu arasi; croquis36 2 x 183.8 = 367.6 mm). Esik adayi = yana acilan buzgulu kumenin max orani ile sarkan buzgulu kumenin min orani arasindaki boslugun ortasi; bosluk <= okuma hatasi ise ORTUSME, bacak kosulda degil (contract kosul._dusenBacak). Boy kelimesi (kisa/dirsek/uzun) kumeyi BELIRLEMEZ (boySinifiOrtusme: ortusuyor); cizilen aci kumesi belirler."
    },
    "yanaAcilanBand": {
     "n": 2,
@@ -6639,7 +6704,14 @@
     "medyan": 33.7,
     "aktif": false,
     "nGerekli": 3,
-    "hukum": "ASKIDA: yana acilan kume n=2 < 3 (karar ajani 3c: n >= 3 kendi bandi)  -> kosulluBant[0] secilemez, her kol sarkan band; kume ve kosul kayitta, n >= 3 olunca kendiliginden aktif"
+    "ayirici": "AYIRICI YOK: kolBoyuOverOmuz boslugu 0.019 <= okuma hatasi 0.059 (Locket 6 kopya yayilimi) -> ORTUSME (karar ajani 3c), kol boyu bacagi kosuldan duser",
+    "okumaHatasi": {
+     "kolBoyuOverOmuz": 0.059,
+     "kolAcisiDeg": 1.1,
+     "_kaynak": "Locket 6 kopya, tek cizim (KOSU/flat-olcum.py BOLUM 4 okumalar; yayilim = max - min)"
+    },
+    "boslukGenisligi": 0.019,
+    "hukum": "ASKIDA: AYIRICI YOK: kolBoyuOverOmuz boslugu 0.019 <= okuma hatasi 0.059 (Locket 6 kopya yayilimi) -> ORTUSME (karar ajani 3c), kol boyu bacagi kosuldan duser; yana acilan kume n=2 < 3 (karar ajani 3c: n >= 3 kendi bandi) -> kosulluBant[0] secilemez, her kol sarkan band; kume ve sayilar kayitta; n >= 3 VE ayirici olunca kendiliginden aktif"
    },
    "boySinifiOrtusme": {
     "kolBoyuOverOmuz": {

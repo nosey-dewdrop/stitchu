@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720" font-family="Helvetica, Arial, sans-serif" font-size="13">
 <rect width="1400" height="720" fill="#fcfcfb"/>
-<text x="90" y="34" font-size="19" fill="#0b0b0b">Satilan flat: kol acisi - kol boyu / omuz genisligi (F1 tur 11, n=33 kol, 15 agzi buzgulu)</text>
+<text x="90" y="34" font-size="19" fill="#0b0b0b">Satilan flat: kol acisi - kol boyu / omuz genisligi (F1 tur 12, n=33 kol, 14 agzi buzgulu)</text>
 <text x="90" y="54" fill="#52514e">Kaynak: KOSU/ciktilar/flat-olcum.json f1Tur8.medyanlar.kolBoyuOverOmuz; aci = omuz ucu -&gt; kol agzi ortasi, yatayin altina derece; oran = kol ekseni boyu / iki omuz ucu arasi</text>
 <line x1="90" y1="650.0" x2="870" y2="650.0" stroke="#e4e3df"/>
 <text x="82" y="650.0" text-anchor="end" fill="#52514e" dy="4">20°</text>
@@ -38,7 +38,11 @@
 <rect x="90" y="140.4" width="780" height="88.2" fill="#2a78d6" opacity="0.10"/>
 <text x="96" y="242.5" fill="#2a78d6" font-size="12">sarkan band IQR [74.5, 85.9], taban 82.2 (contract)</text>
 <rect x="253.8" y="70" width="9.3" height="580" fill="#eb6834" opacity="0.18"/>
-<text x="258.4" y="84" fill="#eb6834" font-size="12" text-anchor="middle">oran boslugu [0.636, 0.655] orta 0.6455 (0.019: olcum hatasi mertebesi)</text>
+<text x="258.4" y="84" fill="#eb6834" font-size="12" text-anchor="middle">oran boslugu [0.636, 0.655] genislik 0.019</text>
+<line x1="244.1" y1="104" x2="272.8" y2="104" stroke="#0b0b0b" stroke-width="3"/>
+<line x1="244.1" y1="98" x2="244.1" y2="110" stroke="#0b0b0b" stroke-width="2"/>
+<line x1="272.8" y1="98" x2="272.8" y2="110" stroke="#0b0b0b" stroke-width="2"/>
+<text x="280.8" y="108" fill="#0b0b0b" font-size="12">okuma hatasi 0.059 (Locket 6 kopya yayilimi) &gt;= bosluk 0.019 -> AYIRICI YOK, kol boyu bacagi kosuldan dustu</text>
 <line x1="90" y1="430.4" x2="870" y2="430.4" stroke="#eb6834" stroke-dasharray="6 4"/>
 <text x="96" y="430.4" fill="#eb6834" font-size="12" dy="-4">en buyuk aci boslugu 34.5 -&gt; 62.3, kesim 48.4°: alti YANA ACILAN, ustu SARKAN</text>
 <rect x="121.6" y="118.9" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>dd-passiflore.jpg (duz): aci 88.1, oran 0.374, boy kisa</title></rect>
@@ -57,7 +61,7 @@
 <rect x="298.1" y="171.4" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>cash-montrose.jpg (duz): aci 81.3, oran 0.736, boy dirsek</title></rect>
 <circle cx="333.3" cy="315.1" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>soi-lori.png: aci 63.3, oran 0.799, boy kisa</title></circle>
 <rect x="371.7" y="209.3" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>tilly-agnes.png#kisa (duz): aci 76.4, oran 0.887, boy kisa</title></rect>
-<circle cx="394.2" cy="141.9" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>sa-queenie.jpg: aci 85.7, oran 0.924, boy dirsek</title></circle>
+<rect x="389.7" y="137.4" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>sa-queenie.jpg (duz): aci 85.7, oran 0.924, boy dirsek</title></rect>
 <rect x="437.0" y="185.4" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>cash-honeybourne.jpg (duz): aci 79.5, oran 1.021, boy dirsek</title></rect>
 <circle cx="444.4" cy="220.0" r="6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"><title>tilly-nell.jpg#puf: aci 75.6, oran 1.027, boy kisa</title></circle>
 <rect x="466.2" y="200.1" width="9" height="9" fill="#9a9890" stroke="#fcfcfb" stroke-width="2"><title>sa-yvette.jpg (duz): aci 77.6, oran 1.081, boy dirsek</title></rect>
@@ -79,20 +83,19 @@
 <text x="271.1" y="221.9" font-size="11" fill="#52514e">bugra-locket (kisa)</text>
 <text x="309.6" y="207.9" font-size="11" fill="#52514e">sa-zalia (dirsek)</text>
 <text x="341.3" y="306.1" font-size="11" fill="#52514e">soi-lori (kisa)</text>
-<text x="402.2" y="132.9" font-size="11" fill="#52514e">sa-queenie (dirsek)</text>
 <text x="452.4" y="211.0" font-size="11" fill="#52514e">tilly-nell puf (kisa)</text>
-<text x="518.7" y="119.4" font-size="11" fill="#52514e">uzun-robe-dress (uzun)</text>
+<text x="518.7" y="131.4" font-size="11" fill="#52514e">uzun-robe-dress (uzun)</text>
 <text x="538.7" y="148.4" font-size="11" fill="#52514e">a-line-top-ve-elbise (uzun)</text>
 <text x="552.8" y="198.6" font-size="11" fill="#52514e">princess-a-line (uzun)</text>
 <text x="572.3" y="226.5" font-size="11" fill="#52514e">sa-dallas (dirsek)</text>
-<text x="611.8" y="136.0" font-size="11" fill="#52514e">dd-magnolia (uzun)</text>
+<text x="611.8" y="112.0" font-size="11" fill="#52514e">dd-magnolia (uzun)</text>
 <text x="686.9" y="313.9" font-size="11" fill="#52514e">tilly-marnie (uzun)</text>
 <text x="764.4" y="183.2" font-size="11" fill="#52514e">bhl-marie-dress (uzun)</text>
 <text x="764.4" y="229.6" font-size="11" fill="#52514e">tilly-lyra uzun (uzun)</text>
 <circle cx="98" cy="590" r="6" fill="#eb6834"/>
-<text x="110" y="590" dy="4" fill="#0b0b0b" font-size="12">buzgulu, yana acilan (n=2) - kosulluBant[0] ASKIDA</text>
+<text x="110" y="590" dy="4" fill="#0b0b0b" font-size="12">buzgulu, yana acilan (n=2) - kosulluBant[0] ASKIDA: n < 3 ve ayirici yok</text>
 <circle cx="98" cy="608" r="6" fill="#2a78d6"/>
-<text x="110" y="608" dy="4" fill="#0b0b0b" font-size="12">buzgulu, sarkan (n=13)</text>
+<text x="110" y="608" dy="4" fill="#0b0b0b" font-size="12">buzgulu, sarkan (n=12)</text>
 <rect x="94" y="622" width="9" height="9" fill="#9a9890"/>
 <text x="110" y="626" dy="4" fill="#0b0b0b" font-size="12">duz agiz (hepsi sarkan bandinda yargilanir)</text>
 <text x="940" y="62" font-size="15" fill="#0b0b0b">Satici boy kelimesi, ayni oran ekseninde</text>
@@ -143,7 +146,7 @@
 <text x="1317.5" y="294" font-size="11" fill="#52514e" text-anchor="middle">1.81</text>
 <text x="940" y="330" fill="#0b0b0b" font-size="12">ortusme: kisa-dirsek EVET, dirsek-uzun EVET</text>
 <text x="940" y="348" fill="#eb6834" font-size="12">boy kelimesi aciyi/orani ayirmiyor (3c)</text>
-<text x="940" y="368" fill="#52514e" font-size="12">dirsek hukmu: BOLUNME (karar ajani 3c)</text>
+<text x="940" y="368" fill="#52514e" font-size="12">dirsek (bilgi): UZUN</text>
 <text x="965.0" y="668" text-anchor="middle" fill="#52514e" font-size="11">0.4</text>
 <text x="1065.0" y="668" text-anchor="middle" fill="#52514e" font-size="11">0.8</text>
 <text x="1165.0" y="668" text-anchor="middle" fill="#52514e" font-size="11">1.2</text>

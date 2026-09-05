@@ -1,4 +1,4 @@
-# KOSU/kol-aci-oran.py — F1 tur 11 gorseli: satilan flatlerde AGZI BUZGULU kollarin cizilen acisi (y) ile kol boyu / omuz genisligi (x).
+# KOSU/kol-aci-oran.py — F1 tur 11/12 gorseli: satilan flatlerde AGZI BUZGULU kollarin cizilen acisi (y) ile kol boyu / omuz genisligi (x).
 #   python3 KOSU/kol-aci-oran.py -> KOSU/ciktilar/kol-aci-oran.svg (sayilar KOSU/ciktilar/flat-olcum.json f1Tur8.medyanlar'dan; elle sayi yok).
 #   Telif: yalniz sayi ve ad; fotograf/cizim yok. Sag panel: satici boy kelimesi (kisa/dirsek/uzun) araliklari ayni eksende (ortusme).
 import json, os
@@ -13,7 +13,7 @@ INK, INK2, GRID = '#0b0b0b', '#52514e', '#e4e3df'
 C_YANA, C_SARKAN, C_DUZ = '#eb6834', '#2a78d6', '#9a9890'
 o = ['<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" font-family="Helvetica, Arial, sans-serif" font-size="13">' % (W, H, W, H),
      '<rect width="%d" height="%d" fill="#fcfcfb"/>' % (W, H),
-     '<text x="%d" y="34" font-size="19" fill="%s">Satilan flat: kol acisi - kol boyu / omuz genisligi (F1 tur 11, n=%d kol, %d agzi buzgulu)</text>' % (L, INK, kb['n'], kb['nBuzgulu']),
+     '<text x="%d" y="34" font-size="19" fill="%s">Satilan flat: kol acisi - kol boyu / omuz genisligi (F1 tur 12, n=%d kol, %d agzi buzgulu)</text>' % (L, INK, kb['n'], kb['nBuzgulu']),
      '<text x="%d" y="54" fill="%s">Kaynak: KOSU/ciktilar/flat-olcum.json f1Tur8.medyanlar.kolBoyuOverOmuz; aci = omuz ucu -&gt; kol agzi ortasi, yatayin altina derece; oran = kol ekseni boyu / iki omuz ucu arasi</text>' % (L, INK2)]
 for v in range(ymin, ymax + 1, 10):
     o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s"/>' % (L, Y(v), L + PW, Y(v), GRID)); o.append('<text x="%d" y="%.1f" text-anchor="end" fill="%s" dy="4">%d°</text>' % (L - 8, Y(v), INK2, v))
@@ -25,7 +25,11 @@ o.append('<rect x="%d" y="%.1f" width="%d" height="%.1f" fill="%s" opacity="0.10
 o.append('<text x="%d" y="%.1f" fill="%s" font-size="12">sarkan band IQR [%s, %s], taban %s (contract)</text>' % (L + 6, Y(FC['min']) + 14, C_SARKAN, FC['min'], FC['max'], FC['taban']))
 if kb['bosluk']:
     a, b2 = kb['bosluk']; o.append('<rect x="%.1f" y="%d" width="%.1f" height="%d" fill="%s" opacity="0.18"/>' % (X(a), T, X(b2) - X(a), ph, C_YANA))
-    o.append('<text x="%.1f" y="%d" fill="%s" font-size="12" text-anchor="middle">oran boslugu [%s, %s] orta %s (0.019: olcum hatasi mertebesi)</text>' % (X((a + b2) / 2), T + 14, C_YANA, a, b2, kb['ortaNokta']))
+    o.append('<text x="%.1f" y="%d" fill="%s" font-size="12" text-anchor="middle">oran boslugu [%s, %s] genislik %s</text>' % (X((a + b2) / 2), T + 14, C_YANA, a, b2, kb['boslukGenisligi']))
+    # F1 karar 2 (tur 12): okuma hatasi cubugu (Locket 6 kopya yayilimi) boslugun yanina, ayni eksende — bosluk bu cubugun icinde kaliyorsa ayirici yok
+    h = kb['okumaHatasi']['kolBoyuOverOmuz']; hx0 = X((a + b2) / 2 - h / 2); hx1 = X((a + b2) / 2 + h / 2); hy = T + 34
+    o.append('<line x1="%.1f" y1="%d" x2="%.1f" y2="%d" stroke="%s" stroke-width="3"/>' % (hx0, hy, hx1, hy, INK)); o.append('<line x1="%.1f" y1="%d" x2="%.1f" y2="%d" stroke="%s" stroke-width="2"/>' % (hx0, hy - 6, hx0, hy + 6, INK)); o.append('<line x1="%.1f" y1="%d" x2="%.1f" y2="%d" stroke="%s" stroke-width="2"/>' % (hx1, hy - 6, hx1, hy + 6, INK))
+    o.append('<text x="%.1f" y="%d" fill="%s" font-size="12">okuma hatasi %s (Locket 6 kopya yayilimi) %s bosluk %s -> %s</text>' % (hx1 + 8, hy + 4, INK, h, '&gt;=' if h >= kb['boslukGenisligi'] else '&lt;', kb['boslukGenisligi'], 'AYIRICI YOK, kol boyu bacagi kosuldan dustu' if h >= kb['boslukGenisligi'] else 'ayirici var'))
 if kb['aciKumeleri']['kesimDeg']:
     k = kb['aciKumeleri']['kesimDeg']; o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-dasharray="6 4"/>' % (L, Y(k), L + PW, Y(k), C_YANA))
     o.append('<text x="%d" y="%.1f" fill="%s" font-size="12" dy="-4">en buyuk aci boslugu %s -&gt; %s, kesim %.1f°: alti YANA ACILAN, ustu SARKAN</text>' % (L + 6, Y(k), C_YANA, kb['aciKumeleri']['enBuyukAciBoslugu'][0][0], kb['aciKumeleri']['enBuyukAciBoslugu'][0][1], k))
@@ -47,7 +51,7 @@ for x, y, ad, boy, col in labels:
     used.append((x, ty)); o.append('<text x="%.1f" y="%.1f" font-size="11" fill="%s">%s (%s)</text>' % (x + 8, ty, INK2, ad, boy))
 # legend
 lx, ly = L + 8, T + ph - 60
-for i, (c, t, shape) in enumerate([(C_YANA, 'buzgulu, yana acilan (n=%d) - kosulluBant[0] ASKIDA' % band['n'], 'c'), (C_SARKAN, 'buzgulu, sarkan (n=%d)' % len(kb['aciKumeleri']['sarkan']), 'c'), (C_DUZ, 'duz agiz (hepsi sarkan bandinda yargilanir)', 'r')]):
+for i, (c, t, shape) in enumerate([(C_YANA, 'buzgulu, yana acilan (n=%d) - kosulluBant[0] ASKIDA: n < 3 ve ayirici yok' % band['n'], 'c'), (C_SARKAN, 'buzgulu, sarkan (n=%d)' % len(kb['aciKumeleri']['sarkan']), 'c'), (C_DUZ, 'duz agiz (hepsi sarkan bandinda yargilanir)', 'r')]):
     yy = ly + i * 18
     o.append('<circle cx="%d" cy="%d" r="6" fill="%s"/>' % (lx, yy, c) if shape == 'c' else '<rect x="%d" y="%d" width="9" height="9" fill="%s"/>' % (lx - 4, yy - 4, c))
     o.append('<text x="%d" y="%d" dy="4" fill="%s" font-size="12">%s</text>' % (lx + 12, yy, INK, t))

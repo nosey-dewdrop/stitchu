@@ -280,6 +280,9 @@ CONTRACT_FC = os.environ.get('FLAT_CONTRACT') or os.path.join(HERE, '..', 'contr
 if os.environ.get('FLAT_CONTRACT'): OUT = os.path.join(HERE, 'ciktilar', '_yerel', 'flat-olcum.negatif.json')
 KOSUL = json.load(open(CONTRACT_FC))['sevkPoz']['kolAcisiDeg']['kosulluBant'][0]['kosul']
 PUF_ESIK, KISA_ESIK = KOSUL['agizBuzguOranMin'], KOSUL.get('kolBoyuOverOmuzMax', KOSUL.get('kolBoyuOverTorsoMax'))   # F1 tur 11: payda omuz genisligi
+# F1 karar 2 (tur 12): kol boyu bacagi kosuldan DUSTUYSE (bosluk <= olculen okuma hatasi) kolBoyuOverOmuzMax kosul'da degil kosul._dusenBacak'ta durur; KISA_ESIK None.
+KOSUL_OLCUM_HATASI = KOSUL.get('olcumHatasi', {})
+KOSUL_DUSEN_BACAK = KOSUL.get('_dusenBacak', {})
 EGRI_ESIK, EGRI_PENCERE, APEX_TOL, APEX_PENCERE = 0.12, 12, 2, 6
 YEREL = os.path.join(HERE, 'ciktilar', '_yerel', 'yeni-flat')
 os.makedirs(YEREL, exist_ok=True)
@@ -782,12 +785,28 @@ if os.path.exists(LOCKET):
             ddx, ddy = mid[0] - om6['snapPX'][0], mid[1] - om6['snapPX'][1]
             kayit['agizOrta'] = [round(mid[0], 1), round(mid[1], 1)]
             kayit['kolAcisiDeg'] = round(math.degrees(math.atan2(ddy, abs(ddx))), 1)
+            # F1 karar 2 (tur 12): kolBoyuOverOmuz da 6 kez okunur -> yayilim = oranin OLCULEN okuma hatasi (uydurma tolerans yerine).
+            # Omuz genisligi ayni tanimla (omuzGenisligi: omuz ucu satirlarinin siluet ortasi = simetri ekseni, 2 x (eksen - omuz ucu x)),
+            # ama renkten bagimsiz SILUET MASKESI ile (kopya penceresi = STRIPE penceresi kaydirilmis).
+            ms_ = []
+            for yy in range(om6['snapPX'][1], om6['snapPX'][1] + 5):
+                xs_ = np.nonzero(mask[yy, tx0 + dx:tx1 + dx])[0]
+                if len(xs_): ms_.append((xs_[0] + xs_[-1]) / 2.0 + tx0 + dx)
+            if ms_:
+                cx_ = sorted(ms_)[len(ms_) // 2]; g_ = 2.0 * (cx_ - om6['snapPX'][0])
+                kayit['omuzGenisligi'] = {'simetriX': round(cx_, 1), 'genislikPX': round(g_, 1), 'kaynak': 'siluet maskesi, omuz ucu satirlari y..y+4 medyani, pencere %d-%d' % (tx0 + dx, tx1 + dx)}
+                kayit['kolBoyuPX'] = round(math.hypot(ddx, ddy), 1)
+                kayit['kolBoyuOverOmuz'] = round(math.hypot(ddx, ddy) / g_, 3)
         okumalar[ad] = kayit
     degs = sorted(o['kolAcisiDeg'] for o in okumalar.values() if 'kolAcisiDeg' in o)
+    oranlar6 = sorted(o['kolBoyuOverOmuz'] for o in okumalar.values() if 'kolBoyuOverOmuz' in o)
     k['okumalar'] = {'yontem': 'siluet maskesi (|px-bg|_1 > %d), STRIPE sablonu IoU kaydi, tohum -> maske siniri snap r=12' % MASKE_ESIK,
                      'renklendirmeler': okumalar,
                      'n': len(degs), 'medyan': medyan(degs), 'min': min(degs), 'max': max(degs), 'yayilimDeg': round(max(degs) - min(degs), 1),
                      'stripeMurekkepOkumasi': k.get('kolAcisiDeg', {}).get('deger'),
+                     'kolBoyuOverOmuz': {'n': len(oranlar6), 'degerler': {ad: o.get('kolBoyuOverOmuz') for ad, o in okumalar.items()}, 'medyan': (medyan(oranlar6) if oranlar6 else None),
+                                         'min': (oranlar6[0] if oranlar6 else None), 'max': (oranlar6[-1] if oranlar6 else None), 'yayilim': (round(oranlar6[-1] - oranlar6[0], 3) if oranlar6 else None),
+                                         'tanim': 'F1 karar 2 (tur 12): ayni cizimin 6 kopyasinda kol boyu / omuz genisligi; yayilim (max - min) = oranin OKUMA HATASI. contract kosul.olcumHatasi.kolBoyuOverOmuz buradan (dosya sonu kontrol eder).'},
                      'tanim': 'ayni cizimin 6 kopyasi = ayni acinin 6 okumasi; yayilim okuma hatasidir, cizim farki degil'}
     if degs and 'kolAcisiDeg' in k:
         k['kolAcisiDeg']['stripeMurekkep'] = k['kolAcisiDeg']['deger']
@@ -1204,11 +1223,23 @@ yaMax = max([k['kolBoyuOverOmuz'] for k in yanaAcilan.values()] or [None]); saMi
 oranBosluk = [yaMax, saMin] if (yaMax is not None and saMin is not None and yaMax < saMin) else None
 oranOrta = round((yaMax + saMin) / 2, 4) if oranBosluk else None
 yaAcilar = sorted(k['kolAcisiDeg'] for k in yanaAcilan.values())
-bandAktif = len(yanaAcilan) >= 3 and oranBosluk is not None
+# F1 karar 2 (tur 12): AYIRICI testi — oran boslugunun genisligi Locket 6 kopya okuma hatasindan (BOLUM 4 okumalar.kolBoyuOverOmuz.yayilim) buyuk mu?
+#   bosluk <= hata ise iki kume bu eksende ORTUSUR (karar ajani 3c): kol boyu bacagi kosuldan duser, band 'ayirici yok' gerekcesiyle askida kalir (n'den bagimsiz).
+_lkOk = (f3['flatler'].get('bugra-locket', {}).get('okumalar') or {}).get('kolBoyuOverOmuz') or {}
+okumaHatasi = {'kolBoyuOverOmuz': _lkOk.get('yayilim'), 'kolAcisiDeg': (f3['flatler'].get('bugra-locket', {}).get('okumalar') or {}).get('yayilimDeg'),
+               '_kaynak': 'Locket 6 kopya, tek cizim (KOSU/flat-olcum.py BOLUM 4 okumalar; yayilim = max - min)'}
+boslukGenisligi = round(oranBosluk[1] - oranBosluk[0], 4) if oranBosluk else None
+ayiriciVar = bool(oranBosluk) and okumaHatasi['kolBoyuOverOmuz'] is not None and boslukGenisligi > okumaHatasi['kolBoyuOverOmuz']
+ayiriciNot = ('AYIRICI VAR: bosluk %s > okuma hatasi %s' % (boslukGenisligi, okumaHatasi['kolBoyuOverOmuz']) if ayiriciVar else
+              'AYIRICI YOK: kolBoyuOverOmuz boslugu %s <= okuma hatasi %s (Locket 6 kopya yayilimi) -> ORTUSME (karar ajani 3c), kol boyu bacagi kosuldan duser' % (boslukGenisligi, okumaHatasi['kolBoyuOverOmuz'])
+              if oranBosluk else 'AYIRICI YOK: oran boslugu yok')
+bandAktif = len(yanaAcilan) >= 3 and oranBosluk is not None and ayiriciVar
 yanaAcilanBand = {'n': len(yanaAcilan), 'uyeler': {ad: {'kolAcisiDeg': k['kolAcisiDeg'], 'kolBoyuOverOmuz': k['kolBoyuOverOmuz'], 'boyKaynak': k.get('boyKaynak')} for ad, k in yanaAcilan.items()},
                   'min': (yaAcilar[0] if yaAcilar else None), 'max': (yaAcilar[-1] if yaAcilar else None), 'medyan': (medyan(yaAcilar) if yaAcilar else None),
-                  'aktif': bandAktif, 'nGerekli': 3,
-                  'hukum': ('AKTIF: n >= 3, oran boslugu var' if bandAktif else 'ASKIDA: yana acilan kume n=%d < 3 (karar ajani 3c: n >= 3 kendi bandi) %s -> kosulluBant[0] secilemez, her kol sarkan band; kume ve kosul kayitta, n >= 3 olunca kendiliginden aktif' % (len(yanaAcilan), '' if oranBosluk else 've oran boslugu yok'))}
+                  'aktif': bandAktif, 'nGerekli': 3, 'ayirici': ayiriciNot, 'okumaHatasi': okumaHatasi, 'boslukGenisligi': boslukGenisligi,
+                  'hukum': ('AKTIF: n >= 3, oran boslugu var, ayirici var' if bandAktif else 'ASKIDA: %s%s -> kosulluBant[0] secilemez, her kol sarkan band; kume ve sayilar kayitta%s' % (
+                      ('' if ayiriciVar else ayiriciNot + '; '), ('yana acilan kume n=%d < 3 (karar ajani 3c: n >= 3 kendi bandi)' % len(yanaAcilan) if len(yanaAcilan) < 3 else 'n=%d yeterli' % len(yanaAcilan)),
+                      ('; n >= 3 VE ayirici olunca kendiliginden aktif' if not ayiriciVar else ', n >= 3 olunca kendiliginden aktif')))}
 # --- dirsek kovasi (F1 karar ajani 2 olcumu; karar 3: konum ACI KUMESINDEN, tablo BILGI) ---
 _sarkanIQR = f3['medyanlar']['kolAcisiDeg']['sarkan']['iqr']; _pufBand = f3['medyanlar']['kolAcisiDeg']['puf']['band']
 def _konum(a):
@@ -1233,7 +1264,8 @@ kolBoyuHukmu = {'alan': 'kolBoyuOverOmuz', 'n': len(omuzKume), 'nBuzgulu': len(b
                 'aciKumeleri': {'yontem': 'buzgulu kollarin acilari siralanir; en buyuk aci boslugu (>= %.0f derece) iki kumeyi ayirir' % ACI_KUME_BOSLUK_MIN, 'enBuyukAciBoslugu': [(_acilar[_gi][0], _acilar[_gi + 1][0]) if _gi >= 0 else None], 'kesimDeg': _kesim,
                                 'yanaAcilan': {ad: [k['kolAcisiDeg'], k['kolBoyuOverOmuz']] for ad, k in yanaAcilan.items()}, 'sarkan': {ad: [k['kolAcisiDeg'], k['kolBoyuOverOmuz']] for ad, k in sarkanBuz.items()}},
                 'yanaAcilanMax': yaMax, 'sarkanMin': saMin, 'bosluk': oranBosluk, 'ortaNokta': oranOrta,
-                'tanim': 'HUKUM (F1 tur 11). kol boyu = omuz ucu -> agiz ortasi, kol EKSENI boyunca / omuz genisligi (iki omuz ucu arasi; croquis36 2 x 183.8 = 367.6 mm). Kosul esigi = yana acilan buzgulu kumenin max orani ile sarkan buzgulu kumenin min orani arasindaki boslugun ortasi. Boy kelimesi (kisa/dirsek/uzun) kumeyi BELIRLEMEZ (boySinifiOrtusme: ortusuyor); cizilen aci kumesi belirler.'}
+                'ayirici': ayiriciNot, 'okumaHatasi': okumaHatasi, 'boslukGenisligi': boslukGenisligi,
+                'tanim': 'F1 tur 11 HUKUM adayi; F1 karar 2 (tur 12): bosluk genisligi okuma hatasiyla test edilir (ayirici). kol boyu = omuz ucu -> agiz ortasi, kol EKSENI boyunca / omuz genisligi (iki omuz ucu arasi; croquis36 2 x 183.8 = 367.6 mm). Esik adayi = yana acilan buzgulu kumenin max orani ile sarkan buzgulu kumenin min orani arasindaki boslugun ortasi; bosluk <= okuma hatasi ise ORTUSME, bacak kosulda degil (contract kosul._dusenBacak). Boy kelimesi (kisa/dirsek/uzun) kumeyi BELIRLEMEZ (boySinifiOrtusme: ortusuyor); cizilen aci kumesi belirler.'}
 f5['medyanlar'] = {
   'balonOranDik': {'eskiKume13': boslukHukmu(eskiKume, 'balonOranDik'), 'yeniKume': boslukHukmu(yeniKume, 'balonOranDik'), 'birlesik': boslukHukmu(birlesik, 'balonOranDik'),
                    'kisaAltKume': {'eskiKume13': kisaAltKume(eskiKume, 'balonOranDik'), 'yeniKume': kisaAltKume(yeniKume, 'balonOranDik'), 'birlesik': kisaAltKume(birlesik, 'balonOranDik'),
@@ -1273,6 +1305,7 @@ print('boySinifiOrtusme omuz:', json.dumps({s_: {kk: v for kk, v in d_.items() i
 print('boySinifiOrtusme torso:', json.dumps({s_: {kk: v for kk, v in d_.items() if kk != 'degerler'} if isinstance(d_, dict) else d_ for s_, d_ in f5['medyanlar']['boySinifiOrtusme']['kolBoyuOverTorso'].items()}))
 print('dirsek (BILGI):', dirsekHukmu['bilgi'], json.dumps(dirsekHukmu['buzguluAciKonumu']))
 print('yanaAcilanBand:', yanaAcilanBand['hukum'], 'n', yanaAcilanBand['n'], 'min/max/medyan', yanaAcilanBand['min'], yanaAcilanBand['max'], yanaAcilanBand['medyan'])
+print('ayirici:', ayiriciNot, '| okumaHatasi', json.dumps(okumaHatasi))
 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, 'w') as f:
@@ -1289,7 +1322,15 @@ if hK.get('bosluk') is None: uyumsuz.append('kisa alt kume boslugu KAPANDI: skal
 else:
     if not _esit(KOSUL['agizBuzguOranMin'], hK['ortaNokta']): uyumsuz.append('agizBuzguOranMin contract %s != uretici ortaNokta %s' % (KOSUL['agizBuzguOranMin'], hK['ortaNokta']))
     if not _listEsit(KOSUL['agizBuzguOranBosluk'], hK['bosluk']): uyumsuz.append('agizBuzguOranBosluk contract %s != uretici %s' % (KOSUL['agizBuzguOranBosluk'], hK['bosluk']))
-if kb['bosluk'] is None: uyumsuz.append('kolBoyuOverOmuz yana-acilan/sarkan boslugu YOK (ortusme ya da kume bos)')
+# F1 karar 2 (tur 12): okuma hatasi contract'ta uretici sayisiyla ayni olmali; bosluk <= hata ise bacak kosulda OLMAMALI (sayi _dusenBacak'ta), bosluk > hata ise kosulda olmali.
+for _a in ('kolBoyuOverOmuz', 'kolAcisiDeg'):
+    if not _esit(KOSUL_OLCUM_HATASI.get(_a), okumaHatasi[_a]): uyumsuz.append('olcumHatasi.%s contract %s != uretici (Locket 6 kopya yayilimi) %s' % (_a, KOSUL_OLCUM_HATASI.get(_a), okumaHatasi[_a]))
+if kb['bosluk'] is None:
+    if 'kolBoyuOverOmuzMax' in KOSUL: uyumsuz.append('kolBoyuOverOmuz yana-acilan/sarkan boslugu YOK (ortusme ya da kume bos) ama contract kosul.kolBoyuOverOmuzMax %s duruyor' % KOSUL['kolBoyuOverOmuzMax'])
+elif not ayiriciVar:
+    if 'kolBoyuOverOmuzMax' in KOSUL: uyumsuz.append('AYIRICI YOK (bosluk %s <= okuma hatasi %s) ama contract kosul.kolBoyuOverOmuzMax %s duruyor: bacak kosuldan dusmeli (_dusenBacak)' % (boslukGenisligi, okumaHatasi['kolBoyuOverOmuz'], KOSUL['kolBoyuOverOmuzMax']))
+    if not _esit(KOSUL_DUSEN_BACAK.get('kolBoyuOverOmuzMax'), kb['ortaNokta']): uyumsuz.append('_dusenBacak.kolBoyuOverOmuzMax contract %s != uretici ortaNokta %s' % (KOSUL_DUSEN_BACAK.get('kolBoyuOverOmuzMax'), kb['ortaNokta']))
+    if not _listEsit(KOSUL_DUSEN_BACAK.get('kolBoyuOverOmuzBosluk'), kb['bosluk']): uyumsuz.append('_dusenBacak.kolBoyuOverOmuzBosluk contract %s != uretici %s' % (KOSUL_DUSEN_BACAK.get('kolBoyuOverOmuzBosluk'), kb['bosluk']))
 else:
     if not _esit(KOSUL.get('kolBoyuOverOmuzMax'), kb['ortaNokta']): uyumsuz.append('kolBoyuOverOmuzMax contract %s != uretici ortaNokta %s' % (KOSUL.get('kolBoyuOverOmuzMax'), kb['ortaNokta']))
     if not _listEsit(KOSUL.get('kolBoyuOverOmuzBosluk'), kb['bosluk']): uyumsuz.append('kolBoyuOverOmuzBosluk contract %s != uretici %s' % (KOSUL.get('kolBoyuOverOmuzBosluk'), kb['bosluk']))
@@ -1300,7 +1341,8 @@ if uyumsuz:
     print('ESIK UYUMSUZ (contract/flat-convention-v1.json kosulluBant[0] vs flat-olcum.json f1Tur8):'); [print('  -', u) for u in uyumsuz]
     print('OUT:', os.path.relpath(OUT, os.path.join(HERE, '..')))
     import sys; sys.exit(2)
-print('ESIK KONTROL OK: agizBuzguOranMin %s = kisa alt kume orta (bosluk %s); kolBoyuOverOmuzMax %s = yana-acilan/sarkan orta (bosluk %s); kosulluBant[0] n=%s aktif=%s' % (KOSUL['agizBuzguOranMin'], hK['bosluk'], KOSUL.get('kolBoyuOverOmuzMax'), kb['bosluk'], yanaAcilanBand['n'], yanaAcilanBand['aktif']))
+print('ESIK KONTROL OK: agizBuzguOranMin %s = kisa alt kume orta (bosluk %s); kolBoyuOverOmuz bosluk %s genislik %s vs okuma hatasi %s -> %s (kosulda kolBoyuOverOmuzMax: %s); kosulluBant[0] n=%s aktif=%s' % (
+    KOSUL['agizBuzguOranMin'], hK['bosluk'], kb['bosluk'], boslukGenisligi, okumaHatasi['kolBoyuOverOmuz'], ('AYIRICI VAR' if ayiriciVar else 'AYIRICI YOK, bacak dustu'), KOSUL.get('kolBoyuOverOmuzMax', 'yok -> _dusenBacak %s' % KOSUL_DUSEN_BACAK.get('kolBoyuOverOmuzMax')), yanaAcilanBand['n'], yanaAcilanBand['aktif']))
 print('OUT:', os.path.relpath(OUT, os.path.join(HERE, '..')))
 print(json.dumps(sonuc['oranlar'], indent=1, ensure_ascii=False))
 for ad, k in f1['flatler'].items():
