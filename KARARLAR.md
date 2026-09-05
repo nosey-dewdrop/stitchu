@@ -21,6 +21,27 @@ Yeni oturum önce en alttaki "Nerede kaldık?" bölümünü okur.
 | K13 | 2026-09-05 | Buğra referans, ayar hedefi değil; Buğra'ya sabit eklemek reward hacking | 28 Tem Damla: "geometri knows it all" | — |
 | K14 | 2026-09-05 | Sadece ön fotoğraf: en sade dikilebilir arka (düz, orta arka kapanma) + görünür ilan + neden. İkinci fotoğraf alanı isteğe bağlı | HEDEF §2 | — |
 
+## Madde defteri (HEDEF §1-§4; her faz sonunda güncellenir)
+
+| Madde | Durum | Kanıt |
+|---|---|---|
+| 1 foto+prompt=kalıp+flat | AÇIK | — |
+| 2 edit | KISMEN: 15 op + replay var (graf_op_check); görsel ve doğal dil yok | `docs/GRAF-IR.md` |
+| 3 hesap | KISMEN: doğrulayıcı + sanal dikiş 3 bedende 0 kırmızı; çizim yok | `graf_dikilebilir_check` |
+| 4 iki beden | KISMEN: contract var, çizim yok | `contract/body-v1.json` |
+| 5 konvansiyon | KISMEN: sayılar var, uygulanan flat yok | `flat-convention-v1.json` |
+| 6 kumaş | AÇIK (eski hatta katsayı) | — |
+| 7 en az parça | AÇIK | — |
+| 8 tech tavanı yok | AÇIK | — |
+| 9 sözlük yok | KISMEN: graf var, enum 436 dallanma | `enum_dallanma_check --measure` |
+| 10 rehber/püf | AÇIK (eski hatta var, graftan değil) | — |
+| 11 kök neden | sürekli | — |
+| 12 Buğra | AÇIK | — |
+| 13 repo temizliği | AÇIK | — |
+| 14 eski çıktı silinir | AÇIK | — |
+| §2 edge case | AÇIK (eski hat tablosu bayat) | — |
+| §4 Damla diker | AÇIK | — |
+
 ## Nerede kaldık?
 
 - 2026-09-05 19:10 — Plan yazıldı (`PLAN.md`). Koşu durdu; son commit `2a654269` (F2a: graf IR, 15 op, doğrulayıcı, 3 bedende 0 kırmızı). Sıradaki: **P1 graftan çizim**. Henüz başlamadı.

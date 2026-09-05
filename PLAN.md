@@ -1,7 +1,7 @@
 # PLAN — fotoğraf + prompt = kalıp + flat (5 Eylül 2026)
 
 Otorite sırası: `HEDEF.md` (Damla'nın cümleleri) > `KARARLAR.md` (karar defteri) > bu dosya.
-`DEVIR.md` §5 (tuzaklar) geçerli kalır; gerisi ve `DEVIR-PROMPT.md`, `~/Desktop/stitchu-kosu-yol-a.js` emekli.
+`DEVIR.md` §5 (tuzaklar) geçerli kalır; gerisi ve `~/Desktop/stitchu-kosu-yol-a.js` emekli. `DEVIR-PROMPT.md` yaşar: her faz sonunda `KARARLAR.md` "nerede kaldık"tan yeniden yazılır (yapıştırılacak metin: hangi faz geçti, açık kusur, sıradaki brief). Oturum düşerse yeni oturum onunla başlar, sıfırdan çözmez.
 Yeni oturum sırayla okur: `HEDEF.md` → `KARARLAR.md` ("nerede kaldık" dahil) → bu dosya → `DERSLER.md` (batan yaklaşımlar).
 
 ## 0. Hedef, tek satır
@@ -55,8 +55,8 @@ Süreler dürüst tahmin; geçilirse defterde neden yazılır.
 |---|---|---|---|---|---|
 | P1 | **Graftan çizim** | `grafdegerle` (graf × Body → 2B paneller, PanelKaynak arayüzü), `flatsvg` (croquis36, katmanlı), `kalipsvg` (pattern-sheet stiliyle). Eski `bodice/skirt/sleeve.cpp` formülleri kaynak, dallanma değil | `graf-ilk/flat.png` emsal 13 yanında aynı ölçekte; `kalip-36.png` (yerelde Buğra sayfası yanında); `seri.png` (34-44). **P1 geçmeden P2 başlamaz** | determinizm (iki koşum diff boş), wasm=native, flat konvansiyon ölçümü (kol açısı, croquis landmark'ları ±2 mm), kalıp sayfa ölçümü, 34-44'te doğrulayıcı 0 kırmızı | 6-10 s |
 | P2 | **Edit = op, görsel** | 8 edit graf üstünde: yaka V, yaka 2 cm derin, etek 8 cm uzat, kol kısalt, bel fiyonk (attach), yan cep, etek ucu volan, kol büzgü. Her biri önce/sonra | `edit/kontak.png` | edit-locality (bölge dışı panel bayt-aynı), her edit sonrası doğrulayıcı 0 kırmızı, iki çıktı da yenilendi | 4-6 s |
-| P3 | **Sınırsızlık testi** | Buğra'nın 2 kalıbı + 9 eski kompozisyon + 5 emsal flat'i graf olarak yazılır (op dizisi). Yazılamayan varsa eksik op adıyla eklenir | `flat-ayni-insan.png` (tüm flat'ler yan yana, bel/göğüs/kalça çizgisi tek hizada); **`emsal-vs-biz.png`**: 5 emsalin grafla yeniden çizimi orijinalinin yanında — "iyi flat" sorusunun ilk gerçek cevabı, fark gözle ve mm; `bugra-bindirme.png` (yerel) | flat_ayni_insan ±2 mm; Buğra bindirme mm raporu (hedef değil, referans) | 8-12 s |
-| P4 | **Tek hat** | `garment.cpp` draft yolu graftan geçer; enum dallanmaları ve kaplama blokları kaldırılır; web flat'i C++'tan alır (`flat-from-pattern.js` emekli); eski çıktılar silinir, aynı adlarla yeniden üretilir; golden yeniden pin (gerekçe commit'te) | `once-sonra.png` | `enum_dallanma_check` sevk yolunda **0**; 4 ilanlı kırmızı dışında kırmızı yok; silinen dosya listesi commit'te (rg kanıtı) | 8-12 s |
+| P3 | **Sınırsızlık testi** | Buğra'nın 2 kalıbı + 9 eski kompozisyon + 5 emsal flat'i graf olarak yazılır (op dizisi). Yazılamayan varsa eksik op adıyla eklenir. Bilinen açık kusurlar burada kapanır (9.4, `kusur-listesi.md`): puf kol hacmi = `overlay` op (büzgülü üst katman), K2 prenses+roba ve K5 küp korse flat'i (`rolePart` ile), kol silueti (manşete daralma) | `flat-ayni-insan.png` (tüm flat'ler yan yana, bel/göğüs/kalça çizgisi tek hizada); **`emsal-vs-biz.png`**: 5 emsalin grafla yeniden çizimi orijinalinin yanında — "iyi flat" sorusunun ilk gerçek cevabı, fark gözle ve mm; `bugra-bindirme.png` (yerel) | flat_ayni_insan ±2 mm; Buğra bindirme mm raporu (hedef değil, referans) | 8-12 s |
+| P4 | **Tek hat** | `garment.cpp` draft yolu graftan geçer; enum dallanmaları ve kaplama blokları kaldırılır; web flat'i C++'tan alır (`flat-from-pattern.js` emekli); eski çıktılar silinir, aynı adlarla yeniden üretilir; golden yeniden pin (gerekçe commit'te) | `once-sonra.png` | `enum_dallanma_check` sevk yolunda **0**; 4 ilanlı kırmızı (flat_artifact_census, style_check, sizechart_source_check, figure_check) ya kapanır ya ilanı güncellenir, beşinci yok; silinen dosya listesi commit'te (rg kanıtı) | 8-12 s |
 | P5 | **Prompt → graf** | Deterministik parçalayıcı: cümle → op dizisi (sözlük değil, kenar/panel/dikiş fiilleri). Yetmezse backend LLM, çıktı yine graf-v1 (şema doğrulamalı). Bilinmeyen: adıyla "absent" + yapılabilir adım. Çelişkili prompt ("kolsuz uzun kollu"): hangi iki cümle çeliştiği yazılarak ret | `giris-prompt-10.png` (10 prompt, 4'ü sözlük dışı: "bel hizasında fiyonklu tek omuz asimetrik", "kimono kollu wrap", "korse üstlü balon etek", "keyhole yakalı dropped waist") | prompt_graf_check: 10/10 graf doğrulayıcıdan geçer, hiçbiri sessizce başka giysiye dönmez | 6-8 s |
 | P6 | **Fotoğraf → graf** | Üç kaynak: (a) tarayıcıda poz landmark'ı (MediaPipe pose; kurulamazsa deftere), (b) giysi silueti → oranlar (mm değil), (c) Claude vision **graf tarifi** üretir (`analyze-core.js` yeniden yazılır; enum alanları gider). Parça sayısı fotoğraftaki **görünür dikişlerden** okunur (madde 7); dikiş yoksa panel yok. Çelişkide ölçüm kazanır. LLM çıktısı üç kapıdan geçer: şema, graf doğrulayıcı, (a)/(b) ölçümüyle çelişki tablosu. Çevrimdışı çapraz doğrulama: SewFormer / ChatGarment ile 20 fotoğrafta panel sayısı + dikiş topolojisi uyum tablosu (Air'da koşmazsa deftere, sessiz atlama yok). Arka: ikinci fotoğraf alanı; yoksa en sade arka + görünür ilan. **Önizleme + düzeltme:** indirmeden önce flat + düz cümle tarif + yazıyla düzeltme (P2 op'u). Edge case'ler adıyla: bulanık / giysi olmayan / birden fazla giysi / kısmi görünen fotoğraf → ret + neden + "şöyle çek"; uç beden yok (seçim 34-44); streç aşımı ve dar en P7'de. Tablo `edge-case-tablosu.md` P5-P7 boyunca dolar, P8'de kapanır | `giris-foto-20.png` (20 foto, 2 ön+arka çifti, landmark/siluet overlay); önizleme ekranı png | foto_graf_check 20/20 doğrulayıcı geçer; arka_koken; edge_case tablosu güncel; yerelde koşar (anahtar/CORS ENV.md) | 10-16 s |
 | P7 | **Terzilik** | Kumaş → Body üstünde bölge bazlı bolluk alanı (dokuma +, örgü − = 1−1/streç); pervaz/tela graftan türetilir; en bölme yalnız zorunluysa (split op, grain + notch); streç aşımı adıyla ret; malzeme listesi (fermuar boyu, düğme, tela, iplik, metraj); rehber TR+EN, kaynaklı; dikiş sırası graftan | `kumas-farki.png` (aynı graf, katalogdan 3 kumaş: cotton-lawn / cotton-modal-jersey / viscose-crepe → 3 kalıp, flat aynı) | kumas_kalip (3 kalıp farklı, flat bayt-aynı), pervaz olmadan "dikilebilir" verilmez, rehber_kaynak | 8-12 s |
@@ -67,9 +67,11 @@ Toplam: 65-100 saat iş (P9 iki temiz tur dahil). Yani 4-7 gün, makine ve oturu
 
 **P8 içinde platform hazırlığı (ucuz, yapılır):** paket içinde graf JSON + kumaş + beden + motor damgası (gardırop kaydı = bu; aynı JSON aynı paketi üretir); indirme tek fonksiyondan geçer ki ileride `/api/pack` ile sunucuda sayılabilsin (kota istemcide sayılmaz).
 
+**Girdi dosyaları (okunur, plana veri):** `KOSU/ciktilar/kusur-listesi.md` (açık kusurlar → P3/P4/P9), `platform-plani.md` (kota /api/pack, iyzico, ETBİS, iOS Origin→guard.js), `seo-plani.md` (~250 sayfa, hesaplayıcı sayfaları, wasm SEO sayfasına yüklenmez, llms.txt), `pazar-notlari.md` (Damla'nın, dokunulmaz).
+
 **Sonrası (mimari hazır, bu planda yapılmaz):** Yüzey3B ikinci PanelKaynak (kapıları defterde: NaN yok, <500 ms, dikiş
 uzunluğu ±0.5 mm, kol/yaka yüzeyden), platform (hesap, 2 hak, kredi, gardırop = graf JSON + motor damgası, ödeme), iOS
-(aynı tokenlar, aynı motor), programatik SEO (her sayfa gerçek motor çıktısı), landing fiyat cümlesi (toile dikilince).
+(aynı tokenlar, aynı motor), programatik SEO (her sayfa gerçek motor çıktısı), landing fiyat cümlesi (toile dikilince), güvenlik açıkları (5.8: ürün bitince kapatılır; secret sızmaz kuralı bugün de geçerli), XPBD drape / 3B önizleme (olsa hoş, Yüzey3B geçerse).
 
 ## 5. Her fazda değişmeyen kurallar
 
@@ -78,6 +80,9 @@ uzunluğu ±0.5 mm, kol/yaka yüzeyden), platform (hesap, 2 hak, kredi, gardıro
 - **Araştırma sırası:** önce repo (`knowledge/`, `flatten-research/`, `docs/`, `contract/`, eski koşu bulguları: garment-flattening, spec-diff edit, ChatGarment/SewFormer), sonra web. "Yapan nasıl yapmış" çevrilir, sıfırdan icat edilmez; kaynak yazılır.
 - **DERSLER.md batan listesi geçerli:** sessiz enum fallback yok, ikame ile geçti yok, png'ye bakmadan "iyi" yok, rehber gerçek kenardan türer (şablon değil), parça listesi ↔ rehber ↔ PDF aynı sayı, Türkçe glyph kontrolü, uydurma eşik yok.
 - **LLM:** prompt hattında önce deterministik, LLM yalnız fallback; fotoğrafta fotoğraf başına tek çağrı; çıktı her zaman şemalı graf JSON, kod/SVG değil. Para sayılır, "olmuş gibi" gösterilmez.
+- **Brief taraf tutmaz** (2.7): işçiye "şunu doğrula" değil durum + kabul ölçütü verilir; eleştirel, iyileştiren cevap istenir.
+- **Tavan yok** (4.6): rakip yapıyor diye küçültme yok; "onlar yapıyorsa biz farklı ve iyisini yaparız". Rakip cümlesi denenmeden kurulmaz.
+- **Pazar/fiyat ajan işi değil** (4.7): fiyatlandırma, pazar araştırması, rakip listesi Damla'nın; ajan mesai harcamaz, `pazar-notlari.md`'ye dokunmaz.
 - **Sayı koda gömülmez;** contract'a, kaynağıyla. Kaynak yoksa `DOĞRULANMADI` yazılır, uydurulmaz.
 - **Sessiz default yok:** bilinmeyen tarif adıyla reddedilir + en yakın yapılabilir adım. İkame ile "geçti" yok.
 - **Uydurulan her şey ilan edilir** (arka, kapak yüksekliği, oran): graf `notes` + pakette kapak cümlesi.
@@ -95,6 +100,8 @@ uzunluğu ±0.5 mm, kol/yaka yüzeyden), platform (hesap, 2 hak, kredi, gardıro
 - **Damla:** png'ye bakar, isterse "satarım / satmam" der. Bakmazsa koşu durmaz.
 
 ## 7. Bu plan HEDEF'in hangi maddesini nerede kapatıyor?
+
+Canlı defter (9.5) `KARARLAR.md` "Madde defteri" bölümünde: her faz sonunda madde başına AÇIK / KISMEN / KAPANDI + kanıt yolu. Aşağıdaki tablo statik haritadır.
 
 | HEDEF | Faz |
 |---|---|
