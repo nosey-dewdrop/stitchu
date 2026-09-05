@@ -3,7 +3,7 @@
 # Expected = grep '|skirt/aLine/' of the PINNED engine/golden-reference.csv
 # (288 lines: 3 bodies x 3 lengths, fabric line + Front/Back/Waistband).
 # Filtering a FRESH motor dump instead would be regen-vs-regen and is
-# forbidden as evidence (DERSLER.md:12 + golden_check.sh header).
+# forbidden as evidence (docs/DERSLER.md:12 + golden_check.sh header).
 # Usage: recipe_golden_check.sh <recipe_golden_dump-binary> <pin-csv> <recipe-json>
 set -u
 DUMP_BIN="$1"

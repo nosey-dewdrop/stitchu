@@ -3,7 +3,7 @@
 // docs/RECETE-SPEC.md v1. The recipe path REBUILDS PathCommands from a formula
 // document (Valentina file logic) as a second, INDEPENDENT production path
 // proven against the PINNED golden — never a recorder replay of the motor's
-// own draw calls (that would be regen-vs-regen, DERSLER.md:12).
+// own draw calls (that would be regen-vs-regen, docs/DERSLER.md:12).
 //
 // v1 scope seal (RECETE-SPEC §4): ops move/line/curve/close, dart, marking
 // move/line, grainline, piece meta; formulas + - * / unary minus parens and

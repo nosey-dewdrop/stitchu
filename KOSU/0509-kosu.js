@@ -248,7 +248,7 @@ const A47 = {
   tarif: `
 ADIM 4.7 — BUGRA. Madde 12 (referans, ayar hedefi degil; Bugra'ya sabit = reward hacking, K13).
 Iki satin alinmis kalip (patterns_real/: Locket Top ve Buttoned Corset Bustier; geometry-full.json, seamgraph.json okunur) graf-v1'de YAZILABILIYOR MU: parca sayisi, dikis topolojisi, pens/buzgu yerleri op dizisi olarak (KOSU/ciktilar/bugra/<ad>.graf.json). Yazilamayan parca -> eksik op adiyla KOSU/ciktilar/her-giysi/eksik-op.md yol haritasina; op eklemek serbest (genel op, Bugra'ya ozel degil).
-EU38 degerlemesi ile Bugra kalibinin bindirmesi: mm tablosu (parca basina kenar uzunluklari, halka cevreleri; en kotu sapma) KOSU/ciktilar/bugra/rapor.md; png KOSU/ciktilar/_yerel/bugra/bindirme-<ad>.png (telifli, commit yok). Sabit yok; "yaklasti" icin hicbir katsayi eklenmez. Onceki olcumler (29 Tem: Bugra armhole 42.5-47.5cm, cap ease +18.66mm EU38, arka omuz standarttan siki) knowledge/ ve DERSLER.md'de; onlari tekrar arastirma, oku.
+EU38 degerlemesi ile Bugra kalibinin bindirmesi: mm tablosu (parca basina kenar uzunluklari, halka cevreleri; en kotu sapma) KOSU/ciktilar/bugra/rapor.md; png KOSU/ciktilar/_yerel/bugra/bindirme-<ad>.png (telifli, commit yok). Sabit yok; "yaklasti" icin hicbir katsayi eklenmez. Onceki olcumler (29 Tem: Bugra armhole 42.5-47.5cm, cap ease +18.66mm EU38, arka omuz standarttan siki) knowledge/ ve docs/DERSLER.md'de; onlari tekrar arastirma, oku.
 TESLIM: bugra/rapor.md (mm tablosu + ifade edilemeyen parcalar + eksik op) + _yerel bindirme png yolu.
 KABUL: iki graf.json sema + grafdogrula 0 kirmizi; 0509-bugra_check: parca sayisi ve seam sayisi Bugra ile esit ya da fark "absent" satiriyla aciklanmis; rapor.md'de en kotu sapma sayi olarak var.
 `}

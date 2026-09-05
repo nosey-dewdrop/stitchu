@@ -8,40 +8,72 @@
     "İSTİSNA KURALI ZORUNLUDUR (V9-A §2B): bugünkü ağaçta 16 ham hit'in 13'ü yanlış pozitif; 2'si emekli edilen cümleyi tırnak içinde taşıyor. İstisnasız kapı RULES §6 ONARIMINI cezalandırır.",
     "Kapının kendi arızası (taban yok, git yok vb.) exit 3 alır; ihlal exit 1 alır. Ayrık exit kodu lychee emsali (V9-R §1 B3). EKSİK YASA ASLA GEÇİŞ DEĞİLDİR: taban dosyası yoksa kapı FAIL verir."
   ],
-  "_note": "v9-g: H1.0-KAPI.md:54 kaynak durumu dürüstçe ilan edildi, D2 kayıtlı borcu 1 -> 0",
-  "olcumCommit": "f3bd10bf7a2e62664f85e552d047dea03303b841",
-  "olcumTarihi": "2026-08-25",
+  "_note": "GEREKÇE YAZILMADI — RULES §4.6 ihlali. Yeniden kes: --note=\"eski X -> yeni Y, sebep\"",
+  "olcumCommit": "7c6a0c763e467c61e2565411b5cc2e029e89cb6c",
+  "olcumTarihi": "2026-09-05",
   "kapsam": {
     "D1_D2": "docs/**/*.{md,html} + README.md, docs/archive/tools/*.{mjs,js} HARİÇ",
     "D3": "docs/**/*.md + README.md (V9-A §1 sayım kapsamı)",
-    "taranan_D1_D2": 18,
+    "taranan_D1_D2": 7,
     "taranan_D3": 7
   },
   "D1": {
     "esik": 0,
-    "hamHit": 14,
+    "hamHit": 8,
     "dusen": {
-      "tirnak_kod_span": 6,
-      "olcum_baglami_tarihli": 8,
+      "tirnak_kod_span": 3,
+      "olcum_baglami_tarihli": 4,
       "fenced_blok": 0
     },
-    "acikBorc": 0,
-    "bilinenAcik": []
+    "acikBorc": 1,
+    "bilinenAcik": [
+      {
+        "dosya": "docs/DERSLER.md",
+        "kalip": "byte-identical",
+        "satir": "- **Golden byte-identical testi.** Pinli sabit dump'a karşı her build taze çıktıyı çeker; regen-vs-regen yasak. Sessiz sürüklenmeyi bu yakalar."
+      }
+    ]
   },
   "D2": {
     "esik": 0,
     "kaynak": "VARLIK SORUSU GİT'E SORULUR (git ls-files + git ls-tree -r HEAD); disk okunmaz — verdict çalışma dizininden bağımsızdır (V9-B3)",
-    "yoklananHedef": 570,
-    "var": 492,
-    "dusenSinif": 38,
-    "uretilenArtefakt": 24,
-    "cipasizAd": 16,
-    "acikBorc": 0,
-    "bilinenAcik": []
+    "yoklananHedef": 226,
+    "var": 176,
+    "dusenSinif": 18,
+    "uretilenArtefakt": 20,
+    "cipasizAd": 7,
+    "acikBorc": 5,
+    "bilinenAcik": [
+      {
+        "dosya": "docs/GRAF-IR.md",
+        "hedef": "G/4",
+        "tur": "TICK"
+      },
+      {
+        "dosya": "docs/GRAF-IR.md",
+        "hedef": "rolePart/roleCount",
+        "tur": "TICK"
+      },
+      {
+        "dosya": "docs/GRAF-IR.md",
+        "hedef": "width.crossFront/2",
+        "tur": "TICK"
+      },
+      {
+        "dosya": "README.md",
+        "hedef": "docs/ARCHITECTURE.md",
+        "tur": "TICK"
+      },
+      {
+        "dosya": "README.md",
+        "hedef": "docs/ARCHITECTURE.md",
+        "tur": "TICK"
+      }
+    ]
   },
   "D3": {
-    "taban": 0,
-    "sayisalSatir": 140,
+    "taban": 7,
+    "sayisalSatir": 83,
     "yontem": "sayı+birim taşıyan prose satırı; satırda ya da kapsayıcı paragrafta backtick içinde alet/test adı (*_check, *.mjs/.py/.js/.sh, ctest, grep, ls -l) ya da kanıt yolu (GECE/, Logs/, reports/) YOKSA sağlayıcısız sayılır"
   }
 }

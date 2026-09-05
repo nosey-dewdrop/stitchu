@@ -7,7 +7,7 @@
 # this style: the pinned subset measured byte-identical under
 # -ffp-contract=off (probe 2026-07-28, §2.1 rule). Filtering a FRESH motor
 # dump instead would be regen-vs-regen and is forbidden as evidence
-# (DERSLER.md:12 + golden_check.sh header).
+# (docs/DERSLER.md:12 + golden_check.sh header).
 # Usage: recipe_dress_golden_check.sh <dump-binary> <pin-csv> <recipe-json>
 set -u
 DUMP_BIN="$1"

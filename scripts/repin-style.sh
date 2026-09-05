@@ -8,7 +8,7 @@
 # script hiç yazılmamıştı (TUR 9'da yazıldı). Kapı, kendisinin nasıl
 # kapatılacağını söyleyip o yolu var etmemişti.
 #
-# ⚠ EN ÖNEMLİ KURAL — REGEN-VS-REGEN YASAĞI (DERSLER.md):
+# ⚠ EN ÖNEMLİ KURAL — REGEN-VS-REGEN YASAĞI (docs/DERSLER.md):
 #   PİN'İ ÖLÇÜM ÜRETMEZ, KARAR ÜRETİR.
 #   style_check kendi çıktısını pinleyemez; pinlerse kalem kendi kendini
 #   onaylamış olur ve kapı bir aynaya dönüşür. Bu script de motorun çıktısını

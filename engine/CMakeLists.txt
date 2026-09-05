@@ -804,7 +804,7 @@ add_test(NAME recipe_check COMMAND recipe_check
 
 # Gate 1(b): the recipe path vs the REPO PIN subset (grep '|skirt/aLine/' of
 # golden-reference.csv). Expected comes from the PIN, never from a fresh motor
-# dump — regen-vs-regen is forbidden as evidence (DERSLER.md:12).
+# dump — regen-vs-regen is forbidden as evidence (docs/DERSLER.md:12).
 add_executable(recipe_golden_dump tests/recipe_golden_dump.cpp)
 target_link_libraries(recipe_golden_dump PRIVATE engine)
 add_test(NAME recipe_golden_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/recipe_golden_check.sh

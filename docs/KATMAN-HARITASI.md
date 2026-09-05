@@ -110,7 +110,7 @@
     **gitignore'da** — `git check-ignore -v engine/dist/stitchu-engine.js` `engine/.gitignore`'ın
     5. satırındaki `dist/` kuralını gösteriyor —
     yani damga TEMİZ BİR CHECKOUT'TA ÜRETİLEMEZ — üstteki onaltılık dizi bir kere okunmuş
-    değerdir, bu dosyadan doğrulanamaz. Aynı sınırı `docs/ARCHITECTURE.md:263` de ilan ediyor.
+    değerdir, bu dosyadan doğrulanamaz. Aynı sınırı eski ARCHITECTURE belgesi de ilan ediyordu (5 Eyl 2026 temizliğinde silindi, git geçmişinde).
     Bundle'ın kaynağıyla tazeliğini yargılayan ayrı kapı `bundle_fresh_check` ctest'te kayıtlı.
     ★ **Boşluk:** editlemenin istediği çıpa bir panelin KENARIDIR; md.7'nin saydığı
     dikiş grafiği eksikliği burada ikinci kez ısırıyor — o gün 88 spec'te **0 adlandırılmış
@@ -123,7 +123,7 @@
     çözümü çalışıyor (varsayılan 6 panelli elbisede 35 serbest bölge-panel çifti),
     dolayısıyla "şuraya" bugün en fazla `Bodice Front`'un tamamını gösterebiliyor.
     Kenar granülaritesindeki çıpa sözlüğü ÜRETİLDİ ama ana dala ALINMADI —
-    `research/v6-cipa-editleme` @ `3d8903c`, dönüş şartı `DAMLA-KUYRUK.md` K-V6A.
+    research hattı v6-cipa-editleme (silindi; commit 3d8903c, git geçmişinde), dönüş şartı `DAMLA-KUYRUK.md` K-V6A.
     ★ İkinci boşluk: `contract/edit-locality-v1.json`'un kendisi ELLE yazılmış,
     üreteci ve `--check` bekçisi yok, `contract/generated-paths.sha256`'da geçmiyor;
     `_bolge_kaynagi`'nın "composition.json'dan birebir taşındı" cümlesi 22 bileşenin
