@@ -321,12 +321,16 @@ komutu koşar; "beklenen exit"i yazılmamış bir kırmızı = ilerleme yok.
 
 ```bash
 cd ~/damla_projects_2026/stitchu && cmake --build engine/build -j2 >/dev/null && \
-ctest --test-dir engine/build -R 'golden|recipe|primitif|edit_locality|manken|kumas|parca|vocab|flatten|surface|enum_dallanma|flat_ayni' -j1 --output-on-failure && \
+ctest --test-dir engine/build -R 'golden|recipe|primitif|edit_locality|manken|kumas|parca|vocab|flatten|surface|enum_dallanma|flat_ayni|body_check|gen_contract|bundle_fresh' -j1 --output-on-failure && \
 node engine/tests/cizim_giysi_mi.mjs && node engine/tests/primitif_ifade_check.mjs && \
 bash engine/tests/enum_dallanma_check.sh && node engine/tests/flat_ayni_insan_check.mjs
+# beklenen iki kirmizinin SABIT sayisi (gozle sayilmaz; sayi ya da ad farkliysa kosu durur):
+[ "$(node KOSU/uret.mjs >/dev/null 2>&1; node engine/tests/flat_ayni_insan_check.mjs 2>&1 | grep -c 'FAIL  34 hukum kirmizi')" = 1 ] && \
+[ "$(node engine/tests/cizim_giysi_mi.mjs 2>&1 | grep -c 'FAIL cizim_giysi_mi — 1 ihlal')" = 1 ] && \
+[ "$(node engine/tests/cizim_giysi_mi.mjs 2>&1 | grep -c '^FAIL  (b) kol acisi konvansiyon bandinda')" = 1 ] && echo 'beklenen kirmizilar sabit: 34 hukum, 1 ihlal (b)'
 ```
 
-Regex 21 test seçer (`ctest -N -R ...`). F1'den sonra bu zincir **exit 1 verir ve
+Regex 25 test seçer (`ctest -N -R ...`; `body_check` alt-dizesi #160 body_check ve #162 wasm_body_check'i alır, #130 body_volume_check'i bilerek ALMAZ — bu fazın kapısı değil). F1'den sonra bu zincir **exit 1 verir ve
 bu BEKLENİR** — sebebi aşağıdaki ilk İKİ satırdır (KAPI B 34 hüküm; F1 tur 4'ten sonra
 `cizim_giysi_mi` (b) kol açısı bandı, tam 1 ihlal); başka bir test kızarırsa koşu durur.
 
@@ -339,7 +343,7 @@ bu BEKLENİR** — sebebi aşağıdaki ilk İKİ satırdır (KAPI B 34 hüküm; 
 | `sizechart_source_check` | exit 1 | 4 kolon NONE (shoulderCM, backLengthCM, armLengthCM, neckCM) | F2 (karar 4: euSizeChart body-v1 izdüşümü) |
 | `figure_check` | exit 1 | 1 FAILURE (pin eksik) | F3b |
 
-Regex'teki diğer 20 test ve `body_check`, `gen_contract_check`, `bundle_fresh_check`,
+Regex'teki diğer 23 test (`body_check`, `gen_contract_check`, `bundle_fresh_check`, `wasm_body_check` dahil) ve
 `vocab_reference_check` (ÜÇ kova kod/prose/beden, ratchet yalnız kod; taban `40286351`, kod **9253**, beden kovası 46 hüküm dışı — b7516166 aşağı kesim: 46 satır body-v1 adlı sayı-değerli JSON anahtarı beden kovasına geçti, baseline `_yasa` son satırı) **yeşil**; bunlardan biri
 kızarırsa kaynağı düzelt, kapıyı değil.
 
