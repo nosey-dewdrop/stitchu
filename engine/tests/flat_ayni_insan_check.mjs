@@ -55,6 +55,12 @@
 //   node engine/tests/flat_ayni_insan_check.mjs                 # KOSU/ciktilar/*.svg (0X-*.svg)
 //   node engine/tests/flat_ayni_insan_check.mjs a.svg b.svg ... # verilen kume
 //   node engine/tests/flat_ayni_insan_check.mjs --json          # tabloyu JSON olarak da bas
+//
+// KABUL (F0 hakem kusuru: pipe node'un cikis kodunu maskeler). Kabul komutunda
+// node TEK BASINA kosar, exit kodu kendisinindir; isaret kontrolu AYRI grep:
+//   node engine/tests/flat_ayni_insan_check.mjs && node engine/tests/flat_ayni_insan_check.mjs 2>/dev/null | grep -q 'ciz-ilan'
+// Ilk cagri kapinin hukmu (tolerans dolunca FAIL exit 1 burada durur), ikincisi
+// yalniz baslik isaretinin varligini kontrol eder.
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
