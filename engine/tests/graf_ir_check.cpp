@@ -14,6 +14,7 @@
 //      (mm yok), cozumle() gercek36'da kapagi 1.04 x oyuga getirir (karar 6)
 //  (g) karar 3: xOf widthHalf + width alani; carpik kombinasyon (widthHalf+ring, ring*+width) parse VE sema'da adiyla
 //  (h) karar 7: Seam.reverse zorunlu (eksikse parse reddi), zincirler yapisal cozulur
+//  (i) graf-v1 1.2.0: eski Turkce anahtarlar (oran/ofsetMM/yOran/yOfsetMM/bolluk/gerekce/intakeOran) sema+parse'ta adiyla reddedilir
 //  (f) KOSU/ciktilar/graf-ilk/graf.json: --emit ile yazilir; emit'siz koşuda dosya metni tabanla
 //      BAYT-AYNI olmali (pin: taban degisti ama dosya yenilenmedi -> kirmizi)
 //
@@ -49,9 +50,9 @@ static JVal loadJSON(const std::string& p) { JVal v; std::string err; if (!parse
 // ----------------------------------------------------------------- taban graf
 static const double kKappa = 4.0 * (std::sqrt(2.0) - 1.0) / 3.0;   // kubik Bezier ceyrek daire katsayisi (turetilmis)
 
-static Anchor L(const std::string& lm, double oran = 1.0) { Anchor a; a.landmark = lm; a.oran = oran; return a; }
-static Anchor Q(const std::string& lm, double oran, const std::string& ring = "") { Anchor a; a.landmark = lm; a.xOf = "ringQuarter"; a.ring = ring; a.oran = oran; return a; }
-static Anchor Y(Anchor a, const std::string& y1, const std::string& y2 = "", double yOran = 0.0) { a.yLandmark = y1; a.yLandmark2 = y2; a.yOran = yOran; return a; }
+static Anchor L(const std::string& lm, double oran = 1.0) { Anchor a; a.landmark = lm; a.xFactor = oran; return a; }
+static Anchor Q(const std::string& lm, double oran, const std::string& ring = "") { Anchor a; a.landmark = lm; a.xOf = "ringQuarter"; a.ring = ring; a.xFactor = oran; return a; }
+static Anchor Y(Anchor a, const std::string& y1, const std::string& y2 = "", double yLerp = 0.0) { a.yLandmark = y1; a.yLandmark2 = y2; a.yLerp = yLerp; return a; }
 static RefPoint P(const Anchor& a) { return RefPoint::of(a); }
 static Edge E(const std::string& id, const std::string& kind, const std::string& role, const RefPoint& from, const RefPoint& to) {
     Edge e; e.id = id; e.kind = kind; e.role = role; e.from = from; e.to = to; return e;
@@ -63,8 +64,8 @@ struct Ease { double bust, waist, hip, biceps; };
 // Govde yarim paneli: on (nape yok, neckFront var) ya da arka
 static Panel govde(bool on, const Ease& ez) {
     Panel p; p.id = on ? "on_beden" : "arka_beden"; p.onFold = true; p.cutCount = 1;
-    p.bolluk = {{"girth.bust", ez.bust}, {"girth.waist", ez.waist}};
-    p.gerekce = on ? "on govde (kat)" : "arka govde (kat)";
+    p.ease = {{"girth.bust", ez.bust}, {"girth.waist", ez.waist}};
+    p.reason = on ? "on govde (kat)" : "arka govde (kat)";
     const std::string top = on ? "landmark.neckFront" : "landmark.nape";
     const RefPoint vTop = P(L(top, 0.0));                                     // CF/CB ust
     const RefPoint vWaistC = P(L("landmark.waist", 0.0));                    // CF/CB bel
@@ -80,7 +81,7 @@ static Panel govde(bool on, const Ease& ez) {
     // dusey teget), ust = oradan omuz ucuna (hafif icbukey). Icbukey nokta x = width.crossFront/2 (body-v1
     // genislikler, Aldrich/Mueller; xOf widthHalf + width alani, karar 3), y = koltukalti->omuz ucu dususunun ortasi (0.5, DOGRULANMADI: notes).
     const std::string crossW = on ? "width.crossFront" : "width.crossBack";
-    Anchor crossA; crossA.landmark = "landmark.underarm"; crossA.xOf = "widthHalf"; crossA.width = crossW; crossA.oran = 1.0;
+    Anchor crossA; crossA.landmark = "landmark.underarm"; crossA.xOf = "widthHalf"; crossA.width = crossW; crossA.xFactor = 1.0;
     const RefPoint vCross = P(Y(crossA, "landmark.underarm", "landmark.shoulderTip", 0.5));
     const RefPoint pCrossUnderY = P(crossA);                                  // cross x, koltukalti y
     const RefPoint a1c1 = affine({{1.0 - kKappa, vUnder}, {kKappa, pCrossUnderY}});
@@ -100,8 +101,8 @@ static Panel govde(bool on, const Ease& ez) {
 }
 static Panel etek(bool on, const Ease& ez) {
     Panel p; p.id = on ? "on_etek" : "arka_etek"; p.onFold = true; p.cutCount = 1;
-    p.bolluk = {{"girth.waist", ez.waist}, {"girth.hip", ez.hip}};
-    p.gerekce = on ? "on etek (kat)" : "arka etek (kat)";
+    p.ease = {{"girth.waist", ez.waist}, {"girth.hip", ez.hip}};
+    p.reason = on ? "on etek (kat)" : "arka etek (kat)";
     const std::string s = on ? "front" : "back";
     const RefPoint vWaistC = P(L("landmark.waist", 0.0));
     const RefPoint vHemC = P(L("landmark.knee", 0.0));
@@ -118,8 +119,8 @@ static Panel etek(bool on, const Ease& ez) {
 }
 static Panel kol(const Ease& ez) {
     Panel p; p.id = "kol"; p.onFold = false; p.cutCount = 2;
-    p.bolluk = {{"girth.biceps", ez.biceps}};
-    p.gerekce = "kol (2 kes)";
+    p.ease = {{"girth.biceps", ez.biceps}};
+    p.reason = "kol (2 kes)";
     // kapak tepesi: x=0, y koltukalti->omuz ucu dususunun 0.6'si (DOGRULANMADI, notes)
     const double capOran = 0.6;
     const RefPoint vTop = P(Y(Q("landmark.underarm", 0.0, "girth.biceps"), "landmark.underarm", "landmark.shoulderTip", capOran));
@@ -154,18 +155,18 @@ static Garment tabanBase(const Ease& ez) {
               "Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).";
     g.panels = {govde(true, ez), govde(false, ez), etek(true, ez), etek(false, ez), kol(ez)};
     // Dikisler SIRALI zincir + ilan edilen yon (karar 7). reverse=false: a.bas <-> b.bas.
-    Seam omuz; omuz.id = "omuz"; omuz.a = {{"on_beden", "shoulder"}}; omuz.b = {{"arka_beden", "shoulder"}}; omuz.reverse = false; omuz.gerekce = "omuz dikisi: omuz ucu <-> omuz ucu, boyun <-> boyun";
-    Seam yan; yan.id = "yan_beden"; yan.a = {{"on_beden", "side_front"}}; yan.b = {{"arka_beden", "side_back"}}; yan.reverse = false; yan.notchFractions = {0.5}; yan.gerekce = "govde yan dikisi: bel <-> bel, koltukalti <-> koltukalti";
+    Seam omuz; omuz.id = "omuz"; omuz.a = {{"on_beden", "shoulder"}}; omuz.b = {{"arka_beden", "shoulder"}}; omuz.reverse = false; omuz.reason = "omuz dikisi: omuz ucu <-> omuz ucu, boyun <-> boyun";
+    Seam yan; yan.id = "yan_beden"; yan.a = {{"on_beden", "side_front"}}; yan.b = {{"arka_beden", "side_back"}}; yan.reverse = false; yan.notchFractions = {0.5}; yan.reason = "govde yan dikisi: bel <-> bel, koltukalti <-> koltukalti";
     // kapak zinciri arka koseden (cap_back) tepeye, oradan on koseye (cap_front); oyuk zinciri arka koltukaltindan omuz ucuna,
     // omuz dikisinden on omuz ucuna gecip on koltukaltina iner (armhole_front.2 ve .1 kendi yonlerine TERS yurunur)
     Seam oyuk; oyuk.id = "kol_oyugu"; oyuk.a = {{"kol", "cap_back"}, {"kol", "cap_front"}}; oyuk.b = {{"arka_beden", "armhole_back.1"}, {"arka_beden", "armhole_back.2"}, {"on_beden", "armhole_front.2"}, {"on_beden", "armhole_front.1"}};
-    oyuk.reverse = false; oyuk.ratio = 1.04; oyuk.gerekce = "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)";
+    oyuk.reverse = false; oyuk.ratio = 1.04; oyuk.reason = "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)";
     // bel zinciri CF'den yan dikise, yan dikisten (yan_beden / yan_etek esleri) CB'ye
     Seam bel; bel.id = "bel"; bel.a = {{"on_beden", "waist_front"}, {"arka_beden", "waist_back"}}; bel.b = {{"on_etek", "waist_front"}, {"arka_etek", "waist_back"}}; bel.reverse = false;
-    bel.notchFractions = {0.25, 0.75}; bel.gerekce = "bel dikisi (govde -> etek): CF <-> CF, yan <-> yan, CB <-> CB";
-    Seam yanE; yanE.id = "yan_etek"; yanE.a = {{"on_etek", "side_front.1"}, {"on_etek", "side_front.2"}}; yanE.b = {{"arka_etek", "side_back.1"}, {"arka_etek", "side_back.2"}}; yanE.reverse = false; yanE.gerekce = "etek yan dikisi: etek ucu <-> etek ucu, bel <-> bel";
+    bel.notchFractions = {0.25, 0.75}; bel.reason = "bel dikisi (govde -> etek): CF <-> CF, yan <-> yan, CB <-> CB";
+    Seam yanE; yanE.id = "yan_etek"; yanE.a = {{"on_etek", "side_front.1"}, {"on_etek", "side_front.2"}}; yanE.b = {{"arka_etek", "side_back.1"}, {"arka_etek", "side_back.2"}}; yanE.reverse = false; yanE.reason = "etek yan dikisi: etek ucu <-> etek ucu, bel <-> bel";
     // kol alti: on kenar kose->agiz (vF->hF), arka kenar agiz->kose (hB->vB): a.bas (kose) <-> b.son (kose) => reverse
-    Seam kolAlti; kolAlti.id = "kol_alti"; kolAlti.a = {{"kol", "underarm_front"}}; kolAlti.b = {{"kol", "underarm_back"}}; kolAlti.reverse = true; kolAlti.gerekce = "kol alti dikisi: kose <-> kose, agiz <-> agiz (reverse)";
+    Seam kolAlti; kolAlti.id = "kol_alti"; kolAlti.a = {{"kol", "underarm_front"}}; kolAlti.b = {{"kol", "underarm_back"}}; kolAlti.reverse = true; kolAlti.reason = "kol alti dikisi: kose <-> kose, agiz <-> agiz (reverse)";
     g.seams = {omuz, yan, oyuk, bel, yanE, kolAlti};
     g.rings = {
         {"yaka", "neck", {{"arka_beden", "neck_back"}, {"on_beden", "neck_front"}}},
@@ -264,10 +265,50 @@ int main(int argc, char** argv) {
     { Garment x; std::string e2;
       ok(!fromJSONText("{\"id\":\"a\",\"version\":\"graf-v1\",\"panels\":[],\"seams\":[],\"rings\":[],\"ops\":[],\"renk\":1}", x, e2) && e2.find("renk") != std::string::npos, "parse reddi: bilinmeyen alan 'renk' adiyla: " + e2);
       ok(!fromJSONText("{\"id\":\"a\",\"version\":\"graf-v0\",\"panels\":[]}", x, e2) && e2.find("version") != std::string::npos, "parse reddi: version farki: " + e2);
-      { JVal cv; std::string ce; parse("{\"combo\":[{\"w\":0.6,\"landmark\":\"landmark.waist\",\"oran\":1,\"ofsetMM\":0},{\"w\":0.6,\"landmark\":\"landmark.hip\",\"oran\":1,\"ofsetMM\":0}]}", cv, ce);
+      { JVal cv; std::string ce; parse("{\"combo\":[{\"w\":0.6,\"landmark\":\"landmark.waist\",\"xFactor\":1,\"xOffsetMM\":0},{\"w\":0.6,\"landmark\":\"landmark.hip\",\"xFactor\":1,\"xOffsetMM\":0}]}", cv, ce);
         RefPoint rp; ok(!fromJSON(cv, rp, e2) && e2.find("1'e toplanmiyor") != std::string::npos, "parse reddi: combo agirliklari 1.2: " + e2); }
       std::string bad = t1; const size_t pos = bad.find("\"edge\": \"shoulder\""); bad.replace(pos, 18, "\"edge\": \"yok_boyle\"");
       ok(!fromJSONText(bad, x, e2) && e2.find("yok_boyle") != std::string::npos, "parse reddi: cozulmeyen EdgeRef adiyla: " + e2); }
+    // (i) graf-v1 1.2.0 (hakem kusuru 1): eski TURKCE anahtarlar sema'da 'tanimsiz alan', parse'ta 'bilinmeyen alan' — sessiz kabul yok.
+    //     Anchor: oran/ofsetMM/yOran/yOfsetMM; Panel: bolluk/gerekce; Seam: gerekce; op suppress: intakeOran; op extendTo: yOfsetMM.
+    { struct Eski { const char* tip; const char* eski; const char* yeni; };
+      const Eski anchorEski[] = {{"Anchor", "oran", "xFactor"}, {"Anchor", "ofsetMM", "xOffsetMM"}, {"Anchor", "yOran", "yLerp"}, {"Anchor", "yOfsetMM", "yOffsetMM"}};
+      for (const Eski& ek : anchorEski) {
+          JVal v = toJSON(g); JVal& to = const_cast<JVal&>(*const_cast<JVal&>(*const_cast<JVal&>(*v.get("panels")).a[0].get("edges")).a[1].get("to"));   // waist_front.to (tek terim Anchor)
+          for (auto& kv : to.o) if (kv.first == ek.yeni) kv.first = ek.eski;   // yeni adi eskisiyle degistir (yoksa eski ad eklenir)
+          if (!to.get(ek.eski)) to.set(ek.eski, JVal::num(0.0));
+          std::vector<std::string> hs;
+          ok(!semaDogrula(v, contract, hs) && !hs.empty() && hs[0].find(std::string("'") + ek.eski + "'") != std::string::npos && hs[0].find("tanimsiz alan") != std::string::npos,
+             std::string("sema negatif (eski anahtar) ") + ek.tip + "." + ek.eski + " -> tanimsiz alan: " + (hs.empty() ? "" : hs[0]));
+          Garment gx; std::string e; ok(!fromJSONText(emit(v), gx, e) && e.find(std::string("'") + ek.eski + "'") != std::string::npos && e.find("bilinmeyen alan") != std::string::npos,
+             std::string("parse reddi (eski anahtar) ") + ek.tip + "." + ek.eski + ": " + e); }
+      const Eski panelEski[] = {{"Panel", "bolluk", "ease"}, {"Panel", "gerekce", "reason"}};
+      for (const Eski& ek : panelEski) {
+          JVal v = toJSON(g); JVal& p0 = const_cast<JVal&>(*v.get("panels")).a[0];
+          for (auto& kv : p0.o) if (kv.first == ek.yeni) kv.first = ek.eski;
+          std::vector<std::string> hs;
+          ok(!semaDogrula(v, contract, hs) && !hs.empty() && hs[0].find(std::string("'") + ek.eski + "'") != std::string::npos && hs[0].find("tanimsiz alan") != std::string::npos,
+             std::string("sema negatif (eski anahtar) ") + ek.tip + "." + ek.eski + " -> tanimsiz alan: " + (hs.empty() ? "" : hs[0]));
+          Garment gx; std::string e; ok(!fromJSONText(emit(v), gx, e) && e.find(std::string("'") + ek.eski + "'") != std::string::npos && e.find("bilinmeyen alan") != std::string::npos,
+             std::string("parse reddi (eski anahtar) ") + ek.tip + "." + ek.eski + ": " + e); }
+      { JVal v = toJSON(g); JVal& s0 = const_cast<JVal&>(*v.get("seams")).a[0];
+        for (auto& kv : s0.o) if (kv.first == "reason") kv.first = "gerekce";
+        std::vector<std::string> hs;
+        ok(!semaDogrula(v, contract, hs) && !hs.empty() && hs[0].find("'gerekce'") != std::string::npos && hs[0].find("tanimsiz alan") != std::string::npos, "sema negatif (eski anahtar) Seam.gerekce -> tanimsiz alan: " + (hs.empty() ? "" : hs[0]));
+        Garment gx; std::string e; ok(!fromJSONText(emit(v), gx, e) && e.find("'gerekce'") != std::string::npos && e.find("bilinmeyen alan") != std::string::npos, "parse reddi (eski anahtar) Seam.gerekce: " + e); }
+      { // op args: contract oplar.suppress.args ve oplar.extendTo.args eski adi tasimaz; applyOp eski adla gelen kaydi adiyla reddeder
+        const JVal* oplar = contract.get("oplar");
+        ok(oplar && oplar->get("suppress") && oplar->get("suppress")->get("args") && !oplar->get("suppress")->get("args")->get("intakeOran") && oplar->get("suppress")->get("args")->get("intakeFraction"), "contract oplar.suppress.args: intakeFraction var, intakeOran yok");
+        ok(oplar && oplar->get("extendTo") && oplar->get("extendTo")->get("args") && !oplar->get("extendTo")->get("args")->get("yOfsetMM") && oplar->get("extendTo")->get("args")->get("yOffsetMM"), "contract oplar.extendTo.args: yOffsetMM var, yOfsetMM yok");
+        JVal args; std::string pe; parse("{\"panel\":\"on_beden\",\"edge\":\"waist_front\",\"atFraction\":0.5,\"intakeOran\":0.1,\"apex\":{\"landmark\":\"landmark.bustApex\",\"xFactor\":0.5,\"xOffsetMM\":0},\"legId\":\"pens\"}", args, pe);
+        OpRecord rec; rec.op = "suppress"; rec.args = args;
+        OpResult r = applyOp(g, rec, octx);
+        ok(!r.ok && r.hata.find("intakeFraction") != std::string::npos, "applyOp suppress eski 'intakeOran' ile: intakeFraction eksik diye reddedildi: " + r.hata); }
+      // eski anahtar hicbir yerde kalmadi: kanonik emit ve contract metni
+      const std::string ct = readFile(argv[1]);
+      bool temiz = true; std::string hangi;
+      for (const char* k : {"\"oran\"", "\"ofsetMM\"", "\"yOran\"", "\"yOfsetMM\"", "\"bolluk\"", "\"gerekce\"", "\"intakeOran\"", "\"Bolluk\""}) if (t1.find(k) != std::string::npos || ct.find(k) != std::string::npos) { temiz = false; hangi += std::string(k) + " "; }
+      ok(temiz, "kanonik emit ve contract/graf-v1.json eski Turkce anahtar tasimiyor" + (temiz ? "" : ": " + hangi)); }
     // (d) degerleme: iki beden
     { const Panel* on = g.panel("on_beden"); const Edge* w = on->edge("waist_front");
       const Edge* sh = on->edge("shoulder");

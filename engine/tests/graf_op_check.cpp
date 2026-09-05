@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
 
     // ---- suppress (primitives-v1 op.suppress; karar 2)
     // apeks y: gogus ucu -> bel dususunun 0.15'i. trueLegs=true: x agiz ortasindan kurulur (verilen x yok sayilir) -> bacaklar insadan esit
-    Anchor apexA; apexA.landmark = "landmark.waist"; apexA.xOf = "ringQuarter"; apexA.oran = 0.5; apexA.yLandmark = "landmark.bustApex"; apexA.yLandmark2 = "landmark.waist"; apexA.yOran = 0.15;
+    Anchor apexA; apexA.landmark = "landmark.waist"; apexA.xOf = "ringQuarter"; apexA.xFactor = 0.5; apexA.yLandmark = "landmark.bustApex"; apexA.yLandmark2 = "landmark.waist"; apexA.yLerp = 0.15;
     const RefPoint apex = RefPoint::of(apexA);
     Garment gDart;
     { const double W0 = len(g, "on_beden", "waist_front", body); const size_t n0 = g.panel("on_beden")->edges.size();
@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
       OpResult n3 = suppress(g, "on_beden", "waist_front", 0.95, 0.2, apex, "x", true, ctx);
       ok(!n3.ok && n3.hata.find("disina") != std::string::npos, "  negatif: agiz kenar disina tasar: " + n3.hata);
       // trueLegs=true agiz ortasini kullanir: kaydirilmis x'li apeks de esit bacak verir; trueLegs=false ayni apeks esit vermez
-      Anchor off = apexA; off.oran = 0.8; const RefPoint apexOff = RefPoint::of(off);
+      Anchor off = apexA; off.xFactor = 0.8; const RefPoint apexOff = RefPoint::of(off);
       OpResult t1 = suppress(g, "on_beden", "waist_front", 0.5, 0.2, apexOff, "p", true, ctx);
       OpResult t0 = suppress(g, "on_beden", "waist_front", 0.5, 0.2, apexOff, "p", false, ctx);
       const Panel* p1 = t1.g.panel("on_beden"); const Panel* p0 = t0.g.panel("on_beden");
@@ -206,11 +206,11 @@ int main(int argc, char** argv) {
       ok(!n.ok, "  negatif: var olan panel id: " + n.hata); }
 
     // ---- attach (volan: kol agzina buzgulu serit)
-    { Panel volan; volan.id = "volan"; volan.cutCount = 2; volan.gerekce = "kol agzi volani"; volan.bolluk = g.panel("kol")->bolluk;   // ayni halka bollugu: kol agziyla ayni G
-      Anchor a0; a0.landmark = "landmark.underarm"; a0.xOf = "ringQuarter"; a0.ring = "girth.biceps"; a0.oran = -3.0; a0.yLandmark = "landmark.elbow";
-      Anchor a1 = a0; a1.oran = 3.0;
-      Anchor a2 = a1; a2.yLandmark = "landmark.elbow"; a2.yLandmark2 = "landmark.wrist"; a2.yOran = 0.3;
-      Anchor a3 = a0; a3.yLandmark = "landmark.elbow"; a3.yLandmark2 = "landmark.wrist"; a3.yOran = 0.3;
+    { Panel volan; volan.id = "volan"; volan.cutCount = 2; volan.reason = "kol agzi volani"; volan.ease = g.panel("kol")->ease;   // ayni halka bollugu: kol agziyla ayni G
+      Anchor a0; a0.landmark = "landmark.underarm"; a0.xOf = "ringQuarter"; a0.ring = "girth.biceps"; a0.xFactor = -3.0; a0.yLandmark = "landmark.elbow";
+      Anchor a1 = a0; a1.xFactor = 3.0;
+      Anchor a2 = a1; a2.yLandmark = "landmark.elbow"; a2.yLandmark2 = "landmark.wrist"; a2.yLerp = 0.3;
+      Anchor a3 = a0; a3.yLandmark = "landmark.elbow"; a3.yLandmark2 = "landmark.wrist"; a3.yLerp = 0.3;
       Edge top; top.id = "top"; top.kind = "seam"; top.role = "flounce_top"; top.from = RefPoint::of(a0); top.to = RefPoint::of(a1);
       Edge s1; s1.id = "side1"; s1.kind = "seam"; s1.from = RefPoint::of(a1); s1.to = RefPoint::of(a2);
       Edge bot; bot.id = "bottom"; bot.kind = "cut"; bot.finish = "rolled"; bot.from = RefPoint::of(a2); bot.to = RefPoint::of(a3);
@@ -229,7 +229,7 @@ int main(int argc, char** argv) {
       ok(!n2.ok, "  negatif: var olan dikis id: " + n2.hata); }
 
     // ---- moveVertex / reshapeEdge (yakayi 20 mm derinlestir)
-    { Anchor deep; deep.landmark = "landmark.neckFront"; deep.oran = 0.0; deep.yOfsetMM = 20.0;
+    { Anchor deep; deep.landmark = "landmark.neckFront"; deep.xFactor = 0.0; deep.yOffsetMM = 20.0;
       const Point y0 = pt(g, "on_beden", g.panel("on_beden")->edge("cf")->from, body);
       OpResult r = moveVertex(g, "on_beden", "cf", RefPoint::of(deep), ctx);
       ok(r.ok, "moveVertex on_beden/cf.from (yaka on ortasi) +20 mm: " + (r.ok ? "ok" : r.hata)); if (!r.ok) return 1;

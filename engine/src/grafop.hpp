@@ -46,13 +46,13 @@ OpResult subdivide(const Garment& g, const std::string& panel, const std::string
 // suppress (contract/primitives-v1.json op.suppress adi; pens = kenara uygulanan operator, HEDEF 1.9). trueLegs=true:
 // apeks x'i pens agzinin orta noktasindan (dik ortay) kurulur, verilen apeks yalniz y'yi verir -> bacaklar INSADAN esit
 // (yatay agizda tam; egik agizda dogrulayicinin kenar_turu dartLeg kurali yargilar). false: apeks oldugu gibi.
-OpResult suppress(const Garment& g, const std::string& panel, const std::string& edge, double atFraction, double intakeOran,
+OpResult suppress(const Garment& g, const std::string& panel, const std::string& edge, double atFraction, double intakeFraction,
                   const RefPoint& apex, const std::string& legId, bool trueLegs, const OpCtx& ctx);
 OpResult gather(const Garment& g, const std::string& panel, const std::string& edge, double ratio, const OpCtx& ctx);
 OpResult flare(const Garment& g, const std::string& panel, const std::string& edge, double factor, const OpCtx& ctx);
 OpResult extend(const Garment& g, const std::string& panel, const std::string& edge, double deltaMM, const OpCtx& ctx);
 OpResult shorten(const Garment& g, const std::string& panel, const std::string& edge, double deltaMM, const OpCtx& ctx);
-OpResult extendTo(const Garment& g, const std::string& panel, const std::string& edge, const std::string& yLandmark, double yOfsetMM, const OpCtx& ctx);
+OpResult extendTo(const Garment& g, const std::string& panel, const std::string& edge, const std::string& yLandmark, double yOffsetMM, const OpCtx& ctx);
 OpResult split(const Garment& g, const std::string& panel, const std::string& vertexA, const std::string& vertexB,
                const std::string& panelA, const std::string& panelB, const std::string& seam, double seamRatio, const OpCtx& ctx);
 OpResult overlay(const Garment& g, const std::string& host, const std::vector<std::string>& edges, double excessRatio,

@@ -111,12 +111,12 @@ int main(int argc, char** argv) {
       ok(yakaKopuk, "negatif [halka_kapanma] omuz dikisi yokken yaka halkasi KAVSAK YOK ile KOPUK");
       negs.push_back({"halka_kapanma", "omuz dikisi silindi -> yaka halkasi kopuk", reds(Rx), yakaKopuk}); }
     { Garment x = g; x.panel("on_beden")->onFold = false; neg("kenar_turu", "on_beden onFold=false ama cf fold kenari", x); }
-    { Anchor apexA; apexA.landmark = "landmark.waist"; apexA.xOf = "ringQuarter"; apexA.oran = 0.5; apexA.yLandmark = "landmark.bustApex"; apexA.yLandmark2 = "landmark.waist"; apexA.yOran = 0.15;
+    { Anchor apexA; apexA.landmark = "landmark.waist"; apexA.xOf = "ringQuarter"; apexA.xFactor = 0.5; apexA.yLandmark = "landmark.bustApex"; apexA.yLandmark2 = "landmark.waist"; apexA.yLerp = 0.15;
       OpResult d = suppress(g, "on_beden", "waist_front", 0.5, 0.2, RefPoint::of(apexA), "pens", true, ctx);
       ok(d.ok, "negatif hazirlik: govdeye pens acildi");
       neg("dikis_uzunluk", "yalniz govdede bel pensi (etekte yok) -> bel dikisi kisa", d.g);
       Garment x = d.g; Panel* p = x.panel("on_beden"); Edge* l1 = p->edge("pens.1");
-      Anchor a2 = apexA; a2.yOran = 0.3; l1->to = RefPoint::of(a2);   // yalniz 1. bacagin apeksi kaydi -> apeks ortak degil
+      Anchor a2 = apexA; a2.yLerp = 0.3; l1->to = RefPoint::of(a2);   // yalniz 1. bacagin apeksi kaydi -> apeks ortak degil
       neg("kenar_turu", "pens 1. bacaginin apeksi tek basina kaydirildi", x); }
     { Garment x = g; x.seam("bel")->ratio = 1.3; neg("dikis_uzunluk", "bel.ratio elle 1.3 (kenar uzatilmadan)", x); }
     { Garment x = g; x.seam("bel")->ratio = 9.0; neg("dikis_uzunluk", "bel.ratio 9.0 aralik disi", x); }

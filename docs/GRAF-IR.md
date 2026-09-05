@@ -1,4 +1,4 @@
-# GRAF IR — bir giysi grafi, iki beden, iki cikti (F2a, 2026-09-05; karar turu uygulandi: suppress · widthHalf/width · fitLength kisiti · Seam.reverse zincir · uydurma/esik tablosu)
+# GRAF IR — bir giysi grafi, iki beden, iki cikti (F2a, 2026-09-05; karar turu uygulandi: suppress · widthHalf/width · fitLength kisiti · Seam.reverse zincir · uydurma/esik tablosu; duzeltme turu: butun alan adlari Ingilizce, graf-v1 1.2.0)
 
 Kaynak: `contract/graf-v1.json` (sozlesme) · `engine/src/graf.hpp` (tipler, JSON, degerleme) ·
 `engine/src/grafop.hpp` (op'lar) · `engine/src/grafdogrula.hpp` (dogrulayici + sanal dikis).
@@ -16,18 +16,24 @@ oynatilir (HEDEF 2). Sozluk yok, menu yok: her giysi kenar/panel/dikis kompozisy
 
 | tip | ne | alanlar |
 |---|---|---|
-| **Anchor** | tek landmark terimi | `landmark`, `xOf` (landmark · ringFront · ringBack · ringQuarter · widthHalf), `ring` (YALNIZ ring*/landmark bolluk halkasi), `width` (YALNIZ widthHalf: `width.crossFront`), `oran`, `ofsetMM`, `yLandmark`, `yLandmark2`, `yOran`, `yOfsetMM` — bir alan tek anlam (karar 3), carpik kombinasyon parse+sema'da adiyla |
+| **Anchor** | tek landmark terimi | `landmark`, `xOf` (landmark · ringFront · ringBack · ringQuarter · widthHalf), `ring` (YALNIZ ring*/landmark bolluk halkasi), `width` (YALNIZ widthHalf: `width.crossFront`), `xFactor`, `xOffsetMM`, `yLandmark`, `yLandmark2`, `yLerp`, `yOffsetMM` — bir alan tek anlam (karar 3), carpik kombinasyon parse+sema'da adiyla |
 | **RefPoint** | nokta = Anchor'larin afin birlesimi (agirliklar 1'e toplanir) | tek terim: Anchor nesnesi; cok terim: `{"combo":[{w,...}]}` |
 | **Edge** | iki RefPoint arasi dogru (control bos) ya da kubik (2 control) | `id`, `kind` (cut · seam · fold · dartLeg), `role`, `rolePart/roleCount`, `from`, `to`, `control`, `finish`, `notches`, `gatherRatio`, `fitSeam` (KISIT: kontroller degerleme aninda bu dikisi kapatacak sekilde bedende cozulur, mm yok — karar 6) |
-| **Panel** | kapali kenar halkasi = bir kez kesilecek parca | `id`, `edges`, `grainDeg`, `onFold`, `cutCount`, `seamAllowanceMM`, `bolluk[]` (halka basina cevre mm), `gerekce` |
-| **Seam** | iki SIRALI kenar ZINCIRI + oran: `len(a) = ratio x len(b) + easeMM` | `id`, `a[]`, `b[]` (ardisik kenarlar tepe paylasir; yon zincirden turer), `reverse` (ZORUNLU: false a.bas<->b.bas, true a.bas<->b.son — karar 7), `ratio`, `easeMM`, `notchFractions` (a'nin basindan; b'de reverse ise 1-f), `closure{type,from,to}`, `gerekce` |
+| **Panel** | kapali kenar halkasi = bir kez kesilecek parca | `id`, `edges`, `grainDeg`, `onFold`, `cutCount`, `seamAllowanceMM`, `ease[]` (RingEase: halka basina cevre mm), `reason` |
+| **Seam** | iki SIRALI kenar ZINCIRI + oran: `len(a) = ratio x len(b) + easeMM` | `id`, `a[]`, `b[]` (ardisik kenarlar tepe paylasir; yon zincirden turer), `reverse` (ZORUNLU: false a.bas<->b.bas, true a.bas<->b.son — karar 7), `ratio`, `easeMM`, `notchFractions` (a'nin basindan; b'de reverse ise 1-f), `closure{type,from,to}`, `reason` |
 | **Ring** | aciklik (yaka, kol oyugu, bel, etek ucu, kol agzi) — sanal dikis kapanmasini olcer | `id`, `role`, `edges[]` |
 | **Garment** | paneller + dikisler + halkalar + op gecmisi | `id`, `version`, `notes`, `panels`, `seams`, `rings`, `ops[{op,args}]` |
 
-**Degerleme** (`eval(RefPoint, EvalCtx{body, bollukMM, onArkaEsit})`):
-`x = oran x taban + ofsetMM`; taban `xOf`'a gore landmark.x · `G(1-arkaPay)/2` · `G arkaPay/2` · `G/4` ·
+**Degerleme** (`eval(RefPoint, EvalCtx{body, ringEaseMM, onArkaEsit})`):
+`x = xFactor x taban + xOffsetMM`; taban `xOf`'a gore landmark.x · `G(1-arkaPay)/2` · `G arkaPay/2` · `G/4` ·
 `genislik/2`, `G = halka cevresi + bolluk` — **kumas = bedene bolluk alani**, cevre orantili buyur.
-`y = yLandmark.y (+ yOran x (yLandmark2.y - yLandmark.y)) + yOfsetMM`. Bilinmeyen landmark adiyla firlatir.
+`y = yLandmark.y (+ yLerp x (yLandmark2.y - yLandmark.y)) + yOffsetMM`. Bilinmeyen landmark adiyla firlatir.
+
+
+**Alan adlari Ingilizce** (graf-v1 1.2.0, F2a duzeltme turu — hakem kusuru 1): bu sema F4a (fotograf) ve F4b (prompt)
+katmaninin uretim hedefidir; anahtarlar tek dilde. Eski adlar (`oran`, `ofsetMM`, `yOran`, `yOfsetMM`, `bolluk`, `gerekce`,
+`intakeOran`) hic bir yerde kabul edilmez: sema `'<ad>' <Tip> icin tanimsiz alan`, parse `bilinmeyen alan '<ad>'` der
+(`graf_ir_check` (i): 7 anahtar x sema+parse negatif + applyOp `intakeOran` reddi). Aciklamalar TR+EN kalir.
 
 ## Degismezler (dogrulayici kurallari, `contract/graf-v1.json toleranslar`)
 
@@ -55,11 +61,11 @@ sutunuyla** basar (karar 5). Tolerans NaN ise dogrulayici **adiyla reddeder** (s
 | op | args | ne yapar | degismez |
 |---|---|---|---|
 | `subdivide` | panel, edge, fractions[] | kenari kesirlerde boler (De Casteljau, RefPoint uzayinda) | rol PARCALI (k/n), toplam uzunluk korunur, dikis/halka referanslari parcalara acilir |
-| `suppress` | panel, edge, atFraction, intakeOran, apex, legId, trueLegs (varsayilan true) | pens = kenara operator (ad `primitives-v1 op.suppress`, karar 2): kenardan intakeOran kadar iceri alir: sol + 2 dartLeg + sag; `trueLegs` apeksi agzin dik ortayina kurar (x agiz ortasindan, y verilen apeksten) | trueLegs ile bacaklar insadan esit (yatay agizda tam; egik agizda `kenar_turu` yargilar), kalan kenar (1-intake) x eski; aci parametre degil |
+| `suppress` | panel, edge, atFraction, intakeFraction, apex, legId, trueLegs (varsayilan true) | pens = kenara operator (ad `primitives-v1 op.suppress`, karar 2): kenardan intakeFraction kadar iceri alir: sol + 2 dartLeg + sag; `trueLegs` apeksi agzin dik ortayina kurar (x agiz ortasindan, y verilen apeksten) | trueLegs ile bacaklar insadan esit (yatay agizda tam; egik agizda `kenar_turu` yargilar), kalan kenar (1-intake) x eski; aci parametre degil |
 | `gather` | panel, edge, ratio | kenari kendi dogrultusunda ratio kat uzatir (kat kenarina dayaniyorsa x=0 etrafinda) | uzunluk tam ratio kat; tasidigi Seam.ratio guncellenir, buzulen taraf a |
 | `flare` | panel, edge, factor | serbest (cut) kenari factor kat acar | dikisli kenara reddedilir (gather onerir) |
 | `extend` / `shorten` | panel, edge, deltaMM | kenari +y / -y tasir (komsu kenarlar birlikte) | dusey komsu kenar tam delta uzar/kisalir |
-| `extendTo` | panel, edge, yLandmark, yOfsetMM | kenarin y tabanini baska landmark'a baglar (diz -> bilek) | y == landmark.y + ofset |
+| `extendTo` | panel, edge, yLandmark, yOffsetMM | kenarin y tabanini baska landmark'a baglar (diz -> bilek) | y == landmark.y + ofset |
 | `split` | panel, vertexA, vertexB, panelA, panelB, seam, seamRatio | paneli iki kose arasinda ikiye boler, yeni dikis ekler | kenar toplami n+2, iki panel kapali, roller iki panelde parcali, referanslar yeni panellere tasinir |
 | `overlay` | host, edges[], excessRatio, panel, seamPrefix | konagin kopyasi ust katman; sayilan kenarlar TEK homotetiyle excessRatio kat, konaga dikilir | konak BAYT-AYNI; her kenar tam ratio kat (egri dahil) |
 | `attach` | hostPanel, hostEdge, panel, edge, ratio, seam | yeni panel (fiyonk/cep/volan) konak kenara dikilir | konak bayt-ayni; acik panel reddedilir |
@@ -72,7 +78,7 @@ sutunuyla** basar (karar 5). Tolerans NaN ise dogrulayici **adiyla reddeder** (s
 **Edit modeli.** Her op yalniz adi gecen panel(ler)i degistirir; digerleri **bayt-ayni** kalir
 (edit-locality yasasi grafa tasindi; `graf_op_check` her opta olcer). Kayit `Garment.ops`'a eklenir;
 `replay(taban, ops)` ayni JSON'u verir (spec-diff deseni, Zoo/KittyCAD). F3c dogal dilden bu kayitlari
-dolduracak ("yakayi 2 cm derinlestir" = `moveVertex on_beden/cf {landmark.neckFront, oran 0, yOfsetMM 20}`).
+dolduracak ("yakayi 2 cm derinlestir" = `moveVertex on_beden/cf {landmark.neckFront, xFactor 0, yOffsetMM 20}`).
 Aralik sayilari (ratio, flare) `contract araliklar`'dan; OpCtx bos ise op reddeder.
 
 **K2/K5 kok sebebi.** `KOSU/ciktilar/primitif-DUSEN-*.txt`: roba/kup bolmesi kol oyugunun adini
@@ -115,13 +121,13 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "role": "cf",
           "from": {
             "landmark": "landmark.neckFront",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.waist",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           }
         },
         {
@@ -130,14 +136,14 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "role": "waist_front",
           "from": {
             "landmark": "landmark.waist",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "notches": [0.5]
         },
@@ -148,15 +154,15 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "from": {
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "notches": [0.5]
         },
@@ -170,18 +176,18 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.underarm",
             "xOf": "widthHalf",
             "width": "width.crossFront",
-            "oran": 1,
-            "ofsetMM": 0,
+            "xFactor": 1,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
             "yLandmark2": "landmark.shoulderTip",
-            "yOran": 0.5
+            "yLerp": 0.5
           },
           "control": [
             {
@@ -191,16 +197,16 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
                   "landmark": "landmark.underarm",
                   "xOf": "ringQuarter",
                   "ring": "girth.bust",
-                  "oran": 1,
-                  "ofsetMM": 0
+                  "xFactor": 1,
+                  "xOffsetMM": 0
                 },
                 {
                   "w": 0.5522847498307936,
                   "landmark": "landmark.underarm",
                   "xOf": "widthHalf",
                   "width": "width.crossFront",
-                  "oran": 1,
-                  "ofsetMM": 0
+                  "xFactor": 1,
+                  "xOffsetMM": 0
                 }
               ]
             },
@@ -208,11 +214,11 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
               "landmark": "landmark.underarm",
               "xOf": "widthHalf",
               "width": "width.crossFront",
-              "oran": 1,
-              "ofsetMM": 0,
+              "xFactor": 1,
+              "xOffsetMM": 0,
               "yLandmark": "landmark.underarm",
               "yLandmark2": "landmark.shoulderTip",
-              "yOran": 0.2761423749153968
+              "yLerp": 0.2761423749153968
             }
           ]
         },
@@ -226,43 +232,43 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
             "landmark": "landmark.underarm",
             "xOf": "widthHalf",
             "width": "width.crossFront",
-            "oran": 1,
-            "ofsetMM": 0,
+            "xFactor": 1,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
             "yLandmark2": "landmark.shoulderTip",
-            "yOran": 0.5
+            "yLerp": 0.5
           },
           "to": {
             "landmark": "landmark.shoulderTip",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "control": [
             {
               "landmark": "landmark.underarm",
               "xOf": "widthHalf",
               "width": "width.crossFront",
-              "oran": 1,
-              "ofsetMM": 0,
+              "xFactor": 1,
+              "xOffsetMM": 0,
               "yLandmark": "landmark.underarm",
               "yLandmark2": "landmark.shoulderTip",
-              "yOran": 0.7761423749153968
+              "yLerp": 0.7761423749153968
             },
             {
               "combo": [
                 {
                   "w": 0.44771525016920644,
                   "landmark": "landmark.shoulderTip",
-                  "oran": 1,
-                  "ofsetMM": 0
+                  "xFactor": 1,
+                  "xOffsetMM": 0
                 },
                 {
                   "w": 0.5522847498307936,
                   "landmark": "landmark.underarm",
                   "xOf": "widthHalf",
                   "width": "width.crossFront",
-                  "oran": 1,
-                  "ofsetMM": 0,
+                  "xFactor": 1,
+                  "xOffsetMM": 0,
                   "yLandmark": "landmark.shoulderTip"
                 }
               ]
@@ -275,13 +281,13 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "role": "shoulder",
           "from": {
             "landmark": "landmark.shoulderTip",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.neckBase",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           }
         },
         {
@@ -290,27 +296,27 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "role": "neck_front",
           "from": {
             "landmark": "landmark.neckBase",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.neckFront",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           },
           "control": [
             {
               "landmark": "landmark.neckBase",
-              "oran": 1,
-              "ofsetMM": 0,
+              "xFactor": 1,
+              "xOffsetMM": 0,
               "yLandmark": "landmark.neckBase",
               "yLandmark2": "landmark.neckFront",
-              "yOran": 0.5522847498307936
+              "yLerp": 0.5522847498307936
             },
             {
               "landmark": "landmark.neckBase",
-              "oran": 0.5522847498307936,
-              "ofsetMM": 0,
+              "xFactor": 0.5522847498307936,
+              "xOffsetMM": 0,
               "yLandmark": "landmark.neckFront"
             }
           ],
@@ -321,7 +327,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
       "onFold": true,
       "cutCount": 1,
       "seamAllowanceMM": 0,
-      "bolluk": [
+      "ease": [
         {
           "ring": "girth.bust",
           "mm": 6e+01
@@ -331,7 +337,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "mm": 25
         }
       ],
-      "gerekce": "on govde (kat)"
+      "reason": "on govde (kat)"
     },
     {
       "id": "arka_beden",
@@ -342,13 +348,13 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "role": "cb",
           "from": {
             "landmark": "landmark.nape",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.waist",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           }
         },
         {
@@ -357,14 +363,14 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "role": "waist_back",
           "from": {
             "landmark": "landmark.waist",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "notches": [0.5]
         },
@@ -375,15 +381,15 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "from": {
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "notches": [0.5]
         },
@@ -397,18 +403,18 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.underarm",
             "xOf": "widthHalf",
             "width": "width.crossBack",
-            "oran": 1,
-            "ofsetMM": 0,
+            "xFactor": 1,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
             "yLandmark2": "landmark.shoulderTip",
-            "yOran": 0.5
+            "yLerp": 0.5
           },
           "control": [
             {
@@ -418,16 +424,16 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
                   "landmark": "landmark.underarm",
                   "xOf": "ringQuarter",
                   "ring": "girth.bust",
-                  "oran": 1,
-                  "ofsetMM": 0
+                  "xFactor": 1,
+                  "xOffsetMM": 0
                 },
                 {
                   "w": 0.5522847498307936,
                   "landmark": "landmark.underarm",
                   "xOf": "widthHalf",
                   "width": "width.crossBack",
-                  "oran": 1,
-                  "ofsetMM": 0
+                  "xFactor": 1,
+                  "xOffsetMM": 0
                 }
               ]
             },
@@ -435,11 +441,11 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
               "landmark": "landmark.underarm",
               "xOf": "widthHalf",
               "width": "width.crossBack",
-              "oran": 1,
-              "ofsetMM": 0,
+              "xFactor": 1,
+              "xOffsetMM": 0,
               "yLandmark": "landmark.underarm",
               "yLandmark2": "landmark.shoulderTip",
-              "yOran": 0.2761423749153968
+              "yLerp": 0.2761423749153968
             }
           ]
         },
@@ -453,43 +459,43 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
             "landmark": "landmark.underarm",
             "xOf": "widthHalf",
             "width": "width.crossBack",
-            "oran": 1,
-            "ofsetMM": 0,
+            "xFactor": 1,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
             "yLandmark2": "landmark.shoulderTip",
-            "yOran": 0.5
+            "yLerp": 0.5
           },
           "to": {
             "landmark": "landmark.shoulderTip",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "control": [
             {
               "landmark": "landmark.underarm",
               "xOf": "widthHalf",
               "width": "width.crossBack",
-              "oran": 1,
-              "ofsetMM": 0,
+              "xFactor": 1,
+              "xOffsetMM": 0,
               "yLandmark": "landmark.underarm",
               "yLandmark2": "landmark.shoulderTip",
-              "yOran": 0.7761423749153968
+              "yLerp": 0.7761423749153968
             },
             {
               "combo": [
                 {
                   "w": 0.44771525016920644,
                   "landmark": "landmark.shoulderTip",
-                  "oran": 1,
-                  "ofsetMM": 0
+                  "xFactor": 1,
+                  "xOffsetMM": 0
                 },
                 {
                   "w": 0.5522847498307936,
                   "landmark": "landmark.underarm",
                   "xOf": "widthHalf",
                   "width": "width.crossBack",
-                  "oran": 1,
-                  "ofsetMM": 0,
+                  "xFactor": 1,
+                  "xOffsetMM": 0,
                   "yLandmark": "landmark.shoulderTip"
                 }
               ]
@@ -502,13 +508,13 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "role": "shoulder",
           "from": {
             "landmark": "landmark.shoulderTip",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.neckBase",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           }
         },
         {
@@ -517,27 +523,27 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "role": "neck_back",
           "from": {
             "landmark": "landmark.neckBase",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.nape",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           },
           "control": [
             {
               "landmark": "landmark.neckBase",
-              "oran": 1,
-              "ofsetMM": 0,
+              "xFactor": 1,
+              "xOffsetMM": 0,
               "yLandmark": "landmark.neckBase",
               "yLandmark2": "landmark.nape",
-              "yOran": 0.5522847498307936
+              "yLerp": 0.5522847498307936
             },
             {
               "landmark": "landmark.neckBase",
-              "oran": 0.5522847498307936,
-              "ofsetMM": 0,
+              "xFactor": 0.5522847498307936,
+              "xOffsetMM": 0,
               "yLandmark": "landmark.nape"
             }
           ],
@@ -548,7 +554,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
       "onFold": true,
       "cutCount": 1,
       "seamAllowanceMM": 0,
-      "bolluk": [
+      "ease": [
         {
           "ring": "girth.bust",
           "mm": 6e+01
@@ -558,7 +564,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "mm": 25
         }
       ],
-      "gerekce": "arka govde (kat)"
+      "reason": "arka govde (kat)"
     },
     {
       "id": "on_etek",
@@ -569,13 +575,13 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "role": "cf",
           "from": {
             "landmark": "landmark.waist",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.knee",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           }
         },
         {
@@ -584,14 +590,14 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "role": "hem_front",
           "from": {
             "landmark": "landmark.knee",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0,
+            "xFactor": 1,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.knee"
           },
           "finish": "hem"
@@ -605,15 +611,15 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "from": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0,
+            "xFactor": 1,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.knee"
           },
           "to": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           }
         },
         {
@@ -625,14 +631,14 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "from": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           }
         },
         {
@@ -642,13 +648,13 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "from": {
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.waist",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           },
           "notches": [0.5]
         }
@@ -657,7 +663,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
       "onFold": true,
       "cutCount": 1,
       "seamAllowanceMM": 0,
-      "bolluk": [
+      "ease": [
         {
           "ring": "girth.waist",
           "mm": 25
@@ -667,7 +673,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "mm": 5e+01
         }
       ],
-      "gerekce": "on etek (kat)"
+      "reason": "on etek (kat)"
     },
     {
       "id": "arka_etek",
@@ -678,13 +684,13 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "role": "cb",
           "from": {
             "landmark": "landmark.waist",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.knee",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           }
         },
         {
@@ -693,14 +699,14 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "role": "hem_back",
           "from": {
             "landmark": "landmark.knee",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0,
+            "xFactor": 1,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.knee"
           },
           "finish": "hem"
@@ -714,15 +720,15 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "from": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0,
+            "xFactor": 1,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.knee"
           },
           "to": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           }
         },
         {
@@ -734,14 +740,14 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "from": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           }
         },
         {
@@ -751,13 +757,13 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "from": {
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
-            "oran": 1,
-            "ofsetMM": 0
+            "xFactor": 1,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.waist",
-            "oran": 0,
-            "ofsetMM": 0
+            "xFactor": 0,
+            "xOffsetMM": 0
           },
           "notches": [0.5]
         }
@@ -766,7 +772,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
       "onFold": true,
       "cutCount": 1,
       "seamAllowanceMM": 0,
-      "bolluk": [
+      "ease": [
         {
           "ring": "girth.waist",
           "mm": 25
@@ -776,7 +782,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
           "mm": 5e+01
         }
       ],
-      "gerekce": "arka etek (kat)"
+      "reason": "arka etek (kat)"
     },
     {
       "id": "kol",
@@ -791,39 +797,39 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.biceps",
-            "oran": 0,
-            "ofsetMM": 0,
+            "xFactor": 0,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
             "yLandmark2": "landmark.shoulderTip",
-            "yOran": 0.6
+            "yLerp": 0.6
           },
           "to": {
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.biceps",
-            "oran": 2,
-            "ofsetMM": 0
+            "xFactor": 2,
+            "xOffsetMM": 0
           },
           "control": [
             {
               "landmark": "landmark.underarm",
               "xOf": "ringQuarter",
               "ring": "girth.biceps",
-              "oran": 1.1045694996615871,
-              "ofsetMM": 0,
+              "xFactor": 1.1045694996615871,
+              "xOffsetMM": 0,
               "yLandmark": "landmark.underarm",
               "yLandmark2": "landmark.shoulderTip",
-              "yOran": 0.6
+              "yLerp": 0.6
             },
             {
               "landmark": "landmark.underarm",
               "xOf": "ringQuarter",
               "ring": "girth.biceps",
-              "oran": 2,
-              "ofsetMM": 0,
+              "xFactor": 2,
+              "xOffsetMM": 0,
               "yLandmark": "landmark.underarm",
               "yLandmark2": "landmark.shoulderTip",
-              "yOran": 0.33137084989847615
+              "yLerp": 0.33137084989847615
             }
           ],
           "fitSeam": "kol_oyugu"
@@ -836,15 +842,15 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.biceps",
-            "oran": 2,
-            "ofsetMM": 0
+            "xFactor": 2,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.biceps",
-            "oran": 2,
-            "ofsetMM": 0,
+            "xFactor": 2,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.elbow"
           }
         },
@@ -856,16 +862,16 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.biceps",
-            "oran": 2,
-            "ofsetMM": 0,
+            "xFactor": 2,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.elbow"
           },
           "to": {
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.biceps",
-            "oran": -2,
-            "ofsetMM": 0,
+            "xFactor": -2,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.elbow"
           },
           "finish": "hem"
@@ -878,16 +884,16 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.biceps",
-            "oran": -2,
-            "ofsetMM": 0,
+            "xFactor": -2,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.elbow"
           },
           "to": {
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.biceps",
-            "oran": -2,
-            "ofsetMM": 0
+            "xFactor": -2,
+            "xOffsetMM": 0
           }
         },
         {
@@ -900,39 +906,39 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.biceps",
-            "oran": -2,
-            "ofsetMM": 0
+            "xFactor": -2,
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.underarm",
             "xOf": "ringQuarter",
             "ring": "girth.biceps",
-            "oran": 0,
-            "ofsetMM": 0,
+            "xFactor": 0,
+            "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
             "yLandmark2": "landmark.shoulderTip",
-            "yOran": 0.6
+            "yLerp": 0.6
           },
           "control": [
             {
               "landmark": "landmark.underarm",
               "xOf": "ringQuarter",
               "ring": "girth.biceps",
-              "oran": -2,
-              "ofsetMM": 0,
+              "xFactor": -2,
+              "xOffsetMM": 0,
               "yLandmark": "landmark.underarm",
               "yLandmark2": "landmark.shoulderTip",
-              "yOran": 0.33137084989847615
+              "yLerp": 0.33137084989847615
             },
             {
               "landmark": "landmark.underarm",
               "xOf": "ringQuarter",
               "ring": "girth.biceps",
-              "oran": -1.1045694996615871,
-              "ofsetMM": 0,
+              "xFactor": -1.1045694996615871,
+              "xOffsetMM": 0,
               "yLandmark": "landmark.underarm",
               "yLandmark2": "landmark.shoulderTip",
-              "yOran": 0.6
+              "yLerp": 0.6
             }
           ],
           "fitSeam": "kol_oyugu"
@@ -942,13 +948,13 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
       "onFold": false,
       "cutCount": 2,
       "seamAllowanceMM": 0,
-      "bolluk": [
+      "ease": [
         {
           "ring": "girth.biceps",
           "mm": 40.5
         }
       ],
-      "gerekce": "kol (2 kes)"
+      "reason": "kol (2 kes)"
     }
   ],
   "seams": [
@@ -969,7 +975,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
       "reverse": false,
       "ratio": 1,
       "easeMM": 0,
-      "gerekce": "omuz dikisi: omuz ucu <-> omuz ucu, boyun <-> boyun"
+      "reason": "omuz dikisi: omuz ucu <-> omuz ucu, boyun <-> boyun"
     },
     {
       "id": "yan_beden",
@@ -989,7 +995,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
       "ratio": 1,
       "easeMM": 0,
       "notchFractions": [0.5],
-      "gerekce": "govde yan dikisi: bel <-> bel, koltukalti <-> koltukalti"
+      "reason": "govde yan dikisi: bel <-> bel, koltukalti <-> koltukalti"
     },
     {
       "id": "kol_oyugu",
@@ -1024,7 +1030,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
       "reverse": false,
       "ratio": 1.04,
       "easeMM": 0,
-      "gerekce": "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)"
+      "reason": "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)"
     },
     {
       "id": "bel",
@@ -1052,7 +1058,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
       "ratio": 1,
       "easeMM": 0,
       "notchFractions": [0.25, 0.75],
-      "gerekce": "bel dikisi (govde -> etek): CF <-> CF, yan <-> yan, CB <-> CB"
+      "reason": "bel dikisi (govde -> etek): CF <-> CF, yan <-> yan, CB <-> CB"
     },
     {
       "id": "yan_etek",
@@ -1079,7 +1085,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
       "reverse": false,
       "ratio": 1,
       "easeMM": 0,
-      "gerekce": "etek yan dikisi: etek ucu <-> etek ucu, bel <-> bel"
+      "reason": "etek yan dikisi: etek ucu <-> etek ucu, bel <-> bel"
     },
     {
       "id": "kol_alti",
@@ -1098,7 +1104,7 @@ yok. Negatif tablo: `KOSU/ciktilar/graf-ilk/dikilebilir-negatif.md` (her kural i
       "reverse": true,
       "ratio": 1,
       "easeMM": 0,
-      "gerekce": "kol alti dikisi: kose <-> kose, agiz <-> agiz (reverse)"
+      "reason": "kol alti dikisi: kose <-> kose, agiz <-> agiz (reverse)"
     }
   ],
   "rings": [

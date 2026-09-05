@@ -154,10 +154,10 @@ OpResult opSubdivide(const Garment& g0, const JVal& a, const OpCtx&) {
 OpResult opSuppress(const Garment& g0, const JVal& a, const OpCtx&) {
     std::string pid, eid, legId, err; double at, intake; RefPoint apex;
     if (!needS(a, "panel", pid, err) || !needS(a, "edge", eid, err) || !needN(a, "atFraction", at, err) ||
-        !needN(a, "intakeOran", intake, err) || !needP(a, "apex", apex, err) || !needS(a, "legId", legId, err)) return fail("suppress: " + err);
+        !needN(a, "intakeFraction", intake, err) || !needP(a, "apex", apex, err) || !needS(a, "legId", legId, err)) return fail("suppress: " + err);
     const bool trueLegs = a.boolOr("trueLegs", true);   // primitives-v1 op.suppress.trueLegs varsayilan true
     if (a.has("trueLegs") && !a.get("trueLegs")->isBool()) return fail("suppress: trueLegs bool degil");
-    if (!(intake > 0.0 && intake < 1.0)) return fail("suppress: intakeOran (0,1) disinda " + fmtNum(intake));
+    if (!(intake > 0.0 && intake < 1.0)) return fail("suppress: intakeFraction (0,1) disinda " + fmtNum(intake));
     const double f0 = at - intake / 2.0, f1 = at + intake / 2.0;
     if (!(f0 > 0.0 && f1 < 1.0)) return fail("suppress: pens agzi kenarin disina tasiyor [" + fmtNum(f0) + ", " + fmtNum(f1) + "]");
     Garment g = g0;
@@ -175,7 +175,7 @@ OpResult opSuppress(const Garment& g0, const JVal& a, const OpCtx&) {
         RefPoint mid = lerp(parts[1].from, parts[1].to, 0.5);
         for (Term& t : mid.terms) {
             t.a.yLandmark = ay.yLandmark.empty() ? ay.landmark : ay.yLandmark;
-            t.a.yLandmark2 = ay.yLandmark2; t.a.yOran = ay.yOran; t.a.yOfsetMM = ay.yOfsetMM;
+            t.a.yLandmark2 = ay.yLandmark2; t.a.yLerp = ay.yLerp; t.a.yOffsetMM = ay.yOffsetMM;
         }
         mid.normalize();
         apex = mid;
@@ -253,12 +253,12 @@ OpResult opShorten(const Garment& g, const JVal& a, const OpCtx&) { return opExt
 OpResult opExtendTo(const Garment& g0, const JVal& a, const OpCtx&) {
     std::string pid, eid, lm, err; double yo = 0;
     if (!needS(a, "panel", pid, err) || !needS(a, "edge", eid, err) || !needS(a, "yLandmark", lm, err)) return fail("extendTo: " + err);
-    yo = a.numOr("yOfsetMM", 0.0);
+    yo = a.numOr("yOffsetMM", 0.0);
     Garment g = g0;
     Panel* p = g.panel(pid); if (!p) return fail("extendTo: panel yok " + pid);
     const int idx = p->edgeIndex(eid); if (idx < 0) return fail("extendTo: kenar yok " + refStr(pid, eid));
     Edge& e = p->edges[idx];
-    auto retg = [&](RefPoint q) { for (Term& t : q.terms) { t.a.yLandmark = lm; t.a.yLandmark2.clear(); t.a.yOran = 0; t.a.yOfsetMM = yo; } q.normalize(); return q; };
+    auto retg = [&](RefPoint q) { for (Term& t : q.terms) { t.a.yLandmark = lm; t.a.yLandmark2.clear(); t.a.yLerp = 0; t.a.yOffsetMM = yo; } q.normalize(); return q; };
     const RefPoint nf = retg(e.from), nt = retg(e.to);
     for (RefPoint& c : e.control) c = retg(c);
     const size_t n = p->edges.size();
@@ -292,8 +292,8 @@ OpResult opSplit(const Garment& g0, const JVal& a, const OpCtx& ctx) {
     P1.edges.push_back(cut1); P2.edges.push_back(cut2);
     auto hasFold = [](const Panel& p) { for (const Edge& e : p.edges) if (e.kind == "fold") return true; return false; };
     P1.onFold = hasFold(P1); P2.onFold = hasFold(P2);
-    P1.gerekce = src->gerekce.empty() ? ("split of " + pid) : (src->gerekce + " | split of " + pid);
-    P2.gerekce = P1.gerekce;
+    P1.reason = src->reason.empty() ? ("split of " + pid) : (src->reason + " | split of " + pid);
+    P2.reason = P1.reason;
     Garment g = g0;
     // referanslar: eski panelden yeni panellere
     for (const Edge& e : P1.edges) retarget(g, pid, e.id, pA);
@@ -302,7 +302,7 @@ OpResult opSplit(const Garment& g0, const JVal& a, const OpCtx& ctx) {
     for (size_t i = 0; i < g.panels.size(); ++i) if (g.panels[i].id == pid) {
         g.panels[i] = P1; g.panels.insert(g.panels.begin() + static_cast<long>(i) + 1, P2); break;
     }
-    Seam s; s.id = sid; s.a = {{pA, cut1.id}}; s.b = {{pB, cut2.id}}; s.ratio = 1.0; s.gerekce = "split of " + pid;
+    Seam s; s.id = sid; s.a = {{pA, cut1.id}}; s.b = {{pB, cut2.id}}; s.ratio = 1.0; s.reason = "split of " + pid;
     g.seams.push_back(s);
     if (ratio != 1.0) {
         Panel* q = g.panel(pA);
@@ -321,7 +321,7 @@ OpResult opOverlay(const Garment& g0, const JVal& a, const OpCtx& ctx) {
     if (!checkRatio(r, ctx, "overlay", err)) return fail(err);
     if (g0.panel(np)) return fail("overlay: panel id zaten var " + np);
     const Panel* h = g0.panel(host); if (!h) return fail("overlay: konak panel yok " + host);
-    Panel q = *h; q.id = np; q.gerekce = "overlay of " + host;
+    Panel q = *h; q.id = np; q.reason = "overlay of " + host;
     Garment g = g0;
     std::vector<int> idxs;
     for (const JVal& ev : es->a) {
@@ -329,7 +329,7 @@ OpResult opOverlay(const Garment& g0, const JVal& a, const OpCtx& ctx) {
         const int idx = q.edgeIndex(ev.s); if (idx < 0) return fail("overlay: konak kenari yok " + refStr(host, ev.s));
         if (q.edges[idx].kind == "fold") return fail("overlay: kat kenari buzulmez " + ev.s);
         idxs.push_back(idx);
-        Seam s; s.id = sp + "." + ev.s; s.a = {{np, ev.s}}; s.b = {{host, ev.s}}; s.ratio = r; s.gerekce = "overlay " + np + " -> " + host;
+        Seam s; s.id = sp + "." + ev.s; s.a = {{np, ev.s}}; s.b = {{host, ev.s}}; s.ratio = r; s.reason = "overlay " + np + " -> " + host;
         if (g.seam(s.id)) return fail("overlay: dikis id zaten var " + s.id);
         g.seams.push_back(s);
     }
@@ -353,7 +353,7 @@ OpResult opAttach(const Garment& g0, const JVal& a, const OpCtx& ctx) {
     if (!checkRatio(r >= 1.0 ? r : 1.0 / r, ctx, "attach", err)) return fail(err);
     Garment g = g0;
     g.panels.push_back(np);
-    Seam s; s.id = sid; s.gerekce = "attach " + np.id + " -> " + hp;
+    Seam s; s.id = sid; s.reason = "attach " + np.id + " -> " + hp;
     if (r >= 1.0) { s.a = {{np.id, ne}}; s.b = {{hp, he}}; s.ratio = r; }
     else { s.a = {{hp, he}}; s.b = {{np.id, ne}}; s.ratio = 1.0 / r; }
     g.seams.push_back(s);
@@ -396,7 +396,7 @@ OpResult opMirror(const Garment& g0, const JVal& a, const OpCtx&) {
     if (!needS(a, "panel", pid, err) || !needS(a, "newId", nid, err)) return fail("mirror: " + err);
     if (g0.panel(nid)) return fail("mirror: panel id zaten var " + nid);
     const Panel* p = g0.panel(pid); if (!p) return fail("mirror: panel yok " + pid);
-    Panel q = *p; q.id = nid; q.edges.clear(); q.gerekce = "mirror of " + pid;
+    Panel q = *p; q.id = nid; q.edges.clear(); q.reason = "mirror of " + pid;
     for (auto it = p->edges.rbegin(); it != p->edges.rend(); ++it) {
         Edge e = it->reversed();
         e.from = mirrorX(e.from); e.to = mirrorX(e.to);
@@ -474,10 +474,10 @@ OpResult subdivide(const Garment& g, const std::string& panel, const std::string
     JVal f = JVal::arr(); for (double x : fr) f.push(JVal::num(x)); a.set("fractions", f);
     return applyOp(g, {"subdivide", a}, ctx);
 }
-OpResult suppress(const Garment& g, const std::string& panel, const std::string& edge, double atFraction, double intakeOran,
+OpResult suppress(const Garment& g, const std::string& panel, const std::string& edge, double atFraction, double intakeFraction,
                   const RefPoint& apex, const std::string& legId, bool trueLegs, const OpCtx& ctx) {
     JVal a = A(); a.set("panel", JVal::str(panel)); a.set("edge", JVal::str(edge)); a.set("atFraction", JVal::num(atFraction));
-    a.set("intakeOran", JVal::num(intakeOran)); a.set("apex", toJSON(apex)); a.set("legId", JVal::str(legId)); a.set("trueLegs", JVal::boolean(trueLegs));
+    a.set("intakeFraction", JVal::num(intakeFraction)); a.set("apex", toJSON(apex)); a.set("legId", JVal::str(legId)); a.set("trueLegs", JVal::boolean(trueLegs));
     return applyOp(g, {"suppress", a}, ctx);
 }
 OpResult gather(const Garment& g, const std::string& panel, const std::string& edge, double ratio, const OpCtx& ctx) {
@@ -496,8 +496,8 @@ OpResult shorten(const Garment& g, const std::string& panel, const std::string& 
     JVal a = A(); a.set("panel", JVal::str(panel)); a.set("edge", JVal::str(edge)); a.set("deltaMM", JVal::num(deltaMM));
     return applyOp(g, {"shorten", a}, ctx);
 }
-OpResult extendTo(const Garment& g, const std::string& panel, const std::string& edge, const std::string& yLandmark, double yOfsetMM, const OpCtx& ctx) {
-    JVal a = A(); a.set("panel", JVal::str(panel)); a.set("edge", JVal::str(edge)); a.set("yLandmark", JVal::str(yLandmark)); a.set("yOfsetMM", JVal::num(yOfsetMM));
+OpResult extendTo(const Garment& g, const std::string& panel, const std::string& edge, const std::string& yLandmark, double yOffsetMM, const OpCtx& ctx) {
+    JVal a = A(); a.set("panel", JVal::str(panel)); a.set("edge", JVal::str(edge)); a.set("yLandmark", JVal::str(yLandmark)); a.set("yOffsetMM", JVal::num(yOffsetMM));
     return applyOp(g, {"extendTo", a}, ctx);
 }
 OpResult split(const Garment& g, const std::string& panel, const std::string& vertexA, const std::string& vertexB,
@@ -582,7 +582,7 @@ CozumSonucu cozumle(const Garment& g, const Body& body, bool onArkaEsit, const O
         const double L = std::hypot(t.x - f.x, t.y - f.y);
         if (L < 1e-9) { R.hata = "cozumle: " + p.id + "/" + e.id + " kiris sifir"; return R; }
         const double nx = -(t.y - f.y) / L, ny = (t.x - f.x) / L;   // kiris normali (sol el)
-        auto shifted = [&](double d) { Edge c = e; for (RefPoint& cp : c.control) { for (Term& tm : cp.terms) { tm.a.ofsetMM += d * nx; tm.a.yOfsetMM += d * ny; } cp.normalize(); } return c; };
+        auto shifted = [&](double d) { Edge c = e; for (RefPoint& cp : c.control) { for (Term& tm : cp.terms) { tm.a.xOffsetMM += d * nx; tm.a.yOffsetMM += d * ny; } cp.normalize(); } return c; };
         auto lenAt = [&](double d) { return shifted(d).length(ectx); };
         // (len(d) - hedef) isaret degistiren en dar aralik: [-dMax, dMax] uzerinde 80 adimlik tarama, sifira en yakin kok
         const int N = 80; double best = 0, bestErr = std::fabs(lenAt(0) - hedef); bool found = false;

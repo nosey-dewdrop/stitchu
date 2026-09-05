@@ -193,12 +193,12 @@ int cmpAnchor(const Anchor& x, const Anchor& y) {
     if (x.xOf != y.xOf) return x.xOf < y.xOf ? -1 : 1;
     if (x.ring != y.ring) return x.ring < y.ring ? -1 : 1;
     if (x.width != y.width) return x.width < y.width ? -1 : 1;
-    if (!feq(x.oran, y.oran)) return x.oran < y.oran ? -1 : 1;
-    if (!feq(x.ofsetMM, y.ofsetMM)) return x.ofsetMM < y.ofsetMM ? -1 : 1;
+    if (!feq(x.xFactor, y.xFactor)) return x.xFactor < y.xFactor ? -1 : 1;
+    if (!feq(x.xOffsetMM, y.xOffsetMM)) return x.xOffsetMM < y.xOffsetMM ? -1 : 1;
     if (x.yLandmark != y.yLandmark) return x.yLandmark < y.yLandmark ? -1 : 1;
     if (x.yLandmark2 != y.yLandmark2) return x.yLandmark2 < y.yLandmark2 ? -1 : 1;
-    if (!feq(x.yOran, y.yOran)) return x.yOran < y.yOran ? -1 : 1;
-    if (!feq(x.yOfsetMM, y.yOfsetMM)) return x.yOfsetMM < y.yOfsetMM ? -1 : 1;
+    if (!feq(x.yLerp, y.yLerp)) return x.yLerp < y.yLerp ? -1 : 1;
+    if (!feq(x.yOffsetMM, y.yOffsetMM)) return x.yOffsetMM < y.yOffsetMM ? -1 : 1;
     return 0;
 }
 } // namespace
@@ -224,7 +224,7 @@ bool RefPoint::operator==(const RefPoint& o) const {
     return true;
 }
 bool RefPoint::xSifir() const {
-    for (const Term& t : terms) if (!(feq(t.a.oran, 0.0) && feq(t.a.ofsetMM, 0.0))) return false;
+    for (const Term& t : terms) if (!(feq(t.a.xFactor, 0.0) && feq(t.a.xOffsetMM, 0.0))) return false;
     return !terms.empty();
 }
 
@@ -241,13 +241,13 @@ RefPoint affine(const std::vector<std::pair<double, RefPoint>>& terms) {
 }
 RefPoint scaleX(const RefPoint& p, double k) {
     RefPoint out = p;
-    for (Term& t : out.terms) { t.a.oran *= k; t.a.ofsetMM *= k; }
+    for (Term& t : out.terms) { t.a.xFactor *= k; t.a.xOffsetMM *= k; }
     out.normalize();
     return out;
 }
 RefPoint shiftY(const RefPoint& p, double dyMM) {
     RefPoint out = p;
-    for (Term& t : out.terms) t.a.yOfsetMM += dyMM;   // her terim ayni kaymayi alir: sum w x dy = dy
+    for (Term& t : out.terms) t.a.yOffsetMM += dyMM;   // her terim ayni kaymayi alir: sum w x dy = dy
     out.normalize();
     return out;
 }
@@ -268,8 +268,8 @@ bool anchorXOfTutarli(const std::string& xOf, const std::string& ring, const std
     return true;
 }
 
-double EvalCtx::bolluk(const std::string& ring) const {
-    for (const auto& kv : bollukMM) if (kv.first == ring) return kv.second;
+double EvalCtx::ringEase(const std::string& ring) const {
+    for (const auto& kv : ringEaseMM) if (kv.first == ring) return kv.second;
     return 0.0;
 }
 
@@ -282,13 +282,13 @@ Point eval(const Anchor& a, const EvalCtx& ctx) {
     if (a.xOf == "landmark") {
         baseX = L.x;
         if (!ring.empty() && body.hasRing(ring)) {
-            const double G = body.ring(ring), E = ctx.bolluk(ring);
+            const double G = body.ring(ring), E = ctx.ringEase(ring);
             if (G > 0) baseX *= (1.0 + E / G);   // bolluk cevreyi orantili buyutur
         }
     } else if (a.xOf == "ringFront" || a.xOf == "ringBack" || a.xOf == "ringQuarter") {
         if (ring.empty() || !body.hasRing(ring))
             throw std::runtime_error("graf eval: " + a.landmark + " icin halka yok (" + a.xOf + ", ring='" + ring + "', " + body.id() + ")");
-        const double G = body.ring(ring) + ctx.bolluk(ring);
+        const double G = body.ring(ring) + ctx.ringEase(ring);
         const double backFrac = ctx.onArkaEsit ? 0.5 : body.ringBackFrac(ring);
         const double pay = a.xOf == "ringFront" ? (1.0 - backFrac) : a.xOf == "ringBack" ? backFrac : 0.5;
         baseX = G * pay / 2.0;
@@ -300,13 +300,13 @@ Point eval(const Anchor& a, const EvalCtx& ctx) {
     } else {
         throw std::runtime_error("graf eval: bilinmeyen xOf '" + a.xOf + "' (" + a.landmark + ")");
     }
-    const double x = a.oran * baseX + a.ofsetMM;
+    const double x = a.xFactor * baseX + a.xOffsetMM;
     double y = a.yLandmark.empty() ? L.y : body.landmark(a.yLandmark).y;
     if (!a.yLandmark2.empty()) {
         const double y2 = body.landmark(a.yLandmark2).y;
-        y = y + a.yOran * (y2 - y);
+        y = y + a.yLerp * (y2 - y);
     }
-    y += a.yOfsetMM;
+    y += a.yOffsetMM;
     return {x, y};
 }
 Point eval(const RefPoint& p, const EvalCtx& ctx) {
@@ -432,7 +432,7 @@ std::vector<PathCommand> Panel::outline(const EvalCtx& ctx) const {
 }
 EvalCtx Panel::ctxFor(const Body& body, bool onArkaEsit) const {
     EvalCtx c; c.body = &body; c.onArkaEsit = onArkaEsit;
-    for (const Bolluk& b : bolluk) c.bollukMM.emplace_back(b.ring, b.mm);
+    for (const RingEase& b : ease) c.ringEaseMM.emplace_back(b.ring, b.mm);
     return c;
 }
 
@@ -455,15 +455,15 @@ void anchorInto(JVal& o, const Anchor& a) {
     if (a.xOf != "landmark") o.set("xOf", JVal::str(a.xOf));
     if (!a.ring.empty()) o.set("ring", JVal::str(a.ring));
     if (!a.width.empty()) o.set("width", JVal::str(a.width));
-    o.set("oran", JVal::num(a.oran));
-    o.set("ofsetMM", JVal::num(a.ofsetMM));
+    o.set("xFactor", JVal::num(a.xFactor));
+    o.set("xOffsetMM", JVal::num(a.xOffsetMM));
     if (!a.yLandmark.empty()) o.set("yLandmark", JVal::str(a.yLandmark));
-    if (!a.yLandmark2.empty()) { o.set("yLandmark2", JVal::str(a.yLandmark2)); o.set("yOran", JVal::num(a.yOran)); }
-    if (a.yOfsetMM != 0.0) o.set("yOfsetMM", JVal::num(a.yOfsetMM));
+    if (!a.yLandmark2.empty()) { o.set("yLandmark2", JVal::str(a.yLandmark2)); o.set("yLerp", JVal::num(a.yLerp)); }
+    if (a.yOffsetMM != 0.0) o.set("yOffsetMM", JVal::num(a.yOffsetMM));
 }
 bool anchorFrom(const JVal& v, Anchor& a, std::string& err, const char* where, bool allowW) {
     if (!v.isObj()) { err = std::string(where) + ": nokta nesne degil"; return false; }
-    static const char* const kAllowed[] = {"landmark", "xOf", "ring", "width", "oran", "ofsetMM", "yLandmark", "yLandmark2", "yOran", "yOfsetMM"};
+    static const char* const kAllowed[] = {"landmark", "xOf", "ring", "width", "xFactor", "xOffsetMM", "yLandmark", "yLandmark2", "yLerp", "yOffsetMM"};
     for (const auto& kv : v.o) {
         bool ok = allowW && kv.first == "w";
         for (const char* k : kAllowed) if (kv.first == k) ok = true;
@@ -475,14 +475,14 @@ bool anchorFrom(const JVal& v, Anchor& a, std::string& err, const char* where, b
     a.ring = v.strOr("ring", "");
     a.width = v.strOr("width", "");
     { std::string why; if (!anchorXOfTutarli(a.xOf, a.ring, a.width, why)) { err = std::string(where) + ": " + why + " (" + a.landmark + ")"; return false; } }
-    if (!v.get("oran") || !v.get("oran")->isNum()) { err = std::string(where) + ": oran eksik (" + a.landmark + ")"; return false; }
-    a.oran = v.get("oran")->n;
-    a.ofsetMM = v.numOr("ofsetMM", 0.0);
+    if (!v.get("xFactor") || !v.get("xFactor")->isNum()) { err = std::string(where) + ": xFactor eksik (" + a.landmark + ")"; return false; }
+    a.xFactor = v.get("xFactor")->n;
+    a.xOffsetMM = v.numOr("xOffsetMM", 0.0);
     a.yLandmark = v.strOr("yLandmark", "");
     a.yLandmark2 = v.strOr("yLandmark2", "");
-    a.yOran = v.numOr("yOran", 0.0);
-    a.yOfsetMM = v.numOr("yOfsetMM", 0.0);
-    if (a.yLandmark2.empty() && a.yOran != 0.0) { err = std::string(where) + ": yLandmark2 yokken yOran anlamsiz"; return false; }
+    a.yLerp = v.numOr("yLerp", 0.0);
+    a.yOffsetMM = v.numOr("yOffsetMM", 0.0);
+    if (a.yLandmark2.empty() && a.yLerp != 0.0) { err = std::string(where) + ": yLandmark2 yokken yLerp anlamsiz"; return false; }
     return true;
 }
 JVal numArr(const std::vector<double>& xs) { JVal a = JVal::arr(); for (double x : xs) a.push(JVal::num(x)); return a; }
@@ -600,18 +600,18 @@ JVal toJSON(const Panel& p) {
     o.set("onFold", JVal::boolean(p.onFold));
     o.set("cutCount", JVal::num(p.cutCount));
     o.set("seamAllowanceMM", JVal::num(p.seamAllowanceMM));
-    if (!p.bolluk.empty()) {
+    if (!p.ease.empty()) {
         JVal b = JVal::arr();
-        for (const Bolluk& x : p.bolluk) { JVal bo = JVal::obj(); bo.set("ring", JVal::str(x.ring)); bo.set("mm", JVal::num(x.mm)); b.push(bo); }
-        o.set("bolluk", b);
+        for (const RingEase& x : p.ease) { JVal bo = JVal::obj(); bo.set("ring", JVal::str(x.ring)); bo.set("mm", JVal::num(x.mm)); b.push(bo); }
+        o.set("ease", b);
     }
-    if (!p.gerekce.empty()) o.set("gerekce", JVal::str(p.gerekce));
+    if (!p.reason.empty()) o.set("reason", JVal::str(p.reason));
     return o;
 }
 bool fromJSON(const JVal& v, Panel& out, std::string& err) {
     out = Panel();
     const std::string where = "Panel " + v.strOr("id", "?");
-    if (!onlyKeys(v, {"id", "edges", "grainDeg", "onFold", "cutCount", "seamAllowanceMM", "bolluk", "gerekce"}, err, where)) return false;
+    if (!onlyKeys(v, {"id", "edges", "grainDeg", "onFold", "cutCount", "seamAllowanceMM", "ease", "reason"}, err, where)) return false;
     if (!needStr(v, "id", out.id, err, where)) return false;
     const JVal* es = v.get("edges");
     if (!es || !es->isArr()) { err = where + ": edges eksik"; return false; }
@@ -620,18 +620,18 @@ bool fromJSON(const JVal& v, Panel& out, std::string& err) {
     out.onFold = v.boolOr("onFold", false);
     out.cutCount = static_cast<int>(v.numOr("cutCount", 1));
     out.seamAllowanceMM = v.numOr("seamAllowanceMM", 0.0);
-    if (const JVal* b = v.get("bolluk")) {
-        if (!b->isArr()) { err = where + ": bolluk dizi degil"; return false; }
+    if (const JVal* b = v.get("ease")) {
+        if (!b->isArr()) { err = where + ": ease dizi degil"; return false; }
         for (const JVal& x : b->a) {
-            Bolluk bo;
-            if (!onlyKeys(x, {"ring", "mm"}, err, where + " bolluk")) return false;
-            if (!needStr(x, "ring", bo.ring, err, where + " bolluk")) return false;
-            if (!x.get("mm") || !x.get("mm")->isNum()) { err = where + " bolluk: mm eksik"; return false; }
+            RingEase bo;
+            if (!onlyKeys(x, {"ring", "mm"}, err, where + " ease")) return false;
+            if (!needStr(x, "ring", bo.ring, err, where + " ease")) return false;
+            if (!x.get("mm") || !x.get("mm")->isNum()) { err = where + " ease: mm eksik"; return false; }
             bo.mm = x.get("mm")->n;
-            out.bolluk.push_back(bo);
+            out.ease.push_back(bo);
         }
     }
-    out.gerekce = v.strOr("gerekce", "");
+    out.reason = v.strOr("reason", "");
     return true;
 }
 
@@ -651,13 +651,13 @@ JVal toJSON(const Seam& s) {
         c.set("toFraction", JVal::num(s.closure.toFraction));
         o.set("closure", c);
     }
-    if (!s.gerekce.empty()) o.set("gerekce", JVal::str(s.gerekce));
+    if (!s.reason.empty()) o.set("reason", JVal::str(s.reason));
     return o;
 }
 bool fromJSON(const JVal& v, Seam& out, std::string& err) {
     out = Seam();
     const std::string where = "Seam " + v.strOr("id", "?");
-    if (!onlyKeys(v, {"id", "a", "b", "reverse", "ratio", "easeMM", "notchFractions", "closure", "gerekce"}, err, where)) return false;
+    if (!onlyKeys(v, {"id", "a", "b", "reverse", "ratio", "easeMM", "notchFractions", "closure", "reason"}, err, where)) return false;
     if (!needStr(v, "id", out.id, err, where)) return false;
     if (!refsFrom(v.get("a"), out.a, err, where + " a") || !refsFrom(v.get("b"), out.b, err, where + " b")) return false;
     if (out.a.empty() || out.b.empty()) { err = where + ": iki taraf da en az bir kenar tasimali"; return false; }
@@ -671,7 +671,7 @@ bool fromJSON(const JVal& v, Seam& out, std::string& err) {
         out.closure.fromFraction = c->numOr("fromFraction", 0.0);
         out.closure.toFraction = c->numOr("toFraction", 1.0);
     }
-    out.gerekce = v.strOr("gerekce", "");
+    out.reason = v.strOr("reason", "");
     return true;
 }
 

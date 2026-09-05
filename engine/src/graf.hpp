@@ -10,14 +10,14 @@
 // dogrulama + sanal dikis grafdogrula.hpp'de.
 //
 // KOORDINAT (contract/body-v1.json koordinat blogu ile ayni cumle): x=0 CF/CB, y=0 omuz
-// cizgisi (neckBase), +y asagi, mm. Bir Anchor'un x'i "oran x taban + ofsetMM"dir; taban
+// cizgisi (neckBase), +y asagi, mm. Bir Anchor'un x'i "xFactor x taban + xOffsetMM"dir; taban
 // ya landmark'in kendi x'i (croquis: cevre/4 tup) ya da halka cevresinden turetilen
 // on/arka/ceyrek pay (kalip: gercek bedende landmark.x govde IZDUSUMUDUR, kalip parcasi
 // ise cevrenin payini tasir). Bolluk (kumas payi) DEGERLEME baglaminda halka basina mm
 // olarak gelir ve cevreyi orantili buyutur: "kumas = bedene bolluk alani".
 //
 // NOKTA = LANDMARK TERIMLERININ AFIN BIRLESIMI (RefPoint). Tek terim gunluk hal
-// ({"landmark":"landmark.waist","oran":0.23,"ofsetMM":0}); De Casteljau bolme, lerp ve
+// ({"landmark":"landmark.waist","xFactor":0.23,"xOffsetMM":0}); De Casteljau bolme, lerp ve
 // olcekleme gibi islemler agirliklari 1'e toplanan cok terimli nokta uretir. Bu sayede
 // bir kenari kesirle bolmek ya da bir kenari buzgu oraniyla uzatmak grafi mm'ye
 // dusurmez: sonuc yine landmark'a bagli kalir ve baska bedende yeniden degerlenir.
@@ -72,18 +72,18 @@ std::string emit(const JVal& v, int indent = 0);
 bool parse(const std::string& text, JVal& out, std::string& err);
 std::string fmtNum(double v);
 
-// ---------------------------------------------------------------- Nokta: landmark + oran
+// ---------------------------------------------------------------- Nokta: landmark + xFactor (oran)
 struct Anchor {
     std::string landmark;          // "landmark.waist" (contract/body-v1.json adlari)
     std::string xOf = "landmark";  // landmark | ringFront | ringBack | ringQuarter | widthHalf (contract enum xOf)
     std::string ring;              // YALNIZ xOf ring* icin halka adi (bos -> Body::ringOfLandmark(landmark)); baska xOf'ta dolu olmasi sema hatasi
     std::string width;             // YALNIZ xOf widthHalf icin beden genislik olcusu adi ("width.crossFront"); x tabani = olcu/2 (karar 3: bir alan tek anlam)
-    double oran = 1.0;             // x = oran x taban(x) + ofsetMM
-    double ofsetMM = 0.0;
+    double xFactor = 1.0;             // x = xFactor x taban(x) + xOffsetMM
+    double xOffsetMM = 0.0;
     std::string yLandmark;         // y tabani; bos -> landmark
-    std::string yLandmark2;        // dolu ise y = y1 + yOran x (y2 - y1)
-    double yOran = 0.0;
-    double yOfsetMM = 0.0;
+    std::string yLandmark2;        // dolu ise y = y1 + yLerp x (y2 - y1)
+    double yLerp = 0.0;
+    double yOffsetMM = 0.0;
     bool operator==(const Anchor& o) const;
 };
 struct Term { double w = 1.0; Anchor a; };
@@ -93,14 +93,14 @@ struct RefPoint {
     bool operator==(const RefPoint& o) const;
     bool operator!=(const RefPoint& o) const { return !(*this == o); }
     bool tekTerim() const { return terms.size() == 1; }
-    // Yapisal: butun terimler x'te 0 mi (oran 0 ve ofset 0 -> CF/CB kat cizgisi)
+    // Yapisal: butun terimler x'te 0 mi (xFactor 0 ve xOffsetMM 0 -> CF/CB kat cizgisi)
     bool xSifir() const;
     void normalize();              // ayni Anchor'lu terimleri birlestir, sifir agirliklari at
 };
 RefPoint lerp(const RefPoint& a, const RefPoint& b, double t);            // (1-t)a + tb
 RefPoint affine(const std::vector<std::pair<double, RefPoint>>& terms);  // sum w_i p_i, sum w_i == 1
 RefPoint scaleX(const RefPoint& p, double k);                            // x -> k x, y sabit (kat ekseni x=0 etrafinda)
-RefPoint shiftY(const RefPoint& p, double dyMM);                         // yOfsetMM += dy
+RefPoint shiftY(const RefPoint& p, double dyMM);                         // yOffsetMM += dy
 RefPoint mirrorX(const RefPoint& p);                                     // x -> -x
 // Karar 3: xOf/ring/width tek anlam — carpik kombinasyon adiyla (parse ve sema ayni kural)
 bool anchorXOfTutarli(const std::string& xOf, const std::string& ring, const std::string& width, std::string& why);
@@ -109,9 +109,9 @@ bool anchorXOfTutarli(const std::string& xOf, const std::string& ring, const std
 // say (croquis flat: on+arka ust uste iki kat — body.gen.hpp kCroquisOmuzHukmu cumlesi).
 struct EvalCtx {
     const Body* body = nullptr;
-    std::vector<std::pair<std::string, double>> bollukMM;  // {"girth.waist", 40}
+    std::vector<std::pair<std::string, double>> ringEaseMM;  // {"girth.waist", 40}
     bool onArkaEsit = false;
-    double bolluk(const std::string& ring) const;
+    double ringEase(const std::string& ring) const;
 };
 // Landmark yoksa std::runtime_error (adiyla). Sessiz default yok.
 Point eval(const Anchor& a, const EvalCtx& ctx);
@@ -143,7 +143,7 @@ struct Edge {
     Point at(const EvalCtx& ctx, double t) const;               // parametre t'de nokta
 };
 
-struct Bolluk { std::string ring; double mm = 0.0; };
+struct RingEase { std::string ring; double mm = 0.0; };
 
 struct Panel {
     std::string id;
@@ -152,8 +152,8 @@ struct Panel {
     bool onFold = false;           // x=0 kat cizgisi (fold kenarlari)
     int cutCount = 1;
     double seamAllowanceMM = 0.0;  // 0 = contract varsayilani F2b'de doldurur; burada sayi uydurulmaz
-    std::vector<Bolluk> bolluk;    // halka basina cevre bollugu, mm (kumas = bedene bolluk alani)
-    std::string gerekce;           // parca neden var (parca_sayisi yasasi)
+    std::vector<RingEase> ease;    // halka basina cevre bollugu, mm (kumas = bedene bolluk alani)
+    std::string reason;           // parca neden var (parca_sayisi yasasi)
 
     int edgeIndex(const std::string& edgeId) const;   // -1 yoksa
     const Edge* edge(const std::string& edgeId) const;
@@ -183,7 +183,7 @@ struct Seam {
     double easeMM = 0.0;
     std::vector<double> notchFractions;  // dikis boyunca kesir, a'nin BASINDAN olculur; b'ye reverse ile tasinir
     Closure closure;
-    std::string gerekce;
+    std::string reason;
 };
 struct Ring {
     std::string id;
