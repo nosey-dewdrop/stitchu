@@ -8,10 +8,10 @@
     "Deger sayimi yalniz PAYLASIM=1 kelimeler icin yapilir: 'none' 22 eksende ortak, tek basina 1178 referans veriyor ve bir ratchet'i gurultuye bogar. 100 tekil kelimenin 92'si sayilir, 8 paylasilan kelime BILEREK disarida.",
     "Sayi dustugunde kapi YESIL kalir ama bu dosya KENDILIGINDEN guncellenmez \u2014 dususu sabitlemek ayri, bilincli bir commit'tir (--baseline).",
     "Bu bir kullanim analizi DEGIL, bir imzadir: yorum satiri da uretilmis tablo da sayilir. Sart dogruluk degil, KARARLILIK.",
-    "IKI KOVA (2026-09-05, F1 duzeltme turu 2): eksenAdi/enumDegeri ve toplam* alanlari yalniz KOD kovasidir (ratchet). prose kovasi ayrica basilir, hukum tasimaz. 9c35e10b'deki yukari kesim (11037->11075, tamami landmark adi + prose carpismasi) geri alindi; 73113fa7'nin dosya-adina bagli 'beden' kovasi da SILINDI (hakem: istisna kilifinda reward hacking) \u2014 carpisma kaynaginda kesildi: body-v1 landmark anahtarlari 'landmark.<ad>' (karar ajani 4). Taban bir daha yukari kesilmez: kod kovasi artarsa kaynagi duzeltilir.",
-    "ASAGI KESIM (2026-09-05, F1 tur 6, hakem: 829480e4'teki 9298 -> 9306 yukari kesim reward hacking): 829480e4'in +8'inin 7'si contract/body-v1.json icindeki flat olcum kayitlarinin \"flat\" JSON anahtariydi (yorum degil, veri anahtari; \"dosya\" diye yeniden adlandirildi, engine/vocab.json bayt-ayni); kalan +1 contract/flat-convention-v1.json sideSeamProfile._normalizedToChest.\"waist\" veri anahtari \u2014 engine/tests/flat_geometry_sellable_check.mjs:448 onu okur, var olan teste dokunmak yasak, bu yuzden 9298'e degil 9299'a kesildi. Kural aynen: kod kovasi artarsa kaynak duzeltilir, taban yukari kesilmez."
+    "UC KOVA (2026-09-05, F1 tur 7): 'beden' kovasi = body-v1 adlarinin (landmark/girth/length/width/angle, dosyadan okunur) JSON ANAHTARI olarak gectigi satirlar; enum degeri hic anahtar olmadigi icin sozluk referansi kaybolmaz; dosya adina bagli istisna yok; basilir, hukum tasimaz.",
+    "IKI KOVA (2026-09-05, F1 duzeltme turu 2): eksenAdi/enumDegeri ve toplam* alanlari yalniz KOD kovasidir (ratchet). prose kovasi ayrica basilir, hukum tasimaz. 9c35e10b'deki yukari kesim (11037->11075, tamami landmark adi + prose carpismasi) geri alindi; 73113fa7'nin dosya-adina bagli 'beden' kovasi da SILINDI (hakem: istisna kilifinda reward hacking) \u2014 carpisma kaynaginda kesildi: body-v1 landmark anahtarlari 'landmark.<ad>' (karar ajani 4). Taban bir daha yukari kesilmez: kod kovasi artarsa kaynagi duzeltilir."
   ],
-  "tabanCommit": "c924e934fa4ae10c416cc78f3b43677fc44e5caa",
+  "tabanCommit": "40286351cf680622fa46e4ddc6020f72355da8dd",
   "sayimKomutu": {
     "eksenAdi": "grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe --exclude-dir=.rabadon --exclude-dir=.wrangler -w <AXIS> <SCOPE> | wc -l",
     "enumDegeri": "grep -rIn --exclude-dir=__pycache__ --exclude-dir=.venv --exclude-dir=node_modules --exclude-dir=probe --exclude-dir=.rabadon --exclude-dir=.wrangler -F \"\\\"<VALUE>\\\"\" <SCOPE> | wc -l",
@@ -19,9 +19,9 @@
     "yeniden_uret": "engine/tests/vocab_reference_check.sh --baseline <commit>",
     "kirli_agaci_denetle": "engine/tests/vocab_reference_check.sh --tree ."
   },
-  "toplam": 9299,
+  "toplam": 9253,
   "toplamEksenAdi": 6307,
-  "toplamEnumDegeri": 2992,
+  "toplamEnumDegeri": 2946,
   "eksenSayisi": 37,
   "paylasim1KelimeSayisi": 92,
   "eksenAdi": {
@@ -72,7 +72,7 @@
     "biasBinding": 9,
     "boat": 28,
     "boxPleatHem": 6,
-    "bust": 85,
+    "bust": 67,
     "button": 18,
     "cap": 25,
     "cape": 12,
@@ -106,7 +106,7 @@
     "halfCircle": 29,
     "halter": 37,
     "highLow": 7,
-    "hip": 99,
+    "hip": 90,
     "horizontal": 21,
     "keyhole": 60,
     "knit": 22,
@@ -152,7 +152,7 @@
     "tunic": 22,
     "vNeck": 38,
     "vent": 8,
-    "waist": 86,
+    "waist": 67,
     "wide": 31,
     "woven": 68,
     "wrapFront": 29
@@ -228,5 +228,14 @@
       "value:waist": 4,
       "value:woven": 1
     }
+  },
+  "beden": {
+    "toplam": 46,
+    "sayim": {
+      "value:bust": 18,
+      "value:hip": 9,
+      "value:waist": 19
+    },
+    "_tanim": "body-v1 adlarinin JSON anahtari olarak gectigi satirlar (beden sozlesmesi referansi, enum degil); hukum disi"
   }
 }
