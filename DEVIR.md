@@ -161,8 +161,10 @@ sürüyordu; tiplerinde kol, yaka, pens yoktu. Flat kalıp hattına bağlandı:
 - **Bayat native build.** ctest'te açıklanamayan kırmızılar (SEGFAULT dahil)
   çıkarsa **önce** `cmake --build engine/build -j4` — 6 kırmızı bunun yüzünden
   yandı, kod hatası değildi.
-- **Motor değiştiyse wasm'ı da derle** (`engine/wasm/build-wasm.sh`), yoksa web
-  eski motoru kullanır ve "düzelttim" yalan olur.
+- **Motor değiştiyse wasm'ı da derle** (`bash engine/build-wasm.sh` — yol
+  `engine/build-wasm.sh`, `engine/wasm/` altında değil), yoksa web eski motoru
+  kullanır ve "düzelttim" yalan olur. Damga `git ls-files` tabanlıdır (5 Eyl):
+  `.rabadon/` oturum dosyaları damgaya girmez, temiz clone aynı damgayı hesaplar.
 - **`vocab_reference_check` (BREADTH→DEPTH cırcırı).** Kapalı enum'a referans
   artışını kırmızı yakar. Yorum satırında geçen kelime bile sayılır. Önce
   `git diff -- engine/vocab.json` bak: bayt-aynıysa artış prose'dur, tabanı
@@ -306,6 +308,33 @@ Mobil, hesap ve gardırop hazır olunca aynı API'yi tüketir (`backend/API.md`)
 
 ---
 
+## KABUL — önceki fazların kabul komutu ve BİLİNEN kırmızılar (F1, 5 Eyl 2026)
+
+Tek yer burasıdır (karar ajanı 1; HEDEF §3.3 compounding error). Her faz bu
+komutu koşar; "beklenen exit"i yazılmamış bir kırmızı = ilerleme yok.
+
+```bash
+cd ~/damla_projects_2026/stitchu && cmake --build engine/build -j2 >/dev/null && \
+ctest --test-dir engine/build -R 'golden|recipe|primitif|edit_locality|manken|kumas|parca|vocab|flatten|surface|enum_dallanma|flat_ayni' -j1 --output-on-failure && \
+node engine/tests/cizim_giysi_mi.mjs && node engine/tests/primitif_ifade_check.mjs && \
+bash engine/tests/enum_dallanma_check.sh && node engine/tests/flat_ayni_insan_check.mjs
+```
+
+Regex 21 test seçer (`ctest -N -R ...`). F1'den sonra bu zincir **exit 1 verir ve
+bu BEKLENİR** — tek sebebi aşağıdaki ilk satırdır; başka bir test kızarırsa koşu durur.
+
+| test | beklenen | kırmızı kümesinin SABİT sayısı | kapatan |
+|---|---|---|---|
+| `flat_ayni_insan_check` (KAPI B) | **exit 1 BEKLENİR** | `KOSU/ciktilar/01-09` (9/9 flat, data-size EU38) üstünde **34 hüküm** kırmızı; 34'ten FARKLI bir sayı = regresyon, koşu durur. Kabul komutu iki adım: `node KOSU/uret.mjs && node engine/tests/flat_ayni_insan_check.mjs` (temiz clone'da tek adım "ölçülecek flat yok" verir — bilinen açık, F2 `flat-kume` ile kapatır, karar 5b) | F2: 9/9 flat croquis36'dan C++'ta, 0 hüküm, exit 0 |
+| `style_check` | exit 1 | 0/31 pin (`engine/STYLE-PIN` dizini yok; `scripts/repin-style.sh --status`) | F3b (re-pin yalnız F3a iki hakemi geçince) |
+| `flat_artifact_census` | exit 1 | 1 ihlal (`[3 C1]` bel köşesi teğet farkı > 1°, araştırma hattı) | F3 |
+| `sizechart_source_check` | exit 1 | 4 kolon NONE (shoulderCM, backLengthCM, armLengthCM, neckCM) | F2 (karar 4: euSizeChart body-v1 izdüşümü) |
+| `figure_check` | exit 1 | 1 FAILURE (pin eksik) | F3b |
+
+Regex'teki diğer 20 test ve `body_check`, `gen_contract_check`, `bundle_fresh_check`,
+`vocab_reference_check` (üç kova, taban `ffa9e6ce`) **yeşil**; bunlardan biri kızarırsa
+kaynağı düzelt, kapıyı değil.
+
 ## 8. İLK 10 DAKİKA
 
 ```bash
@@ -315,7 +344,15 @@ cat KOSU/ciktilar/kusur-listesi.md          # açık kusurlar
 open KOSU/ciktilar/paket-02/                # alıcının aldığı paket
 open KOSU/ciktilar/01-elbise-duz-kol-bebe-yaka.png   # bugünkü flat
 node engine/tests/cizim_giysi_mi.mjs        # çizim kapısı (hızlı)
-cmake --build engine/build -j4              # bayat binary tuzağı
+cmake --build engine/build -j2              # bayat binary tuzağı (Air: -j2)
+# F1 iki beden: kapı + görsel (svg C++'tan, png headless Chrome'dan; ikisi aynı commit'te)
+engine/build/body_check KOSU/ciktilar/beden-iki.svg && \
+  D=$(mktemp -d) && cp KOSU/ciktilar/beden-iki.svg $D/a.svg && \
+  printf '<html><body style="margin:0;background:#fff"><img src="a.svg" style="width:1800px;display:block"></body></html>' > $D/i.html && \
+  timeout 90 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu --hide-scrollbars \
+    --user-data-dir=$D/profil --screenshot=$PWD/KOSU/ciktilar/beden-iki.png --window-size=1800,900 --no-sandbox \
+    --default-background-color=FFFFFF file://$D/i.html; rm -rf $D
+open KOSU/ciktilar/beden-iki.png            # gercek36 | croquis36 | EU34-44 serisi
 ```
 
 Sonra: `git status` temiz mi, `pgrep -fl chrome` zombi var mı, koşan bir

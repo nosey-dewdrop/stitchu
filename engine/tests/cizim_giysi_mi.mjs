@@ -54,7 +54,7 @@
 // cizilemezse bu bir FAIL'dir, bir "skip" degil.
 
 import { createRequire } from 'node:module';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -253,6 +253,75 @@ for (const [ad, spec] of M) {
               (cizilemeyen ? `   ⚠ ${cizilemeyen[1].trim()}` : ''));
 }
 if (cizimler.length !== M.length) FAIL(`${M.length} spec'in ${cizimler.length}'i cizilebildi`);
+
+// --------------------------------------------------------------- (0b) YAN DIKIS ON/ARKA — OLCUM, HUKUM YOK
+// F1 duzeltme turu (karar ajani 5a; F0 hakem ENGEL 1): flat'te on ve arka
+// gorunum ayni bedende degildi (KAPI B dBel 16-100 mm). Kalip tarafinda ayni
+// dikisin iki yakasi — on parcanin yan dikisi ile arka parcanin yan dikisi —
+// esit uzunlukta mi? Bu satir yalniz OLCER (mm, panel bazinda) ve basar; hukum
+// koymaz, cunku "once" sayisi F2 motoru degistirmeden ONCE alinmak zorundadir
+// (HEDEF §3.3). 9 KOSU spec'inin sayisi contract/body-v1.json
+// ayniInsan.once.yanDikisFark_mm'de durur; F2 sonrasi ayni satir tekrar okunur.
+// Yan dikis tanimi kalibin kendi kenar dizisinden: bodice'ta kol oyugu
+// rolunun (edgeRoles armhole_front/armhole_back) hemen ardindan gelen kenar
+// (koltukalti -> bel), etekte bel ucundan (2. komut sonu) etek ucu kavisinden
+// onceki kenara kadar (kalca -> etek ucu). Kavisler 64 adimla acilir.
+{
+  const { draft: draftJSON, bodyForSize } = await import(join(ROOT, 'web/js/engine.js'));
+  const segLen = (cmds, i0, i1) => {
+    let L = 0, cur = null;
+    for (let i = 0; i <= i1 && i < cmds.length; i++) {
+      const c = cmds[i];
+      if (c.type === 'move') { cur = [c.x, c.y]; continue; }
+      if (c.type === 'close' || !cur) continue;
+      const nxt = [c.x, c.y];
+      if (i >= i0) {
+        if (c.type === 'curve') {
+          let p = cur;
+          for (let k = 1; k <= 64; k++) {
+            const t = k / 64, u = 1 - t;
+            const q = [u*u*u*cur[0] + 3*u*u*t*c.cp1x + 3*u*t*t*c.cp2x + t*t*t*nxt[0],
+                       u*u*u*cur[1] + 3*u*u*t*c.cp1y + 3*u*t*t*c.cp2y + t*t*t*nxt[1]];
+            L += Math.hypot(q[0] - p[0], q[1] - p[1]); p = q;
+          }
+        } else L += Math.hypot(nxt[0] - cur[0], nxt[1] - cur[1]);
+      }
+      cur = nxt;
+    }
+    return L;
+  };
+  const yanDikis = (piece) => {
+    const cmds = piece.commands || [];
+    const arm = (piece.edgeRoles || []).find((r) => /^armhole_/.test(r.role));
+    if (arm) return segLen(cmds, arm.last + 1, arm.last + 1);                 // govde: koltukalti -> bel
+    // etek benzeri parca (kol oyugu yok): bel ucundan (2. komut sonu) en dis x'li koseye (etek ucu yani)
+    let maxI = -1, maxX = -Infinity;
+    cmds.forEach((c, i) => { if (c.type !== 'move' && c.type !== 'close' && c.x > maxX) { maxX = c.x; maxI = i; } });
+    return maxI > 2 ? segLen(cmds, 2, maxI) : null;
+  };
+  console.log('\n--- (0b) yan dikis on - arka, mm (kalip parcasi; OLCUM, hukum yok)');
+  const satirlar = [];
+  const z = (v) => (Math.abs(v) < 0.05 ? 0 : v);
+  for (const [ad, spec] of M) {
+    let d;
+    try { d = await draftJSON(spec, bodyForSize(BEDEN)); } catch (e) { console.log(`      ${ad.padEnd(24)} kalip alinamadi — ${e.message}`); continue; }
+    const pieces = (d.pattern && d.pattern.pieces) || [];
+    const parts = [];
+    for (const pf of pieces) {
+      if (!/Front/.test(pf.name)) continue;
+      const pb = pieces.find((q) => q.name === pf.name.replace('Front', 'Back'));
+      if (!pb) continue;
+      const etiket = pf.name.replace(/\s*Front\s*/, ' ').trim().toLowerCase() || 'govde';
+      const lf = yanDikis(pf), lb = yanDikis(pb);
+      if (lf == null || lb == null) { parts.push(`${etiket} —`); continue; }
+      const fark = z(+(lf - lb).toFixed(1));
+      parts.push(`${etiket} ${lf.toFixed(1)}/${lb.toFixed(1)} fark ${fark.toFixed(1)}`);
+      satirlar.push({ ad, parca: etiket, on: +lf.toFixed(1), arka: +lb.toFixed(1), fark });
+    }
+    console.log(`      ${ad.padEnd(24)} ${parts.join(' · ') || 'on/arka parca cifti yok'}`);
+  }
+  if (process.env.CIZIM_YANDIKIS_JSON) writeFileSync(process.env.CIZIM_YANDIKIS_JSON, JSON.stringify({ beden: BEDEN, satirlar }, null, 1));
+}
 
 // --------------------------------------------------------------- (b) KOL
 console.log('\n--- (b) sleeveStyle != none -> KOL');
