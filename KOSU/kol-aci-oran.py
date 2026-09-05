@@ -65,7 +65,7 @@ for name, i in rows:
 ort = bs['ortusme']
 o.append('<text x="%d" y="%d" fill="%s" font-size="12">ortusme: kisa-dirsek %s, dirsek-uzun %s</text>' % (px0, T + 60 + 3 * 70 - 10, INK, 'EVET' if ort['kisa-dirsek'] else 'hayir', 'EVET' if ort['dirsek-uzun'] else 'hayir'))
 o.append('<text x="%d" y="%d" fill="%s" font-size="12">%s</text>' % (px0, T + 60 + 3 * 70 + 8, C_YANA, 'boy kelimesi aciyi/orani ayirmiyor (3c)' if any(ort.values()) else 'boy siniflari ayrik'))
-o.append('<text x="%d" y="%d" fill="%s" font-size="12">dirsek hukmu: %s</text>' % (px0, T + 60 + 3 * 70 + 28, INK2, M['dirsek']['hukum'].split(':')[0]))
+o.append('<text x="%d" y="%d" fill="%s" font-size="12">dirsek (bilgi): %s</text>' % (px0, T + 60 + 3 * 70 + 28, INK2, M['dirsek']['bilgi'].split(':')[0]))
 for v in [0.4, 0.8, 1.2, 1.6]: o.append('<text x="%.1f" y="%d" text-anchor="middle" fill="%s" font-size="11">%.1f</text>' % (PX(v), T + ph + 18, INK2, v))
 o.append('</svg>')
 out = os.path.join(HERE, 'ciktilar', 'kol-aci-oran.svg'); open(out, 'w').write('\n'.join(o)); print(out, len(o), 'eleman')

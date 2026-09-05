@@ -6891,7 +6891,7 @@
       "kolBoyuOverOmuz": 0.7,
       "kolBoyuOverTorso": 0.634,
       "kolAcisiDeg": 71.4,
-      "aciKonumu": "puf bandi icinde",
+      "aciKonumu": "sarkan kume",
       "boyKaynak": "urun sayfasi: \"Sleeveless bound armholes, elbow-length sleeves with deep hem\" (curl 2026-09-05 HTTP 200); cizim: agiz bel dikisinin (y~2040) ~120 px ustunde"
      },
      "cash-honeybourne.jpg": {
@@ -6899,7 +6899,7 @@
       "kolBoyuOverOmuz": 1.021,
       "kolBoyuOverTorso": 1.025,
       "kolAcisiDeg": 79.5,
-      "aciKonumu": "sarkan IQR icinde",
+      "aciKonumu": "sarkan kume",
       "boyKaynak": "urun sayfasi: \"The pretty elbow-length sleeves give an elegant touch\" (WebFetch 2026-09-05); cizim: agiz bel dikisinin (y~1305) ~50 px altinda"
      },
      "cash-montrose.jpg": {
@@ -6907,7 +6907,7 @@
       "kolBoyuOverOmuz": 0.736,
       "kolBoyuOverTorso": null,
       "kolAcisiDeg": 81.3,
-      "aciKonumu": "sarkan IQR icinde",
+      "aciKonumu": "sarkan kume",
       "boyKaynak": "urun sayfasi / blog (blog.cashmerette.com 2018/03 montrose): \"View B ... jewel neck, elbow length sleeves, and keyhole back\"; bluz: bel dikisi yok, torso olculmez (omuz paydasi olculur)"
      },
      "sa-yvette.jpg": {
@@ -6915,7 +6915,7 @@
       "kolBoyuOverOmuz": 1.081,
       "kolBoyuOverTorso": null,
       "kolAcisiDeg": 77.6,
-      "aciKonumu": "sarkan IQR icinde",
+      "aciKonumu": "sarkan kume",
       "boyKaynak": "urun sayfasi: \"Sleeveless or elbow length sleeved version with cuff\" + cizim etiketi \"ELBOW LENGTH SLEEVE WITH INVERTED PLEAT\"; bel dikisi yok (asimetrik dikisler), torso olculmez"
      },
      "sa-emerald.jpg": {
@@ -6923,7 +6923,7 @@
       "kolBoyuOverOmuz": 0.654,
       "kolBoyuOverTorso": null,
       "kolAcisiDeg": 78.0,
-      "aciKonumu": "sarkan IQR icinde",
+      "aciKonumu": "sarkan kume",
       "boyKaynak": "urun sayfasi: \"Optional full elbow length sleeve with tucks and bound finish\"; gomlek yakasi SNP'yi orter, torso olculmez; bel dikisi var (y~350)"
      },
      "sa-dallas.jpg": {
@@ -6931,7 +6931,7 @@
       "kolBoyuOverOmuz": 1.273,
       "kolBoyuOverTorso": null,
       "kolAcisiDeg": 73.6,
-      "aciKonumu": "puf bandi icinde",
+      "aciKonumu": "sarkan kume",
       "boyKaynak": "urun sayfasi: \"Elbow length puff sleeve gathered into lining with elastic\"; gomlek yakasi SNP'yi orter, bu gorunumde bel dikisi yok: torso olculmez"
      },
      "sa-zalia.jpg": {
@@ -6939,7 +6939,7 @@
       "kolBoyuOverOmuz": 0.734,
       "kolBoyuOverTorso": null,
       "kolAcisiDeg": 76.0,
-      "aciKonumu": "sarkan IQR icinde",
+      "aciKonumu": "sarkan kume",
       "boyKaynak": "urun sayfasi: \"Elbow or 3/4 length sleeves gathered into a bind\" + cizim etiketi \"ELBOW SLEEVE LENGTH\" (dress version); A-line, bel dikisi yok: torso olculmez"
      },
      "sa-queenie.jpg": {
@@ -6947,25 +6947,30 @@
       "kolBoyuOverOmuz": 0.924,
       "kolBoyuOverTorso": 0.93,
       "kolAcisiDeg": 85.7,
-      "aciKonumu": "sarkan IQR icinde",
+      "aciKonumu": "sarkan kume",
       "boyKaynak": "urun sayfasi: \"elbow length sleeve with double frill and a gathered head\"; agiz = firfir dikisi (firfir kolPencere disinda, manset kurali gibi)"
      }
     },
-    "sarkanIQR": [
-     74.5,
-     85.9
-    ],
-    "pufBand": [
-     32.9,
-     74.2
-    ],
+    "aciKumeKesimDeg": 48.4,
     "buzguluAciKonumu": {
-     "sa-dallas.jpg": "puf bandi icinde",
-     "sa-zalia.jpg": "sarkan IQR icinde",
-     "sa-queenie.jpg": "sarkan IQR icinde"
+     "sa-dallas.jpg": "sarkan kume",
+     "sa-zalia.jpg": "sarkan kume",
+     "sa-queenie.jpg": "sarkan kume"
     },
-    "hukum": "BOLUNME (karar ajani 3c): buzgulu dirsek acilari iki banda dagildi (sarkan IQR 2, puf bandi 1, disarida 0) -> kol BOYU sinifi (kisa/dirsek/uzun) aciyi ayirmiyor, ayirici yanlis; asagidaki boySinifiOrtusme tablosu ayni sonucu oran ekseninde verir",
-    "okumaHatasiNotu": "Dallas 73.6 puf bandinin ust ucundan (74.2) 0.6, sarkan IQR alt ucundan (74.5) 0.9 derece uzakta; Locket 6 okumanin yayilimi 1.1 derece (okuma hatasi). Kural sayiyla uygulanir, tolerans EKLENMEDI (uydurma sayi yasagi); sinifin gercekten ayirmadigini oran tablosu bagimsiz gosterir."
+    "bilgi": "UZUN: buzgulu dirsek acilarinin hepsi sarkan aci kumesinde (kesim 48.4 derece) -> dirsek kollar aci bakimindan uzun kollarla ayni kumede",
+    "tanim": "BILGI (F1 karar 3, tur 12; tur 10-11 HUKUM idi). Konum bu kosunun aci kumelerinden (kolBoyuOverOmuz.aciKumeleri: en buyuk >= 10 derece bosluk), eski puf bandi / sarkan IQR referansi degil. Hukum tasimaz: kosul boy kelimesini okumuyor, 3c hukmunu boySinifiOrtusme tasiyor.",
+    "eskiReferans": {
+     "sarkanIQR": [
+      74.5,
+      85.9
+     ],
+     "pufBand": [
+      32.9,
+      74.2
+     ],
+     "not": "tur 11 _konum bunlara bakiyordu; karar 3: bayat referans (puf bandi kelimeyle kurulan eski band; IQR sarkan uyelerin %25ini disarida birakir: Eleanor 73.7, Alice 74.1 < 74.5). Sayilar silinmedi, konum icin kullanilmaz."
+    },
+    "okumaHatasiNotu": "BILGI. Dallas 73.6, eski puf bandinin ust ucundan (74.2) 0.6, sarkan IQR alt ucundan (74.5) 0.9 derece uzaktaydi; Locket 6 okumanin yayilimi 1.1 derece (okuma hatasi). Aci kumesi kesimi (34.5 -> 62.3 boslugunun ortasi) Dallas 73.6'nin 25 dereceden fazla altinda: tolerans gerekmez, tanimlanmadi (uydurma sayi yasagi)."
    },
    "agizOmuzDikeyOverTorso": {
     "n": 12,

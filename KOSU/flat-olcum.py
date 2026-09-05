@@ -1159,23 +1159,11 @@ kisaMax = max([v for v, _, kk in kisaOlcumler if kk is True] or [None]); uzunMin
 #   bosluk ustten daralir); puf bandina dusuyorsa 'kisa' (alttan daralir); ikiye bolunuyorsa ayirici yanlis (3c) ve ancak o zaman n>=3 kendi bandiyla ucuncu
 #   kosulluBant. F1 tur 11: olcum TAMAM (buzgulu 3 / duz 5); kural harfiyen uygulanir, sonuc asagida dirsekHukmu.
 dirsekKume = {ad: k for ad, k in birlesik.items() if k.get('kisa') is None and (k.get('kolBoyuOverOmuz') is not None or k.get('kisaOlcu') is not None)}
-_sarkanIQR = f3['medyanlar']['kolAcisiDeg']['sarkan']['iqr']; _pufBand = f3['medyanlar']['kolAcisiDeg']['puf']['band']
-def _konum(a):
-    if _sarkanIQR[0] <= a <= _sarkanIQR[1]: return 'sarkan IQR icinde'
-    if _pufBand and _pufBand[0] <= a <= _pufBand[1]: return 'puf bandi icinde'
-    return 'iki bandin disinda'
-dirsekOlcum = {ad: {'etiket': k['etiket'], 'kolBoyuOverOmuz': k.get('kolBoyuOverOmuz'), 'kolBoyuOverTorso': k.get('kisaOlcu'), 'kolAcisiDeg': k['kolAcisiDeg'], 'aciKonumu': _konum(k['kolAcisiDeg']), 'boyKaynak': k.get('boyKaynak')} for ad, k in dirsekKume.items()}
-nDirsekBuz = sum(1 for k in dirsekKume.values() if k['etiket'] == 'buzgulu'); nDirsekDuz = sum(1 for k in dirsekKume.values() if k['etiket'] == 'duz')
-_buzKonum = {ad: o['aciKonumu'] for ad, o in dirsekOlcum.items() if o['etiket'] == 'buzgulu'}
-_nSark = sum(1 for v in _buzKonum.values() if v == 'sarkan IQR icinde'); _nPuf = sum(1 for v in _buzKonum.values() if v == 'puf bandi icinde')
-if nDirsekBuz < 3 or nDirsekDuz < 3: _dHukum = 'HUKUM YOK: olcum yetersiz (buzgulu %d/3, duz %d/3)' % (nDirsekBuz, nDirsekDuz)
-elif _nSark == nDirsekBuz: _dHukum = 'UZUN: buzgulu dirsek acilarinin hepsi sarkan IQR icinde -> dirsek kollar kosul icin uzun sayilir'
-elif _nPuf == nDirsekBuz: _dHukum = 'KISA: buzgulu dirsek acilarinin hepsi puf bandi icinde -> dirsek kollar kosul icin kisa sayilir'
-else: _dHukum = 'BOLUNME (karar ajani 3c): buzgulu dirsek acilari iki banda dagildi (sarkan IQR %d, puf bandi %d, disarida %d) -> kol BOYU sinifi (kisa/dirsek/uzun) aciyi ayirmiyor, ayirici yanlis; asagidaki boySinifiOrtusme tablosu ayni sonucu oran ekseninde verir' % (_nSark, _nPuf, nDirsekBuz - _nSark - _nPuf)
-dirsekHukmu = {'n': len(dirsekKume), 'nBuzgulu': nDirsekBuz, 'nDuz': nDirsekDuz, 'gerekli': 'n >= 3 buzgulu VE n >= 3 duz', 'olcumler': dirsekOlcum,
-               'sarkanIQR': _sarkanIQR, 'pufBand': _pufBand, 'buzguluAciKonumu': _buzKonum, 'hukum': _dHukum,
-               'okumaHatasiNotu': 'Dallas 73.6 puf bandinin ust ucundan (74.2) 0.6, sarkan IQR alt ucundan (74.5) 0.9 derece uzakta; Locket 6 okumanin yayilimi 1.1 derece (okuma hatasi). Kural sayiyla uygulanir, tolerans EKLENMEDI (uydurma sayi yasagi); sinifin gercekten ayirmadigini oran tablosu bagimsiz gosterir.'}
-
+# F1 karar 3 (5 Eyl 2026, tur 12): dirsek kovasinin aci KONUMU asagida, ACI KUMELERI (yana acilan / sarkan, >= 10 derece bosluk kurali) hesaplandiktan sonra
+#   yazilir; tur 11'e kadar _konum() eski 'puf' bandina [32.9, 74.2] (kelimeyle kurulan, tur 11'in gecersiz sayip [32.9, 34.5] askidaya cektigi band) ve
+#   sarkan IQR'a bakiyordu — bayat referans (Dallas 73.6 'puf bandi icinde' cikiyor, 0.6 derece sinir tartismasi buradan) ve IQR tanim geregi sarkan uyelerin
+#   %25'ini disarida birakir (Eleanor 73.7, Alice 74.1 sarkan uyeleri, IQR alt ucu 74.5'in altinda). Tablo artik HUKUM degil BILGI ('bilgi' anahtari):
+#   kosul boy kelimesini okumuyor (tur 11), 3c hukmunu boySinifiOrtusme bagimsiz tasiyor.
 # --- F1 tur 11 HUKUM: kol boyu orani = kolBoyuOverOmuz (omuz genisligi paydasi; hakem kusur 2). Once BOY SINIFI (satici kelimesi kisa/dirsek/uzun) oran
 #   ekseninde ayriliyor mu? (karar ajani 3c testi) Sonra ACI kumeleri: buzgulu kollarda yana acilan (kucuk aci) ve sarkan (buyuk aci) kumesi arasindaki
 #   oran boslugu. Kosul (agiz buzgulu VE kol boyu orani < esik) icin esik bu ikinci bosluktan turetilir: 'yana acilan' konvansiyonu KISA-ELASTIK puf kolun
@@ -1216,6 +1204,24 @@ yanaAcilanBand = {'n': len(yanaAcilan), 'uyeler': {ad: {'kolAcisiDeg': k['kolAci
                   'min': (yaAcilar[0] if yaAcilar else None), 'max': (yaAcilar[-1] if yaAcilar else None), 'medyan': (medyan(yaAcilar) if yaAcilar else None),
                   'aktif': bandAktif, 'nGerekli': 3,
                   'hukum': ('AKTIF: n >= 3, oran boslugu var' if bandAktif else 'ASKIDA: yana acilan kume n=%d < 3 (karar ajani 3c: n >= 3 kendi bandi) %s -> kosulluBant[0] secilemez, her kol sarkan band; kume ve kosul kayitta, n >= 3 olunca kendiliginden aktif' % (len(yanaAcilan), '' if oranBosluk else 've oran boslugu yok'))}
+# --- dirsek kovasi (F1 karar ajani 2 olcumu; karar 3: konum ACI KUMESINDEN, tablo BILGI) ---
+_sarkanIQR = f3['medyanlar']['kolAcisiDeg']['sarkan']['iqr']; _pufBand = f3['medyanlar']['kolAcisiDeg']['puf']['band']
+def _konum(a):
+    if _kesim is None: return 'aci kumesi yok (buzgulu kollarda >= %.0f derece bosluk bulunmadi)' % ACI_KUME_BOSLUK_MIN
+    return 'yana acilan kume' if a < _kesim else 'sarkan kume'
+dirsekOlcum = {ad: {'etiket': k['etiket'], 'kolBoyuOverOmuz': k.get('kolBoyuOverOmuz'), 'kolBoyuOverTorso': k.get('kisaOlcu'), 'kolAcisiDeg': k['kolAcisiDeg'], 'aciKonumu': _konum(k['kolAcisiDeg']), 'boyKaynak': k.get('boyKaynak')} for ad, k in dirsekKume.items()}
+nDirsekBuz = sum(1 for k in dirsekKume.values() if k['etiket'] == 'buzgulu'); nDirsekDuz = sum(1 for k in dirsekKume.values() if k['etiket'] == 'duz')
+_buzKonum = {ad: o['aciKonumu'] for ad, o in dirsekOlcum.items() if o['etiket'] == 'buzgulu'}
+_nSark = sum(1 for v in _buzKonum.values() if v == 'sarkan kume'); _nYana = sum(1 for v in _buzKonum.values() if v == 'yana acilan kume')
+if nDirsekBuz < 3 or nDirsekDuz < 3: _dBilgi = 'BILGI YOK: olcum yetersiz (buzgulu %d/3, duz %d/3)' % (nDirsekBuz, nDirsekDuz)
+elif _nSark == nDirsekBuz: _dBilgi = 'UZUN: buzgulu dirsek acilarinin hepsi sarkan aci kumesinde (kesim %.1f derece) -> dirsek kollar aci bakimindan uzun kollarla ayni kumede' % _kesim
+elif _nYana == nDirsekBuz: _dBilgi = 'KISA: buzgulu dirsek acilarinin hepsi yana acilan kumede'
+else: _dBilgi = 'BOLUNME: buzgulu dirsek acilari iki kumeye dagildi (sarkan %d, yana acilan %d)' % (_nSark, _nYana)
+dirsekHukmu = {'n': len(dirsekKume), 'nBuzgulu': nDirsekBuz, 'nDuz': nDirsekDuz, 'gerekli': 'n >= 3 buzgulu VE n >= 3 duz', 'olcumler': dirsekOlcum,
+               'aciKumeKesimDeg': _kesim, 'buzguluAciKonumu': _buzKonum, 'bilgi': _dBilgi,
+               'tanim': 'BILGI (F1 karar 3, tur 12; tur 10-11 HUKUM idi). Konum bu kosunun aci kumelerinden (kolBoyuOverOmuz.aciKumeleri: en buyuk >= 10 derece bosluk), eski puf bandi / sarkan IQR referansi degil. Hukum tasimaz: kosul boy kelimesini okumuyor, 3c hukmunu boySinifiOrtusme tasiyor.',
+               'eskiReferans': {'sarkanIQR': _sarkanIQR, 'pufBand': _pufBand, 'not': 'tur 11 _konum bunlara bakiyordu; karar 3: bayat referans (puf bandi kelimeyle kurulan eski band; IQR sarkan uyelerin %25ini disarida birakir: Eleanor 73.7, Alice 74.1 < 74.5). Sayilar silinmedi, konum icin kullanilmaz.'},
+               'okumaHatasiNotu': 'BILGI. Dallas 73.6, eski puf bandinin ust ucundan (74.2) 0.6, sarkan IQR alt ucundan (74.5) 0.9 derece uzaktaydi; Locket 6 okumanin yayilimi 1.1 derece (okuma hatasi). Aci kumesi kesimi (34.5 -> 62.3 boslugunun ortasi) Dallas 73.6\'nin 25 dereceden fazla altinda: tolerans gerekmez, tanimlanmadi (uydurma sayi yasagi).'}
 kolBoyuHukmu = {'alan': 'kolBoyuOverOmuz', 'n': len(omuzKume), 'nBuzgulu': len(buzKume),
                 'degerler': [{'flat': ad, 'oran': k['kolBoyuOverOmuz'], 'etiket': k['etiket'], 'boy': ('kisa' if k.get('kisa') is True else 'uzun' if k.get('kisa') is False else 'dirsek'), 'kolAcisiDeg': k['kolAcisiDeg'], 'torsoOran': k.get('kisaOlcu')} for ad, k in sorted(omuzKume.items(), key=lambda kv: kv[1]['kolBoyuOverOmuz'])],
                 'aciKumeleri': {'yontem': 'buzgulu kollarin acilari siralanir; en buyuk aci boslugu (>= %.0f derece) iki kumeyi ayirir' % ACI_KUME_BOSLUK_MIN, 'enBuyukAciBoslugu': [(_acilar[_gi][0], _acilar[_gi + 1][0]) if _gi >= 0 else None], 'kesimDeg': _kesim,
@@ -1259,7 +1265,7 @@ kb = f5['medyanlar']['kolBoyuOverOmuz']
 print('kolBoyuOverOmuz:', json.dumps(kb['degerler']), '\n  aci kumeleri', json.dumps(kb['aciKumeleri']), '\n  yanaAcilanMax', kb['yanaAcilanMax'], 'sarkanMin', kb['sarkanMin'], 'bosluk', kb['bosluk'], 'orta', kb['ortaNokta'])
 print('boySinifiOrtusme omuz:', json.dumps({s_: {kk: v for kk, v in d_.items() if kk != 'degerler'} if isinstance(d_, dict) else d_ for s_, d_ in f5['medyanlar']['boySinifiOrtusme']['kolBoyuOverOmuz'].items()}))
 print('boySinifiOrtusme torso:', json.dumps({s_: {kk: v for kk, v in d_.items() if kk != 'degerler'} if isinstance(d_, dict) else d_ for s_, d_ in f5['medyanlar']['boySinifiOrtusme']['kolBoyuOverTorso'].items()}))
-print('dirsek:', dirsekHukmu['hukum'], json.dumps(dirsekHukmu['buzguluAciKonumu']))
+print('dirsek (BILGI):', dirsekHukmu['bilgi'], json.dumps(dirsekHukmu['buzguluAciKonumu']))
 print('yanaAcilanBand:', yanaAcilanBand['hukum'], 'n', yanaAcilanBand['n'], 'min/max/medyan', yanaAcilanBand['min'], yanaAcilanBand['max'], yanaAcilanBand['medyan'])
 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
