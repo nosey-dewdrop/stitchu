@@ -1,5 +1,9 @@
 // WASM boundary: garment spec + measurements in, DraftedPattern out as JSON.
 // JSON only exists at this boundary; the engine itself stays plain structs.
+#include "../src/flatsvg.hpp"       // 0509 A2b
+#include "../src/kalipsvg.hpp"      // 0509 A2b
+#include "../src/grafdogrula.hpp"   // 0509 A2b
+#include "../src/grafcontract.gen.hpp"  // 0509 A2b (uretilmis: gomulu sozlesme metni)
 #include <emscripten/bind.h>
 
 #include <algorithm>
@@ -701,6 +705,61 @@ std::string bodyJSON(std::string bodyId) {
     o += "}}";
     return o;
 }
+
+// ---------------------------------------------------------------- 0509 A2b: GRAFTAN CIZIM
+// KOSU/sinyal.sh kabul_P1'in ADIYLA bekledigi tarayici ucu: flatSVG(grafJSON, bodyId) native
+// `engine/build/grafciz <graf> <body> flat` ile BAYT-AYNI donmeli. Ayni cikti ancak ayni
+// sozlesme metniyle olur; tarayicida disk olmadigi icin sozlesme grafcontract.gen.hpp ile
+// gomulu (uretici: KOSU/a2b-gen-contract-hpp.mjs). Hata SESSIZ DEGIL: {"error": ...} JSON'u.
+static std::string grafHataJSON(const std::string& kod) {
+    std::string o = "{\"error\":\"";
+    for (char c : kod) { if (c == '"' || c == '\\') o += '\\'; o += c; }
+    return o + "\"}";
+}
+static bool grafBody(const std::string& bodyId, stitchu::Body& out, std::string& hata) {
+    try {
+        out = (bodyId.rfind("EU", 0) == 0) ? stitchu::Body::graded(bodyId) : stitchu::Body::fromContract(bodyId);
+        return true;
+    } catch (const std::exception& e) { hata = "ERR_UNKNOWN_BODY: " + bodyId + " (" + e.what() + ")"; return false; }
+}
+std::string flatSVGBinding(std::string grafJSON, std::string bodyId) {
+    using namespace stitchu::graf;
+    Garment g; std::string err;
+    if (!fromJSONText(grafJSON, g, err)) return grafHataJSON("ERR_GRAF_PARSE: " + err);
+    stitchu::Body body;
+    if (!grafBody(bodyId, body, err)) return grafHataJSON(err);
+    JVal contract, bodyContract;
+    if (!parse(kGrafContractJSON(), contract, err)) return grafHataJSON("ERR_CONTRACT_PARSE: " + err);
+    FlatOpts o; o.onArkaEsit = (bodyId == "croquis36");
+    std::string hata;
+    std::string svg = flatSVG(g, body, bodyId, contract, bodyContract, o, hata);
+    return svg.empty() ? grafHataJSON(hata.empty() ? "ERR_EMPTY_SVG" : hata) : svg;
+}
+std::string kalipSVGBinding(std::string grafJSON, std::string bodyId) {
+    using namespace stitchu::graf;
+    Garment g; std::string err;
+    if (!fromJSONText(grafJSON, g, err)) return grafHataJSON("ERR_GRAF_PARSE: " + err);
+    stitchu::Body body;
+    if (!grafBody(bodyId, body, err)) return grafHataJSON(err);
+    JVal sheet;
+    if (!parse(kPatternSheetJSON(), sheet, err)) return grafHataJSON("ERR_CONTRACT_PARSE: " + err);
+    KalipOpts o; std::string hata;
+    std::string svg = kalipSVG(g, body, bodyId, sheet, o, hata);
+    return svg.empty() ? grafHataJSON(hata.empty() ? "ERR_EMPTY_SVG" : hata) : svg;
+}
+// grafDraft: graf -> dogrulama raporu JSON'u (dikilebilirlik + panel pozlari). Tarayici
+// "dikilebilir mi" sorusunu motorun kendi hukmuyle sorar, kendi kopyasiyla degil.
+std::string grafDraftBinding(std::string grafJSON, std::string bodyId) {
+    using namespace stitchu::graf;
+    Garment g; std::string err;
+    if (!fromJSONText(grafJSON, g, err)) return grafHataJSON("ERR_GRAF_PARSE: " + err);
+    stitchu::Body body;
+    if (!grafBody(bodyId, body, err)) return grafHataJSON(err);
+    JVal contract;
+    if (!parse(kGrafContractJSON(), contract, err)) return grafHataJSON("ERR_CONTRACT_PARSE: " + err);
+    try { return emit(dogrula(g, body, contract, bodyId == "croquis36").toJSON()); }
+    catch (const std::exception& e) { return grafHataJSON(std::string("ERR_VALIDATE: ") + e.what()); }
+}
 } // namespace
 
 EMSCRIPTEN_BINDINGS(stitchu_engine) {
@@ -713,4 +772,7 @@ EMSCRIPTEN_BINDINGS(stitchu_engine) {
     emscripten::function("planJSON", &planJSONBinding);
     emscripten::function("flatJSON", &flatJSONBinding);
     emscripten::function("opsJSON", &opsJSONBinding);
+    emscripten::function("flatSVG", &flatSVGBinding);
+    emscripten::function("kalipSVG", &kalipSVGBinding);
+    emscripten::function("grafDraft", &grafDraftBinding);
 }

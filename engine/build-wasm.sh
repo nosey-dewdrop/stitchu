@@ -93,6 +93,9 @@ ENGINE_SRCS=(
   src/graf.cpp        # F2a: GRAF IR (bedene referansli Edge/Panel/Seam grafi); embind yok, F2b/F3 baglar
   src/grafop.cpp      # F2a: graf op'lari (saf, edit-locality, replay)
   src/grafdogrula.cpp # F2a: dogrulayici + sanal dikis
+  src/solver_utils.cpp # 0509 A2a: kisit cozucu (grafdegerle/panelkaynak icin; simdilik tuketicisiz ama link birligi icin listede)
+  src/flatsvg.cpp     # 0509 A2b: graftan flat SVG (wasm flatSVG binding)
+  src/kalipsvg.cpp    # 0509 A2b: graftan kalip sayfasi SVG (wasm kalipSVG binding)
   src/garmentshell.cpp
   src/flatten.cpp
   src/shellprojection.cpp
