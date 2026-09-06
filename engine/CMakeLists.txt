@@ -61,7 +61,8 @@ add_library(engine
     src/drape.cpp
     src/graf.cpp
     src/grafop.cpp
-    src/grafdogrula.cpp)
+    src/grafdogrula.cpp
+    src/solver_utils.cpp)
 target_include_directories(engine PUBLIC src)
 target_compile_options(engine PRIVATE -Wall -Wextra)
 
@@ -1541,3 +1542,13 @@ add_test(NAME graf_dikilebilir_check COMMAND graf_dikilebilir_check
 # modlari ve sozlesmeyi olcer (<10 s, ctest cagirmaz): gecerli JSON, zorunlu
 # alanlar, bilinmeyen mod adiyla ret, bozulunca sessiz kalmama.
 add_test(NAME kapi_sozlesme_check COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/0509-kapi.sh --kendi-check)
+
+# ---- 0509 A2a: KISIT COZUCU ISKELETI (engine/src/solver_utils.*). Iteratif yay-kutle
+# gevsetmesi; yumusak hedef = yay, sert kisit (uzunluk esitligi / kapalilik / MUTLAK INSAN
+# OLCEGI) = her iterasyonda projeksiyon. Sinirlar contract/graf-v1.json cozucu.gevsetme'den,
+# olcek araligi contract/body-v1.json olcekAraligi'ndan; kodda sabit yok.
+add_executable(solver_check tests/0509-solver_check.cpp)
+target_link_libraries(solver_check PRIVATE engine)
+add_test(NAME solver_check COMMAND solver_check
+    ${CMAKE_CURRENT_SOURCE_DIR}/../contract/graf-v1.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/../contract/body-v1.json)

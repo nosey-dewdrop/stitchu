@@ -185,6 +185,15 @@
     "fitLength": {
       "dMaxMM": {"deger": 120, "kaynak": "Arama siniri: |d| <= 120 mm. DOGRULANMADI (fizik kaynagi yok): Aldrich kol kapagi yuksekligi bandi 130-150 mm'nin altinda secildi ki kontrol kaymasi tek basina bir kapak yuksekligi kadar olamasin; kok yoksa cozucu 'ulasilamadi' der, sinir gevsetilmez."},
       "tolMM": {"deger": 0.05, "kaynak": "Cozum toleransi 0.05 mm = cizim cozunurlugu 1 mm'nin 1/20'si; kapinin dikisUzunlukMM 2.0'inin 1/40'i — cozucu artigi kapida gorunmez. Sayisal, gevsetme yonunde degil."}
+    },
+    "gevsetme": {
+      "_tanim": "engine/src/solver_utils.hpp (A2a): 2B panel tepe konumlari icin ITERATIF YAY-KUTLE GEVSETMESI. Yumusak hedefler (oran hedefleri) yay kuvvetidir; SERT kisitlar (dikis cifti uzunluk esitligi, panel kapaliligi, mutlak insan olcegi) her iterasyonda PROJEKSIYONLA zorlanir. Buradaki sayilar fizik degil ARAMA sinirlaridir; tavan asilinca yumusak hedefler ADIYLA birakilir, sert kisitlar kalir. NaN kalirsa cozucu adiyla reddeder (sessiz default yok).",
+      "maxIter": {"deger": 400, "kaynak": "Arama butcesi (fizik degil), DOGRULANMADI — yayinlanmis kaynagi yok. Turetme: bir iterasyon sert kisitlari bir kez projekte eder; yakinsama olcutu artigin yakinsamaMM (0.05) altina inmesidir. 400 iterasyon = yakinsamaMM'nin toleranslar.dikisUzunlukMM 2.0'a orani (40x) ile adimBoyu 0.5'in geometrik yavaslamasi icin alinan ust sinir; asilirsa esik GEVSETILMEZ, cozucu 'yumusak birakildi' ya da ERR_UNSOLVABLE der."},
+      "sureTavaniMS": {"deger": 2000, "kaynak": "Arama butcesi (fizik degil), DOGRULANMADI — olcum degil. Turetme: 0509 kapisinin --kisa modu adim basi kosar ve tek panel-cifti cozumunun ctest icinde saniyeler surmemesi gerekir; 2000 ms ust sinirdir. Tavan asilinca cozucu ASILI KALMAZ: yumusak hedefleri birakip sert kisitlarla doner ya da ERR_UNSOLVABLE atar."},
+      "adimBoyu": {"deger": 0.5, "kaynak": "Gevsetme adim carpani (boyutsuz, 0 < k <= 1), DOGRULANMADI — sayisal secim. 1.0 Jacobi tarzi gevsetmede salinim (over-relaxation) uretir, 0'a yakini yakinsamayi maxIter'in altina sokmaz; kararli bandin ortasi 0.5."},
+      "yakinsamaMM": {"deger": 0.05, "kaynak": "cozucu.fitLength.tolMM ile AYNI sayi, AYNI dayanak: 0.05 mm = cizim cozunurlugu 1 mm'nin 1/20'si, kapinin dikisUzunlukMM 2.0'inin 1/40'i — cozucu artigi kapida gorunmez. Iki cozucu ayni sayisal tolerans zincirini kullanir."},
+      "olcekKaynagi": "contract/body-v1.json olcekAraligi.giysiYuksekligiMM (min 395.0, max 1335.0 mm; gercek36 mutlak). MUTLAK INSAN OLCEGI SERT kisittir: cozucu olcegi bozarak dikisi kapatamaz. Sinir kutusu yuksekligi bu araligin disina cikacaksa ERR_UNSOLVABLE atilir — boylece A1'in ERR_SCALE_MISMATCH'i ile pinpon olmaz (olcek burada gevsetilecek bir hedef degil, projeksiyonla korunan bir sinirdir).",
+      "hataKodlari": {"ERR_UNSOLVABLE": "Sert kisitlar birbiriyle ya da olcek siniriyla celisiyor: cozum yok. Cozucu en yakin cozumu (son durumu) ve hangi kisitin gevsetilmesi gerektigini ADIYLA doner."}
     }
   },
   "oplar": {
