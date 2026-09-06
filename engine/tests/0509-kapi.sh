@@ -416,18 +416,28 @@ kisa() {
   [ -f "$EMSAL" ] && emsal_gecit
   kirmizi=$(awk -F'\t' '$2=="KIRMIZI"||$2=="CRASH"' "$GECIT" 2>/dev/null | wc -l | tr -d ' ')
   kirmizi="${kirmizi:-0}"
-  python3 -c "
-import json,sys
+  # cikti once degiskene alinir, sonra JSON'lugu dogrulanir: python3 patlarsa
+  # BOS satir degil, adiyla bir hata satiri basilir (sessiz default yasagi).
+  local satir
+  satir=$(KAPI_COMMIT="${commit:-}" KAPI_SAPMA="${sapma:-}" KAPI_ENUM="${enum:-}" KAPI_KIRMIZI="${kirmizi:-0}" \
+    python3 -c '
+import json, os
 def n(v):
-    if v in ('','null'): return None
+    if v in ("", "null", None): return None
     try:
-        f=float(v); return int(f) if f==int(f) else f
+        f = float(v); return int(f) if f == int(f) else f
     except Exception: return None
-print(json.dumps({'commit': '${commit:-}' or None,
-                  'anaSapmaMM': n('${sapma:-}'),
-                  'enum': n('${enum:-}'),
-                  'kirmizi': n('${kirmizi:-0}'),
-                  'tarih': '$(date '+%Y-%m-%dT%H:%M:%S')'}, ensure_ascii=False))" 2>>"$LOG"
+import datetime
+print(json.dumps({"commit": os.environ.get("KAPI_COMMIT") or None,
+                  "anaSapmaMM": n(os.environ.get("KAPI_SAPMA")),
+                  "enum": n(os.environ.get("KAPI_ENUM")),
+                  "kirmizi": n(os.environ.get("KAPI_KIRMIZI")),
+                  "tarih": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}, ensure_ascii=False))' 2>>"$LOG")
+  if [ -z "${satir:-}" ] || ! printf '%s' "$satir" | python3 -m json.tool >/dev/null 2>>"$LOG"; then
+    echo '{"hata":"KAPI_KISA_BOZUK","neden":"metrik satiri kurulamadi","log":"'"$LOG"'"}'
+    return 1
+  fi
+  printf '%s\n' "$satir"
 }
 
 # ---------------------------------------------------------------- --ivme
@@ -476,7 +486,7 @@ case "$MOD" in
   --kilit)      kilit_kur "${2:-}"; exit 0;;
   --kilit-ac)   kilit_ac; exit 0;;
   --kilit-diff) kilit_diff "${2:-}" "${3:-}"; exit $?;;
-  --kisa)       kisa; exit 0;;
+  --kisa)       kisa; exit $?;;
   --ivme)       ivme; exit 0;;
   --regresyon)  regresyon "${2:-}"; exit $?;;
   tam|"")       ;;
@@ -494,6 +504,7 @@ ctest_gecit parca_sayisi_check     "parca sayisi kaliptaki ile ayni"            
 ctest_gecit edit_locality_check    "edit locality: contract/edit-locality-v1.json"          "engine/CMakeLists.txt:1257 add_test(edit_locality_check)"
 ctest_gecit flat_ayni_insan_check  "flat'ler ayni insana: contract ayniInsan, tolerans 2 mm" "engine/CMakeLists.txt:1490 add_test(flat_ayni_insan_check)"
 ctest_gecit edge_case_supurme_check "kenar durum supurmesi: 0 sessiz default"               "engine/CMakeLists.txt:498 add_test(edge_case_supurme_check)"
+ctest_gecit kapi_sozlesme_check    "kapi.sh cikti sozlesmesi: 13 hukum"                      "engine/CMakeLists.txt add_test(kapi_sozlesme_check)"
 
 # 2) enum dallanma circiri (--measure; taban yalniz duser)
 enum_gecit

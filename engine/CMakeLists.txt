@@ -1535,3 +1535,9 @@ add_test(NAME graf_dikilebilir_check COMMAND graf_dikilebilir_check
     ${CMAKE_CURRENT_SOURCE_DIR}/../contract/graf-v1.json
     ${CMAKE_CURRENT_SOURCE_DIR}/../KOSU/ciktilar/graf-ilk/graf.json
     ${CMAKE_CURRENT_SOURCE_DIR}/../KOSU/ciktilar/graf-ilk)
+
+# 0509 kosusu (A1a): kapi.sh'in KENDI cikti sozlesmesi. 0509-kapi.sh ctest'i
+# kendisi kosar; onu ctest'e eklemek ozyineleme olurdu. Bu check yalniz ucuz
+# modlari ve sozlesmeyi olcer (<10 s, ctest cagirmaz): gecerli JSON, zorunlu
+# alanlar, bilinmeyen mod adiyla ret, bozulunca sessiz kalmama.
+add_test(NAME kapi_sozlesme_check COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/tests/0509-kapi-kendi-check.sh)
