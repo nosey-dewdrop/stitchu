@@ -1,9 +1,9 @@
 {
   "adim": "A1",
   "durum": "ISCI",
-  "deneme": 1,
+  "deneme": 2,
   "butce": {
-    "commit": 7,
+    "commit": 18,
     "saat": 2.63,
     "derlemeCommit": 0,
     "tavan": {
@@ -101,5 +101,10 @@
   "altAdim": {
     "A1a": "GECTI",
     "A1b": "ACIK"
+  },
+  "kararUygulandi": {
+    "karar1": "state.json ilanliKirmizi + kabul komutu H9/H10 (tavan 34) ile olculuyor",
+    "karar2": "state.json ilanliKirmizi + kabul komutu H11 (donuk kume) / H12 (--kisa sinyalsiz)",
+    "karar3": "engine/tests/0509-kapi.sh izlenen_yollar() + cmake_satir_yonu(); kabul komutu H13/H14/H15. A1b'ye devredilmedi, A1a tur 2'de kapandi."
   }
 }
