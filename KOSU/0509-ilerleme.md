@@ -200,3 +200,4 @@ Metrik bu turda DEGISMEDI ve degismemeliydi — bu tur urun kodu yazmadi:
 enum 436->436->436). İlerleyen: `olcek_check` 990.00 mm YEŞİL, `sanalDikisMM`
 0.00 mm ölçüldü. Ayrıntı: `KOSU/0509-DURDU.md`.
 Resume: `Workflow scriptPath=KOSU/0509-kosu.js args={"baslat":"A2"}`.
+2026-09-06 16:41 | A2 | BASLADI
