@@ -182,8 +182,9 @@ kilit_diff() { # $1 = tag; izin listesi $2 (opsiyonel)
 # Her gecit bir satir: ad<TAB>durum<TAB>sayi<TAB>esik<TAB>kaynak<TAB>not<TAB>logSatir
 GECIT="$TMPD/gecitler.tsv"
 : > "$GECIT"
-gecit_yaz() { # ad durum sayi esik kaynak not logSatir
-  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$1" "$2" "${3:-null}" "${4:-null}" "${5:-}" "${6:-}" "${7:-null}" >> "$GECIT"
+gecit_yaz() { # ad durum sayi esik kaynak not logSatir [ekAlan: "anahtar=deger" tek adet]
+  # 8. alan opsiyonel: gecit JSON'una ek bir ADLI alan basar (KARAR 5, nativeKiyas).
+  printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' "$1" "$2" "${3:-null}" "${4:-null}" "${5:-}" "${6:-}" "${7:-null}" "${8:-}" >> "$GECIT"
 }
 
 # ctest_gecit <ad> <esik-metni> <kaynak>
@@ -364,14 +365,30 @@ wasm_gecit() {
   logla "wasm sanity"
   out=$(node "$WASM_SANITY" 2>&1); rc=$?
   printf '%s\n' "$out" >> "$LOG" 2>&1
+  # KARAR 5: gecit ne olcmedigini de tasir. nativeKiyas degeri UYDURULMAZ,
+  # wasm sanity raporunun kendi nativeKiyasi alanindan okunur; alan yoksa
+  # gecit bunu "rapor soylemedi" diye adiyla basar.
+  local nk
+  nk=$(printf '%s' "$out" | python3 -c "
+import sys,json
+try:
+    d=json.loads(sys.stdin.read())
+    v=d.get('nativeKiyasi')
+except Exception:
+    v=None
+print('nativeKiyas=' + (v.replace(chr(9),' ').replace(chr(10),' ') if isinstance(v,str) and v.strip() else 'rapor bu alani basmadi'))" 2>>"$LOG")
+  nk="${nk:-nativeKiyas=rapor okunamadi}"
   if [ "$rc" -eq 0 ]; then
-    gecit_yaz "wasm_sanity" "YESIL" 0 0 "$WASM_SANITY" "trap/panic/bellek/native-fark yok" "$bas"
+    # KARAR 5 (2026-09-06): hukum YALNIZ "bellek sinirli wasm == commit li taban"
+    # iddiasini tasir; "native == wasm" iddiasini TASIMAZ. nativeKiyas alt alani
+    # gecit JSON'una bu yuzden ADIYLA basilir (asagida nativeKiyas cikarimi).
+    gecit_yaz "wasm_sanity" "YESIL" 0 0 "$WASM_SANITY" "0 trap / 0 fark: bellek sinirli wasm ciktisi == commit li taban (native kiyasi YAPILMADI)" "$bas" "$nk"
   elif [ "$rc" -eq 8 ]; then
     gecit_yaz "wasm_sanity" "HENUZ-YOK" null null "$WASM_SANITY" "graf wasm binding'i yok" "$bas"
   elif [ "$rc" -ge 126 ]; then
-    gecit_yaz "wasm_sanity" "CRASH" null 0 "$WASM_SANITY" "node exit $rc" "$bas"
+    gecit_yaz "wasm_sanity" "CRASH" null 0 "$WASM_SANITY" "node exit $rc" "$bas" "$nk"
   else
-    gecit_yaz "wasm_sanity" "KIRMIZI" null 0 "$WASM_SANITY" "wasm sanity kirmizi (exit $rc)" "$bas"
+    gecit_yaz "wasm_sanity" "KIRMIZI" null 0 "$WASM_SANITY" "wasm sanity kirmizi (exit $rc)" "$bas" "$nk"
   fi
 }
 
@@ -433,8 +450,8 @@ with open(gecit_p) as f:
         satir = satir.rstrip("\n")
         if not satir: continue
         p = satir.split("\t")
-        while len(p) < 7: p.append("")
-        ad, durum, sayi, esik, kaynak, not_, logsat = p[:7]
+        while len(p) < 8: p.append("")
+        ad, durum, sayi, esik, kaynak, not_, logsat, ek = p[:8]
         def num(v):
             if v in ("", "null"): return None
             try:
@@ -448,6 +465,11 @@ with open(gecit_p) as f:
         g = {"ad": ad, "durum": durum, "sayi": num(sayi), "esik": num(esik),
              "kaynak": kaynak, "not": not_,
              "log": "%s:%s" % (log_p, logsat) if logsat not in ("", "null") else None}
+        # ek adli alan (KARAR 5): "anahtar=deger". Gecit ne OLCMEDIGINI de adiyla tasir.
+        if ek and "=" in ek:
+            k, _, v = ek.partition("=")
+            k = k.strip()
+            if k: g[k] = v
         gecitler.append(g)
 
 kirmizi = [g["ad"] for g in gecitler if g["durum"] in ("KIRMIZI", "CRASH")]
