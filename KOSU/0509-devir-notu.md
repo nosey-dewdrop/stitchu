@@ -108,3 +108,29 @@ ADIYLA DURAN, ALANIM DISI:
   Cizim grafa SADIK, kusur cumle->graf cevirisinde (A6c hatti). UYDURULMADI.
 - Kol flat'te acilmis/yanda duruyor (sevkPoz.kolAcisiDeg bagli degil) — A2c/A4.
 - K2-prenses-roba regresyonda kosmuyor; kaynak web/lib/flat-from-pattern.js — A2/A4.
+
+## 2026-09-07 — A2a yeniden acilis: H7 KILIT ONARIMI (kok sebep)
+
+ONCE ONAR (7.5) maddesi geregi adim isine gecmeden H7 kapatildi.
+
+KOK SEBEP (iki kaynak celisiyor, gevsetme degil):
+- Kosucu `KOSU/0509-kosu.js:181` izinAlt['A2a SOLVER_UTILS'] = 4 glob:
+  `engine/tests/0509-* contract/graf-v1.json engine/CMakeLists.txt engine/src/solver_utils.*`
+- H7 ise izin listesini STATE'ten okur: `0509-state.json` A2bIzinListesi = 3 glob
+  (`solver_utils.hpp`, `solver_utils.cpp`, `0509-kapi.sh`).
+`--kilit` kosucunun GENIS listesini acar, H7 state'in DAR listesine gore yargilar =>
+6 dosya "izin disi yazilabilir" kalir: contract/graf-v1.json, 0509-emsal-olcum.mjs,
+0509-wasm-sanity.mjs, 0509-olcek_check.cpp, 0509-solver_check.cpp, 0509-topoloji_check.cpp.
+Bunlar A1b'nin `engine/tests/0509-*` izninden kalma; A1b kapaninca kilit YENIDEN KURULMAMIS.
+
+ONARIM (gevsetme YONUNDE DEGIL — daha SIKI olan tarafa hizalandi):
+  bash engine/tests/0509-kapi.sh --kilit "engine/src/solver_utils.hpp engine/src/solver_utils.cpp engine/tests/0509-kapi.sh"
+  -> "kilit: 217 dosya salt-okunur, izin listesinden 3 dosya yazilabilir"
+  -> H7: OK (izin disi yazilabilir: 0). kendi-check 18/18, 0 kirmizi.
+State'i GENISLETMEK secilmedi: Q3 kurali "ilan yoksa izin de yoktur" der, tavan <=0;
+ilani genisletmek gecidi gevsetmek olurdu.
+
+UYARI — TEKRARLAR: chmod git nesnesi DEGIL, commit'te tasinmaz. Kosucu her alt adim
+basinda `--kilit` cagirdiginda GENIS listeyi acacagi icin H7 yeniden kizarir. Kalici
+cozum kosucu ile state'in tek kaynaga indirilmesidir; `0509-kosu.js` benim alanim disi,
+acikSorular'a yazildi.
