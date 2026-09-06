@@ -71,3 +71,40 @@ Kapanmayan, adiyla (alanim disi, brief'te zaten baska adima bagli):
 KILIT UYARISI (sonraki isci): kilit disk halidir, commit'te tasinmaz. Adim
 basinda `--kendi-check` H7'yi OKU; FAIL ise once `--kilit "<izin listesi>"` kur,
 sonra ise basla. `--kilit-ac` ile birakilan kosu bir sonrakini kirmizi baslatir.
+
+## A2a tur 3 (6 Eyl) — OLCUM DEFEKTI KOK NEDENDEN BULUNDU, ONARILMADI (kapsam)
+
+Ne yapmaya calisiyordum: karar ajaninin hukmu — A2'nin metrigi TEK'e iner
+(sanalDikisMM) ve A2 bundan sonra KENDI KAPISINI ONARMAZ (is A1a'ya iade).
+
+KOK NEDEN (sanalDikisMM 0 -> null -> null): metrik OLCULMUYOR, ELDEN besleniyor.
+`engine/tests/0509-kapi.sh:539-552` `sanalDikisMM`'i `KAPI_SANAL` ORTAM
+DEGISKENINDEN okuyor ("Isci doldurur; yoksa null basar"). Son iki commit kilit
+onarimiydi, kimse export etmedi -> null. Yani durgunluk DEGIL, olculmeme —
+karar ajaninin teshisi dogrulandi. Kanit:
+  bash engine/tests/0509-kapi.sh --kisa            -> sanalDikisMM: null
+  KAPI_SANAL=0 bash engine/tests/0509-kapi.sh --kisa -> sanalDikisMM: 0
+Artifact (KOSU/ciktilar/graf-ilk/sanaldikis.json) 8 bedende gercek sayi tasiyor
+ama gecit onu OKUMUYOR. ONARILMADI: dosya A1a'ya iade edilen gecit altyapisi
+(karar ajani: "A2 kendi kapisini, kilidini ve metrigini ONARMAZ").
+Onerilen onarim A1a'ya: KAPI_SANAL bos ise sanaldikis.json'dan max(sanalDikisMM)
+okunsun; env yalniz override olsun.
+
+H16 KIRMIZI, KOK NEDEN AYRI BIR ARAC DEFEKTI (esik gevsetme DEGIL):
+`0509-kapi.sh:871-883` kabul komutlarindaki her "/" iceren shlex token'ini DOSYA
+sayiyor; 5. kabul komutu kabuk yonlendirmesi iceriyor, `>/dev/null` "olmayan
+dosya" diye okunuyor. Minimal repro:
+  python3 -c "import shlex;print([p for p in shlex.split('a >/dev/null') if '/' in p])"
+  -> ['>/dev/null']
+Urun kusuru degil, olcum kusuru. Ayni dosya kilitli + A1a'ya iade -> ONARILMADI.
+
+OLCULEN (elden degil, artifact'tan): sanalDikisMM = 0.00 mm, 8 bedende, esik 2.0.
+Bosluk-sifir DEGIL: 6 dikis cifti + 5 halka gercekten olculuyor, kol_oyugu
+artigi -9.99e-09 mm (gercek cozucu artigi). Giysi kapaniyor.
+grafciz deterministik dogrulandi: croquis36/flat md5 56cacf19... = commit'teki.
+
+ADIYLA DURAN, ALANIM DISI:
+- Taban graf `taban-elbise` KOL panelini tasiyor; brief'in cumlesi "kolsuz".
+  Cizim grafa SADIK, kusur cumle->graf cevirisinde (A6c hatti). UYDURULMADI.
+- Kol flat'te acilmis/yanda duruyor (sevkPoz.kolAcisiDeg bagli degil) — A2c/A4.
+- K2-prenses-roba regresyonda kosmuyor; kaynak web/lib/flat-from-pattern.js — A2/A4.
