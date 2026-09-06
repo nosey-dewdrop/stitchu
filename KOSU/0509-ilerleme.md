@@ -201,3 +201,4 @@ enum 436->436->436). İlerleyen: `olcek_check` 990.00 mm YEŞİL, `sanalDikisMM`
 0.00 mm ölçüldü. Ayrıntı: `KOSU/0509-DURDU.md`.
 Resume: `Workflow scriptPath=KOSU/0509-kosu.js args={"baslat":"A2"}`.
 2026-09-06 16:41 | A2 | BASLADI
+2026-09-06 17:21 | A2a | BASLADI (tag adim-A2a-once, kilit kuruldu, kapi exit=1: flat_ayni_insan_check=1 ILANLI + kapi_sozlesme_check=1 ILAN DISI)

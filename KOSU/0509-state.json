@@ -4,30 +4,32 @@
  "deneme": 1,
  "butce": {
   "adim": "A2",
-  "olculdu": "2026-09-06T16:41",
+  "olculdu": "2026-09-06T17:21",
   "commitSayisi": 0,
   "derlemeCommit": 0,
   "derlemeTavani": 6,
-  "saat": 0.45,
-  "kaynak": "git rev-list --count adim-A2-once..HEAD",
+  "saat": 0.0,
+  "kaynak": "git rev-list --count adim-A2a-once..HEAD",
   "kilitIhlali": [],
   "kapiBozuk": false,
-  "gecitYesil": true,
+  "gecitYesil": false,
   "kirmizilar": [
    "flat_ayni_insan_check=1 (esik 0; ILANLI, tavan 34, kapanacak adim A4)",
-   "kapi_sozlesme_check=1 (esik 0; ILAN DISI, A2 basinda mevcut)"
+   "kapi_sozlesme_check=1 (esik 0; ILAN DISI)",
+   "kendi-check H7 kilit-kurulu FAIL (izin listesi 8 dosya yazilabilir; gorev adimi 1 geregi)"
   ],
   "yerelMinimum": true,
   "metrikSerisi": "anaSapmaMM 0.693->0.693->0.693 (kapanmaOran 0.0); enum 436->436->436",
   "regresyonFarki": [],
-  "not": "A2 basi. kapi.sh exit=1 (2 kirmizi). kendi-check H7 kilit-kurulu FAIL: izin listesi 12 dosyayi yazilabilir birakiyor (gorev adimi 1 geregi)."
+  "not": "A2a baslangici. kapi.sh exit=1, kendi-check exit=1. emsal/regresyon/wasm exit=0."
  },
- "tag": "adim-A2-once",
+ "tag": "adim-A2a-once",
  "yol": [
   "A1",
   "A2",
   "A2a",
-  "A2-yeniden"
+  "A2-yeniden",
+  "A2a-faz"
  ],
  "taban": {
   "cpp.dallanma": 436,
