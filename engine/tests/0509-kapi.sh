@@ -212,14 +212,26 @@ sinyal_gecit() {
   local out
   out=$(bash KOSU/sinyal.sh tam 2>&1); rc=$?
   printf '%s\n' "$out" >> "$LOG" 2>&1
-  kirmizi=$(printf '%s' "$out" | grep -c 'KIRMIZI')
+  # SAYIM: sinyal.sh'in KENDI kirmizi isaretcisi "  KIRMIZI <ad>" (iki bosluk + KIRMIZI, sinyal.sh:203 bicimi).
+  # Duz 'grep -c KIRMIZI' YANLIS sayar: sinyal.sh bolum 6'da KOSU/0509-ilerleme.md satirlarini aynen basiyor,
+  # icinde "KIRMIZI" gecen bir ilerleme satiri sayiyi sahte yukseltiyor (6 Eyl'de 2 -> 3 oldu, yeni kirmizi yoktu).
+  kirmizi=$(printf '%s\n' "$out" | grep -cE '^  KIRMIZI ')
   kirmizi="${kirmizi:-null}"
+  # ilanli kumeye ait olmayan yeni bir kirmizi adi var mi (karar 6 Eyl: kume dondu)
+  # Ad kumesi: "  KIRMIZI ctest" isaretcisi altinda sinyal.sh dusen ALT TEST adlarini basiyor
+  # ("    	  8 - bundle_fresh_check (Failed)"). Karar 6 Eyl 2(a) alt test KUMESINI donduruyor,
+  # o yuzden ad olarak "ctest" degil dusen alt testler yazilir; yakalanamayan isaretci adiyla kalir.
+  KIRMIZI_ADLARI=$(printf '%s\n' "$out" \
+    | sed -n -e 's/^[[:space:]]*[0-9][0-9]* - \([A-Za-z0-9_.-]*\) (Failed).*$/\1/p' \
+             -e 's/^  KIRMIZI \(.*\)$/\1/p' \
+    | grep -v '^ctest$' | sort -u | tr '\n' ',')
+  [ -n "$KIRMIZI_ADLARI" ] || KIRMIZI_ADLARI=$(printf '%s\n' "$out" | sed -n 's/^  KIRMIZI \(.*\)$/\1/p' | tr '\n' ',')
   if [ "$rc" -ge 126 ]; then
     gecit_yaz "sinyal_tam" "CRASH" null 0 "KOSU/sinyal.sh (muhurlu; DEVIR KABUL zinciri)" "exit $rc" "$bas"
   elif [ "$rc" -eq 0 ]; then
     gecit_yaz "sinyal_tam" "YESIL" "$kirmizi" 0 "KOSU/sinyal.sh (muhurlu; DEVIR KABUL zinciri)" "0 KIRMIZI satiri" "$bas"
   else
-    gecit_yaz "sinyal_tam" "KIRMIZI" "$kirmizi" 0 "KOSU/sinyal.sh (muhurlu; DEVIR KABUL zinciri)" "$kirmizi KIRMIZI satiri (exit $rc)" "$bas"
+    gecit_yaz "sinyal_tam" "KIRMIZI" "$kirmizi" 0 "KOSU/sinyal.sh (muhurlu; DEVIR KABUL zinciri)" "kirmizi adlari: ${KIRMIZI_ADLARI%,} (exit $rc)" "$bas"
   fi
 }
 
