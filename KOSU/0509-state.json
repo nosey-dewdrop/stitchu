@@ -4,26 +4,24 @@
   "deneme": 1,
   "butce": {
     "adim": "A2",
-    "commitSayisi": 3,
+    "olculdu": "2026-09-06",
+    "commitSayisi": 13,
     "derlemeCommit": 0,
     "derlemeTavani": 6,
-    "saat": 1.45,
-    "yerelMinimum": true,
-    "metrikSerisi": "anaSapmaMM 0.693 -> 0.693 -> 0.693 (kapanma 0.0); enum 436 -> 436 -> 436 (kapanma 0.0)",
-    "ivmeMuafiyeti": false,
-    "olcumTarihi": "2026-09-06",
-    "gecitYesil": false,
-    "kirmizilar": [
-      "flat_ayni_insan_check 1 basarisiz test (ILANLI, A4)",
-      "sinyal_tam/bundle_fresh_check 1 (ILANLI, A9)"
-    ],
-    "henuzYok": [
-      "olcek_check"
+    "saat": 3.05,
+    "kaynak": "git rev-list --count adim-A2a-once..HEAD -- . ':!KOSU/0509-*' eksi fix(build): commitleri",
+    "kilitIhlali": [
+      "engine/src/grafdogrula.cpp"
     ],
     "kapiBozuk": false,
-    "kilitIhlali": [],
-    "regresyonFarki": 0,
-    "regresyonNot": "OZET adim=elle girdi=9 kosan=8 kosmadi=1 fark=0; K2-prenses-roba kosmadi (ilanli, A2/A4)"
+    "gecitYesil": false,
+    "kirmizilar": [
+      "flat_ayni_insan_check=1 (esik 0; ILANLI, tavan 34, kapanacak adim A4)"
+    ],
+    "yerelMinimum": true,
+    "metrikSerisi": "anaSapmaMM 0.693->0.693->0.693 (kapanmaOran 0.0); enum 436->436->436 (kapanmaOran 0.0); sanalDikisMM son satirda 0",
+    "regresyonFarki": [],
+    "not": "olcek_check HENUZ-YOK'tan cikti: 990.00 mm, aralik [395,1335], YESIL. sinyal_tam/bundle_fresh_check YESIL."
   },
   "tag": "adim-A2a-once",
   "yol": [
