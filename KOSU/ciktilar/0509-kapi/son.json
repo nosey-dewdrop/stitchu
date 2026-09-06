@@ -1,0 +1,155 @@
+{
+    "kapi": "0509-kapi.sh",
+    "commit": "4c9a03ae",
+    "tarih": "2026-09-06 13:56:06",
+    "gecitSayisi": 15,
+    "kirmiziSayisi": 2,
+    "kirmizilar": [
+        "flat_ayni_insan_check",
+        "sinyal_tam"
+    ],
+    "henuzYok": [
+        "olcek_check"
+    ],
+    "crash": [],
+    "gecitYesil": false,
+    "log": "KOSU/0509-kapi.log",
+    "gecitler": [
+        {
+            "ad": "graf_ir_check",
+            "durum": "YESIL",
+            "sayi": 0,
+            "esik": 0,
+            "kaynak": "engine/CMakeLists.txt:1523 add_test(graf_ir_check)",
+            "not": "graf IR + contract/graf-v1.json sema dogrulama: 0 hata",
+            "log": "KOSU/0509-kapi.log:7200"
+        },
+        {
+            "ad": "graf_op_check",
+            "durum": "YESIL",
+            "sayi": 0,
+            "esik": 0,
+            "kaynak": "engine/CMakeLists.txt:1529 add_test(graf_op_check)",
+            "not": "op araliklari contract/graf-v1.json'dan: 0 hata",
+            "log": "KOSU/0509-kapi.log:7209"
+        },
+        {
+            "ad": "graf_dikilebilir_check",
+            "durum": "YESIL",
+            "sayi": 0,
+            "esik": 0,
+            "kaynak": "engine/CMakeLists.txt:1534 add_test(graf_dikilebilir_check)",
+            "not": "sanal dikis: 0 kapanmayan halka",
+            "log": "KOSU/0509-kapi.log:7218"
+        },
+        {
+            "ad": "flat_convention_check",
+            "durum": "YESIL",
+            "sayi": 0,
+            "esik": 0,
+            "kaynak": "engine/CMakeLists.txt:174 add_test(flat_convention_check)",
+            "not": "flat konvansiyonu: contract/flat-convention-v1.json",
+            "log": "KOSU/0509-kapi.log:7227"
+        },
+        {
+            "ad": "parca_sayisi_check",
+            "durum": "YESIL",
+            "sayi": 0,
+            "esik": 0,
+            "kaynak": "engine/CMakeLists.txt:381 add_test(parca_sayisi_check)",
+            "not": "parca sayisi kaliptaki ile ayni",
+            "log": "KOSU/0509-kapi.log:7239"
+        },
+        {
+            "ad": "edit_locality_check",
+            "durum": "YESIL",
+            "sayi": 0,
+            "esik": 0,
+            "kaynak": "engine/CMakeLists.txt:1257 add_test(edit_locality_check)",
+            "not": "edit locality: contract/edit-locality-v1.json",
+            "log": "KOSU/0509-kapi.log:7248"
+        },
+        {
+            "ad": "flat_ayni_insan_check",
+            "durum": "KIRMIZI",
+            "sayi": 1,
+            "esik": 0,
+            "kaynak": "engine/CMakeLists.txt:1490 add_test(flat_ayni_insan_check)",
+            "not": "flat'ler ayni insana: contract ayniInsan, tolerans 2 mm",
+            "log": "KOSU/0509-kapi.log:7257"
+        },
+        {
+            "ad": "edge_case_supurme_check",
+            "durum": "YESIL",
+            "sayi": 0,
+            "esik": 0,
+            "kaynak": "engine/CMakeLists.txt:498 add_test(edge_case_supurme_check)",
+            "not": "kenar durum supurmesi: 0 sessiz default",
+            "log": "KOSU/0509-kapi.log:7341"
+        },
+        {
+            "ad": "kapi_sozlesme_check",
+            "durum": "YESIL",
+            "sayi": 0,
+            "esik": 0,
+            "kaynak": "engine/CMakeLists.txt add_test(kapi_sozlesme_check)",
+            "not": "kapi.sh cikti sozlesmesi: 18 hukum (kaynaktan sayildi, elle yazilmadi)",
+            "log": "KOSU/0509-kapi.log:7350"
+        },
+        {
+            "ad": "enum_dallanma_check",
+            "durum": "YESIL",
+            "sayi": 436,
+            "esik": 436,
+            "kaynak": "engine/tests/enum-dallanma-baseline.json:toplam",
+            "not": "cpp.dallanma <= taban",
+            "log": "KOSU/0509-kapi.log:7368"
+        },
+        {
+            "ad": "emsal_mm_olcum",
+            "durum": "YESIL",
+            "sayi": 0.693,
+            "esik": 2,
+            "kaynak": "contract/flat-convention-v1.json /croquis/toleranceMM",
+            "not": "emsale ana sapma (medyan, mm); olcum engine/tests/0509-emsal-olcum.mjs",
+            "log": "KOSU/0509-kapi.log:7370"
+        },
+        {
+            "ad": "olcek_check",
+            "durum": "HENUZ-YOK",
+            "sayi": null,
+            "esik": null,
+            "kaynak": "contract/body-v1.json olcekAraligi",
+            "not": "graftan cizim yok; degerlenmis bbox olculemiyor",
+            "log": "KOSU/0509-kapi.log:7372"
+        },
+        {
+            "ad": "wasm_sanity",
+            "durum": "YESIL",
+            "sayi": 0,
+            "esik": 0,
+            "kaynak": "engine/tests/0509-wasm-sanity.mjs",
+            "not": "0 trap / 0 fark: bellek sinirli wasm ciktisi == commit li taban (native kiyasi YAPILMADI)",
+            "log": "KOSU/0509-kapi.log:7372",
+            "nativeKiyas": "YOK \u2014 bu hatta native flat uretici bulunmuyor (olculdu 2026-09-06); kiyas bellek sinirli wasm ciktisi ile commit li taban arasinda yapildi. Ayrinti: dosya basligi."
+        },
+        {
+            "ad": "regresyon",
+            "durum": "YESIL",
+            "sayi": 0,
+            "esik": 0,
+            "kaynak": "KOSU/regresyon/girdiler.json",
+            "not": "tabandan fark yok | OZET adim=elle girdi=9 kosan=8 kosmadi=1 fark=0",
+            "log": "KOSU/0509-kapi.log:7393"
+        },
+        {
+            "ad": "sinyal_tam",
+            "durum": "KIRMIZI",
+            "sayi": 1,
+            "esik": 0,
+            "kaynak": "KOSU/sinyal.sh (muhurlu; DEVIR KABUL zinciri)",
+            "not": "kirmizi adlari: bundle_fresh_check (exit 1)",
+            "log": "KOSU/0509-kapi.log:7405"
+        }
+    ]
+}

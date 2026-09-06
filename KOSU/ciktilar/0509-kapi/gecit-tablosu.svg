@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="974" viewBox="0 0 900 974">
 <rect width="900" height="974" fill="#fbfaf8"/>
 <style>text{font-family:-apple-system,Helvetica,Arial,sans-serif}</style>
-<text x="34" y="46" font-size="24" font-weight="700" fill="#141414">0509 gecit tablosu — A1 gecit karari uygulandi</text>
-<text x="34" y="74" font-size="13" fill="#555">commit 1eec09b4 · 2026-09-06 10:46:15 · 15 gecit · 2 kirmizi · crash 0 · gecitYesil False</text>
-<text x="34" y="96" font-size="13" fill="#555">log KOSU/0509-kapi.log · uretim 2026-09-06 10:59:38 · uretici KOSU/0509-kapi-tablo.py &lt;- son_gecit.json (tum sayilar gecit JSON'undan)</text>
+<text x="34" y="46" font-size="24" font-weight="700" fill="#141414">0509 gecit tablosu</text>
+<text x="34" y="74" font-size="13" fill="#555">commit 4c9a03ae · 2026-09-06 13:56:06 · 15 gecit · 2 kirmizi · crash 0 · gecitYesil False</text>
+<text x="34" y="96" font-size="13" fill="#555">log KOSU/0509-kapi.log · uretim 2026-09-06 13:56:06 · uretici KOSU/0509-kapi-tablo.py &lt;- son.json (tum sayilar gecit JSON'undan)</text>
 <line x1="34" y1="128" x2="866" y2="128" stroke="#ddd"/>
 <text x="34" y="120" font-size="11" fill="#888" letter-spacing="1">GECIT / KAYNAK</text>
 <text x="600" y="120" font-size="11" fill="#888" letter-spacing="1">DURUM</text>
