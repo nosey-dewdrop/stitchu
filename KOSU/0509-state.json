@@ -19,7 +19,8 @@
   },
   "regresyonTabani": null,
   "kabulKomutlari": [
-    "bash engine/tests/0509-kapi-kendi-check.sh"
+    "bash engine/tests/0509-kapi-kendi-check.sh",
+    "bash engine/tests/0509-karar-kabul.sh"
   ],
   "devredilen": [
     "[ILANLI KIRMIZI] flat_ayni_insan_check = 34 (A1a oncesi). Kapanacak adim: A4 (A4'un kabul sarti bu gecidin YESIL olmasi; kirmizi kalirsa A4 GECMEZ). TAVAN 34: A2 ve A3'te sayi artarsa o adim duser. gecitYesil hesabinda dusurulmez, JSON'da KIRMIZI basilir, sayi her adimda metrige yazilir.",
