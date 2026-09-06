@@ -1,6 +1,6 @@
 {
-  "adim": "A1b",
-  "durum": "A1b BITTI",
+  "adim": "A1 GECIT — KARARLAR UYGULANDI",
+  "durum": "A1b GECTI, A2 ACIK",
   "deneme": 2,
   "butce": {
     "commit": 8,
@@ -230,5 +230,76 @@
     "contract/body-v1.json (YALNIZ olcekAraligi ekleme, kaynakli)",
     "engine/CMakeLists.txt (YALNIZ add_test ekleme)",
     ".gitignore (yalniz ekleme)"
-  ]
+  ],
+  "A1_gecit_karari": {
+    "_ne": "Karar ajaninin 6 Eyl kararlari ve bu turda UYGULANMALARI. Isci sormustu, karar ajani cevapladi, bu tur uyguladi. Her madde: karar + nerede yasiyor + kanit.",
+    "tarih": "2026-09-06",
+    "hukum": "DEVAM — A1b GECTI, A2 ACIK.",
+    "1_devam_mi_dur_mu": {
+      "karar": "DEVAM. Her acik kalem adiyla bir adima bagli; adsiz ENGEL yok.",
+      "acikKalemler": {
+        "olcek_check": "A2 (mutlak bbox orada doguyor)",
+        "flat_ayni_insan_check": "A4 (34, tavan asilmadi)",
+        "sinyal_tam/bundle_fresh_check": "A9",
+        "K2-prenses-roba regresyon dususu": "A2/A4"
+      },
+      "sart": "A2 kapanisinda kosucu --regresyon --taban ile tabani tazeler; A2'den itibaren --ivme hukmu BAGLAYICI.",
+      "uygulandi": "Bu turda taban ZATEN tazelendi (girdi seti degistigi icin): 9 girdi, 8 kosan, fark 0. Komut: bash engine/tests/0509-kapi.sh --regresyon --taban"
+    },
+    "2_on_arka_cifti": {
+      "karar": "(b) VE biba KALIR — ikisi birden.",
+      "uygulandi": {
+        "F1-mary-quant-on-arka": "YENI girdi. mary-quant-O365926-dress(.jpg/-arka.jpg). Arka yuz OLCULDU ve dogrulandi (on paci yok, yaka arka dilimi sirtta, cep yok, kemer kesintisiz). Taban: 53945 B, sha 41a9d361dc66c42c.",
+        "F2-biba-arka-yok": "biba-O1194418 SETTE KALDI, adi degisti, topolojisi 'yalniz on fotograf' (HEDEF 2 / 12.5), arkaYuz 'absent', ilan ADLANDIRMA_CELISKISI. Taban 38443 B / sha 97439210fb732d05 — eski F1 ile BAYT AYNI (diff -q temiz), yani yeniden adlandirma veri kaybetmedi.",
+        "onbellek": "Iki yeni tarif yazildi (f35565a6..., 0147b7cf...), okuyan isci-A1-gecit, Read araci, llmCagri 0.",
+        "eskiTaban": "KOSU/regresyon/taban/F1-biba-on-arka SILINDI, ayri commit, bayt-ayni kaniti mesajda."
+      },
+      "kapsamUyarisi": "16 ciftin 14'u DOGRULANMADI. A2'nin okudugu her yeni cift icin '-arka' dosyasinin gercekten arka olup olmadigi tarifin icine yazilir; isim guvenilir kabul edilmez. Bu uyari girdiler.json icinde F2'nin _kapsamUyarisi alaninda da duruyor."
+    },
+    "3_K2_K5_teshisi": {
+      "karar": "Teshis guncellenir, not SILINMEZ. Iki DUSEN dosyasinin sonuna tarihli blok eklendi.",
+      "uygulandi": {
+        "K5": "beklenen 'DUSER' -> 'CIZER (6 Eyl olcumu)', taban sha 707009d16f027931.",
+        "K2": "beklenen DEGISMEDI (DUSER). Kok sebep K2 icin ayakta ama artik K5'ten destek almiyor.",
+        "A2sarti": "Teshis cupseam.cpp ile yoke.cpp'yi AYRI olcer; 'ayni kok sebep' varsayimindan BASLAMAZ."
+      },
+      "SORULMAYAN_BULGU": {
+        "_neden_burada": "Karar 'K5 CIZIYOR, taban yap' diyordu. Tabani yaparken ikinci bir olcum cikti; karar ajani bunu bilmiyordu.",
+        "bulgu": "K5'in flat'i 03-elbise-kolsuz.svg (duz kolsuz elbise) ile bayt sayisinda AYNI (25663) ve yalniz 5 yolda ayriliyor: dugum, siluet mikro-sapmasi, arka pens boyu (495.0 vs 535.0), bel dikis kacigi (48.168 vs 39.768 mm).",
+        "olcum": "grep -o 'data-rol=\"[^\"]*\"' KOSU/regresyon/taban/K5-kup-korse/flat.svg | sort | uniq -c -> siluet 2, bel-dikisi 4, pens 12, dikis-izi 12, orta-dikis 2. Kup/korse rolu: 0.",
+        "anlami": "K5'i K5 yapan iki spec anahtari (cupSeam:horizontal, laceUpBack:corset) HIC geometri uretmiyor. Cizilen sey kup dikisli korse degil, kolsuz duz elbise. Madde 4 anlaminda SESSIZ DEFAULT, ilan edilmemis.",
+        "yapilan": "Duz 'CIZER' beklentisi bu kusuru yesile boyardi. Beklentiye 'beklenenKusur' bagli: kupDikisiGeometrisi YOK, korseBagcikGeometrisi YOK. A2/A4 bu alanlari DEGISTIRMEK zorunda; taban sha degisip bu satirlar 'YOK' kalirsa cizim gizlice eskiye donmustur.",
+        "not": "K2 ile K5 farki 'biri calisiyor biri bozuk' DEGIL: K2 gorunur sekilde dusuyor, K5 sessizce ozelliksiz ciziyor. Sessiz olan daha tehlikelidir."
+      }
+    },
+    "4_eksik_op_puff_sweetheart_peplum": {
+      "karar": "OP TABLOSU. Spec enum'una 'puff', 'sweetheart', 'peplum' EKLENMEZ.",
+      "gerekce": "HEDEF 1.9: sozluk sabit tabirlerden yapilmaz; sabit menu/limit/sinir bu maddenin ihlali. Sinirsizlik enum'la degil primitiflerle gelir.",
+      "A2kurali": "A2, fotograf tarifiyle motor sozlugu arasindaki her bosluk icin ADIYLA bir 'eksik op' satiri yazar (12.14: 'absent' + en yakin yapilabilir op onerisi); enum'a en yakin degeri SESSIZCE eslemez.",
+      "primitifKarsiliklari": {
+        "peplum": "bel dikisinde ayri panel + hem cizgisi",
+        "sweetheart": "boyun kenarinin iki egri parcasi",
+        "puff": "omuz basinda buzgu payi"
+      },
+      "uygulandi": "A1b'nin scoop=0.75 eslemesi GECICI OKUMA notudur, sozluk karari DEGIL; A2'de op karsiligiyla degistirilir. Yeni mary-quant tarifinde ayni kural uygulandi: enYakinSpec._kayip[] kemer, tam boy dugme paci, kapakli yama cep, kontrast kumas parcasi ve bel-dikisi yoklugunu ADIYLA sayiyor; hicbiri enum'a eklenmedi.",
+      "enumDegismedi": "contract/ dosyalarina enum degeri EKLENMEDI (kilitli alan, dokunulmadi)."
+    },
+    "5_wasm_native_kiyasi": {
+      "karar": "Bugunku kiyas KABUL, ama gecidin ilani duzeltilir.",
+      "uygulandi": {
+        "gecitNotu": "'trap/panic/bellek/native-fark yok' -> '0 trap / 0 fark: bellek sinirli wasm ciktisi == commit li taban (native kiyasi YAPILMADI)'. Eski not olculmemis bir native kiyasini VAAT EDIYORDU.",
+        "nativeKiyasAlani": "Gecit JSON'unda alt alan olarak basiliyor. Degeri UYDURULMUYOR: wasm sanity raporunun kendi nativeKiyasi alanindan okunuyor; alan yoksa 'rapor bu alani basmadi' yaziliyor.",
+        "mekanizma": "gecit_yaz'a 8. opsiyonel alan eklendi ('anahtar=deger'), python okuyucu bunu gecit JSON'una ADLI alan olarak koyuyor.",
+        "kanit": "KOSU/ciktilar/0509-kapi/*.json -> gecitler[wasm_sanity].nativeKiyas"
+      },
+      "hukmunTasidigiIDDIA": "YALNIZ 'bellek sinirli wasm == commit li taban'. 'native == wasm' iddiasini TASIMAZ.",
+      "A2sarti": "A2'de graftan cizim native tarafta doguyorsa, ayni girdi icin native ve wasm ciktisi karsilastirilir ve fark KIRMIZIDIR. Native uretici A2'de de dogmuyorsa gecit bu haliyle kalir ve ilan 'bu urunde native flat yolu YOK' diye kalicilasir. Sart A4'e TASINMAZ."
+    },
+    "6_ivme_muafiyeti": {
+      "karar": "ONAYLANDI. A1b icin KESILME SEBEBI DEGIL; 8.4 ivme kurali urunu ILERLETEN adimlar icindir.",
+      "kapsam": "MUAFIYET DAR. A2'den itibaren ivme BAGLAYICI ve muafiyet YOK — A2/A4 sapmayi kapatmakla yukumlu.",
+      "uyari": "Ayni gerekce A2'de tekrarlanirsa (urun degisiyor ama sapma kapanmiyor) o GERCEK yerel minimumdur ve kesme uygulanir.",
+      "uygulandi": "state.json butce.yerelMinimum satiri KARAR GEREGI OLDUGU GIBI BIRAKILDI."
+    }
+  }
 }
