@@ -1,5 +1,5 @@
 {
-  "adim": "A2",
+  "adim": "A2b",
   "durum": "ISCI",
   "deneme": 1,
   "butce": {
@@ -138,6 +138,39 @@
       "adim": "A2a",
       "soru": "enum_dallanma_check cpp.dallanma 436 -> 439 oldu (solver Durum enum'u); taban mi kesilsin?",
       "karar": "HAYIR, taban kesilmedi ve gecit gevsetilmedi. KOK SEBEP kendi kodumdaydi: solver akisi durum kodunu AKIS DEGISKENI gibi kullaniyordu (R.durum != Durum::OK, == Durum::YUMUSAK_BIRAKILDI, hpp'de yakinsadi()). Durum kodu bir CIKTI ETIKETIDIR; akis bool'a (yakinsadi / yumusakVardi) tasindi, hpp'deki yakinsadi() kaldirildi. cpp.dallanma 436'ya dondu. case Durum::X: return \"...\" satirlari zaten serializasyon kovasinda, toplama girmiyor."
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A2a kapanis / karar ajani",
+      "soru": "1. H7 esigi (<=2 yazilabilir dosya) A2b'nin dosya alaniyla celisiyor. Esik acilsin mi, yoksa A2b H7'yi 'ilanli kirmizi' olarak mi tasisin?",
+      "karar": "IKISI DE HAYIR. Esik DEGISMEZ, H7 ilanli kirmizi YAPILMAZ. A2b IKI KILIT PENCERESINE bolunur, her pencerede izin listesi en fazla 2 dosya. Pencere 1 (madde 1b, topoloji): --kilit \"engine/src/grafdogrula.hpp engine/src/grafdogrula.cpp\"; topoloji kurallari (kenar rolu uyumlulugu, dikis cifti benzersizligi, kapanma zorunlulugu, komsuluk grafi bagli, ERR_IMPOSSIBLE_TOPOLOGY, ERR_SCALE_MISMATCH) yazilir, birim testi yesillenir, commit, sonra bu iki dosya YENIDEN SALT-OKUNUR birakilir. Pencere 2 (contract): --kilit \"contract/graf-v1.json\" ile YALNIZ topoloji kurallarinin gerektirdigi sozlesme girisi EKLEME olarak yapilir (eklenen/silinen satir sayisi commit mesajinda), commit, kilit geri.",
+      "gerekce": "Iscinin sorusunun dayanagi olculdu ve yanlis cikti: A2b'nin acmasi gereken dosyalarin cogu kilitli alanda DEGIL. kilitli_yollar() yalnizca contract, engine/tests, engine/golden-reference.csv, grafdogrula.*, solver_utils.* dondurur; panelkaynak.*, grafdegerle.*, flatsvg.*, kalipsvg.*, grafciz-cli.cpp, wasm/bindings.cpp, backend/** H7'ye HIC SAYILMAZ ve pencerelerden bagimsiz serbestce yazilir. Gercek kilitli ayak izi 3 dosya (grafdogrula.hpp+cpp+contract/graf-v1.json); 3'u 2'ye indiren sey esik degil SIRA. Esigi adim basina izin listesi uzunlugundan okutmak esik gevsetmedir (3.7) ve 0509-kapi.sh madde 3 geregi KILITLIDIR. 'Ilanli kirmizi' daha kotusu: o mekanizma (5.2) OLCULMUS ve kapanacak adimi adiyla yazilmis bir KUSUR icindir; burada kusur yok, is sirasi var.",
+      "uygulandi": "EVET (bu tur). state.json.A2b_pencereler yazildi; Pencere 1 kilidi kuruldu ve H7 olculdu. engine/tests/ altinda A2b'nin kendi birim testi YENI 0509-* dosyasi olarak acilir (dizinler yazilabilir; var olan test dosyasi DEGISTIRILMEZ)."
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A2a kapanis / karar ajani",
+      "soru": "2. Cozucu 40 halkalik sert zincirde 0.546 mm'de takiliyor. maxIter buyutmek ya da global cozume gecmek icin 11.7 ile A2a yeniden acilsin mi?",
+      "karar": "HAYIR, YENIDEN ACILMAZ. A2a KAPALI kalir; cozucu, maxIter, kIcProjeksiyon DEGERI ve cozum yontemi A2b'de DEGISTIRILMEZ. A2b'nin Halka2B'si panel basina KISA zincir kurar (her panel kendi kisit kumesiyle cozulur; paneller arasi dikis cifti esitligi panel-cifti duzeyinde projekte edilir; tek bir 40 halkalik GLOBAL zincir kurulmaz). KIRILMA SARTI ADIYLA BAGLI: A2b gercek taban grafini (KOSU/ciktilar/graf-ilk/graf.json, 5 panel) cozerken ERR_UNSOLVABLE ALIRSA bu bir OLCUMDUR — hangi panelde, kac halkalik zincirde, kac mm artikta takildigi KOSU/ciktilar/graf-ilk/dikilebilir.md'ye ADIYLA yazilir ve adim BITMEDI sayilir; o olcum geldiginde 11.7 YENIDEN AC 4.A2a devreye girer. Olcum gelmeden acilmaz.",
+      "gerekce": "0.546 mm SENTETIK bir stres testinden (40 halka) gelen sinir; A2b'nin gercek girdisi 5 panelli taban graf ve halkalari (yaka, kol oyugu, bel, etek ucu, kol agzi) F2b'de zaten 0.000 mm artikla kapandi — darbogazin A2b'de TETIKLENECEGI OLCULMEDI. Olculmemis bir ihtimal icin cozucuyu global yonteme tasimak deneme tavanini olmayan bir kusura yakmaktir ve kapsam buyutmedir (2.3). Isci sinirin ustunu ORTMEDI, ERR_UNSOLVABLE olarak ILAN etti ve testte dondurdu — dogru davranis. 11.7 kok neden onceki adimdaysa acilir; burada kok neden HENUZ OLCULMEDI, sarti olusmadi.",
+      "uygulandi": "EVET (bu tur). state.json.A2b_pencereler.q2_yenidenAcmaSarti ve acikEngeller[] icine adiyla yazildi."
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A2a kapanis / karar ajani",
+      "soru": "3. kIcProjeksiyon = 4 kodda duruyor; sozlesmeye (contract/graf-v1.json cozucu.gevsetme) tasinsin mi?",
+      "karar": "EVET, TASINACAK — ama A2b'nin CONTRACT PENCERESINDE (Q1 Pencere 2), AYNI COMMIT'te, EKLEME olarak. contract/graf-v1.json cozucu.gevsetme altina icProjeksiyon: {deger: 4, kaynak: \"...\"} girer; kaynak metni kardeslerinin (maxIter, adimBoyu, yakinsamaMM) formatiyla AYNIDIR ve DOGRULANMADI ibaresini tasir (yayinlanmis kaynagi yok, arama butcesi, fizik degil; turetme = bir projeksiyon turu obur sert kisiti bozabildigi icin tur icinde surulen Gauss-Seidel sweep sayisi). DEGER 4'TEN DEGISTIRILMEZ (A2a'nin 32 hukumlu testi bu sayiyla yesil); yalnizca YERI degisir. solver_utils.cpp'deki constexpr sozlesmeden okunur hale gelir (SolverCtx.icProjeksiyon), sozlesmesiz cagri ERR_SOLVER_NO_CONTRACT ile adiyla reddedilir. AYRI contract commiti ACILMAZ — Q1 Pencere 2 zaten aciliyor, is sisirilmez.",
+      "gerekce": "cozucu.gevsetme blogunda zaten dort arama siniri var (maxIter, sureTavaniMS, adimBoyu, yakinsamaMM) ve dordu de 'fizik degil, arama siniri' diye kaynakli/DOGRULANMADI isaretli. kIcProjeksiyon TAM AYNI SINIFTA bir sayi; disarida kalmasi onu sozlesmenin denetiminden muaf TEK DUGME yapar — ileriki bir adimin sessizce cevirebilecegi tek knob. Iscinin 'kaynak turetemedigim icin uydurma sabit yazmamak adina koda biraktim' gerekcesi dogru bir icgudu ama yanlis sonuc veriyor: sozlesme zaten kaynaksiz sayiyi kabul ediyor, sart kaynak DEGIL, DOGRULANMADI olarak ADIYLA ilan edilmesi. Koda birakmak sayiyi gizlemez ama DENETLENEBILIR YERDEN cikarir.",
+      "uygulandi": "HAYIR — A2b'nin teslimi (Q1 Pencere 2, bu defterde ilan edildi, A2b KABUL SARTI). Bu tur kilitli alani (contract + solver_utils) DEGISTIRMEDI: Pencere 2 A2b'de acilir.",
+      "kabulOlcumu": "python3 -c \"import json;g=json.load(open('contract/graf-v1.json'))['cozucu']['gevsetme']['icProjeksiyon'];assert g['deger']==4 and 'DOGRULANMADI' in g['kaynak']\" && ! grep -q 'constexpr int kIcProjeksiyon' engine/src/solver_utils.cpp"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A2a kapanis / karar ajani",
+      "soru": "KARAR: A2a kapanisi DEVAM mi DUR mu?",
+      "karar": "DEVAM. A2b baslar. SARTLAR: (a) A2b IKI KILIT PENCERESIYLE kosar, H7 hicbir anda kirmizi olmaz; (b) contract'a giren HER SATIR EKLEME olur ve commit mesajinda eklenen/silinen satir sayisi yazar; (c) TESLIM SIRASI ZORUNLU: ILK SAATTE, kotu de olsa, KOSU/ciktilar/graf-ilk/flat.png + kalip-36.png COMMIT'TE olur, iyilestirme sonra; (d) cozucu, maxIter, kIcProjeksiyon DEGERI, esik ve test DEGISTIRILMEZ.",
+      "gerekce": "Cekirdek curuk degil: solver_utils birim testi 32 hukumle gecti, iki gercek kusur cikardi ve ikisi de kapatildi ya da adiyla ilan edildi (yon-fallback duzeltildi; uzun zincir yakinsamamasi ERR_UNSOLVABLE olarak dondu, gizlenmedi). cpp.dallanma 436'ya dondu, taban KESILMEDI, kok neden (durum kodunu akis degiskeni gibi kullanma) yamayla degil kaynagindan duzeltildi. Dort kabul komutu, hedefli ctest 8/8, kendi-check 18/18 yesil, agac temiz. Devredilen kirmizi (kapi_sozlesme_check / H7) esik gevsetilmeden, test degistirilmeden, kilidi A2a izin listesiyle yeniden kurarak kapatildi. Iki ilanli kirmizi kaliyor, ikisi de kapanacak adima ADIYLA bagli (flat_ayni_insan_check=34 -> A4; sinyal_tam/bundle_fresh_check=1 -> A9); olcek_check 'henuz yok' ve A2'nin isi. Adi yazilmamis ENGEL yok, bu yuzden DEVAM gecerlidir.",
+      "uygulandi": "EVET (bu tur). altAdim.A2a=GECTI, A2b=ACIK; A2b_pencereler + A2b_kabulSartlari state.json'a yazildi; Pencere 1 kilidi kuruldu, H7 olculdu."
     }
   ],
   "ilkYesil": {
@@ -184,7 +217,9 @@
   ],
   "altAdim": {
     "A1a": "GECTI",
-    "A1b": "GECTI (teslimler yesil; olcek_check durust henuz-yok, A2 bekliyor)"
+    "A1b": "GECTI (teslimler yesil; olcek_check durust henuz-yok, A2 bekliyor)",
+    "A2a": "GECTI (karar ajani 6 Eyl: DEVAM; cozucu birim testi 32 hukum, hedefli ctest 8/8, kendi-check 18/18, cpp.dallanma 436 taban korundu)",
+    "A2b": "ACIK"
   },
   "kararUygulandi": {
     "karar1": "state.json ilanliKirmizi + kabul komutu H9/H10 (tavan 34) ile olculuyor",
@@ -201,6 +236,12 @@
       "karar4_addtest_hedef": "UYGULANDI: cmake_satir_yonu() ayni ad silinip eklenmisse 'hedefi degisti' KILIT_IHLALI basar; H18 uc halde olcuyor (hedef degisimi/saf ekleme/saf silme).",
       "devredilen_kusur1_esik": "KAPANDI: esik /croquis/toleranceMM acik yolundan okunuyor (2.0 mm), alt dize taramasi kaldirildi. Yanlis kirmizi (0.693 > 0.05) yesile dondu; esik GEVSETILMEDI.",
       "devredilen_kusur2_hukum_sayisi": "KAPANDI: sayi ok()/fail() cagrilarindan uretiliyor, elle yazilmiyor. Ilk duzeltme heredoc'ta kesiliyordu (17 vs 18), o da olculup kapatildi."
+    },
+    "karar_ajani_A2a_kapanis_2026-09-06": {
+      "karar1_h7_iki_pencere": "UYGULANDI: state.json.A2b_pencereler; Pencere 1 kilidi kuruldu, H7 olculdu (kendi-check ciktisi).",
+      "karar2_a2a_acilmaz": "UYGULANDI: A2b_pencereler.q2_yenidenAcmaSarti + acikEngeller[] (SARTA BAGLI). Kod DEGISMEDI, dogru olan da buydu.",
+      "karar3_icProjeksiyon": "A2b YE DEVREDILDI (Pencere 2, ayni commit). Bu tur kilitli alana dokunmadi; kabul olcumu kararDefteri'nde adiyla yazili.",
+      "karar4_devam": "UYGULANDI: adim=A2b, altAdim.A2a=GECTI / A2b=ACIK, A2b_kabulSartlari[] yazildi."
     }
   },
   "acikEngeller": [
@@ -227,6 +268,13 @@
       "durum": "REGRESYONDA KOSMUYOR",
       "kapanacakAdim": "A2/A4",
       "neden": "roba dikisi kol oyugunu kesiyor, armhole_* rolu tasinmiyor (kendi DUSEN notunda ilan edilmis kok sebep)"
+    },
+    {
+      "engel": "A2b Halka2B global zincir yakinsamasi",
+      "durum": "OLCULMEDI (sentetik 40 halkada 0.546 mm artik; gercek 5 panelde F2b'de 0.000 mm)",
+      "kapanacakAdim": "A2b (olcum) -> gerekirse 11.7 YENIDEN AC 4.A2a",
+      "tur": "SARTA BAGLI",
+      "neden": "KARAR 2: olcum gelmeden A2a yeniden acilmaz; olcum KOSU/ciktilar/graf-ilk/dikilebilir.md'ye adiyla yazilir"
     }
   ],
   "A1bIzinListesi": [
@@ -320,5 +368,46 @@
     "A1": "GECTI",
     "A2": "ISCI"
   },
-  "A1_kapanis_notu": "6 Eyl, ana oturum: kosu 8.5 butce asimiyla DURDU olarak kapanmisti, ama hakem A1a ve A1b'yi GECIRDI (altAdim) ve karar ajani hukmu 'DEVAM — A1b GECTI, A2 ACIK' (A1_gecit_karari.hukum). Butce asimi 8.5'e gore protokol hatasi sinyalidir, urun kusuru degil; A1 urunu degistirmedi. Ana oturum kabul komutlarini KENDI kostu ve yesil olduklarini olctu: 'bash engine/tests/0509-kapi.sh --kendi-check' -> OZET 17 hukum gecti, 1 kirmizi (ilanli flat_ayni_insan_check); 'node engine/tests/0509-emsal-olcum.mjs --json' -> JSON dondu; 'node engine/tests/0509-wasm-sanity.mjs' -> JSON dondu, tabandanFark []. Bu yuzden durum GECTI'ye cevrildi; esik gevsetilmedi, verilmis hukum kaydedildi. A1 YENIDEN KOSULMAZ (26 commit tekrar yanmasin); sirada A2."
+  "A1_kapanis_notu": "6 Eyl, ana oturum: kosu 8.5 butce asimiyla DURDU olarak kapanmisti, ama hakem A1a ve A1b'yi GECIRDI (altAdim) ve karar ajani hukmu 'DEVAM — A1b GECTI, A2 ACIK' (A1_gecit_karari.hukum). Butce asimi 8.5'e gore protokol hatasi sinyalidir, urun kusuru degil; A1 urunu degistirmedi. Ana oturum kabul komutlarini KENDI kostu ve yesil olduklarini olctu: 'bash engine/tests/0509-kapi.sh --kendi-check' -> OZET 17 hukum gecti, 1 kirmizi (ilanli flat_ayni_insan_check); 'node engine/tests/0509-emsal-olcum.mjs --json' -> JSON dondu; 'node engine/tests/0509-wasm-sanity.mjs' -> JSON dondu, tabandanFark []. Bu yuzden durum GECTI'ye cevrildi; esik gevsetilmedi, verilmis hukum kaydedildi. A1 YENIDEN KOSULMAZ (26 commit tekrar yanmasin); sirada A2.",
+  "A2b_pencereler": {
+    "_ne": "KARAR 1 (6 Eyl, karar ajani). H7 esigi (<=2) DEGISMEZ, ilanli kirmizi YAPILMAZ; A2b iki kilit penceresine bolunur. Kilitli alan disindaki dosyalar (panelkaynak/grafdegerle/flatsvg/kalipsvg/grafciz-cli/wasm bindings/backend/KOSU) H7'ye SAYILMAZ, pencerelerden bagimsiz serbestce yazilir.",
+    "pencere1": {
+      "ad": "topoloji (madde 1b)",
+      "kilitKomutu": "bash engine/tests/0509-kapi.sh --kilit \"engine/src/grafdogrula.hpp engine/src/grafdogrula.cpp\"",
+      "izinListesi": [
+        "engine/src/grafdogrula.hpp",
+        "engine/src/grafdogrula.cpp"
+      ],
+      "is": "kenar rolu uyumlulugu, dikis cifti benzersizligi, kapanma zorunlulugu, komsuluk grafi bagli, ERR_IMPOSSIBLE_TOPOLOGY, ERR_SCALE_MISMATCH",
+      "birimTesti": "engine/tests/ altinda YENI 0509-* dosyasi (dizin yazilabilir; var olan test dosyasi DEGISTIRILMEZ)",
+      "kapanis": "commit sonrasi bu iki dosya YENIDEN SALT-OKUNUR (bash engine/tests/0509-kapi.sh --kilit \"\")",
+      "durum": "KURULDU (bu tur), is A2b'nin"
+    },
+    "pencere2": {
+      "ad": "contract",
+      "kilitKomutu": "bash engine/tests/0509-kapi.sh --kilit \"contract/graf-v1.json\"",
+      "izinListesi": [
+        "contract/graf-v1.json"
+      ],
+      "is": "YALNIZ topoloji kurallarinin gerektirdigi sozlesme girisi + KARAR 3'un icProjeksiyon girisi; hepsi EKLEME, ayni commit",
+      "commitMesajiSarti": "eklenen/silenen satir sayisi mesajda (A2a emsali: '9 satir eklendi, 0 silindi')",
+      "kapanis": "commit sonrasi kilit geri",
+      "durum": "ACILMADI (A2b'nin teslimi)"
+    },
+    "h7Kurali": "H7 hicbir anda KIRMIZI olmaz; her pencerede izin disi yazilabilir dosya sayisi <= 2.",
+    "q2_yenidenAcmaSarti": {
+      "_ne": "KARAR 2. A2a KAPALI; 11.7 YENIDEN AC 4.A2a yalniz su OLCUM gelirse devreye girer.",
+      "sart": "A2b gercek taban grafini (KOSU/ciktilar/graf-ilk/graf.json, 5 panel) cozerken ERR_UNSOLVABLE alirsa",
+      "yazilacakYer": "KOSU/ciktilar/graf-ilk/dikilebilir.md — hangi panel, kac halkalik zincir, kac mm artik (ADIYLA)",
+      "sonuc": "adim BITMEDI sayilir (kirilma sarti: kapanmayan seam adiyla); 11.7 o zaman acilir, once ACILMAZ",
+      "yasak": "A2b'de cozucu / maxIter / kIcProjeksiyon degeri / cozum yontemi DEGISTIRILEMEZ; Halka2B panel basina KISA zincir kurar, global 40 halkalik zincir kurulmaz"
+    }
+  },
+  "A2b_kabulSartlari": [
+    "(a) iki kilit penceresi kosuldu, H7 hicbir anda kirmizi olmadi",
+    "(b) contract'a giren her satir EKLEME; commit mesajinda eklenen/silinen satir sayisi",
+    "(c) TESLIM SIRASI: ilk saatte KOSU/ciktilar/graf-ilk/flat.png + kalip-36.png commit'te (kotu de olsa)",
+    "(d) cozucu, maxIter, kIcProjeksiyon DEGERI, esik ve test degistirilmedi",
+    "(e) KARAR 3 uygulandi: contract cozucu.gevsetme.icProjeksiyon {deger:4, kaynak DOGRULANMADI}; solver_utils.cpp'de constexpr kIcProjeksiyon KALMADI"
+  ]
 }
