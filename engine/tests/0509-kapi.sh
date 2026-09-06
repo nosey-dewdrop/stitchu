@@ -396,10 +396,16 @@ regresyon_gecit() {
   bas=$(log_satir)
   out=$(regresyon 2>&1); rc=$?
   printf '%s\n' "$out" >> "$LOG" 2>&1
-  if printf '%s' "$out" | grep -q '^kosmadi:'; then
-    gecit_yaz "regresyon" "HENUZ-YOK" null null "$REGRESYON_DIZIN/girdiler.json" "$(printf '%s' "$out" | head -1)" "$bas"
+  # HENUZ-YOK yalniz SETIN KENDISI yokken: girdiler.json / kos.mjs / taban yok.
+  # TEK BIR GIRDININ dusmesi (K2 gibi, kendi DUSEN notunda ilan edilmis) setin
+  # yoklugu DEGILDIR — set kosuyor, o girdi adiyla reddediliyor (madde 4).
+  # Eski hal her 'kosmadi:' satirini setin yokluu sayiyordu ve calisan bir
+  # regresyon setini HENUZ-YOK gosteriyordu (olculdu 6 Eyl: 7 girdi kostu,
+  # 0 fark vardi, gecit yine de HENUZ-YOK basiyordu).
+  if printf '%s' "$out" | grep -qE '^kosmadi: (KOSU|.*girdiler\.json yok|.*kos\.mjs yok)'; then
+    gecit_yaz "regresyon" "HENUZ-YOK" null null "$REGRESYON_DIZIN/girdiler.json" "$(printf '%s' "$out" | grep -E '^kosmadi: (KOSU|.*girdiler\.json yok|.*kos\.mjs yok)' | head -1)" "$bas"
   elif [ "$rc" -eq 0 ]; then
-    gecit_yaz "regresyon" "YESIL" 0 0 "$REGRESYON_DIZIN/girdiler.json" "tabandan fark yok" "$bas"
+    gecit_yaz "regresyon" "YESIL" 0 0 "$REGRESYON_DIZIN/girdiler.json" "tabandan fark yok | $(printf '%s' "$out" | grep -E '^OZET ' | head -1)" "$bas"
   else
     local n; n=$(printf '%s' "$out" | grep -c 'FARK'); n="${n:-null}"
     gecit_yaz "regresyon" "KIRMIZI" "$n" 0 "$REGRESYON_DIZIN/girdiler.json" "tabandan $n fark" "$bas"
@@ -794,7 +800,12 @@ ctest_gecit edge_case_supurme_check "kenar durum supurmesi: 0 sessiz default"   
 # esik bundan turemiyordu ama Damla'nin gordugu JSON'da kapinin KENDI hukum
 # sayisi gercekle celisiyordu. Cozum: sayiyi kendi_check govdesindeki AYRIK
 # H-numaralarindan say; etiket artik guncellenmeyi UNUTAMAZ.
-HUKUM_SAYISI=$(sed -n '/^kendi_check() {/,/^}/p' "$0" 2>>"$LOG" | grep -oE '"H[0-9]+' | sort -u | wc -l | tr -d ' ')
+# NOT (6 Eyl, olculdu): once sayim 'sed -n /^kendi_check/,/^}/p' ile yapiliyordu;
+# H17'nin awk heredoc'u '}' ile baslayan bir satir icerdigi icin aralik ERKEN
+# kesiliyor ve H17 sayilmiyordu (etiket 17, gercek 18 — yine bir "uretilen sayi
+# ile basilan sayi celisiyor" hali, kapatilan kusurun aynisi). Sayim artik
+# ok()/fail() CAGRILARINDAN yapiliyor; heredoc icerigi cagri olmadigi icin girmez.
+HUKUM_SAYISI=$(grep -oE '\b(ok|fail) +"H[0-9]+' "$0" 2>>"$LOG" | grep -oE 'H[0-9]+' | sort -u | wc -l | tr -d ' ')
 ctest_gecit kapi_sozlesme_check    "kapi.sh cikti sozlesmesi: ${HUKUM_SAYISI:-?} hukum (kaynaktan sayildi, elle yazilmadi)" "engine/CMakeLists.txt add_test(kapi_sozlesme_check)"
 
 # 2) enum dallanma circiri (--measure; taban yalniz duser)
