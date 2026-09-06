@@ -60,7 +60,13 @@
       "tavanKurali": "A2 ve A3'te sayi 34'u ASAMAZ; asarsa o adim duser",
       "ilanliKirmizi": true,
       "hesapta": "gecitYesil hesabinda dusurulmez; JSON'da KIRMIZI basilmaya devam eder, sayisi her adimda metrige yazilir",
-      "pinKalkar": "A4 kapanisi; A4'un kabul sarti bu gecidin YESIL olmasi, kirmizi kalirsa A4 GECMEZ"
+      "pinKalkar": "A4 kapanisi; A4'un kabul sarti bu gecidin YESIL olmasi, kirmizi kalirsa A4 GECMEZ",
+      "tavanOlcumKomutu": "ctest --test-dir engine/build -R '^flat_ayni_insan_check$' -j1 --output-on-failure 2>&1 | sed -n 's/^FAIL  \\([0-9]*\\) hukum kirmizi.*/\\1/p'",
+      "tavanOlcumu": {
+        "tarih": "2026-09-06",
+        "deger": 34,
+        "kaynak": "testin kendi son satiri: 'FAIL  34 hukum kirmizi (tolerans 2 mm ...)'"
+      }
     },
     {
       "gecit": "sinyal_tam",
@@ -74,7 +80,8 @@
         "bundle_fresh_check"
       ],
       "kumeKurali": "bu kumeye YENI ad eklenirse ilan gecersizdir, o adim duser",
-      "sure": "tam kosuda kalir (2 dk 16 sn, adim basi bir kez); --kisa'ya GIRMEZ"
+      "sure": "tam kosuda kalir (2 dk 16 sn, adim basi bir kez); --kisa'ya GIRMEZ",
+      "kumeOlcumKomutu": "bash KOSU/sinyal.sh 2>&1 | grep 'KIRMIZI'"
     }
   ],
   "altAdim": {
