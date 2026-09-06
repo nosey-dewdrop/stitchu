@@ -127,3 +127,4 @@ bir protokol hatası sinyali, ürün kusuru değil — A1 ürünü değiştirmed
 Durum `KOSU/0509-state.json` içinde `durum: "DURDU"`. Tam gerekçe, denenen/denenmeyen
 ve resume komutu: `KOSU/0509-DURDU.md`. Kilit açık bırakıldı.
 2026-09-06 12:15 | A2 | BASLADI (tag adim-A2-once; kapi kosuldu, 4 kabul komutu yesil, ilanli kirmizilar tavanda)
+2026-09-06 13:09 | A2 | BASLADI (tag adim-A2a-once; kapi kosuldu, 4 kabul komutu yesil, ilanli 2 kirmizi + kapi_sozlesme_check kilit-kurulu; cpp.dallanma 436=taban, anaSapmaMM 0.693, regresyon fark 0)

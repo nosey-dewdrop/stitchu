@@ -9,14 +9,14 @@
   "derlemeTavani": 6,
   "saat": 0,
   "yerelMinimum": false,
-  "metrikSerisi": "A2 basi: anaSapmaMM 0.693; cpp.dallanma 436 (taban 436); flat_ayni_insan 34 (tavan 34)",
+  "metrikSerisi": "A2a acilis: anaSapmaMM 0.693; cpp.dallanma 436 (taban 436); flat_ayni_insan 34 (tavan 34); regresyon fark 0",
   "ivmeMuafiyeti": false,
   "olcumTarihi": "2026-09-06",
   "gecitYesil": true,
   "kirmizilar": [
    "flat_ayni_insan_check 34 (ILANLI, tavan 34, A4)",
    "sinyal_tam/bundle_fresh_check 1 (ILANLI, A9)",
-   "kapi_sozlesme_check 1 (H7 kilit-kurulu: A2 izin listesi 7 dosya yazilabilir birakiyor)"
+   "kapi_sozlesme_check 1 (H7 kilit-kurulu: A2 izin listesi 5 dosya yazilabilir birakiyor)"
   ],
   "henuzYok": [
    "olcek_check"
@@ -25,10 +25,11 @@
   "kilitIhlali": [],
   "regresyonFarki": 0
  },
- "tag": "adim-A2-once",
+ "tag": "adim-A2a-once",
  "yol": [
   "A1",
-  "A2"
+  "A2",
+  "A2a"
  ],
  "taban": {
   "cpp.dallanma": 436,
