@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="974" viewBox="0 0 900 974">
 <rect width="900" height="974" fill="#fbfaf8"/>
 <style>text{font-family:-apple-system,Helvetica,Arial,sans-serif}</style>
-<text x="34" y="46" font-size="24" font-weight="700" fill="#141414">0509 gecit tablosu — A1a kapanis, A1b acilis</text>
-<text x="34" y="74" font-size="13" fill="#555">commit 94811910 · 2026-09-06 05:22:14 · 15 gecit · 2 kirmizi · crash 0 · gecitYesil False</text>
-<text x="34" y="96" font-size="13" fill="#555">log KOSU/0509-kapi.log · uretim 2026-09-06 05:24:38 · uretici KOSU/0509-kapi-tablo.py &lt;- kapi.json (tum sayilar gecit JSON'undan)</text>
+<text x="34" y="46" font-size="24" font-weight="700" fill="#141414">0509 gecit tablosu — A1b — emsal + regresyon + wasm + onbellek</text>
+<text x="34" y="74" font-size="13" fill="#555">commit 955f3f4a · 2026-09-06 09:24:34 · 15 gecit · 2 kirmizi · crash 0 · gecitYesil False</text>
+<text x="34" y="96" font-size="13" fill="#555">log KOSU/0509-kapi.log · uretim 2026-09-06 09:24:48 · uretici KOSU/0509-kapi-tablo.py &lt;- tam2.json (tum sayilar gecit JSON'undan)</text>
 <line x1="34" y1="128" x2="866" y2="128" stroke="#ddd"/>
 <text x="34" y="120" font-size="11" fill="#888" letter-spacing="1">GECIT / KAYNAK</text>
 <text x="600" y="120" font-size="11" fill="#888" letter-spacing="1">DURUM</text>
@@ -65,10 +65,10 @@
 <text x="42" y="560" font-size="10.5" fill="#8a8a8a">engine/tests/enum-dallanma-baseline.json:toplam</text>
 <rect x="34" y="568" width="832" height="44" fill="#f2f0ec"/>
 <text x="42" y="588" font-size="14" fill="#141414">emsal_mm_olcum</text>
-<circle cx="608" cy="583" r="5" fill="#9a7b18"/>
-<text x="622" y="588" font-size="13" font-weight="600" fill="#9a7b18">HENUZ-YOK</text>
-<text x="768" y="588" font-size="13" fill="#333">null</text>
-<text x="42" y="604" font-size="10.5" fill="#8a8a8a">contract/flat-convention-v1.json + KOSU/ciktilar/flat-olcum.json</text>
+<circle cx="608" cy="583" r="5" fill="#1a7f45"/>
+<text x="622" y="588" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="588" font-size="13" fill="#333">0.693 / 2</text>
+<text x="42" y="604" font-size="10.5" fill="#8a8a8a">contract/flat-convention-v1.json /croquis/toleranceMM</text>
 <text x="42" y="632" font-size="14" fill="#141414">olcek_check</text>
 <circle cx="608" cy="627" r="5" fill="#9a7b18"/>
 <text x="622" y="632" font-size="13" font-weight="600" fill="#9a7b18">HENUZ-YOK</text>
@@ -76,14 +76,14 @@
 <text x="42" y="648" font-size="10.5" fill="#8a8a8a">contract/body-v1.json olcekAraligi</text>
 <rect x="34" y="656" width="832" height="44" fill="#f2f0ec"/>
 <text x="42" y="676" font-size="14" fill="#141414">wasm_sanity</text>
-<circle cx="608" cy="671" r="5" fill="#9a7b18"/>
-<text x="622" y="676" font-size="13" font-weight="600" fill="#9a7b18">HENUZ-YOK</text>
-<text x="768" y="676" font-size="13" fill="#333">null</text>
-<text x="42" y="692" font-size="10.5" fill="#8a8a8a">engine/build-wasm.sh + engine/tests/0509-wasm-sanity.mjs</text>
+<circle cx="608" cy="671" r="5" fill="#1a7f45"/>
+<text x="622" y="676" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="676" font-size="13" fill="#333">0 / 0</text>
+<text x="42" y="692" font-size="10.5" fill="#8a8a8a">engine/tests/0509-wasm-sanity.mjs</text>
 <text x="42" y="720" font-size="14" fill="#141414">regresyon</text>
-<circle cx="608" cy="715" r="5" fill="#9a7b18"/>
-<text x="622" y="720" font-size="13" font-weight="600" fill="#9a7b18">HENUZ-YOK</text>
-<text x="768" y="720" font-size="13" fill="#333">null</text>
+<circle cx="608" cy="715" r="5" fill="#1a7f45"/>
+<text x="622" y="720" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="720" font-size="13" fill="#333">0 / 0</text>
 <text x="42" y="736" font-size="10.5" fill="#8a8a8a">KOSU/regresyon/girdiler.json</text>
 <rect x="34" y="744" width="832" height="44" fill="#f2f0ec"/>
 <text x="42" y="764" font-size="14" fill="#141414">sinyal_tam *</text>
@@ -95,5 +95,5 @@
 <text x="34" y="814" font-size="12.5" fill="#333">kirmizi 2 — ILANLI 2 (flat_ayni_insan_check, sinyal_tam) · ILANSIZ 0 (yok)</text>
 <text x="34" y="836" font-size="12.5" fill="#333">  ILANLI flat_ayni_insan_check: sayi 34 · kapanacak adim A4 · tavan 34</text>
 <text x="34" y="858" font-size="12.5" fill="#333">  ILANLI sinyal_tam: sayi 1 · kapanacak adim A9 · alt kume dondu: bundle_fresh_check</text>
-<text x="34" y="880" font-size="12.5" fill="#333">henuz-yok 4: emsal_mm_olcum, olcek_check, wasm_sanity, regresyon</text>
+<text x="34" y="880" font-size="12.5" fill="#333">henuz-yok 1: olcek_check</text>
 </svg>

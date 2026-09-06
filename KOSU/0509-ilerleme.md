@@ -14,3 +14,25 @@
 | 2026-09-06 04:15 | A1a karar | ARAC ONARIMI | 1 | — | `sinyal_tam` sayımı düzeltildi (8.3, eşik gevşetme DEĞİL): kapı düz `grep -c 'KIRMIZI'` sayıyordu, sinyal.sh bölüm 6 `KOSU/0509-ilerleme.md` satırlarını aynen bastığı için içinde "KIRMIZI" geçen bir ilerleme satırı sayıyı sahte yükseltiyordu (bugün 2 -> 3, yeni kırmızı yoktu). Sayım artık sinyal.sh'ın kendi işaretçi biçimine bağlı (`^  KIRMIZI <ad>`, sinyal.sh:203) ve kırmızı ADLARI JSON'a yazılıyor — karar 2(a)'nın dondurulmuş alt küme şartı böylece denetlenebilir. Gerçek tek kırmızı `bundle_fresh_check` (ctest #8) olarak doğrulandı. |
 | 2026-09-06 05:15 | A1a tur 2 | GECTI | 1 | 0.4 | Hakem hükmü kapatıldı: referans kilidi ihlaliyle geri alınan 4 dosya `ctest kapi_sozlesme_check`'i ve `state.json` kabul komutlarını boşa düşürmüştü. Kabul komutu artık AYRI DOSYA DEĞİL — `bash engine/tests/0509-kapi.sh --kendi-check` (izin listesindeki dosyanın modu), 16 hüküm / 0 kırmızı / exit 0; `add_test` silinmedi, hedefi değişti. Karar 3 de burada indi: `izlenen_yollar()` CMakeLists'i izliyor, `cmake_satir_yonu()` silinen `add_test(` satırını KILIT_IHLALI basıyor (H13/H14/H15 ölçüyor). Tam koşu: 15 geçit, 2 kırmızı (ikisi de ilanlı), yeni kırmızı yok, stderr 0 bayt. Görsel tazelendi: `KOSU/ciktilar/0509-kapi/gecit-tablosu.png`. |
 | 2026-09-06 05:45 | A1a karar (4 hüküm) | UYGULANDI | 1 | — | Karar ajanının 4 hükmü indirildi. **(1) DEVAM** — `A1a=GECTI`, `A1b=ACIK`; açık ENGEL'ler adıyla `state.json.acikEngeller[]`'e yazıldı: `flat_ayni_insan_check`(34)→A4, `sinyal_tam/bundle_fresh_check`(1)→A9, `emsal_mm_olcum`/`olcek_check`/`wasm_sanity`/`regresyon`→A1b; adsız engel yok. **(2) Geçit tablosu üreticisi (b)** — `KOSU/0509-kapi-tablo.py`, commit'li, girdisi tam koşunun JSON'u (uydurma sayı yok; girdi bozuksa exit 2 ve eski png TAZELENMEZ). `kapi.sh` modu (a) ve elle (c) reddedildi: kapı koşunun sözleşmesidir, hüküm basar resim çizmez; elle tazelenen görsel sessizce bayatlar. **(3) H17 sızıntı taraması** ve **(4) `add_test` HEDEF değişimi = KILIT_IHLALI (ilana tabi)** A1b'ye devredildi ve karar defterine ilan edildi; 97559b95'in hedef değişikliği geriye dönük ilan edilmiş sayıldı (eski→yeni hedef + sebep defterde). Kabul komutu yeni state ile yeşil: 16 hüküm, 0 kırmızı, exit 0. Görsel: `KOSU/ciktilar/0509-kapi/gecit-tablosu.png` (üreticiden). |
+
+## A1b — emsal + regresyon + wasm + önbellek (6 Eyl 2026)
+
+Dört "henüz-yok" geçidin ÜÇÜ ölçmeye başladı, biri dürüstçe henüz-yok kaldı.
+
+- `emsal_mm_olcum` **YEŞİL** 0.693 / 2 mm — eşik `contract/flat-convention-v1.json`
+  `/croquis/toleranceMM` (açık yol; alt dize taraması kaldırıldı).
+- `regresyon` **YEŞİL** 0 fark — 8 girdi, 5 topoloji, 7'si koşuyor; K2 kendi
+  ilan edilmiş kök sebebiyle düşüyor, sessizce atlanmıyor.
+- `wasm_sanity` **YEŞİL** 0 trap / 0 fark — 512 MB sınırlı worker.
+- `olcek_check` **henüz-yok** — aralık contract'a kaynaklı eklendi (395–1335 mm),
+  ölçülecek bbox A2'de doğuyor. Sayı uydurulmadı.
+
+Devredilen iki kusur kapandı (birim karışıklığı + elle yazılmış hüküm sayısı).
+Karar defterinden H17 (sızıntı taraması, tarayıcı kendi sağlığını ölçüyor) ve
+H18 (`add_test` hedef değişimi) uygulandı. Kabul komutu 18 hüküm, 0 kırmızı.
+
+Kalan iki kırmızı İLANLI: `flat_ayni_insan_check` → A4, `sinyal_tam` → A9.
+
+Ölçüm bulgusu: `biba-O1194418-dress-arka.jpg` aslında ÖN yüz (kontrol örneğiyle
+doğrulandı: `-arka` konvansiyonu genel olarak doğru, sorun bu çifte özgü).
+Brief madde 3(a)'nın istediği ön-arka çifti bugün elimizde YOK.

@@ -1,36 +1,30 @@
 {
   "adim": "A1b",
-  "durum": "ISCI",
+  "durum": "A1b BITTI",
   "deneme": 2,
   "butce": {
-    "commit": 11,
-    "saat": 4.46,
+    "commit": 8,
+    "saat": 1.6,
     "derlemeCommit": 0,
     "tavan": {
+      "commit": 12,
+      "saat": 5,
       "derlemeCommit": 6
     },
     "olcumTarihi": "2026-09-06",
-    "olcumTag": "adim-A1-once",
+    "olcumTag": "27799724~1..HEAD (A1b turu)",
     "kapiBozuk": false,
     "kapiExit": 1,
     "gecitYesil": false,
     "kirmizilar": [
-      "flat_ayni_insan_check (sayi 1, esik 0, ILANLI -> A4, tavan 34)",
-      "sinyal_tam (bundle_fresh_check, sayi 1, esik 0, ILANLI -> A9)"
+      "flat_ayni_insan_check (ILANLI -> A4, tavan 34, asilmadi)",
+      "sinyal_tam/bundle_fresh_check (ILANLI -> A9)"
     ],
     "henuzYok": [
-      "emsal_mm_olcum",
-      "olcek_check",
-      "wasm_sanity",
-      "regresyon"
+      "olcek_check (graftan cizim A2'de dogar; aralik contract'a kaynakli eklendi)"
     ],
     "kilitIhlali": [],
-    "yerelMinimum": false,
-    "metrikSerisi": "yok (anaSapmaMM son 3 commit'te null)",
-    "regresyonFarki": [
-      "kosmadi: KOSU/regresyon/girdiler.json yok (A1b kurar)"
-    ],
-    "not": "commit = adim-A1-once..HEAD, KOSU/0509-* haric (11), eksi derlemeCommit(0). --kilit-diff: engine/CMakeLists.txt + engine/tests/0509-kapi.sh, ikisi de izin listesinde. --ivme enum uzerinden yerelMinimum=true dedi; ana sapma (anaSapmaMM) null oldugu icin gorev sozlesmesince yerelMinimum=False, metrikSerisi=yok."
+    "not": "A1b'nin dort henuz-yok'undan UCU yesillendi: emsal_mm_olcum 0.693/2 mm, regresyon 0 fark (7 girdi), wasm_sanity 0 trap/0 fark. olcek_check durust henuz-yok kaldi. Devredilen iki kusur kapandi. Karar defterinden H17+H18 uygulandi. Kalan iki kirmizi ILANLI, A1b'nin degil."
   },
   "tag": "adim-A1-once",
   "yol": [
@@ -42,9 +36,23 @@
     "js.sabitMM": 2,
     "js.metin": 34
   },
-  "regresyonTabani": null,
+  "regresyonTabani": {
+    "dizin": "KOSU/regresyon/taban/",
+    "adim": "A1b",
+    "girdi": 8,
+    "kosan": 7,
+    "kosmayan": 1,
+    "kosmayanlar": [
+      "K2-prenses-roba: armhole rolu tasinmiyor (kendi DUSEN notunda ilan; A2/A4)"
+    ],
+    "determinizm": "iki kosumda 7 SVG bayt bayt ayni (olculdu)",
+    "tazeleme": "bash engine/tests/0509-kapi.sh --regresyon --taban (yalniz ciktiyi kasten degistiren adimlarin kapanisinda)"
+  },
   "kabulKomutlari": [
-    "bash engine/tests/0509-kapi.sh --kendi-check"
+    "bash engine/tests/0509-kapi.sh --kendi-check",
+    "node engine/tests/0509-emsal-olcum.mjs --json",
+    "bash engine/tests/0509-kapi.sh --regresyon",
+    "node engine/tests/0509-wasm-sanity.mjs"
   ],
   "devredilen": [
     "[ILANLI KIRMIZI] flat_ayni_insan_check = 34 (A1a oncesi). Kapanacak adim: A4 (A4'un kabul sarti bu gecidin YESIL olmasi; kirmizi kalirsa A4 GECMEZ). TAVAN 34: A2 ve A3'te sayi artarsa o adim duser. gecitYesil hesabinda dusurulmez, JSON'da KIRMIZI basilir, sayi her adimda metrige yazilir.",
@@ -120,7 +128,11 @@
       "uygulandi": "HAYIR — A1b nin teslimi (bu defterde ilan edildi, A1b kabul sarti)"
     }
   ],
-  "ilkYesil": {},
+  "ilkYesil": {
+    "emsal_mm_olcum": "A1b",
+    "wasm_sanity": "A1b",
+    "regresyon": "A1b"
+  },
   "kapi": "engine/tests/0509-kapi.sh",
   "kapiGorsel": "KOSU/ciktilar/0509-kapi/gecit-tablosu.png",
   "ilanliKirmizi": [
@@ -160,7 +172,7 @@
   ],
   "altAdim": {
     "A1a": "GECTI",
-    "A1b": "ACIK"
+    "A1b": "GECTI (teslimler yesil; olcek_check durust henuz-yok, A2 bekliyor)"
   },
   "kararUygulandi": {
     "karar1": "state.json ilanliKirmizi + kabul komutu H9/H10 (tavan 34) ile olculuyor",
@@ -171,12 +183,18 @@
       "karar2_tablo": "UYGULANDI: KOSU/0509-kapi-tablo.py, commit 1e54ab9c",
       "karar3_H17_sizinti": "A1b YE DEVREDILDI: 0509-kapi.sh --kendi-check icinde H17; ayri dosya YASAK",
       "karar4_addtest_hedef": "A1b YE DEVREDILDI: cmake_satir_yonu() hedef degisimini de KILIT_IHLALI basar, ilana tabi; 97559b95 geriye donuk ilan edildi"
+    },
+    "A1b_2026-09-06": {
+      "karar3_H17_sizinti": "UYGULANDI: 0509-kapi.sh --kendi-check H17. Tarayicinin KENDI sagligi once olculuyor (sentetik 3/3); bozuk tarayici artik YESIL yanamaz. Iki yonde kanitlandi.",
+      "karar4_addtest_hedef": "UYGULANDI: cmake_satir_yonu() ayni ad silinip eklenmisse 'hedefi degisti' KILIT_IHLALI basar; H18 uc halde olcuyor (hedef degisimi/saf ekleme/saf silme).",
+      "devredilen_kusur1_esik": "KAPANDI: esik /croquis/toleranceMM acik yolundan okunuyor (2.0 mm), alt dize taramasi kaldirildi. Yanlis kirmizi (0.693 > 0.05) yesile dondu; esik GEVSETILMEDI.",
+      "devredilen_kusur2_hukum_sayisi": "KAPANDI: sayi ok()/fail() cagrilarindan uretiliyor, elle yazilmiyor. Ilk duzeltme heredoc'ta kesiliyordu (17 vs 18), o da olculup kapatildi."
     }
   },
   "acikEngeller": [
     {
       "engel": "flat_ayni_insan_check",
-      "sayi": 34,
+      "sayi": 1,
       "kapanacakAdim": "A4",
       "tur": "ILANLI KIRMIZI"
     },
@@ -187,24 +205,16 @@
       "tur": "ILANLI KIRMIZI"
     },
     {
-      "engel": "emsal_mm_olcum",
-      "durum": "HENUZ-YOK",
-      "kapanacakAdim": "A1b"
-    },
-    {
       "engel": "olcek_check",
       "durum": "HENUZ-YOK",
-      "kapanacakAdim": "A1b"
+      "kapanacakAdim": "A2",
+      "neden": "aralik contract/body-v1.json olcekAraligi'na kaynakli eklendi (395-1335 mm); olculecek sey (gercek36'da degerlenmis mutlak bbox) A2'de doguyor"
     },
     {
-      "engel": "wasm_sanity",
-      "durum": "HENUZ-YOK",
-      "kapanacakAdim": "A1b"
-    },
-    {
-      "engel": "regresyon",
-      "durum": "HENUZ-YOK",
-      "kapanacakAdim": "A1b"
+      "engel": "K2-prenses-roba cizilemiyor",
+      "durum": "REGRESYONDA KOSMUYOR",
+      "kapanacakAdim": "A2/A4",
+      "neden": "roba dikisi kol oyugunu kesiyor, armhole_* rolu tasinmiyor (kendi DUSEN notunda ilan edilmis kok sebep)"
     }
   ],
   "A1bIzinListesi": [
