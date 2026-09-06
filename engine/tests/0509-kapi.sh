@@ -586,23 +586,76 @@ for a in alanlar:
         seri[a] = v
 if not seri:
     print(json.dumps({"yerelMinimum": False, "neden": "3 satirlik tek sayisal metrik yok", "seri": []}, ensure_ascii=False)); raise SystemExit(0)
+
+# KARAR Q1 (2026-09-06, A2 karar ajani): ESIK ALTINDAKI METRIK IVMEDEN MUAFTIR.
+# Gerekce kayitta: bas==0 iken kapanma sabit 0.0 doner -> sifira inmis bir metrik
+# 8.4'u ASLA gecemez; contract esiginin ZATEN altindaki bir metrigin %20 kapanmasi
+# ancak once BOZULMASIYLA mumkundur. Bu esik gevsetmesi DEGILDIR: esik contract'tan
+# okunur, asilirsa metrik seriye GERI GIRER ve kesme aynen uygulanir.
+# Esik kaynagi ACIK YOL ile contract'tan okunur; kaynagi olmayan metrik DUSURULMEZ.
+ESIK_KAYNAK = {
+    # metrik: (dosya, [json yolu], yon)  — yon "kucukIyi": deger <= esik ise esik alti
+    "anaSapmaMM": ("contract/flat-convention-v1.json", ["croquis", "toleranceMM"], "kucukIyi"),
+    "sanalDikisMM": ("contract/graf-v1.json", ["toleranslar", "dikisUzunlukMM", "deger"], "kucukIyi"),
+}
+def _esik_oku(metrik):
+    ent = ESIK_KAYNAK.get(metrik)
+    if not ent: return None, "esik kaynagi YOK (contract'ta tanimli degil) — metrik seride kalir"
+    dosya, yol, yon = ent
+    try:
+        with open(dosya) as f: d = json.load(f)
+        for k in yol: d = d[k]
+    except Exception as e:
+        return None, "esik okunamadi: %s (%s)" % (dosya, type(e).__name__)
+    if not isinstance(d, (int, float)) or isinstance(d, bool):
+        return None, "esik sayisal degil: %s /%s" % (dosya, "/".join(yol))
+    return float(d), "%s /%s = %s" % (dosya, "/".join(yol), d)
+
 # yerel minimum: hicbir sayisal metrik 3 commit'te %20 kapanmadi
-hukum = True
 detay = {}
+dusurulen = {}
+sayilan = {}
 for a, v in seri.items():
     bas, son_ = v[0], v[-1]
     if bas == 0:
         kapanma = 0.0 if son_ == 0 else -1.0
     else:
         kapanma = (bas - son_) / abs(bas)
-    detay[a] = {"bas": bas, "son": son_, "kapanmaOran": round(kapanma, 4)}
-    if kapanma >= 0.20: hukum = False
-cikti = {"yerelMinimum": hukum, "seri": detay, "satir": len(son)}
+    kayit = {"bas": bas, "son": son_, "kapanmaOran": round(kapanma, 4)}
+    esik, esik_not = _esik_oku(a)
+    if esik is not None and son_ <= esik:
+        kayit["esik"] = esik
+        kayit["esikKaynagi"] = esik_not
+        kayit["seriden"] = "DUSURULDU: son deger (%s) contract esiginin (%s) altinda" % (son_, esik)
+        dusurulen[a] = kayit
+    else:
+        if esik is not None:
+            kayit["esik"] = esik
+            kayit["esikKaynagi"] = esik_not
+        else:
+            kayit["esik"] = None
+            kayit["esikKaynagi"] = esik_not
+        sayilan[a] = kayit
+    detay[a] = kayit
+
+if not sayilan:
+    # Hicbir sayisal metrik kalmadi: hepsi esik altinda. Kesme sebebi YOKTUR.
+    cikti = {"yerelMinimum": False,
+             "neden": "tum metrikler esik altinda",
+             "seri": detay, "dusurulen": sorted(dusurulen.keys()),
+             "sayilan": [], "satir": len(son)}
+else:
+    hukum = True
+    for a, kayit in sayilan.items():
+        if kayit["kapanmaOran"] >= 0.20: hukum = False
+    cikti = {"yerelMinimum": hukum, "seri": detay,
+             "dusurulen": sorted(dusurulen.keys()),
+             "sayilan": sorted(sayilan.keys()), "satir": len(son)}
 # KARAR 6 (2026-09-06): ivme muafiyeti. HUKUM DEGISTIRILMEZ, yalniz ADIYLA
 # ilan edilir; muafiyet state.json'dan okunur ve HANGI ADIMDA OLDUGU yazilir.
 # 8.4 ivme kurali urunu ILERLETEN adimlar icindir; gecit KURAN adim muaftir.
 # Muafiyet DAR: yalniz muafAdim icin gecerli, sonrasinda BAGLAYICI.
-if hukum:
+if cikti.get("yerelMinimum") is True:
     # Muafiyet ADIYLA ilan edilir: state.json'da "ivmeMuafiyeti" alani. Bulanik
     # ad eslemesi YOK — adim adi degisince muafiyet sessizce dusmesin/kalmasin.
     adim, ilan = None, None
@@ -693,12 +746,66 @@ gez(d)
   if [ "$rc" = "2" ]; then ok "H6 kilit-diff-tagsiz"
   else fail "H6 kilit-diff-tagsiz" "rc=$rc (2 bekleniyor)"; fi
 
-  # --- H7: referans kilidi kurulu (kilitli alanda salt-okunur dosya var)
-  local yazilabilir
+  # --- H7: referans kilidi kurulu (kilitli alanda IZIN DISI yazilabilir dosya YOK)
+  # KARAR Q3 (2026-09-06, A2 karar ajani): KURAL IZIN LISTESINI SAYMAZ.
+  # Eski hali sabit bir tavan (<=2) tasiyordu; mesru izin listesi 2'yi asinca
+  # KACINILMAZ kirmizi yaniyor, isciyi izin istemek yerine ihtiyacini kirpmaya
+  # itiyordu. Olculen dogru sey "ilan edilmemis dosyaya dokunulabilirligi"dir,
+  # dosya SAYISI degil: bu yuzden sayim yalniz IZIN DISI dosyalari kapsar ve
+  # tavani <=0'dir (daha SIKI, gevsetme degil). Izin listesi state.json'da
+  # adim adiyla ILAN edilir; ilan yoksa izin de yoktur (sessiz default yok, 2.4).
+  local yazilabilir izin_globlari h7not
+  local h7oku="$TMPD/h7-izin-oku.py"
+  cat > "$h7oku" <<'PY'
+import json, sys
+try:
+    st = json.load(open(sys.argv[1])) or {}
+except Exception:
+    sys.exit(0)
+adim = (st.get("adim") or "").strip()
+# altAdim SOZLUK olabilir ({"A2a":"GECTI","A2b":"ACIK"}): ACIK olan alt adim aktiftir.
+alt = ""
+_a = st.get("altAdim")
+if isinstance(_a, str):
+    alt = _a.strip()
+elif isinstance(_a, dict):
+    for k, v in _a.items():
+        if isinstance(v, str) and v.strip().upper().startswith("ACIK"):
+            alt = k.strip(); break
+# Ilan aranan anahtarlar, EN OZELDEN genele: "<altAdim>IzinListesi", "<adim>IzinListesi".
+# Bulanik esleme YOK: adim adi degisince izin sessizce tasinmaz.
+for ad in (alt, adim):
+    if not ad: continue
+    v = st.get(ad + "IzinListesi")
+    if isinstance(v, list):
+        for g in v:
+            if isinstance(g, str):
+                # "yol (YALNIZ ... aciklama)" formatinda yalniz yol kismi glob'dur
+                print(g.split(" (")[0].strip())
+        break
+PY
+  izin_globlari=$(python3 "$h7oku" "$STATE" 2>>"$LOG")
+  local h7suz="$TMPD/h7-suzgec.py"
+  cat > "$h7suz" <<'PY'
+import sys, fnmatch
+globlar = [g for g in open(sys.argv[1]).read().splitlines() if g.strip()]
+disi = []
+for f in sys.stdin:
+    f = f.strip()
+    if not f: continue
+    if any(fnmatch.fnmatch(f, g) or f.startswith(g.rstrip("*/") + "/") for g in globlar):
+        continue
+    disi.append(f)
+print(len(disi))
+for f in disi[:10]:
+    sys.stderr.write("  izin disi yazilabilir: %s\n" % f)
+PY
+  printf '%s\n' "$izin_globlari" > "$TMPD/h7-izin.txt"
   yazilabilir=$(while IFS= read -r p; do find "$p" -type f -perm -u+w 2>/dev/null; done < <(kilitli_yollar) \
-                | grep -v '0509-kapi\.sh$' | wc -l | tr -d ' ')
-  if [ "${yazilabilir:-99}" -le 2 ]; then ok "H7 kilit-kurulu (izin disi yazilabilir: ${yazilabilir})"
-  else fail "H7 kilit-kurulu" "kilitli alanda ${yazilabilir} yazilabilir dosya var, kilit acik"; fi
+                | python3 "$h7suz" "$TMPD/h7-izin.txt" 2>>"$LOG")
+  h7not="izin globlari: $(printf '%s' "$izin_globlari" | tr '\n' ' ')"
+  if [ "${yazilabilir:-99}" -eq 0 ]; then ok "H7 kilit-kurulu (izin disi yazilabilir: 0; ${h7not})"
+  else fail "H7 kilit-kurulu" "kilitli alanda ${yazilabilir} IZIN DISI yazilabilir dosya var, kilit acik (${h7not})"; fi
 
   # --- H8: state.json gecerli JSON ve zorunlu alanlari var
   if python3 -c '
