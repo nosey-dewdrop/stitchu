@@ -7,16 +7,32 @@
   "beden": "EU38",
   "girdiler": [
     {
-      "ad": "F1-biba-on-arka",
+      "ad": "F1-mary-quant-on-arka",
       "tur": "fotograf",
-      "topoloji": "kapali ust + genisleyen etek, on-arka cifti",
-      "neden": "Brief madde 3(a). Tek gercek fotograf girdisi; on ve arka ayni giysinin iki yuzu, tarif ikisinden birlikte okundu.",
+      "topoloji": "GERCEK on-arka cifti: yatik genis yaka + tam boy on paci + kemerli duz elbise",
+      "neden": "Brief madde 3(a) gercek bir on-arka topolojisi ISTIYOR. Bu cift OLCULDU (2026-09-06): arka fotografta on paci yok, yaka arka dilimi sirtta, cep yok, kemer kesintisiz -> gercek arka yuz. Ayrinti: KOSU/onbellek/0147b7cf...json gorunumDogrulamasi.",
       "fotograflar": [
-        "GIRDI/hedef-fotograflar/biba-O1194418-dress.jpg",
-        "GIRDI/hedef-fotograflar/biba-O1194418-dress-arka.jpg"
+        "GIRDI/hedef-fotograflar/mary-quant-O365926-dress.jpg",
+        "GIRDI/hedef-fotograflar/mary-quant-O365926-dress-arka.jpg"
       ],
       "onbellek": "KOSU/onbellek/",
-      "specKaynak": "onbellek"
+      "specKaynak": "onbellek",
+      "arkaYuz": "VAR (olculdu)",
+      "_gecmis": "6 Eyl oncesi bu ad biba-O1194418 ciftini gosteriyordu; o ciftin '-arka' dosyasi ikinci bir ON cekim cikti, girdi asagida F2-biba-arka-yok adiyla AYRI bir topoloji olarak DURUYOR (setten cikarilmadi)."
+    },
+    {
+      "ad": "F2-biba-arka-yok",
+      "tur": "fotograf",
+      "topoloji": "YALNIZ ON FOTOGRAF: bel dikisli oturan beden + peplum + A midi etek; arka yuz YOK",
+      "neden": "HEDEF madde 2 / 12.5 edge case'i: 'sadece on varsa en sade dikilebilir arkayi uydur ve uydurdugunu soyle'. Bu girdi o halin canli ornegi. F1 ile ayni sey DEGIL: F1'in arkasi olculdu, bunun arkasi YOK.",
+      "fotograflar": [
+        "GIRDI/hedef-fotograflar/biba-O1194418-dress.jpg"
+      ],
+      "onbellek": "KOSU/onbellek/",
+      "specKaynak": "onbellek",
+      "arkaYuz": "absent",
+      "ilan": "ADLANDIRMA_CELISKISI — GIRDI/hedef-fotograflar/biba-O1194418-dress-arka.jpg dosyasi ADINDA 'arka' tasiyor ama ICERIGI ikinci bir ON cekimdir (olculdu 2026-09-06, KOSU/onbellek/4e446902...json). Dosya SILINMEDI, girdi olarak KULLANILMIYOR.",
+      "_kapsamUyarisi": "16 fotograf ciftinin 14'u DOGRULANMADI. A2'nin okudugu her yeni cift icin '-arka' dosyasinin gercekten arka olup olmadigi tarifin icine yazilir; isim guvenilir kabul edilmez."
     },
     {
       "ad": "P1-keskin-koseli-yaka",
@@ -46,8 +62,14 @@
       "ad": "K5-kup-korse",
       "tur": "kompozisyon",
       "topoloji": "yatay kup dikisi + korse bagcikli sirt",
-      "neden": "KOSU/ciktilar/primitif-DUSEN-K5-kup-korse.txt — KALIP CIKIYOR (10 parca), CIZILEMEYEN SEY FLAT. K2 ile AYNI kok sebep (bandPiece edgeRoles tasimiyor) ama farkli bolucu (cupseam.cpp); ikisi birlikte kok sebebin gercekten tek olup olmadigini olcer.",
-      "beklenen": "DUSER (armhole rolu tasinmiyor) — A2/A4'te kalkacak",
+      "neden": "KOSU/ciktilar/primitif-DUSEN-K5-kup-korse.txt — 3 Eyl'de 'K2 ile ayni kok sebepten duser' diye yazilmisti; bu bir CIKARIMDI. 6 Eyl OLCUMU curuttu: K5 CIZIYOR (KOSU/regresyon/taban/K5-kup-korse/flat.svg, 25663 B, dugum 9a41ce3feb71a4d0), K2 dusuyor. Iki bolucu (yoke.cpp / cupseam.cpp) ayni davranmiyor.",
+      "beklenen": "CIZER (6 Eyl olcumu) — taban sha256(ilk16) 707009d16f027931. Beklenti 'DUSER' kalsaydi K5'in cizmeyi BIRAKMASI fark edilmezdi.",
+      "beklenenKusur": {
+        "kupDikisiGeometrisi": "YOK (olculdu 2026-09-06)",
+        "korseBagcikGeometrisi": "YOK (olculdu 2026-09-06)",
+        "_olcum": "grep -o 'data-rol=\"[^\"]*\"' KOSU/regresyon/taban/K5-kup-korse/flat.svg | sort | uniq -c -> siluet 2, bel-dikisi 4, pens 12, dikis-izi 12, orta-dikis 2; kup/korse rolu 0. Cizim 03-elbise-kolsuz.svg'den yalniz 5 yolda ayriliyor (dugum, siluet mikro-sapmasi, arka pens boyu, bel dikis kacigi).",
+        "_ne_demek": "K5 CIZIYOR ama spec'in onu K5 yapan iki anahtari (cupSeam:horizontal, laceUpBack:corset) HIC geometri uretmiyor; cizilen sey kolsuz duz elbise. Madde 4 anlaminda SESSIZ DEFAULT, ilan edilmemis. Duz 'CIZER' beklentisi bu kusuru yesile boyardi; bu yuzden kusur beklentiye adiyla baglandi. A2/A4 bu iki alani DEGISTIRMEK zorunda: taban sha degisip bu satirlar 'YOK' kalirsa cizim gizlice eskiye donmustur."
+      },
       "spec": { "garment": "dress", "shaping": "dart", "fabric": "woven", "neckline": "crew", "sleeveStyle": "none", "skirtStyle": "aLine", "skirtLength": "midi", "cupSeam": "horizontal", "laceUpBack": "corset" }
     },
     {

@@ -7,3 +7,34 @@ OLCULDU, 2026-09-03. Kok sebep gather() isim tablosu DEGIL (o bir belirti): yoke
 
 SONRAKI ADIM:
 Roba/kup bolmesi kol oyugunu KESIYORSA, adi da kesilecek: bandPiece kaynak rolun bir ucunu kendi kesim noktasina (cutL/cutR) baglayip her iki parcaya PARCALI bir `armhole_*` rolu stamplayacak; sonra flat tarafinda dikey yigin birlestiricisi (ust parcanin hem kenarini alt parcanin top kenarina oturtan rijit donusum) yazilip armhole = ust.armhole + alt.armhole olarak birlestirilecek. O zaman poseBodice degismeden calisir. Bu is bu fazin disinda; kapali kalmasin diye BURAYA yazildi.
+
+────────────────────────────────────────────────────────────────────────
+2026-09-06 OLCULDU (karar defteri, A1 gecit karari 2) — UZERINE YAZILMADI.
+
+K2 BUGUN DE DUSUYOR; yukaridaki kok sebep K2 icin AYAKTA.
+  KOSU/regresyon/taban/K2-prenses-roba — KLASOR YOK (cizim uretilmedi).
+  Komut: ls KOSU/regresyon/taban/
+  -> F1-mary-quant-on-arka F2-biba-arka-yok K5-kup-korse P1.. P2.. P3..
+     P4.. P5..  (K2 yok)
+
+DEGISEN SEY, K2 DEGIL, HUKMUN KAPSAMI:
+3 Eyl'de bu dosya ile K5'in dosyasi ayni cumleyi tasiyordu — "kok sebep
+TEK ve AYNI (bandPiece edgeRoles tasimiyor)", farkli bolucu (yoke.cpp /
+cupseam.cpp). Bu bir OLCUM degil CIKARIM'di. 6 Eyl olcumu onu K5
+tarafinda curuttu: K5 ciziyor (25663 B, dugum 9a41ce3feb71a4d0), K2
+dusuyor. Iki bolucu ayni sekilde davranmiyor.
+
+  -> "Ayni kok sebep" varsayimi K2 icin dogru olabilir ama ARTIK
+     K5'ten DESTEK ALMIYOR; tek bolucude (yoke.cpp) dogrulanmis
+     durumda ve oyle okunmalidir.
+  -> A2 brief sarti: teshis cupseam.cpp ile yoke.cpp'yi AYRI olcer;
+     "ayni kok sebep" varsayimindan BASLAMAZ.
+
+Not: K5'in "ciziyor" hali de kayitsiz sartsiz iyi degil — orada cizim
+kup dikisi/korse geometrisi URETMEDEN ciziyor (bkz. K5 dosyasinin 6 Eyl
+blogu, rol sayimi ve 03-elbise-kolsuz diff'i). Yani iki bolucunun
+farki "biri calisiyor biri bozuk" degil; K2 gorunur sekilde dusuyor,
+K5 sessizce ozelliksiz ciziyor. A2 ikisini de bu adla ele alir.
+
+REGRESYON BEKLENTISI: K2 icin DEGISMEDI.
+  beklenen: DUSER (armhole rolu tasinmiyor) — A2/A4'te kalkacak.

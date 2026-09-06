@@ -7,3 +7,44 @@ OLCULDU, 2026-09-03. Kok sebep gather() isim tablosu DEGIL (o bir belirti): yoke
 
 SONRAKI ADIM:
 Roba/kup bolmesi kol oyugunu KESIYORSA, adi da kesilecek: bandPiece kaynak rolun bir ucunu kendi kesim noktasina (cutL/cutR) baglayip her iki parcaya PARCALI bir `armhole_*` rolu stamplayacak; sonra flat tarafinda dikey yigin birlestiricisi (ust parcanin hem kenarini alt parcanin top kenarina oturtan rijit donusum) yazilip armhole = ust.armhole + alt.armhole olarak birlestirilecek. O zaman poseBodice degismeden calisir. Bu is bu fazin disinda; kapali kalmasin diye BURAYA yazildi.
+
+────────────────────────────────────────────────────────────────────────
+2026-09-06 OLCULDU (karar defteri, A1 gecit karari 2) — UZERINE YAZILMADI.
+
+K5-kup-korse BUGUN CIZIYOR.
+  KOSU/regresyon/taban/K5-kup-korse/flat.svg — 25663 B,
+  data-dugum 9a41ce3feb71a4d0, sha256(ilk16) 707009d16f027931.
+  Komut: shasum -a256 KOSU/regresyon/taban/K5-kup-korse/flat.svg
+
+3 Eyl'in "K2 ile AYNI kok sebep" hukmu K5 ICIN GECERSIZ: K2'nin taban
+klasoru YOK (dusuyor), K5'inki VAR (ciziyor). Ayni kok sebepten iki
+bolucunun (yoke.cpp / cupseam.cpp) ayni sekilde dustugu CIKARIMI, bir
+olcumle bir bolucude curudu. Eski hipotez yukarida duruyor, silinmedi.
+
+AMA "CIZIYOR" TAM BIR ZAFER DEGIL — IKINCI OLCUM (ayni tur, sorulmadi):
+K5'in flat'i, 03-elbise-kolsuz (duz kolsuz elbise) ile bayt sayisinda
+AYNI (25663 B) ve yalniz 5 yolda ayriliyor:
+  diff <(tr '>' '\n' < KOSU/regresyon/taban/K5-kup-korse/flat.svg) \
+       <(tr '>' '\n' < KOSU/ciktilar/03-elbise-kolsuz.svg)
+  -> fark: data-dugum, siluet mikro-sapmasi, arka pens boyu
+     (495.0 vs 535.0), bel dikis kacigi (48.168 vs 39.768 mm).
+Rol sayimi:
+  grep -o 'data-rol="[^"]*"' .../K5-kup-korse/flat.svg | sort | uniq -c
+  -> siluet 2, bel-dikisi 4, pens 12, dikis-izi 12, orta-dikis 2.
+  grep -ci "cup\|corset\|kup\|korse\|lace\|bagcik" -> 0.
+
+Yani spec'in K5'i K5 yapan IKI anahtari — cupSeam:"horizontal" ve
+laceUpBack:"corset" — cizimde HICBIR geometri uretmiyor. Cizilen sey
+kup dikisli korse degil, kolsuz duz elbisedir. Bu, kalibin (10 parca)
+CIKMASI ile celismiyor: dusen sey yine flat tarafi, ama K2'deki gibi
+"hic cizemiyor" seklinde degil, "sessizce ozelliksiz ciziyor" seklinde.
+Madde 4 anlaminda bu bir SESSIZ DEFAULT'tur ve adiyla ilan edilmemistir.
+
+REGRESYON BEKLENTISI (karar 2 geregi guncellendi):
+  beklenen: CIZER (6 Eyl olcumu) — sha 707009d16f027931 TABAN'dir.
+  Beklenti "DUSER" kalsaydi K5'in cizmeyi BIRAKMASI fark edilmezdi.
+  Beklenti duz "CIZER" birakilsaydi da sessiz default yesil kalirdi;
+  bu yuzden beklentiye ikinci bir sart baglandi:
+  kupDikisiGeometrisi: YOK (olculdu) — A2/A4'te cupSeam ve laceUpBack
+  geometri uretmeye basladiginda bu satir DEGISMEK ZORUNDA; taban sha'si
+  degisip bu satir degismezse cizim gizlice eskiye donmus demektir.

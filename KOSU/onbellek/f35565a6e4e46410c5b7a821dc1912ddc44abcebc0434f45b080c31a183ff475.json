@@ -1,0 +1,86 @@
+{
+  "girdiYolu": "GIRDI/hedef-fotograflar/mary-quant-O365926-dress.jpg",
+  "sha256": "f35565a6e4e46410c5b7a821dc1912ddc44abcebc0434f45b080c31a183ff475",
+  "semaSurumu": "graf-v1",
+  "okuyan": "isci-A1-gecit",
+  "tarih": "2026-09-06",
+  "yontem": "Kosu iscisi fotografa DOGRUDAN bakti (Read araci). Dis LLM cagrisi YOK, canli worker (/api/analyze) cagrilmadi; llmCagri = 0.",
+  "gorunum": "on",
+  "cift": "mary-quant-O365926-dress-arka.jpg (0147b7cf...) — AYNI giysinin arka yuzu, OLCULDU (bkz. arkaDogrulama)",
+  "tarif": {
+    "giysiSinifi": "elbise",
+    "siluet": "duz/hafif A, belden kemerli gomlek elbise (shirtwaist); oturan degil, gevsek duz beden",
+    "yaka": {
+      "tip": "yatik genis bebe/denizci yaka (flat wide collar), beyaz kontrast kumas",
+      "not": "Yaka govde kumasindan AYRI beyaz duz kumas; omuz uzerinde yatiyor, dik durmuyor. Kose isleme: on uclar yuvarlaga yakin, hafif kare. En yakin op: collarType=flat.",
+      "guven": 0.85
+    },
+    "kapanis": {
+      "tip": "on orta tam boy dugme paci (yakadan etek eteğine)",
+      "dugmeSayisi": "7 gorunur (yaka altindan etege), koyu/sedefli",
+      "guven": 0.85
+    },
+    "kol": {
+      "tip": "kisa set-in kol, dirsek ustu",
+      "kolBasi": "duz, buzgusuz; omuz cizgisi hafif dusuk",
+      "agiz": "duz, mansetsiz",
+      "enYakinOp": "sleeveStyle=straight, sleeveLength=short",
+      "guven": 0.85
+    },
+    "beden": {
+      "dikisler": "on ortada paci; bel dikisi YOK — govde tek parca asagi iniyor, bel yalniz KEMERLE toplaniyor. Pens gorunmuyor (gevsek duz kalip).",
+      "guven": 0.7
+    },
+    "bel": {
+      "hat": "dogal belde AYRI kemer/kusak (belt) — dikilmemis, tokasiz, kumas kemer; onde dugmeli tek kopca gorunuyor",
+      "not": "Kemer ayri bir PARCA; bel dikisi degil. Motor enum'unda kemer parcasi YOK; bu bir eksik op (asagida).",
+      "guven": 0.8
+    },
+    "etek": {
+      "tip": "duz/hafif A, diz ustu-diz hizasi (kisa midi)",
+      "cepler": "bel altinda iki adet kapakli (flap) yama cep, kapaklar beyaz kontrast + dugme",
+      "guven": 0.85
+    },
+    "kumas": {
+      "desen": "ince kirmizi-beyaz dikey cizgi (seersucker/dokuma cizgi)",
+      "not": "Cizgi DIKEY ve panel boyunca duz iniyor; grain duz kesim. Kontrast beyaz parcalar (yaka, cep kapagi) duz beyaz."
+    }
+  },
+  "arkaDogrulama": {
+    "_neden": "KAPSAM UYARISI (karar defteri, A1 gecit karari 1): '-arka' dosya adi GUVENILIR KABUL EDILMEZ; her cift icin arka yuz oldugu OLCULUR.",
+    "hukum": "GERCEK ARKA — dogrulandi",
+    "kanit": [
+      "on orta dugme paci arka fotografta YOK (on yuzde 7 dugme, arkada sifir)",
+      "beyaz yatik yaka arkada omuz/sirt uzerinde GENIS bir kare panel olarak duruyor (denizci yakasinin arka dilimi) — on yuzde ayni yaka boyun cevresini sariyor",
+      "kemer arkada kesintisiz devam ediyor, on yuzdeki dugmeli kopca arkada yok",
+      "arkada kapakli cep YOK (on yuzde iki adet var)"
+    ],
+    "okuyan": "isci-A1-gecit (Read araci, iki fotograf yan yana)"
+  },
+  "okunamayanlar": [
+    "arka orta dikis / fermuar: arka fotografta cizgi deseni sirt ortasini gizliyor, orta dikis VAR MI okunamadi (on paci tam boy oldugu icin arka kapanisa gerek yok, ama dikis olabilir)",
+    "omuz dikisi konumu: yatik yaka omzu ortuyor, omuz dikisinin tam yeri gorunmuyor",
+    "kol oyugu tipi: set-in oldugu gorunuyor, oyuk derinligi olculemedi",
+    "astar: gorunmuyor",
+    "beden/olcu: fotografta cetvel yok; mutlak mm OKUNAMAZ (olcek A2'de bedenden gelir)"
+  ],
+  "enYakinSpec": {
+    "garment": "dress",
+    "shaping": "dart",
+    "fabric": "woven",
+    "neckline": "crew",
+    "sleeveStyle": "straight",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "skirtLength": "midi",
+    "collarType": "flat",
+    "_kayip": [
+      "kemer (ayri bel kusagi parcasi): enum'da YOK — eksik op, sessizce eslenmedi",
+      "tam boy on dugme paci (buttonPlacket): enum'da YOK — spec'te kapanis ekseni yok",
+      "kapakli yama cep (flap patch pocket) x2: enum'da YOK",
+      "kontrast kumas parcasi (yaka + cep kapagi beyaz): enum'da renk/kumas-parcasi ekseni YOK",
+      "bel dikisi YOKLUGU: spec 'dart' diyor ama fotografta pens de bel dikisi de gorunmuyor; en yakin deger secildi, OLCUM DEGIL"
+    ],
+    "_uyari": "Bu spec bir ESLEMEDIR, olcum degil. Karar defteri karari 3 geregi bu kalemler A2'de graf-v1 Edge/Panel/Stitch primitifleriyle 'eksik op' satiri olarak yazilir; spec enum'una YENI DEGER EKLENMEZ."
+  }
+}

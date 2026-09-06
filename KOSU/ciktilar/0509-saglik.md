@@ -14,7 +14,7 @@
 Fotoğraf okuma hattı sağlık kontrolü (brief madde 5): 1 fotoğraf
 (`biba-O1194418-dress.jpg`) okundu, tarifi `graf-v1` şemasında yazıldı,
 `KOSU/onbellek/<sha256>.json` olarak kaydedildi ve regresyon setinde
-kullanıldı — `F1-biba-on-arka` girdisi bu tariften türeyen spec ile koşuyor
+kullanıldı — `F2-biba-arka-yok` girdisi (6 Eyl'e kadar adi `F1-biba-on-arka`) bu tariften türeyen spec ile koşuyor
 ve çizim üretiyor (38443 B).
 
 ## İki ölçüm bulgusu (soru sorulmadı ama önemli)

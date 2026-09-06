@@ -1,0 +1,49 @@
+{
+  "girdiYolu": "GIRDI/hedef-fotograflar/mary-quant-O365926-dress-arka.jpg",
+  "sha256": "0147b7cfc57612583cd8a85da4e0d16046688b0ea80187ad2233f6156d02a21c",
+  "semaSurumu": "graf-v1",
+  "okuyan": "isci-A1-gecit",
+  "tarih": "2026-09-06",
+  "yontem": "Kosu iscisi fotografa DOGRUDAN bakti (Read araci). Dis LLM cagrisi YOK; llmCagri = 0.",
+  "gorunum": "arka",
+  "cift": "mary-quant-O365926-dress.jpg (f35565a6...) — AYNI giysinin on yuzu",
+  "gorunumDogrulamasi": {
+    "_neden": "KAPSAM UYARISI (A1 gecit karari 1): dosya adindaki '-arka' KANIT DEGIL. biba-O1194418-dress-arka.jpg ornegi bunu kanitladi: adi arka, kendisi ikinci bir ON cekim.",
+    "hukum": "GERCEK ARKA — dogrulandi (bu dosya on yuzun arkasidir)",
+    "kanit": [
+      "on yuzdeki tam boy dugme paci (7 dugme) burada YOK — sirt kesintisiz",
+      "beyaz yatik yaka burada sirt uzerinde genis dikdortgen bir panel (denizci yakasinin arka dilimi); on yuzde ayni yaka boyun cevresinde ve gogse dogru aciliyor",
+      "on yuzdeki iki kapakli yama cep burada YOK",
+      "kemer sirtta kesintisiz devam ediyor, on yuzdeki dugmeli kopca yok",
+      "kol oyugu dikisleri ve omuz hattinin dususu arka yuz geometrisiyle tutarli"
+    ]
+  },
+  "tarif": {
+    "giysiSinifi": "elbise",
+    "arkaYaka": {
+      "tip": "genis beyaz yatik yaka arka dilimi — sirt uzerinde neredeyse kare bir panel (denizci/bebe yaka arkasi)",
+      "not": "Yaka arkada onden BELIRGIN sekilde daha genis ve derin oturuyor; omuz uclarindan sirt ortasina kadar iniyor.",
+      "guven": 0.85
+    },
+    "arkaBeden": {
+      "dikisler": "sirt duz iniyor; bel dikisi YOK, bel yalniz kemerle toplaniyor. Pens: cizgi deseni yuzunden OKUNAMADI (bkz. okunamayanlar).",
+      "kapanis": "arkada gorunur dugme/fermuar YOK — kapanis on pacida",
+      "guven": 0.7
+    },
+    "arkaEtek": {
+      "tip": "duz/hafif A, diz hizasi; arkada cep yok",
+      "guven": 0.85
+    },
+    "kol": {
+      "tip": "kisa set-in kol; arkadan kol oyugu dikisi gorunuyor, kol basi duz (buzgusuz)",
+      "guven": 0.8
+    }
+  },
+  "okunamayanlar": [
+    "arka orta dikis: dikey cizgi deseni sirt ortasindaki olasi dikisi gizliyor; VAR MI OKUNAMADI",
+    "arka pens: gevsek kalip + cizgi deseni yuzunden gorunmuyor; yoklugu DOGRULANMADI",
+    "arka yaka derinligi (mm): fotografta cetvel yok, mutlak olcu okunamaz",
+    "omuz dikisi: yaka panelinin altinda kaliyor"
+  ],
+  "_kullanim": "Bu tarif on yuz tarifiyle BIRLIKTE okunur; F1-mary-quant-on-arka girdisinin arka yuzudur. Tek basina bir giysi tarif etmez."
+}

@@ -11,14 +11,15 @@
     "olculen": "fotografta giysinin ON yuzu duruyor: on orta dugme sirasi (4 dugme), sweetheart yaka, onde ortada sivri dusen peplum — ucu de on yuz isaretcisi. Arka yuze ait tek bir isaretci (arka yaka, arka fermuar, sirt dikisi) GORUNMUYOR.",
     "fark": "ayni giysinin ON yuzunun IKINCI cekimi: kol pozisyonu ve isik biraz farkli, kadraj biraz genis. Ayni giysi, ayni yuz.",
     "sonuc": "Bu cift bir ON-ARKA CIFTI DEGILDIR. Brief madde 3(a) 'on-arka cifti' diyor; bugun elimizdeki dosya bunu KARSILAMIYOR.",
-    "yapilan": "Sessizce on-arka gibi kullanilmadi. Regresyon girdisi F1-biba-on-arka bu tarifi ON gorunum olarak kullanir, arka yuz 'absent' adiyla isaretlenir (madde 4). Gercek bir arka fotograf gerekiyorsa acikSorular'da.",
+    "yapilan": "Sessizce on-arka gibi kullanilmadi. 6 Eyl (A1 gecit karari 1): girdi adi F2-biba-arka-yok oldu; bu tarif ON gorunum olarak kullanilir, arka yuz 'absent' adiyla isaretlenir (madde 4) ve girdi ADLANDIRMA_CELISKISI ilaniyla tasinir. Girdi setten CIKARILMADI. Gercek on-arka topolojisi ARTIK SETTE VAR: F1-mary-quant-on-arka (arka yuzu olculdu, KOSU/onbellek/0147b7cf...json).",
     "DOGRULANMADI": null,
     "kontrolOrnegi": {
       "olculen": "mary-quant-O365926-dress-arka.jpg AYNI yontemle okundu: GERCEK arka yuz (arka yaka, sirt orta dikisi, arka kemer; on dugme YOK).",
       "sonuc": "'-arka' adlandirma konvansiyonu GENEL OLARAK dogru; sorun biba-O1194418 CIFTINE OZGU.",
       "kapsam": "16 on-arka ciftinin 2'si acildi (biba-O1194418, mary-quant-O365926). Kalan 14 cift OKUNMADI — bu sayilar DOGRULANMADI.",
       "dosyaAyniligi": "16 ciftin hepsinde on ve arka dosyalari sha256 olarak FARKLI (kopya-dosya hatasi degil); olculdu."
-    }
+    },
+    "_oncekiYapilan": "Sessizce on-arka gibi kullanilmadi. Regresyon girdisi F1-biba-on-arka bu tarifi ON gorunum olarak kullanir, arka yuz 'absent' adiyla isaretlenir (madde 4). Gercek bir arka fotograf gerekiyorsa acikSorular'da."
   },
   "tarif": {
     "giysiSinifi": "elbise",
