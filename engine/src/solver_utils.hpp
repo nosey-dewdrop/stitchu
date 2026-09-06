@@ -43,6 +43,7 @@ struct SolverCtx {
     double sureTavaniMS = 0;     // cozucu.gevsetme.sureTavaniMS
     double adimBoyu = 0;         // cozucu.gevsetme.adimBoyu (0 < k <= 1)
     double yakinsamaMM = 0;      // cozucu.gevsetme.yakinsamaMM
+    int icProjeksiyon = 0;       // cozucu.gevsetme.icProjeksiyon (sert projeksiyon ic tur sayisi)
     double olcekMinMM = 0;       // body-v1 olcekAraligi.giysiYuksekligiMM.min (SERT)
     double olcekMaxMM = 0;       // ... .max (SERT)
     bool dolu = false;

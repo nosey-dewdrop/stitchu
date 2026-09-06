@@ -5,7 +5,7 @@
 //      olceklenip uygulanir. (Birakilmis hedefler kuvvet uretmez.)
 //   2. SERT PROJEKSIYON: sert uzunluk kisitlari ve kapaliliklar Gauss-Seidel tarzi sirayla
 //      projekte edilir (her kisit kendi iki dugumunu hedefe tam oturtur; sabit dugum oynamaz).
-//      Bir projeksiyon turu obur kisiti bozabildigi icin tur icinde kIcProjeksiyon kez
+//      Bir projeksiyon turu obur kisiti bozabildigi icin tur icinde icProjeksiyon (contract) kez
 //      tekrarlanir — bu yakinsamayi hizlandirir, esik gevsetmez.
 //   3. OLCEK PROJEKSIYONU (olcekKisiti ise): sinir kutusu yuksekligi [olcekMin, olcekMax]
 //      disinda ise butun serbest dugumler merkez etrafinda araliga geri OLCEKLENIR. Bu SERT bir
@@ -31,11 +31,9 @@ namespace solver {
 using graf::JVal;
 
 namespace {
-// Sert projeksiyonun bir iterasyonda kac kez tekrarlandigi. Sayisal bir ic dongudur, bir esik
-// DEGILDIR: kisit hedefleri ve toleranslar contract'tan gelir, bu yalniz Gauss-Seidel turunun
-// kac kez suruldugudur. Tek tur birbirine bagli kisitlerde (bir dugum iki kisitte) yakinsamayi
-// maxIter'e yayar; 4 tur tipik zincirde artigi bir mertebe dusurur.
-constexpr int kIcProjeksiyon = 4;
+// Sert projeksiyonun bir iterasyonda kac kez tekrarlandigi ARTIK KODDA DEGIL: A2c/KARAR 3 ile
+// contract/graf-v1.json cozucu.gevsetme.icProjeksiyon'a tasindi ve SolverCtx.icProjeksiyon
+// alanindan okunur. Kodda olcu/arama sabiti kalmadi.
 
 bool sonlu(double v) { return std::isfinite(v); }
 bool sonlu(const Point& p) { return sonlu(p.x) && sonlu(p.y); }
@@ -130,7 +128,7 @@ bool projekteOlcek(std::vector<Point>& P, const std::vector<Dugum>& D, const Sol
 }
 
 void sertTur(std::vector<Point>& P, const Problem& pr, const SolverCtx& ctx) {
-    for (int t = 0; t < kIcProjeksiyon; ++t) {
+    for (int t = 0; t < ctx.icProjeksiyon; ++t) {
         for (const SertUzunluk& s : pr.sertUzunluklar) projekteUzunluk(P, pr.dugumler, s.i, s.j, s.hedefMM);
         for (const SertKapalilik& k : pr.sertKapaliliklar) projekteKapalilik(P, pr.dugumler, k);
     }
@@ -159,6 +157,10 @@ SolverCtx SolverCtx::fromContract(const JVal& grafContract, const JVal& bodyCont
     if (!degerOku(gv, "sureTavaniMS", c.sureTavaniMS, hata)) return c;
     if (!degerOku(gv, "adimBoyu", c.adimBoyu, hata)) return c;
     if (!degerOku(gv, "yakinsamaMM", c.yakinsamaMM, hata)) return c;
+    double icProj = 0;
+    if (!degerOku(gv, "icProjeksiyon", icProj, hata)) return c;
+    if (!(icProj >= 1.0)) { hata = "cozucu.gevsetme.icProjeksiyon < 1"; return c; }
+    c.icProjeksiyon = static_cast<int>(icProj);
     if (maxIter < 1) { hata = "cozucu.gevsetme.maxIter < 1"; return c; }
     if (!(c.adimBoyu > 0.0 && c.adimBoyu <= 1.0)) { hata = "cozucu.gevsetme.adimBoyu araligi (0,1] disinda"; return c; }
     if (!(c.sureTavaniMS > 0.0)) { hata = "cozucu.gevsetme.sureTavaniMS <= 0"; return c; }
