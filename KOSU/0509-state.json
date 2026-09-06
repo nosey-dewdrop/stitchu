@@ -53,7 +53,8 @@
   "bash engine/tests/0509-kapi.sh --kendi-check",
   "node engine/tests/0509-emsal-olcum.mjs --json",
   "bash engine/tests/0509-kapi.sh --regresyon",
-  "node engine/tests/0509-wasm-sanity.mjs"
+  "node engine/tests/0509-wasm-sanity.mjs",
+  "bash engine/tests/0509-kapi.sh --kendi-check >/dev/null 2>&1 && node engine/tests/0509-emsal-olcum.mjs --json >/dev/null 2>&1 && bash engine/tests/0509-kapi.sh --regresyon >/dev/null 2>&1 && node engine/tests/0509-wasm-sanity.mjs >/dev/null 2>&1 && bash engine/tests/0509-kapi.sh --ivme | python3 -c \"import json,sys;d=json.load(sys.stdin);[sys.exit(1) for m,k in d['seri'].items() if (k.get('esik') is not None and k['son']<=k['esik'])!=(m in d['dusurulen'])];sys.exit(0)\""
  ],
  "devredilen": [
   "[ILANLI KIRMIZI] flat_ayni_insan_check = 34 (A1a oncesi). Kapanacak adim: A4 (A4'un kabul sarti bu gecidin YESIL olmasi; kirmizi kalirsa A4 GECMEZ). TAVAN 34: A2 ve A3'te sayi artarsa o adim duser. gecitYesil hesabinda dusurulmez, JSON'da KIRMIZI basilir, sayi her adimda metrige yazilir.",
@@ -249,7 +250,8 @@
    "Q2_kilit_kosucuda": "UYGULANDI: KOSU/0509-kosu.js el('basla') — kilit her alt adim basinda FIILEN kurulur (--kilit), ciktisinin 'kilit: N ... M ...' satiri yapilan[]'a AYNEN yazilir, hemen ardindan --kendi-check H7 okunur; H7 kirmizi ise adim BASLAMAZ. Commit mesajindaki 'lock set' tek basina kanit SAYILMAZ.",
    "Q3_H7_izin_listesi": "UYGULANDI: engine/tests/0509-kapi.sh H7 — sabit tavan (<=2) KALDIRILDI; sayilan yalniz IZIN DISI yazilabilir dosyalar, tavan <=0 (daha SIKI). Izin listesi state.json'dan adim adiyla okunur (A2bIzinListesi; altAdim sozlugunde ACIK olan alt adim aktiftir), ilan yoksa izin yoktur.",
    "Q4_olcek_check": "AKSIYON: soru GECERSIZ, gecit zaten kapali. Dogrulandi: 0509-kapi.sh olcek_gecit() satir 353 bir YORUM satiri; HENUZ-YOK yalnizca contract/body-v1.json'da olcekAraligi yoksa doner, aksi halde grafciz gercek36/kalip FIILEN kosulur. Brief satiri KOSU/0509-kosu.js A2b notlarina eklendi ('olcek_check KAPALI - yeniden acma yok') + devir hijyeni dersi.",
-   "arac_onarimi": "H7 yazilirken 'python3 - <arg> <<HEREDOC' kalibinin BOZUK oldugu bulundu: heredoc stdin'i kaplar, script stdin'den okunacagi icin argüman KOD olarak calisir ve dosya listesi hic okunmaz -> gecit her zaman 0 basar, ASLA kizarmaz. Suzgec ve okuyucu AYRI dosyalara ($TMPD) alindi. Negatif test: golden-reference.csv u+w yapilinca H7 FAIL (1 izin disi), geri kurulunca OK (0)."
+   "arac_onarimi": "H7 yazilirken 'python3 - <arg> <<HEREDOC' kalibinin BOZUK oldugu bulundu: heredoc stdin'i kaplar, script stdin'den okunacagi icin argüman KOD olarak calisir ve dosya listesi hic okunmaz -> gecit her zaman 0 basar, ASLA kizarmaz. Suzgec ve okuyucu AYRI dosyalara ($TMPD) alindi. Negatif test: golden-reference.csv u+w yapilinca H7 FAIL (1 izin disi), geri kurulunca OK (0).",
+   "kabulKomutu_notu": "Q1 kurali METRIK GECMISINDEN BAGIMSIZ olcusun diye komut sabit bir 'dusurulen' listesi beklemez (o liste metrik.jsonl'in son 3 satirina bagli, ornegin sanalDikisMM null gelirse seriden zaten cikar): KURALI olcer — esik altindaki her metrik dusurulmus, dusurulen her metrik esik altinda olmali. Falsifiye edildi: engine/golden-reference.csv u+w yapilinca exit 1 (H7), geri kurulunca exit 0."
   }
  },
  "acikEngeller": [
