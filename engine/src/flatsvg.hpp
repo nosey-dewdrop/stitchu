@@ -25,7 +25,8 @@ namespace stitchu {
 namespace graf {
 
 struct FlatOpts {
-    double kenarBoslukMM = 20.0;   // viewBox pay
+    double kenarBoslukMM = 20.0;    // viewBox pay
+    double gorunumArasiMM = 60.0;   // on ve arka gorunumun arasi
     bool onArkaEsit = false;
 };
 
