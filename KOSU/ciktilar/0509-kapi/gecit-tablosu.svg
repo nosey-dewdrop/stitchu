@@ -1,114 +1,99 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="1210" viewBox="0 0 1180 1210">
-<rect width="1180" height="1210" fill="#fbfaf8"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="974" viewBox="0 0 900 974">
+<rect width="900" height="974" fill="#fbfaf8"/>
 <style>text{font-family:-apple-system,Helvetica,Arial,sans-serif}</style>
-<text x="34" y="46" font-size="24" font-weight="700" fill="#141414">0509 gecit tablosu — A1a tur 2</text>
-<text x="34" y="74" font-size="13" fill="#555">commit fac99c69 · 2026-09-06 05:11:13 · 15 gecit · 2 kirmizi (ikisi de ILANLI) · crash 0 · stderr 0 bayt</text>
-<text x="34" y="96" font-size="13" fill="#555">exit 1 · henuz-yok: emsal_mm_olcum, olcek_check, wasm_sanity, regresyon (A1b kurar)</text>
-<line x1="34" y1="128" x2="1146" y2="128" stroke="#ddd"/>
-<text x="34" y="120" font-size="11" fill="#888" letter-spacing="1">GECIT</text>
-<text x="330" y="120" font-size="11" fill="#888" letter-spacing="1">DURUM</text>
-<text x="450" y="120" font-size="11" fill="#888" letter-spacing="1">SAYI</text>
-<text x="520" y="120" font-size="11" fill="#888" letter-spacing="1">ESIK / KAYNAK</text>
-<rect x="34" y="130" width="1112" height="34" fill="#f2f0ec"/>
-<text x="42" y="150" font-size="14" fill="#141414">graf_ir_check</text>
-<circle cx="338" cy="145" r="5" fill="#1a7f45"/>
-<text x="352" y="150" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
-<text x="458" y="150" font-size="13" fill="#333">0</text>
-<text x="520" y="150" font-size="11" fill="#666">engine/CMakeLists.txt:1523 add_test(graf_ir_check)</text>
-<text x="42" y="184" font-size="14" fill="#141414">graf_op_check</text>
-<circle cx="338" cy="179" r="5" fill="#1a7f45"/>
-<text x="352" y="184" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
-<text x="458" y="184" font-size="13" fill="#333">0</text>
-<text x="520" y="184" font-size="11" fill="#666">engine/CMakeLists.txt:1529 add_test(graf_op_check)</text>
-<rect x="34" y="198" width="1112" height="34" fill="#f2f0ec"/>
-<text x="42" y="218" font-size="14" fill="#141414">graf_dikilebilir_check</text>
-<circle cx="338" cy="213" r="5" fill="#1a7f45"/>
-<text x="352" y="218" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
-<text x="458" y="218" font-size="13" fill="#333">0</text>
-<text x="520" y="218" font-size="11" fill="#666">engine/CMakeLists.txt:1534 add_test(graf_dikilebilir_check)</text>
-<text x="42" y="252" font-size="14" fill="#141414">flat_convention_check</text>
-<circle cx="338" cy="247" r="5" fill="#1a7f45"/>
-<text x="352" y="252" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
-<text x="458" y="252" font-size="13" fill="#333">0</text>
-<text x="520" y="252" font-size="11" fill="#666">engine/CMakeLists.txt:174 add_test(flat_convention_check)</text>
-<rect x="34" y="266" width="1112" height="34" fill="#f2f0ec"/>
-<text x="42" y="286" font-size="14" fill="#141414">parca_sayisi_check</text>
-<circle cx="338" cy="281" r="5" fill="#1a7f45"/>
-<text x="352" y="286" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
-<text x="458" y="286" font-size="13" fill="#333">0</text>
-<text x="520" y="286" font-size="11" fill="#666">engine/CMakeLists.txt:381 add_test(parca_sayisi_check)</text>
-<text x="42" y="320" font-size="14" fill="#141414">edit_locality_check</text>
-<circle cx="338" cy="315" r="5" fill="#1a7f45"/>
-<text x="352" y="320" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
-<text x="458" y="320" font-size="13" fill="#333">0</text>
-<text x="520" y="320" font-size="11" fill="#666">engine/CMakeLists.txt:1257 add_test(edit_locality_check)</text>
-<rect x="34" y="334" width="1112" height="34" fill="#f2f0ec"/>
-<text x="42" y="354" font-size="14" fill="#141414">flat_ayni_insan_check</text>
-<circle cx="338" cy="349" r="5" fill="#b3261e"/>
-<text x="352" y="354" font-size="13" font-weight="600" fill="#b3261e">KIRMIZI</text>
-<text x="458" y="354" font-size="13" fill="#333">1</text>
-<text x="520" y="354" font-size="11" fill="#666">engine/CMakeLists.txt:1490 add_test(flat_ayni_insan_check)</text>
-<text x="42" y="388" font-size="14" fill="#141414">edge_case_supurme_check</text>
-<circle cx="338" cy="383" r="5" fill="#1a7f45"/>
-<text x="352" y="388" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
-<text x="458" y="388" font-size="13" fill="#333">0</text>
-<text x="520" y="388" font-size="11" fill="#666">engine/CMakeLists.txt:498 add_test(edge_case_supurme_check)</text>
-<rect x="34" y="402" width="1112" height="34" fill="#f2f0ec"/>
-<text x="42" y="422" font-size="14" fill="#141414">kapi_sozlesme_check</text>
-<circle cx="338" cy="417" r="5" fill="#1a7f45"/>
-<text x="352" y="422" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
-<text x="458" y="422" font-size="13" fill="#333">0</text>
-<text x="520" y="422" font-size="11" fill="#666">engine/CMakeLists.txt add_test(kapi_sozlesme_check)</text>
-<text x="42" y="456" font-size="14" fill="#141414">enum_dallanma_check</text>
-<circle cx="338" cy="451" r="5" fill="#1a7f45"/>
-<text x="352" y="456" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
-<text x="458" y="456" font-size="13" fill="#333">436</text>
-<text x="520" y="456" font-size="11" fill="#666">engine/tests/enum-dallanma-baseline.json:toplam</text>
-<rect x="34" y="470" width="1112" height="34" fill="#f2f0ec"/>
-<text x="42" y="490" font-size="14" fill="#141414">emsal_mm_olcum</text>
-<circle cx="338" cy="485" r="5" fill="#8a8a8a"/>
-<text x="352" y="490" font-size="13" font-weight="600" fill="#8a8a8a">HENUZ-YOK</text>
-<text x="458" y="490" font-size="13" fill="#333">None</text>
-<text x="520" y="490" font-size="11" fill="#666">contract/flat-convention-v1.json + KOSU/ciktilar/flat-olcum.json</text>
-<text x="42" y="524" font-size="14" fill="#141414">olcek_check</text>
-<circle cx="338" cy="519" r="5" fill="#8a8a8a"/>
-<text x="352" y="524" font-size="13" font-weight="600" fill="#8a8a8a">HENUZ-YOK</text>
-<text x="458" y="524" font-size="13" fill="#333">None</text>
-<text x="520" y="524" font-size="11" fill="#666">contract/body-v1.json olcekAraligi</text>
-<rect x="34" y="538" width="1112" height="34" fill="#f2f0ec"/>
-<text x="42" y="558" font-size="14" fill="#141414">wasm_sanity</text>
-<circle cx="338" cy="553" r="5" fill="#8a8a8a"/>
-<text x="352" y="558" font-size="13" font-weight="600" fill="#8a8a8a">HENUZ-YOK</text>
-<text x="458" y="558" font-size="13" fill="#333">None</text>
-<text x="520" y="558" font-size="11" fill="#666">engine/build-wasm.sh + engine/tests/0509-wasm-sanity.mjs</text>
-<text x="42" y="592" font-size="14" fill="#141414">regresyon</text>
-<circle cx="338" cy="587" r="5" fill="#8a8a8a"/>
-<text x="352" y="592" font-size="13" font-weight="600" fill="#8a8a8a">HENUZ-YOK</text>
-<text x="458" y="592" font-size="13" fill="#333">None</text>
-<text x="520" y="592" font-size="11" fill="#666">KOSU/regresyon/girdiler.json</text>
-<rect x="34" y="606" width="1112" height="34" fill="#f2f0ec"/>
-<text x="42" y="626" font-size="14" fill="#141414">sinyal_tam</text>
-<circle cx="338" cy="621" r="5" fill="#b3261e"/>
-<text x="352" y="626" font-size="13" font-weight="600" fill="#b3261e">KIRMIZI</text>
-<text x="458" y="626" font-size="13" fill="#333">1</text>
-<text x="520" y="626" font-size="11" fill="#666">KOSU/sinyal.sh (muhurlu; DEVIR KABUL zinciri)</text>
-<line x1="34" y1="674" x2="1146" y2="674" stroke="#ddd"/>
-<text x="34" y="700" font-size="15" font-weight="700" fill="#141414">KABUL KOMUTU — bash engine/tests/0509-kapi.sh --kendi-check</text>
-<text x="42" y="724" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H1 kisa-tek-satir</text>
-<text x="42" y="744" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H2 kisa-json</text>
-<text x="42" y="764" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H3 kisa-alanlar</text>
-<text x="42" y="784" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H4 bilinmeyen-mod-ret</text>
-<text x="42" y="804" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H5 ivme-bool</text>
-<text x="42" y="824" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H6 kilit-diff-tagsiz</text>
-<text x="42" y="844" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H7 kilit-kurulu (izin disi yazilabilir: 0)</text>
-<text x="42" y="864" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H8 state-semasi</text>
-<text x="42" y="884" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H9 karar1-flat-ayni-insan</text>
-<text x="42" y="904" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H10 karar1-tavan (sayi=34 &lt;= 34)</text>
-<text x="42" y="924" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H11 karar2-sinyal-kume</text>
-<text x="42" y="944" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H12 karar2-kisa-sinyalsiz</text>
-<text x="42" y="964" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H13 karar3-cmake-izlenir</text>
-<text x="42" y="984" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H14 karar3-cmake-yazilabilir</text>
-<text x="42" y="1004" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H15 karar3-satir-yonu</text>
-<text x="42" y="1024" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#1a7f45">OK   H16 kabul-komutu-var</text>
-<text x="42" y="1044" font-size="12" font-family="ui-monospace,Menlo,monospace" fill="#141414">OZET 16 hukum gecti, 0 kirmizi</text>
+<text x="34" y="46" font-size="24" font-weight="700" fill="#141414">0509 gecit tablosu — A1a kapanis, A1b acilis</text>
+<text x="34" y="74" font-size="13" fill="#555">commit 94811910 · 2026-09-06 05:22:14 · 15 gecit · 2 kirmizi · crash 0 · gecitYesil False</text>
+<text x="34" y="96" font-size="13" fill="#555">log KOSU/0509-kapi.log · uretim 2026-09-06 05:24:38 · uretici KOSU/0509-kapi-tablo.py &lt;- kapi.json (tum sayilar gecit JSON'undan)</text>
+<line x1="34" y1="128" x2="866" y2="128" stroke="#ddd"/>
+<text x="34" y="120" font-size="11" fill="#888" letter-spacing="1">GECIT / KAYNAK</text>
+<text x="600" y="120" font-size="11" fill="#888" letter-spacing="1">DURUM</text>
+<text x="760" y="120" font-size="11" fill="#888" letter-spacing="1">SAYI / ESIK</text>
+<rect x="34" y="128" width="832" height="44" fill="#f2f0ec"/>
+<text x="42" y="148" font-size="14" fill="#141414">graf_ir_check</text>
+<circle cx="608" cy="143" r="5" fill="#1a7f45"/>
+<text x="622" y="148" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="148" font-size="13" fill="#333">0 / 0</text>
+<text x="42" y="164" font-size="10.5" fill="#8a8a8a">engine/CMakeLists.txt:1523 add_test(graf_ir_check)</text>
+<text x="42" y="192" font-size="14" fill="#141414">graf_op_check</text>
+<circle cx="608" cy="187" r="5" fill="#1a7f45"/>
+<text x="622" y="192" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="192" font-size="13" fill="#333">0 / 0</text>
+<text x="42" y="208" font-size="10.5" fill="#8a8a8a">engine/CMakeLists.txt:1529 add_test(graf_op_check)</text>
+<rect x="34" y="216" width="832" height="44" fill="#f2f0ec"/>
+<text x="42" y="236" font-size="14" fill="#141414">graf_dikilebilir_check</text>
+<circle cx="608" cy="231" r="5" fill="#1a7f45"/>
+<text x="622" y="236" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="236" font-size="13" fill="#333">0 / 0</text>
+<text x="42" y="252" font-size="10.5" fill="#8a8a8a">engine/CMakeLists.txt:1534 add_test(graf_dikilebilir_check)</text>
+<text x="42" y="280" font-size="14" fill="#141414">flat_convention_check</text>
+<circle cx="608" cy="275" r="5" fill="#1a7f45"/>
+<text x="622" y="280" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="280" font-size="13" fill="#333">0 / 0</text>
+<text x="42" y="296" font-size="10.5" fill="#8a8a8a">engine/CMakeLists.txt:174 add_test(flat_convention_check)</text>
+<rect x="34" y="304" width="832" height="44" fill="#f2f0ec"/>
+<text x="42" y="324" font-size="14" fill="#141414">parca_sayisi_check</text>
+<circle cx="608" cy="319" r="5" fill="#1a7f45"/>
+<text x="622" y="324" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="324" font-size="13" fill="#333">0 / 0</text>
+<text x="42" y="340" font-size="10.5" fill="#8a8a8a">engine/CMakeLists.txt:381 add_test(parca_sayisi_check)</text>
+<text x="42" y="368" font-size="14" fill="#141414">edit_locality_check</text>
+<circle cx="608" cy="363" r="5" fill="#1a7f45"/>
+<text x="622" y="368" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="368" font-size="13" fill="#333">0 / 0</text>
+<text x="42" y="384" font-size="10.5" fill="#8a8a8a">engine/CMakeLists.txt:1257 add_test(edit_locality_check)</text>
+<rect x="34" y="392" width="832" height="44" fill="#f2f0ec"/>
+<text x="42" y="412" font-size="14" fill="#141414">flat_ayni_insan_check *</text>
+<circle cx="608" cy="407" r="5" fill="#b3261e"/>
+<text x="622" y="412" font-size="13" font-weight="600" fill="#b3261e">KIRMIZI</text>
+<text x="768" y="412" font-size="13" fill="#333">1 / 0</text>
+<text x="42" y="428" font-size="10.5" fill="#8a8a8a">engine/CMakeLists.txt:1490 add_test(flat_ayni_insan_check)</text>
+<text x="42" y="456" font-size="14" fill="#141414">edge_case_supurme_check</text>
+<circle cx="608" cy="451" r="5" fill="#1a7f45"/>
+<text x="622" y="456" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="456" font-size="13" fill="#333">0 / 0</text>
+<text x="42" y="472" font-size="10.5" fill="#8a8a8a">engine/CMakeLists.txt:498 add_test(edge_case_supurme_check)</text>
+<rect x="34" y="480" width="832" height="44" fill="#f2f0ec"/>
+<text x="42" y="500" font-size="14" fill="#141414">kapi_sozlesme_check</text>
+<circle cx="608" cy="495" r="5" fill="#1a7f45"/>
+<text x="622" y="500" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="500" font-size="13" fill="#333">0 / 0</text>
+<text x="42" y="516" font-size="10.5" fill="#8a8a8a">engine/CMakeLists.txt add_test(kapi_sozlesme_check)</text>
+<text x="42" y="544" font-size="14" fill="#141414">enum_dallanma_check</text>
+<circle cx="608" cy="539" r="5" fill="#1a7f45"/>
+<text x="622" y="544" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="544" font-size="13" fill="#333">436 / 436</text>
+<text x="42" y="560" font-size="10.5" fill="#8a8a8a">engine/tests/enum-dallanma-baseline.json:toplam</text>
+<rect x="34" y="568" width="832" height="44" fill="#f2f0ec"/>
+<text x="42" y="588" font-size="14" fill="#141414">emsal_mm_olcum</text>
+<circle cx="608" cy="583" r="5" fill="#9a7b18"/>
+<text x="622" y="588" font-size="13" font-weight="600" fill="#9a7b18">HENUZ-YOK</text>
+<text x="768" y="588" font-size="13" fill="#333">null</text>
+<text x="42" y="604" font-size="10.5" fill="#8a8a8a">contract/flat-convention-v1.json + KOSU/ciktilar/flat-olcum.json</text>
+<text x="42" y="632" font-size="14" fill="#141414">olcek_check</text>
+<circle cx="608" cy="627" r="5" fill="#9a7b18"/>
+<text x="622" y="632" font-size="13" font-weight="600" fill="#9a7b18">HENUZ-YOK</text>
+<text x="768" y="632" font-size="13" fill="#333">null</text>
+<text x="42" y="648" font-size="10.5" fill="#8a8a8a">contract/body-v1.json olcekAraligi</text>
+<rect x="34" y="656" width="832" height="44" fill="#f2f0ec"/>
+<text x="42" y="676" font-size="14" fill="#141414">wasm_sanity</text>
+<circle cx="608" cy="671" r="5" fill="#9a7b18"/>
+<text x="622" y="676" font-size="13" font-weight="600" fill="#9a7b18">HENUZ-YOK</text>
+<text x="768" y="676" font-size="13" fill="#333">null</text>
+<text x="42" y="692" font-size="10.5" fill="#8a8a8a">engine/build-wasm.sh + engine/tests/0509-wasm-sanity.mjs</text>
+<text x="42" y="720" font-size="14" fill="#141414">regresyon</text>
+<circle cx="608" cy="715" r="5" fill="#9a7b18"/>
+<text x="622" y="720" font-size="13" font-weight="600" fill="#9a7b18">HENUZ-YOK</text>
+<text x="768" y="720" font-size="13" fill="#333">null</text>
+<text x="42" y="736" font-size="10.5" fill="#8a8a8a">KOSU/regresyon/girdiler.json</text>
+<rect x="34" y="744" width="832" height="44" fill="#f2f0ec"/>
+<text x="42" y="764" font-size="14" fill="#141414">sinyal_tam *</text>
+<circle cx="608" cy="759" r="5" fill="#b3261e"/>
+<text x="622" y="764" font-size="13" font-weight="600" fill="#b3261e">KIRMIZI</text>
+<text x="768" y="764" font-size="13" fill="#333">1 / 0</text>
+<text x="42" y="780" font-size="10.5" fill="#8a8a8a">KOSU/sinyal.sh (muhurlu; DEVIR KABUL zinciri)</text>
+<line x1="34" y1="800" x2="866" y2="800" stroke="#ddd"/>
+<text x="34" y="814" font-size="12.5" fill="#333">kirmizi 2 — ILANLI 2 (flat_ayni_insan_check, sinyal_tam) · ILANSIZ 0 (yok)</text>
+<text x="34" y="836" font-size="12.5" fill="#333">  ILANLI flat_ayni_insan_check: sayi 34 · kapanacak adim A4 · tavan 34</text>
+<text x="34" y="858" font-size="12.5" fill="#333">  ILANLI sinyal_tam: sayi 1 · kapanacak adim A9 · alt kume dondu: bundle_fresh_check</text>
+<text x="34" y="880" font-size="12.5" fill="#333">henuz-yok 4: emsal_mm_olcum, olcek_check, wasm_sanity, regresyon</text>
 </svg>
