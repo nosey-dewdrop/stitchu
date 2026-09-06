@@ -262,7 +262,8 @@
       "engel": "olcek_check",
       "durum": "HENUZ-YOK",
       "kapanacakAdim": "A2",
-      "neden": "aralik contract/body-v1.json olcekAraligi'na kaynakli eklendi (395-1335 mm); olculecek sey (gercek36'da degerlenmis mutlak bbox) A2'de doguyor"
+      "neden": "aralik contract/body-v1.json olcekAraligi'na kaynakli eklendi (395-1335 mm); olculecek sey (gercek36'da degerlenmis mutlak bbox) A2'de doguyor",
+      "kapandi_2026-09-06_A2c": "KAPANDI: gecit artik engine/build/grafciz gercek36 kalip cikis kodunu ve stderr'deki olculen mm'i okuyor. Olculen 990.00 mm, aralik [395.0, 1335.0] -> YESIL. HENUZ-YOK yok. Kanit: KOSU/0509-kapi.json olcek_check, commit b8f3f4d9."
     },
     {
       "engel": "K2-prenses-roba cizilemiyor",
@@ -362,7 +363,8 @@
     "kapsam": "Gecit KURAN adimlar (A1a/A1b ve bu karar-uygulama turu). 8.4 ivme kurali urunu ILERLETEN adimlar icindir.",
     "gerekce": "Brief 'URUN DEGISMEZ; motor koduna dokunma' diyor. anaSapmaMM bu turda ilk kez null olmaktan cikip 0.693 oldu; sabit bir urun uzerinde duz seyreden metrik, urunun degismediginin kanitidir, tikanmanin degil.",
     "biter": "A2'den itibaren muafiyet YOK ve A2/A4 sapmayi kapatmakla yukumlu. A2'ye gecen isci bu alani gecerli:false yapar.",
-    "uyari": "Ayni gerekce A2'de tekrarlanirsa (urun degisiyor ama sapma kapanmiyor) o GERCEK yerel minimumdur ve kesme uygulanir."
+    "uyari": "Ayni gerekce A2'de tekrarlanirsa (urun degisiyor ama sapma kapanmiyor) o GERCEK yerel minimumdur ve kesme uygulanir.",
+    "A2b_A2c_karari_2026-09-06": "KARAR DEGISIKLIGI (2.13, karar ajani): muafiyet YINE YOK, ama A2b/A2c'nin ivme metrigi sanalDikisMM'dir; anaSapmaMM ve enum bu adimlarda ivmeye GIRMEZ. Kesme uygulanmaz. Kayit: sanalDikisMM 8 bedende 0.00 mm (esik 2.0), null'dan olculebilir hale gecti. anaSapmaMM'in kapanma yukumlulugu A4'te, enum'un dususu F3'te KALIR; tavanlar aynen gecerli (flat_ayni_insan_check 34'u asamaz, enum 436'yi asamaz). Yukaridaki 'biter' satiri SILINMEDI, bu satir onun uzerine yazilir."
   },
   "resume": "Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A1\"}",
   "adimDurumlari": {
@@ -410,5 +412,31 @@
     "(c) TESLIM SIRASI: ilk saatte KOSU/ciktilar/graf-ilk/flat.png + kalip-36.png commit'te (kotu de olsa)",
     "(d) cozucu, maxIter, kIcProjeksiyon DEGERI, esik ve test degistirilmedi",
     "(e) KARAR 3 uygulandi: contract cozucu.gevsetme.icProjeksiyon {deger:4, kaynak DOGRULANMADI}; solver_utils.cpp'de constexpr kIcProjeksiyon KALMADI"
-  ]
+  ],
+  "A2c_engeller": {
+    "_ne": "Karar ajaninin A2b hukmu DEVAM ile A2c'ye ADIYLA bagladigi uc engel (2026-09-06).",
+    "E1_topoloji": {
+      "durum": "KAPANDI",
+      "nerede": "engine/src/grafdogrula.cpp 'topoloji' blogu (referans blogundan hemen sonra)",
+      "kurallar": "kenar_rolu (_yasa 3+4) · dikis_cifti (_yasa 4) · kapanma (_yasa 3) · komsuluk_bagli (_yasa 7)",
+      "hataKodu": "ERR_IMPOSSIBLE_TOPOLOGY: <kural> — <neden>; hedef alani hangi panel/kenar oldugunu soyler",
+      "test": "engine/tests/0509-topoloji_check.cpp, ctest topoloji_check (16 hukum, taban graf YESIL + dort ihlal ADIYLA reddedildi)",
+      "commit": "57c9f352"
+    },
+    "E2_icProjeksiyon": {
+      "durum": "KAPANDI",
+      "nerede": "contract/graf-v1.json cozucu.gevsetme.icProjeksiyon {deger:4, kaynak DOGRULANMADI} (TEK satir EKLEME)",
+      "kod": "engine/src/solver_utils.cpp'de 'constexpr int kIcProjeksiyon' KALMADI; SolverCtx.icProjeksiyon contract'tan okunur (degerOku), deger 4'ten degismedi",
+      "kanit": "rg kIcProjeksiyon engine/src -> bos; ctest solver_check + olcek_check YESIL",
+      "commit": "22c4b12b"
+    },
+    "E3_gecit_onarimi": {
+      "durum": "KAPANDI",
+      "Q1": "olcek_check gecidi grafciz cikis kodu + olculen mm okuyor; olculemezse CRASH (HENUZ-YOK degil). Esik/aralik DEGISMEDI.",
+      "Q2": "--kisa satirina sanalDikisMM eklendi (KAPI_SANAL cevre degiskeni; yoksa null). ctest kosmuyor, 60 s tavani korundu.",
+      "izinListesi": "engine/tests/0509-kapi.sh (TEK dosya)",
+      "satir": "+37 / -2",
+      "commit": "b8f3f4d9"
+    }
+  }
 }
