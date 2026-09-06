@@ -3,15 +3,34 @@
   "durum": "ISCI",
   "deneme": 2,
   "butce": {
-    "commit": 18,
-    "saat": 2.63,
+    "commit": 11,
+    "saat": 4.46,
     "derlemeCommit": 0,
     "tavan": {
       "derlemeCommit": 6
     },
     "olcumTarihi": "2026-09-06",
     "olcumTag": "adim-A1-once",
-    "not": "commit = adim-A1-once..HEAD, KOSU/0509-* haric, eksi derlemeCommit(0)"
+    "kapiBozuk": false,
+    "kapiExit": 1,
+    "gecitYesil": false,
+    "kirmizilar": [
+      "flat_ayni_insan_check (sayi 1, esik 0, ILANLI -> A4, tavan 34)",
+      "sinyal_tam (bundle_fresh_check, sayi 1, esik 0, ILANLI -> A9)"
+    ],
+    "henuzYok": [
+      "emsal_mm_olcum",
+      "olcek_check",
+      "wasm_sanity",
+      "regresyon"
+    ],
+    "kilitIhlali": [],
+    "yerelMinimum": false,
+    "metrikSerisi": "yok (anaSapmaMM son 3 commit'te null)",
+    "regresyonFarki": [
+      "kosmadi: KOSU/regresyon/girdiler.json yok (A1b kurar)"
+    ],
+    "not": "commit = adim-A1-once..HEAD, KOSU/0509-* haric (11), eksi derlemeCommit(0). --kilit-diff: engine/CMakeLists.txt + engine/tests/0509-kapi.sh, ikisi de izin listesinde. --ivme enum uzerinden yerelMinimum=true dedi; ana sapma (anaSapmaMM) null oldugu icin gorev sozlesmesince yerelMinimum=False, metrikSerisi=yok."
   },
   "tag": "adim-A1-once",
   "yol": [
