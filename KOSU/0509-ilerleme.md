@@ -77,3 +77,43 @@ K2 ile K5 farkı "biri çalışıyor biri bozuk" DEĞİL: K2 görünür şekilde
 K5 sessizce özelliksiz çiziyor. Sessiz olan daha tehlikelidir.
 
 Görsel: `KOSU/ciktilar/_yerel/0906-karar/0906-karar-kanit.html` (+ 4 png).
+
+### Araç onarımı (8.3) — eşik gevşetme DEĞİL
+
+**H5 `ivme-bool` yanlış kırmızı yaktı.** Kök sebep ölçüldü: hüküm NaN'ı
+`assert "nan" not in json.dumps(d).lower()` ile, yani **alt dize taramasıyla**
+arıyordu. Karar 6'nın muafiyet gerekçesine yazılan düz Türkçe metinde
+"tıka**nan**ın" kelimesi geçtiği için tarama tetiklendi — ortada NaN yoktu.
+
+Bu, A1b'nin devraldığı kusurla **aynı sınıf** hata (eşiği alt dize taramasıyla
+aramak; orada `/croquis/toleranceMM` açık yola bağlanmıştı). Aynı sınıf ikinci
+kez engellediği için araç onarıldı:
+
+- Kontrol **daraltılmadı, doğru yere bağlandı**: JSON ağacındaki her *sayısal*
+  değer `math.isfinite` ile geziliyor (bool'lar hariç, yol adıyla raporlanıyor).
+- Ham metinde JSON dışı `NaN`/`Infinity` sabitleri ayrıca sınır-eşleşmeli
+  `grep -E` ile aranıyor (python `json` bunları geçerli sayar, tüketiciler için
+  bozuktur).
+
+Onarımın **hâlâ ısırdığı kanıtlandı**, üç ölçüm:
+
+| durum | beklenen | sonuç |
+|---|---|---|
+| `{"seri":{"x":NaN}}` parse edilmiş | yakala | `AssertionError: sonlu olmayan sayi: /seri/x/` |
+| ham `NaN` sabiti | yakala | YAKALANDI |
+| "tikanmanin degil" düz metni | geç | GEÇTİ |
+
+Yani hüküm eskisinden **daha güçlü**, daha gevşek değil: iki ayrı yoldan gerçek
+NaN'ı tutuyor, düz metne artık takılmıyor. `--kendi-check`: 18 hüküm, 0 kırmızı.
+
+### İvme muafiyeti artık ADIYLA ilan ediliyor, adım adına bakmıyor
+
+Karar 6 muafiyeti onayladı ama "A2'den itibaren YOK" dedi. Bunu bulanık ad
+eşlemesine bırakmak (adım adında "A1b" aramak) muafiyeti adım yeniden
+adlandırılınca sessizce düşürür ya da kaldırır. Bunun yerine:
+
+- `state.json` içinde açık bir `ivmeMuafiyeti` alanı var; **ilan yoksa muafiyet YOK**.
+- `--ivme` çıktısı `muafiyet{gecerli, kaynak, ilanEdildi, okunanAdim, gerekce, biter}`
+  basıyor. **Hüküm (`yerelMinimum`) DEĞİŞTİRİLMEDİ** — yalnız yanına ne olduğu yazıldı.
+- Muafiyet **kendiliğinden bitmiyor**: A2'ye geçen işçi `gecerli: false` yapmak
+  zorunda; yapmazsa muafiyet görünür bir yalan olarak orada durur.
