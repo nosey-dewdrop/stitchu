@@ -1,39 +1,34 @@
 {
- "adim": "A1",
- "durum": "GECTI",
- "deneme": 2,
+ "adim": "A2",
+ "durum": "ISCI",
+ "deneme": 1,
  "butce": {
-  "adim": "A1",
-  "commitSayisi": 26,
+  "adim": "A2",
+  "commitSayisi": 0,
   "derlemeCommit": 0,
   "derlemeTavani": 6,
-  "saat": 9.27,
-  "yerelMinimum": true,
-  "metrikSerisi": "anaSapmaMM 0.693 -> 0.693 (kapanma %0); enum 436 -> 436 (kapanma %0); satir=3",
-  "ivmeMuafiyeti": true,
+  "saat": 0,
+  "yerelMinimum": false,
+  "metrikSerisi": "A2 basi: anaSapmaMM 0.693; cpp.dallanma 436 (taban 436); flat_ayni_insan 34 (tavan 34)",
+  "ivmeMuafiyeti": false,
   "olcumTarihi": "2026-09-06",
-  "gecitYesil": false,
+  "gecitYesil": true,
   "kirmizilar": [
-   "flat_ayni_insan_check 1 > esik 0",
-   "sinyal_tam 1 > esik 0 (bundle_fresh_check exit 1)"
+   "flat_ayni_insan_check 34 (ILANLI, tavan 34, A4)",
+   "sinyal_tam/bundle_fresh_check 1 (ILANLI, A9)",
+   "kapi_sozlesme_check 1 (H7 kilit-kurulu: A2 izin listesi 7 dosya yazilabilir birakiyor)"
   ],
   "henuzYok": [
    "olcek_check"
   ],
   "kapiBozuk": false,
   "kilitIhlali": [],
-  "kilitDokunulan": [
-   "contract/body-v1.json",
-   "engine/CMakeLists.txt",
-   "engine/tests/0509-emsal-olcum.mjs",
-   "engine/tests/0509-kapi.sh",
-   "engine/tests/0509-wasm-sanity.mjs"
-  ],
   "regresyonFarki": 0
  },
- "tag": "adim-A1-once",
+ "tag": "adim-A2-once",
  "yol": [
-  "A1"
+  "A1",
+  "A2"
  ],
  "taban": {
   "cpp.dallanma": 436,
@@ -301,18 +296,17 @@
   }
  },
  "ivmeMuafiyeti": {
-  "gecerli": true,
+  "gecerli": false,
   "_ne": "KARAR 6 (2026-09-06, A1 gecit karari). Bu ILAN olmadan muafiyet YOKTUR; --ivme bu alani okur, adim ADINA bakmaz.",
   "kapsam": "Gecit KURAN adimlar (A1a/A1b ve bu karar-uygulama turu). 8.4 ivme kurali urunu ILERLETEN adimlar icindir.",
   "gerekce": "Brief 'URUN DEGISMEZ; motor koduna dokunma' diyor. anaSapmaMM bu turda ilk kez null olmaktan cikip 0.693 oldu; sabit bir urun uzerinde duz seyreden metrik, urunun degismediginin kanitidir, tikanmanin degil.",
   "biter": "A2'den itibaren muafiyet YOK ve A2/A4 sapmayi kapatmakla yukumlu. A2'ye gecen isci bu alani gecerli:false yapar.",
   "uyari": "Ayni gerekce A2'de tekrarlanirsa (urun degisiyor ama sapma kapanmiyor) o GERCEK yerel minimumdur ve kesme uygulanir."
  },
- "durduSebep": "BUTCE ASILDI (8.29): 26 mantik commit (tavan 12), 9.27 saat (tavan 5), derleme commiti 0/6. Detay: KOSU/0509-DURDU.md",
- "durduTarih": "2026-09-06",
  "resume": "Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A1\"}",
  "adimDurumlari": {
-  "A1": "GECTI"
+  "A1": "GECTI",
+  "A2": "ISCI"
  },
  "A1_kapanis_notu": "6 Eyl, ana oturum: kosu 8.5 butce asimiyla DURDU olarak kapanmisti, ama hakem A1a ve A1b'yi GECIRDI (altAdim) ve karar ajani hukmu 'DEVAM — A1b GECTI, A2 ACIK' (A1_gecit_karari.hukum). Butce asimi 8.5'e gore protokol hatasi sinyalidir, urun kusuru degil; A1 urunu degistirmedi. Ana oturum kabul komutlarini KENDI kostu ve yesil olduklarini olctu: 'bash engine/tests/0509-kapi.sh --kendi-check' -> OZET 17 hukum gecti, 1 kirmizi (ilanli flat_ayni_insan_check); 'node engine/tests/0509-emsal-olcum.mjs --json' -> JSON dondu; 'node engine/tests/0509-wasm-sanity.mjs' -> JSON dondu, tabandanFark []. Bu yuzden durum GECTI'ye cevrildi; esik gevsetilmedi, verilmis hukum kaydedildi. A1 YENIDEN KOSULMAZ (26 commit tekrar yanmasin); sirada A2."
 }

@@ -1,0 +1,10 @@
+HAKEM A1 TUR 2 — emsal_mm_olcum esik birim karisikligi (DEVREDILEN, A1b)
+engine/tests/0509-kapi.sh:291-306 esik okuyucusu
+Ozyinelemeli ilk-eslesme: 'tolerans' alt dizesi tasiyan ILK sayisal anahtari alir.
+$ python3 (kapinin kendi bul() fonksiyonu, contract/flat-convention-v1.json uzerinde)
+  kapinin sectigi esik = 0.05      <- /sevkPoz/yakaParcasi/boyToleransOran (BIRIMSIZ ORAN, yaka parcasi boyu)
+  dogru mm esigi       = 2.0       <- /croquis/toleranceMM
+Not: 'toleranceMM' ingilizce yazildigi icin 'tolerans' aramasina HIC girmiyor.
+Yon: 0.05 < 2.0, yani esik GEVSETILMIYOR 40x SIKILASIYOR -> reward hacking DEGIL, birim hatasi.
+Etki: emsal_mm_olcum HENUZ-YOK oldugu icin bugun sessiz; A1b onu yakinca mm sapmasi
+      birimsiz 0.05 orana karsi olculur ve gecit YANLIS KIRMIZI yanar.
