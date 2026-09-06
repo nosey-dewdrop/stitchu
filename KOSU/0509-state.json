@@ -3,36 +3,25 @@
   "durum": "ISCI",
   "deneme": 1,
   "butce": {
-    "adim": "A2a",
     "tag": "adim-A2a-once",
-    "commitSayisi": 2,
+    "adim": "A2/A2a",
+    "commitSayisi": 4,
     "derlemeCommit": 0,
     "derlemeTavani": 6,
-    "saat": 1.96,
-    "gecitYesil": false,
-    "kapiBozuk": false,
-    "kirmizilar": [
-      "flat_ayni_insan_check = 1 (esik 0) [ILANLI, tavan 34, kapanacak adim A4]",
-      "kapi_sozlesme_check = 1 (esik 0) — kendi-check H16 kabul-komutu-var FAIL",
-      "kendi-check H16 kabul-komutu-var: kabulKomutlari bos ya da silinmis dosyaya isaret ediyor (17/18 gecti)"
-    ],
-    "regresyonFarki": [
-      "kosmadi: K2-prenses-roba (flatSVG firlatti; beklenen DUSER, A2/A4'te kalkacak)",
-      "OZET adim=elle girdi=9 kosan=8 kosmadi=1 fark=0"
-    ],
+    "saat": 3.39,
+    "olcumTarihi": "2026-09-06 20:26",
+    "yerelMinimum": false,
+    "metrikSerisi": "sanalDikisMM 0/0/0 (esik 2.0, --ivme tarafindan seriden DUSURULDU: esik alti)",
     "kilitIhlali": [],
-    "kilitDiff": [
-      "engine/tests/0509-kapi.sh (izin listesinde)"
+    "kapiBozuk": false,
+    "gecitYesil": false,
+    "kirmizilar": [
+      "flat_ayni_insan_check=1 (esik 0) [ILANLI, tavan 34, kapanacak adim A4]"
     ],
-    "yerelMinimum": true,
-    "ivmeDusurulen": [
-      "anaSapmaMM"
-    ],
-    "ivmeSayilan": [
-      "enum"
-    ],
-    "metrikSerisi": "anaSapmaMM 0.693/0.693/0.693 (esik 2.0, DUSURULDU); enum 436/436/436 (esik yok); sanalDikisMM 0/null/null",
-    "olcumTarihi": "2026-09-06"
+    "regresyonFark": 0,
+    "regresyonKosmadi": [
+      "K2-prenses-roba"
+    ]
   },
   "tag": "adim-A2a-once",
   "yol": [
