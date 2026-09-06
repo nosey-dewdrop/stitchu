@@ -117,3 +117,12 @@ adlandırılınca sessizce düşürür ya da kaldırır. Bunun yerine:
   basıyor. **Hüküm (`yerelMinimum`) DEĞİŞTİRİLMEDİ** — yalnız yanına ne olduğu yazıldı.
 - Muafiyet **kendiliğinden bitmiyor**: A2'ye geçen işçi `gecerli: false` yapmak
   zorunda; yapmazsa muafiyet görünür bir yalan olarak orada durur.
+
+## 2026-09-06 — KOŞU DURDU (8.29, bütçe)
+
+A1 geçidi kuruldu (A1a GEÇTİ, A1b GEÇTİ) ama adım bütçesi aşıldı: **26 mantık
+commiti** (tavan 12), **9.27 saat** (tavan 5), derleme commiti 0/6. 8.5'e göre bu
+bir protokol hatası sinyali, ürün kusuru değil — A1 ürünü değiştirmedi.
+
+Durum `KOSU/0509-state.json` içinde `durum: "DURDU"`. Tam gerekçe, denenen/denenmeyen
+ve resume komutu: `KOSU/0509-DURDU.md`. Kilit açık bırakıldı.

@@ -1,6 +1,6 @@
 {
   "adim": "A1 GECIT — KARARLAR UYGULANDI",
-  "durum": "A1b GECTI, A2 ACIK",
+  "durum": "DURDU",
   "deneme": 2,
   "butce": {
     "adim": "A1",
@@ -307,5 +307,8 @@
     "gerekce": "Brief 'URUN DEGISMEZ; motor koduna dokunma' diyor. anaSapmaMM bu turda ilk kez null olmaktan cikip 0.693 oldu; sabit bir urun uzerinde duz seyreden metrik, urunun degismediginin kanitidir, tikanmanin degil.",
     "biter": "A2'den itibaren muafiyet YOK ve A2/A4 sapmayi kapatmakla yukumlu. A2'ye gecen isci bu alani gecerli:false yapar.",
     "uyari": "Ayni gerekce A2'de tekrarlanirsa (urun degisiyor ama sapma kapanmiyor) o GERCEK yerel minimumdur ve kesme uygulanir."
-  }
+  },
+  "durduSebep": "BUTCE ASILDI (8.29): 26 mantik commit (tavan 12), 9.27 saat (tavan 5), derleme commiti 0/6. Detay: KOSU/0509-DURDU.md",
+  "durduTarih": "2026-09-06",
+  "resume": "Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A1\"}"
 }
