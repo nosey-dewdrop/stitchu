@@ -6,14 +6,15 @@
     "commit": 0,
     "saat": 0
   },
-  "tag": "adim-A2-once",
+  "tag": "adim-A2a-once",
   "yol": [
     "A1",
     "A2",
     "A2a",
     "A2-yeniden",
     "A2a-faz",
-    "A2-H7-kilit-kirmizi"
+    "A2-H7-kilit-kirmizi",
+    "A2a-faz-H7-kirmizi-2"
   ],
   "taban": {
     "cpp.dallanma": 436,
