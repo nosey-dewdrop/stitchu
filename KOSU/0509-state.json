@@ -1,6 +1,6 @@
 {
   "adim": "A2b",
-  "durum": "ISCI",
+  "durum": "DURDU",
   "deneme": 1,
   "butce": {
     "adim": "A2",
@@ -436,5 +436,6 @@
       "satir": "+37 / -2",
       "commit": "b8f3f4d9"
     }
-  }
+  },
+  "durduNot": "8.29 butce asimi: 13 mantik commiti (tavan 12), 0/6 derleme, 3.05 saat. Gerekce: KOSU/0509-DURDU.md. Resume: Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A2\"}"
 }

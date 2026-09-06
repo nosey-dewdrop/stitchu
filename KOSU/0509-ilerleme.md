@@ -192,3 +192,11 @@ degistirilmez; (e) K3 uygulandi.
 
 Metrik bu turda DEGISMEDI ve degismemeliydi — bu tur urun kodu yazmadi:
 `{"commit": "eb69fc3d", "anaSapmaMM": 0.693, "enum": 436, "kirmizi": 0}`.
+
+**KOŞU DURDU (2026-09-06, 8.29).** A2 — İlk geçiş. Bütçe aşıldı: 13 mantık commiti
+(tavan 12), 0/6 derleme commiti, 3.05 saat (tavan 5). geçitYeşil=false
+(`flat_ayni_insan_check`=1, ilanlı, tavan 34, kapanacak adım A4); kilit ihlali
+`engine/src/grafdogrula.cpp`; yerelMinimum=true (anaSapmaMM 0.693->0.693->0.693,
+enum 436->436->436). İlerleyen: `olcek_check` 990.00 mm YEŞİL, `sanalDikisMM`
+0.00 mm ölçüldü. Ayrıntı: `KOSU/0509-DURDU.md`.
+Resume: `Workflow scriptPath=KOSU/0509-kosu.js args={"baslat":"A2"}`.
