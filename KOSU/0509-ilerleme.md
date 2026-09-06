@@ -153,3 +153,42 @@ ve resume komutu: `KOSU/0509-DURDU.md`. Kilit açık bırakıldı.
 - ONARILAN DEVIR: `kapi_sozlesme_check` (H7) kok sebepten kapandi — kilit A2 degil A2a izin
   listesiyle kuruldu. Esik gevsetilmedi.
 - `cpp.dallanma` 436 -> 439 -> 436: durum kodu akis degiskeni olmaktan cikarildi (kararDefteri).
+
+## A2a KAPANIS — KARAR AJANI HUKMU UYGULANDI (6 Eyl)
+
+Hukum: **DEVAM.** A2a GECTI, A2b ACIK. Dort karar state.json.kararDefteri'ne tam
+metinle (soru + karar + gerekce + uygulandi) yazildi; asagisi ozet ve kanit.
+
+**K1 — H7 esigi acilsin mi / ilanli kirmizi mi?** IKISI DE HAYIR. Esik (<=2) degismedi,
+test degistirilmedi. A2b IKI KILIT PENCERESINE bolundu:
+- Pencere 1 (topoloji): `--kilit "engine/src/grafdogrula.hpp engine/src/grafdogrula.cpp"`
+  — **bu turda KURULDU**: `kilit: 215 dosya salt-okunur, izin listesinden 2 dosya yazilabilir`.
+- Pencere 2 (contract): `--kilit "contract/graf-v1.json"` — A2b'nin teslimi, ACILMADI.
+Kilitli alan disindaki dosyalar (panelkaynak/grafdegerle/flatsvg/kalipsvg/grafciz-cli/
+wasm bindings/backend/KOSU) H7'ye SAYILMAZ; `kilitli_yollar()` onlari dondurmuyor.
+Kanit: `bash engine/tests/0509-kapi.sh --kendi-check` -> `OK H7 kilit-kurulu (izin disi
+yazilabilir: 2)`, OZET 18 hukum gecti, 0 kirmizi.
+
+**K2 — A2a 11.7 ile yeniden acilsin mi (0.546 mm)?** HAYIR. A2a kapali; cozucu, maxIter,
+kIcProjeksiyon degeri ve cozum yontemi A2b'de DEGISTIRILMEZ. Halka2B panel basina KISA
+zincir kurar. Yeniden acma SARTI ADIYLA baglandi: A2b gercek taban grafini
+(`KOSU/ciktilar/graf-ilk/graf.json`, 5 panel) cozerken ERR_UNSOLVABLE alirsa — hangi panel,
+kac halkalik zincir, kac mm artik `KOSU/ciktilar/graf-ilk/dikilebilir.md`'ye ADIYLA yazilir,
+adim BITMEDI sayilir, 11.7 o zaman devreye girer. Olcum gelmeden acilmaz.
+Kayit: state.json `A2b_pencereler.q2_yenidenAcmaSarti` + `acikEngeller[]` (tur: SARTA BAGLI).
+
+**K3 — kIcProjeksiyon sozlesmeye tasinsin mi?** EVET, ama A2b'nin Pencere 2'sinde, AYNI
+COMMIT'te, EKLEME olarak. `cozucu.gevsetme.icProjeksiyon {deger: 4, kaynak: "... DOGRULANMADI ..."}`;
+deger 4'ten DEGISMEZ (32 hukumlu test o sayiyla yesil), yalniz YERI degisir. Bu tur kilitli
+alana DOKUNMADI. Kabul olcumu state.json kararDefteri'nde yazili:
+`python3 -c "...icProjeksiyon['deger']==4 and 'DOGRULANMADI' in kaynak"` + `! grep -q
+'constexpr int kIcProjeksiyon' engine/src/solver_utils.cpp`.
+
+**K4 — DEVAM.** A2b kabul sartlari (state.json `A2b_kabulSartlari`): (a) iki pencere, H7
+hicbir anda kirmizi degil; (b) contract'a giren her satir EKLEME + commit mesajinda
+eklenen/silinen satir sayisi; (c) TESLIM SIRASI: ilk saatte `KOSU/ciktilar/graf-ilk/flat.png`
++ `kalip-36.png` commit'te (kotu de olsa); (d) cozucu/maxIter/kIcProjeksiyon degeri/esik/test
+degistirilmez; (e) K3 uygulandi.
+
+Metrik bu turda DEGISMEDI ve degismemeliydi — bu tur urun kodu yazmadi:
+`{"commit": "eb69fc3d", "anaSapmaMM": 0.693, "enum": 436, "kirmizi": 0}`.
