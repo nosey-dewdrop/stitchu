@@ -257,5 +257,38 @@ std::string kalipSVG(const Garment& g, const Body& body, const std::string& body
     return s.str();
 }
 
+bool olcekDogrula(const Garment& g, const Body& body, const JVal& bodyContract,
+                  bool onArkaEsit, double& olculenMM, std::string& hata) {
+    hata.clear();
+    olculenMM = 0;
+    double lo = 0, hi = 0;
+    if (!say(bodyContract, { "olcekAraligi", "giysiYuksekligiMM", "min" }, lo, hata) ||
+        !say(bodyContract, { "olcekAraligi", "giysiYuksekligiMM", "max" }, hi, hata)) {
+        hata = "ERR_SCALE_NO_CONTRACT: contract/body-v1.json olcekAraligi.giysiYuksekligiMM okunamadi (" + hata + ")";
+        return false;
+    }
+    if (g.panels.empty()) { hata = "ERR_EMPTY_GARMENT: graf panelsiz"; return false; }
+    // Butun panellerin ORTAK sinir kutusu, her panel kendi beden koordinatlarinda
+    // (paneller ayni landmark kumesinden degerlenir; y ekseni omuz cizgisinden asagi).
+    bool ilk = true;
+    double y0 = 0, y1 = 0;
+    for (const Panel& p : g.panels) {
+        EvalCtx ctx = p.ctxFor(body, onArkaEsit);
+        Rect r = bboxOf(p.outline(ctx));
+        if (ilk) { y0 = r.y; y1 = r.y + r.height; ilk = false; }
+        else { y0 = std::min(y0, r.y); y1 = std::max(y1, r.y + r.height); }
+    }
+    olculenMM = y1 - y0;
+    if (olculenMM < lo || olculenMM > hi) {
+        char b[192];
+        std::snprintf(b, sizeof b,
+                      "ERR_SCALE_MISMATCH: giysi yuksekligi %.2f mm, contract araligi [%.2f, %.2f] mm disinda "
+                      "(contract/body-v1.json olcekAraligi.giysiYuksekligiMM)", olculenMM, lo, hi);
+        hata = b;
+        return false;
+    }
+    return true;
+}
+
 }  // namespace graf
 }  // namespace stitchu

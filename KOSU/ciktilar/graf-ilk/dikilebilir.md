@@ -197,3 +197,8 @@ Kaynak: `engine/build/grafdogrula <graf.json> <bodyId> --json` (motorun kendi hu
 ## KAPANMAYAN DIKIS
 
 Yok: 8 bedende de her dikis cifti ve her halka kavsagi esigin altinda kapaniyor.
+
+## CIZIMDE ADIYLA DURAN KUSUR (A2b, olculdu)
+
+- **Kol, flat gorunumde ACILMIS duruyor.** Kat kenari olmayan panel (kol) yerini dogrulayicinin dikis agaci pozundan alir; o poz kol oyugu dikisini "kitap gibi" acar, yani kol govdenin YANINA yatik cikar, asagi sarkmaz. Dikis olarak DOGRU (kol_oyugu artigi `1e-8 mm`), cizim konvansiyonu olarak EKSIK: satilan flat'te kol govdeye sevkPoz.kolAcisiDeg (contract/flat-convention-v1.json) acisiyla sarkitilir. Bu aciyi baglamak A2c/A4'un isi; burada UYDURULMADI.
+- **Kol yalnizca bir gorunumde.** Kol iki gorunume de girmez; kat kenari olmadigi icin dikis grafindan yayilan tek gorunume (bu grafta `cb`) dusuyor. On gorunumde kol cizilmiyor — sessiz degil, `data-gorunum` ile SVG'de ilan ediliyor.

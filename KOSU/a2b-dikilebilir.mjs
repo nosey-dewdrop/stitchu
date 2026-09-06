@@ -67,6 +67,17 @@ md += kapanmayan.length
   ? kapanmayan.map((s) => `- ADIYLA KAPANMAYAN: ${s}`).join('\n') + '\n\n**ADIM BITMEDI** (A2 KIRILMA kurali).\n'
   : `Yok: ${raporlar.length} bedende de her dikis cifti ve her halka kavsagi esigin altinda kapaniyor.\n`;
 
+md += `\n## CIZIMDE ADIYLA DURAN KUSUR (A2b, olculdu)\n\n`;
+md += `- **Kol, flat gorunumde ACILMIS duruyor.** Kat kenari olmayan panel (kol) yerini `;
+md += `dogrulayicinin dikis agaci pozundan alir; o poz kol oyugu dikisini "kitap gibi" acar, `;
+md += `yani kol govdenin YANINA yatik cikar, asagi sarkmaz. Dikis olarak DOGRU (kol_oyugu `;
+md += `artigi ${'`'}1e-8 mm${'`'}), cizim konvansiyonu olarak EKSIK: satilan flat'te kol govdeye `;
+md += `sevkPoz.kolAcisiDeg (contract/flat-convention-v1.json) acisiyla sarkitilir. `;
+md += `Bu aciyi baglamak A2c/A4'un isi; burada UYDURULMADI.\n`;
+md += `- **Kol yalnizca bir gorunumde.** Kol iki gorunume de girmez; kat kenari olmadigi icin `;
+md += `dikis grafindan yayilan tek gorunume (bu grafta ${'`'}cb${'`'}) dusuyor. On gorunumde kol `;
+md += `cizilmiyor — sessiz degil, ${'`'}data-gorunum${'`'} ile SVG'de ilan ediliyor.\n`;
+
 writeFileSync('KOSU/ciktilar/graf-ilk/dikilebilir.md', md);
 writeFileSync('KOSU/ciktilar/graf-ilk/sanaldikis.json', JSON.stringify({ seri, esikler: r0.toleranslar }, null, 2) + '\n');
 console.log(JSON.stringify(seri));

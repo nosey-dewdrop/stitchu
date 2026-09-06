@@ -28,5 +28,14 @@ struct KalipOpts {
 std::string kalipSVG(const Garment& g, const Body& body, const std::string& bodyId,
                      const JVal& sheet, const KalipOpts& opts, std::string& hata);
 
+// OLCEK GECIDI (A2 brief madde 1b). Gercek bir bedende degerlenen grafin MUTLAK giysi
+// yuksekligi (butun panellerin ortak sinir kutusunun yuksekligi, omuz cizgisinden etek
+// ucuna) contract/body-v1.json olcekAraligi.giysiYuksekligiMM araliginin disinda ise
+// ERR_SCALE_MISMATCH. Amac birim kaymasini (mm/cm, croquis 1:3, olceksiz kullanici birimi)
+// topolojiden BAGIMSIZ yakalamak. Aralik contract'tan okunur; kodda sabit yok.
+// olculenMM her durumda doldurulur. true = aralik icinde.
+bool olcekDogrula(const Garment& g, const Body& body, const JVal& bodyContract,
+                  bool onArkaEsit, double& olculenMM, std::string& hata);
+
 }  // namespace graf
 }  // namespace stitchu

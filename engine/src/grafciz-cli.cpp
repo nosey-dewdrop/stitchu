@@ -70,10 +70,27 @@ int main(int argc, char** argv) {
         o.onArkaEsit = (bodyId == "croquis36");
         svg = flatSVG(g, body, bodyId, contract, bodyContract, o, hata);
     } else {
-        JVal sheet;
+        JVal sheet, bodyContract;
         if (!readContract("contract/pattern-sheet-v1.json", sheet)) {
             std::fprintf(stderr, "ERR_READ: contract/pattern-sheet-v1.json (repo kokunden calistir)\n");
             return 2;
+        }
+        // OLCEK GECIDI: kalip GERCEK bir bedende cizilir; mutlak sinir kutusu contract
+        // araliginin disindaysa ERR_SCALE_MISMATCH ile ADIYLA reddedilir (croquis birimi
+        // ya da olceksiz kullanici birimi kalip diye sevk edilmesin). croquis36 muaftir:
+        // o beden mankendir, mutlak insan olcegi iddiasi tasimaz.
+        if (bodyId != "croquis36") {
+            if (!readContract("contract/body-v1.json", bodyContract)) {
+                std::fprintf(stderr, "ERR_READ: contract/body-v1.json (repo kokunden calistir)\n");
+                return 2;
+            }
+            double olculen = 0;
+            std::string sHata;
+            if (!olcekDogrula(g, body, bodyContract, false, olculen, sHata)) {
+                std::fprintf(stderr, "%s\n", sHata.c_str());
+                return 1;
+            }
+            std::fprintf(stderr, "olcek_check: %s giysi yuksekligi %.2f mm, contract araliginda\n", bodyId.c_str(), olculen);
         }
         KalipOpts o;
         svg = kalipSVG(g, body, bodyId, sheet, o, hata);

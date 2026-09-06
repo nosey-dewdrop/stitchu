@@ -1565,3 +1565,13 @@ target_link_libraries(grafciz PRIVATE engine)
 
 add_executable(grafdogrula src/grafdogrula-cli.cpp)
 target_link_libraries(grafdogrula PRIVATE engine)
+
+# 0509 A2b: OLCEK GECIDI birim testi. Kapi scripti (engine/tests/0509-kapi.sh) olcek_check'i
+# "graftan cizim yok" gerekcesiyle HENUZ-YOK basiyordu; cizim artik VAR (engine/build/grafciz)
+# ve olcek kisiti kalipsvg.hpp olcekDogrula'da yasiyor. Bu test onu contract'tan okunan
+# sinirlarla, hem gecen hem reddeden yonde olcer.
+add_executable(olcek_check tests/0509-olcek_check.cpp)
+target_link_libraries(olcek_check PRIVATE engine)
+add_test(NAME olcek_check COMMAND olcek_check
+    ${CMAKE_CURRENT_SOURCE_DIR}/../contract/body-v1.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/../KOSU/ciktilar/graf-ilk/graf.json)
