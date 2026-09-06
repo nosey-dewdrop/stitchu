@@ -145,6 +145,7 @@ const EL_SEMA = {
     kabulKomutlari: { type: 'array', items: { type: 'string' }, description: 'yukle: state.json kabulKomutlari' },
     devredilen: { type: 'array', items: { type: 'string' }, description: 'yukle: state.json devredilen' },
     banned: { type: 'array', items: { type: 'string' }, description: 'yukle: state.json banned, "4.x|satir" bicimi' },
+    adimDurumlari: { type: 'array', items: { type: 'string' }, description: 'yukle: GECTI olan adim numaralari, "A1" gibi (state.json adimDurumlari + altAdim + durum alanlarindan)' },
   },
   required: ['gecitYesil', 'kirmizilar', 'commitSayisi', 'saat', 'regresyonFarki', 'yapilan', 'yok', 'kilitIhlali', 'yerelMinimum', 'metrikSerisi', 'derlemeCommit', 'kapiBozuk', 'kabulKomutlari', 'devredilen', 'banned'],
 }
@@ -389,7 +390,7 @@ async function el(gorev, adim, ek) {
  2. bash ${KAPI} (DOSYA YOKSA: gecitYesil=true, yok listesine 'kapi.sh henuz yazilmadi (A1a)' — kapi yoklugu KIRMIZI DEGILDIR, hata firlatma); onceki adimlarin kabul komutlarini SIRAYLA kos: ${gecmisKabuller.length ? gecmisKabuller.map((k, i) => `(${i + 1}) ${k}`).join(' ; ') : '(yok)'}; sapma metrikleri: bash engine/tests/enum_dallanma_check.sh --measure (cpp.dallanma; taban ${STATE} icindeki taban, yuksekse kirmizi), bash ${KAPI} --regresyon (fark listesi).
  3. ${STATE} guncelle: adim=${adim.no}, durum=ISCI, deneme=${ek && ek.deneme || 1}, butce sifirla, tag adi; ilerleme satiri ${ILERLEME}'ye: tarih-saat (date), adim, BASLADI.
  4. Commit + push. gecitYesil = (2)'de hicbir sey kirmizi degilse.`,
-    yukle: `RESUME YUKLEME: ${STATE} oku ve kabulKomutlari, devredilen, banned ("4.x|satir" bicimi) alanlarini AYNEN dondur; dosya yoksa bos diziler. Ayrica bash ${KAPI} (varsa) kos, gecitYesil. Hicbir sey yazma.`,
+    yukle: `RESUME YUKLEME: ${STATE} oku ve kabulKomutlari, devredilen, banned ("4.x|satir" bicimi) alanlarini AYNEN dondur; dosya yoksa bos diziler. AYRICA adimDurumlari: GECTI olan adim numaralarini dizi olarak dondur ("A1","A2",...) — kaynak sirasiyla state.json'daki adimDurumlari nesnesi (deger "GECTI" olanlar), yoksa altAdim nesnesi (o adimin TUM alt adimlari GECTI ise adim GECTI sayilir) ve durum=="GECTI" ise adim alanindaki numara. Uydurma: kanit yoksa o adimi YAZMA. Ayrica bash ${KAPI} (varsa) kos, gecitYesil. Hicbir sey yazma.`,
     olc: `BUTCE OLCUMU ${adim.ad} (8.25): commitSayisi = git rev-list --count ${_tagAd}-once..HEAD -- . ':!KOSU/0509-*' EKSI derlemeCommit (git log --oneline ${_tagAd}-once..HEAD | grep -c '^[0-9a-f]* fix(build):'); derlemeCommit'i ayri dondur (mantik butcesine sayilmaz, kendi tavani 6); saat = (date +%s - git log -1 --format=%ct ${_tagAd}-once)/3600. Ayrica bash ${KAPI} kos: cikti gecerli JSON degilse ya da exit 3 ise kapiBozuk=true ve kirmizilar'a 'CTEST_CRASH_OR_INVALID_JSON: <KOSU/0509-kapi.log son satir>' (kendin JSON.parse deneme, python3 -m json.tool ile bak). bash ${KAPI} --regresyon (regresyonFarki; ${(ek && ek.tabanKurar) ? 'BU ADIM TABAN KURAR: fark HATA DEGIL, listele ve gec' : 'fark kirmizidir'}). KILIT: bash ${KAPI} --kilit-diff ${_tagAd}-once (yoksa: git diff --name-only ${_tagAd}-once..HEAD -- contract engine/tests engine/golden-reference.csv engine/src/grafdogrula.hpp engine/src/grafdogrula.cpp engine/src/solver_utils.hpp engine/src/solver_utils.cpp), izin listesi ${JSON.stringify(ek && ek.izin || '')} disindakiler kilitIhlali'na. IVME (8.4): bash ${KAPI} --ivme (yoksa: KOSU/0509-metrik.jsonl son 3 satir; ana sapma 3 commit'te %20 kapanmadiysa yerelMinimum=true; metrik yoksa, null ise ya da metrikler sayisal degilse (boolean/string) yerelMinimum=false, metrikSerisi='yok'; NaN hesabi yapma), metrikSerisi'ne sayilar. ${STATE} butce alanini yaz. Commit + push.`,
     kapat: `ADIM KAPANISI ${adim.ad} (11.2): bash ${KAPI} + tum kabul komutlari + --regresyon son kez; ${STATE}: durum=GECTI, kabulKomutlari += ${JSON.stringify(ek && ek.kabulKomutu || '')}, devredilen, ilkYesil guncelle; ${ILERLEME} satiri: tarih-saat, adim, GECTI, commit sayisi, saat, hakem tek cumle: ${JSON.stringify((ek && ek.hukum) || '')}; ${DOC} §5 defterini guncelle: 5.1 kapanan maddeler += ${JSON.stringify((ek && ek.kapananMaddeler) || [])}, 5.2 acik, 5.3 acik sorular, 5.4 devredilen, 5.5 karar degisiklikleri (kararDefteri). bash ${KAPI} --regresyon --taban (hakem gecti: bu adimin ciktilari yeni regresyon tabani; yoksa KOSU/regresyon/cikti/<adim>/ -> taban isareti state.json'da). git tag -f adim-${adim.no}-gecti. Commit + push.`,
     durdu: `KOSU DURDU (8.29): once bash ${KAPI} --kilit-ac (yoksa chmod -R u+w contract engine/tests engine/src/grafdogrula.* engine/src/solver_utils.*). ${DURDU} yaz: hangi adim (${adim.ad}), hangi kusur, hangi katman, ne denendi (banned + hakem hukmu asagida), ne denenmedi, resume komutu: Workflow scriptPath=KOSU/0509-kosu.js args={"baslat":"${adim.no}"} (isci "kaldigin yerden, git log'a bak" ile baslar). Soru icermez. ${STATE}: durum=DURDU; ${ILERLEME} satiri. ${DOC} §5 guncelle. Commit + push.\n# SEBEP\n${ek && ek.sebep || ''}`,
@@ -577,15 +578,20 @@ async function adimKos(faz, ekNot) {
 }
 
 let oncekiNot = ''
+const gecenAdimlar = []   // 0509 fix: state.json'dan yuklenen GECTI adim numaralari (atlama yasaginin gercek kaynagi)
 let durdu = false, deployAcik = false
 let atla = !!BASLAT
 if ((BASLAT || SADECE.length) && !KURU) {   // resume/tek-adim: kosucu hafizasi bos, state.json'dan yukle (kabul komutlari, devredilen, banned)
   const y = await el('yukle', null)
-  if (y) { gecmisKabuller.push(...(y.kabulKomutlari || [])); devredilenKusurlar.push(...(y.devredilen || [])); for (const b of (y.banned || [])) { const [no, ...rest] = b.split('|'); (banned[no] = banned[no] || []).push(rest.join('|')) } }
+  if (y) { gecmisKabuller.push(...(y.kabulKomutlari || [])); devredilenKusurlar.push(...(y.devredilen || [])); gecenAdimlar.push(...(y.adimDurumlari || [])); for (const b of (y.banned || [])) { const [no, ...rest] = b.split('|'); (banned[no] = banned[no] || []).push(rest.join('|')) } }
   gunluk.push(`resume ${BASLAT || SADECE.join(',')}: ${gecmisKabuller.length} kabul, ${devredilenKusurlar.length} devredilen yuklendi`)
   if (SADECE.length) {   // atlama yasagi: acilan adimdan oncekiler GECTI olmali (A1 haric)
     const ilk = SIRA.findIndex(a => a.no === SADECE[0])
-    const eksik = SIRA.slice(0, ilk < 0 ? 0 : ilk).map(a => a.no).filter(no => !gecmisKabuller.some(k => k.includes(no)))
+    // 0509 fix: atlama yasagi kabul komutu METNINDE adim numarasi ariyordu; hicbir kabul komutu numara tasimiyor
+    // (A1'inkiler "bash engine/tests/0509-kapi.sh --kendi-check" gibi), yani kontrol her zaman "eksik" diyordu.
+    // Dogru kaynak state.json'daki adim durumlari.
+    const gectiler = new Set(gecenAdimlar)
+    const eksik = SIRA.slice(0, ilk < 0 ? 0 : ilk).map(a => a.no).filter(no => !gectiler.has(no))
     if (eksik.length) { log(`DUR: ${SADECE[0]} acilamaz, once su adimlar GECTI olmali: ${eksik.join(', ')} (state.json kabulKomutlari bos)`); return { sonuclar: [], gunluk: [`atlama yasagi: eksik ${eksik.join(', ')}`], devredilenKusurlar, banned, kararDefteri, kabulKomutlari: gecmisKabuller } }
   }
 }
