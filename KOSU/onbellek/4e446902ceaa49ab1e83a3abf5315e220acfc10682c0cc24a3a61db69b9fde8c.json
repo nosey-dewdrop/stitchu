@@ -60,7 +60,7 @@
     "shaping": "dart",
     "fabric": "woven",
     "neckline": "scoop",
-    "sleeveStyle": "puff",
+    "sleeveStyle": "straight",
     "sleeveLength": "short",
     "skirtStyle": "aLine",
     "skirtLength": "midi",
@@ -68,7 +68,12 @@
       "sweetheart yaka enum'da yok",
       "peplum degeri okunamadi",
       "bias grain ekseni yok",
-      "ARKA YUZ: absent"
-    ]
+      "ARKA YUZ: absent",
+      "DUZELTME 2026-09-06 (A1b, olculdu): ilk tarif sleeveStyle='puff' yaziyordu; motor bunu reddetti (\"invalid sleeveStyle 'puff' (valid: none, straight, balloon)\", regresyon kosumu). Puf kol motorda AYRI eksende: sleeveCap='puffed' (web/js/create.js:78), sarti sleeveStyle='straight'. Tarif degismedi, ESLEME duzeltildi."
+    ],
+    "sleeveCap": "puffed"
+  },
+  "esemeNotu": {
+    "sleeveCap": "Fotograftaki kabarik omuz basi = sleeveCap 'puffed'; kol GOVDESI duz (balon degil), o yuzden sleeveStyle 'straight'."
   }
 }
