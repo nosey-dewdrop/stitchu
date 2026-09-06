@@ -4,17 +4,17 @@
   "deneme": 1,
   "butce": {
     "adim": "A2",
-    "commitSayisi": 2,
+    "commitSayisi": 3,
     "derlemeCommit": 0,
     "derlemeTavani": 6,
-    "saat": 0,
-    "yerelMinimum": false,
-    "metrikSerisi": "A2a kapanis: anaSapmaMM 0.693 (degismedi); cpp.dallanma 436 (taban 436, ARTMADI); flat_ayni_insan 34 (tavan 34); regresyon fark 0; kirmizi 0",
+    "saat": 1.45,
+    "yerelMinimum": true,
+    "metrikSerisi": "anaSapmaMM 0.693 -> 0.693 -> 0.693 (kapanma 0.0); enum 436 -> 436 -> 436 (kapanma 0.0)",
     "ivmeMuafiyeti": false,
     "olcumTarihi": "2026-09-06",
-    "gecitYesil": true,
+    "gecitYesil": false,
     "kirmizilar": [
-      "flat_ayni_insan_check 34 (ILANLI, tavan 34, A4)",
+      "flat_ayni_insan_check 1 basarisiz test (ILANLI, A4)",
       "sinyal_tam/bundle_fresh_check 1 (ILANLI, A9)"
     ],
     "henuzYok": [
@@ -22,7 +22,8 @@
     ],
     "kapiBozuk": false,
     "kilitIhlali": [],
-    "regresyonFarki": 0
+    "regresyonFarki": 0,
+    "regresyonNot": "OZET adim=elle girdi=9 kosan=8 kosmadi=1 fark=0; K2-prenses-roba kosmadi (ilanli, A2/A4)"
   },
   "tag": "adim-A2a-once",
   "yol": [
