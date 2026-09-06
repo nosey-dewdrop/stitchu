@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="974" viewBox="0 0 900 974">
-<rect width="900" height="974" fill="#fbfaf8"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="930" viewBox="0 0 900 930">
+<rect width="900" height="930" fill="#fbfaf8"/>
 <style>text{font-family:-apple-system,Helvetica,Arial,sans-serif}</style>
-<text x="34" y="46" font-size="24" font-weight="700" fill="#141414">0509 gecit tablosu</text>
-<text x="34" y="74" font-size="13" fill="#555">commit 4c9a03ae · 2026-09-06 13:56:06 · 15 gecit · 2 kirmizi · crash 0 · gecitYesil False</text>
-<text x="34" y="96" font-size="13" fill="#555">log KOSU/0509-kapi.log · uretim 2026-09-06 13:56:06 · uretici KOSU/0509-kapi-tablo.py &lt;- son.json (tum sayilar gecit JSON'undan)</text>
+<text x="34" y="46" font-size="24" font-weight="700" fill="#141414">0509 gecit tablosu — A2 kararlari uygulandi (Q1-Q4)</text>
+<text x="34" y="74" font-size="13" fill="#555">commit 836a71c4 · 2026-09-06 18:31:31 · 15 gecit · 1 kirmizi · crash 0 · gecitYesil False</text>
+<text x="34" y="96" font-size="13" fill="#555">log KOSU/0509-kapi.log · uretim 2026-09-06 18:31:41 · uretici KOSU/0509-kapi-tablo.py &lt;- kapi.json (tum sayilar gecit JSON'undan)</text>
 <line x1="34" y1="128" x2="866" y2="128" stroke="#ddd"/>
 <text x="34" y="120" font-size="11" fill="#888" letter-spacing="1">GECIT / KAYNAK</text>
 <text x="600" y="120" font-size="11" fill="#888" letter-spacing="1">DURUM</text>
@@ -70,10 +70,10 @@
 <text x="768" y="588" font-size="13" fill="#333">0.693 / 2</text>
 <text x="42" y="604" font-size="10.5" fill="#8a8a8a">contract/flat-convention-v1.json /croquis/toleranceMM</text>
 <text x="42" y="632" font-size="14" fill="#141414">olcek_check</text>
-<circle cx="608" cy="627" r="5" fill="#9a7b18"/>
-<text x="622" y="632" font-size="13" font-weight="600" fill="#9a7b18">HENUZ-YOK</text>
-<text x="768" y="632" font-size="13" fill="#333">null</text>
-<text x="42" y="648" font-size="10.5" fill="#8a8a8a">contract/body-v1.json olcekAraligi</text>
+<circle cx="608" cy="627" r="5" fill="#1a7f45"/>
+<text x="622" y="632" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="632" font-size="13" fill="#333">990 / 1335</text>
+<text x="42" y="648" font-size="10.5" fill="#8a8a8a">contract/body-v1.json olcekAraligi.giysiYuksekligiMM</text>
 <rect x="34" y="656" width="832" height="44" fill="#f2f0ec"/>
 <text x="42" y="676" font-size="14" fill="#141414">wasm_sanity</text>
 <circle cx="608" cy="671" r="5" fill="#1a7f45"/>
@@ -86,14 +86,12 @@
 <text x="768" y="720" font-size="13" fill="#333">0 / 0</text>
 <text x="42" y="736" font-size="10.5" fill="#8a8a8a">KOSU/regresyon/girdiler.json</text>
 <rect x="34" y="744" width="832" height="44" fill="#f2f0ec"/>
-<text x="42" y="764" font-size="14" fill="#141414">sinyal_tam *</text>
-<circle cx="608" cy="759" r="5" fill="#b3261e"/>
-<text x="622" y="764" font-size="13" font-weight="600" fill="#b3261e">KIRMIZI</text>
-<text x="768" y="764" font-size="13" fill="#333">1 / 0</text>
+<text x="42" y="764" font-size="14" fill="#141414">sinyal_tam</text>
+<circle cx="608" cy="759" r="5" fill="#1a7f45"/>
+<text x="622" y="764" font-size="13" font-weight="600" fill="#1a7f45">YESIL</text>
+<text x="768" y="764" font-size="13" fill="#333">0 / 0</text>
 <text x="42" y="780" font-size="10.5" fill="#8a8a8a">KOSU/sinyal.sh (muhurlu; DEVIR KABUL zinciri)</text>
 <line x1="34" y1="800" x2="866" y2="800" stroke="#ddd"/>
-<text x="34" y="814" font-size="12.5" fill="#333">kirmizi 2 — ILANLI 2 (flat_ayni_insan_check, sinyal_tam) · ILANSIZ 0 (yok)</text>
+<text x="34" y="814" font-size="12.5" fill="#333">kirmizi 1 — ILANLI 1 (flat_ayni_insan_check) · ILANSIZ 0 (yok)</text>
 <text x="34" y="836" font-size="12.5" fill="#333">  ILANLI flat_ayni_insan_check: sayi 34 · kapanacak adim A4 · tavan 34</text>
-<text x="34" y="858" font-size="12.5" fill="#333">  ILANLI sinyal_tam: sayi 1 · kapanacak adim A9 · alt kume dondu: bundle_fresh_check</text>
-<text x="34" y="880" font-size="12.5" fill="#333">henuz-yok 1: olcek_check</text>
 </svg>
