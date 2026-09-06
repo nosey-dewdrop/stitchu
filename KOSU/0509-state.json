@@ -3,9 +3,15 @@
   "durum": "ISCI",
   "deneme": 1,
   "butce": {
-    "commit": 0,
-    "saat": 0,
-    "derlemeCommit": 0
+    "commit": 7,
+    "saat": 2.63,
+    "derlemeCommit": 0,
+    "tavan": {
+      "derlemeCommit": 6
+    },
+    "olcumTarihi": "2026-09-06",
+    "olcumTag": "adim-A1-once",
+    "not": "commit = adim-A1-once..HEAD, KOSU/0509-* haric, eksi derlemeCommit(0)"
   },
   "tag": "adim-A1-once",
   "yol": [
