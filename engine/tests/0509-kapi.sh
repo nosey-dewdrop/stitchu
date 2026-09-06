@@ -350,8 +350,33 @@ print('' if o is None else json.dumps(o,ensure_ascii=False))" 2>>"$LOG")
     gecit_yaz "olcek_check" "HENUZ-YOK" null null "contract/body-v1.json olcekAraligi" "olcek araligi contract'ta yok (A1b kaynakli ekler)" "$bas"
     return
   fi
-  # graftan cizim yokken mutlak sinir kutusu olculemez
-  gecit_yaz "olcek_check" "HENUZ-YOK" null null "contract/body-v1.json olcekAraligi" "graftan cizim yok; degerlenmis bbox olculemiyor" "$bas"
+  # A2c/Q1: cizim VAR (engine/build/grafciz) -> gercek olcum. Olculemezse HENUZ-YOK degil CRASH.
+  local graf="KOSU/ciktilar/graf-ilk/graf.json"
+  if [ ! -x "$BUILD/grafciz" ]; then
+    gecit_yaz "olcek_check" "CRASH" null null "contract/body-v1.json olcekAraligi" "$BUILD/grafciz yok ya da calistirilabilir degil" "$bas"
+    return
+  fi
+  if [ ! -f "$graf" ]; then
+    gecit_yaz "olcek_check" "CRASH" null null "contract/body-v1.json olcekAraligi" "graf girdisi yok: $graf" "$bas"
+    return
+  fi
+  local err rc mm lo hi hukum
+  err=$("$BUILD/grafciz" "$graf" gercek36 kalip 2>&1 >/dev/null); rc=$?
+  printf '%s\n' "$err" >> "$LOG" 2>&1
+  # olculen mm: grafciz stderr'i "... giysi yuksekligi <N> mm ..." basar (kalipsvg.cpp olcekDogrula)
+  mm=$(printf '%s' "$err" | sed -n 's/.*giysi yuksekligi \([0-9.][0-9.]*\) mm.*/\1/p' | head -1)
+  lo=$(printf '%s' "$aralik" | python3 -c "import json,sys; print(json.load(sys.stdin)['giysiYuksekligiMM']['min'])" 2>>"$LOG")
+  hi=$(printf '%s' "$aralik" | python3 -c "import json,sys; print(json.load(sys.stdin)['giysiYuksekligiMM']['max'])" 2>>"$LOG")
+  if [ -z "${mm:-}" ] || [ -z "${lo:-}" ] || [ -z "${hi:-}" ]; then
+    gecit_yaz "olcek_check" "CRASH" "${mm:-null}" null "contract/body-v1.json olcekAraligi" "olculen mm ya da contract araligi okunamadi (grafciz rc=$rc)" "$bas"
+    return
+  fi
+  # hukum: grafciz cikis kodu 0 VE olculen mm contract araliginda
+  hukum=$(KAPI_MM="$mm" KAPI_LO="$lo" KAPI_HI="$hi" KAPI_RC="$rc" python3 -c "
+import os
+mm=float(os.environ['KAPI_MM']); lo=float(os.environ['KAPI_LO']); hi=float(os.environ['KAPI_HI'])
+print('YESIL' if (os.environ['KAPI_RC']=='0' and lo<=mm<=hi) else 'KIRMIZI')" 2>>"$LOG")
+  gecit_yaz "olcek_check" "${hukum:-CRASH}" "$mm" "$hi" "contract/body-v1.json olcekAraligi.giysiYuksekligiMM" "grafciz gercek36 kalip: rc=$rc, olculen $mm mm, aralik [$lo, $hi]" "$bas"
 }
 
 # ---------------------------------------------------------------- wasm sanity (A1b)
@@ -511,7 +536,9 @@ kisa() {
   # cikti once degiskene alinir, sonra JSON'lugu dogrulanir: python3 patlarsa
   # BOS satir degil, adiyla bir hata satiri basilir (sessiz default yasagi).
   local satir
-  satir=$(KAPI_COMMIT="${commit:-}" KAPI_SAPMA="${sapma:-}" KAPI_ENUM="${enum:-}" KAPI_KIRMIZI="${kirmizi:-0}" \
+  # KAPI_SANAL: bu adimin urun olcusu (sanalDikisMM). Isci doldurur; yoksa null basar
+  # (ivme null'i zaten muaf tutuyor). ctest KOSMAZ, uretilmis cizimden okunur: 60 s tavani korunur.
+  satir=$(KAPI_COMMIT="${commit:-}" KAPI_SAPMA="${sapma:-}" KAPI_SANAL="${KAPI_SANAL:-}" KAPI_ENUM="${enum:-}" KAPI_KIRMIZI="${kirmizi:-0}" \
     python3 -c '
 import json, os
 def n(v):
@@ -522,6 +549,7 @@ def n(v):
 import datetime
 print(json.dumps({"commit": os.environ.get("KAPI_COMMIT") or None,
                   "anaSapmaMM": n(os.environ.get("KAPI_SAPMA")),
+                  "sanalDikisMM": n(os.environ.get("KAPI_SANAL")),
                   "enum": n(os.environ.get("KAPI_ENUM")),
                   "kirmizi": n(os.environ.get("KAPI_KIRMIZI")),
                   "tarih": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")}, ensure_ascii=False))' 2>>"$LOG")
