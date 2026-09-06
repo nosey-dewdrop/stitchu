@@ -189,3 +189,7 @@ KOSU/ciktilar/_yerel/
 
 # 0509 kosusu: kapi.sh alt surec logu (calisma ciktisi, commit edilmez)
 KOSU/0509-kapi.log
+
+# 0509 kosusu (A1b): regresyon KOSUM ciktilari uretilebilir, TABAN commit edilir.
+# Taban her adimda karsilastirma zeminidir; cikti/ her kosumda yeniden yazilir.
+KOSU/regresyon/cikti/

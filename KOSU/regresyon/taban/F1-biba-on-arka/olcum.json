@@ -1,0 +1,37 @@
+{
+  "bayt": 38443,
+  "sha": "97439210fb732d05",
+  "width": "1806.8469mm",
+  "height": "1205.0000mm",
+  "dataScale": "1:1",
+  "dataUnitMM": "1",
+  "dataSinif": "dress/dart/woven",
+  "dataSize": "EU38",
+  "dataDugum": "b7837f24656f040e",
+  "yolSayisi": 84,
+  "rolSayisi": {
+    "siluet": 2,
+    "bel-dikisi": 4,
+    "pens": 12,
+    "dikis-izi": 12,
+    "kol": 4,
+    "buzgu": 48,
+    "orta-dikis": 2
+  },
+  "_specKaynak": "KOSU/onbellek/88ab9466d20c66e4....json enYakinSpec (motorda opu olmayan eksenler dusuruldu: peplum)",
+  "_spec": {
+    "garment": "dress",
+    "shaping": "dart",
+    "fabric": "woven",
+    "neckline": "scoop",
+    "sleeveStyle": "straight",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "skirtLength": "midi",
+    "sleeveCap": "puffed"
+  },
+  "_eksik": [
+    "kalip.svg: graftan cizim hatti yok (A2)",
+    "dikilebilir.json: graf degerleme hatti yok (A2)"
+  ]
+}

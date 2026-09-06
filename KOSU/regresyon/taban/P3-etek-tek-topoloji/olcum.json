@@ -1,0 +1,30 @@
+{
+  "bayt": 28959,
+  "sha": "cae57e2c7065ee34",
+  "width": "1368.8000mm",
+  "height": "809.2444mm",
+  "dataScale": "1:1",
+  "dataUnitMM": "1",
+  "dataSinif": "skirt/dart/woven",
+  "dataSize": "EU38",
+  "dataDugum": "77a44d5b7a88a5f9",
+  "yolSayisi": 22,
+  "rolSayisi": {
+    "siluet": 2,
+    "pens": 8,
+    "bel-dikisi": 8,
+    "dikis-izi": 4
+  },
+  "_specKaynak": "girdiler.json spec",
+  "_spec": {
+    "garment": "skirt",
+    "shaping": "dart",
+    "fabric": "woven",
+    "skirtStyle": "aLine",
+    "skirtLength": "midi"
+  },
+  "_eksik": [
+    "kalip.svg: graftan cizim hatti yok (A2)",
+    "dikilebilir.json: graf degerleme hatti yok (A2)"
+  ]
+}
