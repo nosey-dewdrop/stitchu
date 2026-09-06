@@ -62,7 +62,9 @@ add_library(engine
     src/graf.cpp
     src/grafop.cpp
     src/grafdogrula.cpp
-    src/solver_utils.cpp)
+    src/solver_utils.cpp
+    src/flatsvg.cpp
+    src/kalipsvg.cpp)
 target_include_directories(engine PUBLIC src)
 target_compile_options(engine PRIVATE -Wall -Wextra)
 
@@ -1552,3 +1554,14 @@ target_link_libraries(solver_check PRIVATE engine)
 add_test(NAME solver_check COMMAND solver_check
     ${CMAKE_CURRENT_SOURCE_DIR}/../contract/graf-v1.json
     ${CMAKE_CURRENT_SOURCE_DIR}/../contract/body-v1.json)
+
+# ---- 0509 A2b: GRAFTAN CIZIM (engine/src/flatsvg.*, kalipsvg.*) + IKI CLI.
+# Karar ajani (0509, 8.4 yerel minimum): A2 bundan sonra COZUCU katmanindan degil
+# CIZIM CIKTISI katmanindan surulur. Bu iki ikili KOSU/sinyal.sh kabul_P1'in ADIYLA
+# bekledigi adlardir: engine/build/grafciz <graf.json> <bodyId> flat|kalip ve
+# engine/build/grafdogrula <graf.json> <bodyId>.
+add_executable(grafciz src/grafciz-cli.cpp)
+target_link_libraries(grafciz PRIVATE engine)
+
+add_executable(grafdogrula src/grafdogrula-cli.cpp)
+target_link_libraries(grafdogrula PRIVATE engine)
