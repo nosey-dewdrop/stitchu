@@ -18,10 +18,13 @@
     "js.metin": 34
   },
   "regresyonTabani": null,
-  "kabulKomutlari": [],
+  "kabulKomutlari": [
+    "bash engine/tests/0509-kapi-kendi-check.sh"
+  ],
   "devredilen": [],
   "banned": [],
   "kararDefteri": [],
   "ilkYesil": {},
-  "kapi": "engine/tests/0509-kapi.sh"
+  "kapi": "engine/tests/0509-kapi.sh",
+  "kapiGorsel": "KOSU/ciktilar/0509-kapi/gecit-tablosu.png"
 }
