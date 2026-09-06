@@ -1,0 +1,74 @@
+{
+  "seri": [
+    {
+      "beden": "gercek36",
+      "sanalDikisMM": 0,
+      "esik": 2,
+      "kirmizi": 0
+    },
+    {
+      "beden": "croquis36",
+      "sanalDikisMM": 0,
+      "esik": 2,
+      "kirmizi": 0
+    },
+    {
+      "beden": "EU34",
+      "sanalDikisMM": 0,
+      "esik": 2,
+      "kirmizi": 0
+    },
+    {
+      "beden": "EU36",
+      "sanalDikisMM": 0,
+      "esik": 2,
+      "kirmizi": 0
+    },
+    {
+      "beden": "EU38",
+      "sanalDikisMM": 0,
+      "esik": 2,
+      "kirmizi": 0
+    },
+    {
+      "beden": "EU40",
+      "sanalDikisMM": 0,
+      "esik": 2,
+      "kirmizi": 0
+    },
+    {
+      "beden": "EU42",
+      "sanalDikisMM": 0,
+      "esik": 2,
+      "kirmizi": 0
+    },
+    {
+      "beden": "EU44",
+      "sanalDikisMM": 0,
+      "esik": 2,
+      "kirmizi": 0
+    }
+  ],
+  "esikler": [
+    {
+      "ad": "dikisUzunlukMM",
+      "mm": 2,
+      "kaynak": "contract/body-v1.json ayniInsan.toleransMM ile AYNI zincir: URBN Apparel Technical Manual 'Position points, olcu <5 in' = 1/8 in = 3.175 mm ust sinir (knowledge/POM-TOLERANS-URBN-2026-08-23.md); repodaki CLO sayisi engine/src/validator.hpp:23 pairedSeamTolerance 3.0 (yayin degil, yazilim varsayilani); GarmentCode StitchingRule.isMatching tol=0.05 GORELI (500 mm'de 25 mm — bizim kapimizin esigi degil, knowledge/TEKNOLOJI-2026-08-23.md:66). En kisitlayici yayinli degerin altinda, cizim cozunurlugunun (1 mm) ustunde: 2.0 — DOGRULANMADI etiketi ayniInsan ile ayni, gevsetme yonunde degil."
+    },
+    {
+      "ad": "centikMM",
+      "mm": 0.5,
+      "kaynak": "engine/tests/notch_alignment_check.cpp (2026-09-03): 'dikisin ustunde yurunen mm ... 0.5mm icinde' — motorun mevcut centik kapisi, repo konvansiyonu (yayin yok, DOGRULANMADI). En kisitlayici var olan deger."
+    },
+    {
+      "ad": "halkaKapanmaMM",
+      "mm": 2,
+      "kaynak": "dikisUzunlukMM ile ayni: halka bir dikisin uzunluk artigi ya da bir kavsakta iki dikisin farkiyla kapanir; ayni buyukluk, ayni dayanak."
+    },
+    {
+      "ad": "pensBacakMM",
+      "mm": 2,
+      "kaynak": "engine/src/validator.hpp dartSumTolerance 2.0 (repo konvansiyonu) ve dikisUzunlukMM ile ayni zincir; pens bacaklari insadan esit oldugu icin fark yalniz sayisal artiktir."
+    }
+  ]
+}
