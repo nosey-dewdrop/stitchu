@@ -24,7 +24,14 @@
       "olcek_check (graftan cizim A2'de dogar; aralik contract'a kaynakli eklendi)"
     ],
     "kilitIhlali": [],
-    "not": "A1b'nin dort henuz-yok'undan UCU yesillendi: emsal_mm_olcum 0.693/2 mm, regresyon 0 fark (7 girdi), wasm_sanity 0 trap/0 fark. olcek_check durust henuz-yok kaldi. Devredilen iki kusur kapandi. Karar defterinden H17+H18 uygulandi. Kalan iki kirmizi ILANLI, A1b'nin degil."
+    "not": "A1b'nin dort henuz-yok'undan UCU yesillendi: emsal_mm_olcum 0.693/2 mm, regresyon 0 fark (7 girdi), wasm_sanity 0 trap/0 fark. olcek_check durust henuz-yok kaldi. Devredilen iki kusur kapandi. Karar defterinden H17+H18 uygulandi. Kalan iki kirmizi ILANLI, A1b'nin degil.",
+    "yerelMinimum": {
+      "okuma": "--ivme yerelMinimum=true (anaSapmaMM 0.693 -> 0.693, kapanma %0)",
+      "hukum": "KESILME SEBEBI DEGIL — ivme kurali (8.4) urunu ILERLETEN adimlar icindir.",
+      "gerekce": "A1b'nin brief'i acikca 'URUN DEGISMEZ; motor koduna dokunma' diyor. A1b GECIT KURAR, sayiyi kapatmaz. anaSapmaMM bu turda ILK KEZ null olmaktan cikip 0.693 oldu (once olculemiyordu); duz seyretmesi urunun degismediginin kanitidir, tikanmanin degil.",
+      "sapmayi_kapatacak_adim": "A2 (graftan cizim) ve A4 (croquis konvansiyonu). Ivme hukmu oradan itibaren baglayicidir.",
+      "uyari": "Sonraki isci --ivme'yi okurken bunu bilmeli: A1b'nin duz serisi bir yerel minimum DEGIL, sabit bir urun uzerinde kurulan olcum aletidir."
+    }
   },
   "tag": "adim-A1-once",
   "yol": [
