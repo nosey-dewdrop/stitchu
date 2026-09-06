@@ -84,14 +84,34 @@ izlenen_yollar() {
 # add_test( / add_executable( satiri varsa KILIT_IHLALI basar. Ekleme ('+')
 # temiz sayilir. Gerekce: kirmiziya duen bir gecidin add_test satirini silmek
 # gecidi sessizce yesil yapar; ekleme zararsiz, silme kanit yok ediyor.
+# HEDEF DEGISIMI (karar defteri 6 Eyl, A1b teslimi): satiri SILMEK ile bir
+# add_test'in HEDEFINI degistirmek ayni sonucu verir — add_test'i /bin/true'ya
+# yoneltmek gecidi sessizce yesil yapar ve eski kural bunu TEMIZ sayardi
+# (3.7 reward hacking: test degistirme). Bu yuzden ayni test adinin COMMAND'i
+# degisiyorsa da KILIT_IHLALI basilir. YASAK degil, ILANA tabi: degisiklik
+# state.json.kararDefteri'ne (eski hedef -> yeni hedef -> sebep) yazilmadan
+# gecit yesil sayilmaz. 97559b95 geriye donuk ilan edildi (kapi_sozlesme_check).
 cmake_satir_yonu() {
-  local satir
+  local satir ad
+  local silinen_adlar="" eklenen_adlar=""
   while IFS= read -r satir; do
     case "$satir" in
-      ---*) continue;;
+      ---*|+++*) continue;;
       -*add_test\(*|-*add_executable\(*)
-        echo "KILIT_IHLALI engine/CMakeLists.txt silinen satir: ${satir#-}";;
+        echo "KILIT_IHLALI engine/CMakeLists.txt silinen satir: ${satir#-}"
+        ad=$(printf '%s' "$satir" | sed -n 's/.*add_test(NAME[[:space:]]*\([A-Za-z0-9_.-]*\).*/\1/p')
+        [ -n "$ad" ] && silinen_adlar="$silinen_adlar $ad";;
+      +*add_test\(*)
+        ad=$(printf '%s' "$satir" | sed -n 's/.*add_test(NAME[[:space:]]*\([A-Za-z0-9_.-]*\).*/\1/p')
+        [ -n "$ad" ] && eklenen_adlar="$eklenen_adlar $ad";;
     esac
+  done
+  # ayni ad hem silinmis hem eklenmis => satir SILINMEDI, HEDEFI degisti
+  local a b
+  for a in $silinen_adlar; do
+    for b in $eklenen_adlar; do
+      [ "$a" = "$b" ] && echo "KILIT_IHLALI engine/CMakeLists.txt add_test hedefi degisti: $a (ilan sarti: state.json kararDefteri'ne eski hedef -> yeni hedef -> sebep)"
+    done
   done
   return 0
 }
@@ -659,6 +679,84 @@ for k in ks:
         assert os.path.exists(p), "kabul komutu olmayan dosyaya isaret ediyor: "+p
 ' 2>/dev/null; then ok "H16 kabul-komutu-var"
   else fail "H16 kabul-komutu-var" "kabulKomutlari bos ya da silinmis dosyaya isaret ediyor"; fi
+
+  # --- H18 (karar defteri 6 Eyl, A1b teslimi): add_test HEDEF DEGISIMI de
+  #    KILIT_IHLALI basar. Satiri silmek ile hedefi /bin/true'ya cevirmek ayni
+  #    sonucu verir; eski kural yalniz SILMEYI goruyordu. Uc halde de olculur:
+  #    (a) ayni ad silinip yeniden eklenmis (hedef degisimi) -> IHLAL
+  #    (b) saf ekleme -> TEMIZ
+  #    (c) saf silme -> IHLAL (eski kural korunuyor)
+  local h18a h18b h18c
+  h18a=$(printf -- '-add_test(NAME x_check COMMAND eski.sh)\n+add_test(NAME x_check COMMAND /bin/true)\n' | cmake_satir_yonu)
+  h18b=$(printf -- '+add_test(NAME yepyeni COMMAND x)\n' | cmake_satir_yonu)
+  h18c=$(printf -- '-add_test(NAME olu COMMAND x)\n' | cmake_satir_yonu)
+  if printf '%s' "$h18a" | grep -q 'hedefi degisti' \
+     && [ -z "$h18b" ] \
+     && printf '%s' "$h18c" | grep -q 'KILIT_IHLALI'; then
+    ok "H18 karar4-addtest-hedef-degisimi"
+  else
+    fail "H18 karar4-addtest-hedef-degisimi" "hedef degisimi=$(printf '%s' "$h18a" | tr '\n' ';') / saf-ekleme=$(printf '%s' "$h18b" | tr '\n' ';') / saf-silme=$(printf '%s' "$h18c" | tr '\n' ';')"
+  fi
+
+  # --- H17 (karar defteri 6 Eyl, A1b teslimi): ALT SUREC SIZINTI TARAMASI.
+  #    Iddia "hicbir alt surec stdout'a sizmiyor" bugune kadar stderr BAYTIYLA
+  #    olculuyordu; o olcum, stdout'a JSON-BENZERI basan bir alt sureci
+  #    yakalamaz. Statik tarama: kapi.sh'in KENDI kaynagindaki her alt surec
+  #    cagrisi (ctest|node|python3|cmake) ya '>> $LOG 2>&1' ile yonlendirilmis,
+  #    ya $(...) ile YAKALANMIS, ya da bir boruya girmis olmali. Ciplak cagri =
+  #    KIRMIZI, satir numarasiyla. Regresyon/wasm/emsal alt surec sayisini
+  #    buyuttugu icin tarama tam bu buyumeyle geliyor.
+  #
+  #    TARAYICININ KENDI SAGLIGI ONCE OLCULUR. Ilk yazimda (6 Eyl, A1b) awk
+  #    deseninde '/' karakter sinifi icinde kacirilmamisti; awk "nonterminated
+  #    character class" ile OLUYOR, cikti BOS geliyor ve bos cikti "sizinti yok"
+  #    diye okunuyordu — yani gecit, bozuk tarayiciyla YESIL yaniyordu. Olculdu:
+  #    kapi.sh'e ciplak 'node --version' eklendi, H17 yine OK dedi. Bu yuzden
+  #    once SENTETIK bir ornek taranir: bilinen 3 ciplak cagriyi bulamayan bir
+  #    tarayici KIRMIZI'dir (arac onarimi, 8.3), sessizce gecmez.
+  local tarayici sentetik bulunan ciplak
+  tarayici="$TMPD/sizinti.awk"
+  cat > "$tarayici" <<'AWK'
+/^[[:space:]]*#/ { next }
+/<<.?PY/ { icinde=1 }
+icinde && /^PY$/ { icinde=0; next }
+icinde { next }
+{
+  satir = $0
+  sub(/#.*$/, "", satir)
+  if (bekleyen != "") { satir = bekleyen " " satir; bekleyen = "" }
+  if (satir ~ /\\[[:space:]]*$/) { sub(/\\[[:space:]]*$/, "", satir); bekleyen = satir; next }
+  ham = satir
+  # HAM satirda: zaten yonlendirilmis / yakalanmis / boruya girmis mi?
+  if (ham ~ /\$\(/) next
+  if (ham ~ />>[[:space:]]*"?\$LOG/) next
+  if (ham ~ /\|[[:space:]]*(grep|sed|awk|python3|head|tail|wc|tr|sort)/) next
+  if (ham ~ /^[[:space:]]*(local|[A-Za-z_][A-Za-z0-9_]*=)/) next
+  # tirnakli dizeleri sil: icindeki "ctest"/"node" bir METINDIR, cagri degil
+  gsub(/"[^"]*"/, "", satir)
+  tek = sprintf("%c", 39)
+  gsub(tek "[^" tek "]*" tek, "", satir)
+  if (satir ~ /(^|[;|&(){}]|&&|\|\|)[[:space:]]*(ctest|node|python3|cmake)([[:space:]]|$)/) {
+    printf "%d:%s\n", NR, substr($0, 1, 90)
+  }
+}
+AWK
+  sentetik="$TMPD/sizinti-ornek.sh"
+  {
+    printf '  node --version\n'
+    printf '  ctest -R foo\n'
+    printf '  python3 -c "x"\n'
+    printf '  out=$(ctest -R bar)\n'
+    printf '  ctest -R baz >> "$LOG" 2>&1\n'
+  } > "$sentetik"
+  bulunan=$(awk -f "$tarayici" "$sentetik" 2>>"$LOG" | wc -l | tr -d ' ')
+  if [ "${bulunan:-0}" != "3" ]; then
+    fail "H17 sizinti-taramasi" "TARAYICI BOZUK (arac onarimi): sentetik ornekte 3 ciplak cagri bekleniyordu, ${bulunan:-0} bulundu; bos cikti 'temiz' sayilamaz"
+  else
+    ciplak=$(awk -f "$tarayici" "$0" 2>>"$LOG")
+    if [ -z "$ciplak" ]; then ok "H17 sizinti-taramasi (tarayici dogrulandi: 3/3)"
+    else fail "H17 sizinti-taramasi" "ciplak alt surec cagrisi (stdout sizabilir): $(printf '%s' "$ciplak" | tr '\n' ';')"; fi
+  fi
 
   printf 'OZET %s hukum gecti, %s kirmizi\n' "$gecti" "$kaldi"
   [ "$kaldi" -eq 0 ] && return 0
