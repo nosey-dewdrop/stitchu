@@ -1873,5 +1873,23 @@
     "bacakIcBilekOverHip": 0.15,
     "agHalkaYarimOverHip": 0.45,
     "_birim": "kalca yari genisligi (landmark.hip.x) carpani"
+  },
+  "olcekAraligi": {
+    "_tanim": "OLCEK GECIDI (0509 kosusu, brief madde 7; A1b ekledi 2026-09-06). Giysi grafi gercek36'da degerlendiginde MUTLAK sinir kutusu bu araligin disina cikarsa ERR_SCALE_MISMATCH: topoloji yesil olsa da gecit KIRMIZI. Amac birim/olcek kaymasini (mm yerine cm, 1:3 croquis birimi, olceksiz kullanici birimi) topolojiden BAGIMSIZ yakalamak.",
+    "_neden_bu_iki_sayi": "Bu bir SAGDUYU araligi degil, contract tablolarindan TURETILMIS bir zarf. Uydurma sabit yok: iki uc de asagidaki kaynak satirlarindan aritmetikle cikiyor. Aralik GENIS tutuldu (kirpma degil, kaba birim hatasi yakalama): amac 'bu giysi 13 mm mi yoksa 13 m mi' sorusunu cevaplamak, giysi tasarimini kisitlamak degil.",
+    "giysiYuksekligiMM": {
+      "min": 395.0,
+      "minTuretme": "contract/tables.json draft.euSizeChart._fields[backLengthCM] uzerinden EN KUCUK beden: EU34 = 39.5 cm = 395 mm. Bundan kisa bir GIYSI (omuz cizgisinden etek ucuna) bu beden ailesinde yok: en kisa hal bele kadar inen bir usttur ve o da arka boy kadardir.",
+      "max": 1335.0,
+      "maxTuretme": "EN BUYUK arka boy + EN UZUN etek dususu: EU52 backLengthCM 43.5 cm = 435 mm + contract/tables.json draft.skirtLengthMM.maxi = 900 mm => 1335 mm. Daha uzunu bugunku etek boyu tablosunda YOK.",
+      "birim": "mm (gercek36 mutlak)"
+    },
+    "kaynak": {
+      "backLengthCM": "contract/tables.json -> draft.euSizeChart (_fields[4]=backLengthCM), EU34..EU52 = 39.5..43.5 cm",
+      "skirtLengthMM": "contract/tables.json -> draft.skirtLengthMM = {mini:450, midi:650, maxi:900}",
+      "not": "Iki tablo da contract icinde; bu blok onlardan TURETILDI, yeni bir olcum getirmiyor. euSizeChart'in kendi kaynak tartismasi tables.json _sourcesROL alaninda duruyor ve BU BLOK O TARTISMAYI COZMEZ — yalnizca ayni sayilari olcek zarfi olarak kullanir."
+    },
+    "hataKodu": "ERR_SCALE_MISMATCH",
+    "_bugun": "HENUZ-YOK: graftan cizim (gercek36'da degerlenmis giysi grafi) A2'de geliyor; o gune kadar mutlak bbox olculemiyor ve gecit 'henuz-yok' basar, kirmizi sayilmaz."
   }
 }
