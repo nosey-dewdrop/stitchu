@@ -1,35 +1,19 @@
 {
   "adim": "A2",
-  "durum": "DURDU",
+  "durum": "ISCI",
   "deneme": 1,
   "butce": {
-    "tag": "adim-A2a-once",
-    "adim": "A2/A2a",
-    "commitSayisi": 4,
-    "derlemeCommit": 0,
-    "derlemeTavani": 6,
-    "saat": 3.39,
-    "olcumTarihi": "2026-09-06 20:26",
-    "yerelMinimum": false,
-    "metrikSerisi": "sanalDikisMM 0/0/0 (esik 2.0, --ivme tarafindan seriden DUSURULDU: esik alti)",
-    "kilitIhlali": [],
-    "kapiBozuk": false,
-    "gecitYesil": false,
-    "kirmizilar": [
-      "flat_ayni_insan_check=1 (esik 0) [ILANLI, tavan 34, kapanacak adim A4]"
-    ],
-    "regresyonFark": 0,
-    "regresyonKosmadi": [
-      "K2-prenses-roba"
-    ]
+    "commit": 0,
+    "saat": 0
   },
-  "tag": "adim-A2a-once",
+  "tag": "adim-A2-once",
   "yol": [
     "A1",
     "A2",
     "A2a",
     "A2-yeniden",
-    "A2a-faz"
+    "A2a-faz",
+    "A2-H7-kilit-kirmizi"
   ],
   "taban": {
     "cpp.dallanma": 436,
