@@ -128,3 +128,28 @@ Durum `KOSU/0509-state.json` içinde `durum: "DURDU"`. Tam gerekçe, denenen/den
 ve resume komutu: `KOSU/0509-DURDU.md`. Kilit açık bırakıldı.
 2026-09-06 12:15 | A2 | BASLADI (tag adim-A2-once; kapi kosuldu, 4 kabul komutu yesil, ilanli kirmizilar tavanda)
 2026-09-06 13:09 | A2 | BASLADI (tag adim-A2a-once; kapi kosuldu, 4 kabul komutu yesil, ilanli 2 kirmizi + kapi_sozlesme_check kilit-kurulu; cpp.dallanma 436=taban, anaSapmaMM 0.693, regresyon fark 0)
+
+## A2a — SOLVER_UTILS (2026-09-06, kapandi)
+
+- `engine/src/solver_utils.{hpp,cpp}`: kisit cozucu iskeleti. Iteratif yay-kutle gevsetmesi;
+  YUMUSAK hedefler yay kuvveti, SERT kisitlar (uzunluk esitligi / panel kapaliligi / MUTLAK
+  INSAN OLCEGI) her iterasyonda Gauss-Seidel projeksiyonu. Sinirlar `contract/graf-v1.json
+  cozucu.gevsetme` (maxIter 400, sureTavaniMS 2000, adimBoyu 0.5, yakinsamaMM 0.05) ve olcek
+  `contract/body-v1.json olcekAraligi.giysiYuksekligiMM` [395, 1335]. Kodda sabit yok:
+  sozlesmesiz cagri `ERR_SOLVER_NO_CONTRACT` ile ADIYLA reddedilir.
+- ASLA ASILI KALMAZ: maxIter VE sureTavaniMS iki bagimsiz tavan. Tavan dolunca yumusak
+  hedefler ADIYLA birakilir (`birakilanHedefler[]`), sert kisitlar son bir turla korunur.
+- OLCEK SERT: cozucu olcegi bozup dikisi kapatamaz -> `ERR_UNSOLVABLE` (A1'in
+  ERR_SCALE_MISMATCH'i ile pinpon yok). Test (6) olcek kisiti acik/kapali ile kanitlar.
+- Cozum yoksa: `ERR_UNSOLVABLE` + EN YAKIN COZUM (`noktalar`) + `gevsetilmesiGereken` kisit adi.
+- Birim test `engine/tests/0509-solver_check.cpp` (ctest `solver_check`), 32 hukum, GECTI:
+  ucgen panel, dortgen panel cifti (dikis uzunluk esitligi), acik halka kapanma, tavan
+  davranisi (yumusak birakilir / sert kalir), yakinsama siniri ADIYLA ilan (uzun zincir),
+  ERR_UNSOLVABLE, olcek sertligi, bozuk problem, DETERMINIZM (bit-ayni cikti).
+- OLCULEN SINIR (gizlenmedi, test 4c): 40 halkalik sert zincirin artigi maxIter x 4 sweep
+  icinde 0.05 mm altina INMIYOR (~0.546 mm). Cozucu bunu sessizce gecmez, ERR_UNSOLVABLE
+  atar. A2b Halka2B'si panel basina kisa zincirler kurmali.
+- Gorsel: `KOSU/ciktilar/graf-ilk/solver-a2a.png` (once/sonra, uc sahne, sayilarla).
+- ONARILAN DEVIR: `kapi_sozlesme_check` (H7) kok sebepten kapandi — kilit A2 degil A2a izin
+  listesiyle kuruldu. Esik gevsetilmedi.
+- `cpp.dallanma` 436 -> 439 -> 436: durum kodu akis degiskeni olmaktan cikarildi (kararDefteri).

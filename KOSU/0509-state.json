@@ -1,313 +1,324 @@
 {
- "adim": "A2",
- "durum": "ISCI",
- "deneme": 1,
- "butce": {
   "adim": "A2",
-  "commitSayisi": 0,
-  "derlemeCommit": 0,
-  "derlemeTavani": 6,
-  "saat": 0,
-  "yerelMinimum": false,
-  "metrikSerisi": "A2a acilis: anaSapmaMM 0.693; cpp.dallanma 436 (taban 436); flat_ayni_insan 34 (tavan 34); regresyon fark 0",
-  "ivmeMuafiyeti": false,
-  "olcumTarihi": "2026-09-06",
-  "gecitYesil": true,
-  "kirmizilar": [
-   "flat_ayni_insan_check 34 (ILANLI, tavan 34, A4)",
-   "sinyal_tam/bundle_fresh_check 1 (ILANLI, A9)",
-   "kapi_sozlesme_check 1 (H7 kilit-kurulu: A2 izin listesi 5 dosya yazilabilir birakiyor)"
+  "durum": "ISCI",
+  "deneme": 1,
+  "butce": {
+    "adim": "A2",
+    "commitSayisi": 2,
+    "derlemeCommit": 0,
+    "derlemeTavani": 6,
+    "saat": 0,
+    "yerelMinimum": false,
+    "metrikSerisi": "A2a kapanis: anaSapmaMM 0.693 (degismedi); cpp.dallanma 436 (taban 436, ARTMADI); flat_ayni_insan 34 (tavan 34); regresyon fark 0; kirmizi 0",
+    "ivmeMuafiyeti": false,
+    "olcumTarihi": "2026-09-06",
+    "gecitYesil": true,
+    "kirmizilar": [
+      "flat_ayni_insan_check 34 (ILANLI, tavan 34, A4)",
+      "sinyal_tam/bundle_fresh_check 1 (ILANLI, A9)"
+    ],
+    "henuzYok": [
+      "olcek_check"
+    ],
+    "kapiBozuk": false,
+    "kilitIhlali": [],
+    "regresyonFarki": 0
+  },
+  "tag": "adim-A2a-once",
+  "yol": [
+    "A1",
+    "A2",
+    "A2a"
   ],
-  "henuzYok": [
-   "olcek_check"
+  "taban": {
+    "cpp.dallanma": 436,
+    "js.dallanma": 18,
+    "js.sabitMM": 2,
+    "js.metin": 34
+  },
+  "regresyonTabani": {
+    "dizin": "KOSU/regresyon/taban/",
+    "adim": "A1b",
+    "girdi": 8,
+    "kosan": 7,
+    "kosmayan": 1,
+    "kosmayanlar": [
+      "K2-prenses-roba: armhole rolu tasinmiyor (kendi DUSEN notunda ilan; A2/A4)"
+    ],
+    "determinizm": "iki kosumda 7 SVG bayt bayt ayni (olculdu)",
+    "tazeleme": "bash engine/tests/0509-kapi.sh --regresyon --taban (yalniz ciktiyi kasten degistiren adimlarin kapanisinda)"
+  },
+  "kabulKomutlari": [
+    "bash engine/tests/0509-kapi.sh --kendi-check",
+    "node engine/tests/0509-emsal-olcum.mjs --json",
+    "bash engine/tests/0509-kapi.sh --regresyon",
+    "node engine/tests/0509-wasm-sanity.mjs"
   ],
-  "kapiBozuk": false,
-  "kilitIhlali": [],
-  "regresyonFarki": 0
- },
- "tag": "adim-A2a-once",
- "yol": [
-  "A1",
-  "A2",
-  "A2a"
- ],
- "taban": {
-  "cpp.dallanma": 436,
-  "js.dallanma": 18,
-  "js.sabitMM": 2,
-  "js.metin": 34
- },
- "regresyonTabani": {
-  "dizin": "KOSU/regresyon/taban/",
-  "adim": "A1b",
-  "girdi": 8,
-  "kosan": 7,
-  "kosmayan": 1,
-  "kosmayanlar": [
-   "K2-prenses-roba: armhole rolu tasinmiyor (kendi DUSEN notunda ilan; A2/A4)"
+  "devredilen": [
+    "[ILANLI KIRMIZI] flat_ayni_insan_check = 34 (A1a oncesi). Kapanacak adim: A4 (A4'un kabul sarti bu gecidin YESIL olmasi; kirmizi kalirsa A4 GECMEZ). TAVAN 34: A2 ve A3'te sayi artarsa o adim duser. gecitYesil hesabinda dusurulmez, JSON'da KIRMIZI basilir, sayi her adimda metrige yazilir.",
+    "[ILANLI KIRMIZI] sinyal_tam / bundle_fresh_check = 1 (A1a oncesi). Kapanacak adim: A9 (paket + tarayici wasm hatti yeniden uretilir). Kirmizi alt test kumesi DONDU: {bundle_fresh_check}; kumeye yeni ad eklenirse ilan gecersiz, o adim duser. sinyal_tam tam kosuda kalir (adim basi bir kez, ~2 dk 16 sn), --kisa'ya GIRMEZ."
   ],
-  "determinizm": "iki kosumda 7 SVG bayt bayt ayni (olculdu)",
-  "tazeleme": "bash engine/tests/0509-kapi.sh --regresyon --taban (yalniz ciktiyi kasten degistiren adimlarin kapanisinda)"
- },
- "kabulKomutlari": [
-  "bash engine/tests/0509-kapi.sh --kendi-check",
-  "node engine/tests/0509-emsal-olcum.mjs --json",
-  "bash engine/tests/0509-kapi.sh --regresyon",
-  "node engine/tests/0509-wasm-sanity.mjs"
- ],
- "devredilen": [
-  "[ILANLI KIRMIZI] flat_ayni_insan_check = 34 (A1a oncesi). Kapanacak adim: A4 (A4'un kabul sarti bu gecidin YESIL olmasi; kirmizi kalirsa A4 GECMEZ). TAVAN 34: A2 ve A3'te sayi artarsa o adim duser. gecitYesil hesabinda dusurulmez, JSON'da KIRMIZI basilir, sayi her adimda metrige yazilir.",
-  "[ILANLI KIRMIZI] sinyal_tam / bundle_fresh_check = 1 (A1a oncesi). Kapanacak adim: A9 (paket + tarayici wasm hatti yeniden uretilir). Kirmizi alt test kumesi DONDU: {bundle_fresh_check}; kumeye yeni ad eklenirse ilan gecersiz, o adim duser. sinyal_tam tam kosuda kalir (adim basi bir kez, ~2 dk 16 sn), --kisa'ya GIRMEZ."
- ],
- "banned": [
-  "izin disi dokunus: engine/tests/0509-kapi-kendi-check.sh, engine/tests/0509-kapi-sizinti.py, engine/tests/0509-kapi-tablo.mjs, engine/tests/0509-karar-kabul.sh"
- ],
- "kararDefteri": [
-  {
-   "tarih": "2026-09-06",
-   "adim": "A1a",
-   "soru": "flat_ayni_insan_check kirmizi mi kalsin, pinlensin mi?",
-   "karar": "KIRMIZI kalir, henuz-yok'a CEVRILMEZ; devredilen[] ilanli kirmizi, tavan 34, pin A4'te kalkar"
+  "banned": [
+    "izin disi dokunus: engine/tests/0509-kapi-kendi-check.sh, engine/tests/0509-kapi-sizinti.py, engine/tests/0509-kapi-tablo.mjs, engine/tests/0509-karar-kabul.sh"
+  ],
+  "kararDefteri": [
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1a",
+      "soru": "flat_ayni_insan_check kirmizi mi kalsin, pinlensin mi?",
+      "karar": "KIRMIZI kalir, henuz-yok'a CEVRILMEZ; devredilen[] ilanli kirmizi, tavan 34, pin A4'te kalkar"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1a",
+      "soru": "sinyal_tam icin yeni adim acilsin mi?",
+      "karar": "Acilmaz; devredilen[] ilanli kirmizi, alt test kumesi dondu (bundle_fresh_check), kapanacak adim A9, --kisa'ya girmez"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1a",
+      "soru": "engine/CMakeLists.txt kilide alinsin mi?",
+      "karar": "Kilide ALINMAZ, IZLEMEYE alinir: --kilit-diff alanina eklenir + satir yonu denetimi (silinen add_test(/add_executable( satiri = KILIT_IHLALI, izin listesinde olsa bile). Uygulama A1b'nin teslimi"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1a tur 2",
+      "soru": "Referans kilidi ihlaliyle geri alinan 4 dosya kabul komutunu bosa dusurdu; nasil kapanir?",
+      "karar": "Kabul komutu AYRI DOSYA olmaz: engine/tests/0509-kapi.sh --kendi-check modu (izin listesindeki dosyanin icinde). ctest kapi_sozlesme_check bu moda yonlendirildi (add_test SILINMEDI, hedefi degisti). Karar 3'un izlenen_yollar()+cmake_satir_yonu() uygulamasi da bu modda olculuyor."
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1a tur 2 / karar ajani",
+      "soru": "A1a tur 2 — DEVAM mi DUR mu?",
+      "karar": "DEVAM. A1a GECTI, A1b ACIK. Adsiz ENGEL yok: flat_ayni_insan_check(34)->A4; sinyal_tam/bundle_fresh_check->A9; emsal_mm_olcum, olcek_check, wasm_sanity, regresyon (4 henuz-yok)->A1b.",
+      "gerekce": "Iki engel de kok nedenden kapandi (kabul komutu izin listesindeki 0509-kapi.sh --kendi-check moduna indi; add_test silinmedi, hedefi degisti). Banned 4 dosyaya dokunulmadi, esik gevsetilmedi, yeni kirmizi/CRASH yok. Gecidi KURMAK A1a nin isiydi; gecidin olctugu urun kusuru sonraki adimlarin.",
+      "uygulandi": "state.json altAdim + acikEngeller; gecit tablosu KOSU/ciktilar/0509-kapi/gecit-tablosu.png (commit 1e54ab9c)"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1a tur 2 / karar ajani",
+      "soru": "Gecit tablosu gorselini ureten script nerede yasasin?",
+      "karar": "(b) KOSU/0509-kapi-tablo.py — KOSU/ altinda ayri, commit li uretici. (a) kapi.sh modu ve (c) elle REDDEDILDI.",
+      "gerekce": "Tur 1 gorsel actigi icin dusmedi, KILITLI engine/tests/ altina izin disi dosya actigi icin dustu. KOSU/ izlenen_yollar() disinda. Emsal: KOSU/0509-karar-tablosu.py. kapi.sh kosunun SOZLESMESIDIR, hukum basar resim cizmez. Elle tazelenen gorsel sessizce bayatlar (6 Eyl de oldu).",
+      "uygulandi": "KOSU/0509-kapi-tablo.py (commit 1e54ab9c); girdi tam kosu JSON u, uydurma sayi yok, girdi bozuksa exit 2 ve eski png TAZELENMEZ"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1b (uygulama A1b nin teslimi)",
+      "soru": "Sizinti tarayicisi banned; 'alt surec stdout a sizmiyor' iddiasi stderr baytiyla olculuyor, bu zayif. Statik tarama geri gelsin mi?",
+      "karar": "EVET, ama AYRI DOSYA DEGIL ve A1a da DEGIL: engine/tests/0509-kapi.sh --kendi-check icine H17 hukmu olarak eklenir. A1b nin teslimi. Hukum: kapi.sh in kendi kaynagindaki her alt surec cagrisi (ctest|node|python3|cmake|bash) ya '>> $LOG 2>&1' ya da '$(...)' yakalamasi icinde olmali; ciplak cagri = KIRMIZI, satir numarasiyla.",
+      "gerekce": "Iscinin teshisi dogru: stderr bayti ve json.tool, stdout a JSON-benzeri basan alt sureci yakalamaz. Ama A1a GECTI; gecmis adima yeni is eklemek 7.2 ihlali olurdu. A1b zaten ayni dosyaya yazma yetkisine sahip ve regresyon/wasm/emsal ile alt surec sayisini BUYUTUYOR; tarama tam o buyumeyle gelmeli. Ayri dosya reddi: tur 1 in dustugu yol aynen budur.",
+      "uygulandi": "HAYIR — A1b nin teslimi (bu defterde ilan edildi, A1b kabul sarti)"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1b (uygulama A1b nin teslimi)",
+      "soru": "Karar 3 un satir yonu kurali silinen add_test( satirini yakaliyor ama HEDEFI degistirileni yakalamiyor — bilincli bosluk mu?",
+      "karar": "BOSLUK, sikilastirilir. A1b de cmake_satir_yonu() genisletilir: engine/CMakeLists.txt diff inde bir add_test( satirinin SILINMESI kadar HEDEFININ degismesi de (ayni test adi, farkli COMMAND) KILIT_IHLALI basar. YASAK degil, ILANA tabi: degisiklik state.json.kararDefteri ne tek satir (eski hedef -> yeni hedef -> sebep) yazilmadan gecit YESIL sayilmaz.",
+      "gerekce": "Saldiri gercek: add_test i /bin/true ya yoneltmek satiri silmekle AYNI sonucu verir ve bugunku kural onu temiz sayar (3.7 reward hacking: test degistirme). Yasaklamak yerine ILANA baglamak dogru esik — 8.20/2.13 'degistirmek serbest ama bedelli'.",
+      "geriyeDonukIlan": {
+        "commit": "97559b95",
+        "test": "kapi_sozlesme_check",
+        "eskiHedef": "engine/tests/0509-kapi-kendi-check.sh (referans kilidi ihlaliyle geri alindi, dosya YOK)",
+        "yeniHedef": "bash engine/tests/0509-kapi.sh --kendi-check",
+        "sebep": "silinmis dosyaya bakan test ctest te YENI kirmiziydi; kabul komutu izin listesindeki dosyanin bir moduna indirildi, add_test SILINMEDI",
+        "mesru": true,
+        "not": "karar ajani 6 Eyl: geriye donuk ILAN EDILMIS kabul edilir"
+      },
+      "uygulandi": "HAYIR — A1b nin teslimi (bu defterde ilan edildi, A1b kabul sarti)"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A2a",
+      "soru": "kapi_sozlesme_check (H7 kilit-kurulu) neden kirmiziydi, nasil kapandi?",
+      "karar": "KOK SEBEP: referans kilidi hala A2'nin GENIS izin listesiyle kuruluydu (7 dosya), A2a'nin degil; artik 0509-emsal-olcum.mjs / 0509-wasm-sanity.mjs gibi A1 kalintilari yazilabilir duruyordu. Kilit A2a izin listesiyle yeniden kuruldu (contract/graf-v1.json + engine/tests/0509-solver_check.cpp = 2 dosya, H7 esigi <= 2). Esik GEVSETILMEDI, test DEGISTIRILMEDI; alan daraltildi. Adim sonunda solver_utils.* yeniden salt-okunur."
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A2a",
+      "soru": "enum_dallanma_check cpp.dallanma 436 -> 439 oldu (solver Durum enum'u); taban mi kesilsin?",
+      "karar": "HAYIR, taban kesilmedi ve gecit gevsetilmedi. KOK SEBEP kendi kodumdaydi: solver akisi durum kodunu AKIS DEGISKENI gibi kullaniyordu (R.durum != Durum::OK, == Durum::YUMUSAK_BIRAKILDI, hpp'de yakinsadi()). Durum kodu bir CIKTI ETIKETIDIR; akis bool'a (yakinsadi / yumusakVardi) tasindi, hpp'deki yakinsadi() kaldirildi. cpp.dallanma 436'ya dondu. case Durum::X: return \"...\" satirlari zaten serializasyon kovasinda, toplama girmiyor."
+    }
+  ],
+  "ilkYesil": {
+    "emsal_mm_olcum": "A1b",
+    "wasm_sanity": "A1b",
+    "regresyon": "A1b"
   },
-  {
-   "tarih": "2026-09-06",
-   "adim": "A1a",
-   "soru": "sinyal_tam icin yeni adim acilsin mi?",
-   "karar": "Acilmaz; devredilen[] ilanli kirmizi, alt test kumesi dondu (bundle_fresh_check), kapanacak adim A9, --kisa'ya girmez"
+  "kapi": "engine/tests/0509-kapi.sh",
+  "kapiGorsel": "KOSU/ciktilar/0509-kapi/gecit-tablosu.png",
+  "ilanliKirmizi": [
+    {
+      "gecit": "flat_ayni_insan_check",
+      "sayi": 34,
+      "kaynak": "A1a oncesi",
+      "kapanacakAdim": "A4",
+      "sebep": "urun yolu flat-from-pattern.js EU38; graftan cizim A2'de gelir, croquis konvansiyonu A4'te oturur",
+      "tavan": 34,
+      "tavanKurali": "A2 ve A3'te sayi 34'u ASAMAZ; asarsa o adim duser",
+      "ilanliKirmizi": true,
+      "hesapta": "gecitYesil hesabinda dusurulmez; JSON'da KIRMIZI basilmaya devam eder, sayisi her adimda metrige yazilir",
+      "pinKalkar": "A4 kapanisi; A4'un kabul sarti bu gecidin YESIL olmasi, kirmizi kalirsa A4 GECMEZ",
+      "tavanOlcumKomutu": "ctest --test-dir engine/build -R '^flat_ayni_insan_check$' -j1 --output-on-failure 2>&1 | sed -n 's/^FAIL  \\([0-9]*\\) hukum kirmizi.*/\\1/p'",
+      "tavanOlcumu": {
+        "tarih": "2026-09-06",
+        "deger": 34,
+        "kaynak": "testin kendi son satiri: 'FAIL  34 hukum kirmizi (tolerans 2 mm ...)'"
+      }
+    },
+    {
+      "gecit": "sinyal_tam",
+      "alt": "bundle_fresh_check",
+      "sayi": 1,
+      "kaynak": "A1a oncesi",
+      "kapanacakAdim": "A9",
+      "sebep": "sevk edilen wasm paketi kaynagindan eski; paket A9'da wasm WebWorker hattiyla yeniden uretiliyor",
+      "ilanliKirmizi": true,
+      "kirmiziAltTestKumesi": [
+        "bundle_fresh_check"
+      ],
+      "kumeKurali": "bu kumeye YENI ad eklenirse ilan gecersizdir, o adim duser",
+      "sure": "tam kosuda kalir (2 dk 16 sn, adim basi bir kez); --kisa'ya GIRMEZ",
+      "kumeOlcumKomutu": "bash KOSU/sinyal.sh 2>&1 | grep 'KIRMIZI'"
+    }
+  ],
+  "altAdim": {
+    "A1a": "GECTI",
+    "A1b": "GECTI (teslimler yesil; olcek_check durust henuz-yok, A2 bekliyor)"
   },
-  {
-   "tarih": "2026-09-06",
-   "adim": "A1a",
-   "soru": "engine/CMakeLists.txt kilide alinsin mi?",
-   "karar": "Kilide ALINMAZ, IZLEMEYE alinir: --kilit-diff alanina eklenir + satir yonu denetimi (silinen add_test(/add_executable( satiri = KILIT_IHLALI, izin listesinde olsa bile). Uygulama A1b'nin teslimi"
+  "kararUygulandi": {
+    "karar1": "state.json ilanliKirmizi + kabul komutu H9/H10 (tavan 34) ile olculuyor",
+    "karar2": "state.json ilanliKirmizi + kabul komutu H11 (donuk kume) / H12 (--kisa sinyalsiz)",
+    "karar3": "engine/tests/0509-kapi.sh izlenen_yollar() + cmake_satir_yonu(); kabul komutu H13/H14/H15. A1b'ye devredilmedi, A1a tur 2'de kapandi.",
+    "karar_ajani_2026-09-06": {
+      "karar1_devam": "UYGULANDI: altAdim.A1a=GECTI, A1b=ACIK, acikEngeller[] adiyla yazildi",
+      "karar2_tablo": "UYGULANDI: KOSU/0509-kapi-tablo.py, commit 1e54ab9c",
+      "karar3_H17_sizinti": "A1b YE DEVREDILDI: 0509-kapi.sh --kendi-check icinde H17; ayri dosya YASAK",
+      "karar4_addtest_hedef": "A1b YE DEVREDILDI: cmake_satir_yonu() hedef degisimini de KILIT_IHLALI basar, ilana tabi; 97559b95 geriye donuk ilan edildi"
+    },
+    "A1b_2026-09-06": {
+      "karar3_H17_sizinti": "UYGULANDI: 0509-kapi.sh --kendi-check H17. Tarayicinin KENDI sagligi once olculuyor (sentetik 3/3); bozuk tarayici artik YESIL yanamaz. Iki yonde kanitlandi.",
+      "karar4_addtest_hedef": "UYGULANDI: cmake_satir_yonu() ayni ad silinip eklenmisse 'hedefi degisti' KILIT_IHLALI basar; H18 uc halde olcuyor (hedef degisimi/saf ekleme/saf silme).",
+      "devredilen_kusur1_esik": "KAPANDI: esik /croquis/toleranceMM acik yolundan okunuyor (2.0 mm), alt dize taramasi kaldirildi. Yanlis kirmizi (0.693 > 0.05) yesile dondu; esik GEVSETILMEDI.",
+      "devredilen_kusur2_hukum_sayisi": "KAPANDI: sayi ok()/fail() cagrilarindan uretiliyor, elle yazilmiyor. Ilk duzeltme heredoc'ta kesiliyordu (17 vs 18), o da olculup kapatildi."
+    }
   },
-  {
-   "tarih": "2026-09-06",
-   "adim": "A1a tur 2",
-   "soru": "Referans kilidi ihlaliyle geri alinan 4 dosya kabul komutunu bosa dusurdu; nasil kapanir?",
-   "karar": "Kabul komutu AYRI DOSYA olmaz: engine/tests/0509-kapi.sh --kendi-check modu (izin listesindeki dosyanin icinde). ctest kapi_sozlesme_check bu moda yonlendirildi (add_test SILINMEDI, hedefi degisti). Karar 3'un izlenen_yollar()+cmake_satir_yonu() uygulamasi da bu modda olculuyor."
-  },
-  {
-   "tarih": "2026-09-06",
-   "adim": "A1a tur 2 / karar ajani",
-   "soru": "A1a tur 2 — DEVAM mi DUR mu?",
-   "karar": "DEVAM. A1a GECTI, A1b ACIK. Adsiz ENGEL yok: flat_ayni_insan_check(34)->A4; sinyal_tam/bundle_fresh_check->A9; emsal_mm_olcum, olcek_check, wasm_sanity, regresyon (4 henuz-yok)->A1b.",
-   "gerekce": "Iki engel de kok nedenden kapandi (kabul komutu izin listesindeki 0509-kapi.sh --kendi-check moduna indi; add_test silinmedi, hedefi degisti). Banned 4 dosyaya dokunulmadi, esik gevsetilmedi, yeni kirmizi/CRASH yok. Gecidi KURMAK A1a nin isiydi; gecidin olctugu urun kusuru sonraki adimlarin.",
-   "uygulandi": "state.json altAdim + acikEngeller; gecit tablosu KOSU/ciktilar/0509-kapi/gecit-tablosu.png (commit 1e54ab9c)"
-  },
-  {
-   "tarih": "2026-09-06",
-   "adim": "A1a tur 2 / karar ajani",
-   "soru": "Gecit tablosu gorselini ureten script nerede yasasin?",
-   "karar": "(b) KOSU/0509-kapi-tablo.py — KOSU/ altinda ayri, commit li uretici. (a) kapi.sh modu ve (c) elle REDDEDILDI.",
-   "gerekce": "Tur 1 gorsel actigi icin dusmedi, KILITLI engine/tests/ altina izin disi dosya actigi icin dustu. KOSU/ izlenen_yollar() disinda. Emsal: KOSU/0509-karar-tablosu.py. kapi.sh kosunun SOZLESMESIDIR, hukum basar resim cizmez. Elle tazelenen gorsel sessizce bayatlar (6 Eyl de oldu).",
-   "uygulandi": "KOSU/0509-kapi-tablo.py (commit 1e54ab9c); girdi tam kosu JSON u, uydurma sayi yok, girdi bozuksa exit 2 ve eski png TAZELENMEZ"
-  },
-  {
-   "tarih": "2026-09-06",
-   "adim": "A1b (uygulama A1b nin teslimi)",
-   "soru": "Sizinti tarayicisi banned; 'alt surec stdout a sizmiyor' iddiasi stderr baytiyla olculuyor, bu zayif. Statik tarama geri gelsin mi?",
-   "karar": "EVET, ama AYRI DOSYA DEGIL ve A1a da DEGIL: engine/tests/0509-kapi.sh --kendi-check icine H17 hukmu olarak eklenir. A1b nin teslimi. Hukum: kapi.sh in kendi kaynagindaki her alt surec cagrisi (ctest|node|python3|cmake|bash) ya '>> $LOG 2>&1' ya da '$(...)' yakalamasi icinde olmali; ciplak cagri = KIRMIZI, satir numarasiyla.",
-   "gerekce": "Iscinin teshisi dogru: stderr bayti ve json.tool, stdout a JSON-benzeri basan alt sureci yakalamaz. Ama A1a GECTI; gecmis adima yeni is eklemek 7.2 ihlali olurdu. A1b zaten ayni dosyaya yazma yetkisine sahip ve regresyon/wasm/emsal ile alt surec sayisini BUYUTUYOR; tarama tam o buyumeyle gelmeli. Ayri dosya reddi: tur 1 in dustugu yol aynen budur.",
-   "uygulandi": "HAYIR — A1b nin teslimi (bu defterde ilan edildi, A1b kabul sarti)"
-  },
-  {
-   "tarih": "2026-09-06",
-   "adim": "A1b (uygulama A1b nin teslimi)",
-   "soru": "Karar 3 un satir yonu kurali silinen add_test( satirini yakaliyor ama HEDEFI degistirileni yakalamiyor — bilincli bosluk mu?",
-   "karar": "BOSLUK, sikilastirilir. A1b de cmake_satir_yonu() genisletilir: engine/CMakeLists.txt diff inde bir add_test( satirinin SILINMESI kadar HEDEFININ degismesi de (ayni test adi, farkli COMMAND) KILIT_IHLALI basar. YASAK degil, ILANA tabi: degisiklik state.json.kararDefteri ne tek satir (eski hedef -> yeni hedef -> sebep) yazilmadan gecit YESIL sayilmaz.",
-   "gerekce": "Saldiri gercek: add_test i /bin/true ya yoneltmek satiri silmekle AYNI sonucu verir ve bugunku kural onu temiz sayar (3.7 reward hacking: test degistirme). Yasaklamak yerine ILANA baglamak dogru esik — 8.20/2.13 'degistirmek serbest ama bedelli'.",
-   "geriyeDonukIlan": {
-    "commit": "97559b95",
-    "test": "kapi_sozlesme_check",
-    "eskiHedef": "engine/tests/0509-kapi-kendi-check.sh (referans kilidi ihlaliyle geri alindi, dosya YOK)",
-    "yeniHedef": "bash engine/tests/0509-kapi.sh --kendi-check",
-    "sebep": "silinmis dosyaya bakan test ctest te YENI kirmiziydi; kabul komutu izin listesindeki dosyanin bir moduna indirildi, add_test SILINMEDI",
-    "mesru": true,
-    "not": "karar ajani 6 Eyl: geriye donuk ILAN EDILMIS kabul edilir"
-   },
-   "uygulandi": "HAYIR — A1b nin teslimi (bu defterde ilan edildi, A1b kabul sarti)"
-  }
- ],
- "ilkYesil": {
-  "emsal_mm_olcum": "A1b",
-  "wasm_sanity": "A1b",
-  "regresyon": "A1b"
- },
- "kapi": "engine/tests/0509-kapi.sh",
- "kapiGorsel": "KOSU/ciktilar/0509-kapi/gecit-tablosu.png",
- "ilanliKirmizi": [
-  {
-   "gecit": "flat_ayni_insan_check",
-   "sayi": 34,
-   "kaynak": "A1a oncesi",
-   "kapanacakAdim": "A4",
-   "sebep": "urun yolu flat-from-pattern.js EU38; graftan cizim A2'de gelir, croquis konvansiyonu A4'te oturur",
-   "tavan": 34,
-   "tavanKurali": "A2 ve A3'te sayi 34'u ASAMAZ; asarsa o adim duser",
-   "ilanliKirmizi": true,
-   "hesapta": "gecitYesil hesabinda dusurulmez; JSON'da KIRMIZI basilmaya devam eder, sayisi her adimda metrige yazilir",
-   "pinKalkar": "A4 kapanisi; A4'un kabul sarti bu gecidin YESIL olmasi, kirmizi kalirsa A4 GECMEZ",
-   "tavanOlcumKomutu": "ctest --test-dir engine/build -R '^flat_ayni_insan_check$' -j1 --output-on-failure 2>&1 | sed -n 's/^FAIL  \\([0-9]*\\) hukum kirmizi.*/\\1/p'",
-   "tavanOlcumu": {
+  "acikEngeller": [
+    {
+      "engel": "flat_ayni_insan_check",
+      "sayi": 1,
+      "kapanacakAdim": "A4",
+      "tur": "ILANLI KIRMIZI"
+    },
+    {
+      "engel": "sinyal_tam/bundle_fresh_check",
+      "sayi": 1,
+      "kapanacakAdim": "A9",
+      "tur": "ILANLI KIRMIZI"
+    },
+    {
+      "engel": "olcek_check",
+      "durum": "HENUZ-YOK",
+      "kapanacakAdim": "A2",
+      "neden": "aralik contract/body-v1.json olcekAraligi'na kaynakli eklendi (395-1335 mm); olculecek sey (gercek36'da degerlenmis mutlak bbox) A2'de doguyor"
+    },
+    {
+      "engel": "K2-prenses-roba cizilemiyor",
+      "durum": "REGRESYONDA KOSMUYOR",
+      "kapanacakAdim": "A2/A4",
+      "neden": "roba dikisi kol oyugunu kesiyor, armhole_* rolu tasinmiyor (kendi DUSEN notunda ilan edilmis kok sebep)"
+    }
+  ],
+  "A1bIzinListesi": [
+    "engine/tests/0509-*",
+    "KOSU/**",
+    "contract/body-v1.json (YALNIZ olcekAraligi ekleme, kaynakli)",
+    "engine/CMakeLists.txt (YALNIZ add_test ekleme)",
+    ".gitignore (yalniz ekleme)"
+  ],
+  "A1_gecit_karari": {
+    "_ne": "Karar ajaninin 6 Eyl kararlari ve bu turda UYGULANMALARI. Isci sormustu, karar ajani cevapladi, bu tur uyguladi. Her madde: karar + nerede yasiyor + kanit.",
     "tarih": "2026-09-06",
-    "deger": 34,
-    "kaynak": "testin kendi son satiri: 'FAIL  34 hukum kirmizi (tolerans 2 mm ...)'"
-   }
+    "hukum": "DEVAM — A1b GECTI, A2 ACIK.",
+    "1_devam_mi_dur_mu": {
+      "karar": "DEVAM. Her acik kalem adiyla bir adima bagli; adsiz ENGEL yok.",
+      "acikKalemler": {
+        "olcek_check": "A2 (mutlak bbox orada doguyor)",
+        "flat_ayni_insan_check": "A4 (34, tavan asilmadi)",
+        "sinyal_tam/bundle_fresh_check": "A9",
+        "K2-prenses-roba regresyon dususu": "A2/A4"
+      },
+      "sart": "A2 kapanisinda kosucu --regresyon --taban ile tabani tazeler; A2'den itibaren --ivme hukmu BAGLAYICI.",
+      "uygulandi": "Bu turda taban ZATEN tazelendi (girdi seti degistigi icin): 9 girdi, 8 kosan, fark 0. Komut: bash engine/tests/0509-kapi.sh --regresyon --taban"
+    },
+    "2_on_arka_cifti": {
+      "karar": "(b) VE biba KALIR — ikisi birden.",
+      "uygulandi": {
+        "F1-mary-quant-on-arka": "YENI girdi. mary-quant-O365926-dress(.jpg/-arka.jpg). Arka yuz OLCULDU ve dogrulandi (on paci yok, yaka arka dilimi sirtta, cep yok, kemer kesintisiz). Taban: 53945 B, sha 41a9d361dc66c42c.",
+        "F2-biba-arka-yok": "biba-O1194418 SETTE KALDI, adi degisti, topolojisi 'yalniz on fotograf' (HEDEF 2 / 12.5), arkaYuz 'absent', ilan ADLANDIRMA_CELISKISI. Taban 38443 B / sha 97439210fb732d05 — eski F1 ile BAYT AYNI (diff -q temiz), yani yeniden adlandirma veri kaybetmedi.",
+        "onbellek": "Iki yeni tarif yazildi (f35565a6..., 0147b7cf...), okuyan isci-A1-gecit, Read araci, llmCagri 0.",
+        "eskiTaban": "KOSU/regresyon/taban/F1-biba-on-arka SILINDI, ayri commit, bayt-ayni kaniti mesajda."
+      },
+      "kapsamUyarisi": "16 ciftin 14'u DOGRULANMADI. A2'nin okudugu her yeni cift icin '-arka' dosyasinin gercekten arka olup olmadigi tarifin icine yazilir; isim guvenilir kabul edilmez. Bu uyari girdiler.json icinde F2'nin _kapsamUyarisi alaninda da duruyor."
+    },
+    "3_K2_K5_teshisi": {
+      "karar": "Teshis guncellenir, not SILINMEZ. Iki DUSEN dosyasinin sonuna tarihli blok eklendi.",
+      "uygulandi": {
+        "K5": "beklenen 'DUSER' -> 'CIZER (6 Eyl olcumu)', taban sha 707009d16f027931.",
+        "K2": "beklenen DEGISMEDI (DUSER). Kok sebep K2 icin ayakta ama artik K5'ten destek almiyor.",
+        "A2sarti": "Teshis cupseam.cpp ile yoke.cpp'yi AYRI olcer; 'ayni kok sebep' varsayimindan BASLAMAZ."
+      },
+      "SORULMAYAN_BULGU": {
+        "_neden_burada": "Karar 'K5 CIZIYOR, taban yap' diyordu. Tabani yaparken ikinci bir olcum cikti; karar ajani bunu bilmiyordu.",
+        "bulgu": "K5'in flat'i 03-elbise-kolsuz.svg (duz kolsuz elbise) ile bayt sayisinda AYNI (25663) ve yalniz 5 yolda ayriliyor: dugum, siluet mikro-sapmasi, arka pens boyu (495.0 vs 535.0), bel dikis kacigi (48.168 vs 39.768 mm).",
+        "olcum": "grep -o 'data-rol=\"[^\"]*\"' KOSU/regresyon/taban/K5-kup-korse/flat.svg | sort | uniq -c -> siluet 2, bel-dikisi 4, pens 12, dikis-izi 12, orta-dikis 2. Kup/korse rolu: 0.",
+        "anlami": "K5'i K5 yapan iki spec anahtari (cupSeam:horizontal, laceUpBack:corset) HIC geometri uretmiyor. Cizilen sey kup dikisli korse degil, kolsuz duz elbise. Madde 4 anlaminda SESSIZ DEFAULT, ilan edilmemis.",
+        "yapilan": "Duz 'CIZER' beklentisi bu kusuru yesile boyardi. Beklentiye 'beklenenKusur' bagli: kupDikisiGeometrisi YOK, korseBagcikGeometrisi YOK. A2/A4 bu alanlari DEGISTIRMEK zorunda; taban sha degisip bu satirlar 'YOK' kalirsa cizim gizlice eskiye donmustur.",
+        "not": "K2 ile K5 farki 'biri calisiyor biri bozuk' DEGIL: K2 gorunur sekilde dusuyor, K5 sessizce ozelliksiz ciziyor. Sessiz olan daha tehlikelidir."
+      }
+    },
+    "4_eksik_op_puff_sweetheart_peplum": {
+      "karar": "OP TABLOSU. Spec enum'una 'puff', 'sweetheart', 'peplum' EKLENMEZ.",
+      "gerekce": "HEDEF 1.9: sozluk sabit tabirlerden yapilmaz; sabit menu/limit/sinir bu maddenin ihlali. Sinirsizlik enum'la degil primitiflerle gelir.",
+      "A2kurali": "A2, fotograf tarifiyle motor sozlugu arasindaki her bosluk icin ADIYLA bir 'eksik op' satiri yazar (12.14: 'absent' + en yakin yapilabilir op onerisi); enum'a en yakin degeri SESSIZCE eslemez.",
+      "primitifKarsiliklari": {
+        "peplum": "bel dikisinde ayri panel + hem cizgisi",
+        "sweetheart": "boyun kenarinin iki egri parcasi",
+        "puff": "omuz basinda buzgu payi"
+      },
+      "uygulandi": "A1b'nin scoop=0.75 eslemesi GECICI OKUMA notudur, sozluk karari DEGIL; A2'de op karsiligiyla degistirilir. Yeni mary-quant tarifinde ayni kural uygulandi: enYakinSpec._kayip[] kemer, tam boy dugme paci, kapakli yama cep, kontrast kumas parcasi ve bel-dikisi yoklugunu ADIYLA sayiyor; hicbiri enum'a eklenmedi.",
+      "enumDegismedi": "contract/ dosyalarina enum degeri EKLENMEDI (kilitli alan, dokunulmadi)."
+    },
+    "5_wasm_native_kiyasi": {
+      "karar": "Bugunku kiyas KABUL, ama gecidin ilani duzeltilir.",
+      "uygulandi": {
+        "gecitNotu": "'trap/panic/bellek/native-fark yok' -> '0 trap / 0 fark: bellek sinirli wasm ciktisi == commit li taban (native kiyasi YAPILMADI)'. Eski not olculmemis bir native kiyasini VAAT EDIYORDU.",
+        "nativeKiyasAlani": "Gecit JSON'unda alt alan olarak basiliyor. Degeri UYDURULMUYOR: wasm sanity raporunun kendi nativeKiyasi alanindan okunuyor; alan yoksa 'rapor bu alani basmadi' yaziliyor.",
+        "mekanizma": "gecit_yaz'a 8. opsiyonel alan eklendi ('anahtar=deger'), python okuyucu bunu gecit JSON'una ADLI alan olarak koyuyor.",
+        "kanit": "KOSU/ciktilar/0509-kapi/*.json -> gecitler[wasm_sanity].nativeKiyas"
+      },
+      "hukmunTasidigiIDDIA": "YALNIZ 'bellek sinirli wasm == commit li taban'. 'native == wasm' iddiasini TASIMAZ.",
+      "A2sarti": "A2'de graftan cizim native tarafta doguyorsa, ayni girdi icin native ve wasm ciktisi karsilastirilir ve fark KIRMIZIDIR. Native uretici A2'de de dogmuyorsa gecit bu haliyle kalir ve ilan 'bu urunde native flat yolu YOK' diye kalicilasir. Sart A4'e TASINMAZ."
+    },
+    "6_ivme_muafiyeti": {
+      "karar": "ONAYLANDI. A1b icin KESILME SEBEBI DEGIL; 8.4 ivme kurali urunu ILERLETEN adimlar icindir.",
+      "kapsam": "MUAFIYET DAR. A2'den itibaren ivme BAGLAYICI ve muafiyet YOK — A2/A4 sapmayi kapatmakla yukumlu.",
+      "uyari": "Ayni gerekce A2'de tekrarlanirsa (urun degisiyor ama sapma kapanmiyor) o GERCEK yerel minimumdur ve kesme uygulanir.",
+      "uygulandi": "state.json butce.yerelMinimum satiri KARAR GEREGI OLDUGU GIBI BIRAKILDI."
+    }
   },
-  {
-   "gecit": "sinyal_tam",
-   "alt": "bundle_fresh_check",
-   "sayi": 1,
-   "kaynak": "A1a oncesi",
-   "kapanacakAdim": "A9",
-   "sebep": "sevk edilen wasm paketi kaynagindan eski; paket A9'da wasm WebWorker hattiyla yeniden uretiliyor",
-   "ilanliKirmizi": true,
-   "kirmiziAltTestKumesi": [
-    "bundle_fresh_check"
-   ],
-   "kumeKurali": "bu kumeye YENI ad eklenirse ilan gecersizdir, o adim duser",
-   "sure": "tam kosuda kalir (2 dk 16 sn, adim basi bir kez); --kisa'ya GIRMEZ",
-   "kumeOlcumKomutu": "bash KOSU/sinyal.sh 2>&1 | grep 'KIRMIZI'"
-  }
- ],
- "altAdim": {
-  "A1a": "GECTI",
-  "A1b": "GECTI (teslimler yesil; olcek_check durust henuz-yok, A2 bekliyor)"
- },
- "kararUygulandi": {
-  "karar1": "state.json ilanliKirmizi + kabul komutu H9/H10 (tavan 34) ile olculuyor",
-  "karar2": "state.json ilanliKirmizi + kabul komutu H11 (donuk kume) / H12 (--kisa sinyalsiz)",
-  "karar3": "engine/tests/0509-kapi.sh izlenen_yollar() + cmake_satir_yonu(); kabul komutu H13/H14/H15. A1b'ye devredilmedi, A1a tur 2'de kapandi.",
-  "karar_ajani_2026-09-06": {
-   "karar1_devam": "UYGULANDI: altAdim.A1a=GECTI, A1b=ACIK, acikEngeller[] adiyla yazildi",
-   "karar2_tablo": "UYGULANDI: KOSU/0509-kapi-tablo.py, commit 1e54ab9c",
-   "karar3_H17_sizinti": "A1b YE DEVREDILDI: 0509-kapi.sh --kendi-check icinde H17; ayri dosya YASAK",
-   "karar4_addtest_hedef": "A1b YE DEVREDILDI: cmake_satir_yonu() hedef degisimini de KILIT_IHLALI basar, ilana tabi; 97559b95 geriye donuk ilan edildi"
+  "ivmeMuafiyeti": {
+    "gecerli": false,
+    "_ne": "KARAR 6 (2026-09-06, A1 gecit karari). Bu ILAN olmadan muafiyet YOKTUR; --ivme bu alani okur, adim ADINA bakmaz.",
+    "kapsam": "Gecit KURAN adimlar (A1a/A1b ve bu karar-uygulama turu). 8.4 ivme kurali urunu ILERLETEN adimlar icindir.",
+    "gerekce": "Brief 'URUN DEGISMEZ; motor koduna dokunma' diyor. anaSapmaMM bu turda ilk kez null olmaktan cikip 0.693 oldu; sabit bir urun uzerinde duz seyreden metrik, urunun degismediginin kanitidir, tikanmanin degil.",
+    "biter": "A2'den itibaren muafiyet YOK ve A2/A4 sapmayi kapatmakla yukumlu. A2'ye gecen isci bu alani gecerli:false yapar.",
+    "uyari": "Ayni gerekce A2'de tekrarlanirsa (urun degisiyor ama sapma kapanmiyor) o GERCEK yerel minimumdur ve kesme uygulanir."
   },
-  "A1b_2026-09-06": {
-   "karar3_H17_sizinti": "UYGULANDI: 0509-kapi.sh --kendi-check H17. Tarayicinin KENDI sagligi once olculuyor (sentetik 3/3); bozuk tarayici artik YESIL yanamaz. Iki yonde kanitlandi.",
-   "karar4_addtest_hedef": "UYGULANDI: cmake_satir_yonu() ayni ad silinip eklenmisse 'hedefi degisti' KILIT_IHLALI basar; H18 uc halde olcuyor (hedef degisimi/saf ekleme/saf silme).",
-   "devredilen_kusur1_esik": "KAPANDI: esik /croquis/toleranceMM acik yolundan okunuyor (2.0 mm), alt dize taramasi kaldirildi. Yanlis kirmizi (0.693 > 0.05) yesile dondu; esik GEVSETILMEDI.",
-   "devredilen_kusur2_hukum_sayisi": "KAPANDI: sayi ok()/fail() cagrilarindan uretiliyor, elle yazilmiyor. Ilk duzeltme heredoc'ta kesiliyordu (17 vs 18), o da olculup kapatildi."
-  }
- },
- "acikEngeller": [
-  {
-   "engel": "flat_ayni_insan_check",
-   "sayi": 1,
-   "kapanacakAdim": "A4",
-   "tur": "ILANLI KIRMIZI"
+  "resume": "Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A1\"}",
+  "adimDurumlari": {
+    "A1": "GECTI",
+    "A2": "ISCI"
   },
-  {
-   "engel": "sinyal_tam/bundle_fresh_check",
-   "sayi": 1,
-   "kapanacakAdim": "A9",
-   "tur": "ILANLI KIRMIZI"
-  },
-  {
-   "engel": "olcek_check",
-   "durum": "HENUZ-YOK",
-   "kapanacakAdim": "A2",
-   "neden": "aralik contract/body-v1.json olcekAraligi'na kaynakli eklendi (395-1335 mm); olculecek sey (gercek36'da degerlenmis mutlak bbox) A2'de doguyor"
-  },
-  {
-   "engel": "K2-prenses-roba cizilemiyor",
-   "durum": "REGRESYONDA KOSMUYOR",
-   "kapanacakAdim": "A2/A4",
-   "neden": "roba dikisi kol oyugunu kesiyor, armhole_* rolu tasinmiyor (kendi DUSEN notunda ilan edilmis kok sebep)"
-  }
- ],
- "A1bIzinListesi": [
-  "engine/tests/0509-*",
-  "KOSU/**",
-  "contract/body-v1.json (YALNIZ olcekAraligi ekleme, kaynakli)",
-  "engine/CMakeLists.txt (YALNIZ add_test ekleme)",
-  ".gitignore (yalniz ekleme)"
- ],
- "A1_gecit_karari": {
-  "_ne": "Karar ajaninin 6 Eyl kararlari ve bu turda UYGULANMALARI. Isci sormustu, karar ajani cevapladi, bu tur uyguladi. Her madde: karar + nerede yasiyor + kanit.",
-  "tarih": "2026-09-06",
-  "hukum": "DEVAM — A1b GECTI, A2 ACIK.",
-  "1_devam_mi_dur_mu": {
-   "karar": "DEVAM. Her acik kalem adiyla bir adima bagli; adsiz ENGEL yok.",
-   "acikKalemler": {
-    "olcek_check": "A2 (mutlak bbox orada doguyor)",
-    "flat_ayni_insan_check": "A4 (34, tavan asilmadi)",
-    "sinyal_tam/bundle_fresh_check": "A9",
-    "K2-prenses-roba regresyon dususu": "A2/A4"
-   },
-   "sart": "A2 kapanisinda kosucu --regresyon --taban ile tabani tazeler; A2'den itibaren --ivme hukmu BAGLAYICI.",
-   "uygulandi": "Bu turda taban ZATEN tazelendi (girdi seti degistigi icin): 9 girdi, 8 kosan, fark 0. Komut: bash engine/tests/0509-kapi.sh --regresyon --taban"
-  },
-  "2_on_arka_cifti": {
-   "karar": "(b) VE biba KALIR — ikisi birden.",
-   "uygulandi": {
-    "F1-mary-quant-on-arka": "YENI girdi. mary-quant-O365926-dress(.jpg/-arka.jpg). Arka yuz OLCULDU ve dogrulandi (on paci yok, yaka arka dilimi sirtta, cep yok, kemer kesintisiz). Taban: 53945 B, sha 41a9d361dc66c42c.",
-    "F2-biba-arka-yok": "biba-O1194418 SETTE KALDI, adi degisti, topolojisi 'yalniz on fotograf' (HEDEF 2 / 12.5), arkaYuz 'absent', ilan ADLANDIRMA_CELISKISI. Taban 38443 B / sha 97439210fb732d05 — eski F1 ile BAYT AYNI (diff -q temiz), yani yeniden adlandirma veri kaybetmedi.",
-    "onbellek": "Iki yeni tarif yazildi (f35565a6..., 0147b7cf...), okuyan isci-A1-gecit, Read araci, llmCagri 0.",
-    "eskiTaban": "KOSU/regresyon/taban/F1-biba-on-arka SILINDI, ayri commit, bayt-ayni kaniti mesajda."
-   },
-   "kapsamUyarisi": "16 ciftin 14'u DOGRULANMADI. A2'nin okudugu her yeni cift icin '-arka' dosyasinin gercekten arka olup olmadigi tarifin icine yazilir; isim guvenilir kabul edilmez. Bu uyari girdiler.json icinde F2'nin _kapsamUyarisi alaninda da duruyor."
-  },
-  "3_K2_K5_teshisi": {
-   "karar": "Teshis guncellenir, not SILINMEZ. Iki DUSEN dosyasinin sonuna tarihli blok eklendi.",
-   "uygulandi": {
-    "K5": "beklenen 'DUSER' -> 'CIZER (6 Eyl olcumu)', taban sha 707009d16f027931.",
-    "K2": "beklenen DEGISMEDI (DUSER). Kok sebep K2 icin ayakta ama artik K5'ten destek almiyor.",
-    "A2sarti": "Teshis cupseam.cpp ile yoke.cpp'yi AYRI olcer; 'ayni kok sebep' varsayimindan BASLAMAZ."
-   },
-   "SORULMAYAN_BULGU": {
-    "_neden_burada": "Karar 'K5 CIZIYOR, taban yap' diyordu. Tabani yaparken ikinci bir olcum cikti; karar ajani bunu bilmiyordu.",
-    "bulgu": "K5'in flat'i 03-elbise-kolsuz.svg (duz kolsuz elbise) ile bayt sayisinda AYNI (25663) ve yalniz 5 yolda ayriliyor: dugum, siluet mikro-sapmasi, arka pens boyu (495.0 vs 535.0), bel dikis kacigi (48.168 vs 39.768 mm).",
-    "olcum": "grep -o 'data-rol=\"[^\"]*\"' KOSU/regresyon/taban/K5-kup-korse/flat.svg | sort | uniq -c -> siluet 2, bel-dikisi 4, pens 12, dikis-izi 12, orta-dikis 2. Kup/korse rolu: 0.",
-    "anlami": "K5'i K5 yapan iki spec anahtari (cupSeam:horizontal, laceUpBack:corset) HIC geometri uretmiyor. Cizilen sey kup dikisli korse degil, kolsuz duz elbise. Madde 4 anlaminda SESSIZ DEFAULT, ilan edilmemis.",
-    "yapilan": "Duz 'CIZER' beklentisi bu kusuru yesile boyardi. Beklentiye 'beklenenKusur' bagli: kupDikisiGeometrisi YOK, korseBagcikGeometrisi YOK. A2/A4 bu alanlari DEGISTIRMEK zorunda; taban sha degisip bu satirlar 'YOK' kalirsa cizim gizlice eskiye donmustur.",
-    "not": "K2 ile K5 farki 'biri calisiyor biri bozuk' DEGIL: K2 gorunur sekilde dusuyor, K5 sessizce ozelliksiz ciziyor. Sessiz olan daha tehlikelidir."
-   }
-  },
-  "4_eksik_op_puff_sweetheart_peplum": {
-   "karar": "OP TABLOSU. Spec enum'una 'puff', 'sweetheart', 'peplum' EKLENMEZ.",
-   "gerekce": "HEDEF 1.9: sozluk sabit tabirlerden yapilmaz; sabit menu/limit/sinir bu maddenin ihlali. Sinirsizlik enum'la degil primitiflerle gelir.",
-   "A2kurali": "A2, fotograf tarifiyle motor sozlugu arasindaki her bosluk icin ADIYLA bir 'eksik op' satiri yazar (12.14: 'absent' + en yakin yapilabilir op onerisi); enum'a en yakin degeri SESSIZCE eslemez.",
-   "primitifKarsiliklari": {
-    "peplum": "bel dikisinde ayri panel + hem cizgisi",
-    "sweetheart": "boyun kenarinin iki egri parcasi",
-    "puff": "omuz basinda buzgu payi"
-   },
-   "uygulandi": "A1b'nin scoop=0.75 eslemesi GECICI OKUMA notudur, sozluk karari DEGIL; A2'de op karsiligiyla degistirilir. Yeni mary-quant tarifinde ayni kural uygulandi: enYakinSpec._kayip[] kemer, tam boy dugme paci, kapakli yama cep, kontrast kumas parcasi ve bel-dikisi yoklugunu ADIYLA sayiyor; hicbiri enum'a eklenmedi.",
-   "enumDegismedi": "contract/ dosyalarina enum degeri EKLENMEDI (kilitli alan, dokunulmadi)."
-  },
-  "5_wasm_native_kiyasi": {
-   "karar": "Bugunku kiyas KABUL, ama gecidin ilani duzeltilir.",
-   "uygulandi": {
-    "gecitNotu": "'trap/panic/bellek/native-fark yok' -> '0 trap / 0 fark: bellek sinirli wasm ciktisi == commit li taban (native kiyasi YAPILMADI)'. Eski not olculmemis bir native kiyasini VAAT EDIYORDU.",
-    "nativeKiyasAlani": "Gecit JSON'unda alt alan olarak basiliyor. Degeri UYDURULMUYOR: wasm sanity raporunun kendi nativeKiyasi alanindan okunuyor; alan yoksa 'rapor bu alani basmadi' yaziliyor.",
-    "mekanizma": "gecit_yaz'a 8. opsiyonel alan eklendi ('anahtar=deger'), python okuyucu bunu gecit JSON'una ADLI alan olarak koyuyor.",
-    "kanit": "KOSU/ciktilar/0509-kapi/*.json -> gecitler[wasm_sanity].nativeKiyas"
-   },
-   "hukmunTasidigiIDDIA": "YALNIZ 'bellek sinirli wasm == commit li taban'. 'native == wasm' iddiasini TASIMAZ.",
-   "A2sarti": "A2'de graftan cizim native tarafta doguyorsa, ayni girdi icin native ve wasm ciktisi karsilastirilir ve fark KIRMIZIDIR. Native uretici A2'de de dogmuyorsa gecit bu haliyle kalir ve ilan 'bu urunde native flat yolu YOK' diye kalicilasir. Sart A4'e TASINMAZ."
-  },
-  "6_ivme_muafiyeti": {
-   "karar": "ONAYLANDI. A1b icin KESILME SEBEBI DEGIL; 8.4 ivme kurali urunu ILERLETEN adimlar icindir.",
-   "kapsam": "MUAFIYET DAR. A2'den itibaren ivme BAGLAYICI ve muafiyet YOK — A2/A4 sapmayi kapatmakla yukumlu.",
-   "uyari": "Ayni gerekce A2'de tekrarlanirsa (urun degisiyor ama sapma kapanmiyor) o GERCEK yerel minimumdur ve kesme uygulanir.",
-   "uygulandi": "state.json butce.yerelMinimum satiri KARAR GEREGI OLDUGU GIBI BIRAKILDI."
-  }
- },
- "ivmeMuafiyeti": {
-  "gecerli": false,
-  "_ne": "KARAR 6 (2026-09-06, A1 gecit karari). Bu ILAN olmadan muafiyet YOKTUR; --ivme bu alani okur, adim ADINA bakmaz.",
-  "kapsam": "Gecit KURAN adimlar (A1a/A1b ve bu karar-uygulama turu). 8.4 ivme kurali urunu ILERLETEN adimlar icindir.",
-  "gerekce": "Brief 'URUN DEGISMEZ; motor koduna dokunma' diyor. anaSapmaMM bu turda ilk kez null olmaktan cikip 0.693 oldu; sabit bir urun uzerinde duz seyreden metrik, urunun degismediginin kanitidir, tikanmanin degil.",
-  "biter": "A2'den itibaren muafiyet YOK ve A2/A4 sapmayi kapatmakla yukumlu. A2'ye gecen isci bu alani gecerli:false yapar.",
-  "uyari": "Ayni gerekce A2'de tekrarlanirsa (urun degisiyor ama sapma kapanmiyor) o GERCEK yerel minimumdur ve kesme uygulanir."
- },
- "resume": "Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A1\"}",
- "adimDurumlari": {
-  "A1": "GECTI",
-  "A2": "ISCI"
- },
- "A1_kapanis_notu": "6 Eyl, ana oturum: kosu 8.5 butce asimiyla DURDU olarak kapanmisti, ama hakem A1a ve A1b'yi GECIRDI (altAdim) ve karar ajani hukmu 'DEVAM — A1b GECTI, A2 ACIK' (A1_gecit_karari.hukum). Butce asimi 8.5'e gore protokol hatasi sinyalidir, urun kusuru degil; A1 urunu degistirmedi. Ana oturum kabul komutlarini KENDI kostu ve yesil olduklarini olctu: 'bash engine/tests/0509-kapi.sh --kendi-check' -> OZET 17 hukum gecti, 1 kirmizi (ilanli flat_ayni_insan_check); 'node engine/tests/0509-emsal-olcum.mjs --json' -> JSON dondu; 'node engine/tests/0509-wasm-sanity.mjs' -> JSON dondu, tabandanFark []. Bu yuzden durum GECTI'ye cevrildi; esik gevsetilmedi, verilmis hukum kaydedildi. A1 YENIDEN KOSULMAZ (26 commit tekrar yanmasin); sirada A2."
+  "A1_kapanis_notu": "6 Eyl, ana oturum: kosu 8.5 butce asimiyla DURDU olarak kapanmisti, ama hakem A1a ve A1b'yi GECIRDI (altAdim) ve karar ajani hukmu 'DEVAM — A1b GECTI, A2 ACIK' (A1_gecit_karari.hukum). Butce asimi 8.5'e gore protokol hatasi sinyalidir, urun kusuru degil; A1 urunu degistirmedi. Ana oturum kabul komutlarini KENDI kostu ve yesil olduklarini olctu: 'bash engine/tests/0509-kapi.sh --kendi-check' -> OZET 17 hukum gecti, 1 kirmizi (ilanli flat_ayni_insan_check); 'node engine/tests/0509-emsal-olcum.mjs --json' -> JSON dondu; 'node engine/tests/0509-wasm-sanity.mjs' -> JSON dondu, tabandanFark []. Bu yuzden durum GECTI'ye cevrildi; esik gevsetilmedi, verilmis hukum kaydedildi. A1 YENIDEN KOSULMAZ (26 commit tekrar yanmasin); sirada A2."
 }
