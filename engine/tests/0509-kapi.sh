@@ -35,6 +35,8 @@
 #   bash engine/tests/0509-kapi.sh --kilit-ac      kilidi ac (kosu durunca/bitince)
 #   bash engine/tests/0509-kapi.sh --kilit-diff <tag>  izin disi dokunulan kilitli dosyalari bas
 #   bash engine/tests/0509-kapi.sh --regresyon [--taban]   (A1b kurar; yoksa "kosmadi" der)
+#   bash engine/tests/0509-kapi.sh --kendi-check   A1a KABUL KOMUTU: kapinin kendi cikti
+#                                                  sozlesmesi + A1a'nin uc karari, exit 0/1
 #
 # ESIK KAYNAGI: her gecidin esigi ve kaynagi JSON'da "esik" + "kaynak" alanlarinda.
 # Koda gomulu esik yoktur; sayilar contract/ ve engine/tests/*-baseline.json'dan gelir.
@@ -67,6 +69,31 @@ kilitli_yollar() {
            engine/src/solver_utils.hpp engine/src/solver_utils.cpp; do
     [ -e "$p" ] && echo "$p"
   done
+}
+
+# --kilit-diff'in TARADIGI alan (karar 3, 6 Eyl): kilitli alan + engine/CMakeLists.txt.
+# CMakeLists chmod ile KILITLENMEZ (yazilabilir kalir, test eklemek serbest) ama
+# diff'te gorulunce izin listesine karsi denetlenir ve satir yonu okunur.
+izlenen_yollar() {
+  kilitli_yollar
+  [ -e engine/CMakeLists.txt ] && echo engine/CMakeLists.txt
+  return 0
+}
+
+# SATIR YONU DENETIMI (karar 3): stdin'den bir diff okur; silinen ('-') bir
+# add_test( / add_executable( satiri varsa KILIT_IHLALI basar. Ekleme ('+')
+# temiz sayilir. Gerekce: kirmiziya duen bir gecidin add_test satirini silmek
+# gecidi sessizce yesil yapar; ekleme zararsiz, silme kanit yok ediyor.
+cmake_satir_yonu() {
+  local satir
+  while IFS= read -r satir; do
+    case "$satir" in
+      ---*) continue;;
+      -*add_test\(*|-*add_executable\(*)
+        echo "KILIT_IHLALI engine/CMakeLists.txt silinen satir: ${satir#-}";;
+    esac
+  done
+  return 0
 }
 
 kilit_kur() { # $1 = bosluklu izin listesi (glob)
@@ -108,7 +135,12 @@ kilit_diff() { # $1 = tag; izin listesi $2 (opsiyonel)
   local tag="${1:-}" izin="${2:-}"
   [ -n "$tag" ] || { echo "kullanim: --kilit-diff <tag> [\"izin listesi\"]"; return 2; }
   local alanlar=() p
-  while IFS= read -r p; do alanlar+=("$p"); done < <(kilitli_yollar)
+  while IFS= read -r p; do alanlar+=("$p"); done < <(izlenen_yollar)
+  # karar 3: CMakeLists satir yonu — silinen add_test(/add_executable( = KILIT_IHLALI,
+  # dosya izin listesinde olsa BILE (izin listesi bunu affetmez).
+  if [ -e engine/CMakeLists.txt ]; then
+    git diff "$tag"..HEAD -- engine/CMakeLists.txt 2>>"$LOG" | cmake_satir_yonu
+  fi
   [ ${#alanlar[@]} -gt 0 ] || { echo ""; return 0; }
   local dokunulan
   dokunulan=$(git diff --name-only "$tag"..HEAD -- "${alanlar[@]}" 2>>"$LOG")
@@ -492,6 +524,147 @@ print(json.dumps({"yerelMinimum": hukum, "seri": detay, "satir": len(son)}, ensu
 PY
 }
 
+# ---------------------------------------------------------------- --kendi-check
+# A1a KABUL KOMUTU. Kapinin kendi cikti sozlesmesini ve A1a'nin uc kararini
+# olcer. Ayri dosya DEGIL, bu scriptin bir modu: onceki denemede ayri dosya
+# acmak referans kilidini kirdi (banned[]), kabul komutu izin listesindeki
+# dosyanin icinde yasar.
+# Her hukum tek satir: "OK  <ad>" / "FAIL <ad>: <sebep>". Son satir ozet.
+# exit 0 = tum hukumler gecti, 1 = en az bir hukum kirmizi.
+kendi_check() {
+  local gecti=0 kaldi=0 out rc
+  ok()   { printf 'OK   %s\n' "$1"; gecti=$((gecti+1)); }
+  fail() { printf 'FAIL %s: %s\n' "$1" "$2"; kaldi=$((kaldi+1)); }
+
+  # --- H1: --kisa TEK satir basar, bos degil
+  out=$("$0" --kisa 2>/dev/null); rc=$?
+  if [ -z "$out" ]; then fail "H1 kisa-bos" "--kisa hic satir basmadi (rc=$rc)"
+  elif [ "$(printf '%s\n' "$out" | wc -l | tr -d ' ')" != "1" ]; then
+    fail "H1 kisa-tek-satir" "$(printf '%s\n' "$out" | wc -l | tr -d ' ') satir basti, 1 bekleniyor"
+  else ok "H1 kisa-tek-satir"; fi
+
+  # --- H2: --kisa ciktisi gecerli JSON
+  if printf '%s' "$out" | python3 -m json.tool >/dev/null 2>&1; then ok "H2 kisa-json"
+  else fail "H2 kisa-json" "python3 -m json.tool gecmedi: $out"; fi
+
+  # --- H3: --kisa'da dort alan var ve enum sayisal (bos degisken yasagi)
+  if printf '%s' "$out" | python3 -c '
+import json,sys
+d=json.load(sys.stdin)
+for a in ("commit","anaSapmaMM","enum","kirmizi","tarih"):
+    assert a in d, "eksik alan: "+a
+assert isinstance(d["enum"],(int,float)), "enum sayisal degil: %r"%d["enum"]
+assert isinstance(d["kirmizi"],(int,float)), "kirmizi sayisal degil: %r"%d["kirmizi"]
+' 2>/dev/null; then ok "H3 kisa-alanlar"
+  else fail "H3 kisa-alanlar" "alan eksik ya da enum/kirmizi sayisal degil"; fi
+
+  # --- H4: bilinmeyen mod sessiz gecmez, adiyla ret (madde 4)
+  out=$("$0" --uydurma-mod 2>/dev/null); rc=$?
+  if [ "$rc" = "3" ] && printf '%s' "$out" | grep -q 'BILINMEYEN_MOD'; then ok "H4 bilinmeyen-mod-ret"
+  else fail "H4 bilinmeyen-mod-ret" "rc=$rc cikti=$out (rc=3 + BILINMEYEN_MOD bekleniyor)"; fi
+
+  # --- H5: --ivme sayisal metrik yoksa false doner, NaN/exception degil
+  out=$("$0" --ivme 2>/dev/null)
+  if printf '%s' "$out" | python3 -c '
+import json,sys
+d=json.load(sys.stdin)
+assert isinstance(d.get("yerelMinimum"),bool), "yerelMinimum bool degil"
+assert "nan" not in json.dumps(d).lower(), "NaN sizdi"
+' 2>/dev/null; then ok "H5 ivme-bool"
+  else fail "H5 ivme-bool" "ivme JSON degil / bool degil / NaN: $out"; fi
+
+  # --- H6: --kilit-diff tag'siz cagrilirsa kullanim basar, rc=2
+  out=$("$0" --kilit-diff 2>/dev/null); rc=$?
+  if [ "$rc" = "2" ]; then ok "H6 kilit-diff-tagsiz"
+  else fail "H6 kilit-diff-tagsiz" "rc=$rc (2 bekleniyor)"; fi
+
+  # --- H7: referans kilidi kurulu (kilitli alanda salt-okunur dosya var)
+  local yazilabilir
+  yazilabilir=$(while IFS= read -r p; do find "$p" -type f -perm -u+w 2>/dev/null; done < <(kilitli_yollar) \
+                | grep -v '0509-kapi\.sh$' | wc -l | tr -d ' ')
+  if [ "${yazilabilir:-99}" -le 2 ]; then ok "H7 kilit-kurulu (izin disi yazilabilir: ${yazilabilir})"
+  else fail "H7 kilit-kurulu" "kilitli alanda ${yazilabilir} yazilabilir dosya var, kilit acik"; fi
+
+  # --- H8: state.json gecerli JSON ve zorunlu alanlari var
+  if python3 -c '
+import json
+d=json.load(open("KOSU/0509-state.json"))
+for a in ("adim","durum","deneme","butce","banned","devredilen","ilkYesil","kabulKomutlari"):
+    assert a in d, "eksik alan: "+a
+' 2>/dev/null; then ok "H8 state-semasi"
+  else fail "H8 state-semasi" "KOSU/0509-state.json bozuk ya da alan eksik"; fi
+
+  # --- H9 (karar 1): flat_ayni_insan_check ilanli kirmizi, tavan 34, kapanacak adim A4
+  if python3 -c '
+import json
+d=json.load(open("KOSU/0509-state.json"))
+k=[x for x in d.get("ilanliKirmizi",[]) if x.get("gecit")=="flat_ayni_insan_check"]
+assert k, "ilanliKirmizi listesinde flat_ayni_insan_check yok"
+k=k[0]
+assert k.get("tavan")==34, "tavan 34 degil: %r"%k.get("tavan")
+assert k.get("kapanacakAdim")=="A4", "kapanacak adim A4 degil: %r"%k.get("kapanacakAdim")
+' 2>/dev/null; then ok "H9 karar1-flat-ayni-insan"
+  else fail "H9 karar1-flat-ayni-insan" "ilan/tavan 34/kapanacakAdim A4 state.json'da yok"; fi
+
+  # --- H10 (karar 1): tavan asilmadi — gecidin bugunku sayisi <= 34
+  local sayi
+  sayi=$(ctest --test-dir "$BUILD" -R '^flat_ayni_insan_check$' -j1 --output-on-failure 2>>"$LOG" \
+         | sed -n 's/.*[^0-9]\([0-9][0-9]*\) hukum kirmizi.*/\1/p' | head -1)
+  if [ -z "${sayi:-}" ]; then fail "H10 karar1-tavan" "sayi olculemedi (ctest ciktisi eslesmedi), log: $LOG"
+  elif [ "$sayi" -le 34 ]; then ok "H10 karar1-tavan (sayi=$sayi <= 34)"
+  else fail "H10 karar1-tavan" "sayi=$sayi > tavan 34"; fi
+
+  # --- H11 (karar 2): sinyal_tam ilani, dondurulmus alt test kumesi
+  if python3 -c '
+import json
+d=json.load(open("KOSU/0509-state.json"))
+k=[x for x in d.get("ilanliKirmizi",[]) if x.get("gecit")=="sinyal_tam"]
+assert k, "ilanliKirmizi listesinde sinyal_tam yok"
+k=k[0]
+assert k.get("kapanacakAdim")=="A9", "kapanacak adim A9 degil: %r"%k.get("kapanacakAdim")
+assert k.get("kirmiziAltTestKumesi")==["bundle_fresh_check"], "alt test kumesi donuk degil: %r"%k.get("kirmiziAltTestKumesi")
+' 2>/dev/null; then ok "H11 karar2-sinyal-kume"
+  else fail "H11 karar2-sinyal-kume" "sinyal_tam ilani / A9 / donuk kume {bundle_fresh_check} state.json'da yok"; fi
+
+  # --- H12 (karar 2): sinyal_tam --kisa'ya GIRMEZ (ucuz yol sinyal.sh cagirmaz)
+  if "$0" --kisa >/dev/null 2>&1 && ! grep -q 'sinyal_gecit\|sinyal\.sh' <(sed -n '/^kisa() {/,/^}/p' "$0"); then
+    ok "H12 karar2-kisa-sinyalsiz"
+  else fail "H12 karar2-kisa-sinyalsiz" "--kisa govdesinde sinyal.sh cagrisi var"; fi
+
+  # --- H13 (karar 3): --kilit-diff engine/CMakeLists.txt'i IZLIYOR
+  if grep -q 'engine/CMakeLists.txt' <(sed -n '/^izlenen_yollar()/,/^}/p' "$0"); then ok "H13 karar3-cmake-izlenir"
+  else fail "H13 karar3-cmake-izlenir" "izlenen_yollar() icinde engine/CMakeLists.txt yok"; fi
+
+  # --- H14 (karar 3): CMakeLists KILIDE ALINMAZ (yazilabilir kalir)
+  if [ -w engine/CMakeLists.txt ]; then ok "H14 karar3-cmake-yazilabilir"
+  else fail "H14 karar3-cmake-yazilabilir" "engine/CMakeLists.txt salt-okunur; karar 3 kilide ALINMAZ diyor"; fi
+
+  # --- H15 (karar 3): satir yonu denetimi — silinen add_test( yakalanir
+  #    sentetik diff uzerinde olculur, repoya dokunmaz
+  local sy
+  sy=$(printf -- '-add_test(NAME olu_gecit COMMAND x)\n+add_test(NAME yeni COMMAND y)\n' | cmake_satir_yonu)
+  if printf '%s' "$sy" | grep -q 'KILIT_IHLALI'; then ok "H15 karar3-satir-yonu"
+  else fail "H15 karar3-satir-yonu" "silinen add_test( satiri KILIT_IHLALI basmadi: $sy"; fi
+
+  # --- H16: kabul komutlari state.json'da ve hepsi VAR olan dosyaya isaret ediyor
+  if python3 -c '
+import json,os,shlex
+d=json.load(open("KOSU/0509-state.json"))
+ks=d.get("kabulKomutlari",[])
+assert ks, "kabulKomutlari bos"
+for k in ks:
+    parts=shlex.split(k)
+    yol=[p for p in parts if "/" in p]
+    for p in yol:
+        assert os.path.exists(p), "kabul komutu olmayan dosyaya isaret ediyor: "+p
+' 2>/dev/null; then ok "H16 kabul-komutu-var"
+  else fail "H16 kabul-komutu-var" "kabulKomutlari bos ya da silinmis dosyaya isaret ediyor"; fi
+
+  printf 'OZET %s hukum gecti, %s kirmizi\n' "$gecti" "$kaldi"
+  [ "$kaldi" -eq 0 ] && return 0
+  return 1
+}
+
 # ---------------------------------------------------------------- ana akis
 MOD="${1:-tam}"
 case "$MOD" in
@@ -501,6 +674,7 @@ case "$MOD" in
   --kisa)       kisa; exit $?;;
   --ivme)       ivme; exit 0;;
   --regresyon)  regresyon "${2:-}"; exit $?;;
+  --kendi-check) kendi_check; exit $?;;
   tam|"")       ;;
   *)            echo "{\"hata\":\"BILINMEYEN_MOD\",\"mod\":\"$MOD\"}"; exit 3;;
 esac

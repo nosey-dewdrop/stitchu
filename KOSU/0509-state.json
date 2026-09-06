@@ -25,8 +25,7 @@
   },
   "regresyonTabani": null,
   "kabulKomutlari": [
-    "bash engine/tests/0509-kapi-kendi-check.sh",
-    "bash engine/tests/0509-karar-kabul.sh"
+    "bash engine/tests/0509-kapi.sh --kendi-check"
   ],
   "devredilen": [
     "[ILANLI KIRMIZI] flat_ayni_insan_check = 34 (A1a oncesi). Kapanacak adim: A4 (A4'un kabul sarti bu gecidin YESIL olmasi; kirmizi kalirsa A4 GECMEZ). TAVAN 34: A2 ve A3'te sayi artarsa o adim duser. gecitYesil hesabinda dusurulmez, JSON'da KIRMIZI basilir, sayi her adimda metrige yazilir.",
@@ -53,6 +52,12 @@
       "adim": "A1a",
       "soru": "engine/CMakeLists.txt kilide alinsin mi?",
       "karar": "Kilide ALINMAZ, IZLEMEYE alinir: --kilit-diff alanina eklenir + satir yonu denetimi (silinen add_test(/add_executable( satiri = KILIT_IHLALI, izin listesinde olsa bile). Uygulama A1b'nin teslimi"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1a tur 2",
+      "soru": "Referans kilidi ihlaliyle geri alinan 4 dosya kabul komutunu bosa dusurdu; nasil kapanir?",
+      "karar": "Kabul komutu AYRI DOSYA olmaz: engine/tests/0509-kapi.sh --kendi-check modu (izin listesindeki dosyanin icinde). ctest kapi_sozlesme_check bu moda yonlendirildi (add_test SILINMEDI, hedefi degisti). Karar 3'un izlenen_yollar()+cmake_satir_yonu() uygulamasi da bu modda olculuyor."
     }
   ],
   "ilkYesil": {},
