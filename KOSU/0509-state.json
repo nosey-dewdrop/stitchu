@@ -32,7 +32,9 @@
     "[ILANLI KIRMIZI] flat_ayni_insan_check = 34 (A1a oncesi). Kapanacak adim: A4 (A4'un kabul sarti bu gecidin YESIL olmasi; kirmizi kalirsa A4 GECMEZ). TAVAN 34: A2 ve A3'te sayi artarsa o adim duser. gecitYesil hesabinda dusurulmez, JSON'da KIRMIZI basilir, sayi her adimda metrige yazilir.",
     "[ILANLI KIRMIZI] sinyal_tam / bundle_fresh_check = 1 (A1a oncesi). Kapanacak adim: A9 (paket + tarayici wasm hatti yeniden uretilir). Kirmizi alt test kumesi DONDU: {bundle_fresh_check}; kumeye yeni ad eklenirse ilan gecersiz, o adim duser. sinyal_tam tam kosuda kalir (adim basi bir kez, ~2 dk 16 sn), --kisa'ya GIRMEZ."
   ],
-  "banned": [],
+  "banned": [
+    "izin disi dokunus: engine/tests/0509-kapi-kendi-check.sh, engine/tests/0509-kapi-sizinti.py, engine/tests/0509-kapi-tablo.mjs, engine/tests/0509-karar-kabul.sh"
+  ],
   "kararDefteri": [
     {
       "tarih": "2026-09-06",
