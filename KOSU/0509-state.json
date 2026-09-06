@@ -21,10 +21,64 @@
   "kabulKomutlari": [
     "bash engine/tests/0509-kapi-kendi-check.sh"
   ],
-  "devredilen": [],
+  "devredilen": [
+    "[ILANLI KIRMIZI] flat_ayni_insan_check = 34 (A1a oncesi). Kapanacak adim: A4 (A4'un kabul sarti bu gecidin YESIL olmasi; kirmizi kalirsa A4 GECMEZ). TAVAN 34: A2 ve A3'te sayi artarsa o adim duser. gecitYesil hesabinda dusurulmez, JSON'da KIRMIZI basilir, sayi her adimda metrige yazilir.",
+    "[ILANLI KIRMIZI] sinyal_tam / bundle_fresh_check = 1 (A1a oncesi). Kapanacak adim: A9 (paket + tarayici wasm hatti yeniden uretilir). Kirmizi alt test kumesi DONDU: {bundle_fresh_check}; kumeye yeni ad eklenirse ilan gecersiz, o adim duser. sinyal_tam tam kosuda kalir (adim basi bir kez, ~2 dk 16 sn), --kisa'ya GIRMEZ."
+  ],
   "banned": [],
-  "kararDefteri": [],
+  "kararDefteri": [
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1a",
+      "soru": "flat_ayni_insan_check kirmizi mi kalsin, pinlensin mi?",
+      "karar": "KIRMIZI kalir, henuz-yok'a CEVRILMEZ; devredilen[] ilanli kirmizi, tavan 34, pin A4'te kalkar"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1a",
+      "soru": "sinyal_tam icin yeni adim acilsin mi?",
+      "karar": "Acilmaz; devredilen[] ilanli kirmizi, alt test kumesi dondu (bundle_fresh_check), kapanacak adim A9, --kisa'ya girmez"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1a",
+      "soru": "engine/CMakeLists.txt kilide alinsin mi?",
+      "karar": "Kilide ALINMAZ, IZLEMEYE alinir: --kilit-diff alanina eklenir + satir yonu denetimi (silinen add_test(/add_executable( satiri = KILIT_IHLALI, izin listesinde olsa bile). Uygulama A1b'nin teslimi"
+    }
+  ],
   "ilkYesil": {},
   "kapi": "engine/tests/0509-kapi.sh",
-  "kapiGorsel": "KOSU/ciktilar/0509-kapi/gecit-tablosu.png"
+  "kapiGorsel": "KOSU/ciktilar/0509-kapi/gecit-tablosu.png",
+  "ilanliKirmizi": [
+    {
+      "gecit": "flat_ayni_insan_check",
+      "sayi": 34,
+      "kaynak": "A1a oncesi",
+      "kapanacakAdim": "A4",
+      "sebep": "urun yolu flat-from-pattern.js EU38; graftan cizim A2'de gelir, croquis konvansiyonu A4'te oturur",
+      "tavan": 34,
+      "tavanKurali": "A2 ve A3'te sayi 34'u ASAMAZ; asarsa o adim duser",
+      "ilanliKirmizi": true,
+      "hesapta": "gecitYesil hesabinda dusurulmez; JSON'da KIRMIZI basilmaya devam eder, sayisi her adimda metrige yazilir",
+      "pinKalkar": "A4 kapanisi; A4'un kabul sarti bu gecidin YESIL olmasi, kirmizi kalirsa A4 GECMEZ"
+    },
+    {
+      "gecit": "sinyal_tam",
+      "alt": "bundle_fresh_check",
+      "sayi": 1,
+      "kaynak": "A1a oncesi",
+      "kapanacakAdim": "A9",
+      "sebep": "sevk edilen wasm paketi kaynagindan eski; paket A9'da wasm WebWorker hattiyla yeniden uretiliyor",
+      "ilanliKirmizi": true,
+      "kirmiziAltTestKumesi": [
+        "bundle_fresh_check"
+      ],
+      "kumeKurali": "bu kumeye YENI ad eklenirse ilan gecersizdir, o adim duser",
+      "sure": "tam kosuda kalir (2 dk 16 sn, adim basi bir kez); --kisa'ya GIRMEZ"
+    }
+  ],
+  "altAdim": {
+    "A1a": "GECTI",
+    "A1b": "ACIK"
+  }
 }
