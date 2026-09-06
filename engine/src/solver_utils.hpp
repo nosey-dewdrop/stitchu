@@ -105,7 +105,9 @@ struct Sonuc {
     std::string enKotuSertKisit;               // o kisitin adi
     std::string gevsetilmesiGereken;           // ERR_UNSOLVABLE'da: hangi kisit gevsetilmeli
     std::vector<std::string> birakilanHedefler;// tavan dolunca birakilan yumusak hedef adlari
-    bool yakinsadi() const { return durum == Durum::OK; }
+    // Durum kodu bir CIKTI ETIKETIDIR; cagiran taraf da akisini enum karsilastirmasina
+    // baglamasin diye kullanisli yordamlar ADIYLA verilir (durumAdi ile birlikte).
+    bool hataVar() const { return !hata.empty() && noktalar.empty(); }
 };
 
 // TEK GIRIS. Girdi problem DEGISTIRILMEZ (saf); ilk tahmin problem.dugumler[].p'dir.

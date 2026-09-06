@@ -217,6 +217,9 @@ Sonuc coz(const Problem& pr, const SolverCtx& ctx) {
     };
 
     bool yumusakBirakildi = false;
+    // Yakinsama enum KARSILASTIRMASIYLA degil bool ile tasinir: durum kodu bir cikti
+    // etiketidir, akis degiskeni degil (enum dallanma circiri, engine/tests/enum_dallanma_check.sh).
+    bool yakinsadi = false;
     int it = 0;
     for (; it < ctx.maxIter; ++it) {
         // 1. YUMUSAK: yay kuvvetleri (birakilmadiysa)
@@ -244,6 +247,7 @@ Sonuc coz(const Problem& pr, const SolverCtx& ctx) {
         std::string enKotu;
         const double artik = sertArtik(P, pr, enKotu);
         if (artik <= ctx.yakinsamaMM) {
+            yakinsadi = true;
             R.durum = Durum::OK;
             R.enBuyukSertArtikMM = artik;
             R.enKotuSertKisit = enKotu;
@@ -254,7 +258,7 @@ Sonuc coz(const Problem& pr, const SolverCtx& ctx) {
     }
 
     // --- tavan dolduysa: yumusak hedefleri BIRAK, sert kisitlari son bir turla koru
-    if (R.durum != Durum::OK) {
+    if (!yakinsadi) {
         yumusakBirakildi = true;
         for (const YumusakHedef& y : pr.yumusakHedefler) R.birakilanHedefler.push_back(y.ad);
         // sert kisitlarin kendi butcesi: yumusak kuvvet olmadan tekrar projekte et.
@@ -268,9 +272,10 @@ Sonuc coz(const Problem& pr, const SolverCtx& ctx) {
         const double artik = sertArtik(P, pr, enKotu);
         R.enBuyukSertArtikMM = artik;
         R.enKotuSertKisit = enKotu;
+        const bool yumusakVardi = !pr.yumusakHedefler.empty();
         if (artik <= ctx.yakinsamaMM) {
-            R.durum = pr.yumusakHedefler.empty() ? Durum::OK : Durum::YUMUSAK_BIRAKILDI;
-            if (R.durum == Durum::YUMUSAK_BIRAKILDI) {
+            R.durum = yumusakVardi ? Durum::YUMUSAK_BIRAKILDI : Durum::OK;
+            if (yumusakVardi) {
                 R.hata = "tavan doldu, yumusak hedefler birakildi; sert kisitlar saglandi";
             } else {
                 R.birakilanHedefler.clear();
