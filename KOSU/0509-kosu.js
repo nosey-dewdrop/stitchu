@@ -539,10 +539,26 @@ const ilerle = r => r && (r.gecti || r.devamKarari)
 const notu = r => (r && r.hukum && r.hukum.sonrakiFazaNot) || ''
 const yenidenAcildi = {}   // 0509 (11.7): ayni adim ikinci kez -> zincirleme, dur
 
+// --- ilanli kirmizi (karar 6 Eyl): kaynak state.json ilanliKirmizi[]; kod icinde sabit gecit adi YOK
+function ilanliKayitlar() {
+  try { const j = JSON.parse(require('fs').readFileSync(STATE, 'utf8')); return Array.isArray(j.ilanliKirmizi) ? j.ilanliKirmizi : [] } catch (e) { return [] }
+}
+function ilanliKirmiziKumesi() { return new Set(ilanliKayitlar().map(r => r.gecit)) }
+function ilanliAd(k) { return String(k).split(/[\s:(\/]/)[0] }   // "sinyal_tam (3/27)" -> "sinyal_tam"
+function ilanliKayit(ad) { return ilanliKayitlar().find(r => r.gecit === ad) || null }
+
 async function adimKos(faz, ekNot) {
   const bas = await el('basla', faz, { izin: faz.izin || '' })
   if (!bas) return { gecti: false, isci: null, hukum: { neden: 'ALTYAPI: el (basla) iki kez oldu', kusurlar: [], rewardHacking: [] }, altyapi: true }
-  if (!bas.gecitYesil) ekNot = `ONCE ONAR (7.5): adim baslamadan onceki kabul komutlari/gecitler KIRMIZI: ${bas.kirmizilar.join('; ')}. Bunlari kok sebepten onar (bu onarim bu adimin butcesinden duser), sonra adimin isine gec.\n` + (ekNot || '')
+  // karar 6 Eyl: ILANLI KIRMIZI (state.json ilanliKirmizi[]) "once onar" listesinden DUSULUR — kapanacagi adim adiyla yazili,
+  // o adimda kabul sarti olur. Susturma degil: adiyla ilan edilir, tavani/kumesi hatirlatilir. Ilanli olmayan kirmizi aynen onarilir.
+  {
+    const ilanli = ilanliKirmiziKumesi()
+    const ilanliGorulen = (bas.kirmizilar || []).filter(k => ilanli.has(ilanliAd(k)))
+    const gercekKirmizi = (bas.kirmizilar || []).filter(k => !ilanli.has(ilanliAd(k)))
+    if (gercekKirmizi.length) ekNot = `ONCE ONAR (7.5): adim baslamadan onceki kabul komutlari/gecitler KIRMIZI: ${gercekKirmizi.join('; ')}. Bunlari kok sebepten onar (bu onarim bu adimin butcesinden duser), sonra adimin isine gec.\n` + (ekNot || '')
+    if (ilanliGorulen.length) ekNot = `ILANLI KIRMIZI (onarma, kapanacagi adim yazili): ${ilanliGorulen.map(k => { const r = ilanliKayit(ilanliAd(k)); return `${k} -> ${r ? r.kapanacakAdim : '?'}${r && r.tavan ? ` (tavan ${r.tavan}, ASILAMAZ)` : ''}${r && r.kirmiziAltTestKumesi ? ` (alt kume dondu: ${r.kirmiziAltTestKumesi.join(',')}; yeni ad eklenirse ilan gecersiz)` : ''}` }).join(' ; ')}. Bu adimda BUNLARA DOKUNMA; sayi artarsa adim duser.\n` + (ekNot || '')
+  }
   if (ALT[faz.no]) {   // 9.7: buyuk adim, alt adim basina isci; hakem her alt adimi olcer
     let son = null
     for (const alt of ALT[faz.no]) {
