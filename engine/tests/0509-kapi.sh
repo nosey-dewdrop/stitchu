@@ -288,22 +288,22 @@ emsal_gecit() {
     return
   fi
   sapma=$(emsal_olc)
+  # ESIK: ACIK YOL ile okunur, alt dize taramasiyla DEGIL.
+  # A1 gecit hakemi (6 Eyl) kusuru: eski okuyucu contract icinde adinda
+  # 'tolerans' gecen ILK sayisal anahtari aliyordu; o anahtar
+  # /sevkPoz/yakaParcasi/boyToleransOran = 0.05, yani BIRIMSIZ BIR ORAN.
+  # Gercek mm toleransi /croquis/toleranceMM = 2.0 ('toleranceMM' ingilizce
+  # yazildigi icin taramaya hic girmiyordu). Bir MILIMETRE sapmasi birimsiz bir
+  # orana vuruluyordu: esik gevsemiyor, 40 kat SIKILASIYORDU — yani gecit
+  # olmayan bir geometri kusuru icin YANLIS KIRMIZI yaniyordu.
+  # Olculdu (6 Eyl, A1b): anaSapmaMM 0.693 mm, eski okuyucuyla esik 0.05 ->
+  # KIRMIZI; acik yolla esik 2.0 -> YESIL. Esik GEVSETILMEDI, contract'ta
+  # yazili olan mm toleransi dogru anahtardan okundu.
   esik=$(python3 -c "
-import json
+import json,sys
 c=json.load(open('contract/flat-convention-v1.json'))
-def bul(o):
-  if isinstance(o,dict):
-    for k,v in o.items():
-      if 'tolerans' in k.lower() or 'toleransMM'==k:
-        if isinstance(v,(int,float)): return v
-      r=bul(v)
-      if r is not None: return r
-  elif isinstance(o,list):
-    for v in o:
-      r=bul(v)
-      if r is not None: return r
-  return None
-v=bul(c); print('' if v is None else v)" 2>>"$LOG")
+v=c.get('croquis',{}).get('toleranceMM')
+print('' if not isinstance(v,(int,float)) or isinstance(v,bool) else v)" 2>>"$LOG")
   if [ -z "${sapma:-}" ]; then
     gecit_yaz "emsal_mm_olcum" "CRASH" null "${esik:-null}" "contract/flat-convention-v1.json" "olcum JSON'unda anaSapmaMM yok" "$bas"
     return
@@ -312,7 +312,7 @@ v=bul(c); print('' if v is None else v)" 2>>"$LOG")
   hukum=$(python3 -c "
 s=float('${sapma}'); e='${esik:-}'
 print('YESIL' if (e!='' and s<=float(e)) else ('KIRMIZI' if e!='' else 'HENUZ-YOK'))" 2>>"$LOG")
-  gecit_yaz "emsal_mm_olcum" "${hukum:-CRASH}" "$sapma" "${esik:-null}" "contract/flat-convention-v1.json (tolerans mm)" "emsale ana sapma" "$bas"
+  gecit_yaz "emsal_mm_olcum" "${hukum:-CRASH}" "$sapma" "${esik:-null}" "contract/flat-convention-v1.json /croquis/toleranceMM" "emsale ana sapma (medyan, mm); olcum engine/tests/0509-emsal-olcum.mjs" "$bas"
 }
 
 # ---------------------------------------------------------------- olcek gecidi (A1b)
@@ -690,7 +690,14 @@ ctest_gecit parca_sayisi_check     "parca sayisi kaliptaki ile ayni"            
 ctest_gecit edit_locality_check    "edit locality: contract/edit-locality-v1.json"          "engine/CMakeLists.txt:1257 add_test(edit_locality_check)"
 ctest_gecit flat_ayni_insan_check  "flat'ler ayni insana: contract ayniInsan, tolerans 2 mm" "engine/CMakeLists.txt:1490 add_test(flat_ayni_insan_check)"
 ctest_gecit edge_case_supurme_check "kenar durum supurmesi: 0 sessiz default"               "engine/CMakeLists.txt:498 add_test(edge_case_supurme_check)"
-ctest_gecit kapi_sozlesme_check    "kapi.sh cikti sozlesmesi: 13 hukum"                      "engine/CMakeLists.txt add_test(kapi_sozlesme_check)"
+# HUKUM SAYISI URETILIR, ELLE YAZILMAZ. A1 gecit hakemi kusuru (6 Eyl):
+# etiket "13 hukum" diyordu, kabul komutunun kendi ozeti "16 hukum gecti"
+# basiyordu — tur 2'de H14/H15/H16 eklenmis, etiket guncellenmemisti. Hicbir
+# esik bundan turemiyordu ama Damla'nin gordugu JSON'da kapinin KENDI hukum
+# sayisi gercekle celisiyordu. Cozum: sayiyi kendi_check govdesindeki AYRIK
+# H-numaralarindan say; etiket artik guncellenmeyi UNUTAMAZ.
+HUKUM_SAYISI=$(sed -n '/^kendi_check() {/,/^}/p' "$0" 2>>"$LOG" | grep -oE '"H[0-9]+' | sort -u | wc -l | tr -d ' ')
+ctest_gecit kapi_sozlesme_check    "kapi.sh cikti sozlesmesi: ${HUKUM_SAYISI:-?} hukum (kaynaktan sayildi, elle yazilmadi)" "engine/CMakeLists.txt add_test(kapi_sozlesme_check)"
 
 # 2) enum dallanma circiri (--measure; taban yalniz duser)
 enum_gecit
