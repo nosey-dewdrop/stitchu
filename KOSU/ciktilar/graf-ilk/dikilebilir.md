@@ -1,6 +1,6 @@
 # Dikilebilirlik — graftan cizime, her dikis cifti iki taraf (0509 A2b)
 
-Kaynak: `engine/build/grafdogrula <graf.json> <bodyId> --json` (motorun kendi hukmu). Graf: `KOSU/ciktilar/graf-ilk/graf.json` (`undefined`). Bu tablo hesap yapmaz, motorun sayilarini basar.
+Kaynak: `engine/build/grafdogrula <graf.json> <bodyId> --json` (motorun kendi hukmu). Graf: `KOSU/ciktilar/graf-ilk/graf.json` (`taban-elbise`). Bu tablo hesap yapmaz, motorun sayilarini basar.
 
 ## Esikler (contract/graf-v1.json)
 

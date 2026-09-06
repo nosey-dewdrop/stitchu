@@ -26,7 +26,7 @@ const tol = Object.fromEntries((r0.toleranslar || []).map((t) => [t.ad, t]));
 
 let md = `# Dikilebilirlik — graftan cizime, her dikis cifti iki taraf (0509 A2b)\n\n`;
 md += `Kaynak: \`engine/build/grafdogrula <graf.json> <bodyId> --json\` (motorun kendi hukmu). `;
-md += `Graf: \`${G}\` (\`${r0.grafId}\`). Bu tablo hesap yapmaz, motorun sayilarini basar.\n\n`;
+md += `Graf: \`${G}\` (\`${r0.graf}\`). Bu tablo hesap yapmaz, motorun sayilarini basar.\n\n`;
 
 md += `## Esikler (contract/graf-v1.json)\n\n| tolerans | mm | kaynak |\n|---|---|---|\n`;
 for (const t of r0.toleranslar || []) md += `| ${t.ad} | ${f2(t.mm)} | ${String(t.kaynak).slice(0, 220)} |\n`;
