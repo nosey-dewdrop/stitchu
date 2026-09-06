@@ -202,3 +202,4 @@ enum 436->436->436). İlerleyen: `olcek_check` 990.00 mm YEŞİL, `sanalDikisMM`
 Resume: `Workflow scriptPath=KOSU/0509-kosu.js args={"baslat":"A2"}`.
 2026-09-06 16:41 | A2 | BASLADI
 2026-09-06 17:21 | A2a | BASLADI (tag adim-A2a-once, kilit kuruldu, kapi exit=1: flat_ayni_insan_check=1 ILANLI + kapi_sozlesme_check=1 ILAN DISI)
+2026-09-06 | A2 | DURDU (8.29) — hakem DUR. 3 satış engeli: kapanma yok (giyilemez), sıfır pens (107.5mm supresyon emilmiyor), sanalDikisMM=0.00 yapısal/vacuous (6 dikişten 5'i çözücüye girmiyor, ringQuarter özdeşliği; bust/hip halkası yok). Bu turda ürün üretilmedi: `adim-A2a-once..HEAD -- engine/src` BOŞ. Devredilen: K2-prenses-roba -> A4, flat_ayni_insan_check=34 -> A4, bundle_fresh_check -> A9. Ayrıntı: `KOSU/0509-DURDU.md`. Resume: `Workflow scriptPath=KOSU/0509-kosu.js args={"baslat":"A2"}`. Kilit açık.

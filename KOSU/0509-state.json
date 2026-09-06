@@ -1,6 +1,6 @@
 {
   "adim": "A2",
-  "durum": "ISCI",
+  "durum": "DURDU",
   "deneme": 1,
   "butce": {
     "tag": "adim-A2a-once",
@@ -377,7 +377,7 @@
     "Q1_esik_alti_karari_2026-09-06": "KARAR (2.13, A2 karar ajani): ESIK ALTINDAKI METRIK IVMEDEN MUAFTIR — KURAL OKUMASI olarak, muafiyet ILANI olarak DEGIL. Bu alan (/ivmeMuafiyeti) ADIM muafiyeti icindir ve gecerli:false KALIR; metrik muafiyeti ayri bir seydir ve --ivme'nin kendi icinde, contract esigi okunarak uygulanir. Gerekce: 0509-kapi.sh'te bas==0 iken kapanma sabit 0.0 doner, yani sifira inmis metrik 8.4'u ASLA gecemez; anaSapmaMM 0.693 icin %20 kapanma 0.554 mm demek, olcum gurultusu mertebesinde. Bu 8.3'tur (arac onarilir), 8.4'un kastettigi yerel minimum degil. Tavanlar AYNEN durur: esik asilirsa metrik seriye GERI GIRER ve kesme uygulanir. Uygulama: --ivme bir metrigi contract esiginin altindayken seriden DUSURUR ve dusurdugunu ADIYLA ilan eder (cikti /dusurulen, /sayilan, /seri/<metrik>/seriden); hicbir sayisal metrik kalmazsa yerelMinimum=false, neden='tum metrikler esik altinda'. Esik kaynaklari ACIK YOL: anaSapmaMM -> contract/flat-convention-v1.json /croquis/toleranceMM (2.0); sanalDikisMM -> contract/graf-v1.json /toleranslar/dikisUzunlukMM/deger (2.0). Kaynagi olmayan metrik DUSURULMEZ, seride kalir (enum: taban engine/tests/enum-dallanma-baseline.json, su an 436 = tavanda, esik ALTINDA degil -> sayilmaya devam eder). Bu turda kesme UYGULANMADI, BANNED'a satir yazilmadi, 'kokten degistir' cagrisi yapilmadi; A2b/A2c devam eder. Onarim adimlarina AYRI olcu BAGLANMADI (yeni olcu = yeni menu).",
     "Q1_Q2_Q4_uygulandi_2026-09-06": "A1a turu, karar ajaninin Q1/Q2/Q4 hukmu UYGULANDI (commit f5c9ef7e, tek dosya engine/tests/0509-kapi.sh). Q1: --kisa sanalDikisMM'i artik KOSU/ciktilar/graf-ilk/sanaldikis.json'dan max(seri[].sanalDikisMM) olarak OLCER; KAPI_SANAL yalniz OVERRIDE; kaynak okunamazsa null degil KAPI_SANAL_OLCULEMEDI basip exit 1. Q2: H16 shlex token filtresi kabuk yonlendirme/pipe operatorlerini ATLAR ve her atlanan token'i ADIYLA ilan eder; H16 GEVSETILMEDI (olmayan gercek yol hala FAIL — iki yonde de yanlislandi). Q4: --ivme A2/A2b/A2c'de seriyi YALNIZ sanalDikisMM uzerinden kurar, anaSapmaMM ve enum seriye girmez, ilan cikti /q4 + /tekMetrik alanlarinda. Esikler ve tavanlar DEGISMEDI (2.0 / 34 / 436). Sonuc: yerelMinimum=false, neden='tum metrikler esik altinda'. Q3 ILAN satiri KOSU/ciktilar/graf-ilk/dikilebilir.md basina yazildi."
   },
-  "resume": "Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A1\"}",
+  "resume": "Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A2\"}",
   "adimDurumlari": {
     "A1": "GECTI",
     "A2": "ISCI"
@@ -450,7 +450,7 @@
       "commit": "b8f3f4d9"
     }
   },
-  "durduNot": "8.29 butce asimi: 13 mantik commiti (tavan 12), 0/6 derleme, 3.05 saat. Gerekce: KOSU/0509-DURDU.md. Resume: Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A2\"}",
+  "durduNot": "2026-09-06 8.29 — A2 Ilk gecis hakemi DUR. 3 satis engeli: (1) kapanma yok/giyilemez (graf), (2) sifir pens 107.5mm supresyon emilmiyor (degerleme), (3) sanalDikisMM=0.00 yapisal/vacuous (degerleme+graf semasi). Ayrica bu turda urun uretilmedi: adim-A2a-once..HEAD engine/src BOS. Ayrinti: KOSU/0509-DURDU.md. Resume: Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A2\"}. Kilit acik.",
   "A2_devam_notu": "6 Eyl ana oturum: A2b/A2c isi YAPILDI (flat.png, kalip-36.png, seri.png, sanaldikis 8 bedende 0.0 mm, topoloji-kanit 4 kural, olcek_check 990 mm YESIL) ama HAKEM HIC GORMEDI: butce kontrolu hakemden once kosuyor ve olcum A2b'yi A2a'nin tag'inden saydi (13 commit/3.05 saat aslinda A2a+A2b+A2c toplami). Kok neden koscuda: alt adim basina tag atilmiyordu. Duzeltildi (tag ve butce alt adim basina, tag komutu zorunlu/acik). adim-A2b-once tag'i HEAD'e atildi; A2b/A2c yeniden kosulmaz, hakem mevcut ciktiyi olcer. KILIT IHLALI grafdogrula.cpp: A2b'nin izin listesinde VAR, is A2c etiketiyle devam ettigi icin ihlal gorundu — sahte pozitif, geri ALINMADI (alinsaydi topoloji kapisi silinirdi).",
   "A2bIzinListesi": [
     "engine/src/solver_utils.hpp",
