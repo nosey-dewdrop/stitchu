@@ -36,3 +36,44 @@ Kalan iki kırmızı İLANLI: `flat_ayni_insan_check` → A4, `sinyal_tam` → A
 Ölçüm bulgusu: `biba-O1194418-dress-arka.jpg` aslında ÖN yüz (kontrol örneğiyle
 doğrulandı: `-arka` konvansiyonu genel olarak doğru, sorun bu çifte özgü).
 Brief madde 3(a)'nın istediği ön-arka çifti bugün elimizde YOK.
+
+## A1 GEÇİT KARARI — kararlar uygulandı (6 Eyl 2026)
+
+Karar ajanı beş soruyu cevapladı; bu tur yalnız onları uyguladı, yeni iş açmadı.
+**Hüküm: DEVAM — A1b GEÇTİ, A2 AÇIK.**
+
+| # | Karar | Uygulama | Kanıt |
+|---|---|---|---|
+| 1 | DEVAM; her açık kalem adıyla bir adıma bağlı | `state.json.A1_gecit_karari.1_devam_mi_dur_mu` | taban tazelendi: 9 girdi / 8 koşan / fark 0 |
+| 2 | (b) **VE** biba kalır | `F1-mary-quant-on-arka` yeni girdi, `F2-biba-arka-yok` ayrı topoloji | F1 53945 B sha `41a9d361dc66c42c`; F2 sha `97439210fb732d05` (eski F1 ile **bayt aynı**, `diff -q` temiz) |
+| 3 | K2/K5 teşhisi güncellenir, not **silinmez** | iki DÜŞEN dosyasının sonuna tarihli blok | K5 `beklenen: CIZER`, K2 `beklenen: DUSER` (değişmedi) |
+| 4 | Boşluk **op tablosunda** kapanır, enum büyümez | mary-quant tarifinde `_kayip[]` 5 kalemi adıyla sayıyor | `contract/` enum'una değer EKLENMEDİ |
+| 5 | wasm kıyası kabul, **ilan düzeltilir** | geçit JSON'unda `nativeKiyas` alt alanı | `gecitler[wasm_sanity].nativeKiyas` — değer wasm raporundan okunuyor, uydurulmuyor |
+| 6 | ivme muafiyeti onaylandı, **A2'den itibaren yok** | `state.json.butce.yerelMinimum` karar gereği olduğu gibi bırakıldı | — |
+
+**Fotoğraf okuması işçinin kendisi (Read aracı), `llmCagri = 0`.**
+Mary-quant çiftinin arka yüzü ÖLÇÜLDÜ: ön paçı yok, yaka arka dilimi sırtta,
+cep yok, kemer kesintisiz → gerçek arka. Kapsam uyarısı deftere yazıldı:
+**16 çiftin 14'ü DOĞRULANMADI**, A2 her yeni çift için `-arka` dosyasını ölçer.
+
+### ⚠ Sorulmamış bulgu — K5 "çiziyor" ama özelliksiz çiziyor
+
+Karar "K5 ÇİZİYOR, tabanı öyle yaz" diyordu. Tabanı yazarken ikinci bir ölçüm çıktı:
+
+- K5'in flat'ı `03-elbise-kolsuz.svg` ile **bayt sayısında aynı** (25663) ve
+  yalnız **5 yolda** ayrılıyor (düğüm, siluet mikro-sapması, arka pens boyu
+  495.0→535.0, bel dikiş kaçığı 48.168→39.768 mm).
+- Rol sayımı: siluet 2, bel-dikişi 4, pens 12, dikiş-izi 12, orta-dikiş 2 —
+  **kup/korse rolü 0**. Ekranda da göğüste kup dikişi, sırtta bağcık YOK.
+- Yani `cupSeam: horizontal` ve `laceUpBack: corset` **hiç geometri üretmiyor**;
+  çizilen şey kolsuz düz elbise. Madde 4 anlamında **sessiz default**, ilan edilmemişti.
+
+Düz bir `beklenen: CIZER` bu kusuru yeşile boyardı. Beklentiye `beklenenKusur`
+bağlandı (`kupDikisiGeometrisi: YOK`, `korseBagcikGeometrisi: YOK`); A2/A4 bu
+alanları değiştirmek zorunda, yoksa taban sha'sı değişip kusur satırı "YOK"
+kalırsa çizim gizlice eskiye dönmüş demektir.
+
+K2 ile K5 farkı "biri çalışıyor biri bozuk" DEĞİL: K2 görünür şekilde düşüyor,
+K5 sessizce özelliksiz çiziyor. Sessiz olan daha tehlikelidir.
+
+Görsel: `KOSU/ciktilar/_yerel/0906-karar/0906-karar-kanit.html` (+ 4 png).
