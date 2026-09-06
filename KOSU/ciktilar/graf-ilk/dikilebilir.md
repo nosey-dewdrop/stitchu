@@ -1,5 +1,7 @@
 # Dikilebilirlik — graftan cizime, her dikis cifti iki taraf (0509 A2b)
 
+> **ILAN (KARAR Q3, 2026-09-06):** girdi cumlesi KOLSUZ, cizilen taban graf F2a fixture'idir ve KOL panelini tasir; cumle->graf hatti A6c'de kurulur. A2 grafi cumleden TURETMEZ, kolu de SILMEZ — fixture kollu oldugu icin `kol_oyugu`/`kol_alti` dikis ciftini de olcturur, yani daha ZOR girdidir.
+
 Kaynak: `engine/build/grafdogrula <graf.json> <bodyId> --json` (motorun kendi hukmu). Graf: `KOSU/ciktilar/graf-ilk/graf.json` (`taban-elbise`). Bu tablo hesap yapmaz, motorun sayilarini basar.
 
 ## Esikler (contract/graf-v1.json)

@@ -536,9 +536,43 @@ kisa() {
   # cikti once degiskene alinir, sonra JSON'lugu dogrulanir: python3 patlarsa
   # BOS satir degil, adiyla bir hata satiri basilir (sessiz default yasagi).
   local satir
-  # KAPI_SANAL: bu adimin urun olcusu (sanalDikisMM). Isci doldurur; yoksa null basar
-  # (ivme null'i zaten muaf tutuyor). ctest KOSMAZ, uretilmis cizimden okunur: 60 s tavani korunur.
-  satir=$(KAPI_COMMIT="${commit:-}" KAPI_SAPMA="${sapma:-}" KAPI_SANAL="${KAPI_SANAL:-}" KAPI_ENUM="${enum:-}" KAPI_KIRMIZI="${kirmizi:-0}" \
+  # KAPI_SANAL: bu adimin urun olcusu (sanalDikisMM). KARAR Q1 (2026-09-06, A2 karar
+  # ajani): metrik ELDEN BESLENMEZ, ARTIFACT'TAN OLCULUR. KAPI_SANAL bos ise
+  # KOSU/ciktilar/graf-ilk/sanaldikis.json'dan max(seri[].sanalDikisMM) okunur;
+  # env yalniz OVERRIDE'dir. Dosya okunamaz/bicimsizse null BASILMAZ, adiyla CRASH
+  # edilir (A1 "bos degisken yasagi": olculmeyen metrik sessizce null gorunmez).
+  # ctest KOSMAZ, uretilmis cizimden okunur: 60 s tavani korunur.
+  local sanal_kaynak="KOSU/ciktilar/graf-ilk/sanaldikis.json"
+  local sanal="${KAPI_SANAL:-}"
+  if [ -z "$sanal" ]; then
+    sanal=$(SANAL_DOSYA="$sanal_kaynak" python3 -c '
+import json, os, sys
+p = os.environ["SANAL_DOSYA"]
+try:
+    with open(p) as f: d = json.load(f)
+except Exception as e:
+    sys.stderr.write("SANAL_KAYNAK_OKUNAMADI: %s (%s)\n" % (p, type(e).__name__)); raise SystemExit(3)
+seri = d.get("seri")
+if not isinstance(seri, list) or not seri:
+    sys.stderr.write("SANAL_KAYNAK_BOS: %s /seri bos ya da liste degil\n" % p); raise SystemExit(3)
+vals = []
+for r in seri:
+    v = (r or {}).get("sanalDikisMM")
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        sys.stderr.write("SANAL_KAYNAK_BICIMSIZ: %s /seri[].sanalDikisMM sayisal degil: %r\n" % (p, v)); raise SystemExit(3)
+    vals.append(float(v))
+m = max(vals)
+print(int(m) if m == int(m) else m)
+' 2>>"$LOG") || {
+      echo '{"hata":"KAPI_SANAL_OLCULEMEDI","neden":"sanalDikisMM artifacttan okunamadi (elden beslenmis null yasak)","kaynak":"'"$sanal_kaynak"'","log":"'"$LOG"'"}'
+      return 1
+    }
+    if [ -z "$sanal" ]; then
+      echo '{"hata":"KAPI_SANAL_OLCULEMEDI","neden":"olcum bos dondu","kaynak":"'"$sanal_kaynak"'","log":"'"$LOG"'"}'
+      return 1
+    fi
+  fi
+  satir=$(KAPI_COMMIT="${commit:-}" KAPI_SAPMA="${sapma:-}" KAPI_SANAL="$sanal" KAPI_ENUM="${enum:-}" KAPI_KIRMIZI="${kirmizi:-0}" \
     python3 -c '
 import json, os
 def n(v):
@@ -578,6 +612,26 @@ with open(p) as f:
 son = satirlar[-3:]
 # YALNIZ sayisal metrikler; boolean/string muaf
 alanlar = ["anaSapmaMM", "sanalDikisMM", "enum"]
+# KARAR Q4 (2026-09-06, A2 karar ajani): A2/A2b/A2c'nin ivme metrigi TEK'tir:
+# sanalDikisMM. anaSapmaMM'in kapanma yukumlulugu A4'te, enum'un dususu F3'te
+# KALIR; bu adimlarda seriye GIRMEZ. Hukum state.json /ivmeMuafiyeti
+# /A2b_A2c_karari_2026-09-06'da yaziliydi ama --ivme okumuyordu (hukum kagitta,
+# arac eski davraniyordu). Bu 8.3 arac onarimidir: ESIKLER VE TAVANLAR AYNEN
+# DURUR (flat_ayni_insan_check 34'u, enum 436'yi ASAMAZ), degisen yalniz HANGI
+# metrigin ivmeye girdigi. Tavan asilirsa metrik seriye GERI GIRER.
+TEK_METRIK_ADIMLARI = {"A2": "sanalDikisMM", "A2b": "sanalDikisMM", "A2c": "sanalDikisMM"}
+adim = None
+try:
+    with open(state_p) as f: adim = (json.load(f) or {}).get("adim")
+except Exception:
+    adim = None
+tek = TEK_METRIK_ADIMLARI.get(adim) if isinstance(adim, str) else None
+q4_ilan = None
+if tek:
+    alanlar = [tek]
+    q4_ilan = ("KARAR Q4: adim %s -> ivme metrigi TEK: %s. "
+               "anaSapmaMM (yukumlulugu A4) ve enum (dususu F3) bu adimda seriye GIRMEZ; "
+               "tavanlar aynen durur." % (adim, tek))
 seri = {}
 for a in alanlar:
     v = [r.get(a) for r in son]
@@ -585,7 +639,9 @@ for a in alanlar:
     if len(v) == len(son) and len(v) >= 3:
         seri[a] = v
 if not seri:
-    print(json.dumps({"yerelMinimum": False, "neden": "3 satirlik tek sayisal metrik yok", "seri": []}, ensure_ascii=False)); raise SystemExit(0)
+    _c = {"yerelMinimum": False, "neden": "3 satirlik tek sayisal metrik yok", "seri": []}
+    if q4_ilan: _c["adim"] = adim; _c["tekMetrik"] = tek; _c["q4"] = q4_ilan
+    print(json.dumps(_c, ensure_ascii=False)); raise SystemExit(0)
 
 # KARAR Q1 (2026-09-06, A2 karar ajani): ESIK ALTINDAKI METRIK IVMEDEN MUAFTIR.
 # Gerekce kayitta: bas==0 iken kapanma sabit 0.0 doner -> sifira inmis bir metrik
@@ -644,6 +700,8 @@ if not sayilan:
              "neden": "tum metrikler esik altinda",
              "seri": detay, "dusurulen": sorted(dusurulen.keys()),
              "sayilan": [], "satir": len(son)}
+    if q4_ilan:
+        cikti["adim"] = adim; cikti["tekMetrik"] = tek; cikti["q4"] = q4_ilan
 else:
     hukum = True
     for a, kayit in sayilan.items():
@@ -651,6 +709,10 @@ else:
     cikti = {"yerelMinimum": hukum, "seri": detay,
              "dusurulen": sorted(dusurulen.keys()),
              "sayilan": sorted(sayilan.keys()), "satir": len(son)}
+if q4_ilan:
+    cikti["adim"] = adim
+    cikti["tekMetrik"] = tek
+    cikti["q4"] = q4_ilan
 # KARAR 6 (2026-09-06): ivme muafiyeti. HUKUM DEGISTIRILMEZ, yalniz ADIYLA
 # ilan edilir; muafiyet state.json'dan okunur ve HANGI ADIMDA OLDUGU yazilir.
 # 8.4 ivme kurali urunu ILERLETEN adimlar icindir; gecit KURAN adim muaftir.
@@ -869,18 +931,36 @@ assert k.get("kirmiziAltTestKumesi")==["bundle_fresh_check"], "alt test kumesi d
   else fail "H15 karar3-satir-yonu" "silinen add_test( satiri KILIT_IHLALI basmadi: $sy"; fi
 
   # --- H16: kabul komutlari state.json'da ve hepsi VAR olan dosyaya isaret ediyor
-  if python3 -c '
-import json,os,shlex
+  #    KARAR Q2 (2026-09-06, A2 karar ajani): shlex token'inda "/" gormek DOSYA
+  #    demek DEGIL. Kabuk yonlendirme/pipe operatorleri (">/dev/null", "2>>x",
+  #    "<in", "|", "&&") yol degildir; eski parser bunlari "olmayan dosya" sayip
+  #    H16'yi kabuk SOZDIZIMI olcen bir kapiya cevirmisti. Filtre bunlari ATLAR.
+  #    H16 GEVSETILMEZ: gercek yollar hala VAR olmak zorunda. Atlanan her token
+  #    ADIYLA ilan edilir (sessiz atlama yasak, 12.0).
+  local h16out h16rc
+  h16out=$(python3 -c '
+import json,os,shlex,sys
 d=json.load(open("KOSU/0509-state.json"))
 ks=d.get("kabulKomutlari",[])
 assert ks, "kabulKomutlari bos"
+OPBAS=("<",">","|","&",";","(",")")
+atlanan=[]; bakilan=[]
 for k in ks:
-    parts=shlex.split(k)
-    yol=[p for p in parts if "/" in p]
-    for p in yol:
-        assert os.path.exists(p), "kabul komutu olmayan dosyaya isaret ediyor: "+p
-' 2>/dev/null; then ok "H16 kabul-komutu-var"
-  else fail "H16 kabul-komutu-var" "kabulKomutlari bos ya da silinmis dosyaya isaret ediyor"; fi
+    for t in shlex.split(k):
+        if "/" not in t: continue
+        if t[0] in OPBAS or t.lstrip("0123456789")[:1] in (">","<"):
+            atlanan.append((t,"kabuk yonlendirme/pipe operatoru, dosya yolu degil")); continue
+        bakilan.append(t)
+for t in atlanan:
+    sys.stderr.write("H16 ATLANDI: %s -- %s\n" % t)
+for t in bakilan:
+    assert os.path.exists(t), "kabul komutu olmayan dosyaya isaret ediyor: "+t
+sys.stderr.write("H16 bakilan yol sayisi: %d, atlanan token sayisi: %d\n" % (len(bakilan),len(atlanan)))
+' 2>&1); h16rc=$?
+  printf '%s\n' "$h16out" | grep -E '^H16 (ATLANDI|bakilan)' >> "$LOG" 2>/dev/null || true
+  printf '%s\n' "$h16out" | grep '^H16 ATLANDI' || true
+  if [ "$h16rc" -eq 0 ]; then ok "H16 kabul-komutu-var"
+  else fail "H16 kabul-komutu-var" "kabulKomutlari bos ya da silinmis dosyaya isaret ediyor: $(printf '%s' "$h16out" | tail -1)"; fi
 
   # --- H18 (karar defteri 6 Eyl, A1b teslimi): add_test HEDEF DEGISIMI de
   #    KILIT_IHLALI basar. Satiri silmek ile hedefi /bin/true'ya cevirmek ayni
