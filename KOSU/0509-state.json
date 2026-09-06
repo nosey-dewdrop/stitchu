@@ -1,5 +1,5 @@
 {
-  "adim": "A1",
+  "adim": "A1b",
   "durum": "ISCI",
   "deneme": 2,
   "butce": {
@@ -58,6 +58,47 @@
       "adim": "A1a tur 2",
       "soru": "Referans kilidi ihlaliyle geri alinan 4 dosya kabul komutunu bosa dusurdu; nasil kapanir?",
       "karar": "Kabul komutu AYRI DOSYA olmaz: engine/tests/0509-kapi.sh --kendi-check modu (izin listesindeki dosyanin icinde). ctest kapi_sozlesme_check bu moda yonlendirildi (add_test SILINMEDI, hedefi degisti). Karar 3'un izlenen_yollar()+cmake_satir_yonu() uygulamasi da bu modda olculuyor."
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1a tur 2 / karar ajani",
+      "soru": "A1a tur 2 — DEVAM mi DUR mu?",
+      "karar": "DEVAM. A1a GECTI, A1b ACIK. Adsiz ENGEL yok: flat_ayni_insan_check(34)->A4; sinyal_tam/bundle_fresh_check->A9; emsal_mm_olcum, olcek_check, wasm_sanity, regresyon (4 henuz-yok)->A1b.",
+      "gerekce": "Iki engel de kok nedenden kapandi (kabul komutu izin listesindeki 0509-kapi.sh --kendi-check moduna indi; add_test silinmedi, hedefi degisti). Banned 4 dosyaya dokunulmadi, esik gevsetilmedi, yeni kirmizi/CRASH yok. Gecidi KURMAK A1a nin isiydi; gecidin olctugu urun kusuru sonraki adimlarin.",
+      "uygulandi": "state.json altAdim + acikEngeller; gecit tablosu KOSU/ciktilar/0509-kapi/gecit-tablosu.png (commit 1e54ab9c)"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1a tur 2 / karar ajani",
+      "soru": "Gecit tablosu gorselini ureten script nerede yasasin?",
+      "karar": "(b) KOSU/0509-kapi-tablo.py — KOSU/ altinda ayri, commit li uretici. (a) kapi.sh modu ve (c) elle REDDEDILDI.",
+      "gerekce": "Tur 1 gorsel actigi icin dusmedi, KILITLI engine/tests/ altina izin disi dosya actigi icin dustu. KOSU/ izlenen_yollar() disinda. Emsal: KOSU/0509-karar-tablosu.py. kapi.sh kosunun SOZLESMESIDIR, hukum basar resim cizmez. Elle tazelenen gorsel sessizce bayatlar (6 Eyl de oldu).",
+      "uygulandi": "KOSU/0509-kapi-tablo.py (commit 1e54ab9c); girdi tam kosu JSON u, uydurma sayi yok, girdi bozuksa exit 2 ve eski png TAZELENMEZ"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1b (uygulama A1b nin teslimi)",
+      "soru": "Sizinti tarayicisi banned; 'alt surec stdout a sizmiyor' iddiasi stderr baytiyla olculuyor, bu zayif. Statik tarama geri gelsin mi?",
+      "karar": "EVET, ama AYRI DOSYA DEGIL ve A1a da DEGIL: engine/tests/0509-kapi.sh --kendi-check icine H17 hukmu olarak eklenir. A1b nin teslimi. Hukum: kapi.sh in kendi kaynagindaki her alt surec cagrisi (ctest|node|python3|cmake|bash) ya '>> $LOG 2>&1' ya da '$(...)' yakalamasi icinde olmali; ciplak cagri = KIRMIZI, satir numarasiyla.",
+      "gerekce": "Iscinin teshisi dogru: stderr bayti ve json.tool, stdout a JSON-benzeri basan alt sureci yakalamaz. Ama A1a GECTI; gecmis adima yeni is eklemek 7.2 ihlali olurdu. A1b zaten ayni dosyaya yazma yetkisine sahip ve regresyon/wasm/emsal ile alt surec sayisini BUYUTUYOR; tarama tam o buyumeyle gelmeli. Ayri dosya reddi: tur 1 in dustugu yol aynen budur.",
+      "uygulandi": "HAYIR — A1b nin teslimi (bu defterde ilan edildi, A1b kabul sarti)"
+    },
+    {
+      "tarih": "2026-09-06",
+      "adim": "A1b (uygulama A1b nin teslimi)",
+      "soru": "Karar 3 un satir yonu kurali silinen add_test( satirini yakaliyor ama HEDEFI degistirileni yakalamiyor — bilincli bosluk mu?",
+      "karar": "BOSLUK, sikilastirilir. A1b de cmake_satir_yonu() genisletilir: engine/CMakeLists.txt diff inde bir add_test( satirinin SILINMESI kadar HEDEFININ degismesi de (ayni test adi, farkli COMMAND) KILIT_IHLALI basar. YASAK degil, ILANA tabi: degisiklik state.json.kararDefteri ne tek satir (eski hedef -> yeni hedef -> sebep) yazilmadan gecit YESIL sayilmaz.",
+      "gerekce": "Saldiri gercek: add_test i /bin/true ya yoneltmek satiri silmekle AYNI sonucu verir ve bugunku kural onu temiz sayar (3.7 reward hacking: test degistirme). Yasaklamak yerine ILANA baglamak dogru esik — 8.20/2.13 'degistirmek serbest ama bedelli'.",
+      "geriyeDonukIlan": {
+        "commit": "97559b95",
+        "test": "kapi_sozlesme_check",
+        "eskiHedef": "engine/tests/0509-kapi-kendi-check.sh (referans kilidi ihlaliyle geri alindi, dosya YOK)",
+        "yeniHedef": "bash engine/tests/0509-kapi.sh --kendi-check",
+        "sebep": "silinmis dosyaya bakan test ctest te YENI kirmiziydi; kabul komutu izin listesindeki dosyanin bir moduna indirildi, add_test SILINMEDI",
+        "mesru": true,
+        "not": "karar ajani 6 Eyl: geriye donuk ILAN EDILMIS kabul edilir"
+      },
+      "uygulandi": "HAYIR — A1b nin teslimi (bu defterde ilan edildi, A1b kabul sarti)"
     }
   ],
   "ilkYesil": {},
@@ -105,6 +146,53 @@
   "kararUygulandi": {
     "karar1": "state.json ilanliKirmizi + kabul komutu H9/H10 (tavan 34) ile olculuyor",
     "karar2": "state.json ilanliKirmizi + kabul komutu H11 (donuk kume) / H12 (--kisa sinyalsiz)",
-    "karar3": "engine/tests/0509-kapi.sh izlenen_yollar() + cmake_satir_yonu(); kabul komutu H13/H14/H15. A1b'ye devredilmedi, A1a tur 2'de kapandi."
-  }
+    "karar3": "engine/tests/0509-kapi.sh izlenen_yollar() + cmake_satir_yonu(); kabul komutu H13/H14/H15. A1b'ye devredilmedi, A1a tur 2'de kapandi.",
+    "karar_ajani_2026-09-06": {
+      "karar1_devam": "UYGULANDI: altAdim.A1a=GECTI, A1b=ACIK, acikEngeller[] adiyla yazildi",
+      "karar2_tablo": "UYGULANDI: KOSU/0509-kapi-tablo.py, commit 1e54ab9c",
+      "karar3_H17_sizinti": "A1b YE DEVREDILDI: 0509-kapi.sh --kendi-check icinde H17; ayri dosya YASAK",
+      "karar4_addtest_hedef": "A1b YE DEVREDILDI: cmake_satir_yonu() hedef degisimini de KILIT_IHLALI basar, ilana tabi; 97559b95 geriye donuk ilan edildi"
+    }
+  },
+  "acikEngeller": [
+    {
+      "engel": "flat_ayni_insan_check",
+      "sayi": 34,
+      "kapanacakAdim": "A4",
+      "tur": "ILANLI KIRMIZI"
+    },
+    {
+      "engel": "sinyal_tam/bundle_fresh_check",
+      "sayi": 1,
+      "kapanacakAdim": "A9",
+      "tur": "ILANLI KIRMIZI"
+    },
+    {
+      "engel": "emsal_mm_olcum",
+      "durum": "HENUZ-YOK",
+      "kapanacakAdim": "A1b"
+    },
+    {
+      "engel": "olcek_check",
+      "durum": "HENUZ-YOK",
+      "kapanacakAdim": "A1b"
+    },
+    {
+      "engel": "wasm_sanity",
+      "durum": "HENUZ-YOK",
+      "kapanacakAdim": "A1b"
+    },
+    {
+      "engel": "regresyon",
+      "durum": "HENUZ-YOK",
+      "kapanacakAdim": "A1b"
+    }
+  ],
+  "A1bIzinListesi": [
+    "engine/tests/0509-*",
+    "KOSU/**",
+    "contract/body-v1.json (YALNIZ olcekAraligi ekleme, kaynakli)",
+    "engine/CMakeLists.txt (YALNIZ add_test ekleme)",
+    ".gitignore (yalniz ekleme)"
+  ]
 }
