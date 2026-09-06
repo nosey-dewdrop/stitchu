@@ -301,5 +301,13 @@
       "uyari": "Ayni gerekce A2'de tekrarlanirsa (urun degisiyor ama sapma kapanmiyor) o GERCEK yerel minimumdur ve kesme uygulanir.",
       "uygulandi": "state.json butce.yerelMinimum satiri KARAR GEREGI OLDUGU GIBI BIRAKILDI."
     }
+  },
+  "ivmeMuafiyeti": {
+    "gecerli": true,
+    "_ne": "KARAR 6 (2026-09-06, A1 gecit karari). Bu ILAN olmadan muafiyet YOKTUR; --ivme bu alani okur, adim ADINA bakmaz.",
+    "kapsam": "Gecit KURAN adimlar (A1a/A1b ve bu karar-uygulama turu). 8.4 ivme kurali urunu ILERLETEN adimlar icindir.",
+    "gerekce": "Brief 'URUN DEGISMEZ; motor koduna dokunma' diyor. anaSapmaMM bu turda ilk kez null olmaktan cikip 0.693 oldu; sabit bir urun uzerinde duz seyreden metrik, urunun degismediginin kanitidir, tikanmanin degil.",
+    "biter": "A2'den itibaren muafiyet YOK ve A2/A4 sapmayi kapatmakla yukumlu. A2'ye gecen isci bu alani gecerli:false yapar.",
+    "uyari": "Ayni gerekce A2'de tekrarlanirsa (urun degisiyor ama sapma kapanmiyor) o GERCEK yerel minimumdur ve kesme uygulanir."
   }
 }

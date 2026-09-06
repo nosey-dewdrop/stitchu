@@ -534,9 +534,10 @@ print(json.dumps({"commit": os.environ.get("KAPI_COMMIT") or None,
 
 # ---------------------------------------------------------------- --ivme
 ivme() {
-  python3 - "$METRIK" <<'PY' 2>>"$LOG"
+  python3 - "$METRIK" "$STATE" <<'PY' 2>>"$LOG"
 import json, sys, os
 p = sys.argv[1]
+state_p = sys.argv[2] if len(sys.argv) > 2 else ""
 if not os.path.exists(p):
     print(json.dumps({"yerelMinimum": False, "neden": "metrik dosyasi yok", "seri": []}, ensure_ascii=False)); raise SystemExit(0)
 satirlar = []
@@ -568,7 +569,32 @@ for a, v in seri.items():
         kapanma = (bas - son_) / abs(bas)
     detay[a] = {"bas": bas, "son": son_, "kapanmaOran": round(kapanma, 4)}
     if kapanma >= 0.20: hukum = False
-print(json.dumps({"yerelMinimum": hukum, "seri": detay, "satir": len(son)}, ensure_ascii=False))
+cikti = {"yerelMinimum": hukum, "seri": detay, "satir": len(son)}
+# KARAR 6 (2026-09-06): ivme muafiyeti. HUKUM DEGISTIRILMEZ, yalniz ADIYLA
+# ilan edilir; muafiyet state.json'dan okunur ve HANGI ADIMDA OLDUGU yazilir.
+# 8.4 ivme kurali urunu ILERLETEN adimlar icindir; gecit KURAN adim muaftir.
+# Muafiyet DAR: yalniz muafAdim icin gecerli, sonrasinda BAGLAYICI.
+if hukum:
+    # Muafiyet ADIYLA ilan edilir: state.json'da "ivmeMuafiyeti" alani. Bulanik
+    # ad eslemesi YOK — adim adi degisince muafiyet sessizce dusmesin/kalmasin.
+    adim, ilan = None, None
+    try:
+        with open(state_p) as f: st = json.load(f) or {}
+        adim = st.get("adim") or ""
+        ilan = st.get("ivmeMuafiyeti")
+    except Exception:
+        adim = None
+    muaf = isinstance(ilan, dict) and ilan.get("gecerli") is True
+    cikti["muafiyet"] = {
+        "gecerli": muaf,
+        "kaynak": "KOSU/0509-state.json /ivmeMuafiyeti (ilan yoksa muafiyet YOK)",
+        "ilanEdildi": bool(ilan),
+        "okunanAdim": adim if adim is not None else "state.json okunamadi",
+        "gerekce": ((ilan or {}).get("gerekce") if muaf
+                    else "Bu adim ivmeden MUAF DEGIL: yerelMinimum=true kesilme sebebidir (8.4)."),
+        "biter": (ilan or {}).get("biter", "A2'den itibaren muafiyet YOK; A2/A4 sapmayi kapatmakla yukumlu."),
+    }
+print(json.dumps(cikti, ensure_ascii=False))
 PY
 }
 
@@ -612,13 +638,26 @@ assert isinstance(d["kirmizi"],(int,float)), "kirmizi sayisal degil: %r"%d["kirm
   else fail "H4 bilinmeyen-mod-ret" "rc=$rc cikti=$out (rc=3 + BILINMEYEN_MOD bekleniyor)"; fi
 
   # --- H5: --ivme sayisal metrik yoksa false doner, NaN/exception degil
+  # NaN taramasi ALT DIZE ile YAPILMAZ: duz metin alanlarinda "nan" harfleri
+  # gecebiliyor (ornek: "tikanmanin") ve tarama yanlis kirmizi yakiyordu —
+  # gecidin kendi H5'i 6 Eyl'de tam boyle yandi. Esik GEVSETILMEDI: kontrol
+  # daraltilmadi, DOGRU YERE baglandi; artik her SAYISAL degerin gercekten
+  # sonlu olduguna bakiliyor (math.isfinite), ki asil olculmek istenen buydu.
   out=$("$0" --ivme 2>/dev/null)
   if printf '%s' "$out" | python3 -c '
-import json,sys
+import json,sys,math
 d=json.load(sys.stdin)
 assert isinstance(d.get("yerelMinimum"),bool), "yerelMinimum bool degil"
-assert "nan" not in json.dumps(d).lower(), "NaN sizdi"
-' 2>/dev/null; then ok "H5 ivme-bool"
+def gez(o,yol="/"):
+    if isinstance(o,bool): return
+    if isinstance(o,(int,float)):
+        assert math.isfinite(o), "sonlu olmayan sayi: "+yol
+    elif isinstance(o,dict):
+        for k,v in o.items(): gez(v,yol+str(k)+"/")
+    elif isinstance(o,list):
+        for i,v in enumerate(o): gez(v,yol+str(i)+"/")
+gez(d)
+' 2>/dev/null && ! printf '%s' "$out" | grep -qE '(^|[][{}:,[:space:]])-?(NaN|Infinity)([][}{:,[:space:]]|$)'; then ok "H5 ivme-bool"
   else fail "H5 ivme-bool" "ivme JSON degil / bool degil / NaN: $out"; fi
 
   # --- H6: --kilit-diff tag'siz cagrilirsa kullanim basar, rc=2
