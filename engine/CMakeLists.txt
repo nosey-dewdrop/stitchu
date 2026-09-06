@@ -1575,3 +1575,15 @@ target_link_libraries(olcek_check PRIVATE engine)
 add_test(NAME olcek_check COMMAND olcek_check
     ${CMAKE_CURRENT_SOURCE_DIR}/../contract/body-v1.json
     ${CMAKE_CURRENT_SOURCE_DIR}/../KOSU/ciktilar/graf-ilk/graf.json)
+
+# ---- 0509 A2c/E1: TOPOLOJIK MANTIK (engine/src/grafdogrula.cpp "topoloji" blogu).
+# Karar ajani (0509, A2b hukmu DEVAM): cizim yukarisinda bir kapi yoktu — dogrulanmamis graf
+# uzerine katman/kopru/seri koymak compounding error uretir (3.2), ve ERR_IMPOSSIBLE_TOPOLOGY
+# olmadan 8.8'in "topolojiye uymuyorsa guvenli taban" yolu kurulamaz (K5'te ozelliksiz cizim
+# sessizce yesil yandi). Dort kural contract _yasa 3/4/7'den turer; test taban grafi BOZUP
+# reddi olcer, esik gevsetmez, contract'a dokunmaz.
+add_executable(topoloji_check tests/0509-topoloji_check.cpp)
+target_link_libraries(topoloji_check PRIVATE engine)
+add_test(NAME topoloji_check COMMAND topoloji_check
+    ${CMAKE_CURRENT_SOURCE_DIR}/../contract/graf-v1.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/../KOSU/ciktilar/graf-ilk/graf.json)

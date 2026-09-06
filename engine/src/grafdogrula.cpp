@@ -5,6 +5,7 @@
 #include <cctype>
 #include <cmath>
 #include <cstdio>
+#include <functional>
 #include <limits>
 #include <set>
 #include <stdexcept>
@@ -313,6 +314,101 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
     for (const Ring& r : g0.rings) if (!refsOk(r.edges, "ring " + r.id)) refsAllOk = false;
     if (!refsAllOk) return R;   // gerisi referanssiz olculemez
     H("referans", g0.id, std::to_string(g0.seams.size()) + " dikis, " + std::to_string(g0.rings.size()) + " halka; tum referanslar cozuldu", true);
+
+    // ---- topoloji (A2c/E1): dikilemez GRAF, cizim denenmeden ADIYLA reddedilir.
+    // Dort kural, hepsi contract/graf-v1.json _yasa'sindan turer; uydurma tablo YOK:
+    //   kenar_rolu       (_yasa 3+4) dikisin iki tarafi da kind=="seam" kenardir; fold/cut/dartLeg
+    //                    bir dikise giremez (fold kat cizgisi, cut serbest kenar, dartLeg pens).
+    //   dikis_cifti      (_yasa 4)   bir kenar birden cok dikiste OLAMAZ, ayni dikisin iki tarafinda
+    //                    hic olamaz: dikis ciftleri benzersizdir.
+    //   kapanma          (_yasa 3)   kind=="seam" her kenar TAM BIR dikiste olmalidir; acik kalan
+    //                    seam kenari kapanmayan giysidir.
+    //   komsuluk_bagli   (_yasa 7)   dikislerle baglanan paneller TEK bilesen olmalidir; kopuk panel
+    //                    ayni giysiye dikilemez.
+    // Hukum yazisi ERR_IMPOSSIBLE_TOPOLOGY ile baslar ve hangi KURAL + hangi KENAR oldugunu soyler.
+    {
+        auto topoRet = [&](const char* kural, const std::string& hedef, const std::string& neden) {
+            H("topoloji", hedef, std::string("ERR_IMPOSSIBLE_TOPOLOGY: ") + kural + " — " + neden, false);
+        };
+        // kenar kind haritasi (g0: cozumden ONCE, topoloji cozumden bagimsizdir)
+        std::map<std::string, std::string> kind;            // "panel/edge" -> kind
+        for (const Panel& p : g0.panels) for (const Edge& e : p.edges) kind[p.id + "/" + e.id] = e.kind;
+
+        int hataSayisi = 0;
+        std::map<std::string, std::vector<std::string>> kenarDikisleri;   // "panel/edge" -> seam id (tekrarli)
+        for (const Seam& s : g0.seams) {
+            std::set<std::string> buDikiste;
+            auto taraf = [&](const std::vector<EdgeRef>& refs, const char* yan) {
+                for (const EdgeRef& r : refs) {
+                    const std::string key = rs(r);
+                    kenarDikisleri[key].push_back(s.id);
+                    // kural 1: kenar rolu uyumlulugu
+                    auto it = kind.find(key);
+                    if (it != kind.end() && it->second != "seam") {
+                        topoRet("kenar_rolu", key, "dikis " + s.id + " tarafi " + yan + " '" + it->second + "' kenari tasiyor; dikise yalniz kind=seam kenar girer (_yasa 3)");
+                        ++hataSayisi;
+                    }
+                    // kural 2a: ayni dikisin iki tarafinda ayni kenar
+                    if (!buDikiste.insert(key).second) {
+                        topoRet("dikis_cifti", key, "kenar dikis " + s.id + " icinde iki kez geciyor; dikis cifti benzersizdir (_yasa 4)");
+                        ++hataSayisi;
+                    }
+                }
+            };
+            taraf(s.a, "a"); taraf(s.b, "b");
+        }
+        // kural 2b: bir kenar birden cok DIKISTE
+        for (const auto& kv : kenarDikisleri) {
+            std::set<std::string> farkli(kv.second.begin(), kv.second.end());
+            if (farkli.size() > 1) {
+                std::string liste; for (const std::string& d : farkli) { if (!liste.empty()) liste += ", "; liste += d; }
+                topoRet("dikis_cifti", kv.first, "kenar " + std::to_string(farkli.size()) + " ayri dikiste (" + liste + "); bir kenar tek bir dikise aittir (_yasa 4)");
+                ++hataSayisi;
+            }
+        }
+        // kural 3: kapanma zorunlulugu — kind=seam her kenar TAM BIR dikiste
+        for (const auto& kv : kind) {
+            if (kv.second != "seam") continue;
+            if (!kenarDikisleri.count(kv.first)) {
+                topoRet("kapanma", kv.first, "kind=seam kenar hicbir dikiste degil; giysi bu kenardan KAPANMIYOR (_yasa 3)");
+                ++hataSayisi;
+            }
+        }
+        // kural 4: komsuluk grafi bagli (union-find, dikisler kenar)
+        if (!g0.panels.empty()) {
+            std::map<std::string, std::string> ebeveyn;
+            for (const Panel& p : g0.panels) ebeveyn[p.id] = p.id;
+            std::function<std::string(const std::string&)> bul = [&](const std::string& x) -> std::string {
+                std::string k = x; while (ebeveyn[k] != k) k = ebeveyn[k]; ebeveyn[x] = k; return k;
+            };
+            for (const Seam& s : g0.seams) {
+                std::string ilk;
+                auto birlestir = [&](const std::vector<EdgeRef>& refs) {
+                    for (const EdgeRef& r : refs) {
+                        if (!ebeveyn.count(r.panel)) continue;
+                        if (ilk.empty()) { ilk = r.panel; continue; }
+                        const std::string a = bul(ilk), b = bul(r.panel);
+                        if (a != b) ebeveyn[a] = b;
+                    }
+                };
+                birlestir(s.a); birlestir(s.b);
+            }
+            std::set<std::string> kokler;
+            for (const Panel& p : g0.panels) kokler.insert(bul(p.id));
+            if (kokler.size() > 1) {
+                // kopuk paneli ADIYLA soyle: en kucuk bilesenin ilk paneli
+                std::map<std::string, std::vector<std::string>> bilesenler;
+                for (const Panel& p : g0.panels) bilesenler[bul(p.id)].push_back(p.id);
+                const std::vector<std::string>* enKucuk = nullptr;
+                for (const auto& kv : bilesenler) if (!enKucuk || kv.second.size() < enKucuk->size()) enKucuk = &kv.second;
+                topoRet("komsuluk_bagli", enKucuk ? enKucuk->front() : g0.id,
+                        std::to_string(kokler.size()) + " kopuk panel bileseni; dikisler butun panelleri TEK giysiye baglamiyor (_yasa 7)");
+                ++hataSayisi;
+            }
+        }
+        if (hataSayisi == 0)
+            H("topoloji", g0.id, "kenar_rolu · dikis_cifti · kapanma · komsuluk_bagli: dort kural da gecti (" + std::to_string(g0.panels.size()) + " panel, " + std::to_string(g0.seams.size()) + " dikis)", true);
+    }
 
     // ---- kisit: fitLength kisitlari bu bedende cozulur (karar 6); cozulen graf G ile olculur
     const OpCtx octx = OpCtx::fromContract(contract);
