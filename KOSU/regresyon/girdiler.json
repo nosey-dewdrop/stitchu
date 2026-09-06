@@ -1,0 +1,78 @@
+{
+  "_ne": "0509 kosusunun SESSIZ REGRESYON SETI (A1b, 2026-09-06). Sabit girdiler; her adim bunlari uctan uca kosar ve bir onceki adimin ciktisiyla karsilastirir. Amac: bir adimin duzelttigi sey baska bir topolojiyi sessizce bozmasin.",
+  "_kosum": "bash engine/tests/0509-kapi.sh --regresyon [--taban]",
+  "_cikti": "KOSU/regresyon/cikti/<adim>/<girdi>/flat.svg (+ olcum.json). SVG deterministik oldugu icin PNG basilmaz.",
+  "_hat": "Bugun kosabilen hat: spec -> web/js/download.js flatSVG (wasm bundle web/vendor/stitchu-engine.js) -> flat SVG. Graftan cizim (A2) geldiginde kalip.svg + dikilebilir.json bu dosyaya EKLENIR; bugun yoklugu her girdide adiyla yazilir.",
+  "_fotograf": "Fotograflar YALNIZ YOL olarak durur; GIRDI/ gitignore'lu, kopyalanmaz. Fotograf girdisinin tarifi KOSU/onbellek/<sha256>.json'dan okunur (kosu iscisi okudu, canli worker degil).",
+  "beden": "EU38",
+  "girdiler": [
+    {
+      "ad": "F1-biba-on-arka",
+      "tur": "fotograf",
+      "topoloji": "kapali ust + genisleyen etek, on-arka cifti",
+      "neden": "Brief madde 3(a). Tek gercek fotograf girdisi; on ve arka ayni giysinin iki yuzu, tarif ikisinden birlikte okundu.",
+      "fotograflar": [
+        "GIRDI/hedef-fotograflar/biba-O1194418-dress.jpg",
+        "GIRDI/hedef-fotograflar/biba-O1194418-dress-arka.jpg"
+      ],
+      "onbellek": "KOSU/onbellek/",
+      "specKaynak": "onbellek"
+    },
+    {
+      "ad": "P1-keskin-koseli-yaka",
+      "tur": "prompt",
+      "topoloji": "yatik yaka parcasi, KOSELERI SIVRI (yuvarlak degil)",
+      "neden": "Brief madde 3(b). Yaka parcasinin kose isleme yolu ayri bir kod dali; yuvarlak yakada gorunmeyen kirilma burada gorunur.",
+      "cumle": "yatik bebe yaka ama koseleri sivri, kisa kollu, A etekli midi elbise",
+      "spec": { "garment": "dress", "shaping": "dart", "fabric": "woven", "neckline": "scoop", "sleeveStyle": "straight", "sleeveLength": "short", "skirtStyle": "aLine", "skirtLength": "midi", "collarType": "flat", "collarEdge": "pointed" }
+    },
+    {
+      "ad": "P2-ayrik-panelli-buzgulu-kol",
+      "tur": "prompt",
+      "topoloji": "ayrik panelli govde + kol bolgesinde buzgu",
+      "neden": "Brief madde 3(c). Buzgu parca sinirini ve kol dikis uzunlugunu birlikte degistirir; duz kolda gorunmeyen uzunluk esitsizligi burada gorunur.",
+      "cumle": "prenses dikisli beden, balon kol, kolda lastik buzgu, uzun kollu maxi elbise",
+      "spec": { "garment": "dress", "shaping": "princess", "fabric": "woven", "neckline": "crew", "sleeveStyle": "balloon", "sleeveLength": "long", "skirtStyle": "straight", "skirtLength": "maxi", "gatherType": "shirred", "gatherZone": "sleeve" }
+    },
+    {
+      "ad": "K2-prenses-roba",
+      "tur": "kompozisyon",
+      "topoloji": "prenses dikis + yatay roba (yoke)",
+      "neden": "KOSU/ciktilar/primitif-DUSEN-K2-prenses-roba.txt — KALIP CIKIYOR (14 parca), CIZILEMEYEN SEY FLAT. Roba dikisi kol oyugunu kesiyor, armhole_* rolu dusuyor, poseBodice calisamiyor. Bugun DUSMESI BEKLENIYOR; regresyon onu duzeltmez, sessizce degismedigini olcer.",
+      "beklenen": "DUSER (armhole rolu tasinmiyor) — A2/A4'te kalkacak",
+      "spec": { "garment": "dress", "shaping": "princess", "fabric": "woven", "neckline": "crew", "sleeveStyle": "straight", "sleeveLength": "short", "skirtStyle": "aLine", "skirtLength": "midi", "yoke": "plain" }
+    },
+    {
+      "ad": "K5-kup-korse",
+      "tur": "kompozisyon",
+      "topoloji": "yatay kup dikisi + korse bagcikli sirt",
+      "neden": "KOSU/ciktilar/primitif-DUSEN-K5-kup-korse.txt — KALIP CIKIYOR (10 parca), CIZILEMEYEN SEY FLAT. K2 ile AYNI kok sebep (bandPiece edgeRoles tasimiyor) ama farkli bolucu (cupseam.cpp); ikisi birlikte kok sebebin gercekten tek olup olmadigini olcer.",
+      "beklenen": "DUSER (armhole rolu tasinmiyor) — A2/A4'te kalkacak",
+      "spec": { "garment": "dress", "shaping": "dart", "fabric": "woven", "neckline": "crew", "sleeveStyle": "none", "skirtStyle": "aLine", "skirtLength": "midi", "cupSeam": "horizontal", "laceUpBack": "corset" }
+    },
+    {
+      "ad": "P3-etek-tek-topoloji",
+      "tur": "prompt",
+      "topoloji": "govdesiz: yalniz etek (omuz/kol/yaka YOK)",
+      "neden": "Ucuncu ayri topoloji (brief madde 3: 'topolojisi farkli en az 3 giysi'). Govde panelleri hic olmayinca omuz/oyuk varsayan her kod yolu adiyla dusmek zorunda; sessiz default burada yakalanir.",
+      "cumle": "A formlu kemerli midi etek",
+      "spec": { "garment": "skirt", "shaping": "dart", "fabric": "woven", "skirtStyle": "aLine", "skirtLength": "midi" }
+    },
+    {
+      "ad": "P4-kolsuz-dik-yaka-mini",
+      "tur": "prompt",
+      "topoloji": "kolsuz + dik (stand) yaka + mini",
+      "neden": "Kol YOKken yaka parcasi olan hal: kol oyugu temizleme ile yaka dikisi ayni panelde bulusur, ikisi ayri kod yolu.",
+      "cumle": "kolsuz, dik yakali, mini A etekli elbise",
+      "spec": { "garment": "dress", "shaping": "dart", "fabric": "woven", "neckline": "crew", "sleeveStyle": "none", "skirtStyle": "aLine", "skirtLength": "mini", "collarType": "stand" }
+    },
+    {
+      "ad": "P5-ust-gomlek-yaka-buzgu",
+      "tur": "prompt",
+      "topoloji": "ust (etek yok) + gomlek yakasi + yaka bolgesinde buzgu",
+      "neden": "Ucuncu govde ailesi: etek panelleri yok, topLength hattı devrede. Gomlek yakasi + buzgu ayni bolgede birlesiyor.",
+      "cumle": "gomlek yakali, uzun kollu, yakasi buzgulu bluz",
+      "spec": { "garment": "top", "shaping": "dart", "fabric": "woven", "neckline": "crew", "sleeveStyle": "straight", "sleeveLength": "long", "topLength": "hip", "collarType": "shirt", "gatherType": "shirred", "gatherZone": "neckline" }
+    }
+  ]
+}

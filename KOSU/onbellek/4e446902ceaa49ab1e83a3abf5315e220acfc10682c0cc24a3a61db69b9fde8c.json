@@ -1,0 +1,74 @@
+{
+  "girdiYolu": "GIRDI/hedef-fotograflar/biba-O1194418-dress-arka.jpg",
+  "sha256": "4e446902ceaa49ab1e83a3abf5315e220acfc10682c0cc24a3a61db69b9fde8c",
+  "semaSurumu": "graf-v1",
+  "okuyan": "isci-A1b",
+  "tarih": "2026-09-06",
+  "yontem": "Kosu iscisi fotografa DOGRUDAN bakti (Read araci). Dis LLM cagrisi YOK; llmCagri = 0.",
+  "gorunum": "on (DOSYA ADI 'arka' DIYOR — ADLA ICERIK CELISIYOR)",
+  "ADLANDIRMA_CELISKISI": {
+    "iddia": "dosya adi -arka.jpg, yani arka yuz bekleniyor",
+    "olculen": "fotografta giysinin ON yuzu duruyor: on orta dugme sirasi (4 dugme), sweetheart yaka, onde ortada sivri dusen peplum — ucu de on yuz isaretcisi. Arka yuze ait tek bir isaretci (arka yaka, arka fermuar, sirt dikisi) GORUNMUYOR.",
+    "fark": "ayni giysinin ON yuzunun IKINCI cekimi: kol pozisyonu ve isik biraz farkli, kadraj biraz genis. Ayni giysi, ayni yuz.",
+    "sonuc": "Bu cift bir ON-ARKA CIFTI DEGILDIR. Brief madde 3(a) 'on-arka cifti' diyor; bugun elimizdeki dosya bunu KARSILAMIYOR.",
+    "yapilan": "Sessizce on-arka gibi kullanilmadi. Regresyon girdisi F1-biba-on-arka bu tarifi ON gorunum olarak kullanir, arka yuz 'absent' adiyla isaretlenir (madde 4). Gercek bir arka fotograf gerekiyorsa acikSorular'da.",
+    "DOGRULANMADI": null,
+    "kontrolOrnegi": {
+      "olculen": "mary-quant-O365926-dress-arka.jpg AYNI yontemle okundu: GERCEK arka yuz (arka yaka, sirt orta dikisi, arka kemer; on dugme YOK).",
+      "sonuc": "'-arka' adlandirma konvansiyonu GENEL OLARAK dogru; sorun biba-O1194418 CIFTINE OZGU.",
+      "kapsam": "16 on-arka ciftinin 2'si acildi (biba-O1194418, mary-quant-O365926). Kalan 14 cift OKUNMADI — bu sayilar DOGRULANMADI.",
+      "dosyaAyniligi": "16 ciftin hepsinde on ve arka dosyalari sha256 olarak FARKLI (kopya-dosya hatasi degil); olculdu."
+    }
+  },
+  "tarif": {
+    "giysiSinifi": "elbise",
+    "siluet": "bel dikisli oturan beden + peplum + A midi etek",
+    "yaka": {
+      "tip": "sweetheart / kalp yaka",
+      "enYakinOp": "scoop",
+      "guven": 0.75
+    },
+    "kol": {
+      "tip": "kisa-orta set-in, omuz basi buzgulu (puff)",
+      "enYakinOp": "sleeveStyle=puff, sleeveLength=short",
+      "guven": 0.8
+    },
+    "beden": {
+      "kapanis": "on orta dugme sirasi (4 dugme gorunuyor)",
+      "guven": 0.7
+    },
+    "bel": {
+      "hat": "dogal bel dikisi",
+      "peplum": "onde sivri dusen ayri peplum kati",
+      "guven": 0.85
+    },
+    "etek": {
+      "tip": "A form midi",
+      "guven": 0.85
+    },
+    "kumas": {
+      "desen": "bias cizgi, on ortada chevron aynalama"
+    }
+  },
+  "okunamayanlar": [
+    "ARKA YUZ HALA OKUNAMADI (bu dosya da on yuz)",
+    "pens mi prenses mi: desen dikisleri gizliyor",
+    "kapanis yeri (yan/arka fermuar)"
+  ],
+  "enYakinSpec": {
+    "garment": "dress",
+    "shaping": "dart",
+    "fabric": "woven",
+    "neckline": "scoop",
+    "sleeveStyle": "puff",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "skirtLength": "midi",
+    "_kayip": [
+      "sweetheart yaka enum'da yok",
+      "peplum degeri okunamadi",
+      "bias grain ekseni yok",
+      "ARKA YUZ: absent"
+    ]
+  }
+}

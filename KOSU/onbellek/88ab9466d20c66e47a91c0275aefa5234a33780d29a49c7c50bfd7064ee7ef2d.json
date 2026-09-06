@@ -1,0 +1,66 @@
+{
+  "girdiYolu": "GIRDI/hedef-fotograflar/biba-O1194418-dress.jpg",
+  "sha256": "88ab9466d20c66e47a91c0275aefa5234a33780d29a49c7c50bfd7064ee7ef2d",
+  "semaSurumu": "graf-v1",
+  "okuyan": "isci-A1b",
+  "tarih": "2026-09-06",
+  "yontem": "Kosu iscisi fotografa DOGRUDAN bakti (Read araci). Dis LLM cagrisi YOK, canli worker (/api/analyze) cagrilmadi; llmCagri = 0.",
+  "gorunum": "on",
+  "tarif": {
+    "giysiSinifi": "elbise",
+    "siluet": "bel dikisli, oturan beden + peplum + genisleyen A etek",
+    "yaka": {
+      "tip": "sweetheart / kalp yaka",
+      "not": "on yaka cizgisi ortada hafif yukselen iki kavis; omuz uclarina dogru genis ve kare-ye yakin aciliyor. Motorun bugunku enum'unda birebir karsiligi YOK; en yakin op 'scoop' (genis oval). Bu bir ESLEME, olcum degil.",
+      "guven": 0.75
+    },
+    "kol": {
+      "tip": "kisa-orta boy (dirsek ustu) set-in kol",
+      "kolBasi": "omuz basinda BUZGULU/kabarik tepe (puff / gathered sleeve head); omuz cizgisi yukari kalkik",
+      "agiz": "duz, mansetsiz",
+      "enYakinOp": "sleeveStyle=puff, sleeveLength=short",
+      "guven": 0.8
+    },
+    "beden": {
+      "dikisler": "on ortada dugme paci; govde panelleri bel hattinda kesiliyor (bel dikisi acik). Prenses dikisi GORUNMUYOR — cizgi deseni panel sinirlarini gizliyor, o yuzden pens/prenses ayrimi OKUNAMADI.",
+      "kapanis": "on orta dugme sirasi, 4 (belki 5) dugme; dugmeler koyu, oval",
+      "guven": 0.6
+    },
+    "bel": {
+      "hat": "dogal bel, belirgin bel dikisi",
+      "peplum": "bel dikisinden asagi inen ayri bir peplum kati; onde ortada sivri/catallı dusuyor, yanlarda kivrilarak yukseliyor",
+      "guven": 0.85
+    },
+    "etek": {
+      "tip": "A form, diz alti (midi)",
+      "guven": 0.85
+    },
+    "kumas": {
+      "desen": "capraz (bias) yonlendirilmis ince siyah-krem cizgi; on ortada cizgiler V/chevron olusturacak sekilde aynalanmis",
+      "not": "Desen yonu KALIBIN kendisini degistirmez ama parcalarin GRAIN yonunu degistirir (bias kesim). Bugunku spec'te grain ekseni YOK; bu bilgi tarife yaziliyor, spec'e gecmiyor."
+    }
+  },
+  "okunamayanlar": [
+    "arka yuz: bu fotografta gorunmuyor (mankenin arkasi cekilmemis)",
+    "pens mi prenses mi: cizgi deseni panel dikislerini gizliyor",
+    "etek panel sayisi: okunamadi",
+    "fermuar/kapanis yeri (yan mi arka mi): gorunmuyor"
+  ],
+  "enYakinSpec": {
+    "_ne": "Tarifin BUGUNKU motor spec'ine en yakin cevirisi. Cevrilemeyen her nitelik okunamayanlar/notlarda adiyla duruyor; sessiz default yok.",
+    "garment": "dress",
+    "shaping": "dart",
+    "fabric": "woven",
+    "neckline": "scoop",
+    "sleeveStyle": "puff",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "skirtLength": "midi",
+    "peplum": "yok-op",
+    "_kayip": [
+      "sweetheart yaka: enum'da yok, scoop'a esleniyor (guven 0.75)",
+      "peplum: create.js'te 'peplum' ekseni VAR ama bu tarifin sivri-onlu peplumu icin bir deger okunamadi; regresyonda peplum ACILMADAN kosuluyor, fark buradan gelirse adiyla yazilir",
+      "bias grain: spec'te eksen yok"
+    ]
+  }
+}
