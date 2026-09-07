@@ -162,17 +162,72 @@ std::vector<Point> flattenOutline(const std::vector<PathCommand>& cmds, int step
 Point centroid(const std::vector<Point>& P) { Point c{0, 0}; if (P.empty()) return c; for (const Point& p : P) { c.x += p.x; c.y += p.y; } c.x /= P.size(); c.y /= P.size(); return c; }
 
 // ---------------------------------------------------------------- kavsak tanima (karar 7)
+// Panelin bir x=0 kenari, closure ILAN EDILMIS bir dikise ait mi (arka orta fermuar gibi).
+// Giyilebilirlik ve halka kapanmasi bunu sorar: kapanma varsa giysi vucuda girer ve halka
+// ayna noktasinda kapanir; yoksa panel onFold=false iken halka gercekten KOPUKTUR.
+bool kapanmaAynasi(const Garment& g, const std::string& panelId) {
+    const Panel* P = g.panel(panelId);
+    if (!P || P->onFold) return false;
+    // Panelde closure ILAN EDILMIS bir dikis varsa, panelin x=0 ekseni bir KAPANMA
+    // eksenidir: o eksene inen HER kenar ucu ayna noktasidir (kat aynasinin karsiligi).
+    // Kapanma dikisinin kendi kenari (cb) ile sinirlamak yanlis olurdu: bel/etek ucu
+    // halkalari cb'den degil, waist_back / hem_back'in x=0 ucundan kapanir.
+    for (const Seam& s : g.seams) {
+        if (s.closure.type.empty()) continue;
+        for (const std::vector<EdgeRef>* taraf : {&s.a, &s.b})
+            for (const EdgeRef& r : *taraf)
+                if (r.panel == panelId) return true;
+    }
+    return false;
+}
+
 // Tepe (panel, RefPoint) ile tepe (panel, RefPoint) bulusur mu: ayni panelde esitlik (kose), ilan
 // edilen dikis esi (dikis), iki kat cizgisi ucu (kat). Oncelik: kose > dikis > kat (kat ancak baska
 // baglanti yoksa; iki x=0 ucunun rastlantisi degil, halkanin ayna kapanisi olsun diye).
+// Iki tepe ayni panelde bir PENS'in iki bacak tabani mi (dikilince cakisan iki nokta).
+// Pens kapaninca bel cizgisi kesintisiz olur: A ve B ayni noktaya gelir. Zincir cozucu
+// bunu bilmezse bel halkasi "tepe paylasmiyor" diye KOPUK gorunur, oysa giysi kapalidir.
+bool pensTabani(const Garment& g, const std::string& panelId, const RefPoint& A, const RefPoint& B) {
+    const Panel* P = g.panel(panelId);
+    if (!P) return false;
+    const size_t n = P->edges.size();
+    for (size_t i = 0; i < n; ++i) {
+        const Edge& e1 = P->edges[i];
+        const Edge& e2 = P->edges[(i + 1) % n];
+        if (e1.kind != "dartLeg" || e2.kind != "dartLeg") continue;
+        if (e1.to != e2.from) continue;                       // ortak apeks degil
+        if ((e1.from == A && e2.to == B) || (e1.from == B && e2.to == A)) return true;
+    }
+    return false;
+}
+
 Kavsak kavsakBul(const Garment& g, const std::string& pi, const RefPoint& A, const std::string& pj, const RefPoint& B, const ZincirCozumu& cz, bool katIzin) {
     if (pi == pj && A == B) return {"kose", ""};
+    // PENS KAPANMASI (0509 A2, 2026-09-07): ayni panelde bir pensin iki bacak tabani.
+    // Dikilince cakisirlar, yani zincir buradan devam eder. Kumasta bosluk var, giysi
+    // uzerinde yok: sanal dikis ACISINDAN bu bir kavsaktir.
+    if (pi == pj && pensTabani(g, pi, A, B)) return {"pens", ""};
     for (const ZincirCozumu::Es& e : cz.esler) {
         if ((e.panelP == pi && e.P == A && e.panelQ == pj && e.Q == B) || (e.panelQ == pi && e.Q == A && e.panelP == pj && e.P == B)) return {"dikis", e.dikis};
     }
     if (katIzin) {
         const Panel* P = g.panel(pi); const Panel* Q = g.panel(pj);
         if (P && Q && P->onFold && Q->onFold && A.xSifir() && B.xSifir()) return {"kat", ""};
+        // KARISIK AYNA: bir taraf KAT (on panel, onFold), obur taraf KAPANMA (arka panel,
+        // cutCount=2 + closure). Arkadan kapanan elbisenin bel/yaka/etek halkalari tam
+        // olarak boyle kapanir: on orta katta, arka orta fermuarda, ikisi de x=0 ekseninde
+        // ayni noktada bulusur. Tek turden ayna aramak bu giysiyi kopuk gosteriyordu.
+        // KAPANMA AYNASI (0509 A2, 2026-09-07): kat aynasinin kardesi. Panel onFold DEGIL
+        // (arka orta kesik), ama x=0 ucu closure tasiyan bir dikise ait: giysi oradan ACILIR
+        // ve giyildikten sonra kapanir. Halka kapanmasi acisindan bu bir kavsaktir; kat ile
+        // farki kumasta iki kenar olmasi, geometride ayni noktada bulusmasi. Kapanma ilan
+        // EDILMEMISSE (closure bos) bu dal calismaz: acik kalan arka orta halkayi kopuk birakir.
+        if (P && Q && A.xSifir() && B.xSifir()) {
+            const bool ai = P->onFold || kapanmaAynasi(g, pi);
+            const bool aj = Q->onFold || kapanmaAynasi(g, pj);
+            // en az bir taraf gercek KAPANMA olmali; iki kat zaten yukarida "kat" dondu
+            if (ai && aj && (kapanmaAynasi(g, pi) || kapanmaAynasi(g, pj))) return {"kapanma", ""};
+        }
     }
     return {"", ""};
 }
@@ -205,7 +260,12 @@ Zincir zincirCoz(const Garment& g, const std::vector<EdgeRef>& refs, const Zinci
         z.basPanel = z.sonPanel = refs[0].panel; z.bas = entry(refs[0], false); z.son = exit_(refs[0], false);
         return z;
     }
-    auto rank = [](const std::string& t) { return t == "kose" ? 0 : t == "dikis" ? 1 : t == "kat" ? 2 : 9; };
+    // Kavsak turu onceligi. "pens" ve "kapanma" (0509 A2, 2026-09-07) da GECERLI kavsaktir;
+    // listede olmayan tur 9 alir ve zincir KOPUK sayilirdi — pens kapanmasi ve arka orta
+    // fermuar tam olarak bu yuzden kopuk gorunuyordu. Sira: gercek nokta ortakligi (kose) >
+    // ilan edilmis dikis > pens kapanmasi (ayni panel, dikilince cakisir) > kat aynasi >
+    // kapanma aynasi (giysi acilir, en zayif ilan).
+    auto rank = [](const std::string& t) { return t == "kose" ? 0 : t == "dikis" ? 1 : t == "pens" ? 2 : t == "kat" ? 3 : t == "kapanma" ? 4 : 9; };
     // i = 0: dort kombinasyon icinden EN IYI kavsak (tur onceligi, esitlikte duz-duz)
     {
         int best = 9; bool bt0 = false, bt1 = false; Kavsak bk;
@@ -348,10 +408,23 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
                         topoRet("kenar_rolu", key, "dikis " + s.id + " tarafi " + yan + " '" + it->second + "' kenari tasiyor; dikise yalniz kind=seam kenar girer (_yasa 3)");
                         ++hataSayisi;
                     }
-                    // kural 2a: ayni dikisin iki tarafinda ayni kenar
+                    // kural 2a: ayni dikisin iki tarafinda ayni kenar.
+                    // AYNA KAPANMA ISTISNASI (0509 A2, 2026-09-07): panel cutCount==2 ise iki
+                    // parca kesilir (sol + sag ayna) ve kenar kendi ayna KOPYASIYLA dikilir --
+                    // arka orta fermuar tam olarak budur. Iki taraf ayni Edge'i gosterir ama
+                    // KUMASTA iki ayri parcadir, dikis cifti hala benzersizdir. Istisna dar
+                    // tutulur: closure ilan edilmis, x=0'da duran, cutCount==2 panelin kenari.
                     if (!buDikiste.insert(key).second) {
-                        topoRet("dikis_cifti", key, "kenar dikis " + s.id + " icinde iki kez geciyor; dikis cifti benzersizdir (_yasa 4)");
-                        ++hataSayisi;
+                        const Panel* pp = g0.panel(r.panel);
+                        const Edge* ee = g0.edge(r);
+                        const bool aynaKapanma = pp && ee && pp->cutCount == 2 && !s.closure.type.empty()
+                                                 && ee->from.xSifir() && ee->to.xSifir();
+                        if (aynaKapanma) {
+                            H("topoloji", key, "ayna kapanmasi: kenar dikis " + s.id + " icinde kendi ayna kopyasiyla eslesiyor (cutCount=2, closure " + s.closure.type + "); kumasta iki parca", true, true);
+                        } else {
+                            topoRet("dikis_cifti", key, "kenar dikis " + s.id + " icinde iki kez geciyor; dikis cifti benzersizdir (_yasa 4)");
+                            ++hataSayisi;
+                        }
                     }
                 }
             };
@@ -406,8 +479,31 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
                 ++hataSayisi;
             }
         }
+        // kural 5: GIYILEBILIRLIK (0509 A2, 2026-09-07) — ERR_NOT_WEARABLE.
+        // Ilk dort kural topolojik TUTARLILIGI olcer; hicbiri "giysi vucuda GIRIYOR mu"
+        // sorusunu sormaz. Her paneli onFold, hicbir dikiste closure olmayan kapali bir
+        // TUP dort kuralin dordunu de gecer ve giyilemez: en dar halkasi (bel) vucudun
+        // en genis gecis olcusunden (gogus/kalca) kucukse giysi kafadan da ayaktan da
+        // gecmez. Gercek kalipta bunun karsiligi bir KAPANMA'dir (fermuar/dugme/baglama)
+        // ya da halkanin esnek olmasidir. Burada olculen sey ilan: >=1 dikiste closure.
+        // Muafiyet: hicbir paneli onFold olmayan tam-acik graf (or. sal) bu kurala girmez.
+        {
+            bool kapaliTup = false;
+            for (const Panel& p : g0.panels) if (p.onFold) { kapaliTup = true; break; }
+            bool kapanmaVar = false; std::string kapanmaAdi;
+            for (const Seam& s : g0.seams) if (!s.closure.type.empty()) { kapanmaVar = true; kapanmaAdi = s.id + " (" + s.closure.type + ")"; break; }
+            if (kapaliTup && !kapanmaVar) {
+                topoRet("giyilebilirlik", g0.id,
+                        "ERR_NOT_WEARABLE: graf kapali tup (onFold panel var) ve HICBIR dikiste closure yok; "
+                        "giysi en dar halkasindan vucuda girmez. Bir dikise closure ilan edilmeli "
+                        "(contract enum closureType: zipper|buttons|hooks|ties|open) ya da o panelin onFold'u kaldirilmali");
+                ++hataSayisi;
+            } else if (kapanmaVar) {
+                H("topoloji", g0.id, "giyilebilirlik: kapanma ilan edildi -> " + kapanmaAdi + "; giysi buradan acilir", true, true);
+            }
+        }
         if (hataSayisi == 0)
-            H("topoloji", g0.id, "kenar_rolu · dikis_cifti · kapanma · komsuluk_bagli: dort kural da gecti (" + std::to_string(g0.panels.size()) + " panel, " + std::to_string(g0.seams.size()) + " dikis)", true);
+            H("topoloji", g0.id, "kenar_rolu · dikis_cifti · kapanma · komsuluk_bagli · giyilebilirlik: bes kural da gecti (" + std::to_string(g0.panels.size()) + " panel, " + std::to_string(g0.seams.size()) + " dikis)", true);
     }
 
     // ---- kisit: fitLength kisitlari bu bedende cozulur (karar 6); cozulen graf G ile olculur
@@ -578,7 +674,7 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
             const double gap = k.tur == "dikis" ? (seamArtik.count(k.dikis) ? seamArtik[k.dikis] : 0.0) : 0.0;
             if (gap > worst) { worst = gap; hs.enKotuKavsak = rs(ri) + " -> " + rs(rj); }
             if (!desc.empty()) desc += " | ";
-            desc += rs(ri) + (z.kenarlar[i].ters ? "<" : ">") + " -> " + rs(rj) + ": " + (k.tur.empty() ? "KAVSAK YOK" : k.tur == "dikis" ? "dikis " + k.dikis + " (" + f2(gap) + ")" : k.tur == "kat" ? "kat aynasi" : "kose");
+            desc += rs(ri) + (z.kenarlar[i].ters ? "<" : ">") + " -> " + rs(rj) + ": " + (k.tur.empty() ? "KAVSAK YOK" : k.tur == "dikis" ? "dikis " + k.dikis + " (" + f2(gap) + ")" : k.tur == "kat" ? "kat aynasi" : k.tur == "kapanma" ? "kapanma aynasi (giysi buradan acilir)" : k.tur == "pens" ? "pens kapanmasi" : "kose");
         }
         hs.kapanmaMM = worst; hs.kavsaklar = z.ok ? desc : (z.hata + (desc.empty() ? "" : " | " + desc));
         hs.gecti = z.ok && worst <= tol.halkaKapanmaMM;
