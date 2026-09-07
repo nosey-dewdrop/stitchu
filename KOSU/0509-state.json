@@ -1,6 +1,6 @@
 {
   "adim": "A2",
-  "durum": "ISCI",
+  "durum": "DURDU",
   "deneme": 1,
   "butce": {
     "tag": "adim-A2a-once",
@@ -455,7 +455,7 @@
       "commit": "b8f3f4d9"
     }
   },
-  "durduNot": "2026-09-06 8.29 — A2 Ilk gecis hakemi DUR. 3 satis engeli: (1) kapanma yok/giyilemez (graf), (2) sifir pens 107.5mm supresyon emilmiyor (degerleme), (3) sanalDikisMM=0.00 yapisal/vacuous (degerleme+graf semasi). Ayrica bu turda urun uretilmedi: adim-A2a-once..HEAD engine/src BOS. Ayrinti: KOSU/0509-DURDU.md. Resume: Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A2\"}. Kilit acik.",
+  "durduNot": "2026-09-07, 8.29 (2. durdurma). A2 / A2b ACIK. Sebep: BUTCE ASILDI — 2 mantik commit, 7.51 saat (8.5 protokol hatasi sinyali). Yeni kusur yok. Onceki turun 3 satis engeli (kapanma yok, sifir pens, sanalDikisMM vacuous) ve urun uretilmemesi ele alinmadi. Katman: kosu duzeni. Kilit acik. Ayrinti: KOSU/0509-DURDU.md. Resume: Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A2\"}",
   "A2_devam_notu": "6 Eyl ana oturum: A2b/A2c isi YAPILDI (flat.png, kalip-36.png, seri.png, sanaldikis 8 bedende 0.0 mm, topoloji-kanit 4 kural, olcek_check 990 mm YESIL) ama HAKEM HIC GORMEDI: butce kontrolu hakemden once kosuyor ve olcum A2b'yi A2a'nin tag'inden saydi (13 commit/3.05 saat aslinda A2a+A2b+A2c toplami). Kok neden koscuda: alt adim basina tag atilmiyordu. Duzeltildi (tag ve butce alt adim basina, tag komutu zorunlu/acik). adim-A2b-once tag'i HEAD'e atildi; A2b/A2c yeniden kosulmaz, hakem mevcut ciktiyi olcer. KILIT IHLALI grafdogrula.cpp: A2b'nin izin listesinde VAR, is A2c etiketiyle devam ettigi icin ihlal gorundu — sahte pozitif, geri ALINMADI (alinsaydi topoloji kapisi silinirdi).",
   "A2bIzinListesi": [
     "engine/src/solver_utils.hpp",
