@@ -63,10 +63,15 @@ logla() { printf '\n===== %s  %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" >> "$LOG
 # ---------------------------------------------------------------- kilitli alan
 # DIZINLER yazilabilir kalir (yeni 0509-* dosya acilabilsin); yalniz DOSYALAR a-w.
 kilitli_yollar() {
-  # var olanlari bas; olmayan (grafdogrula.* / solver_utils.* A2a'nin isi) sessiz gecilir
-  for p in contract engine/tests engine/golden-reference.csv \
-           engine/src/grafdogrula.hpp engine/src/grafdogrula.cpp \
-           engine/src/solver_utils.hpp engine/src/solver_utils.cpp; do
+  # SADELESTIRILDI (2026-09-07, Damla karari, A2 elle kapatma): kilit engine/src'yi
+  # KAPSAMAZ. Gerekce olculdu: A2 dort tur ust uste ürün kodu yazmadan dustu, dordunde
+  # de butce H7/kilit onarimina gitti (KOSU/0509-DURDU.md + karar defteri: uc kararin
+  # ucu de arac katmani, "hakem hukmunu ne acar ne kapatir"). Kilidin korudugu sey
+  # "isci gecemedigi testte kurali sessizce siler" idi; o koruma engine/tests ve
+  # contract kilidinde ZATEN duruyor (dogrulayicinin KURALLARI orada yasiyor, ve
+  # --kilit-diff satir yonu denetimi silinen add_test satirini yakaliyor). engine/src
+  # kilidi ise ayni kusuru yakalamiyor, yalniz urun kodu yazmayi engelliyordu.
+  for p in contract engine/tests engine/golden-reference.csv; do
     [ -e "$p" ] && echo "$p"
   done
 }
