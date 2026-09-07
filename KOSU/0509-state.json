@@ -3,8 +3,23 @@
   "durum": "ISCI",
   "deneme": 1,
   "butce": {
-    "commit": 0,
-    "saat": 0
+    "tag": "adim-A2a-once",
+    "commit": 2,
+    "derlemeCommit": 0,
+    "saat": 7.51,
+    "olcumTarihi": "2026-09-07T08:15",
+    "altAdim": "A2a/A2b",
+    "kilitIhlali": [],
+    "yerelMinimum": false,
+    "metrikSerisi": "sanalDikisMM 0 -> 0 -> 0 (esik 2.0 alti, seriden dusuruldu); anaSapmaMM 0.693 sabit (A4 yukumlulugu, A2'de seriye girmez)",
+    "kapiBozuk": false,
+    "gecitYesil": false,
+    "kirmizilar": [
+      "flat_ayni_insan_check = 1 (esik 0) — ILANLI KIRMIZI, tavan 34, A4'te kapanacak"
+    ],
+    "regresyonFarki": [
+      "kosmadi: K2-prenses-roba (flatSVG firlatti, beklenen DUSER); fark=0"
+    ]
   },
   "tag": "adim-A2a-once",
   "yol": [
