@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1400" viewBox="-20 -20 1400 1400"><rect width="1360" height="940" fill="#ffffff"/>
+<defs><marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 z" fill="#444"/></marker></defs>
+<text x="30" y="40" font-size="20" font-weight="bold" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="start">A2 kararlari Q1+Q2+Q3 uygulandi — izin listesinin tek kaynagi state.json (2026-09-07)</text>
+<text x="30" y="64" font-size="13" font-weight="normal" fill="#555" font-family="-apple-system,Helvetica,Arial" text-anchor="start">kanit: commit d9adf9de + 4365c414 · KOSU/0509-kosu.js · H7 YESIL, kendi-check 18/18, 0 kirmizi</text>
+<text x="60" y="110" font-size="16" font-weight="bold" fill="#a11" font-family="-apple-system,Helvetica,Arial" text-anchor="start">ONCE — celiski, H7 KIRMIZI</text>
+<rect x="40" y="126" width="580" height="58" rx="9" fill="#ffdede" stroke="#555" stroke-width="1.4"/>
+<text x="330.0" y="151.18" font-size="13" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">kosucu 0509-kosu.js:182  faz.izinAlt  (brief metni)</text>
+<text x="330.0" y="168.18" font-size="13" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">4 glob</text>
+<line x1="180" y1="184" x2="150" y2="222" stroke="#444" stroke-width="1.8" marker-end="url(#a)"/>
+<line x1="480" y1="184" x2="510" y2="222" stroke="#444" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="40" y="222" width="260" height="58" rx="9" fill="#ffeade" stroke="#555" stroke-width="1.4"/>
+<text x="170.0" y="247.18" font-size="13" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">--kilit</text>
+<text x="170.0" y="264.18" font-size="13" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">4 glob acar</text>
+<rect x="360" y="222" width="260" height="58" rx="9" fill="#ffeade" stroke="#555" stroke-width="1.4"/>
+<text x="490.0" y="247.18" font-size="13" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">H7 state.json okur</text>
+<text x="490.0" y="264.18" font-size="13" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">3 glob bekler</text>
+<line x1="150" y1="280" x2="300" y2="320" stroke="#444" stroke-width="1.8" marker-end="url(#a)"/>
+<line x1="510" y1="280" x2="360" y2="320" stroke="#444" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="40" y="320" width="580" height="50" rx="9" fill="#ffb8b8" stroke="#555" stroke-width="1.4"/>
+<text x="330.0" y="349.86" font-size="13.5" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">4 acik  ≠  3 ilan   -&gt;   H7 FAIL (izin disi yazilabilir: 1)</text>
+<text x="760" y="110" font-size="16" font-weight="bold" fill="#186118" font-family="-apple-system,Helvetica,Arial" text-anchor="start">SONRA — Q1: tek kaynak, H7 YESIL</text>
+<rect x="720" y="126" width="600" height="58" rx="9" fill="#dcf5dc" stroke="#555" stroke-width="1.4"/>
+<text x="1020.0" y="151.25" font-size="12.5" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">KOSU/0509-state.json   &lt;altAdim&gt;IzinListesi</text>
+<text x="1020.0" y="167.75" font-size="12.5" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">TEK KAYNAK — ilan yoksa izin de yok, adim baslamaz</text>
+<line x1="860" y1="184" x2="860" y2="222" stroke="#444" stroke-width="1.8" marker-end="url(#a)"/>
+<line x1="1180" y1="184" x2="1180" y2="222" stroke="#444" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="720" y="222" width="270" height="58" rx="9" fill="#e8f5da" stroke="#555" stroke-width="1.4"/>
+<text x="855.0" y="247.32" font-size="12" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">stateIzinListesi()</text>
+<text x="855.0" y="263.32" font-size="12" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">kosucu, KOSU/0509-kosu.js</text>
+<rect x="1050" y="222" width="270" height="58" rx="9" fill="#e8f5da" stroke="#555" stroke-width="1.4"/>
+<text x="1185.0" y="247.32" font-size="12" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">H7 ayni cozumleme</text>
+<text x="1185.0" y="263.32" font-size="12" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">0509-kapi.sh:818-841</text>
+<line x1="860" y1="280" x2="960" y2="320" stroke="#444" stroke-width="1.8" marker-end="url(#a)"/>
+<line x1="1180" y1="280" x2="1080" y2="320" stroke="#444" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="720" y="320" width="600" height="50" rx="9" fill="#a9e0a9" stroke="#555" stroke-width="1.4"/>
+<text x="1020.0" y="349.86" font-size="13.5" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">--kilit VE --kilit-diff ayni listeyle   -&gt;   H7 OK (izin disi: 0)</text>
+<rect x="720" y="388" width="600" height="58" rx="9" fill="#dde7ff" stroke="#555" stroke-width="1.4"/>
+<text x="1020.0" y="413.25" font-size="12.5" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">Q3: A2c basinda ilanGecisi() 0509-kapi.sh kalemini DUSURUR,</text>
+<text x="1020.0" y="429.75" font-size="12.5" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">A2cIzinListesi = engine/CMakeLists.txt acilir (--kilit ONCESI)</text>
+<rect x="40" y="388" width="580" height="58" rx="9" fill="#eeeeee" stroke="#555" stroke-width="1.4"/>
+<text x="330.0" y="413.25" font-size="12.5" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">Q2: yeni karar yok — kilit her alt adim basinda fiilen yeniden</text>
+<text x="330.0" y="429.75" font-size="12.5" font-weight="normal" fill="#111" font-family="-apple-system,Helvetica,Arial" text-anchor="middle">kurulur, kaniti H7 ciktisidir (zaten el(&#x27;basla&#x27;) icinde yazili).</text>
+<line x1="40" y1="482" x2="1320" y2="482" stroke="#ddd" stroke-width="1.5"/>
+<text x="40" y="498" font-size="14" font-weight="bold" fill="#111" font-family="ui-monospace,Menlo,monospace" text-anchor="start">KABUL KOMUTU:  bash KOSU/ciktilar/graf-ilk/0509-q1q3-kabul.sh</text>
+<text x="40" y="522" font-size="14" font-weight="bold" fill="#186118" font-family="ui-monospace,Menlo,monospace" text-anchor="start">exit = 0</text>
+<rect x="36" y="534" width="1288" height="234" rx="9" fill="#f7f9f7" stroke="#cccccc" stroke-width="1.4"/>
+<text x="52" y="576" font-size="12.5" font-weight="normal" fill="#186118" font-family="ui-monospace,Menlo,monospace" text-anchor="start">OK   Q1 stateIzinListesi var</text>
+<text x="52" y="600" font-size="12.5" font-weight="normal" fill="#186118" font-family="ui-monospace,Menlo,monospace" text-anchor="start">OK   Q1 --kilit state listesiyle</text>
+<text x="52" y="624" font-size="12.5" font-weight="normal" fill="#186118" font-family="ui-monospace,Menlo,monospace" text-anchor="start">OK   Q1 --kilit-diff state listesiyle</text>
+<text x="52" y="648" font-size="12.5" font-weight="normal" fill="#186118" font-family="ui-monospace,Menlo,monospace" text-anchor="start">OK   Q1 brief izin artik girdi degil</text>
+<text x="52" y="672" font-size="12.5" font-weight="normal" fill="#186118" font-family="ui-monospace,Menlo,monospace" text-anchor="start">OK   Q3 ILAN_GECIS tablosu</text>
+<text x="52" y="696" font-size="12.5" font-weight="normal" fill="#186118" font-family="ui-monospace,Menlo,monospace" text-anchor="start">OK   Q3 ilanGecisi --kilit oncesi</text>
+<text x="52" y="720" font-size="12.5" font-weight="normal" fill="#186118" font-family="ui-monospace,Menlo,monospace" text-anchor="start">OK   Q3 A2c: kapi.sh duser, CMakeLists acilir</text>
+<text x="52" y="744" font-size="12.5" font-weight="normal" fill="#186118" font-family="ui-monospace,Menlo,monospace" text-anchor="start">OK   H7 kilit-kurulu (izin disi yazilabilir: 0; izin globlari: engine/src/solver_utils.hpp engine/src/solver_utils.cpp engine/tests/0509-kapi.sh)</text>
+<text x="52" y="768" font-size="12.5" font-weight="normal" fill="#186118" font-family="ui-monospace,Menlo,monospace" text-anchor="start">KABUL Q1+Q2+Q3 GECTI</text>
+<text x="40" y="816" font-size="13.5" font-weight="bold" fill="#111" font-family="ui-monospace,Menlo,monospace" text-anchor="start">KILIT (fiilen kosuldu):</text>
+<rect x="36" y="826" width="1288" height="64" rx="9" fill="#f5f5f8" stroke="#cccccc" stroke-width="1.4"/>
+<text x="52" y="850" font-size="12.5" font-weight="normal" fill="#222" font-family="ui-monospace,Menlo,monospace" text-anchor="start">kilit: 217 dosya salt-okunur, izin listesinden 3 dosya yazilabilir</text>
+<text x="52" y="876" font-size="12.5" font-weight="normal" fill="#222" font-family="ui-monospace,Menlo,monospace" text-anchor="start">izin: engine/src/solver_utils.hpp engine/src/solver_utils.cpp engine/tests/0509-kapi.sh</text>
+</svg>
