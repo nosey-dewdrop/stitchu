@@ -80,8 +80,8 @@ int main(int argc, char** argv) {
     Anchor apexA; apexA.landmark = "landmark.waist"; apexA.xOf = "ringQuarter"; apexA.xFactor = 0.5; apexA.yLandmark = "landmark.bustApex"; apexA.yLandmark2 = "landmark.waist"; apexA.yLerp = 0.15;
     const RefPoint apex = RefPoint::of(apexA);
     Garment gDart;
-    { const double W0 = len(g, "on_beden", "waist_front", body); const size_t n0 = g.panel("on_beden")->edges.size();
-      OpResult r = suppress(g, "on_beden", "waist_front", 0.5, 0.2, apex, "pens_bel", true, ctx);
+    { const double W0 = len(g, "on_beden", "waist_front.2", body); const size_t n0 = g.panel("on_beden")->edges.size();
+      OpResult r = suppress(g, "on_beden", "waist_front.2", 0.5, 0.2, apex, "pens_bel", true, ctx);
       ok(r.ok, "suppress waist_front @0.5 intake 0.2 trueLegs: " + (r.ok ? "ok" : r.hata)); if (!r.ok) return 1;
       ok(r.g.ops.back().op == "suppress" && r.g.ops.back().args.boolOr("trueLegs", false), "  kayit adi 'suppress' (primitives-v1 op.suppress), trueLegs true");
       gDart = r.g;
@@ -91,41 +91,41 @@ int main(int argc, char** argv) {
       ok(l1 && l2 && l1->kind == "dartLeg" && l2->kind == "dartLeg" && l1->to == l2->from, "  iki dartLeg, ortak apeks");
       const double a = l1->length(p->ctxFor(body)), b2 = l2->length(p->ctxFor(body));
       ok(std::fabs(a - b2) < 1e-6, "  bacaklar esit " + f2(a) + " / " + f2(b2) + " mm (insadan)");
-      const double W1 = len(r.g, "on_beden", "waist_front.1", body) + len(r.g, "on_beden", "waist_front.3", body);
+      const double W1 = len(r.g, "on_beden", "waist_front.2.1", body) + len(r.g, "on_beden", "waist_front.2.3", body);
       ok(std::fabs(W1 - 0.8 * W0) < 1e-6, "  bel kenari 0.8 x eski: " + f2(W1) + " == " + f2(0.8 * W0));
       ok(p->closed(&why), "  panel kapali: " + why);
       const Seam* s = r.g.seam("bel");
-      ok(hasRef(s->a, "on_beden", "waist_front.1") && hasRef(s->a, "on_beden", "waist_front.3") && !hasRef(s->a, "on_beden", "waist_front"), "  bel dikisi referanslari sol/sag parcaya");
+      ok(hasRef(s->a, "on_beden", "waist_front.2.1") && hasRef(s->a, "on_beden", "waist_front.2.3") && !hasRef(s->a, "on_beden", "waist_front.2"), "  bel dikisi referanslari sol/sag parcaya");
       ok(locality(g, r.g, {"on_beden"}, why), "  locality " + why);
       OpResult n = suppress(g, "on_beden", "cf", 0.5, 0.2, apex, "x", true, ctx);
       ok(!n.ok && n.hata.find("fold") != std::string::npos, "  negatif: kat kenarina pens reddi: " + n.hata);
-      OpResult n2 = suppress(g, "on_beden", "waist_front", 0.5, 1.2, apex, "x", true, ctx);
+      OpResult n2 = suppress(g, "on_beden", "waist_front.2", 0.5, 1.2, apex, "x", true, ctx);
       ok(!n2.ok, "  negatif: intake 1.2 reddi: " + n2.hata);
-      OpResult n3 = suppress(g, "on_beden", "waist_front", 0.95, 0.2, apex, "x", true, ctx);
+      OpResult n3 = suppress(g, "on_beden", "waist_front.2", 0.95, 0.2, apex, "x", true, ctx);
       ok(!n3.ok && n3.hata.find("disina") != std::string::npos, "  negatif: agiz kenar disina tasar: " + n3.hata);
       // trueLegs=true agiz ortasini kullanir: kaydirilmis x'li apeks de esit bacak verir; trueLegs=false ayni apeks esit vermez
       Anchor off = apexA; off.xFactor = 0.8; const RefPoint apexOff = RefPoint::of(off);
-      OpResult t1 = suppress(g, "on_beden", "waist_front", 0.5, 0.2, apexOff, "p", true, ctx);
-      OpResult t0 = suppress(g, "on_beden", "waist_front", 0.5, 0.2, apexOff, "p", false, ctx);
+      OpResult t1 = suppress(g, "on_beden", "waist_front.2", 0.5, 0.2, apexOff, "p", true, ctx);
+      OpResult t0 = suppress(g, "on_beden", "waist_front.2", 0.5, 0.2, apexOff, "p", false, ctx);
       const Panel* p1 = t1.g.panel("on_beden"); const Panel* p0 = t0.g.panel("on_beden");
       const double d1 = std::fabs(p1->edge("p.1")->length(p1->ctxFor(body)) - p1->edge("p.2")->length(p1->ctxFor(body)));
       const double d0 = std::fabs(p0->edge("p.1")->length(p0->ctxFor(body)) - p0->edge("p.2")->length(p0->ctxFor(body)));
       ok(t1.ok && t0.ok && d1 < 1e-6 && d0 > 1.0, "  trueLegs: kaydirilmis apeks x'i ile bacak farki true " + f2(d1) + " / false " + f2(d0) + " mm (insa vs verilen)");
-      OpResult n4 = suppress(g, "on_beden", "waist_front", 0.5, 0.2, lerp(apex, RefPoint::of(off), 0.5), "q", true, ctx);
+      OpResult n4 = suppress(g, "on_beden", "waist_front.2", 0.5, 0.2, lerp(apex, RefPoint::of(off), 0.5), "q", true, ctx);
       ok(!n4.ok && n4.hata.find("tek landmark") != std::string::npos, "  negatif: trueLegs ile cok terimli apeks reddi: " + n4.hata); }
 
     // ---- gather
-    { const double W0 = len(g, "on_etek", "waist_front", body);
-      OpResult r = gather(g, "on_etek", "waist_front", 1.5, ctx);
+    { const double W0 = len(g, "on_etek", "waist_front.2", body);
+      OpResult r = gather(g, "on_etek", "waist_front.2", 1.5, ctx);
       ok(r.ok, "gather on_etek/waist_front x1.5: " + (r.ok ? "ok" : r.hata)); if (!r.ok) return 1;
-      const double W1 = len(r.g, "on_etek", "waist_front", body);
+      const double W1 = len(r.g, "on_etek", "waist_front.2", body);
       ok(std::fabs(W1 - 1.5 * W0) < 1e-6, "  kenar 1.5 kat: " + f2(W1) + " == " + f2(1.5 * W0));
       const Seam* s = r.g.seam("bel");
-      ok(std::fabs(s->ratio - 1.5) < 1e-9 && hasRef(s->a, "on_etek", "waist_front"), "  dikis orani 1.5, buzulen taraf a'ya gecti (etek)");
-      ok(r.g.panel("on_etek")->edge("waist_front")->gatherRatio == 1.5, "  edge.gatherRatio 1.5 (bilgi)");
+      ok(std::fabs(s->ratio - 1.5) < 1e-9 && hasRef(s->a, "on_etek", "waist_front.2"), "  dikis orani 1.5, buzulen taraf a'ya gecti (etek)");
+      ok(r.g.panel("on_etek")->edge("waist_front.2")->gatherRatio == 1.5, "  edge.gatherRatio 1.5 (bilgi)");
       ok(r.g.panel("on_etek")->closed(&why), "  panel kapali " + why);
       ok(locality(g, r.g, {"on_etek"}, why), "  locality " + why);
-      OpResult n = gather(g, "on_etek", "waist_front", 5.0, ctx);
+      OpResult n = gather(g, "on_etek", "waist_front.2", 5.0, ctx);
       ok(!n.ok && n.hata.find("aralig") != std::string::npos, "  negatif: oran 5.0 contract araligi disinda: " + n.hata);
       OpResult n2 = gather(g, "on_etek", "cf", 1.5, ctx);
       ok(!n2.ok, "  negatif: kat kenari buzulmez: " + n2.hata); }
@@ -137,7 +137,7 @@ int main(int argc, char** argv) {
       ok(std::fabs(len(r.g, "on_etek", "hem_front", body) - 1.6 * H0) < 1e-6, "  etek ucu 1.6 kat (" + f2(1.6 * H0) + ")");
       ok(len(r.g, "on_etek", "side_front.1", body) > len(g, "on_etek", "side_front.1", body), "  yan kenar disa acildi (uzadi)");
       ok(locality(g, r.g, {"on_etek"}, why), "  locality " + why);
-      OpResult n = flare(g, "on_etek", "waist_front", 1.6, ctx);
+      OpResult n = flare(g, "on_etek", "waist_front.2", 1.6, ctx);
       ok(!n.ok && n.hata.find("gather") != std::string::npos, "  negatif: dikisli kenara flare reddi (gather onerir): " + n.hata);
       OpResult n2 = flare(g, "on_etek", "hem_front", 9.0, ctx);
       ok(!n2.ok, "  negatif: katsayi 9 aralik disi: " + n2.hata); }
@@ -176,7 +176,11 @@ int main(int argc, char** argv) {
       const std::string pOf1 = r.g.panelOfEdge("armhole_back.1.1"), pOf2 = r.g.panelOfEdge("armhole_back.1.2");
       ok(!pOf1.empty() && !pOf2.empty() && pOf1 != pOf2, "  oyuk parcalari iki ayri panelde: .1.1 -> " + pOf1 + ", .1.2 -> " + pOf2);
       ok(r.g.edge({pOf1, "armhole_back.1.1"})->role == "armhole_back" && r.g.edge({pOf2, "armhole_back.1.2"})->role == "armhole_back" && r.g.edge({pOf2, "armhole_back.1.2"})->rolePart == 2 && r.g.edge({pOf2, "armhole_back.1.2"})->roleCount == 4, "  rol iki panelde de armhole_back, parcali (1/4, 2/4; .2 = 3/4..4/4 ayni panelde)");
-      ok(pu->onFold && pa->onFold, "  iki panel de kat kenari tasiyor (onFold)");
+      // 2026-09-07: arka orta artik KAT DEGIL, kapanma dikisi (fermuar) — arka_beden
+      // onFold=false, cutCount=2. Bolunen iki parca da bu ozelligi MIRAS ALIR; olculen
+      // sey "bolme, panelin orta-ekseni ozelligini koruyor mu" idi, o korunuyor.
+      ok(!pu->onFold && !pa->onFold && pu->cutCount == 2 && pa->cutCount == 2,
+         "  iki panel de arka orta kapanmasini miras aldi (onFold=false, cutCount=2)");
       const Seam* roba = r.g.seam("roba");
       ok(roba && roba->a.size() == 1 && roba->b.size() == 1 && r.g.edge(roba->a[0]) && r.g.edge(roba->b[0]), "  roba dikisi iki yeni kesim kenarini bagliyor");
       ok(std::fabs(len(r.g, roba->a[0].panel, roba->a[0].edge, body) - len(r.g, roba->b[0].panel, roba->b[0].edge, body)) < 1e-9, "  kesim kenarlari esit uzunlukta");
@@ -184,7 +188,7 @@ int main(int argc, char** argv) {
       ok(hasRef(oyuk->b, pOf1, "armhole_back.1.1") && hasRef(oyuk->b, pOf2, "armhole_back.1.2"), "  kol_oyugu dikisi referanslari yeni panellere tasindi");
       { const EdgeRef& rb = r.g.seam("omuz")->b[0]; ok((rb.panel == "arka_ust" || rb.panel == "arka_alt") && rb.edge == "shoulder" && r.g.edge(rb), "  omuz dikisi referansi yeni panele tasindi (" + rb.panel + "/" + rb.edge + ")"); }
       ok(locality(s2.g, r.g, {"arka_beden"}, why), "  locality: on_beden/etekler/kol bayt-ayni " + why);
-      OpResult n = split(s2.g, "arka_beden", "cb.2", "waist_back", "x", "y", "z", 1.0, ctx);
+      OpResult n = split(s2.g, "arka_beden", "cb.2", "waist_back.1", "x", "y", "z", 1.0, ctx);   // 2026-09-07: bel kenari pens icin bolundu; cb'nin komsusu artik waist_back.1
       ok(!n.ok && n.hata.find("komsu") != std::string::npos, "  negatif: komsu koseler (mevcut kenarla cakisir): " + n.hata);
       OpResult n2 = split(s2.g, "arka_beden", "cb.2", "cb.2", "x", "y", "z", 1.0, ctx);
       ok(!n2.ok, "  negatif: ayni kose: " + n2.hata);
@@ -299,8 +303,8 @@ int main(int argc, char** argv) {
 
     // ---- replay + bilinmeyen op
     { OpResult a1 = subdivide(g, "on_beden", "armhole_front.1", {0.4}, ctx);
-      OpResult a2 = suppress(a1.g, "on_beden", "waist_front", 0.5, 0.2, apex, "pens_bel", true, ctx);
-      OpResult a3 = gather(a2.g, "on_etek", "waist_front", 1.5, ctx);
+      OpResult a2 = suppress(a1.g, "on_beden", "waist_front.2", 0.5, 0.2, apex, "pens_bel", true, ctx);
+      OpResult a3 = gather(a2.g, "on_etek", "waist_front.2", 1.5, ctx);
       OpResult a4 = extend(a3.g, "on_etek", "hem_front", 50.0, ctx);
       ok(a1.ok && a2.ok && a3.ok && a4.ok, "replay hazirlik: 4 op zinciri");
       std::vector<OpRecord> recs(a4.g.ops.begin() + static_cast<long>(ops0), a4.g.ops.end());
@@ -309,7 +313,7 @@ int main(int argc, char** argv) {
       OpRecord bad; bad.op = "teleport"; bad.args = JVal::obj();
       OpResult n = applyOp(g, bad, ctx);
       ok(!n.ok && n.hata.find("teleport") != std::string::npos, "bilinmeyen op adiyla reddedildi: " + n.hata);
-      OpCtx bos; OpResult n2 = gather(g, "on_etek", "waist_front", 1.5, bos);
+      OpCtx bos; OpResult n2 = gather(g, "on_etek", "waist_front.2", 1.5, bos);
       ok(!n2.ok && n2.hata.find("OpCtx") != std::string::npos, "contract araligi yuklenmeden gather reddi: " + n2.hata); }
 
     // suppress sonrasi dikilebilirlik: bel dikisi ADIYLA kirmizi (etekte pens yok) — op'un durust sonucu

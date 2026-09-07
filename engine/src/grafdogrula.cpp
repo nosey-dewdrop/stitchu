@@ -189,7 +189,7 @@ bool kapanmaAynasi(const Garment& g, const std::string& panelId) {
 // bunu bilmezse bel halkasi "tepe paylasmiyor" diye KOPUK gorunur, oysa giysi kapalidir.
 bool pensTabani(const Garment& g, const std::string& panelId, const RefPoint& A, const RefPoint& B) {
     const Panel* P = g.panel(panelId);
-    if (!P) return false;
+    if (!P || P->edges.empty()) return false;   // bos panel: % n sifira bolme (negatif testler bozuk graf verir)
     const size_t n = P->edges.size();
     for (size_t i = 0; i < n; ++i) {
         const Edge& e1 = P->edges[i];
@@ -668,9 +668,13 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
         const Zincir z = zincirCoz(g, ring.edges, zc, true);
         double worst = 0; std::string desc;
         const size_t n = ring.edges.size();
-        for (size_t i = 0; i < z.kavsaklar.size(); ++i) {
+        // z.kenarlar, zincir KOPUK oldugunda kavsaklardan kisa kalabilir (zincirCoz erken
+        // doner ve kismi liste birakir). Eskiden dogrudan z.kenarlar[i] okunuyordu: bozuk
+        // grafta (negatif testler) indis tasmasi -> SEGFAULT. Sinir kenar sayisidir.
+        const size_t kn = z.kenarlar.size();
+        for (size_t i = 0; kn > 0 && i < z.kavsaklar.size() && i < kn; ++i) {
             const Kavsak& k = z.kavsaklar[i];
-            const EdgeRef& ri = z.kenarlar[i].ref; const EdgeRef& rj = z.kenarlar[(i + 1) % n].ref;
+            const EdgeRef& ri = z.kenarlar[i].ref; const EdgeRef& rj = z.kenarlar[(i + 1) % kn].ref;
             const double gap = k.tur == "dikis" ? (seamArtik.count(k.dikis) ? seamArtik[k.dikis] : 0.0) : 0.0;
             if (gap > worst) { worst = gap; hs.enKotuKavsak = rs(ri) + " -> " + rs(rj); }
             if (!desc.empty()) desc += " | ";

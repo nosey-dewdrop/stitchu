@@ -1,7 +1,7 @@
 {
   "id": "taban-elbise",
   "version": "graf-v1",
-  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b oyugu ve kapagi kaynakli kurar (KAPI 2, docs/GRAF-IR.md F2b kapilari; F3e devredilmez); croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6). | 0509 A2 ELLE KAPATMA (2026-09-07): (1) yan noktalari ringQuarter->ringFront/ringBack, iki taraf farkli formulden (arkaPay body-v1 olculu) -> dikis esitligi gercek kisit; (2) on/arka bel pensi (dartLeg cifti), supresyonun yarisi pens yarisi yan dikis (Aldrich temel blok); (3) arka orta KAT DEGIL: onFold=false + arka_orta dikisi + closure zipper -> giysi 685mm belden gecer; (4) rings[] gogus + kalca halkasi eklendi, supresyon artik sanalDikisMM gorus alaninda.",
+  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b oyugu ve kapagi kaynakli kurar (KAPI 2, docs/GRAF-IR.md F2b kapilari; F3e devredilmez); croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).",
   "panels": [
     {
       "id": "on_beden",
@@ -35,20 +35,20 @@
           "to": {
             "combo": [
               {
-                "w": 0.75,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.35,
-                "xOffsetMM": 0.0
-              },
-              {
                 "w": 0.25,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.35,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
               }
             ]
           }
@@ -62,20 +62,20 @@
           "from": {
             "combo": [
               {
-                "w": 0.75,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.35,
-                "xOffsetMM": 0.0
-              },
-              {
                 "w": 0.25,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.35,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
               }
             ]
           },
@@ -103,20 +103,20 @@
           "to": {
             "combo": [
               {
-                "w": 1.25,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.35,
-                "xOffsetMM": 0.0
-              },
-              {
                 "w": -0.25,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.35,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
               }
             ]
           }
@@ -130,20 +130,20 @@
           "from": {
             "combo": [
               {
-                "w": 1.25,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.35,
-                "xOffsetMM": 0.0
-              },
-              {
                 "w": -0.25,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.35,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
               }
             ]
           },
@@ -151,12 +151,9 @@
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
             "xFactor": 1,
-            "xOffsetMM": 0,
-            "ring": "girth.waist"
+            "xOffsetMM": 0
           },
-          "notches": [
-            0.47
-          ]
+          "notches": [0.47]
         },
         {
           "id": "side_front",
@@ -166,8 +163,7 @@
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
             "xFactor": 1,
-            "xOffsetMM": 0,
-            "ring": "girth.waist"
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.underarm",
@@ -176,9 +172,7 @@
             "xFactor": 1,
             "xOffsetMM": 0
           },
-          "notches": [
-            0.5
-          ]
+          "notches": [0.5]
         },
         {
           "id": "armhole_front.1",
@@ -344,7 +338,7 @@
       "ease": [
         {
           "ring": "girth.bust",
-          "mm": 60.0
+          "mm": 6e+01
         },
         {
           "ring": "girth.waist",
@@ -385,20 +379,20 @@
           "to": {
             "combo": [
               {
-                "w": 0.75,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.35,
-                "xOffsetMM": 0.0
-              },
-              {
                 "w": 0.25,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.35,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
               }
             ]
           }
@@ -412,20 +406,20 @@
           "from": {
             "combo": [
               {
-                "w": 0.75,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.35,
-                "xOffsetMM": 0.0
-              },
-              {
                 "w": 0.25,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.35,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
               }
             ]
           },
@@ -453,20 +447,20 @@
           "to": {
             "combo": [
               {
-                "w": 1.25,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.35,
-                "xOffsetMM": 0.0
-              },
-              {
                 "w": -0.25,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.35,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
               }
             ]
           }
@@ -480,20 +474,20 @@
           "from": {
             "combo": [
               {
-                "w": 1.25,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.35,
-                "xOffsetMM": 0.0
-              },
-              {
                 "w": -0.25,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.35,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
               }
             ]
           },
@@ -501,12 +495,9 @@
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
             "xFactor": 1,
-            "xOffsetMM": 0,
-            "ring": "girth.waist"
+            "xOffsetMM": 0
           },
-          "notches": [
-            0.47
-          ]
+          "notches": [0.47]
         },
         {
           "id": "side_back",
@@ -516,8 +507,7 @@
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
             "xFactor": 1,
-            "xOffsetMM": 0,
-            "ring": "girth.waist"
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.underarm",
@@ -526,9 +516,7 @@
             "xFactor": 1,
             "xOffsetMM": 0
           },
-          "notches": [
-            0.5
-          ]
+          "notches": [0.5]
         },
         {
           "id": "armhole_back.1",
@@ -694,14 +682,14 @@
       "ease": [
         {
           "ring": "girth.bust",
-          "mm": 60.0
+          "mm": 6e+01
         },
         {
           "ring": "girth.waist",
           "mm": 25
         }
       ],
-      "reason": "arka govde (kat)"
+      "reason": "arka govde (iki parca, arka orta fermuar)"
     },
     {
       "id": "on_etek",
@@ -735,8 +723,7 @@
             "xOf": "ringQuarter",
             "xFactor": 1,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.knee",
-            "ring": "girth.hip"
+            "yLandmark": "landmark.knee"
           },
           "finish": "hem"
         },
@@ -751,15 +738,13 @@
             "xOf": "ringQuarter",
             "xFactor": 1,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.knee",
-            "ring": "girth.hip"
+            "yLandmark": "landmark.knee"
           },
           "to": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
             "xFactor": 1,
-            "xOffsetMM": 0,
-            "ring": "girth.hip"
+            "xOffsetMM": 0
           }
         },
         {
@@ -772,15 +757,13 @@
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
             "xFactor": 1,
-            "xOffsetMM": 0,
-            "ring": "girth.hip"
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
             "xFactor": 1,
-            "xOffsetMM": 0,
-            "ring": "girth.waist"
+            "xOffsetMM": 0
           }
         },
         {
@@ -793,32 +776,29 @@
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
             "xFactor": 1,
-            "xOffsetMM": 0,
-            "ring": "girth.waist"
+            "xOffsetMM": 0
           },
           "to": {
             "combo": [
-              {
-                "w": 1.205,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.59,
-                "xOffsetMM": 0.0
-              },
               {
                 "w": -0.205,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.59,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
               }
             ]
           },
-          "notches": [
-            0.82
-          ]
+          "notches": [0.82]
         },
         {
           "id": "dart_on_etek.1",
@@ -829,20 +809,20 @@
           "from": {
             "combo": [
               {
-                "w": 1.205,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.59,
-                "xOffsetMM": 0.0
-              },
-              {
                 "w": -0.205,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.59,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
               }
             ]
           },
@@ -850,7 +830,7 @@
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
             "ring": "girth.waist",
-            "xFactor": 0.35,
+            "xFactor": 0.59,
             "xOffsetMM": 0
           }
         },
@@ -864,26 +844,26 @@
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
             "ring": "girth.waist",
-            "xFactor": 0.35,
+            "xFactor": 0.59,
             "xOffsetMM": 0
           },
           "to": {
             "combo": [
-              {
-                "w": 0.795,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.59,
-                "xOffsetMM": 0.0
-              },
               {
                 "w": 0.205,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.59,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.795,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
               }
             ]
           }
@@ -897,20 +877,20 @@
           "from": {
             "combo": [
               {
-                "w": 0.795,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.59,
-                "xOffsetMM": 0.0
-              },
-              {
                 "w": 0.205,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.59,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.795,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
               }
             ]
           },
@@ -932,7 +912,7 @@
         },
         {
           "ring": "girth.hip",
-          "mm": 50.0
+          "mm": 5e+01
         }
       ],
       "reason": "on etek (kat)"
@@ -969,8 +949,7 @@
             "xOf": "ringQuarter",
             "xFactor": 1,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.knee",
-            "ring": "girth.hip"
+            "yLandmark": "landmark.knee"
           },
           "finish": "hem"
         },
@@ -985,15 +964,13 @@
             "xOf": "ringQuarter",
             "xFactor": 1,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.knee",
-            "ring": "girth.hip"
+            "yLandmark": "landmark.knee"
           },
           "to": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
             "xFactor": 1,
-            "xOffsetMM": 0,
-            "ring": "girth.hip"
+            "xOffsetMM": 0
           }
         },
         {
@@ -1006,15 +983,13 @@
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
             "xFactor": 1,
-            "xOffsetMM": 0,
-            "ring": "girth.hip"
+            "xOffsetMM": 0
           },
           "to": {
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
             "xFactor": 1,
-            "xOffsetMM": 0,
-            "ring": "girth.waist"
+            "xOffsetMM": 0
           }
         },
         {
@@ -1027,32 +1002,29 @@
             "landmark": "landmark.waist",
             "xOf": "ringQuarter",
             "xFactor": 1,
-            "xOffsetMM": 0,
-            "ring": "girth.waist"
+            "xOffsetMM": 0
           },
           "to": {
             "combo": [
-              {
-                "w": 1.205,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.59,
-                "xOffsetMM": 0.0
-              },
               {
                 "w": -0.205,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.59,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
               }
             ]
           },
-          "notches": [
-            0.82
-          ]
+          "notches": [0.82]
         },
         {
           "id": "dart_arka_etek.1",
@@ -1063,20 +1035,20 @@
           "from": {
             "combo": [
               {
-                "w": 1.205,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.59,
-                "xOffsetMM": 0.0
-              },
-              {
                 "w": -0.205,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.59,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
               }
             ]
           },
@@ -1084,7 +1056,7 @@
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
             "ring": "girth.waist",
-            "xFactor": 0.35,
+            "xFactor": 0.59,
             "xOffsetMM": 0
           }
         },
@@ -1098,26 +1070,26 @@
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
             "ring": "girth.waist",
-            "xFactor": 0.35,
+            "xFactor": 0.59,
             "xOffsetMM": 0
           },
           "to": {
             "combo": [
-              {
-                "w": 0.795,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.59,
-                "xOffsetMM": 0.0
-              },
               {
                 "w": 0.205,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.59,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.795,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
               }
             ]
           }
@@ -1131,20 +1103,20 @@
           "from": {
             "combo": [
               {
-                "w": 0.795,
-                "landmark": "landmark.waist",
-                "xOf": "ringQuarter",
-                "ring": "girth.waist",
-                "xFactor": 0.59,
-                "xOffsetMM": 0.0
-              },
-              {
                 "w": 0.205,
                 "landmark": "landmark.waist",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 0.59,
-                "xOffsetMM": 0.0
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.795,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
               }
             ]
           },
@@ -1166,10 +1138,10 @@
         },
         {
           "ring": "girth.hip",
-          "mm": 50.0
+          "mm": 5e+01
         }
       ],
-      "reason": "arka etek (kat)"
+      "reason": "arka etek (iki parca, arka orta fermuar)"
     },
     {
       "id": "kol",
@@ -1381,9 +1353,7 @@
       "reverse": false,
       "ratio": 1,
       "easeMM": 0,
-      "notchFractions": [
-        0.5
-      ],
+      "notchFractions": [0.5],
       "reason": "govde yan dikisi: bel <-> bel, koltukalti <-> koltukalti"
     },
     {
@@ -1462,10 +1432,8 @@
       "reverse": false,
       "ratio": 1,
       "easeMM": 0,
-      "notchFractions": [
-        0.33
-      ],
-      "reason": "bel dikisi (govde -> etek): CF <-> CF, yan <-> yan, CB <-> CB"
+      "notchFractions": [0.33],
+      "reason": "bel dikisi (govde -> etek): CF <-> CF, yan <-> yan, CB <-> CB; pens bolunmesi yuzunden centik tek kesirde (0.33)"
     },
     {
       "id": "yan_etek",
@@ -1528,12 +1496,14 @@
         }
       ],
       "reverse": true,
+      "ratio": 1,
+      "easeMM": 0,
       "closure": {
         "type": "zipper",
-        "fromFraction": 0.0,
-        "toFraction": 1.0
+        "fromFraction": 0,
+        "toFraction": 1
       },
-      "reason": "arkadan kapanan elbise (girdi cumlesi): arka orta KAT DEGIL, iki parca kesilir (cutCount=2) ve fermuarla kapanir; giysi buradan acilip vucuda girer"
+      "reason": "arka orta fermuar (govde): giysi buradan acilir, bel 685 mm'den gecer"
     },
     {
       "id": "arka_orta_etek",
@@ -1550,12 +1520,14 @@
         }
       ],
       "reverse": true,
+      "ratio": 1,
+      "easeMM": 0,
       "closure": {
         "type": "zipper",
-        "fromFraction": 0.0,
-        "toFraction": 1.0
+        "fromFraction": 0,
+        "toFraction": 1
       },
-      "reason": "arkadan kapanan elbise (girdi cumlesi): arka orta KAT DEGIL, iki parca kesilir (cutCount=2) ve fermuarla kapanir; giysi buradan acilip vucuda girer"
+      "reason": "arka orta fermuar (etek)"
     }
   ],
   "rings": [

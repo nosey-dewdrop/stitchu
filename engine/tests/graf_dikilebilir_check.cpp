@@ -60,12 +60,12 @@ int main(int argc, char** argv) {
     for (const Hukum& h : R.hukumler) if (!h.bilgi && !h.gecti) std::printf("      KIRMIZI %s | %s | %s\n", h.kural.c_str(), h.hedef.c_str(), h.deger.c_str());
     ok(R.dikilebilir(), "taban graf gercek36'da DIKILEBILIR (0 kirmizi)");
     auto count = [&](const std::string& k, bool onlyPass) { int n = 0; for (const Hukum& h : R.hukumler) if (h.kural == k && !h.bilgi && (!onlyPass || h.gecti)) ++n; return n; };
-    ok(count("dikis_uzunluk", true) == 6, "6 dikis uzunluk hukmu yesil (" + std::to_string(count("dikis_uzunluk", true)) + ")");
-    ok(count("centik", true) == 3, "3 centik hukmu yesil (bel 0.25/0.75 + yan 0.5)");
+    ok(count("dikis_uzunluk", true) == 8, "8 dikis uzunluk hukmu yesil (6 + arka_orta_beden/etek kapanma dikisi, 2026-09-07) (" + std::to_string(count("dikis_uzunluk", true)) + ")");
+    ok(count("centik", true) == 2, "2 centik hukmu yesil (bel 0.33 + yan 0.5; bel centigi pens bolunmesiyle tek kesre indi, 2026-09-07)");
     ok(count("kendini_kesme", true) == 5, "5 panel kendini kesmiyor");
-    ok(count("halka_kapanma", true) == 5, "5 halka kapaniyor (yaka, kol oyugu, bel, etek ucu, kol agzi)");
+    ok(count("halka_kapanma", true) == 7, "7 halka kapaniyor (yaka, kol oyugu, bel, etek ucu, kol agzi + gogus, kalca; son ikisi 2026-09-07 supresyonu olcunun icine almak icin eklendi)");
     ok(count("panel_kapali", true) == 5, "5 panel kapali");
-    ok(count("dikis_zincir", true) == 6, "6 dikis zinciri yapisal cozuldu (karar 7): " + std::to_string(count("dikis_zincir", true)));
+    ok(count("dikis_zincir", true) == 8, "8 dikis zinciri yapisal cozuldu (karar 7; 6 + iki arka orta kapanma dikisi): " + std::to_string(count("dikis_zincir", true)));
     ok(R.uydurmalar.size() >= 2 && R.toJSON().get("uydurma") && R.toJSON().get("uydurma")->a.size() == R.uydurmalar.size() && R.toMarkdown().find("## Uydurma") != std::string::npos,
        "rapor 'uydurma' bolumu: " + std::to_string(R.uydurmalar.size()) + " DOGRULANMADI kalemi (JSON + markdown)");
     for (const std::string& u : R.uydurmalar) std::printf("      uydurma: %s\n", u.c_str());
@@ -111,19 +111,30 @@ int main(int argc, char** argv) {
       ok(yakaKopuk, "negatif [halka_kapanma] omuz dikisi yokken yaka halkasi KAVSAK YOK ile KOPUK");
       negs.push_back({"halka_kapanma", "omuz dikisi silindi -> yaka halkasi kopuk", reds(Rx), yakaKopuk}); }
     { Garment x = g; x.panel("on_beden")->onFold = false; neg("kenar_turu", "on_beden onFold=false ama cf fold kenari", x); }
-    { Anchor apexA; apexA.landmark = "landmark.waist"; apexA.xOf = "ringQuarter"; apexA.xFactor = 0.5; apexA.yLandmark = "landmark.bustApex"; apexA.yLandmark2 = "landmark.waist"; apexA.yLerp = 0.15;
-      OpResult d = suppress(g, "on_beden", "waist_front", 0.5, 0.2, RefPoint::of(apexA), "pens", true, ctx);
-      ok(d.ok, "negatif hazirlik: govdeye pens acildi");
-      neg("dikis_uzunluk", "yalniz govdede bel pensi (etekte yok) -> bel dikisi kisa", d.g);
-      Garment x = d.g; Panel* p = x.panel("on_beden"); Edge* l1 = p->edge("pens.1");
-      Anchor a2 = apexA; a2.yLerp = 0.3; l1->to = RefPoint::of(a2);   // yalniz 1. bacagin apeksi kaydi -> apeks ortak degil
-      neg("kenar_turu", "pens 1. bacaginin apeksi tek basina kaydirildi", x); }
+    // 2026-09-07 (A2 elle kapatma): taban graf ARTIK kendi bel pensini tasiyor
+    // (dart_on_beden.1/.2) ve bel kenari bolundu (waist_front.1/.2). Eski hal
+    // suppress(g,"on_beden","waist_front",...) ile pens ACIYORDU; o kenar adi artik
+    // yok, suppress basarisiz donuyor, p->edge("pens.1") NULL ve test SEGFAULT ediyordu.
+    // Testin NIYETI korundu: "bir pens bacaginin apeksi tek basina kayarsa dogrulayici
+    // kenar_turu kirmizisi basar" — olcum artik grafin KENDI pensi uzerinde yapiliyor.
+    { Garment x = g; Panel* p = x.panel("on_beden");
+      Edge* l1 = p ? p->edge("dart_on_beden.1") : nullptr;
+      ok(l1 != nullptr, "negatif hazirlik: taban grafta bel pensi var (dart_on_beden.1)");
+      if (l1) {
+        Anchor a2; a2.landmark = "landmark.underarm"; a2.xOf = "ringQuarter"; a2.ring = "girth.waist"; a2.xFactor = 0.42;
+        l1->to = RefPoint::of(a2);   // yalniz 1. bacagin apeksi kaydi -> apeks ortak degil
+        neg("kenar_turu", "pens 1. bacaginin apeksi tek basina kaydirildi", x);
+      } }
+    { // pens bacaklari silinince panel konturu acik kalir
+      Garment x = g; Panel* p = x.panel("on_etek");
+      if (p) { std::vector<Edge> kalan; for (const Edge& e : p->edges) if (e.kind != "dartLeg") kalan.push_back(e); p->edges = kalan; }
+      neg("panel_kapali", "etek pens bacaklari silindi (kontur acik kaldi)", x); }
     { Garment x = g; x.seam("bel")->ratio = 1.3; neg("dikis_uzunluk", "bel.ratio elle 1.3 (kenar uzatilmadan)", x); }
     { Garment x = g; x.seam("bel")->ratio = 9.0; neg("dikis_uzunluk", "bel.ratio 9.0 aralik disi", x); }
     { Garment x = g; x.panel("on_beden")->edge("side_front")->notches = {0.6}; neg("centik", "on_beden/side_front centigi 0.6'ya kaydi (arka 0.5)", x); }
     { Garment x = g; Panel* p = x.panel("on_etek"); const RefPoint a = p->vertex(2), b = p->vertex(3); p->setVertex(2, b); p->setVertex(3, a);
       neg("kendini_kesme", "on_etek etek-ucu ve kalca koseleri yer degistirdi (papyon)", x); }
-    { OpResult e = extend(g, "on_beden", "waist_front", 25.0, ctx);
+    { OpResult e = extend(g, "on_beden", "waist_front.2", 25.0, ctx);   // 2026-09-07: bel kenari pens icin bolundu
       ok(e.ok, "negatif hazirlik: on govde bel kenari 25 mm asagi (yan dikis on tarafta uzadi)");
       neg("halka_kapanma", "on yan dikis 25 mm uzun -> kol oyugu / bel halkalari kavsakta acik", e.g);
       DogrulamaRaporu Rx = dogrula(e.g, gercek, contract);
