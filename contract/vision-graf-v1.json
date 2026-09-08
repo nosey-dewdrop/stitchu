@@ -1,0 +1,179 @@
+{
+  "_contract": "vision-graf-v1 — FOTOGRAF OKUMA SOZLESMESI (A3, 2026-09-08). Bir fotografin graf-v1 diliyle tarifi: isim degil GEOMETRI.",
+  "version": "1.0.0",
+  "id": "vision-graf-v1",
+
+  "_yasa": [
+    "1. ISIM DEGIL GEOMETRI. Bir kalem 'sweetheart yaka' diyemez; 'yaka halkasi su landmark'lar arasinda, su oranla' der. Bilinen isim yalniz KISALTMA olarak durur (kisaltma alani) ve cozumu her zaman bir op demetidir (opDemeti). Kisaltma tek basina tarif DEGILDIR: opDemeti bos olan bir kisaltma reddedilir.",
+    "2. ORAN, SAYI DEGIL. Fotograftan mm okunamaz — fotografta olcek yoktur. Her uzunluk bir landmark ciftine gore ORAN olarak yazilir (oranPay/oranPayda: landmark adlari). Mutlak mm yazan bir kalem semaya aykiridir.",
+    "3. ORANLAR GRAFA DOGRUDAN YAZILMAZ. Bu semadaki oranlar A2 kisit cozucusune HEDEF olarak girer (hedefOran). Cozucu dikis esitligini korur; etek ucu orani bel dikisini koparamaz. Sapma olculur ve celiskiTablosu'na degil sapmaTablosu'na yazilir, onizleme (A5) gosterir.",
+    "4. GUVEN KALEM BASINA. Her kalem kendi guven puanini tasir [0,1]. Giysi basina tek puan YOK; bir yaka 0.9, ayni fotografta arka kapanma 0.3 olabilir.",
+    "5. CLAUDE NE, OLCUM NE KADAR. Semantik (claude) NE oldugunu, olcum (landmark/siluet) NE KADAR oldugunu soyler. Celiskide OLCUM KAZANIR ve celiski celiskiTablosu'na satir olarak yazilir; kazanan alan adiyla ilan edilir.",
+    "6. SESSIZ DEFAULT YOK. Fotografta okunamayan nitelik okunamayanlar[] icine ADIYLA girer; motorun opunda karsiligi olmayan nitelik eksikOp[] icine girer. Bir alanin bos birakilmasi 'yok' demek DEGILDIR.",
+    "7. ARKA KOKENI ILAN EDILIR. arka.koken = 'fotograf' | 'turetildi'. 'turetildi' ise arka.neden zorunludur ve onizlemede gorunur; sessizce arka uydurulmaz.",
+    "8. GUVENLI TABAN ADIYLA. ERR_IMPOSSIBLE_TOPOLOGY iki yeniden istemede de kalkmazsa ret degil ERR_FALLBACK_BASE: tabanGraf yuklenir, oranlar cozucuye hedef kalir, onizleme 'fotografin tam okunamadi' der. guvenliTaban alani bunu tasir."
+  ],
+
+  "koordinat": "contract/body-v1.json koordinat blogu ile ayni cumle: x=0 CF/CB duzlemi, y=0 omuz cizgisi, y asagi artar. Fotograf pikseli bu uzaya GIRMEZ; fotograftan yalniz ORAN cikar.",
+
+  "kokTip": "VisionOkuma",
+
+  "tipler": {
+    "VisionOkuma": {
+      "aciklama": {
+        "tr": "Bir fotograf (ya da on+arka cifti) icin tek okuma kaydi.",
+        "en": "One reading record for a photo (or a front+back pair)."
+      },
+      "alanlar": {
+        "girdiYolu": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "GIRDI/ altindaki fotograf yolu. Fotograf KOPYALANMAZ, yalniz yol." } },
+        "sha256": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "Fotograf dosyasinin sha256'si; onbellek dosya adi budur." } },
+        "semaSurumu": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "vision-graf-v1" } },
+        "okuyan": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "'isci-A3' = kosu iscisi Read araciyla okudu; canli worker cagrilmadi, llmCagri 0." } },
+        "tarih": { "tip": "string", "zorunlu": true },
+        "gorunum": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "on | arka" } },
+        "cift": { "tip": "string", "zorunlu": false, "aciklama": { "tr": "Es fotografin sha256'si (on+arka cifti); yoksa alan yok." } },
+        "paneller": { "tip": "PanelOkuma[]", "zorunlu": true },
+        "kenarlar": { "tip": "KenarOkuma[]", "zorunlu": true },
+        "dikisler": { "tip": "DikisOkuma[]", "zorunlu": true },
+        "kapanma": { "tip": "KapanmaOkuma", "zorunlu": true },
+        "simetri": { "tip": "SimetriOkuma", "zorunlu": true },
+        "katmanlar": { "tip": "KatmanOkuma[]", "zorunlu": true, "aciklama": { "tr": "Ust uste binen parcalar (peplum, roba, astar gorunen kat); bos dizi = tek katman, ADIYLA." } },
+        "arka": { "tip": "ArkaOkuma", "zorunlu": true },
+        "kisaltmalar": { "tip": "Kisaltma[]", "zorunlu": true, "aciklama": { "tr": "Bilinen isimler; her biri bir op demetine cozulur. Bos dizi olabilir." } },
+        "celiskiTablosu": { "tip": "Celiski[]", "zorunlu": true, "aciklama": { "tr": "claude semantigi ile olcum arasindaki celiskiler. BOS DIZI 'celiski yok' demek DEGILDIR; celiski aranmadiysa olculmedi[] doldurulur." } },
+        "olculmedi": { "tip": "string[]", "zorunlu": true, "aciklama": { "tr": "Olculemeyen kaynaklar adiyla: 'poz landmark: MediaPipe yuklenmedi' gibi. Bos dizi = her kaynak olculdu." } },
+        "okunamayanlar": { "tip": "string[]", "zorunlu": true },
+        "eksikOp": { "tip": "string[]", "zorunlu": true, "aciklama": { "tr": "Fotografta gorulen ama motorun opunda karsiligi olmayan nitelikler." } },
+        "guvenliTaban": { "tip": "GuvenliTaban", "zorunlu": false },
+        "tabanGraf": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "Ustune op uygulanan taban graf yolu. Fotograf tarifi bu grafin uzerine op demeti olarak iner." } },
+        "opDemeti": { "tip": "OpKaydi[]", "zorunlu": true, "aciklama": { "tr": "Bu okumanin taban grafa uyguladigi op'lar, sirali. graf-v1 ops[] ile AYNI bicim." } }
+      }
+    },
+
+    "PanelOkuma": {
+      "aciklama": { "tr": "Fotografta ayirt edilen bir kesim parcasi.", "en": "One cut piece told apart in the photo." },
+      "alanlar": {
+        "id": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "graf-v1 panel id'siyle ayni ad uzayi (on_beden, arka_etek, kol...)." } },
+        "gorulduMu": { "tip": "bool", "zorunlu": true, "aciklama": { "tr": "false = bu panel fotografta GORULMEDI, tabandan geliyor; okunamayanlar[] de bunu tasir." } },
+        "kanit": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "Fotografta neye bakarak ayirt edildi: 'bel hattinda kumas yonu kiriliyor' gibi." } },
+        "guven": { "tip": "number", "zorunlu": true, "aralik": [0, 1] }
+      }
+    },
+
+    "KenarOkuma": {
+      "aciklama": { "tr": "Bir panel kenarinin fotograftan okunan yeri ve bicimi — landmark + ORAN.", "en": "One panel edge read from the photo as landmark + ratio." },
+      "alanlar": {
+        "panel": { "tip": "string", "zorunlu": true },
+        "kenar": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "graf-v1 kenar adi (hem, neck_front, cf...)." } },
+        "landmarkUst": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "contract/body-v1.json landmark adi; oranin PAYDA ucu." } },
+        "landmarkAlt": { "tip": "string", "zorunlu": true },
+        "oran": { "tip": "number", "zorunlu": true, "aciklama": { "tr": "Kenarin yeri: landmarkUst..landmarkAlt araliginda [0,1] konum. 0 = ust landmark, 1 = alt landmark. >1 landmark'in otesi demektir ve serbesttir (etek dizin altina inebilir)." } },
+        "bicim": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "duz | kavisli-ic | kavisli-dis | kirik. Kubik kontrol noktasi UYDURULMAZ; bicim niteldir, egriyi cozucu kurar." } },
+        "buzguAraligi": { "tip": "number[2]", "zorunlu": false, "aciklama": { "tr": "Kenar buzgulu ise [alt, ust] oran araligi (1.0 = duz). Tek sayi DEGIL aralik: fotograftan buzgu miktari kesin okunamaz, cozucu araliktan secer." } },
+        "guven": { "tip": "number", "zorunlu": true, "aralik": [0, 1] }
+      }
+    },
+
+    "DikisOkuma": {
+      "aciklama": { "tr": "Iki kenari birlestiren dikis; fotograftan okunan sey ORANDIR, uzunluk degil.", "en": "A seam; what the photo yields is the ratio, not a length." },
+      "alanlar": {
+        "id": { "tip": "string", "zorunlu": true },
+        "a": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "panel/kenar" } },
+        "b": { "tip": "string", "zorunlu": true },
+        "oranAralik": { "tip": "number[2]", "zorunlu": true, "aciklama": { "tr": "len(a)/len(b) icin fotograftan okunan ARALIK. 1.0 = esit, >1 = a tarafi buzgulu/bollu. Aralik cunku fotograf tek sayi vermez." } },
+        "gorunurMu": { "tip": "bool", "zorunlu": true, "aciklama": { "tr": "false = dikis fotografta GORULMUYOR (desen gizliyor, arka yuz); varligi cikarim, okunamayanlar[]'a da girer." } },
+        "guven": { "tip": "number", "zorunlu": true, "aralik": [0, 1] }
+      }
+    },
+
+    "KapanmaOkuma": {
+      "aciklama": { "tr": "Giysinin nereden acildigi. Yer + tur; sessiz default YOK.", "en": "Where the garment opens." },
+      "alanlar": {
+        "yer": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "on_orta | arka_orta | yan | omuz | yok | okunamadi" } },
+        "tur": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "dugme | fermuar | kopca | baglama | okunamadi" } },
+        "oranBas": { "tip": "number", "zorunlu": false, "aciklama": { "tr": "Kapanmanin basladigi konum, giysi boyu orani [0,1]." } },
+        "oranSon": { "tip": "number", "zorunlu": false },
+        "guven": { "tip": "number", "zorunlu": true, "aralik": [0, 1] }
+      }
+    },
+
+    "SimetriOkuma": {
+      "alanlar": {
+        "cfAyna": { "tip": "bool", "zorunlu": true, "aciklama": { "tr": "On orta duzleme gore ayna simetrik mi." } },
+        "cbAyna": { "tip": "bool", "zorunlu": true },
+        "kanit": { "tip": "string", "zorunlu": true },
+        "guven": { "tip": "number", "zorunlu": true, "aralik": [0, 1] }
+      }
+    },
+
+    "KatmanOkuma": {
+      "alanlar": {
+        "ad": { "tip": "string", "zorunlu": true },
+        "ustunde": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "Hangi panelin USTUNE biniyor." } },
+        "oranBas": { "tip": "number", "zorunlu": true, "aciklama": { "tr": "Katmanin basladigi konum (giysi boyu orani)." } },
+        "oranSon": { "tip": "number", "zorunlu": true },
+        "guven": { "tip": "number", "zorunlu": true, "aralik": [0, 1] }
+      }
+    },
+
+    "ArkaOkuma": {
+      "alanlar": {
+        "koken": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "fotograf | turetildi. 'turetildi' = arka fotograf YOK, en sade dikilebilir arka kuruldu." } },
+        "neden": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "koken='turetildi' ise NEDEN turetildigi; onizlemede gorunur ilan. koken='fotograf' ise es fotografin yolu." } },
+        "sha256": { "tip": "string", "zorunlu": false },
+        "guven": { "tip": "number", "zorunlu": true, "aralik": [0, 1] }
+      }
+    },
+
+    "Kisaltma": {
+      "aciklama": { "tr": "Bilinen bir giysi ismi. Tarif DEGIL kisaltmadir; cozumu opDemeti'dir.", "en": "A known garment name: an abbreviation, never the description itself." },
+      "alanlar": {
+        "isim": { "tip": "string", "zorunlu": true },
+        "opDemeti": { "tip": "string[]", "zorunlu": true, "aciklama": { "tr": "Bu ismin cozuldugu op adlari. BOS OLAMAZ (yasa 1): cozulmeyen isim reddedilir ve eksikOp[]'a yazilir." } },
+        "guven": { "tip": "number", "zorunlu": true, "aralik": [0, 1] }
+      }
+    },
+
+    "Celiski": {
+      "aciklama": { "tr": "Claude semantigi ile olcumun ayristigi kalem. Kazanan HER ZAMAN olcumdur (yasa 5).", "en": "One item where semantics and measurement disagree; measurement wins." },
+      "alanlar": {
+        "kalem": { "tip": "string", "zorunlu": true },
+        "claude": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "Semantigin NE dedigi." } },
+        "olcum": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "Olcumun NE KADAR dedigi." } },
+        "kazanan": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "'olcum' — yasa 5 geregi sabit. Baska bir deger semaya aykiridir." } },
+        "kaynak": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "Olcumun nereden geldigi: 'siluet-orani' | 'poz-landmark' | 'OLCULMEDI: <neden>'." } }
+      }
+    },
+
+    "GuvenliTaban": {
+      "aciklama": { "tr": "8.8 guvenli taban kaydi: fotograf okunamadi ama ret degil.", "en": "Safe-base record: unreadable photo does not become a rejection." },
+      "alanlar": {
+        "hataKodu": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "ERR_FALLBACK_BASE" } },
+        "deneme": { "tip": "number", "zorunlu": true, "aciklama": { "tr": "Kac yeniden isteme yapildi (en fazla 2)." } },
+        "ilan": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "Onizlemede AYNEN gorunecek cumle." } }
+      }
+    },
+
+    "OpKaydi": {
+      "aciklama": { "tr": "graf-v1 ops[] ile AYNI bicim: {op, args}.", "en": "Same shape as graf-v1 ops[]." },
+      "alanlar": {
+        "op": { "tip": "string", "zorunlu": true },
+        "args": { "tip": "object", "zorunlu": true },
+        "neden": { "tip": "string", "zorunlu": true, "aciklama": { "tr": "Bu op'u DOGURAN okuma kalemi: hangi kenar/dikis/kisaltma. Nedensiz op semaya aykiridir." } }
+      }
+    }
+  },
+
+  "hataKodlari": {
+    "ERR_IMPOSSIBLE_TOPOLOGY": "Tarif semaya uyuyor ama dikilebilir bir grafa cozulmuyor. En fazla 2 yeniden isteme, sonra ERR_FALLBACK_BASE.",
+    "ERR_FALLBACK_BASE": "Guvenli taban devreye girdi: en sade dikilebilir graf + siluet oranlari hedef. RET DEGIL.",
+    "ERR_UNREADABLE": "Fotograf hicbir kalemde okunmadi (bulanik/kadraj disi). Bu bir RETTIR ve adiyla yazilir.",
+    "ERR_NOT_GARMENT": "Fotografta giysi yok. Baska giysiye DONULMEZ (madde 4)."
+  },
+
+  "kaynak": {
+    "graf-v1": "contract/graf-v1.json — panel/kenar/dikis dili ve op adlari buradan gelir; bu sema onu genisletmez, fotograf tarafini ekler.",
+    "body-v1": "contract/body-v1.json — landmark ve halka adlari buradan gelir (landmark.*, girth.*). Bu semada landmark adi UYDURULMAZ.",
+    "A3 brief": "0509 A3: 'isim degil geometri; bilinen isim yalniz kisaltma, cozumu op demeti; guven puani kalem basina; celiskide olcum kazanir.'"
+  }
+}
