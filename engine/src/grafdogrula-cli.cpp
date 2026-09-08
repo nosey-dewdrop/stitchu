@@ -44,6 +44,10 @@ int main(int argc, char** argv) {
     JVal contract;
     std::string err;
     if (!parse(contractMetin, contract, err)) { std::fprintf(stderr, "ERR_CONTRACT_PARSE: %s\n", err.c_str()); return 2; }
+    // body-v1: kisit cozucusunun mutlak insan olcegi siniri (2026-09-08). Okunamazsa
+    // cozucu yuklenmez ve pens kisit cozumu ADIYLA atlanir (rapor "pens_cozum" satirinda).
+    JVal bodyContract;
+    { std::string bm; if (readFile("contract/body-v1.json", bm)) { std::string be; parse(bm, bodyContract, be); } }
     Garment g;
     if (!fromJSONText(metin, g, err)) { std::fprintf(stderr, "ERR_GRAF_PARSE: %s\n", err.c_str()); return 2; }
     Body body;
@@ -56,7 +60,7 @@ int main(int argc, char** argv) {
     }
     DogrulamaRaporu R;
     try {
-        R = dogrula(g, body, contract, bodyId == "croquis36");
+        R = dogrula(g, body, contract, bodyId == "croquis36", bodyContract);
     } catch (const std::exception& e) {
         std::fprintf(stderr, "ERR_VALIDATE: %s\n", e.what());
         return 2;

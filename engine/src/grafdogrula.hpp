@@ -113,7 +113,11 @@ struct DogrulamaRaporu {
     std::string toMarkdown() const;
 };
 
-DogrulamaRaporu dogrula(const Garment& g, const Body& body, const JVal& contract, bool onArkaEsit = false);
+// bodyContract (contract/body-v1.json): kisit cozucusunun mutlak insan olcegi siniri
+// icin gerekir (2026-09-08). Bos JVal gecilirse cozucu yuklenmez ve pens kisit cozumu
+// ADIYLA atlanir — graf degismez, olcum yine yapilir (sessiz sapma yok).
+DogrulamaRaporu dogrula(const Garment& g, const Body& body, const JVal& contract, bool onArkaEsit = false,
+                        const JVal& bodyContract = JVal());
 
 // Yardimcilar (testler de kullanir)
 double chainLength(const Garment& g, const std::vector<EdgeRef>& refs, const Body& body, bool onArkaEsit);

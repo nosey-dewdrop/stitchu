@@ -49,13 +49,26 @@ int main(int argc, char** argv) {
     const std::string outDir = argv[3];
     JVal contract; std::string err;
     if (!parse(readFile(argv[1]), contract, err)) { std::fprintf(stderr, "contract: %s\n", err.c_str()); return 2; }
+    // 2026-09-08: pens kisit cozumu body-v1'i ister (mutlak insan olcegi siniri).
+    // Yuklenmezse dogrulayici "cozucu sozlesmesi yuklenmedi" diye KIRMIZI basar.
+    // YOL: ctest mutlak yol veriyor ve calisma dizini repo koku DEGIL; body-v1'i
+    // argv[1]'in (graf-v1.json) yanindan turet, gorece yol kullanma.
+    JVal bodyContract;
+    {
+        std::string gy = argv[1];
+        const std::size_t kes = gy.find_last_of('/');
+        const std::string bodyYol = (kes == std::string::npos ? std::string("contract") : gy.substr(0, kes)) + "/body-v1.json";
+        std::string be;
+        if (!parse(readFile(bodyYol), bodyContract, be))
+            std::fprintf(stderr, "UYARI: body-v1 okunamadi (%s): %s — pens kisit cozumu atlanir\n", bodyYol.c_str(), be.c_str());
+    }
     Garment g;
     if (!fromJSONText(readFile(argv[2]), g, err)) { std::fprintf(stderr, "graf.json: %s\n", err.c_str()); return 2; }
     const OpCtx ctx = OpCtx::fromContract(contract);
     const Body gercek = Body::fromContract("gercek36");
 
     // (a) taban dikilebilir
-    DogrulamaRaporu R = dogrula(g, gercek, contract);
+    DogrulamaRaporu R = dogrula(g, gercek, contract, false, bodyContract);
     std::printf("graf_dikilebilir_check — %s @ %s: %zu hukum, %d kirmizi\n", g.id.c_str(), gercek.id().c_str(), R.hukumler.size(), R.kirmizi());
     for (const Hukum& h : R.hukumler) if (!h.bilgi && !h.gecti) std::printf("      KIRMIZI %s | %s | %s\n", h.kural.c_str(), h.hedef.c_str(), h.deger.c_str());
     ok(R.dikilebilir(), "taban graf gercek36'da DIKILEBILIR (0 kirmizi)");
@@ -83,7 +96,7 @@ int main(int argc, char** argv) {
     // (d) diger bedenler: AYNI graf, 0 kirmizi (karar 6: kisit her bedende cozulur)
     for (const std::string& bid : {std::string("EU38"), std::string("croquis36")}) {
         const Body b = bid == "croquis36" ? Body::fromContract("croquis36") : Body::graded(bid);
-        DogrulamaRaporu Rb = dogrula(g, b, contract, bid == "croquis36");
+        DogrulamaRaporu Rb = dogrula(g, b, contract, bid == "croquis36", bodyContract);
         const DikisSatir* oy = nullptr; for (const DikisSatir& d : Rb.dikisler) if (d.seam == "kol_oyugu") oy = &d;
         std::printf("      %s: %d kirmizi; kol_oyugu a %.2f hedef %.2f artik %+.3f mm (kisit bu bedende cozuldu)\n", bid.c_str(), Rb.kirmizi(), oy ? oy->lenA : NAN, oy ? oy->hedefA : NAN, oy ? oy->artikMM : NAN);
         for (const std::string& s : reds(Rb)) std::printf("        KIRMIZI %s\n", s.c_str());
@@ -95,7 +108,7 @@ int main(int argc, char** argv) {
     // (b) negatif ornekler — kural adiyla
     std::vector<Negatif> negs;
     auto neg = [&](const std::string& kural, const std::string& ornek, const Garment& gx) {
-        DogrulamaRaporu Rx = dogrula(gx, gercek, contract);
+        DogrulamaRaporu Rx = dogrula(gx, gercek, contract, false, bodyContract);
         Negatif n{kural, ornek, reds(Rx), !reds(Rx, kural).empty()};
         negs.push_back(n);
         ok(n.hedefKuralKirmizi, "negatif [" + kural + "] " + ornek + " -> " + (n.hedefKuralKirmizi ? reds(Rx, kural)[0] : "KURAL KIRMIZI DEGIL (" + join(n.kirmizi) + ")"));
@@ -106,7 +119,7 @@ int main(int argc, char** argv) {
     { Garment x = g; x.panel("on_etek")->edge("hem_front")->finish.clear(); neg("kenar_turu", "on_etek/hem_front cut kenarinin finish'i silindi", x); }
     { Garment x = g; x.seams.erase(x.seams.begin());   // omuz dikisi yok
       neg("kenar_turu", "omuz dikisi silindi -> shoulder seam-kenarlari dikissiz", x);
-      DogrulamaRaporu Rx = dogrula(x, gercek, contract); bool yakaKopuk = false;
+      DogrulamaRaporu Rx = dogrula(x, gercek, contract, false, bodyContract); bool yakaKopuk = false;
       for (const Hukum& h : Rx.hukumler) if (h.kural == "halka_kapanma" && h.hedef.rfind("yaka", 0) == 0 && !h.gecti && h.deger.find("KOPUK") != std::string::npos) yakaKopuk = true;
       ok(yakaKopuk, "negatif [halka_kapanma] omuz dikisi yokken yaka halkasi KAVSAK YOK ile KOPUK");
       negs.push_back({"halka_kapanma", "omuz dikisi silindi -> yaka halkasi kopuk", reds(Rx), yakaKopuk}); }
@@ -137,7 +150,7 @@ int main(int argc, char** argv) {
     { OpResult e = extend(g, "on_beden", "waist_front.2", 25.0, ctx);   // 2026-09-07: bel kenari pens icin bolundu
       ok(e.ok, "negatif hazirlik: on govde bel kenari 25 mm asagi (yan dikis on tarafta uzadi)");
       neg("halka_kapanma", "on yan dikis 25 mm uzun -> kol oyugu / bel halkalari kavsakta acik", e.g);
-      DogrulamaRaporu Rx = dogrula(e.g, gercek, contract);
+      DogrulamaRaporu Rx = dogrula(e.g, gercek, contract, false, bodyContract);
       const HalkaSatir* oy = nullptr; for (const HalkaSatir& h : Rx.halkalar) if (h.ring == "kol_oyugu_halka") oy = &h;
       const DikisSatir* yan = nullptr; for (const DikisSatir& d : Rx.dikisler) if (d.seam == "yan_beden") yan = &d;
       ok(oy && yan && !oy->gecti && std::fabs(oy->kapanmaMM - std::fabs(yan->artikMM)) < 1e-6 && oy->kapanmaMM > 20.0 && oy->enKotuKavsak.find("armhole") != std::string::npos,
@@ -146,7 +159,7 @@ int main(int argc, char** argv) {
     { Garment x = g; Seam* s = x.seam("kol_oyugu"); std::swap(s->b[1], s->b[2]);   // back.1, front.2, back.2, front.1
       neg("dikis_zincir", "kol_oyugu.b sirasi bozuldu (armhole_back.1, armhole_front.2, ...) -> tepe paylasmiyor", x); }
     { Garment x = g; x.seam("kol_alti")->reverse = false;
-      DogrulamaRaporu Rx = dogrula(x, gercek, contract); bool agizKopuk = false; std::string satir;
+      DogrulamaRaporu Rx = dogrula(x, gercek, contract, false, bodyContract); bool agizKopuk = false; std::string satir;
       for (const Hukum& h : Rx.hukumler) if (h.kural == "halka_kapanma" && h.hedef.rfind("kol_agzi", 0) == 0 && !h.gecti) { agizKopuk = true; satir = h.deger; }
       ok(agizKopuk, "negatif [halka_kapanma] kol_alti reverse=false ilan edilince (kose<->agiz dikilmis olur) kol agzi halkasi kapanmaz: " + satir);
       negs.push_back({"halka_kapanma", "kol_alti reverse yanlis ilan -> kol agzi kopuk", reds(Rx), agizKopuk}); }

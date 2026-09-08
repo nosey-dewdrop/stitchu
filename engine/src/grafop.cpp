@@ -2,6 +2,8 @@
 // (2) yalniz hedef paneli/dikisi degistir; (3) kaydi ekle.
 #include "grafop.hpp"
 
+#include "solver_utils.hpp"   // 2026-09-08: pens agzi kisit cozucusuyle cozulur (Damla karari (a))
+
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -553,6 +555,165 @@ double edgeLen(const Garment& g, const EdgeRef& r, const Body& body, bool onArka
     if (!p || !e) throw std::runtime_error("cozumle: referans cozulmedi " + r.panel + "/" + r.edge);
     return e->length(p->ctxFor(body, onArkaEsit));
 }
+}
+
+namespace {
+
+// PENS AGZINI KISIT COZUCUSUYLE COZ (2026-09-08, Damla karari (a): solver bagla).
+//
+// NEDEN: pens agzi 2026-09-07'de `combo` (afin birlesim) ile SABIT AGIRLIKLI bir formulden
+// geliyordu. Olcuye bagliydi ama bir KISIT COZUMU degildi; 8 Eyl hakemi bunu adiyla yakaladi:
+// "esitlikler hala buyuk olcude aritmetik ozdeslik, sadece daha karmasik bir ozdeslik".
+// Belirtileri: ops[] fitLength 2'de kaldi, beden-duzeyi yanlislama 0.73'te takildi,
+// engine/src/solver_utils.* yazildi ama HICBIR YERDEN cagrilmadi (olu kod, §0 anlaminda
+// oyalama).
+//
+// NE YAPAR: bel dikisinin iki tarafini SERT UZUNLUK KISITI olarak cozucuye verir ve pens
+// agzini (dartLeg ciftinin taban aciklıgı) BILINMEYEN yapar. Cozucu, iki tarafin uzunlugunu
+// esitleyen agiz genisligini bulur. Sonuc grafa dMM olarak DEGIL, kenar uclarinin
+// xOffsetMM'ine yazilir (mm grafa gomulmez kurali: ofset landmark'a bagli kalir ve baska
+// bedende yeniden degerlenir — cozum her bedende yeniden kosulur).
+//
+// COZULEMEZSE: graf DEGISMEZ ve hata ADIYLA doner (ERR_UNSOLVABLE zinciri). Sessiz
+// yaklastirma yok; cagiran taraf ya hatayi tasir ya da combo tabanini kullanmaya devam eder.
+struct PensCift { std::string panel; std::string bacak1, bacak2; };
+
+std::vector<PensCift> pensleriBul(const Garment& g) {
+    std::vector<PensCift> out;
+    for (const Panel& p : g.panels) {
+        const std::size_t n = p.edges.size();
+        for (std::size_t i = 0; i < n; ++i) {
+            const Edge& e1 = p.edges[i];
+            if (e1.kind != "dartLeg") continue;
+            const Edge& e2 = p.edges[(i + 1) % n];
+            if (e2.kind != "dartLeg" || e1.to != e2.from) continue;
+            out.push_back({p.id, e1.id, e2.id});
+            ++i;
+        }
+    }
+    return out;
+}
+
+}  // namespace
+
+CozumSonucu cozPens(const Garment& g, const Body& body, bool onArkaEsit,
+                    const solver::SolverCtx& sctx, const std::string& seamId) {
+    CozumSonucu R; R.g = g;
+    if (!sctx.dolu) { R.hata = "cozPens: solver contract yuklenmedi (SolverCtx bos)"; return R; }
+    const Seam* s = g.seam(seamId);
+    if (!s) { R.hata = "cozPens: dikis yok: " + seamId; return R; }
+    const std::vector<PensCift> pensler = pensleriBul(g);
+    if (pensler.empty()) { R.hata = "cozPens: grafta pens (dartLeg cifti) yok"; return R; }
+
+    // Dikisin iki tarafinin SU ANKI uzunluklari (pens agzi mevcut haliyle)
+    double La = 0, Lb = 0;
+    try {
+        for (const EdgeRef& r : s->a) La += edgeLen(g, r, body, onArkaEsit);
+        for (const EdgeRef& r : s->b) Lb += edgeLen(g, r, body, onArkaEsit);
+    } catch (const std::exception& ex) { R.hata = std::string("cozPens: ") + ex.what(); return R; }
+
+    // PROBLEM: her pens agzi bir dugum ciftidir (sol taban, sag taban). Sert kisit:
+    // "a tarafinin toplam uzunlugu = b tarafinin toplam uzunlugu". Bunu dugum uzayina
+    // dusurmek icin her pensi tek serbestlikle temsil ediyoruz: agiz genisligi.
+    // Cozucu genel amacli oldugu icin problemi 1B kurup (her pens bir dugum cifti,
+    // hedef uzaklik = agiz) bel farkini pensler arasinda PAYLASTIRIYORUZ.
+    solver::Problem prob;
+    std::vector<std::size_t> solIdx, sagIdx;
+    std::vector<double> mevcutAgiz;
+    for (const PensCift& pc : pensler) {
+        const Panel* p = g.panel(pc.panel);
+        const Edge* b1 = p ? p->edge(pc.bacak1) : nullptr;
+        const Edge* b2 = p ? p->edge(pc.bacak2) : nullptr;
+        if (!p || !b1 || !b2) { R.hata = "cozPens: pens kenari cozulemedi: " + pc.panel; return R; }
+        const EvalCtx pctx = p->ctxFor(body, onArkaEsit);
+        Point sol, sag;
+        try { sol = eval(b1->from, pctx); sag = eval(b2->to, pctx); }
+        catch (const std::exception& ex) { R.hata = std::string("cozPens: ") + ex.what(); return R; }
+        const double agiz = std::hypot(sag.x - sol.x, sag.y - sol.y);
+        mevcutAgiz.push_back(agiz);
+        solIdx.push_back(prob.dugumler.size());
+        prob.dugumler.push_back({pc.panel + "/" + pc.bacak1 + ".taban", sol, true});   // sol taban SABIT
+        sagIdx.push_back(prob.dugumler.size());
+        prob.dugumler.push_back({pc.panel + "/" + pc.bacak2 + ".taban", sag, false});  // sag taban SERBEST
+    }
+
+    // HANGI FARK KAPATILIR? (2026-09-08, olculdu — ilk deneme yanlisti ve adiyla yaziliyor)
+    //
+    // Ilk bagladigimda kisit "bel dikisinin iki tarafi esit olsun" idi (La - Lb). OLCULDU:
+    // bu fark her bedende SIFIR, cunku dikisin iki tarafi da ayni girth.waist'ten turuyor —
+    // yani cozucunun cozecegi bir sey yok, kosuyor ve hicbir sey degistirmiyordu (EU34/38/44
+    // ucunde de agiz tam 9.42 mm, kayma -0.02). Cozucu bagli gorunuyordu ama IS YAPMIYORDU.
+    //
+    // DOGRU KISIT: pensin isi bel dikisini kapatmak DEGIL, GOGUS-BEL SUPRESYONUNU emmektir.
+    // Govde paneli gogus hizasinda genis, bel hizasinda dardir; bu daralmanin bir kismi yan
+    // dikisten, kalani PENSTEN alinir. Yani pens agizlarinin toplami = supresyonun pens payi.
+    // Supresyon bedenden gelir (gogus cevresi - bel cevresi) ve bedene gore DEGISIR; boylece
+    // agiz da degisir ve olcum gercekten olcuye baglanir.
+    //
+    // Pens payi: supresyonun kalip konvansiyonundaki orani (Aldrich temel blok: supresyon
+    // pens ve yan dikis arasinda paylasilir, pens payi tipik 1/3). DOGRULANMADI: birincil
+    // kaynak elde olcumle teyit edilmedi; sayi contract'a tasinana kadar burada ADIYLA durur.
+    const double kPensPayi = 1.0 / 3.0;
+    if (!body.hasRing("girth.bust") || !body.hasRing("girth.waist")) {
+        R.hata = "cozPens: bedende girth.bust / girth.waist yok; supresyon hesaplanamaz";
+        return R;
+    }
+    double easeB = 0, easeW = 0;
+    for (const Panel& p : g.panels)
+        for (const RingEase& re : p.ease) {
+            if (re.ring == "girth.bust") easeB = std::max(easeB, re.mm);
+            if (re.ring == "girth.waist") easeW = std::max(easeW, re.mm);
+        }
+    const double supresyonTam = (body.ring("girth.bust") + easeB) - (body.ring("girth.waist") + easeW);
+    if (!(supresyonTam > 0)) {
+        R.hata = "cozPens: supresyon pozitif degil (" + fmtNum(supresyonTam) + " mm); bu bedende pens gerekmiyor";
+        return R;
+    }
+    // Pensler YARIM panellerde; tam cevredeki pens payi yarim panellere bolunur.
+    const double pensPayiTam = supresyonTam * kPensPayi;
+    const double payPens = pensPayiTam / 2.0 / static_cast<double>(pensler.size());
+    (void)La; (void)Lb;   // bel dikisi esitligi ayri kapida (dikis_uzunluk) olculuyor
+    for (std::size_t k = 0; k < pensler.size(); ++k) {
+        const double hedefAgiz = payPens;   // agiz DOGRUDAN supresyon payidir (mevcut hale eklenmez)
+        if (!(hedefAgiz > 0)) { R.hata = "cozPens: " + pensler[k].panel + " hedef agiz pozitif degil (" + fmtNum(hedefAgiz) + "); pens bu farki ememez"; return R; }
+        prob.sertUzunluklar.push_back({pensler[k].panel + ".agiz", solIdx[k], sagIdx[k], hedefAgiz});
+    }
+    prob.olcekKisiti = false;   // burada olcek kisiti yok: yalniz agiz genisligi cozuluyor
+
+    const solver::Sonuc sc = solver::coz(prob, sctx);
+    if (sc.durum == solver::Durum::ERR_UNSOLVABLE || sc.durum == solver::Durum::ERR_PROBLEM_BOZUK ||
+        sc.durum == solver::Durum::ERR_SOLVER_NO_CONTRACT) {
+        R.hata = std::string("cozPens: ") + solver::durumAdi(sc.durum) + ": " + sc.hata +
+                 (sc.gevsetilmesiGereken.empty() ? "" : " (gevsetilmesi gereken: " + sc.gevsetilmesiGereken + ")");
+        return R;
+    }
+
+    // COZUMU GRAFA YAZ: sag tabanin kaymasi kadar xOffsetMM eklenir. mm landmark'a bagli
+    // kalir (Anchor.xOffsetMM), yani baska bedende cozum yeniden kosulur.
+    for (std::size_t k = 0; k < pensler.size(); ++k) {
+        const Point yeni = sc.noktalar[sagIdx[k]];
+        const Point eski = prob.dugumler[sagIdx[k]].p;
+        const double dx = yeni.x - eski.x;
+        if (std::fabs(dx) < 1e-12) continue;
+        Panel* p = R.g.panel(pensler[k].panel);
+        Edge* b2 = p ? p->edge(pensler[k].bacak2) : nullptr;
+        if (!b2) { R.hata = "cozPens: cozum yazilamadi: " + pensler[k].panel; return R; }
+        const RefPoint eskiUc = b2->to;
+        for (Term& tm : b2->to.terms) tm.a.xOffsetMM += dx;
+        b2->to.normalize();
+        // KONTUR KAPALILIGI: pens agzinin sag tabani, bitisik bel kenarinin BASLANGICIYLA
+        // ayni noktadir. Yalniz pens bacagini kaydirirsak panel konturu ACILIR (panel_kapali
+        // kirmizisi). Ayni RefPoint'i tasiyan her kenar ucu birlikte kayar.
+        for (Edge& e : p->edges) {
+            if (e.id == pensler[k].bacak2) continue;
+            if (e.from == eskiUc) { for (Term& tm : e.from.terms) tm.a.xOffsetMM += dx; e.from.normalize(); }
+            if (e.to == eskiUc) { for (Term& tm : e.to.terms) tm.a.xOffsetMM += dx; e.to.normalize(); }
+        }
+        R.cozumler.push_back({pensler[k].panel, pensler[k].bacak2, seamId,
+                              prob.sertUzunluklar[k].hedefMM, dx, sc.enBuyukSertArtikMM});
+    }
+    R.ok = true;
+    return R;
 }
 
 CozumSonucu cozumle(const Garment& g, const Body& body, bool onArkaEsit, const OpCtx& ctx) {

@@ -341,7 +341,7 @@ double chainLength(const Garment& g, const std::vector<EdgeRef>& refs, const Bod
     return chainOf(g, duzZincir(refs), body, onArkaEsit).total;
 }
 
-DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contract, bool onArkaEsit) {
+DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contract, bool onArkaEsit, const JVal& bodyContract) {
     DogrulamaRaporu R; R.grafId = g0.id; R.bodyId = body.id(); R.onArkaEsit = onArkaEsit;
     auto H = [&](const std::string& k, const std::string& hedef, const std::string& deger, bool gecti, bool bilgi = false) {
         R.hukumler.push_back({k, hedef, deger, gecti, bilgi});
@@ -518,9 +518,47 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
     // ---- kisit: fitLength kisitlari bu bedende cozulur (karar 6); cozulen graf G ile olculur
     const OpCtx octx = OpCtx::fromContract(contract);
     CozumSonucu cz = cozumle(g0, body, onArkaEsit, octx);
-    const Garment& g = cz.ok ? cz.g : g0;
+    Garment gCoz = cz.ok ? cz.g : g0;
     if (!cz.ok) H("kisit", g0.id, cz.hata, false);
     else for (const Cozum& c : cz.cozumler) H("kisit", c.panel + "/" + c.edge, "dikis " + c.seam + ": hedef " + f2(c.hedefMM) + " mm, kontrol kaymasi " + f2(c.dMM) + " mm @ " + body.id() + ", artik " + f4(c.artikMM) + " mm", true, true);
+
+    // ---- PENS AGZI KISIT COZUMU (2026-09-08, Damla karari (a): solver bagla).
+    // Bel dikisinin iki tarafinin uzunluk esitligi SERT KISIT olarak solver_utils'e verilir,
+    // pens agzi bilinmeyendir. Oncesinde agiz `combo` afin birlesiminden geliyordu: olcuye
+    // bagliydi ama bir kisit COZUMU degildi (8 Eyl hakemi: "daha karmasik bir ozdeslik").
+    // Cozucu kosarsa cozulmus graf olculur; kosamazsa graf DEGISMEZ ve durum ADIYLA raporlanir
+    // (sessiz yaklastirma yok) — combo tabani gecerli kalir, olcum yine yapilir.
+    {
+        std::string sHata;
+        const solver::SolverCtx sctx = solver::SolverCtx::fromContract(contract, bodyContract, sHata);
+        const bool pensVar = [&]{
+            for (const Panel& p : gCoz.panels) for (const Edge& e : p.edges) if (e.kind == "dartLeg") return true;
+            return false;
+        }();
+        if (!pensVar) {
+            H("pens_cozum", gCoz.id, "grafta pens yok; kisit cozumu calismadi", true, true);
+        } else if (!sctx.dolu) {
+            H("pens_cozum", gCoz.id, "cozucu sozlesmesi yuklenmedi: " + sHata + " (graf DEGISMEDI, combo tabani olculuyor)", false);
+        } else if (!gCoz.seam("bel")) {
+            H("pens_cozum", gCoz.id, "'bel' dikisi yok; pens kisiti baglanamadi (graf DEGISMEDI)", true, true);
+        } else {
+            const CozumSonucu pc = cozPens(gCoz, body, onArkaEsit, sctx, "bel");
+            if (!pc.ok) {
+                H("pens_cozum", gCoz.id, pc.hata + " (graf DEGISMEDI, combo tabani olculuyor)", false);
+            } else {
+                std::string detay; double enBuyuk = 0;
+                for (const Cozum& c : pc.cozumler) {
+                    if (!detay.empty()) detay += ", ";
+                    detay += c.panel + "/" + c.edge + " agiz " + f2(c.hedefMM) + " mm (kayma " + f2(c.dMM) + ")";
+                    enBuyuk = std::max(enBuyuk, std::fabs(c.artikMM));
+                }
+                gCoz = pc.g;
+                H("pens_cozum", gCoz.id, "kisit cozucusu (solver_utils) " + std::to_string(pc.cozumler.size()) +
+                  " pens agzini cozdu, en buyuk sert artik " + f2(enBuyuk) + " mm; " + (detay.empty() ? "kayma yok" : detay), true);
+            }
+        }
+    }
+    const Garment& g = gCoz;
     if (cz.ok && cz.cozumler.empty()) H("kisit", g0.id, "fitLength kisiti yok", true, true);
 
     // ---- kenar_turu

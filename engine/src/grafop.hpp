@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "graf.hpp"
+#include "solver_utils.hpp"
 
 namespace stitchu {
 namespace graf {
@@ -77,6 +78,13 @@ OpResult fitLength(const Garment& g, const std::string& panel, const std::string
 struct Cozum { std::string panel, edge, seam; double hedefMM = 0, dMM = 0, artikMM = 0; };
 struct CozumSonucu { bool ok = false; std::string hata; Garment g; std::vector<Cozum> cozumler; };
 CozumSonucu cozumle(const Garment& g, const Body& body, bool onArkaEsit, const OpCtx& ctx);
+
+// PENS AGZINI KISIT COZUCUSUYLE COZ (2026-09-08). Bel dikisinin iki tarafinin uzunluk
+// esitligini SERT KISIT olarak solver_utils'e verir; pens agzi bilinmeyendir. Cozum
+// kenar uclarinin xOffsetMM'ine yazilir (mm grafa gomulmez: ofset landmark'a bagli kalir).
+// Cozulemezse graf DEGISMEZ ve hata ADIYLA doner. seamId genelde "bel".
+CozumSonucu cozPens(const Garment& g, const Body& body, bool onArkaEsit,
+                    const solver::SolverCtx& sctx, const std::string& seamId);
 
 } // namespace graf
 } // namespace stitchu

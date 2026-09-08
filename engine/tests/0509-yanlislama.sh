@@ -65,6 +65,22 @@ trap temizle EXIT INT TERM HUP
 
 [ -x "$DOGRULA" ] || { echo '{"ad":"yanlislama_check","durum":"CRASH","neden":"engine/build/grafdogrula yok"}'; exit 3; }
 
+# Pens agzi (mm): cozucunun bu bedende buldugu deger. 2026-09-08 (Damla karari (a),
+# solver baglandi) sonrasi B bolumunun DOGRU gostergesi budur: cozucu bel dikisi artigini
+# her bedende ~0'a cekiyor, dolayisiyla sanalDikisMM beden bozmasina artik tepki VERMEZ
+# (bu bir kusur degil, cozucunun isini yaptiginin isareti). Olcuye baglilik AGIZDA gorunur:
+# supresyon buyudukce agiz acilir (olculdu: gogus 840/880/920 -> agiz 8.96/10.62/12.29).
+pensAgzi() {
+  "$DOGRULA" "$1" gercek36 --json 2>/dev/null | python3 -c '
+import json,sys,re
+try: R=json.load(sys.stdin)
+except Exception: print("HATA"); raise SystemExit(0)
+h=[x for x in R.get("hukumler",[]) if x["kural"]=="pens_cozum"]
+if not h: print("YOK"); raise SystemExit(0)
+m=re.search(r"agiz ([0-9.]+) mm", h[0]["deger"])
+print(m.group(1) if m else "YOK")'
+}
+
 # sanalDikisMM = max(|dikis artigi|, |halka kapanmasi|) — kapi.sh ile AYNI tanim
 olc() {
   "$DOGRULA" "$1" gercek36 --json 2>/dev/null | python3 -c '
@@ -99,7 +115,7 @@ BOZUK=$(olc "$TMPG")
 BEDEN_SAGLAM=""; BEDEN_BOZUK=""; BEDEN_NOT="atlandi (contract yazilabilir degil)"
 if cp "$BODY" "$YEDEK" 2>/dev/null && [ -w "$BODY" ]; then
   gen_yedekle
-  BEDEN_SAGLAM="$SAGLAM"
+  BEDEN_SAGLAM=$(pensAgzi "$GRAF")
   python3 - "$BODY" "$BOZMA" <<'PY'
 import json,sys
 b,bozma=sys.argv[1],float(sys.argv[2])
@@ -109,7 +125,7 @@ w['cevreMM']=float(w['cevreMM'])+bozma
 json.dump(d,open(b,'w'),ensure_ascii=False,indent=2)
 PY
   if node engine/tools/gen-contract.mjs >/dev/null 2>&1 && cmake --build engine/build --target grafdogrula -j4 >/dev/null 2>&1; then
-    BEDEN_BOZUK=$(olc "$GRAF"); BEDEN_NOT="olculdu"
+    BEDEN_BOZUK=$(pensAgzi "$GRAF"); BEDEN_NOT="olculdu"
   else
     BEDEN_NOT="atlandi (gen/derleme basarisiz)"
   fi
@@ -132,9 +148,9 @@ beden = {"durum": bnot}
 if bs and bb:
     try:
         bsf,bbf=float(bs),float(bb)
-        beden = {"durum":"olculdu","saglamMM":bsf,"bozukMM":bbf,
+        beden = {"durum":"olculdu","olculen":"pens agzi (mm)","saglam":bsf,"bozuk":bbf,
                  "olcuyeDuyarli": abs(bbf-bsf) > 1e-6,
-                 "not":"beden bozmada dikisin IKI tarafi birlikte olceklenir; burada beklenen KIRMIZI degil, degerin DEGISMESIdir"}
+                 "not":"Bel 20 mm buyuyunce supresyon (gogus-bel) 20 mm KUCULUR; cozucu pens agzini o kadar KAPATIR. Beklenen KIRMIZI degil, agzin DEGISMESIdir. sanalDikisMM'e bakilmaz: cozucu artigi her bedende ~0'a ceker (2026-09-08 (a))."}
     except ValueError: pass
 
 print(json.dumps({
