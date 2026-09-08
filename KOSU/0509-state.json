@@ -7,15 +7,15 @@
     "commit": 0,
     "derlemeCommit": 0,
     "saat": 0.0,
-    "olcumTarihi": "2026-09-08T14:47",
+    "olcumTarihi": "2026-09-08T22:23",
     "altAdim": "A3",
     "kilitIhlali": [],
     "yerelMinimum": true,
-    "metrikSerisi": "cpp.dallanma 436 (taban 436, esit); js.dallanma 12+ / js.sabitMM 2 / js.metin 34 (taban); anaSapmaMM 0.693 ve sanalDikisMM 0 esik alti, seriden dusuruldu",
+    "metrikSerisi": "cpp.dallanma 436 (taban 436, esit); js.dallanma 12+6 / js.sabitMM 2 / js.metin 34 (taban); anaSapmaMM 0.693 ve sanalDikisMM 0 esik alti, seriden DUSURULDU",
     "kapiBozuk": false,
     "gecitYesil": false,
     "kirmizilar": [
-      "sinyal_tam = 2 (bundle_fresh_check + vocab_reference_check + 'muhur bozuldu:') — ilanli kirmizi kumesi DONDU {bundle_fresh_check}, vocab_reference_check kumede YOK -> ILAN GECERSIZ",
+      "sinyal_tam = 1 (kirmizi adlari: bundle_fresh_check, vocab_reference_check) — ilanli kirmizi kumesi DONDU {bundle_fresh_check}, vocab_reference_check kumede YOK -> ILAN GECERSIZ",
       "flat_ayni_insan_check = 1 (ILANLI KIRMIZI, tavan 34, asilmadi)"
     ],
     "regresyonFarki": [
@@ -32,7 +32,8 @@
     "A2-H7-kilit-kirmizi",
     "A2a-faz-H7-kirmizi-2",
     "A3",
-    "A3-baslangic-fotograf"
+    "A3-baslangic-fotograf",
+    "A3-baslangic-fotograf-11.5"
   ],
   "taban": {
     "cpp.dallanma": 436,
