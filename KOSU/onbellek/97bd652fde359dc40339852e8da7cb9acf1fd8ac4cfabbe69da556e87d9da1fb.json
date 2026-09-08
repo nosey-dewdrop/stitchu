@@ -308,10 +308,17 @@
    "kazanan": "olcum",
    "kaynak": "siluet-orani",
    "sonuc": "Celiski: siluetin 'en dar nokta'si bel degil, kollarin govdeye en yakin oldugu yer. Dogal bel bir elbisede ~0.35 olur (bkz. biba-O1194418: 0.3552, kollari asagida). Op'a bel KONUMU girmedi; yalniz ORAN girdi ve o da supheli isaretli."
+  },
+  {
+   "kalem": "bel yuksekligi — poz landmark'i (kaynak a) HAKEM",
+   "claude": "Dogal bel; siluetin 0.4894'u bana yuksek geldi",
+   "olcum": "poz landmark'i (MediaPipe pose landmarker lite, self-host web/vendor/pose/, headless Chrome'da kosuldu, guven 0.759): belY = 0.405. Siluet 0.4894 diyordu.",
+   "kazanan": "olcum",
+   "kaynak": "poz-landmark",
+   "sonuc": "UC KAYNAK da olculdu ve poz siluetin hatasini ADIYLA acikladi: siluetin 'en dar nokta'si kollarin govdeye yaklastigi yerdi, bel degil. Poz omuz/kalca noktalarindan beli 0.405'te buluyor. Ayrica siluetin anlamsiz enGenis/omuz=2.1558 degeri de aciklandi: poz kolBoyu/omuzGen=1.2083 diyor, yani kollar gercekten omuzdan uzun ve acik; siluetin 'genislik' paydasi kollari olcuyordu. belY orani DOGRULANMADI bir sabit (omuz-kalca'nin 0.55'i) kullaniyor, o kalem ayrica isaretli."
   }
  ],
  "olculmedi": [
-  "poz landmark (kaynak a): MediaPipe kurulmadi — bu fotografta EKSIKLIGI OLCULDU, kol/govde ayrimi yapilamadigi icin genislik oranlari kullanilamaz hale geldi",
   "arka yuz: fotograf yok"
  ],
  "okunamayanlar": [
