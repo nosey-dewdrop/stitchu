@@ -1,0 +1,18 @@
+{
+ "kirmizi": 13,
+ "fails": [
+  "centik:bel @0.3300",
+  "dikis_uzunluk:kol_oyugu",
+  "dikis_uzunluk:kol_oyugu_2",
+  "halka_kapanma:bel_halka (waist_ring)",
+  "halka_kapanma:etek_ucu (hem)",
+  "halka_kapanma:yaka (neck)",
+  "kenar_turu:arka_ayna/cb",
+  "kenar_turu:arka_etek_ayna/cb",
+  "kenar_turu:on_tam/shoulder.2",
+  "kisit:P7-tek-omuz-asimetrik-fiyonk",
+  "topoloji:arka_ayna/cb",
+  "topoloji:arka_etek_ayna/cb",
+  "topoloji:on_tam/shoulder.2"
+ ]
+}

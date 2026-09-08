@@ -76,10 +76,16 @@ void retarget(Garment& g, const std::string& oldPanel, const std::string& edgeId
 // ortak koseyi iki kez tasirdi — bu yuzden kume tek seferde.
 void scaleEdges(Panel& p, const std::vector<int>& idxs, double k) {
     bool foldAnchored = false;
+    // x=0 giysinin simetri eksenidir: kat kenari (onFold) da arka orta dikisi (cutCount 2, cb seam) de o
+    // eksende durur. Eksene dayanan kume yalniz x'te, eksen etrafinda olceklenir; aksi halde CB ucu eksenden
+    // kayar (2026-09-09 olculdu: arka_etek/hem_back flare -> "topoloji arka_etek/cb" kirmizi). Eksen = panelin
+    // IKI UCU DA x=0'da olan bir kenari (kol panelinin x=0'daki tek kosesi eksen degildir; kapak homotetisi tam kalir).
+    bool eksenVar = p.onFold;
+    for (const Edge& e : p.edges) if (e.from.xSifir() && e.to.xSifir()) eksenVar = true;
     std::vector<RefPoint> verts;
     for (int idx : idxs) {
         const Edge& e = p.edges[idx];
-        if (p.onFold && (e.from.xSifir() || e.to.xSifir())) foldAnchored = true;
+        if (eksenVar && (e.from.xSifir() || e.to.xSifir())) foldAnchored = true;
         for (const RefPoint* q : {&e.from, &e.to}) {
             bool dup = false; for (const RefPoint& v : verts) if (v == *q) dup = true;
             if (!dup) verts.push_back(*q);
@@ -388,7 +394,8 @@ OpResult opReshapeEdge(const Garment& g0, const JVal& a, const OpCtx&) {
     if (a.has("kind")) {
         std::string k; if (!needS(a, "kind", k, err)) return fail("reshapeEdge: " + err);
         if (k != "cut" && k != "seam" && k != "fold") return fail("reshapeEdge: kind '" + k + "' yazilamaz (cut|seam|fold; dartLeg yalniz suppress)");
-        if (e.kind == "dartLeg") return fail("reshapeEdge: dartLeg kenarinin turu degistirilmez " + eid);
+        // dartLeg yalniz SEAM olabilir: prenses/kup dikisi pensi emer (bacak dikis cizgisi olur); cut/fold olamaz
+        if (e.kind == "dartLeg" && k != "seam") return fail("reshapeEdge: dartLeg kenari yalniz seam'e cevrilir (pens dikise emilir) " + eid);
         e.kind = k;
         if (k != "cut") e.finish.clear();
         any = true;

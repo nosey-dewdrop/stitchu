@@ -1,0 +1,372 @@
+[
+ {
+  "op": "mirror",
+  "args": {
+   "panel": "on_beden",
+   "newId": "on_ayna"
+  }
+ },
+ {
+  "op": "mirror",
+  "args": {
+   "panel": "arka_beden",
+   "newId": "arka_ayna"
+  }
+ },
+ {
+  "op": "mirror",
+  "args": {
+   "panel": "on_etek",
+   "newId": "on_etek_ayna"
+  }
+ },
+ {
+  "op": "mirror",
+  "args": {
+   "panel": "arka_etek",
+   "newId": "arka_etek_ayna"
+  }
+ },
+ {
+  "op": "mirror",
+  "args": {
+   "panel": "kol",
+   "newId": "kol_ayna"
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "omuz_2",
+   "a": [
+    {
+     "panel": "on_ayna",
+     "edge": "shoulder"
+    }
+   ],
+   "b": [
+    {
+     "panel": "arka_ayna",
+     "edge": "shoulder"
+    }
+   ],
+   "reverse": false,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "yan_beden_2",
+   "a": [
+    {
+     "panel": "on_ayna",
+     "edge": "side_front"
+    }
+   ],
+   "b": [
+    {
+     "panel": "arka_ayna",
+     "edge": "side_back"
+    }
+   ],
+   "reverse": false,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "yan_etek_2",
+   "a": [
+    {
+     "panel": "on_etek_ayna",
+     "edge": "side_front.1"
+    },
+    {
+     "panel": "on_etek_ayna",
+     "edge": "side_front.2"
+    }
+   ],
+   "b": [
+    {
+     "panel": "arka_etek_ayna",
+     "edge": "side_back.1"
+    },
+    {
+     "panel": "arka_etek_ayna",
+     "edge": "side_back.2"
+    }
+   ],
+   "reverse": false,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "bel_2",
+   "a": [
+    {
+     "panel": "on_ayna",
+     "edge": "waist_front.1"
+    },
+    {
+     "panel": "on_ayna",
+     "edge": "waist_front.2"
+    },
+    {
+     "panel": "arka_ayna",
+     "edge": "waist_back.2"
+    },
+    {
+     "panel": "arka_ayna",
+     "edge": "waist_back.1"
+    }
+   ],
+   "b": [
+    {
+     "panel": "on_etek_ayna",
+     "edge": "waist_front.2"
+    },
+    {
+     "panel": "on_etek_ayna",
+     "edge": "waist_front.1"
+    },
+    {
+     "panel": "arka_etek_ayna",
+     "edge": "waist_back.1"
+    },
+    {
+     "panel": "arka_etek_ayna",
+     "edge": "waist_back.2"
+    }
+   ],
+   "reverse": false,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "kol_oyugu_2",
+   "a": [
+    {
+     "panel": "kol_ayna",
+     "edge": "cap_back"
+    },
+    {
+     "panel": "kol_ayna",
+     "edge": "cap_front"
+    }
+   ],
+   "b": [
+    {
+     "panel": "arka_ayna",
+     "edge": "armhole_back.1"
+    },
+    {
+     "panel": "arka_ayna",
+     "edge": "armhole_back.2"
+    },
+    {
+     "panel": "on_ayna",
+     "edge": "armhole_front.2"
+    },
+    {
+     "panel": "on_ayna",
+     "edge": "armhole_front.1"
+    }
+   ],
+   "reverse": false,
+   "ratio": 1.04
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "kol_alti_2",
+   "a": [
+    {
+     "panel": "kol_ayna",
+     "edge": "underarm_front"
+    }
+   ],
+   "b": [
+    {
+     "panel": "kol_ayna",
+     "edge": "underarm_back"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "on_orta_kat",
+   "a": [
+    {
+     "panel": "on_beden",
+     "edge": "cf"
+    }
+   ],
+   "b": [
+    {
+     "panel": "on_ayna",
+     "edge": "cf"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "merge",
+  "args": {
+   "seam": "on_orta_kat",
+   "panelA": "on_beden",
+   "panelB": "on_ayna",
+   "panel": "on_tam"
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "on_etek_kat",
+   "a": [
+    {
+     "panel": "on_etek",
+     "edge": "cf"
+    }
+   ],
+   "b": [
+    {
+     "panel": "on_etek_ayna",
+     "edge": "cf"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "merge",
+  "args": {
+   "seam": "on_etek_kat",
+   "panelA": "on_etek",
+   "panelB": "on_etek_ayna",
+   "panel": "on_etek_tam"
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_tam",
+   "edge": "shoulder.2",
+   "kind": "cut",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "addPanel",
+  "args": {
+   "onto": "on_tam",
+   "panel": {
+    "id": "bel_fiyonk",
+    "edges": [
+     {
+      "id": "ust",
+      "kind": "cut",
+      "from": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.55,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.underbust",
+       "yLerp": 0.15
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.95,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.underbust",
+       "yLerp": 0.15
+      },
+      "finish": "hem"
+     },
+     {
+      "id": "dis",
+      "kind": "cut",
+      "from": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.95,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.underbust",
+       "yLerp": 0.15
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.95,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.highHip",
+       "yLerp": 0.15
+      },
+      "finish": "hem"
+     },
+     {
+      "id": "alt",
+      "kind": "cut",
+      "from": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.95,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.highHip",
+       "yLerp": 0.15
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.55,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.highHip",
+       "yLerp": 0.15
+      },
+      "finish": "hem"
+     },
+     {
+      "id": "ic",
+      "kind": "cut",
+      "from": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.55,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.highHip",
+       "yLerp": 0.15
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.55,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.underbust",
+       "yLerp": 0.15
+      },
+      "finish": "hem"
+     }
+    ],
+    "grainDeg": 0,
+    "onFold": false,
+    "cutCount": 1,
+    "seamAllowanceMM": 0,
+    "reason": "bel hizasinda yuze dikili serit (fiyonk govdesi)"
+   }
+  }
+ }
+]

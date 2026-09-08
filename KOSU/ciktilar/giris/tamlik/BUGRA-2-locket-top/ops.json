@@ -1,0 +1,385 @@
+[
+ {
+  "op": "drop",
+  "args": {
+   "panel": "on_etek",
+   "finish": "hem"
+  }
+ },
+ {
+  "op": "drop",
+  "args": {
+   "panel": "arka_etek",
+   "finish": "hem"
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_beden",
+   "edge": "waist_front.1",
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_beden",
+   "edge": "waist_front.2",
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "waist_back.1",
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "waist_back.2",
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "on_orta",
+   "a": [
+    {
+     "panel": "on_beden",
+     "edge": "cf"
+    }
+   ],
+   "b": [
+    {
+     "panel": "on_beden",
+     "edge": "cf"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "closure",
+  "args": {
+   "seam": "on_orta",
+   "type": "buttons",
+   "fromFraction": 0.05,
+   "toFraction": 0.95
+  }
+ },
+ {
+  "op": "addPanel",
+  "args": {
+   "panel": {
+    "id": "boyun_parca",
+    "edges": [
+     {
+      "id": "ic",
+      "kind": "seam",
+      "role": "neck_front",
+      "from": {
+       "landmark": "landmark.neckFront",
+       "xFactor": 0.0
+      },
+      "to": {
+       "landmark": "landmark.neckBase",
+       "xFactor": 1.0
+      },
+      "control": [
+       {
+        "landmark": "landmark.neckBase",
+        "xFactor": 0.35,
+        "yLandmark": "landmark.neckFront"
+       },
+       {
+        "landmark": "landmark.neckBase",
+        "xFactor": 0.85,
+        "yLandmark": "landmark.neckFront",
+        "yLandmark2": "landmark.neckBase",
+        "yLerp": 0.6
+       }
+      ]
+     },
+     {
+      "id": "omuz_ustu",
+      "kind": "cut",
+      "from": {
+       "landmark": "landmark.neckBase",
+       "xFactor": 1.0
+      },
+      "to": {
+       "combo": [
+        {
+         "w": 0.5,
+         "landmark": "landmark.neckBase",
+         "xFactor": 1.0
+        },
+        {
+         "w": 0.5,
+         "landmark": "landmark.shoulderTip",
+         "xFactor": 1.0
+        }
+       ]
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "dis",
+      "kind": "cut",
+      "from": {
+       "combo": [
+        {
+         "w": 0.5,
+         "landmark": "landmark.neckBase",
+         "xFactor": 1.0
+        },
+        {
+         "w": 0.5,
+         "landmark": "landmark.shoulderTip",
+         "xFactor": 1.0
+        }
+       ]
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xFactor": 0.0,
+       "yLandmark": "landmark.neckFront",
+       "yLandmark2": "landmark.bustLine",
+       "yLerp": 0.35
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "cf",
+      "kind": "fold",
+      "role": "cf",
+      "from": {
+       "landmark": "landmark.waist",
+       "xFactor": 0.0,
+       "yLandmark": "landmark.neckFront",
+       "yLandmark2": "landmark.bustLine",
+       "yLerp": 0.35
+      },
+      "to": {
+       "landmark": "landmark.neckFront",
+       "xFactor": 0.0
+      }
+     }
+    ],
+    "grainDeg": 0,
+    "onFold": true,
+    "cutCount": 1,
+    "seamAllowanceMM": 0,
+    "reason": "boyun hattina dikili yatik parca; omuz ustunde 0.5, ortada 0.35 (neck..bustLine)"
+   }
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "boyun_dikisi",
+   "a": [
+    {
+     "panel": "boyun_parca",
+     "edge": "ic"
+    }
+   ],
+   "b": [
+    {
+     "panel": "on_beden",
+     "edge": "neck_front"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "fitLength",
+  "args": {
+   "panel": "boyun_parca",
+   "edge": "ic",
+   "target": {
+    "seam": "boyun_dikisi",
+    "ratio": 1.0,
+    "easeMM": 0
+   }
+  }
+ },
+ {
+  "op": "addPanel",
+  "args": {
+   "panel": {
+    "id": "boyun_parca_astar",
+    "edges": [
+     {
+      "id": "ic",
+      "kind": "cut",
+      "from": {
+       "landmark": "landmark.neckFront",
+       "xFactor": 0.0
+      },
+      "to": {
+       "landmark": "landmark.neckBase",
+       "xFactor": 1.0
+      },
+      "control": [
+       {
+        "landmark": "landmark.neckBase",
+        "xFactor": 0.35,
+        "yLandmark": "landmark.neckFront"
+       },
+       {
+        "landmark": "landmark.neckBase",
+        "xFactor": 0.85,
+        "yLandmark": "landmark.neckFront",
+        "yLandmark2": "landmark.neckBase",
+        "yLerp": 0.6
+       }
+      ],
+      "finish": "raw"
+     },
+     {
+      "id": "omuz_ustu",
+      "kind": "seam",
+      "from": {
+       "landmark": "landmark.neckBase",
+       "xFactor": 1.0
+      },
+      "to": {
+       "combo": [
+        {
+         "w": 0.5,
+         "landmark": "landmark.neckBase",
+         "xFactor": 1.0
+        },
+        {
+         "w": 0.5,
+         "landmark": "landmark.shoulderTip",
+         "xFactor": 1.0
+        }
+       ]
+      }
+     },
+     {
+      "id": "dis",
+      "kind": "seam",
+      "from": {
+       "combo": [
+        {
+         "w": 0.5,
+         "landmark": "landmark.neckBase",
+         "xFactor": 1.0
+        },
+        {
+         "w": 0.5,
+         "landmark": "landmark.shoulderTip",
+         "xFactor": 1.0
+        }
+       ]
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xFactor": 0.0,
+       "yLandmark": "landmark.neckFront",
+       "yLandmark2": "landmark.bustLine",
+       "yLerp": 0.35
+      }
+     },
+     {
+      "id": "cf",
+      "kind": "fold",
+      "role": "cf",
+      "from": {
+       "landmark": "landmark.waist",
+       "xFactor": 0.0,
+       "yLandmark": "landmark.neckFront",
+       "yLandmark2": "landmark.bustLine",
+       "yLerp": 0.35
+      },
+      "to": {
+       "landmark": "landmark.neckFront",
+       "xFactor": 0.0
+      }
+     }
+    ],
+    "grainDeg": 0,
+    "onFold": true,
+    "cutCount": 1,
+    "seamAllowanceMM": 0,
+    "reason": "yatik parcanin astari; dis kenarlari parcaya dikilir"
+   }
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "astar_dikisi",
+   "a": [
+    {
+     "panel": "boyun_parca",
+     "edge": "omuz_ustu"
+    },
+    {
+     "panel": "boyun_parca",
+     "edge": "dis"
+    }
+   ],
+   "b": [
+    {
+     "panel": "boyun_parca_astar",
+     "edge": "omuz_ustu"
+    },
+    {
+     "panel": "boyun_parca_astar",
+     "edge": "dis"
+    }
+   ],
+   "reverse": false,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "kol",
+   "edge": "underarm_front",
+   "fractions": [
+    0.5
+   ]
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "kol",
+   "edge": "underarm_back",
+   "fractions": [
+    0.5
+   ]
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "kol",
+   "vertexA": "underarm_back.2",
+   "vertexB": "underarm_front.2",
+   "panelA": "kol_ust",
+   "panelB": "kol_alt",
+   "seam": "kol_kesim",
+   "seamRatio": 1.3
+  }
+ }
+]

@@ -1,0 +1,319 @@
+[
+ {
+  "op": "drop",
+  "args": {
+   "panel": "kol",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "drop",
+  "args": {
+   "panel": "on_etek",
+   "finish": "hem"
+  }
+ },
+ {
+  "op": "drop",
+  "args": {
+   "panel": "arka_etek",
+   "finish": "hem"
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_beden",
+   "edge": "cf",
+   "fractions": [
+    0.5
+   ]
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_beden",
+   "edge": "cf.1",
+   "to": {
+    "landmark": "landmark.waist",
+    "xFactor": 0.0,
+    "yLandmark": "landmark.underarm"
+   }
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "on_beden",
+   "vertexA": "cf.2",
+   "vertexB": "armhole_front.1",
+   "panelA": "on_alt",
+   "panelB": "on_ust",
+   "seam": "on_ust_kesim",
+   "seamRatio": 1.0
+  }
+ },
+ {
+  "op": "drop",
+  "args": {
+   "panel": "on_ust",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "cb",
+   "fractions": [
+    0.5
+   ]
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "cb.1",
+   "to": {
+    "landmark": "landmark.waist",
+    "xFactor": 0.0,
+    "yLandmark": "landmark.underarm"
+   }
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "arka_beden",
+   "vertexA": "cb.2",
+   "vertexB": "armhole_back.1",
+   "panelA": "arka_alt",
+   "panelB": "arka_ust",
+   "seam": "arka_ust_kesim",
+   "seamRatio": 1.0
+  }
+ },
+ {
+  "op": "drop",
+  "args": {
+   "panel": "arka_ust",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "arka_orta_alt",
+   "a": [
+    {
+     "panel": "arka_alt",
+     "edge": "cb.2"
+    }
+   ],
+   "b": [
+    {
+     "panel": "arka_alt",
+     "edge": "cb.2"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "closure",
+  "args": {
+   "seam": "arka_orta_alt",
+   "type": "zipper",
+   "fromFraction": 0,
+   "toFraction": 1
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_alt",
+   "edge": "on_ust_kesim.a",
+   "fractions": [
+    0.6
+   ]
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "on_alt",
+   "vertexA": "dart_on_beden.2",
+   "vertexB": "on_ust_kesim.a.2",
+   "panelA": "on_yan",
+   "panelB": "on_orta",
+   "seam": "on_prenses",
+   "seamRatio": 1.0
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_yan",
+   "edge": "dart_on_beden.2",
+   "kind": "seam"
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_orta",
+   "edge": "dart_on_beden.1",
+   "kind": "seam"
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "on_prenses_alt",
+   "a": [
+    {
+     "panel": "on_yan",
+     "edge": "dart_on_beden.2"
+    }
+   ],
+   "b": [
+    {
+     "panel": "on_orta",
+     "edge": "dart_on_beden.1"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_orta",
+   "edge": "cf.2",
+   "fractions": [
+    0.5
+   ]
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_orta",
+   "edge": "on_prenses.b",
+   "fractions": [
+    0.5
+   ]
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "on_orta",
+   "vertexA": "cf.2.2",
+   "vertexB": "on_prenses.b.2",
+   "panelA": "on_alt_kap",
+   "panelB": "on_ust_kap",
+   "seam": "kap_dikisi",
+   "seamRatio": 1.0
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "arka_alt",
+   "edge": "arka_ust_kesim.a",
+   "fractions": [
+    0.6
+   ]
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "arka_alt",
+   "vertexA": "dart_arka_beden.2",
+   "vertexB": "arka_ust_kesim.a.2",
+   "panelA": "arka_yan",
+   "panelB": "arka_orta",
+   "seam": "arka_prenses",
+   "seamRatio": 1.0
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_yan",
+   "edge": "dart_arka_beden.2",
+   "kind": "seam"
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_orta",
+   "edge": "dart_arka_beden.1",
+   "kind": "seam"
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "arka_prenses_alt",
+   "a": [
+    {
+     "panel": "arka_yan",
+     "edge": "dart_arka_beden.2"
+    }
+   ],
+   "b": [
+    {
+     "panel": "arka_orta",
+     "edge": "dart_arka_beden.1"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "on_orta_dugme",
+   "a": [
+    {
+     "panel": "on_ust_kap",
+     "edge": "cf.2.1"
+    },
+    {
+     "panel": "on_alt_kap",
+     "edge": "cf.2.2"
+    }
+   ],
+   "b": [
+    {
+     "panel": "on_ust_kap",
+     "edge": "cf.2.1"
+    },
+    {
+     "panel": "on_alt_kap",
+     "edge": "cf.2.2"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "closure",
+  "args": {
+   "seam": "on_orta_dugme",
+   "type": "buttons",
+   "fromFraction": 0.05,
+   "toFraction": 0.95
+  }
+ }
+]

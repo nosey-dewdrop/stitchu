@@ -1,5 +1,8 @@
 # 0509 KOŞU DURDU — 8.29 (3. durdurma)
 
+> **9 Eyl, elle oturum (Damla kararı):** bu DURDU'nun A3 kusuru koşu dışında elle kapatıldı — motor taban + primitif emir listesini uygular ve çizer; 5 teslim yeniden üretildi (4 farklı flat, 5/5 grafdogrula 0 kırmızı, KABUL kırmızı=0), devirler geri alındı, `sinyal_tam` ilanı düzeltildi. Ayrıntı: `0509-kosu.md` §5.0c eki ve §5.5 (2026-09-09), `KOSU/ciktilar/giris/HUKUM.md`, `TAMLIK.md`. Taze hakem: `KOSU/ciktilar/hakem/A3/`. Koşucu bu oturumda çalıştırılmadı; sonraki adım A4 elle, koşucu A5'ten.
+
+
 Tarih: 2026-09-09. Durum: **DURDU**. Bu dosya soru içermez, karar istemez.
 
 ## Hangi adım

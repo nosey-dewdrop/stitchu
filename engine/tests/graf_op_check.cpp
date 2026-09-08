@@ -399,7 +399,9 @@ int main(int argc, char** argv) {
       OpResult r2 = ap(s1.g, "reshapeEdge", R"({"panel":"on_beden","edge":"cf.1","kind":"cut"})");
       ok(!r2.ok && r2.hata.find("finish") != std::string::npos, "  negatif: cut finish'siz red: " + r2.hata);
       OpResult r3 = ap(g, "reshapeEdge", R"({"panel":"on_beden","edge":"dart_on_beden.1","kind":"cut","finish":"hem"})");
-      ok(!r3.ok && r3.hata.find("dartLeg") != std::string::npos, "  negatif: dartLeg turu degismez: " + r3.hata);
+      ok(!r3.ok && r3.hata.find("dartLeg") != std::string::npos, "  negatif: dartLeg cut olmaz (yalniz seam): " + r3.hata);
+      OpResult r3b = ap(g, "reshapeEdge", R"({"panel":"on_beden","edge":"dart_on_beden.1","kind":"seam"})");
+      ok(r3b.ok && r3b.g.panel("on_beden")->edge("dart_on_beden.1")->kind == "seam", "  dartLeg -> seam (prenses dikisi pensi emer)");
       OpResult r4 = ap(g, "reshapeEdge", R"({"panel":"on_beden","edge":"cf","kind":"seam"})");
       ok(r4.ok && !r4.g.panel("on_beden")->onFold && r4.g.panel("on_beden")->cutCount == 2, "  kind=seam: kat kalmadi -> onFold=false, cutCount=2"); }
 
