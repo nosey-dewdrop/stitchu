@@ -7,14 +7,17 @@
     "commit": 0,
     "derlemeCommit": 0,
     "saat": 0.0,
-    "olcumTarihi": "2026-09-08T13:55",
+    "olcumTarihi": "2026-09-08T14:47",
     "altAdim": "A3",
     "kilitIhlali": [],
-    "yerelMinimum": false,
-    "metrikSerisi": "cpp.dallanma 436 (taban 436, esit); js.dallanma 18 / js.sabitMM 2 / js.metin 34 (hepsi taban); anaSapmaMM 0.693 ve sanalDikisMM esik alti, seriden dusuruldu",
+    "yerelMinimum": true,
+    "metrikSerisi": "cpp.dallanma 436 (taban 436, esit); js.dallanma 12+ / js.sabitMM 2 / js.metin 34 (taban); anaSapmaMM 0.693 ve sanalDikisMM 0 esik alti, seriden dusuruldu",
     "kapiBozuk": false,
-    "gecitYesil": true,
-    "kirmizilar": [],
+    "gecitYesil": false,
+    "kirmizilar": [
+      "sinyal_tam = 2 (bundle_fresh_check + vocab_reference_check + 'muhur bozuldu:') — ilanli kirmizi kumesi DONDU {bundle_fresh_check}, vocab_reference_check kumede YOK -> ILAN GECERSIZ",
+      "flat_ayni_insan_check = 1 (ILANLI KIRMIZI, tavan 34, asilmadi)"
+    ],
     "regresyonFarki": [
       "kosmadi: K2-prenses-roba (flatSVG firlatti, beklenen DUSER); fark=0"
     ]
@@ -28,7 +31,8 @@
     "A2a-faz",
     "A2-H7-kilit-kirmizi",
     "A2a-faz-H7-kirmizi-2",
-    "A3"
+    "A3",
+    "A3-baslangic-fotograf"
   ],
   "taban": {
     "cpp.dallanma": 436,
@@ -226,13 +230,7 @@
       "kumeOlcumKomutu": "bash KOSU/sinyal.sh 2>&1 | grep 'KIRMIZI'"
     }
   ],
-  "altAdim": {
-    "A1a": "GECTI",
-    "A1b": "GECTI (teslimler yesil; olcek_check durust henuz-yok, A2 bekliyor)",
-    "A2a": "GECTI (2026-09-07 yeniden dogrulandi: H7 kilit onarildi, kendi-check 18/18, solver_check 37 hukum, hedefli ctest 4/4, KABUL P1 GECTI, sanalDikis 0.00mm/8 beden, enum 436 taban korundu)",
-    "A2b": "GECTI (2026-09-08 hakem: A2 GECTI. Dort olcut olculdu: pens 8 dartLeg/bacak farki 0.01mm, kapanma 7 halka + 2 zipper + ERR_NOT_WEARABLE kirmizi basabiliyor, sanalDikis vacuous degil, yanlislama 0.0->20.0. solver_utils bagli ve is yapiyor: gogus 840/880/920 -> pens agzi 8.96/10.62/12.29)",
-    "A3": "ACIK"
-  },
+  "altAdim": "A3",
   "kararUygulandi": {
     "karar1": "state.json ilanliKirmizi + kabul komutu H9/H10 (tavan 34) ile olculuyor",
     "karar2": "state.json ilanliKirmizi + kabul komutu H11 (donuk kume) / H12 (--kisa sinyalsiz)",
