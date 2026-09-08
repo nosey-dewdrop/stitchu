@@ -481,5 +481,17 @@
     "KOSU/onbellek/** (13.6/5.3: fotograf okumasi onbellekten beslenir)"
   ],
   "pushBekliyor": false,
-  "pushBekleyenCommitler": []
+  "pushBekleyenCommitler": [],
+  "A3Devam": {
+    "not": "2026-09-08: A3 iscisi 304 adim gercek is yapti, sonra harness'in 180 sn 'ilerleme yok' tavanina takildi (git DEGIL — pull/push 0.8 sn'de geciyor, olculdu). Sonraki 5 deneme ayni yerde aninda oldu. Is COMMIT'LENDI, kaybolmadi. Yeni isci SIFIRDAN BASLAMASIN.",
+    "bitenler": [
+      "contract/vision-graf-v1.json yazildi (commit 9ed9768d): fotograf okumasi geometri, isim degil; oran grafa girmez, A2 cozucusune HEDEF olur; celiskide olcum kazanir",
+      "siluet olcum katmani (kaynak b) yazildi ve 5/6 fotografta calisiyor; overlay'ler gozle denetlendi, mary-quant-O365926 ZAYIF diye ADIYLA reddedildi, ossie-clark olculemez (arka plan)",
+      "KOSU/onbellek/ 3+ giris var (A1'den devralinan biba cifti dahil)",
+      "muhur onarildi (commit b984a910): A2'nin izinli dokundugu 3 test dosyasi yeniden muhurlendi",
+      "adim basi geciti + tag (commit ac0f6d97)"
+    ],
+    "kalan": "ASIL TESLIM: 5 fotograf -> graf.json + flat.png + kalip-36.svg + dikilebilir tablosu, overlay'li kontak PNG. Isci kesildiginde ureticiyi (onbellek girisi -> op demeti -> graf -> SVG/PNG) yazmaya YENI BASLIYORDU.",
+    "uyari": "Toplu uretimi TEK komutta kosma: fotograf basina ayri komut, uzun olani arka plana al (ORTAK brief 'UZUN KOMUT SESSIZ KALMAZ')."
+  }
 }
