@@ -18,6 +18,8 @@ import { okumaGetirDosyadan } from "./web/js/vision-bridge.js";
 import { readFileSync, readdirSync } from "node:fs";
 
 let kirmizi = 0;
+// yasa 9: op adlari contract/graf-v1.json oplar kumesinden; analyze-core Workers'ta dosya okuyamaz, kume buradan verilir
+const OPLAR = new Set(Object.keys(JSON.parse(readFileSync("contract/graf-v1.json", "utf8")).oplar).filter((k) => !k.startsWith("_")));
 const ok = (a, n = "") => console.log(`OK   ${a}` + (n ? `  -- ${n}` : ""));
 const fail = (a, n = "") => { kirmizi++; console.log(`FAIL ${a}` + (n ? `  -- ${n}` : "")); };
 
@@ -36,7 +38,13 @@ else ok("A3 gorunur-ilan", r.guvenliTaban.ilan);
 // gecerli cevap ILK seferde kabul edilmeli (taban yanlis yere kacmasin)
 const iyi = JSON.parse(readFileSync("KOSU/onbellek/" + readdirSync("KOSU/onbellek").find((f) => f.endsWith(".json") && JSON.parse(readFileSync("KOSU/onbellek/" + f, "utf8")).semaSurumu === "vision-graf-v1"), "utf8"));
 let c2 = 0;
-const r2 = await analyzePhotoToGraph({ sha: "x", onbellekGetir: async () => null, cagriYap: async () => { c2++; return iyi; } });
+const r2 = await analyzePhotoToGraph({ sha: "x", onbellekGetir: async () => null, cagriYap: async () => { c2++; return iyi; }, oplar: OPLAR });
+// yasa 9 yanlislama: kume disi op adi tasiyan cevap KABUL EDILMEMELI
+let c3 = 0;
+const kotu = { ...iyi, opDemeti: [{ op: "setNeckline", args: {}, neden: "test" }] };
+const r3 = await analyzePhotoToGraph({ sha: "y", onbellekGetir: async () => null, cagriYap: async () => { c3++; return kotu; }, oplar: OPLAR });
+if (r3.hataKodu !== "ERR_FALLBACK_BASE") fail("A5 kume-disi-op-reddi", `'setNeckline' kabul edildi (hataKodu ${r3.hataKodu})`);
+else ok("A5 kume-disi-op-reddi", "graf-v1 oplar disinda op adi tasiyan cevap reddedildi (yasa 9), 3 cagri sonra taban");
 if (r2.hataKodu || c2 !== 1) fail("A4 gecerli-cevap-kabul", `hataKodu ${r2.hataKodu}, cagri ${c2}`);
 else ok("A4 gecerli-cevap-kabul", "semaya uyan cevap ilk seferde kabul edildi (taban tetiklenmedi)");
 

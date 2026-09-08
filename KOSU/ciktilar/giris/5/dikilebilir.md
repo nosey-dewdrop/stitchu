@@ -9,12 +9,12 @@
 | kalem | okuma | guven |
 |---|---|---|
 | panel `arka_beden` | GORULDU — Dikey seersucker cizgi sirtta kesintisiz; ortada cizgi dizilimi simetrik ayrisiyor -> CB dikisi. | 0.95 |
-| panel `yaka_bandi_arka` | GORULDU — Sirtta genis, DUZ BEYAZ, dikdortgene yakin yaka dilimi; alt kenari kurek hizasinda yatay bitiyor. | 0.95 |
+| panel `boyun_bandi_arka` | GORULDU — Sirtta genis, DUZ BEYAZ, dikdortgene yakin yaka dilimi; alt kenari kurek hizasinda yatay bitiyor. | 0.95 |
 | panel `kol` | GORULDU — Iki kol da gorunuyor; on yuzle ayni kisa duz kol, cizgiler ayni yonde. | 0.9 |
-| panel `kemer` | GORULDU — Belde ayni kumastan ince kemer; sirtta KESINTISIZ geciyor (toka onde). Bedene dikili degil. | 0.9 |
+| panel `bel_bandi` | GORULDU — Belde ayni kumastan ince kemer; sirtta KESINTISIZ geciyor (toka onde). Bedene dikili degil. | 0.9 |
 | panel `arka_etek` | gorulmedi (tabandan) — AYRI etek paneli YOK: cizgiler omuzdan ete kesintisiz, bel dikisi bulunmuyor. On yuzle ayni hukum. | 0.85 |
-| kenar `yaka_bandi_arka/neck_back` | landmark.nape..landmark.bustLine oraninda **0.05**, duz | 0.85 |
-| kenar `yaka_bandi_arka/dis_kenar` | landmark.nape..landmark.bustLine oraninda **0.55**, duz | 0.85 |
+| kenar `boyun_bandi_arka/neck_back` | landmark.nape..landmark.bustLine oraninda **0.05**, duz | 0.85 |
+| kenar `boyun_bandi_arka/dis_kenar` | landmark.nape..landmark.bustLine oraninda **0.55**, duz | 0.85 |
 | kenar `arka_beden/cb` | landmark.nape..landmark.waist oraninda **1**, duz | 0.8 |
 | kenar `arka_beden/hem` | landmark.waist..landmark.ankle oraninda **0.42**, duz | 0.8 |
 | kenar `kol/hem` | landmark.shoulderTip..landmark.wrist oraninda **0.4**, duz | 0.85 |
@@ -35,34 +35,36 @@ Yasa 5: celiskide **olcum kazanir**. Bos tablo "celiski yok" demek degildir.
 | giysi boyu (on/arka tutarliligi) | On ve arka ayni boyda: iki fotografta da bel-ayakbilegi orani ~0.42 | siluet boy/omuz on 2.5061, arka 2.1736 — %15 fark | **olcum** (siluet-orani) | Fark giysiden DEGIL: iki cekimde manken ayakligi ve kadraj farkli (on cekimde parke zemin daha cok giriyor). Ayni giysinin on ve arkasi ayni boyda olmak ZORUNDA, o yuzden bu olcum ciftinin farki dogrudan KADRAJ HATASI olculmus oluyor: %15. Op'a semantik 0.42 girdi. |
 | cbAyna | On yuzden cikarim: simetrik olmali | bu fotografta DOGRUDAN gorunuyor, CB ekseninde ayna | **olcum** (siluet-orani) | Cikarim DOGRULANDI. On yuzun guveni 0.9'dan bu fotografla desteklendi. |
 
-## Motora ne gecti?
+## Motora ne gecti? (primitif emir listesi)
 
-Okuma dili (fotograf) ile motorun op sozlugu ayni sey degil. Ceviri ve **cevrilemeyenler**:
+Okuma dogrudan graf-v1 primitifleriyle yazilir (vision-graf-v1 yasa 9); ceviri katmani YOK.
+Motor (`grafuygula`) taban grafa bu 8 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
+Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
-| okuma op'u | motor op'u | not |
-|---|---|---|
+| # | primitif | args | doguran okuma kalemi |
+|---|---|---|---|
+| 1 | `merge` | `{"seam":"bel","panelA":"arka_beden","panelB":"arka_etek","panel":"arka_govde"}` | panel arka_etek gorulmedi: cizgiler kesintisiz, bel dikisi yok -> arka tek panel |
+| 2 | `merge` | `{"seam":"bel","panelA":"on_beden","panelB":"on_etek","panel":"on_govde"}` | es fotograf (on): bel dikisi yok -> on tek panel |
+| 3 | `addPanel` | `{"panel":{"id":"boyun_bandi_arka","edges":[{"id":"ic","kind":"seam","role":"neck_back","from":{"landmark":"landmark.nape","xFactor":0},"to":{"landmark":"landmar…` | panel boyun_bandi_arka gorulduMu + kenar boyun_bandi_arka/dis_kenar (oran 0.55, kavisli-dis) + katman kaydi |
+| 4 | `sew` | `{"seam":"boyun_dikisi_arka","a":[{"panel":"boyun_bandi_arka","edge":"ic"}],"b":[{"panel":"arka_govde","edge":"neck_back"}],"reverse":true,"ratio":1}` | dikis boyun_bandi_arka/ic <-> arka_govde/neck_back [1.0,1.0] |
+| 5 | `fitLength` | `{"panel":"boyun_bandi_arka","edge":"ic","target":{"seam":"boyun_dikisi_arka","ratio":1,"easeMM":0}}` | ic kenar boyun hattinin uzunlugunu kapatir (kisit) |
+| 6 | `extendTo` | `{"panel":"arka_govde","edge":"hem_back","yLandmark":"landmark.knee","yOffsetMM":0}` | kenar arka_beden/hem: waist..ankle 0.42 -> landmark.knee |
+| 7 | `extendTo` | `{"panel":"on_govde","edge":"hem_front","yLandmark":"landmark.knee","yOffsetMM":0}` | on hem arka ile ayni boyda (es fotograf) |
+| 8 | `extendTo` | `{"panel":"kol","edge":"hem","yLandmark":"landmark.elbow","yOffsetMM":0}` | kenar kol/hem: shoulderTip..wrist 0.40 -> landmark.elbow |
 
-| `splitPanel` | **YOK** | motorun op sozlugunde karsiligi yok (contract/graf-v1.json oplar) — dogduran okuma: kenar arka_beden/cb + dikis cb_dikisi |
-| `addPanel` | **YOK** | motorun op sozlugunde karsiligi yok (contract/graf-v1.json oplar) — dogduran okuma: panel yaka_bandi_arka + kenar dis_kenar |
-| `setHemLength` | **YOK** | kenar yok: arka_beden/hem — dogduran okuma: kenar arka_beden/hem |
-| `mergeSeam` | **YOK** | motorun op sozlugunde karsiligi yok (contract/graf-v1.json oplar) — dogduran okuma: panel arka_etek gorulmedi: cizgiler kesintisiz, bel dikisi yok |
-
-**Cozucu hedefi** (grafa YAZILMAZ, contract yasa 3): 1 adet.
+**Cozucu hedefi** (grafa YAZILMAZ, yasa 3): 1 adet.
 - girth.waist / girth.bust = 0.3815 (kaynak: siluet-orani bel/enGenis) — OLCUM ZAYIF
-
-**Landmark kaybi** (motor ara noktaya baglanamiyor, en yakin landmark secildi):
-- yok
 
 ## Cizildi mi?
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK | 21422 |
-| flat.png | OK | 82695 |
-| kalip-36.svg | OK | 12734 |
-| kalip-36.png | OK | 41871 |
+| flat.svg | OK (data-ops=8) | 14912 |
+| flat.png | OK | 79960 |
+| kalip-36.svg | OK | 8895 |
+| kalip-36.png | OK | 42379 |
 
-**grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
+**grafdogrula (gercek36):** KOSTU — kirmizi hukum: **1** (supresyon: foto-0147b7cf)
 
 ## Okunamayanlar (sessiz default YOK)
 
@@ -74,7 +76,8 @@ Okuma dili (fotograf) ile motorun op sozlugu ayni sey degil. Ceviri ve **cevrile
 
 - poz landmark (kaynak a): KOSULDU -> ERR_NO_POSE (arka yuz cekimi, yuz/uzuv gorunmuyor).
 
-## Motorun op sozlugunde KARSILIGI OLMAYANLAR
+## Primitif kumesiyle YAZILAMAYANLAR (eksikPrimitif — kumeye eklenecek primitifin adresi)
 
-- yatik/denizci yakasinin arka dilimi: graf-v1'de yaka arka profili yok
-- kemer: ayri parca, karsiligi yok
+- IC HALKA PENS (bel pensi, bel dikisi yokken): panel modeli dis halkadir; merge bel pensini dusurur (reason'da adiyla). Kumeye eklenecek primitif: pens (ic halka)
+- bagimsiz parca (bel bandi): komsuluk kurali, primitif yok
+- CB kapanma turu okunamadi: taban grafin fermuari duruyor (ilan)

@@ -3,3 +3,4 @@ sha256 f35565a6e4e46410c5b7a821dc1912ddc44abcebc0434f45b080c31a183ff475
 gorunum on
 okuyan isci-A3 (llmCagri 0)
 arka.koken fotograf
+cizim taban+ops (12 primitif emir; KOSU/ciktilar/graf-ilk/graf.json + ops.json -> grafuygula/grafciz --ops)

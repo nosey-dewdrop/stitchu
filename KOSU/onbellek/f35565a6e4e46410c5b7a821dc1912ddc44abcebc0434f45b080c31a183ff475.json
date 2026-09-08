@@ -16,7 +16,7 @@
    "kanit": "Dikey seersucker cizgi CF pacisinda kesiliyor ve iki yanda simetrik devam ediyor; cizgi yonu panelin dogrultusunu dogrudan gosteriyor."
   },
   {
-   "id": "yaka_bandi",
+   "id": "boyun_bandi",
    "gorulduMu": true,
    "guven": 0.95,
    "kanit": "Omuzlari ortan genis, DUZ BEYAZ (kontrast kumas) yatik yaka; kendi dikisiyle bedene oturuyor. Kare-ye yakin, omuz uclarina kadar uzaniyor."
@@ -28,13 +28,13 @@
    "kanit": "Kisa, duz, mansetsiz kol; cizgiler kolda govdeyle AYNI dikey yonde, yani kol ayri parca ve duz kesilmis."
   },
   {
-   "id": "kemer",
+   "id": "bel_bandi",
    "gorulduMu": true,
    "guven": 0.9,
    "kanit": "Belde ayni kumastan ince kemer; onde tokali/dugmeli. Bedene DIKILI DEGIL (arka fotografta serbest gecio), ayri parca."
   },
   {
-   "id": "cep_torba",
+   "id": "on_yama",
    "gorulduMu": true,
    "guven": 0.9,
    "kanit": "Kalca hizasinda iki adet YAMA cep, beyaz kapakli; cebin kendi cizgileri govdeninkiyle ayni yonde."
@@ -54,7 +54,7 @@
  ],
  "kenarlar": [
   {
-   "panel": "yaka_bandi",
+   "panel": "boyun_bandi",
    "kenar": "neck_front",
    "landmarkUst": "landmark.neckFront",
    "landmarkAlt": "landmark.bustLine",
@@ -64,7 +64,7 @@
    "not": "Yaka cizgisinin KENDISI boyun kokune yakin (yuvarlak); yakanin genis beyaz parcasi onun UZERINE yatiyor."
   },
   {
-   "panel": "yaka_bandi",
+   "panel": "boyun_bandi",
    "kenar": "dis_kenar",
    "landmarkUst": "landmark.neckFront",
    "landmarkAlt": "landmark.bustLine",
@@ -143,7 +143,7 @@
   },
   {
    "id": "yaka_dikisi",
-   "a": "yaka_bandi/ic",
+   "a": "boyun_bandi/ic",
    "b": "on_beden/neck_front",
    "oranAralik": [
     1.0,
@@ -169,21 +169,21 @@
  },
  "katmanlar": [
   {
-   "ad": "yaka_bandi",
+   "ad": "boyun_bandi",
    "ustunde": "on_beden",
    "oranBas": 0.0,
    "oranSon": 0.12,
    "guven": 0.9
   },
   {
-   "ad": "cep_torba",
+   "ad": "on_yama",
    "ustunde": "on_beden",
    "oranBas": 0.44,
    "oranSon": 0.6,
    "guven": 0.9
   },
   {
-   "ad": "kemer",
+   "ad": "bel_bandi",
    "ustunde": "on_beden",
    "oranBas": 0.36,
    "oranSon": 0.41,
@@ -196,105 +196,368 @@
   "neden": "GIRDI/hedef-fotograflar/mary-quant-O365926-dress-arka.jpg — gercekten arka yuz; okumasi 0147b7cf...json",
   "sha256": "0147b7cfc57612583cd8a85da4e0d16046688b0ea80187ad2233f6156d02a21c"
  },
- "kisaltmalar": [
+ "hedefler": [
   {
-   "isim": "gomlek elbise (shirtdress)",
-   "opDemeti": [
-    "addClosure",
-    "setHemLength"
-   ],
-   "guven": 0.85
-  },
-  {
-   "isim": "yatik genis yaka (flat/sailor collar)",
-   "opDemeti": [
-    "addPanel",
-    "attachSeam"
-   ],
-   "guven": 0.85
-  },
-  {
-   "isim": "yama cep",
-   "opDemeti": [
-    "addPatch"
-   ],
-   "guven": 0.9
+   "ring": "girth.waist",
+   "ratioTo": "girth.bust",
+   "ratio": 0.4654,
+   "kaynak": "siluet-orani bel/enGenis",
+   "uyari": "OLCUM ZAYIF (kalite=ZAYIF), celiskiTablosu'na bak"
   }
  ],
  "opDemeti": [
   {
-   "op": "setHemLength",
+   "op": "merge",
    "args": {
-    "panel": "on_beden",
-    "edge": "hem",
-    "target": {
-     "landmarkUst": "landmark.waist",
-     "landmarkAlt": "landmark.ankle",
-     "ratio": 0.42
-    }
+    "seam": "bel",
+    "panelA": "on_beden",
+    "panelB": "on_etek",
+    "panel": "on_govde"
    },
-   "neden": "kenar on_beden/hem"
+   "neden": "panel on_etek gorulmedi: cizgiler kesintisiz, bel dikisi YOK -> on beden + on etek tek panel"
   },
   {
-   "op": "setHemLength",
+   "op": "merge",
    "args": {
-    "panel": "kol",
-    "edge": "hem",
-    "target": {
-     "landmarkUst": "landmark.shoulderTip",
-     "landmarkAlt": "landmark.wrist",
-     "ratio": 0.4
-    }
+    "seam": "bel",
+    "panelA": "arka_beden",
+    "panelB": "arka_etek",
+    "panel": "arka_govde"
    },
-   "neden": "kenar kol/hem"
+   "neden": "arka: es fotograf (arka) bel dikisi gostermiyor -> arka tek panel"
   },
   {
-   "op": "mergeSeam",
+   "op": "reshapeEdge",
    "args": {
-    "seam": "bel_dikisi"
+    "panel": "on_govde",
+    "edge": "neck_front",
+    "to": {
+     "landmark": "landmark.waist",
+     "xFactor": 0.0,
+     "yLandmark": "landmark.neckFront",
+     "yLandmark2": "landmark.bustLine",
+     "yLerp": 0.1
+    }
    },
-   "neden": "panel on_etek gorulmedi: cizgiler kesintisiz, bel dikisi YOK -> taban grafin bel dikisi kaldirilir"
+   "neden": "kenar boyun_bandi/neck_front: neckFront..bustLine 0.1, kavisli-ic (boyun hatti hafif asagida)"
+  },
+  {
+   "op": "sew",
+   "args": {
+    "seam": "on_orta",
+    "a": [
+     {
+      "panel": "on_govde",
+      "edge": "cf.1"
+     },
+     {
+      "panel": "on_govde",
+      "edge": "cf.2"
+     }
+    ],
+    "b": [
+     {
+      "panel": "on_govde",
+      "edge": "cf.1"
+     },
+     {
+      "panel": "on_govde",
+      "edge": "cf.2"
+     }
+    ],
+    "reverse": true,
+    "ratio": 1
+   },
+   "neden": "kapanma okumasi: yer on_orta -> on orta kat kenari kendi ayna kopyasiyla dikilir (kat acilir)"
+  },
+  {
+   "op": "closure",
+   "args": {
+    "seam": "on_orta",
+    "type": "buttons",
+    "fromFraction": 0.02,
+    "toFraction": 0.78
+   },
+   "neden": "kapanma okumasi: on_orta / dugme, oranBas 0.02 oranSon 0.78 (tam boy paci)"
   },
   {
    "op": "addPanel",
    "args": {
-    "id": "yaka_bandi",
-    "attachTo": "on_beden/neck_front",
-    "outerRatio": 0.62
+    "panel": {
+     "id": "boyun_bandi",
+     "edges": [
+      {
+       "id": "ic",
+       "kind": "seam",
+       "role": "neck_front",
+       "from": {
+        "landmark": "landmark.waist",
+        "xFactor": 0.0,
+        "yLandmark": "landmark.neckFront",
+        "yLandmark2": "landmark.bustLine",
+        "yLerp": 0.1
+       },
+       "to": {
+        "landmark": "landmark.neckBase",
+        "xFactor": 1.0
+       },
+       "control": [
+        {
+         "landmark": "landmark.neckBase",
+         "xFactor": 0.35,
+         "yLandmark": "landmark.neckFront"
+        },
+        {
+         "landmark": "landmark.neckBase",
+         "xFactor": 0.85,
+         "yLandmark": "landmark.neckFront",
+         "yLandmark2": "landmark.neckBase",
+         "yLerp": 0.6
+        }
+       ]
+      },
+      {
+       "id": "omuz_ustu",
+       "kind": "cut",
+       "from": {
+        "landmark": "landmark.neckBase",
+        "xFactor": 1.0
+       },
+       "to": {
+        "combo": [
+         {
+          "w": 0.38,
+          "landmark": "landmark.neckBase",
+          "xFactor": 1.0
+         },
+         {
+          "w": 0.62,
+          "landmark": "landmark.shoulderTip",
+          "xFactor": 1.0
+         }
+        ]
+       },
+       "finish": "faced"
+      },
+      {
+       "id": "dis",
+       "kind": "cut",
+       "from": {
+        "combo": [
+         {
+          "w": 0.38,
+          "landmark": "landmark.neckBase",
+          "xFactor": 1.0
+         },
+         {
+          "w": 0.62,
+          "landmark": "landmark.shoulderTip",
+          "xFactor": 1.0
+         }
+        ]
+       },
+       "to": {
+        "landmark": "landmark.waist",
+        "xFactor": 0.0,
+        "yLandmark": "landmark.neckFront",
+        "yLandmark2": "landmark.bustLine",
+        "yLerp": 0.62
+       },
+       "finish": "faced"
+      },
+      {
+       "id": "cf",
+       "kind": "fold",
+       "role": "cf",
+       "from": {
+        "landmark": "landmark.waist",
+        "xFactor": 0.0,
+        "yLandmark": "landmark.neckFront",
+        "yLandmark2": "landmark.bustLine",
+        "yLerp": 0.62
+       },
+       "to": {
+        "landmark": "landmark.waist",
+        "xFactor": 0.0,
+        "yLandmark": "landmark.neckFront",
+        "yLandmark2": "landmark.bustLine",
+        "yLerp": 0.1
+       }
+      }
+     ],
+     "grainDeg": 0,
+     "onFold": true,
+     "cutCount": 1,
+     "seamAllowanceMM": 0,
+     "reason": "boyun hattina dikili yatik genis parca; omuz ustunde 0.62, CF'de 0.62 (neck..bustLine) iner"
+    }
    },
-   "neden": "panel yaka_bandi + kenar dis_kenar"
+   "neden": "panel boyun_bandi gorulduMu + kenar boyun_bandi/dis_kenar (oran 0.62, kavisli-dis) + katman kaydi"
   },
   {
-   "op": "addClosure",
+   "op": "sew",
    "args": {
-    "yer": "on_orta",
-    "tur": "dugme",
-    "oranBas": 0.02,
-    "oranSon": 0.78
+    "seam": "boyun_dikisi",
+    "a": [
+     {
+      "panel": "boyun_bandi",
+      "edge": "ic"
+     }
+    ],
+    "b": [
+     {
+      "panel": "on_govde",
+      "edge": "neck_front"
+     }
+    ],
+    "reverse": true,
+    "ratio": 1
    },
-   "neden": "kapanma okumasi"
+   "neden": "dikis boyun_bandi/ic <-> on_govde/neck_front [1.0,1.0]"
   },
   {
-   "op": "addPatch",
+   "op": "fitLength",
    "args": {
-    "id": "cep_torba",
-    "on": "on_beden",
-    "oranBas": 0.44,
-    "oranSon": 0.6,
-    "adet": 2
+    "panel": "boyun_bandi",
+    "edge": "ic",
+    "target": {
+     "seam": "boyun_dikisi",
+     "ratio": 1.0,
+     "easeMM": 0
+    }
    },
-   "neden": "panel cep_torba + katman kaydi"
+   "neden": "ic kenar boyun hattinin uzunlugunu kapatir (kisit)"
   },
   {
-   "op": "setWidthTarget",
+   "op": "addPanel",
    "args": {
-    "ring": "girth.waist",
-    "ratioTo": "girth.bust",
-    "ratio": 0.4654,
-    "kaynak": "siluet-orani bel/enGenis",
-    "uyari": "OLCUM ZAYIF (kalite=ZAYIF), celiskiTablosu'na bak"
+    "onto": "on_govde",
+    "panel": {
+     "id": "on_yama",
+     "edges": [
+      {
+       "id": "ust",
+       "kind": "cut",
+       "from": {
+        "landmark": "landmark.waist",
+        "xOf": "ringQuarter",
+        "xFactor": 0.35,
+        "yLandmark": "landmark.waist",
+        "yLandmark2": "landmark.hip",
+        "yLerp": 0.26
+       },
+       "to": {
+        "landmark": "landmark.waist",
+        "xOf": "ringQuarter",
+        "xFactor": 0.9,
+        "yLandmark": "landmark.waist",
+        "yLandmark2": "landmark.hip",
+        "yLerp": 0.26
+       },
+       "finish": "hem"
+      },
+      {
+       "id": "dis",
+       "kind": "cut",
+       "from": {
+        "landmark": "landmark.waist",
+        "xOf": "ringQuarter",
+        "xFactor": 0.9,
+        "yLandmark": "landmark.waist",
+        "yLandmark2": "landmark.hip",
+        "yLerp": 0.26
+       },
+       "to": {
+        "landmark": "landmark.waist",
+        "xOf": "ringQuarter",
+        "xFactor": 0.9,
+        "yLandmark": "landmark.waist",
+        "yLandmark2": "landmark.hip",
+        "yLerp": 1.0
+       },
+       "finish": "hem"
+      },
+      {
+       "id": "alt",
+       "kind": "cut",
+       "from": {
+        "landmark": "landmark.waist",
+        "xOf": "ringQuarter",
+        "xFactor": 0.9,
+        "yLandmark": "landmark.waist",
+        "yLandmark2": "landmark.hip",
+        "yLerp": 1.0
+       },
+       "to": {
+        "landmark": "landmark.waist",
+        "xOf": "ringQuarter",
+        "xFactor": 0.35,
+        "yLandmark": "landmark.waist",
+        "yLandmark2": "landmark.hip",
+        "yLerp": 1.0
+       },
+       "finish": "hem"
+      },
+      {
+       "id": "ic",
+       "kind": "cut",
+       "from": {
+        "landmark": "landmark.waist",
+        "xOf": "ringQuarter",
+        "xFactor": 0.35,
+        "yLandmark": "landmark.waist",
+        "yLandmark2": "landmark.hip",
+        "yLerp": 1.0
+       },
+       "to": {
+        "landmark": "landmark.waist",
+        "xOf": "ringQuarter",
+        "xFactor": 0.35,
+        "yLandmark": "landmark.waist",
+        "yLandmark2": "landmark.hip",
+        "yLerp": 0.26
+       },
+       "finish": "hem"
+      }
+     ],
+     "grainDeg": 0,
+     "onFold": false,
+     "cutCount": 2,
+     "seamAllowanceMM": 0,
+     "reason": "on_govde yuzune dikili dikdortgen parca, adet 2 (ayna); dusey yeri okumadan (giysi boyu 0.44-0.60 -> bel..kalca 0.26-1.0), yatay yeri DOGRULANMADI (bel ceyregi 0.35-0.90 secildi, fotograftan oran cikarilmadi)"
+    }
    },
-   "neden": "olcum (kaynak b)"
+   "neden": "panel on_yama gorulduMu + katman kaydi (on_beden ustunde 0.44-0.60), adet 2"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "on_govde",
+    "edge": "hem_front",
+    "yLandmark": "landmark.knee",
+    "yOffsetMM": 0
+   },
+   "neden": "kenar on_beden/hem: waist..ankle 0.42 -> govde zincirinde 0.617, en yakin landmark.knee (0.72; crotch 0.50 daha uzak)"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "arka_govde",
+    "edge": "hem_back",
+    "yLandmark": "landmark.knee",
+    "yOffsetMM": 0
+   },
+   "neden": "arka hem on hem ile ayni boyda (es fotograf arka/hem 0.42)"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "kol",
+    "edge": "hem",
+    "yLandmark": "landmark.elbow",
+    "yOffsetMM": 0
+   },
+   "neden": "kenar kol/hem: shoulderTip..wrist 0.40 -> landmark.elbow (0.55)"
   }
  ],
  "celiskiTablosu": [
@@ -332,10 +595,10 @@
   "cep torbasinin tam derinligi",
   "kemerin bedene dikili olup olmadigi (arka fotograf serbest gecio diyor)"
  ],
- "eksikOp": [
-  "yatik genis yaka: graf-v1'de yaka paneli 'dik' varsayimiyla; yatik yaka icin dis kenar profili yok",
-  "yama cep: addPatch motorda YOK, kalibi degistirmez ama kesim listesinde parca olarak eksik",
-  "kemer: ayri parca, graf-v1'de karsiligi yok"
+ "_kullanim": "A3 hattinin girdisi.",
+ "eksikPrimitif": [
+  "bagimsiz parca (bel bandi/kusak): hicbir panele dikili degil; komsuluk_bagli kurali bagimsiz parcayi reddediyor, primitif yok (aksesuar)",
+  "yama parcanin yatay yeri fotograftan oran olarak cikarilmadi (DOGRULANMADI, secildi)"
  ],
- "_kullanim": "A3 hattinin girdisi."
+ "primitifCeviri": "2026-09-09 (Damla karari): opDemeti graf-v1 PRIMITIF kumesine yeniden yazildi (elle; okuma kalemleri degismedi, her op 'neden' ile bir kaleme bagli). Eski ad-sozlugu op'lari (setHemLength/setNeckline/addPanel/addClosure/addPatch/mergeSeam/setWidthTarget) ve kisaltmalar kaldirildi; setWidthTarget hedefler[] oldu."
 }

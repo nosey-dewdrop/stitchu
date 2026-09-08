@@ -304,7 +304,10 @@ OpResult opSplit(const Garment& g0, const JVal& a, const OpCtx& ctx) {
     for (size_t i = 0; i < g.panels.size(); ++i) if (g.panels[i].id == pid) {
         g.panels[i] = P1; g.panels.insert(g.panels.begin() + static_cast<long>(i) + 1, P2); break;
     }
-    Seam s; s.id = sid; s.a = {{pA, cut1.id}}; s.b = {{pB, cut2.id}}; s.ratio = 1.0; s.reason = "split of " + pid;
+    // cut1 = B->A (P1), cut2 = A->B (P2): a'nin basi (B) b'nin SONUYLA dikilir -> reverse=true (karar 7).
+    // 2026-09-09 olculdu: reverse=false ile zincir cozucu yan dikisi ve bel/gogus halkalarini bolme
+    // noktasinda "tepe paylasmiyor" diye KOPUK sayiyordu (foto 3, gogus alti kesme).
+    Seam s; s.id = sid; s.a = {{pA, cut1.id}}; s.b = {{pB, cut2.id}}; s.reverse = true; s.ratio = 1.0; s.reason = "split of " + pid;
     g.seams.push_back(s);
     if (ratio != 1.0) {
         Panel* q = g.panel(pA);

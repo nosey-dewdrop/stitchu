@@ -21,7 +21,7 @@
    "kanit": "Gogus alti kesme cizgisinin altinda, bele dogru daralan panel. Yan siniri desen yogunlugundan zor secilliyor; guven dusuk."
   },
   {
-   "id": "yaka_bandi",
+   "id": "boyun_bandi",
    "gorulduMu": true,
    "guven": 0.9,
    "kanit": "Boyunda dik duran, boyunu saran ayri bant. Ust kenari boyun cevresinin USTUNDE bitiyor; bandin kendi dikisi CF'de anahtar deligi olarak aciliyor."
@@ -53,7 +53,7 @@
  ],
  "kenarlar": [
   {
-   "panel": "yaka_bandi",
+   "panel": "boyun_bandi",
    "kenar": "neck_front",
    "landmarkUst": "landmark.neckFront",
    "landmarkAlt": "landmark.bustLine",
@@ -144,7 +144,7 @@
   },
   {
    "id": "yaka_dikisi",
-   "a": "yaka_bandi/alt",
+   "a": "boyun_bandi/alt",
    "b": "on_beden/neck_front",
    "oranAralik": [
     1.0,
@@ -183,113 +183,352 @@
   "guven": 0.3,
   "neden": "Arka fotograf YOK. En sade dikilebilir arka kuruldu: duz arka beden + duz arka etek, orta arka kapanma (giysinin giyilebilmesi bunu gerektiriyor ve on yuzde kapanma yok). Onizlemede gorunur ilan: arka fotograftan degil, TURETILDI."
  },
- "kisaltmalar": [
+ "hedefler": [
   {
-   "isim": "dik yaka (stand collar)",
-   "opDemeti": [
-    "addPanel",
-    "attachSeam",
-    "setCollarHeight"
-   ],
-   "guven": 0.9
-  },
-  {
-   "isim": "anahtar deligi (keyhole)",
-   "opDemeti": [
-    "addSlit"
-   ],
-   "guven": 0.8
-  },
-  {
-   "isim": "ampir/gogus alti kesme",
-   "opDemeti": [
-    "splitPanel",
-    "attachSeam"
-   ],
-   "guven": 0.7,
-   "not": "Tam ampir degil; isim yalnizca kisaltma, geometri kenar oraninda (0.18)."
+   "ring": "girth.waist",
+   "ratioTo": "girth.bust",
+   "ratio": 0.4036,
+   "kaynak": "siluet-orani bel/enGenis",
+   "uyari": "OLCUM SUPHELI, celiskiTablosu'na bak"
   }
  ],
  "opDemeti": [
   {
-   "op": "splitPanel",
+   "op": "subdivide",
    "args": {
     "panel": "on_beden",
-    "at": {
-     "landmarkUst": "landmark.bustLine",
-     "landmarkAlt": "landmark.waist",
-     "ratio": 0.18
-    },
-    "shape": "kavisli-dis"
+    "edge": "cf",
+    "fractions": [
+     0.35
+    ]
    },
-   "neden": "kenar on_beden/gogus_alti"
+   "neden": "kenar on_beden/anahtar_deligi: CF ust bolumu ayrilir"
+  },
+  {
+   "op": "reshapeEdge",
+   "args": {
+    "panel": "on_beden",
+    "edge": "cf.1",
+    "to": {
+     "landmark": "landmark.waist",
+     "xFactor": 0.0,
+     "yLandmark": "landmark.neckFront",
+     "yLandmark2": "landmark.bustLine",
+     "yLerp": 0.55
+    },
+    "kind": "cut",
+    "finish": "faced",
+    "control": [
+     {
+      "landmark": "landmark.neckFront",
+      "xOf": "ringQuarter",
+      "ring": "girth.neckBase",
+      "xFactor": 0.15,
+      "yLandmark": "landmark.neckFront",
+      "yLandmark2": "landmark.bustLine",
+      "yLerp": 0.15
+     },
+     {
+      "landmark": "landmark.neckFront",
+      "xOf": "ringQuarter",
+      "ring": "girth.neckBase",
+      "xFactor": 0.15,
+      "yLandmark": "landmark.neckFront",
+      "yLandmark2": "landmark.bustLine",
+      "yLerp": 0.45
+     }
+    ]
+   },
+   "neden": "kenar on_beden/anahtar_deligi: neckFront..bustLine 0.55, kirik; yarik = CF kat kenarinin serbest kenar olmus bolumu, genislik boyun ceyreginin 0.15'i"
+  },
+  {
+   "op": "reshapeEdge",
+   "args": {
+    "panel": "on_beden",
+    "edge": "dart_on_beden.1",
+    "to": {
+     "landmark": "landmark.underarm",
+     "xOf": "ringQuarter",
+     "ring": "girth.waist",
+     "xFactor": 0.35,
+     "yLandmark": "landmark.bustLine",
+     "yLandmark2": "landmark.waist",
+     "yLerp": 0.35
+    }
+   },
+   "neden": "kenar on_beden/gogus_alti 0.18: bel pensinin apeksi kesme hattinin altinda kalir (0.35)"
+  },
+  {
+   "op": "subdivide",
+   "args": {
+    "panel": "on_beden",
+    "edge": "cf.2",
+    "fractions": [
+     0.5
+    ]
+   },
+   "neden": "kenar on_beden/gogus_alti: CF uzerinde kose"
+  },
+  {
+   "op": "reshapeEdge",
+   "args": {
+    "panel": "on_beden",
+    "edge": "cf.2.1",
+    "to": {
+     "landmark": "landmark.waist",
+     "xFactor": 0.0,
+     "yLandmark": "landmark.bustLine",
+     "yLandmark2": "landmark.waist",
+     "yLerp": 0.18
+    }
+   },
+   "neden": "kenar on_beden/gogus_alti: bustLine..waist 0.18 (CF ucu)"
+  },
+  {
+   "op": "subdivide",
+   "args": {
+    "panel": "on_beden",
+    "edge": "side_front",
+    "fractions": [
+     0.76
+    ]
+   },
+   "neden": "kenar on_beden/gogus_alti: yan dikis uzerinde kose, bel-koltukalti dogrusunun 0.76'sinda (= bustLine..waist 0.18 hatti, iki bedende <1 mm; dogru kenarda kesir = yay kesri, 0.5'teki centik yerinde kalir)"
+  },
+  {
+   "op": "split",
+   "args": {
+    "panel": "on_beden",
+    "vertexA": "cf.2.2",
+    "vertexB": "side_front.2",
+    "panelA": "on_beden_alt",
+    "panelB": "on_beden_ust",
+    "seam": "gogus_alti",
+    "seamRatio": 1.0
+   },
+   "neden": "dikis gogus_alti_dikisi: on_beden/gogus_alti <-> on_beden_yan/ust, oranAralik [1.0,1.12] -> 1.0 secildi (alt sinir; ust panelin altini buzmek yan dikisi arkadan ayirirdi, \"hafif bolluk olabilir\" notu guven 0.7); kavisli-dis bicim DUZ kesildi (kontrol noktasi uydurulmadi)"
   },
   {
    "op": "addPanel",
    "args": {
-    "id": "yaka_bandi",
-    "attachTo": "on_beden/neck_front",
-    "height": "okunamadi-oran"
-   },
-   "neden": "panel yaka_bandi + 'dik yaka' kisaltmasi"
-  },
-  {
-   "op": "addSlit",
-   "args": {
-    "panel": "on_beden",
-    "from": "landmark.neckFront",
-    "ratio": 0.55
-   },
-   "neden": "kenar on_beden/anahtar_deligi"
-  },
-  {
-   "op": "setHemLength",
-   "args": {
-    "panel": "on_etek",
-    "edge": "hem",
-    "target": {
-     "landmarkUst": "landmark.waist",
-     "landmarkAlt": "landmark.ankle",
-     "ratio": 0.62
+    "panel": {
+     "id": "boyun_bandi",
+     "edges": [
+      {
+       "id": "alt",
+       "kind": "seam",
+       "role": "neck_front",
+       "from": {
+        "landmark": "landmark.neckFront",
+        "xFactor": 0.0
+       },
+       "to": {
+        "landmark": "landmark.neckBase",
+        "xFactor": 1.0
+       },
+       "control": [
+        {
+         "landmark": "landmark.neckBase",
+         "xFactor": 0.35,
+         "yLandmark": "landmark.neckFront"
+        },
+        {
+         "landmark": "landmark.neckBase",
+         "xFactor": 0.85,
+         "yLandmark": "landmark.neckFront",
+         "yLandmark2": "landmark.neckBase",
+         "yLerp": 0.6
+        }
+       ]
+      },
+      {
+       "id": "dis",
+       "kind": "cut",
+       "from": {
+        "landmark": "landmark.neckBase",
+        "xFactor": 1.0
+       },
+       "to": {
+        "combo": [
+         {
+          "w": 1.0,
+          "landmark": "landmark.neckBase",
+          "xFactor": 1.0
+         },
+         {
+          "w": 1.5,
+          "landmark": "landmark.nape",
+          "xFactor": 0.0
+         },
+         {
+          "w": -1.5,
+          "landmark": "landmark.neckBase",
+          "xFactor": 0.0
+         }
+        ]
+       },
+       "finish": "faced"
+      },
+      {
+       "id": "ust",
+       "kind": "cut",
+       "from": {
+        "combo": [
+         {
+          "w": 1.0,
+          "landmark": "landmark.neckBase",
+          "xFactor": 1.0
+         },
+         {
+          "w": 1.5,
+          "landmark": "landmark.nape",
+          "xFactor": 0.0
+         },
+         {
+          "w": -1.5,
+          "landmark": "landmark.neckBase",
+          "xFactor": 0.0
+         }
+        ]
+       },
+       "to": {
+        "combo": [
+         {
+          "w": 1.0,
+          "landmark": "landmark.neckFront",
+          "xFactor": 0.0
+         },
+         {
+          "w": 1.5,
+          "landmark": "landmark.nape",
+          "xFactor": 0.0
+         },
+         {
+          "w": -1.5,
+          "landmark": "landmark.neckBase",
+          "xFactor": 0.0
+         }
+        ]
+       },
+       "finish": "faced"
+      },
+      {
+       "id": "cf",
+       "kind": "fold",
+       "role": "cf",
+       "from": {
+        "combo": [
+         {
+          "w": 1.0,
+          "landmark": "landmark.neckFront",
+          "xFactor": 0.0
+         },
+         {
+          "w": 1.5,
+          "landmark": "landmark.nape",
+          "xFactor": 0.0
+         },
+         {
+          "w": -1.5,
+          "landmark": "landmark.neckBase",
+          "xFactor": 0.0
+         }
+        ]
+       },
+       "to": {
+        "landmark": "landmark.neckFront",
+        "xFactor": 0.0
+       }
+      }
+     ],
+     "grainDeg": 0,
+     "onFold": true,
+     "cutCount": 1,
+     "seamAllowanceMM": 0,
+     "reason": "boyun hattinda dik duran bant; yukseklik okunamadi-oran -> 1.5 x ense dususu (landmark.nape) secildi, ADIYLA"
     }
    },
-   "neden": "kenar on_etek/hem"
+   "neden": "panel boyun_bandi gorulduMu + kenar boyun_bandi/neck_front (0.0) + dikis yaka_dikisi"
   },
   {
-   "op": "setHemLength",
+   "op": "sew",
+   "args": {
+    "seam": "boyun_dikisi",
+    "a": [
+     {
+      "panel": "boyun_bandi",
+      "edge": "alt"
+     }
+    ],
+    "b": [
+     {
+      "panel": "on_beden_ust",
+      "edge": "neck_front"
+     }
+    ],
+    "reverse": true,
+    "ratio": 1
+   },
+   "neden": "dikis boyun_bandi/alt <-> on_beden/neck_front oranAralik [1.0,1.0]"
+  },
+  {
+   "op": "fitLength",
+   "args": {
+    "panel": "boyun_bandi",
+    "edge": "alt",
+    "target": {
+     "seam": "boyun_dikisi",
+     "ratio": 1.0,
+     "easeMM": 0
+    }
+   },
+   "neden": "bandin alt kenari boyun hattinin uzunlugunu kapatir (kisit; mm yazilmaz)"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "on_etek",
+    "edge": "hem_front",
+    "yLandmark": "landmark.knee",
+    "yOffsetMM": 0
+   },
+   "neden": "kenar on_etek/hem: waist..ankle 0.62 -> landmark.knee"
+  },
+  {
+   "op": "extendTo",
    "args": {
     "panel": "kol",
     "edge": "hem",
+    "yLandmark": "landmark.wrist",
+    "yOffsetMM": 0
+   },
+   "neden": "kenar kol/hem: shoulderTip..wrist 1.0 -> landmark.wrist"
+  },
+  {
+   "op": "fitLength",
+   "args": {
+    "panel": "kol",
+    "edge": "cap_front",
     "target": {
-     "landmarkUst": "landmark.shoulderTip",
-     "landmarkAlt": "landmark.wrist",
-     "ratio": 1.0
+     "seam": "kol_oyugu",
+     "ratio": 1.14,
+     "easeMM": 0
     }
    },
-   "neden": "kenar kol/hem (uzun kol)"
+   "neden": "dikis kol_oyugu oranAralik [1.08,1.2] -> orta oran 1.14; toplama kol_oyugu dikisinin oranidir: kapak kenarlari zaten bu dikise kisitli (fitLength), oran yeniden yazilir ve her bedende cozulur"
   },
   {
-   "op": "setEase",
+   "op": "fitLength",
    "args": {
-    "seam": "kol_oyugu",
-    "side": "kol",
-    "ratioRange": [
-     1.08,
-     1.2
-    ]
+    "panel": "kol",
+    "edge": "cap_back",
+    "target": {
+     "seam": "kol_oyugu",
+     "ratio": 1.14,
+     "easeMM": 0
+    }
    },
-   "neden": "dikis kol_oyugu"
-  },
-  {
-   "op": "setWidthTarget",
-   "args": {
-    "ring": "girth.waist",
-    "ratioTo": "girth.bust",
-    "ratio": 0.4036,
-    "kaynak": "siluet-orani bel/enGenis",
-    "uyari": "OLCUM SUPHELI, celiskiTablosu'na bak"
-   },
-   "neden": "olcum (kaynak b)"
+   "neden": "dikis kol_oyugu oranAralik [1.08,1.2] -> orta oran 1.14; toplama kol_oyugu dikisinin oranidir: kapak kenarlari zaten bu dikise kisitli (fitLength), oran yeniden yazilir ve her bedende cozulur"
   }
  ],
  "celiskiTablosu": [
@@ -328,10 +567,11 @@
   "etek panel sayisi",
   "kol agzindaki dugme adedi"
  ],
- "eksikOp": [
-  "anahtar deligi (keyhole): graf-v1'de 'yarik' kenar turu yok; addSlit UYDURMA BIR AD DEGIL ama motorda karsiligi da YOK — eksikOp'ta duruyor",
-  "dik yaka bandi yuksekligi: landmark'a gore oran verilemedi, mm de verilemez (yasa 2)",
-  "bias grain ekseni"
+ "_kullanim": "A3 hattinin girdisi.",
+ "eksikPrimitif": [
+  "kesme hattinin kavisli-dis bicimi: kontrol noktasi uydurulmadan yazilamadi (oran verilmedi), duz kesildi",
+  "kol agzindaki dusey dugme/carpma detayi: kapanma yalniz dikise yazilir, kol agzi dikis degil",
+  "kumas grain ekseni: op yok"
  ],
- "_kullanim": "A3 hattinin girdisi."
+ "primitifCeviri": "2026-09-09 (Damla karari): opDemeti graf-v1 PRIMITIF kumesine yeniden yazildi (elle; okuma kalemleri degismedi, her op 'neden' ile bir kaleme bagli). Eski ad-sozlugu op'lari (setHemLength/setNeckline/addPanel/addClosure/addPatch/mergeSeam/setWidthTarget) ve kisaltmalar kaldirildi; setWidthTarget hedefler[] oldu."
 }

@@ -2,7 +2,7 @@
 //   graf.json + flat.svg/png + kalip-36.svg/png + kaynak-yolu.txt + dikilebilir.md
 // Tek fotograf, tek komut (madde 12: toplu uretim tek komutta kosulmaz).
 import { writeFileSync, existsSync, statSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { uret, ciz } from './0509-a3-uret.mjs';
 import { png } from './0509-a3-png.mjs';
 
@@ -10,25 +10,26 @@ const [sha, dizin, no] = process.argv.slice(2);
 if (!sha || !dizin) { console.error('kullanim: node KOSU/0509-a3-teslim.mjs <sha> <dizin> <no>'); process.exit(2); }
 
 const r = uret(sha, dizin);
-const c = ciz(r.grafYol, dizin);
+if (!r.grafYol) { console.error(JSON.stringify({ no, sha: sha.slice(0, 12), MOTOR_REDDETTI: r.motor }, null, 1)); process.exit(1); }
+const c = ciz(r.opsYol, dizin);
 const p = {};
 for (const ad of ['flat', 'kalip-36'])
   p[ad] = c[ad].durum === 'OK' ? await png(`${dizin}/${ad}.svg`, `${dizin}/${ad}.png`, 900) : { ok: false, neden: c[ad].stderr };
 
 // grafdogrula: kirmizi hukum sayisi
 let dogrula = { durum: 'KOSMADI' };
-try {
-  const out = execFileSync('engine/build/grafdogrula', [r.grafYol, 'gercek36', '--json'], { encoding: 'utf8' });
-  const j = JSON.parse(out);
-  // grafdogrula ciktisinda kirmizi sayisi TEK yerde: ust duzey `kirmizi`.
-  // Ilk yazimda `j.kirmizi ?? ...filter(h.durum==='FAIL')` vardi; `durum` diye bir
-  // alan YOK (alan adi `gecti`), yani fallback her zaman 0 doner ve gecit YALANCI
-  // YESIL yanardi. Olculdu: gercekte 2 kirmizi varken 0 basiliyordu.
-  if (typeof j.kirmizi !== 'number') throw new Error('grafdogrula ciktisinda `kirmizi` alani yok');
-  dogrula = { durum: 'KOSTU', kirmizi: j.kirmizi,
-              fail: j.hukumler.filter((h) => !h.gecti && !h.bilgi).map((h) => `${h.kural}: ${h.hedef}`) };
-} catch (e) {
-  dogrula = { durum: 'HATA', stderr: String(e.stderr || e.message).trim().split('\n').slice(-2).join(' | ') };
+{
+  // grafdogrula kirmizi varsa exit 1 doner ama JSON'u yine stdout'a yazar: spawnSync ile exit koduna
+  // bakmadan okunur (execFileSync firlatiyordu ve her kirmizi teslim "HATA" gorunuyordu — olculdu 2026-09-09).
+  const d = spawnSync('engine/build/grafdogrula', [r.grafYol, 'gercek36', '--json'], { encoding: 'utf8', maxBuffer: 64e6 });
+  try {
+    const j = JSON.parse(d.stdout);
+    if (typeof j.kirmizi !== 'number') throw new Error('grafdogrula ciktisinda `kirmizi` alani yok');
+    dogrula = { durum: 'KOSTU', kirmizi: j.kirmizi,
+                fail: j.hukumler.filter((h) => !h.gecti && !h.bilgi).map((h) => `${h.kural}: ${h.hedef}`) };
+  } catch (e) {
+    dogrula = { durum: 'HATA', exit: d.status, stderr: String(d.stderr || e.message).trim().split('\n').slice(-2).join(' | ') };
+  }
 }
 
 const o = r.okuma;
@@ -57,26 +58,24 @@ Yasa 5: celiskide **olcum kazanir**. Bos tablo "celiski yok" demek degildir.
 |---|---|---|---|---|
 ${(o.celiskiTablosu || []).map((x) => `| ${x.kalem} | ${x.claude} | ${x.olcum} | **${x.kazanan}** (${x.kaynak}) | ${x.sonuc} |`).join('\n') || '| — | — | — | — | tablo BOS; olculmedi[] bak |'}
 
-## Motora ne gecti?
+## Motora ne gecti? (primitif emir listesi)
 
-Okuma dili (fotograf) ile motorun op sozlugu ayni sey degil. Ceviri ve **cevrilemeyenler**:
+Okuma dogrudan graf-v1 primitifleriyle yazilir (vision-graf-v1 yasa 9); ceviri katmani YOK.
+Motor (\`grafuygula\`) taban grafa bu ${r.ops.length} emri sirayla uyguladi; cizici (\`grafciz --ops\`) ops SONRASI grafi cizdi.
+Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
-| okuma op'u | motor op'u | not |
-|---|---|---|
-${r.uygulanan.map((x, i) => `| — | \`${x.op}\` | ${JSON.stringify(x.args)} |`).join('\n')}
-${r.cevrilemeyen.map((x) => `| \`${x.okumaOp}\` | **YOK** | ${x.neden} — dogduran okuma: ${x.dogduran} |`).join('\n')}
+| # | primitif | args | doguran okuma kalemi |
+|---|---|---|---|
+${(o.opDemeti || []).map((x, i) => `| ${i + 1} | \`${x.op}\` | \`${JSON.stringify(x.args).slice(0, 160)}${JSON.stringify(x.args).length > 160 ? '…' : ''}\` | ${x.neden} |`).join('\n')}
 
-**Cozucu hedefi** (grafa YAZILMAZ, contract yasa 3): ${r.hedefler.length} adet.
+**Cozucu hedefi** (grafa YAZILMAZ, yasa 3): ${r.hedefler.length} adet.
 ${r.hedefler.map((h) => `- ${h.ring} / ${h.ratioTo} = ${h.ratio} (kaynak: ${h.kaynak})${h.uyari ? ` — ${h.uyari}` : ''}`).join('\n')}
-
-**Landmark kaybi** (motor ara noktaya baglanamiyor, en yakin landmark secildi):
-${r.kayiplar.map((k) => `- \`${k.op}\`: ${k.kayip}`).join('\n') || '- yok'}
 
 ## Cizildi mi?
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | ${c.flat.durum} | ${sat(c.flat.bayt)} |
+| flat.svg | ${c.flat.durum} (data-ops=${sat(c.flat.dataOps)}) | ${sat(c.flat.bayt)} |
 | flat.png | ${p.flat.ok ? 'OK' : 'HATA'} | ${sat(p.flat.bayt)} |
 | kalip-36.svg | ${c['kalip-36'].durum} | ${sat(c['kalip-36'].bayt)} |
 | kalip-36.png | ${p['kalip-36'].ok ? 'OK' : 'HATA'} | ${sat(p['kalip-36'].bayt)} |
@@ -91,15 +90,15 @@ ${(o.okunamayanlar || []).map((x) => `- ${x}`).join('\n')}
 
 ${(o.olculmedi || []).map((x) => `- ${x}`).join('\n')}
 
-## Motorun op sozlugunde KARSILIGI OLMAYANLAR
+## Primitif kumesiyle YAZILAMAYANLAR (eksikPrimitif — kumeye eklenecek primitifin adresi)
 
-${(o.eksikOp || []).map((x) => `- ${x}`).join('\n')}
+${(o.eksikPrimitif || []).map((x) => `- ${x}`).join('\n')}
 `;
 writeFileSync(`${dizin}/dikilebilir.md`, md);
 
 console.log(JSON.stringify({
   no, sha: sha.slice(0, 12), girdi: o.girdiYolu, dizin,
-  uygulanan: r.uygulanan.map((x) => x.op), cevrilemeyen: r.cevrilemeyen.length,
+  op: r.ops.map((x) => x.op), motor: r.motor,
   cizim: c, png: p, grafdogrula: { durum: dogrula.durum, kirmizi: dogrula.kirmizi, fail: dogrula.fail },
   celiskiSatiri: (o.celiskiTablosu || []).length,
 }, null, 1));

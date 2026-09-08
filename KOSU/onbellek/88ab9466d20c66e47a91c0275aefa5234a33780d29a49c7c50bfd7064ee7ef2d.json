@@ -28,7 +28,7 @@
    "kanit": "Arka yuz bu fotografta gorunmuyor; panel tabandan geliyor."
   },
   {
-   "id": "peplum_on",
+   "id": "on_ust_kat",
    "gorulduMu": true,
    "guven": 0.9,
    "kanit": "Bel hattinda ayri bir kat basliyor: cizgi yonu bel dikisinde sifirlaniyor ve peplum icinde YENIDEN chevron kuruyor. Onde ortada sivri dusuyor, yanlarda yukseliyor; alt kenari etek uzerinde serbest duruyor (govde ile birlesmiyor)."
@@ -74,7 +74,7 @@
    "not": "Omuz dikisi kol buzgusunun altinda kaliyor, yeri cikarim."
   },
   {
-   "panel": "peplum_on",
+   "panel": "on_ust_kat",
    "kenar": "hem",
    "landmarkUst": "landmark.waist",
    "landmarkAlt": "landmark.hip",
@@ -122,7 +122,7 @@
   {
    "id": "bel_dikisi",
    "a": "on_beden/waist_front",
-   "b": "peplum_on/waist",
+   "b": "on_ust_kat/waist",
    "oranAralik": [
     1.0,
     1.0
@@ -133,7 +133,7 @@
   },
   {
    "id": "etek_beli",
-   "a": "peplum_on/waist",
+   "a": "on_ust_kat/waist",
    "b": "on_etek/waist",
    "oranAralik": [
     1.0,
@@ -184,7 +184,7 @@
  },
  "katmanlar": [
   {
-   "ad": "peplum_on",
+   "ad": "on_ust_kat",
    "ustunde": "on_etek",
    "oranBas": 0.0,
    "oranSon": 0.3,
@@ -198,116 +198,230 @@
   "neden": "Es dosya adi 'biba-O1194418-dress-arka.jpg' ARKA diyor ama icerigi OLCULDU: yine ON yuz (ayni sweetheart yaka, ayni 4 dugmeli on paci, ayni sivri peplum ucu). Siluet olcumu de ayni sonuca variyor: boy/omuz 2.3199 vs 2.3459, belKonum 0.3552 vs 0.3570 — iki dosya ayni giysinin ayni yuzu. Arka yuz OKUNAMADI, en sade dikilebilir arka kuruldu: duz arka beden + duz arka etek, orta arka kapanmasiz (on orta zaten dugmeli).",
   "sha256": "4e446902ceaa49ab1e83a3abf5315e220acfc10682c0cc24a3a61db69b9fde8c"
  },
- "kisaltmalar": [
+ "hedefler": [
   {
-   "isim": "sweetheart yaka",
-   "opDemeti": [
-    "setNeckline"
-   ],
-   "guven": 0.75,
-   "not": "Kisaltma, olcum degil. Cozumu: neck_front kenarini 'kavisli-ic' bicimde, oran 0.33'te kuran tek op. Motorun enum'unda 'sweetheart' YOK; en yakin karsilik genis oval. Fark eksikOp'ta."
-  },
-  {
-   "isim": "peplum",
-   "opDemeti": [
-    "addPanel",
-    "attachSeam",
-    "setHemProfile"
-   ],
-   "guven": 0.9
-  },
-  {
-   "isim": "puf kol basi",
-   "opDemeti": [
-    "setEase"
-   ],
-   "guven": 0.8,
-   "not": "Cozumu tek bir isim degil: kol cap kenarina buzgu araligi + kol_oyugu dikisinde oranAralik>1."
+   "ring": "girth.waist",
+   "ratioTo": "girth.bust",
+   "ratio": 0.4954,
+   "kaynak": "siluet-orani bel/enGenis"
   }
  ],
  "opDemeti": [
   {
-   "op": "setHemLength",
+   "op": "extendTo",
    "args": {
     "panel": "on_etek",
-    "edge": "hem",
-    "target": {
-     "landmarkUst": "landmark.waist",
-     "landmarkAlt": "landmark.ankle",
-     "ratio": 0.6
-    }
+    "edge": "hem_front",
+    "yLandmark": "landmark.knee",
+    "yOffsetMM": 0
    },
-   "neden": "kenar on_etek/hem, oran 0.60 (midi)"
+   "neden": "kenar on_etek/hem: waist..ankle 0.60 -> govde zincirinde 0.736, en yakin landmark.knee (0.72)"
   },
   {
-   "op": "setHemLength",
+   "op": "extendTo",
    "args": {
     "panel": "kol",
     "edge": "hem",
+    "yLandmark": "landmark.elbow",
+    "yOffsetMM": 0
+   },
+   "neden": "kenar kol/hem: shoulderTip..wrist 0.47 -> kol zincirinde en yakin landmark.elbow (0.55)"
+  },
+  {
+   "op": "fitLength",
+   "args": {
+    "panel": "kol",
+    "edge": "cap_front",
     "target": {
-     "landmarkUst": "landmark.shoulderTip",
-     "landmarkAlt": "landmark.wrist",
-     "ratio": 0.47
+     "seam": "kol_oyugu",
+     "ratio": 1.25,
+     "easeMM": 0
     }
    },
-   "neden": "kenar kol/hem, oran 0.47"
+   "neden": "dikis kol_oyugu oranAralik [1.15,1.35] -> orta oran 1.25 (cozucu tek sayi ister); toplama kol_oyugu dikisinin oranidir: kapak kenarlari zaten bu dikise kisitli (fitLength), oran yeniden yazilir ve her bedende cozulur"
   },
   {
-   "op": "setEase",
+   "op": "fitLength",
    "args": {
-    "seam": "kol_oyugu",
-    "side": "kol",
-    "ratioRange": [
-     1.15,
-     1.35
-    ]
+    "panel": "kol",
+    "edge": "cap_back",
+    "target": {
+     "seam": "kol_oyugu",
+     "ratio": 1.25,
+     "easeMM": 0
+    }
    },
-   "neden": "dikis kol_oyugu oranAralik + kenar kol/cap buzguAraligi (puf kol basi kisaltmasi)"
+   "neden": "dikis kol_oyugu oranAralik [1.15,1.35] -> orta oran 1.25 (cozucu tek sayi ister); toplama kol_oyugu dikisinin oranidir: kapak kenarlari zaten bu dikise kisitli (fitLength), oran yeniden yazilir ve her bedende cozulur"
   },
   {
-   "op": "setNeckline",
+   "op": "reshapeEdge",
    "args": {
     "panel": "on_beden",
     "edge": "neck_front",
-    "shape": "kavisli-ic",
-    "ratio": 0.33
+    "to": {
+     "landmark": "landmark.waist",
+     "xFactor": 0.0,
+     "yLandmark": "landmark.neckFront",
+     "yLandmark2": "landmark.bustLine",
+     "yLerp": 0.33
+    },
+    "control": [
+     {
+      "landmark": "landmark.neckBase",
+      "xFactor": 0.9,
+      "yLandmark": "landmark.neckFront",
+      "yLandmark2": "landmark.bustLine",
+      "yLerp": 0.25
+     },
+     {
+      "landmark": "landmark.neckBase",
+      "xFactor": 0.3,
+      "yLandmark": "landmark.neckFront",
+      "yLandmark2": "landmark.bustLine",
+      "yLerp": 0.4
+     }
+    ]
    },
-   "neden": "kenar on_beden/neck_front; 'sweetheart yaka' kisaltmasinin cozumu"
-  },
-  {
-   "op": "setWidthTarget",
-   "args": {
-    "ring": "girth.waist",
-    "ratioTo": "girth.bust",
-    "ratio": 0.4954,
-    "kaynak": "siluet-orani bel/enGenis"
-   },
-   "neden": "olcum (kaynak b) — semantik degil, siluet; cozucuye HEDEF"
+   "neden": "kenar on_beden/neck_front: neckFront..bustLine oraninda 0.33, kavisli-ic (CF ucu asagida, kenar iceri kavisli)"
   },
   {
    "op": "addPanel",
    "args": {
-    "id": "peplum_on",
-    "attachTo": "on_beden/waist_front",
-    "hemRatio": {
-     "landmarkUst": "landmark.waist",
-     "landmarkAlt": "landmark.hip",
-     "on": 0.62,
-     "yan": 0.3
+    "onto": "on_etek",
+    "panel": {
+     "id": "on_ust_kat",
+     "edges": [
+      {
+       "id": "cf",
+       "kind": "fold",
+       "role": "cf",
+       "from": {
+        "landmark": "landmark.waist",
+        "xFactor": 0.0
+       },
+       "to": {
+        "landmark": "landmark.waist",
+        "xFactor": 0.0,
+        "yLandmark": "landmark.waist",
+        "yLandmark2": "landmark.hip",
+        "yLerp": 0.62
+       }
+      },
+      {
+       "id": "hem",
+       "kind": "cut",
+       "role": "hem_front",
+       "from": {
+        "landmark": "landmark.waist",
+        "xFactor": 0.0,
+        "yLandmark": "landmark.waist",
+        "yLandmark2": "landmark.hip",
+        "yLerp": 0.62
+       },
+       "to": {
+        "landmark": "landmark.hip",
+        "xOf": "ringQuarter",
+        "ring": "girth.hip",
+        "xFactor": 1.25,
+        "yLandmark": "landmark.waist",
+        "yLandmark2": "landmark.hip",
+        "yLerp": 0.3
+       },
+       "finish": "hem"
+      },
+      {
+       "id": "side",
+       "kind": "cut",
+       "role": "side_front",
+       "from": {
+        "landmark": "landmark.hip",
+        "xOf": "ringQuarter",
+        "ring": "girth.hip",
+        "xFactor": 1.25,
+        "yLandmark": "landmark.waist",
+        "yLandmark2": "landmark.hip",
+        "yLerp": 0.3
+       },
+       "to": {
+        "landmark": "landmark.waist",
+        "xOf": "ringQuarter",
+        "xFactor": 1.0
+       },
+       "finish": "hem"
+      },
+      {
+       "id": "waist",
+       "kind": "cut",
+       "role": "waist_front",
+       "from": {
+        "landmark": "landmark.waist",
+        "xOf": "ringQuarter",
+        "xFactor": 1.0
+       },
+       "to": {
+        "landmark": "landmark.waist",
+        "xFactor": 0.0
+       },
+       "finish": "raw"
+      }
+     ],
+     "grainDeg": 0,
+     "onFold": true,
+     "cutCount": 1,
+     "seamAllowanceMM": 0,
+     "ease": [
+      {
+       "ring": "girth.waist",
+       "mm": 25
+      },
+      {
+       "ring": "girth.hip",
+       "mm": 50
+      }
+     ],
+     "reason": "ikinci kat: on_etek yuzunde, bel hattindan baslayan, onde sivri (0.62) yanda kisa (0.30) acilan kat; bel kenari raw = bel dikisine yakalanir"
     }
    },
-   "neden": "panel peplum_on + katman kaydi + 'peplum' kisaltmasi"
+   "neden": "panel on_ust_kat gorulduMu + katman kaydi (on_etek ustunde 0.0-0.3) + kenar on_ust_kat/hem (waist..hip 0.62, kirik)"
   },
   {
-   "op": "addClosure",
+   "op": "sew",
    "args": {
-    "yer": "on_orta",
-    "tur": "dugme",
-    "oranBas": 0.06,
-    "oranSon": 0.34,
-    "adet": 4
+    "seam": "on_orta",
+    "a": [
+     {
+      "panel": "on_beden",
+      "edge": "cf"
+     },
+     {
+      "panel": "on_etek",
+      "edge": "cf"
+     }
+    ],
+    "b": [
+     {
+      "panel": "on_beden",
+      "edge": "cf"
+     },
+     {
+      "panel": "on_etek",
+      "edge": "cf"
+     }
+    ],
+    "reverse": true,
+    "ratio": 1
    },
-   "neden": "kapanma okumasi"
+   "neden": "kapanma okumasi: yer on_orta -> on orta kat kenari kendi ayna kopyasiyla dikilir (kat acilir)"
+  },
+  {
+   "op": "closure",
+   "args": {
+    "seam": "on_orta",
+    "type": "buttons",
+    "fromFraction": 0.06,
+    "toFraction": 0.34
+   },
+   "neden": "kapanma okumasi: on_orta / dugme, oranBas 0.06 oranSon 0.34 (4 dugme, yaka altindan bele)"
   }
  ],
  "celiskiTablosu": [
@@ -347,10 +461,10 @@
   "5. dugme: peplum uzerinde devam ediyor olabilir, secilemedi",
   "cbAyna: arka gorunmedigi icin cikarim"
  ],
- "eksikOp": [
-  "sweetheart yaka: motorun yaka enum'unda karsiligi yok; genis ovale esleniyor (kisaltma guveni 0.75)",
-  "bias grain: kumasin 45 derece yonlendirilmesi kalibi degistirmez ama parcalarin grain acisini degistirir; graf-v1'de grain ekseni YOK",
-  "peplum ucunun onde sivri, yanda yuksek profili: setHemProfile op'u tek oran aliyor, iki oranli (on/yan) profil karsiligi yok"
+ "_kullanim": "Bu dosya A3 hattinin girdisi. vision-bridge once buraya bakar; ayni sha icin ikinci kez okuma YAPILMAZ.",
+ "eksikPrimitif": [
+  "kumas grain ekseni 45 derece: Panel.grainDeg alani var, op yok (grain yazan primitif) — kalibi degistirmez, kesim planini degistirir",
+  "ikinci katin bel dikisine YAKALANMASI: ayni dikise ucuncu katman yok; kat yuze dikili (onto) olarak yazildi, konstruksiyon notu farkli"
  ],
- "_kullanim": "Bu dosya A3 hattinin girdisi. vision-bridge once buraya bakar; ayni sha icin ikinci kez okuma YAPILMAZ."
+ "primitifCeviri": "2026-09-09 (Damla karari): opDemeti graf-v1 PRIMITIF kumesine yeniden yazildi (elle; okuma kalemleri degismedi, her op 'neden' ile bir kaleme bagli). Eski ad-sozlugu op'lari (setHemLength/setNeckline/addPanel/addClosure/addPatch/mergeSeam/setWidthTarget) ve kisaltmalar kaldirildi; setWidthTarget hedefler[] oldu."
 }

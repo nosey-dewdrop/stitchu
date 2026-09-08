@@ -365,7 +365,9 @@ std::vector<Edge> Edge::subdivide(const std::vector<double>& fractions) const {
             e.rolePart = (kOld - 1) * m + k; e.roleCount = nOld * m;
         }
         e.notches.clear();
-        for (double f : notches) if (f >= t0 - 1e-12 && f < t1 - 1e-12) e.notches.push_back((f - t0) / (t1 - t0));
+        // Kesme noktasina denk gelen centik (f == t0 ya da t1) parcaya 0/1 kesriyle TASINMAZ: o nokta artik
+        // bir kosedir (JSON donusu (0,1) disini adiyla reddeder; 2026-09-09 olculdu: subdivide 0.5 + centik 0.5).
+        for (double f : notches) if (f > t0 + 1e-9 && f < t1 - 1e-9) e.notches.push_back((f - t0) / (t1 - t0));
         out.push_back(e);
     };
     for (size_t i = 0; i < fr.size(); ++i) {
