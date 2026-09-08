@@ -124,3 +124,100 @@ export function buildAnalyzeRequest(reqBody, model, maxTokens = 1100) {
     },
   };
 }
+
+// ---------------------------------------------------------------------------
+// A3 (2026-09-08) — FOTOGRAF OKUMA UCU, vision-graf-v1 semasi.
+//
+// BU KOD KOSUDA CAGRILMAZ. Damla'nin 6 Eyl karari: anahtar YOK, fotograf okumasi
+// icin dis LLM cagrisi odenmez. Hat KOSU/onbellek/<sha>.json'dan beslenir
+// (web/js/vision-bridge.js okumaGetir). Bu blok, canli deneme A10'da acildiginda
+// (yalniz Damla kredi verirse) AYNI semayi uretsin diye yazildi.
+//
+// Neden simdi yaziliyor: sema iki yerde ayri ayri turerse (isci bir sey yazar,
+// worker baskasini) hat sessizce ayrisir. Tek kaynak: contract/vision-graf-v1.json.
+//
+// EKLEMEDIR: yukaridaki hicbir satir degismedi.
+
+/** Fotograf okuma istemi. Cikti SEMAYA bagli, serbest metin DEGIL. */
+export const VISION_SYSTEM_PROMPT = `Sen bir kalip ustasisin. Sana bir giysi fotografi verilecek.
+
+ISIM DEGIL GEOMETRI yaz. "sweetheart yaka" bir OLCUM degildir; olcum, yaka
+cizgisinin hangi landmark'lar arasinda hangi ORANDA durdugudur. Bilinen bir isim
+kullanacaksan onu yalniz KISALTMA olarak yaz ve mutlaka bir op demetine coz.
+
+Ciktin GECERLI JSON olacak ve contract/vision-graf-v1.json semasina uyacak:
+  paneller[]     — ayirt edilen kesim parcalari; her birinde gorulduMu + kanit + guven
+  kenarlar[]     — panel/kenar, landmarkUst..landmarkAlt arasinda oran [0,1], bicim,
+                   buzguluyse buzguAraligi [alt,ust]
+  dikisler[]     — a/b kenar cifti, oranAralik [alt,ust], gorunurMu
+  kapanma        — yer (on_orta|arka_orta|yan|omuz|yok|okunamadi), tur, oranBas/oranSon
+  simetri        — cfAyna, cbAyna, kanit
+  katmanlar[]    — ust uste binen parcalar; bos dizi = tek katman
+  arka           — koken 'fotograf'|'turetildi'; turetildiyse NEDEN
+  kisaltmalar[]  — isim + opDemeti[] (BOS OLAMAZ) + guven
+  celiskiTablosu[] — her satirda kazanan MUTLAKA 'olcum'
+  olculmedi[], okunamayanlar[], eksikOp[]
+  opDemeti[]     — her op'ta 'neden': o op'u DOGURAN okuma kalemi
+
+KURALLAR
+1. MM YAZMA. Fotografta olcek yoktur; yalniz ORAN.
+2. Guven puani KALEM BASINA (0..1), tek bir genel puan degil.
+3. Goremedigin seyi UYDURMA: okunamayanlar[]'a ADIYLA yaz.
+4. Motorun opunda karsiligi olmayan nitelik eksikOp[]'a yazilir.
+5. Semaya uymayan cevap REDDEDILIR. En fazla 2 yeniden isteme, sonra
+   "okunamadi" (ERR_UNREADABLE) ya da guvenli taban (ERR_FALLBACK_BASE).
+6. Fotografta giysi yoksa ERR_NOT_GARMENT; BASKA giysiye donme.`;
+
+/**
+ * Fotograf okuma ucu. onbellekGetir verilirse ONCE ona bakar; onbellek varsa
+ * DIS CAGRI YAPILMAZ (llmCagri 0). Onbellek yoksa ve cagriYap verilmediyse
+ * ADIYLA reddeder — sessizce prompt hattina DUSMEZ (madde 4).
+ */
+export async function analyzePhotoToGraph({ sha, onbellekGetir, cagriYap, maxYenidenIsteme = 2 }) {
+  if (onbellekGetir) {
+    const c = await onbellekGetir(sha);
+    if (c && !c.hataKodu) return { ...c, _kaynak: 'onbellek', _llmCagri: 0 };
+  }
+  if (!cagriYap)
+    return {
+      hataKodu: 'ERR_NO_CACHE', sha, _llmCagri: 0,
+      neden: 'Onbellekte yok ve canli cagri KAPALI (Damla karari: anahtar yok). A10 disinda acilmaz.',
+    };
+
+  let cagri = 0, sonHata = null;
+  for (let deneme = 0; deneme <= maxYenidenIsteme; deneme++) {
+    const ham = await cagriYap({ sistem: VISION_SYSTEM_PROMPT, deneme, sonHata });
+    cagri++;
+    let d;
+    try { d = typeof ham === 'string' ? JSON.parse(ham) : ham; }
+    catch (e) { sonHata = `JSON degil: ${e.message}`; continue; }
+    const eksik = visionSemaEksikleri(d);
+    if (!eksik.length) return { ...d, semaSurumu: 'vision-graf-v1', _kaynak: 'worker', _llmCagri: cagri };
+    sonHata = `sema disi: ${eksik.join(', ')}`;
+  }
+  // 8.8: iki yeniden istemede de duzelmedi -> RET DEGIL, guvenli taban.
+  return {
+    hataKodu: 'ERR_FALLBACK_BASE', sha, _llmCagri: cagri,
+    guvenliTaban: {
+      hataKodu: 'ERR_FALLBACK_BASE', deneme: maxYenidenIsteme,
+      ilan: 'Fotografin tam okunamadi, sade bir tabandan basladim, yaziyla duzelt.',
+    },
+    neden: sonHata,
+  };
+}
+
+/** Semanin zorunlu ust duzey alanlari + iki yasa. Bos dizi = temiz. */
+export function visionSemaEksikleri(d) {
+  const eksik = [];
+  for (const k of ['paneller', 'kenarlar', 'dikisler', 'kapanma', 'simetri', 'katmanlar',
+                   'arka', 'kisaltmalar', 'celiskiTablosu', 'olculmedi', 'okunamayanlar',
+                   'eksikOp', 'opDemeti'])
+    if (d?.[k] === undefined) eksik.push(`alan yok: ${k}`);
+  for (const k of (d?.kisaltmalar ?? []))
+    if (!k.opDemeti?.length) eksik.push(`kisaltma '${k.isim}' op demetine cozulmuyor (yasa 1)`);
+  for (const c of (d?.celiskiTablosu ?? []))
+    if (c.kazanan !== 'olcum') eksik.push(`celiski '${c.kalem}' kazanan '${c.kazanan}', 'olcum' olmali (yasa 5)`);
+  for (const o of (d?.opDemeti ?? []))
+    if (!String(o.neden ?? '').trim()) eksik.push(`op '${o.op}' nedensiz`);
+  return eksik;
+}

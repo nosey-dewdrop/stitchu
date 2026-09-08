@@ -974,3 +974,58 @@ export function buildSeenRecord(spec, seen) {
     boxPleatDrawn: spec.boxPleat !== 'none',
   };
 }
+
+// ---------------------------------------------------------------------------
+// A3 (2026-09-08) — ONBELLEK ONCE. Damla'nin 6 Eyl karari: fotograf okumasi icin
+// ANAHTAR YOK, dis LLM cagrisi YOK. Bir fotografin tarifi KOSU/onbellek/<sha256>.json
+// icinde durur ve hat ONCE oraya bakar. Ayni girdi ikinci kez ODENMEZ.
+//
+// Bu blok EKLEMEDIR: yukaridaki enum/spec hatti oldugu gibi durur, hicbir satiri
+// degismedi. Yeni hat vision-graf-v1 semasini (geometri) tasir, eskisi enum'u.
+//
+// Cagri sirasi (contract/vision-graf-v1.json):
+//   1. onbellek   -> varsa DON, cagri 0
+//   2. yoksa      -> ERR_NO_CACHE. Canli worker (/api/analyze) A10'da, YALNIZ
+//                    Damla kredi verirse. Sessizce "promptla devam" YOK (madde 4).
+
+export const VISION_CACHE_DIR = 'KOSU/onbellek';
+
+/** sha256(dosya) -> tarayicida da node'da da ayni sonuc. */
+export async function fotoSha256(bytes) {
+  const buf = bytes instanceof ArrayBuffer ? bytes : bytes.buffer ?? bytes;
+  if (globalThis.crypto?.subtle) {
+    const h = await globalThis.crypto.subtle.digest('SHA-256', buf);
+    return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  const { createHash } = await import('node:crypto');
+  return createHash('sha256').update(Buffer.from(buf)).digest('hex');
+}
+
+/**
+ * Onbellekten oku. Bulursa vision-graf-v1 okumasi doner ({_kaynak:'onbellek'}).
+ * Bulamazsa ADIYLA reddeder: {hataKodu:'ERR_NO_CACHE'} — sessiz default yok.
+ * oku(): ortam bagimsiz okuyucu (node'da fs, tarayicida fetch).
+ */
+export async function okumaGetir(sha, oku) {
+  try {
+    const ham = await oku(`${VISION_CACHE_DIR}/${sha}.json`);
+    const d = typeof ham === 'string' ? JSON.parse(ham) : ham;
+    if (d.semaSurumu !== 'vision-graf-v1')
+      return { hataKodu: 'ERR_SCHEMA', neden: `semaSurumu '${d.semaSurumu}', beklenen 'vision-graf-v1'`, sha };
+    return { ...d, _kaynak: 'onbellek', _llmCagri: 0 };
+  } catch (e) {
+    return {
+      hataKodu: 'ERR_NO_CACHE', sha,
+      neden: `${VISION_CACHE_DIR}/${sha}.json yok. Fotograf okumasi icin dis cagri YAPILMAZ `
+           + `(Damla karari, 6 Eyl: anahtar yok). Canli worker denemesi A10'da, yalniz kredi varsa.`,
+      yapilabilir: 'Bu fotografi isci okumali ve tarifi onbellege yazmali.',
+    };
+  }
+}
+
+/** Node tarafi kolaylik: dosya yolundan okuma getirir. */
+export async function okumaGetirDosyadan(fotoYolu) {
+  const { readFile } = await import('node:fs/promises');
+  const sha = await fotoSha256(await readFile(fotoYolu));
+  return okumaGetir(sha, (p) => readFile(p, 'utf8'));
+}
