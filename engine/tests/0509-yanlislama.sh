@@ -29,17 +29,39 @@ ESIK=2.0
 BOZMA=20.0
 TMPG=$(mktemp -t graf-bozuk-XXXXXX).json
 YEDEK=$(mktemp -t body-yedek-XXXXXX).json
-
+# 2026-09-08 (Damla karari; 8 Eyl hakemi'nin ayak kapani uyarisi): B bolumu contract'i
+# YAZIP gen-contract ile engine/src/*.gen.hpp'yi YENIDEN URETIR. Test yarida kesilirse
+# (Ctrl+C, kill, disk dolmasi) repo BOZUK contract + BOZUK gen.hpp ile kalirdi. Simdi
+# uretilen dosyalarin da yedegi alinir ve trap ucunu birden geri alir; trap yalniz EXIT'te
+# degil INT/TERM/HUP'ta da calisir. Geri alma DOGRULANIR: gen dosyalari yedekle ayni mi.
+GEN_DOSYALAR="engine/src/contract.gen.hpp engine/src/composition.gen.hpp engine/src/body.gen.hpp web/js/contract.gen.js backend/contract.gen.js"
+GENYEDEK=$(mktemp -d -t gen-yedek-XXXXXX)
+gen_yedekle() {
+  for f in $GEN_DOSYALAR; do
+    [ -f "$f" ] && mkdir -p "$GENYEDEK/$(dirname "$f")" && cp "$f" "$GENYEDEK/$f"
+  done
+}
+gen_geri_al() {
+  local bozuk=""
+  for f in $GEN_DOSYALAR; do
+    [ -f "$GENYEDEK/$f" ] || continue
+    cmp -s "$GENYEDEK/$f" "$f" || { cp "$GENYEDEK/$f" "$f" 2>/dev/null || bozuk="$bozuk $f"; }
+  done
+  [ -n "$bozuk" ] && printf 'UYARI: gen dosyasi geri alinamadi:%s (elle: node engine/tools/gen-contract.mjs)\n' "$bozuk" >&2
+  return 0
+}
 temizle() {
   rm -f "$TMPG"
   if [ -f "$YEDEK" ] && [ -s "$YEDEK" ]; then
-    cp "$YEDEK" "$BODY" 2>/dev/null
-    node engine/tools/gen-contract.mjs >/dev/null 2>&1
-    cmake --build engine/build --target grafdogrula -j4 >/dev/null 2>&1
+    cp "$YEDEK" "$BODY" 2>/dev/null || printf 'UYARI: %s geri alinamadi (yedek: %s)\n' "$BODY" "$YEDEK" >&2
   fi
-  rm -f "$YEDEK"
+  gen_geri_al
+  # gen geri alindiktan sonra binary da eski haline donmeli, yoksa sonraki olcum bozuk
+  # gen ile derlenmis motoru kullanir (sessiz yanlis sayi).
+  cmake --build engine/build --target grafdogrula -j4 >/dev/null 2>&1
+  rm -f "$YEDEK"; rm -rf "$GENYEDEK"
 }
-trap temizle EXIT
+trap temizle EXIT INT TERM HUP
 
 [ -x "$DOGRULA" ] || { echo '{"ad":"yanlislama_check","durum":"CRASH","neden":"engine/build/grafdogrula yok"}'; exit 3; }
 
@@ -76,6 +98,7 @@ BOZUK=$(olc "$TMPG")
 # ---------------------------------------------------------------- B) BEDEN DUZEYI (tutarlilik)
 BEDEN_SAGLAM=""; BEDEN_BOZUK=""; BEDEN_NOT="atlandi (contract yazilabilir degil)"
 if cp "$BODY" "$YEDEK" 2>/dev/null && [ -w "$BODY" ]; then
+  gen_yedekle
   BEDEN_SAGLAM="$SAGLAM"
   python3 - "$BODY" "$BOZMA" <<'PY'
 import json,sys

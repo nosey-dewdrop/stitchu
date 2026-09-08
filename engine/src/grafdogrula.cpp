@@ -479,28 +479,37 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
                 ++hataSayisi;
             }
         }
-        // kural 5: GIYILEBILIRLIK (0509 A2, 2026-09-07) — ERR_NOT_WEARABLE.
+        // kural 5: GIYILEBILIRLIK — ERR_NOT_WEARABLE.
         // Ilk dort kural topolojik TUTARLILIGI olcer; hicbiri "giysi vucuda GIRIYOR mu"
         // sorusunu sormaz. Her paneli onFold, hicbir dikiste closure olmayan kapali bir
-        // TUP dort kuralin dordunu de gecer ve giyilemez: en dar halkasi (bel) vucudun
-        // en genis gecis olcusunden (gogus/kalca) kucukse giysi kafadan da ayaktan da
-        // gecmez. Gercek kalipta bunun karsiligi bir KAPANMA'dir (fermuar/dugme/baglama)
-        // ya da halkanin esnek olmasidir. Burada olculen sey ilan: >=1 dikiste closure.
+        // TUP dort kuralin dordunu de gecer ve giyilemez.
+        //
+        // 2026-09-08 (Damla karari; 8 Eyl hakemi): eski hal ILAN SAYIYORDU (">=1 dikiste
+        // closure var mi"). Hakemin adiyla yakaladigi acik: bel cevresi 200 mm'ye dusse
+        // bile bir yere "zipper" yazildigi surece kural YESIL kaliyordu — yanlis-negatif
+        // kapisi. Artik OLCUYOR: giysinin en dar GOVDE halkasi (bel/gogus/kalca; yaka,
+        // kol oyugu, kol agzi ve etek ucu HARIC — onlar govdenin gecis yolu degil) ile
+        // vucudun o giysiden gecmesi gereken EN GENIS olcusu karsilastirilir.
+        //
+        // KURAL: giysi kapali tup ise (kapanma ilan edilmemis), en dar govde halkasi
+        // vucudun en genis gecis olcusunden KUCUK olamaz. Kapanma varsa giysi oradan
+        // acilir, gecis sarti aranmaz — ama kapanmanin hangi olcuyu kurtardigi RAPORLANIR.
         // Muafiyet: hicbir paneli onFold olmayan tam-acik graf (or. sal) bu kurala girmez.
+        //
+        // NOT (durustluk): bu blok topoloji bolumunde, yani BEDEN degerlemesinden ONCE
+        // calisiyor; halka uzunluklari burada henuz yok. Bu yuzden asil OLCUM asagida,
+        // halka_kapanma bolumunun sonunda yapilir (ayni kural adi, ayni hata kodu).
+        // Burada yalniz ILAN diyalektigi kalir: kapanma yoksa ve olcum de yapilamiyorsa
+        // (beden yok) kural sessiz gecer, olcum bolumu hukmu verir.
         {
             bool kapaliTup = false;
             for (const Panel& p : g0.panels) if (p.onFold) { kapaliTup = true; break; }
             bool kapanmaVar = false; std::string kapanmaAdi;
             for (const Seam& s : g0.seams) if (!s.closure.type.empty()) { kapanmaVar = true; kapanmaAdi = s.id + " (" + s.closure.type + ")"; break; }
-            if (kapaliTup && !kapanmaVar) {
-                topoRet("giyilebilirlik", g0.id,
-                        "ERR_NOT_WEARABLE: graf kapali tup (onFold panel var) ve HICBIR dikiste closure yok; "
-                        "giysi en dar halkasindan vucuda girmez. Bir dikise closure ilan edilmeli "
-                        "(contract enum closureType: zipper|buttons|hooks|ties|open) ya da o panelin onFold'u kaldirilmali");
-                ++hataSayisi;
-            } else if (kapanmaVar) {
-                H("topoloji", g0.id, "giyilebilirlik: kapanma ilan edildi -> " + kapanmaAdi + "; giysi buradan acilir", true, true);
-            }
+            if (kapanmaVar)
+                H("topoloji", g0.id, "giyilebilirlik (ilan): kapanma -> " + kapanmaAdi + "; gecis sarti kapanmayla saglanir, olcum halka bolumunde", true, true);
+            else if (kapaliTup)
+                H("topoloji", g0.id, "giyilebilirlik (ilan): kapanma YOK, graf kapali tup; gecis sarti OLCULECEK (halka bolumu)", true, true);
         }
         if (hataSayisi == 0)
             H("topoloji", g0.id, "kenar_rolu · dikis_cifti · kapanma · komsuluk_bagli · giyilebilirlik: bes kural da gecti (" + std::to_string(g0.panels.size()) + " panel, " + std::to_string(g0.seams.size()) + " dikis)", true);
@@ -684,6 +693,123 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
         hs.gecti = z.ok && worst <= tol.halkaKapanmaMM;
         H("halka_kapanma", ring.id + " (" + ring.role + ")", !z.ok ? ("halka KOPUK: " + hs.kavsaklar) : ("toplam " + f2(hs.toplamMM) + " mm, en buyuk kavsak boslugu " + f2(worst) + " mm" + (worst > 0 ? " @ " + hs.enKotuKavsak : "") + " — " + desc), hs.gecti);
         R.halkalar.push_back(hs);
+    }
+
+    // ---- GIYILEBILIRLIK OLCUMU (kural 5'in asil hukmu; 2026-09-08, Damla karari).
+    // Ilan degil OLCUM: giysinin en dar GOVDE halkasi, vucudun o giysiden gecmesi gereken
+    // EN GENIS olcusunden kucuk mu? Govde halkasi = rolu waist_ring | bust | hip olan
+    // halkalar. Yaka, kol oyugu, kol agzi ve etek ucu HARIC: onlar govdenin gecis yolu
+    // degildir (etek ucundan giyilen elbise de vardir ama o zaman etek ucu en dar govde
+    // halkasi olmaz, bel olur — yani en dar govde halkasi dogru sinirdir).
+    // Vucut tarafi: giysinin kapsadigi halkalarin gercek beden cevrelerinin EN BUYUGU.
+    {
+        const char* govdeRolleri[] = {"waist_ring", "bust", "hip"};
+        auto govdeMi = [&](const std::string& rol) {
+            for (const char* r : govdeRolleri) if (rol == r) return true;
+            return false;
+        };
+        double enDarGiysi = 0; std::string enDarAd; bool giysiVar = false;
+        for (const HalkaSatir& h : R.halkalar) {
+            if (!govdeMi(h.role) || h.toplamMM <= 0) continue;
+            // halka yarim panelde olculuyor (kat/ayna): tam cevre icin 2x
+            const double tam = h.toplamMM * 2.0;
+            if (!giysiVar || tam < enDarGiysi) { enDarGiysi = tam; enDarAd = h.ring + " (" + h.role + ")"; giysiVar = true; }
+        }
+        double enGenisVucut = 0; std::string enGenisAd; bool vucutVar = false;
+        for (const Ring& ring : g.rings) {
+            if (!govdeMi(ring.role)) continue;
+            const std::string bn = ring.role == "waist_ring" ? "girth.waist" : ring.role == "bust" ? "girth.bust" : "girth.hip";
+            if (!body.hasRing(bn)) continue;
+            const double c = body.ring(bn);
+            if (c > 0 && (!vucutVar || c > enGenisVucut)) { enGenisVucut = c; enGenisAd = bn; vucutVar = true; }
+        }
+        bool kapanmaVar = false; std::string kapanmaAdi;
+        for (const Seam& sm : g.seams) if (!sm.closure.type.empty()) { kapanmaVar = true; kapanmaAdi = sm.id + " (" + sm.closure.type + ")"; break; }
+        bool kapaliTup = false;
+        for (const Panel& p : g.panels) if (p.onFold) { kapaliTup = true; break; }
+
+        if (!giysiVar || !vucutVar) {
+            H("giyilebilirlik", g.id, std::string("OLCULEMEDI: ") + (!giysiVar ? "grafta govde halkasi (waist_ring/bust/hip) yok" : "bedende karsilik gelen cevre olcusu yok"), true, true);
+        } else if (kapanmaVar) {
+            H("giyilebilirlik", g.id, "kapanma " + kapanmaAdi + " -> giysi buradan acilir; gecis sarti aranmaz. Olcu (bilgi): en dar govde halkasi " + enDarAd + " = " + f2(enDarGiysi) + " mm, vucudun en genis gecis olcusu " + enGenisAd + " = " + f2(enGenisVucut) + " mm; kapanma olmasa " + (enDarGiysi + 1e-9 < enGenisVucut ? "GECMEZDI (" + f2(enGenisVucut - enDarGiysi) + " mm eksik)" : "gecerdi"), true, true);
+        } else if (!kapaliTup) {
+            H("giyilebilirlik", g.id, "tam acik graf (onFold panel yok): gecis sarti aranmaz", true, true);
+        } else {
+            const bool gecer = enDarGiysi + 1e-9 >= enGenisVucut;
+            H("giyilebilirlik", g.id, gecer
+                ? ("kapanma yok ama giysi geciyor: en dar govde halkasi " + enDarAd + " = " + f2(enDarGiysi) + " mm >= " + enGenisAd + " " + f2(enGenisVucut) + " mm")
+                : ("ERR_NOT_WEARABLE: giysi vucuda GIRMIYOR. En dar govde halkasi " + enDarAd + " = " + f2(enDarGiysi) + " mm, vucudun gecmesi gereken en genis olcusu " + enGenisAd + " = " + f2(enGenisVucut) + " mm; " + f2(enGenisVucut - enDarGiysi) + " mm eksik. Bir dikise closure ilan edilmeli (contract enum closureType) ya da halka genisletilmeli"),
+                gecer);
+        }
+    }
+
+    // ---- SUPRESYON MUHASEBESI (2026-09-08, Damla karari; 8 Eyl hakemi'nin actigi acik).
+    // Hakem: "gogus-bel farki 90 mm, 4 pensin toplami 37.52 mm, kalan ~52 mm'nin yan
+    // dikisten alinip alinmadigini hicbir kapi sormuyor. Pens VAR ama YETERSIZ olabilir;
+    // kalip bele oturmayabilir." Bu kapi tam o soruyu sorar ve muhasebeyi ADIYLA doker.
+    //
+    // MUHASEBE: gogus cevresi - bel cevresi = SUPRESYON. Bu fark uc yerden emilir:
+    //   (1) PENS   — dartLeg ciftlerinin bel cizgisindeki agiz genisligi
+    //   (2) YAN    — yan dikisin bel hizasinda iceri girmesi (gogus yarisi - bel yarisi)
+    //   (3) EMILMEYEN — kalani. Buyukse giysi belde bol durur.
+    // Sayilar panel kenarlarindan DEGERLEME ile gelir (uydurma yok); giysi bollugu
+    // (panel.ease) dahildir, yani "kumasin bel cevresi" ile "kumasin gogus cevresi".
+    {
+        const double bolluk = 0.0;   // ease zaten panel ctx'inde; ayrica eklenmez
+        (void)bolluk;
+        double pensToplam = 0; int pensSayisi = 0;
+        std::string pensDetay;
+        for (const Panel& p : g.panels) {
+            const EvalCtx pctx = p.ctxFor(body, onArkaEsit);
+            const size_t n = p.edges.size();
+            for (size_t i = 0; i < n; ++i) {
+                const Edge& e1 = p.edges[i];
+                if (e1.kind != "dartLeg") continue;
+                const Edge& e2 = p.edges[(i + 1) % n];
+                if (e2.kind != "dartLeg" || e1.to != e2.from) continue;
+                // pens AGZI: iki bacak tabani arasi mesafe (bel cizgisinde emilen genislik)
+                double agiz = 0;
+                try { agiz = distance(eval(e1.from, pctx), eval(e2.to, pctx)); } catch (const std::exception&) { continue; }
+                pensToplam += agiz; ++pensSayisi;
+                if (!pensDetay.empty()) pensDetay += ", ";
+                pensDetay += p.id + " " + f2(agiz);
+                ++i;   // cift islendi
+            }
+        }
+        // Gogus ve bel cevresi: BEDENIN olcusu + giysinin o halkadaki bollugu.
+        // (Panel kenarindan turetmek yerine bedenden okuyoruz cunku supresyon bir BEDEN
+        // gercegi; giysinin ne kadarini emdigi ayri satirda.)
+        const bool varB = body.hasRing("girth.bust"), varW = body.hasRing("girth.waist");
+        if (!varB || !varW) {
+            H("supresyon", g.id, "OLCULEMEDI: bedende girth.bust ya da girth.waist yok", true, true);
+        } else {
+            double easeB = 0, easeW = 0;
+            for (const Panel& p : g.panels)
+                for (const RingEase& re : p.ease) {
+                    if (re.ring == "girth.bust") easeB = std::max(easeB, re.mm);
+                    if (re.ring == "girth.waist") easeW = std::max(easeW, re.mm);
+                }
+            const double bust = body.ring("girth.bust") + easeB;
+            const double waist = body.ring("girth.waist") + easeW;
+            const double supresyon = bust - waist;              // TAM cevre farki
+            // Pens toplami yarim panellerde olculdu; giysi cift simetrik -> tam cevrede 2x
+            const double pensTam = pensToplam * 2.0;
+            const double yanAlim = supresyon - pensTam;         // kalan: yan dikis + emilmeyen
+            const double oran = supresyon > 1e-9 ? pensTam / supresyon : 0.0;
+            // ESIK: pens supresyonun en az %25'ini emmeli. Kaynak: Aldrich temel blok
+            // (bel supresyonu pens ve yan dikis arasinda paylasilir; pens payi tipik
+            // 1/3-1/2). %25 ALT sinir, gevsek tarafta secildi: bu kapi "pens hic yok /
+            // sembolik" durumunu yakalamak icin var, kalip zevkini dikte etmek icin degil.
+            // DOGRULANMADI: birincil kaynak (Aldrich s.) elde olcumle teyit edilmedi.
+            const double altOran = 0.25;
+            const bool ok = supresyon <= 1e-9 || oran >= altOran;
+            H("supresyon", g.id,
+              "gogus " + f2(bust) + " - bel " + f2(waist) + " = SUPRESYON " + f2(supresyon) + " mm | "
+              "pens " + std::to_string(pensSayisi) + " adet, agiz toplami (tam cevre) " + f2(pensTam) + " mm = %" + f2(oran * 100.0) + " | "
+              "yan dikis + emilmeyen " + f2(yanAlim) + " mm | pens payi alt sinir %" + f2(altOran * 100.0) + " (Aldrich temel blok, DOGRULANMADI) | "
+              "pens detayi (yarim panel): " + (pensDetay.empty() ? "YOK" : pensDetay),
+              ok);
+        }
     }
     return R;
 }

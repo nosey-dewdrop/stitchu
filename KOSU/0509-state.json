@@ -464,7 +464,8 @@
     "engine/tests/0509-yanlislama.sh (A2 olcut 4 yanlislama testi; Damla karari 2026-09-07 elle kapatma)",
     "engine/tests/graf_dikilebilir_check.cpp (taban graf pens+kapanma tasidigi icin negatif testin hazirligi uyarlanir; Damla karari 2026-09-07)",
     "engine/tests/graf_op_check.cpp (taban graf pens/kapanma tasidigi icin kenar adlari degisti; Damla karari 2026-09-07)",
-    "engine/tests/graf_ir_check.cpp (taban graf pens/kapanma tasidigi icin kenar adlari degisti; Damla karari 2026-09-07)"
+    "engine/tests/graf_ir_check.cpp (taban graf pens/kapanma tasidigi icin kenar adlari degisti; Damla karari 2026-09-07)",
+    "engine/tests/0509-beden-sayisi.sh (beden sayisi dogrulamasi; Damla karari 2026-09-08)"
   ],
   "A2bIzinListesi_ne": "KARAR Q3 (2026-09-06, A2 karar ajani): H7 artik IZIN LISTESINI SAYMAZ; sayilan yalniz IZIN DISI yazilabilir dosyalardir ve tavani <=0'dir (sabit 2 degil). Izin bu alanda ADIYLA ilan edilir; ilan yoksa izin de yoktur, her yazilabilir dosya ihlaldir. 0509-kapi.sh bu listede BIR KERELIGINE bulunur (Q1+Q3 gecit onarimi); A2c'de listeden DUSER.",
   "A2IzinListesi": [
