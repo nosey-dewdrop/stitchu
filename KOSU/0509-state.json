@@ -1,7 +1,7 @@
 {
-  "adim": "A2",
-  "durum": "DURDU",
-  "deneme": 1,
+  "adim": "A3",
+  "durum": "HAZIR",
+  "deneme": 0,
   "butce": {
     "tag": "adim-A2a-once",
     "commit": 2,
@@ -58,7 +58,13 @@
   ],
   "devredilen": [
     "[ILANLI KIRMIZI] flat_ayni_insan_check = 34 (A1a oncesi). Kapanacak adim: A4 (A4'un kabul sarti bu gecidin YESIL olmasi; kirmizi kalirsa A4 GECMEZ). TAVAN 34: A2 ve A3'te sayi artarsa o adim duser. gecitYesil hesabinda dusurulmez, JSON'da KIRMIZI basilir, sayi her adimda metrige yazilir.",
-    "[ILANLI KIRMIZI] sinyal_tam / bundle_fresh_check = 1 (A1a oncesi). Kapanacak adim: A9 (paket + tarayici wasm hatti yeniden uretilir). Kirmizi alt test kumesi DONDU: {bundle_fresh_check}; kumeye yeni ad eklenirse ilan gecersiz, o adim duser. sinyal_tam tam kosuda kalir (adim basi bir kez, ~2 dk 16 sn), --kisa'ya GIRMEZ."
+    "[ILANLI KIRMIZI] sinyal_tam / bundle_fresh_check = 1 (A1a oncesi). Kapanacak adim: A9 (paket + tarayici wasm hatti yeniden uretilir). Kirmizi alt test kumesi DONDU: {bundle_fresh_check}; kumeye yeni ad eklenirse ilan gecersiz, o adim duser. sinyal_tam tam kosuda kalir (adim basi bir kez, ~2 dk 16 sn), --kisa'ya GIRMEZ.",
+    "[A4'E DEVREDILDI, 2026-09-08 hakem] SUPRESYON KAPISI TAUTOLOJIK: grafop.cpp kPensPayi=1/3 sabiti pens toplamini TANIM GEREGI supresyonun 1/3'u yapiyor; grafdogrula supresyon kapisi 'oran >= 0.25' soruyor -> kapi hicbir grafta KIRMIZI BASAMAZ. Kanit (hakem): etek pensleri silindi, pens 4->2 dustu, oran %33.33 AYNI kaldi (cozucu kalanlara dagitti). Muhasebe dogru, KAPI anlamsiz. Kapanis: esik pens payini degil EMILMEYEN kalemi olcmeli (yan dikisin belde gercekten ne kadar iceri girdigi panel kenarindan olculup 143.33mm'nin ne kadari emiliyor sorulmali).",
+    "[A4'E DEVREDILDI, 2026-09-08 hakem] kPensPayi=1/3 contract'ta DEGIL, C++'ta gomulu (grafop.cpp). Referans kilidi mantigina aykiri: kalip konvansiyonu sayisi contract/'ta olmali ki degistirmek izin listesi gerektirsin.",
+    "[A4'E DEVREDILDI, 2026-09-08 hakem] On ve arka pens agzi birebir ayni (8.96/8.96); cozucu supresyonu pensler arasinda ESIT paylastiriyor. Gercek kalipta arka bel pensi onden BELIRGIN genistir (kurek/bel kavisi). Kalibin bele oturmasini etkiler, olcen kapi yok.",
+    "[A4'E DEVREDILDI, 2026-09-08 hakem] Etek pensleri gogus-bel payindan besleniyor; KALCA-bel farki hicbir kapinin sorusu degil.",
+    "[BILGI, 2026-09-08 hakem] Supresyon her bedende 215.00mm SABIT: Burda tablosunda gogus ve bel ayni adimla (40mm) buyuyor. Beden serisi pens agzini hic degistirmiyor; agzin olcuye duyarliligi yalniz contract elle bozulunca gorulur. A4/A7'de bilinsin.",
+    "[DUZELTME, 2026-09-08 hakem] Onceki hakemin 'EU34..EU44 diye beden YOK' iddiasi YANLIS. gradeTablosu.bedenler gercek (kaynak contract/tables.json draft.euSizeChart), motor Body::graded (body.cpp:86) okuyor. DOGRUSU: 8 ad, 7 BAGIMSIZ olcu seti (gercek36 == EU36, ayni insan iki kaynaktan). Disari 'sekiz bedende dogrulandi' DEGIL, 'yedi bagimsiz olcu setinde' denir."
   ],
   "banned": [
     "izin disi dokunus: engine/tests/0509-kapi-kendi-check.sh, engine/tests/0509-kapi-sizinti.py, engine/tests/0509-kapi-tablo.mjs, engine/tests/0509-karar-kabul.sh"
@@ -225,7 +231,7 @@
     "A1a": "GECTI",
     "A1b": "GECTI (teslimler yesil; olcek_check durust henuz-yok, A2 bekliyor)",
     "A2a": "GECTI (2026-09-07 yeniden dogrulandi: H7 kilit onarildi, kendi-check 18/18, solver_check 37 hukum, hedefli ctest 4/4, KABUL P1 GECTI, sanalDikis 0.00mm/8 beden, enum 436 taban korundu)",
-    "A2b": "ACIK"
+    "A2b": "GECTI (2026-09-08 hakem: A2 GECTI. Dort olcut olculdu: pens 8 dartLeg/bacak farki 0.01mm, kapanma 7 halka + 2 zipper + ERR_NOT_WEARABLE kirmizi basabiliyor, sanalDikis vacuous degil, yanlislama 0.0->20.0. solver_utils bagli ve is yapiyor: gogus 840/880/920 -> pens agzi 8.96/10.62/12.29)"
   },
   "kararUygulandi": {
     "karar1": "state.json ilanliKirmizi + kabul komutu H9/H10 (tavan 34) ile olculuyor",
