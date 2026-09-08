@@ -59,12 +59,12 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=8) | 14912 |
-| flat.png | OK | 79960 |
-| kalip-36.svg | OK | 8895 |
-| kalip-36.png | OK | 42379 |
+| flat.svg | OK (data-ops=8) | 17016 |
+| flat.png | OK | 86640 |
+| kalip-36.svg | OK | 9919 |
+| kalip-36.png | OK | 44652 |
 
-**grafdogrula (gercek36):** KOSTU — kirmizi hukum: **1** (supresyon: foto-0147b7cf)
+**grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 
 ## Okunamayanlar (sessiz default YOK)
 

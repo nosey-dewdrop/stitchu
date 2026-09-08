@@ -294,7 +294,67 @@
           "mm": 5e+01
         }
       ],
-      "reason": "on govde (kat) | merge on_beden+on_etek along bel | dusen pens bacaklari: on_beden/dart_on_beden.1 on_beden/dart_on_beden.2 on_etek/dart_on_etek.1 on_etek/dart_on_etek.2"
+      "reason": "on govde (kat) | merge on_beden+on_etek along bel | ic pens ic_pens_1: on_beden/dart_on_beden.1+dart_on_beden.2 + on_etek/dart_on_etek.1+dart_on_etek.2 (balik pensi, agiz A'nin)",
+      "darts": [
+        {
+          "id": "ic_pens_1",
+          "from": {
+            "combo": [
+              {
+                "w": 0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "combo": [
+              {
+                "w": -0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "apexUp": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": 0.35,
+            "xOffsetMM": 0
+          },
+          "apexDown": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": 0.35,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.hip"
+          }
+        }
+      ]
     },
     {
       "id": "arka_govde",
@@ -582,7 +642,67 @@
           "mm": 5e+01
         }
       ],
-      "reason": "arka govde (iki parca, arka orta fermuar) | merge arka_beden+arka_etek along bel | dusen pens bacaklari: arka_beden/dart_arka_beden.1 arka_beden/dart_arka_beden.2 arka_etek/dart_arka_etek.1 arka_etek/dart_arka_etek.2"
+      "reason": "arka govde (iki parca, arka orta fermuar) | merge arka_beden+arka_etek along bel | ic pens ic_pens_1: arka_beden/dart_arka_beden.1+dart_arka_beden.2 + arka_etek/dart_arka_etek.1+dart_arka_etek.2 (balik pensi, agiz A'nin)",
+      "darts": [
+        {
+          "id": "ic_pens_1",
+          "from": {
+            "combo": [
+              {
+                "w": 0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "combo": [
+              {
+                "w": -0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "apexUp": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": 0.35,
+            "xOffsetMM": 0
+          },
+          "apexDown": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": 0.35,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.hip"
+          }
+        }
+      ]
     },
     {
       "id": "kol",

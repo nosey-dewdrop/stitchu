@@ -355,6 +355,15 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
                     s << "    <path data-panel=\"" << p.id << "\" data-yan=\"" << yan << "\" data-edge=\"" << e.id
                       << "\" data-tur=\"pens\" d=\"" << edgeD(e, ctx, z) << "\"/>\n";
                 }
+                if (&e == &p.edges.back()) for (const IcPens& d : p.darts) {   // ic halka pensler, panel basina bir kez
+                    const RefPoint* zincir[5] = {&d.a, &d.apexUst, &d.b, &d.apexAlt, &d.a};
+                    for (int i = 0; i < 4; ++i) {
+                        Edge t; t.from = *zincir[i]; t.to = *zincir[i + 1];
+                        if (t.from == t.to) continue;
+                        s << "    <path data-panel=\"" << p.id << "\" data-yan=\"" << yan << "\" data-edge=\"" << d.id << "." << (i + 1)
+                          << "\" data-tur=\"pens\" d=\"" << edgeD(t, ctx, z) << "\"/>\n";
+                    }
+                }
                 for (double t : e.notches) {
                     Point m = e.at(ctx, t);
                     Point n = normalIn(e, ctx, mrk);

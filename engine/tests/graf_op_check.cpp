@@ -333,7 +333,11 @@ int main(int argc, char** argv) {
       ok(m && !r.g.panel("on_beden") && !r.g.panel("on_etek") && r.g.panels.size() == 4, "  4 panel: on_govde var, on_beden/on_etek yok");
       ok(m && m->closed(&why), "  birlesik panel kapali: " + why);
       ok(m && m->edge("cf.1") && m->edge("cf.2") && m->edge("hem_front") && m->edge("neck_front") && !m->edge("waist_front.1"), "  kenarlar: cf.1/cf.2 (catisma), hem_front, neck_front; bel kenarlari gitti");
-      ok(m && m->reason.find("dusen pens bacaklari") != std::string::npos && m->reason.find("dart_on_beden.1") != std::string::npos, "  dusen pens bacaklari reason'da ADIYLA (ic pens tasinmiyor, bilinen sinir)");
+      ok(m && m->darts.size() == 1 && m->reason.find("balik pensi") != std::string::npos && m->reason.find("dart_on_beden.1") != std::string::npos, "  kosudaki pens ciftleri IC HALKA PENS oldu (1 balik pensi), reason'da ADIYLA");
+      { DogrulamaRaporu R2 = dogrula(r.g, body, contract); bool sup = true; std::string sat;
+        for (const Hukum& h : R2.hukumler) if (h.kural == "supresyon") { sup = h.gecti; sat = h.deger; }
+        ok(sup, "  supresyon kapisi ic pensi sayiyor (yesil): " + sat.substr(0, 120));
+        Garment back; std::string e2; ok(fromJSONText(toJSONText(r.g), back, e2) && back.panel("on_govde")->darts.size() == 1, "  darts JSON gidis-donus " + e2); }
       const Seam* bel = r.g.seam("bel");
       ok(bel && bel->a.size() == 2 && bel->b.size() == 2 && bel->a[0].panel == "arka_beden", "  bel dikisi arka icin kaldi (2+2 kenar)");
       bool ringOk = false; for (const Ring& ri : r.g.rings) if (ri.id == "etek_ucu") for (const EdgeRef& e : ri.edges) if (e.panel == "on_govde" && e.edge == "hem_front") ringOk = true;

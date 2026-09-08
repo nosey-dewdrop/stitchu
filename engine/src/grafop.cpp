@@ -588,11 +588,43 @@ OpResult opMerge(const Garment& g0, const JVal& a, const OpCtx&) {
         return fail("merge: kavsak koseler yapisal esit degil (" + pa + "/" + kA.kalan.back().id + ".to vs " + pb + "/" + kB.kalan.front().id + ".from; " + pb + "/" + kB.kalan.back().id + ".to vs " + pa + "/" + kA.kalan.front().id + ".from)");
     Panel M = *A; M.id = np; M.edges.clear();
     M.reason = (A->reason.empty() ? "" : A->reason + " | ") + "merge " + pa + "+" + pb + " along " + sid;
-    if (!kA.dusenPens.empty() || !kB.dusenPens.empty()) {
-        M.reason += " | dusen pens bacaklari:";
-        for (const std::string& e : kA.dusenPens) M.reason += " " + pa + "/" + e;
-        for (const std::string& e : kB.dusenPens) M.reason += " " + pb + "/" + e;
+    // Kosunun icinde kalan pens bacaklari DUSMEZ, IC HALKA PENSE donusur (2026-09-09): A'nin pens
+    // cifti (agiz + yukari apeks) B'nin ayni siradaki pens ciftiyle (asagi apeks) eslesir = balik
+    // pensi; agiz A'nin agzidir, B'nin apeksi agzin x'ine tasinir (xOffset yok: yalniz y landmark'i
+    // B'nin apeksinden alinir, x terimleri agiz ortasindan). Esi yoksa pens ucgen kalir (apexAlt =
+    // agiz ortasi) ve reason'a adiyla yazilir.
+    struct PensCift { RefPoint a, b, apex; std::string ad; };
+    auto pensCiftleri = [&](const Panel& P, const std::vector<std::string>& dusen) {
+        std::vector<PensCift> v;
+        for (size_t i = 0; i + 1 < dusen.size(); ++i) {
+            const Edge* e1 = P.edge(dusen[i]); const Edge* e2 = P.edge(dusen[i + 1]);
+            if (!e1 || !e2 || e1->kind != "dartLeg" || e2->kind != "dartLeg" || e1->to != e2->from) continue;
+            v.push_back({e1->from, e2->to, e1->to, e1->id + "+" + e2->id}); ++i;
+        }
+        return v;
+    };
+    auto apeksYTasi = [](RefPoint agizOrta, const RefPoint& apex) {   // x agiz ortasindan, y apeksten
+        if (!apex.tekTerim()) return apex;
+        const Anchor ay = apex.terms[0].a;
+        for (Term& t : agizOrta.terms) { t.a.yLandmark = ay.yLandmark.empty() ? ay.landmark : ay.yLandmark; t.a.yLandmark2 = ay.yLandmark2; t.a.yLerp = ay.yLerp; t.a.yOffsetMM = ay.yOffsetMM; }
+        agizOrta.normalize(); return agizOrta;
+    };
+    { const std::vector<PensCift> pA = pensCiftleri(*A, kA.dusenPens), pB = pensCiftleri(*B, kB.dusenPens);
+      for (size_t i = 0; i < pA.size(); ++i) {
+          IcPens d; d.id = "ic_pens_" + std::to_string(M.darts.size() + 1); d.a = pA[i].a; d.b = pA[i].b; d.apexUst = pA[i].apex;
+          const RefPoint orta = lerp(pA[i].a, pA[i].b, 0.5);
+          if (i < pB.size()) { d.apexAlt = apeksYTasi(orta, pB[i].apex); M.reason += " | ic pens " + d.id + ": " + pa + "/" + pA[i].ad + " + " + pb + "/" + pB[i].ad + " (balik pensi, agiz A'nin)"; }
+          else { d.apexAlt = orta; M.reason += " | ic pens " + d.id + ": " + pa + "/" + pA[i].ad + " UCGEN (B'de esi yok)"; }
+          M.darts.push_back(d);
+      }
+      for (size_t i = pA.size(); i < pB.size(); ++i) {
+          IcPens d; d.id = "ic_pens_" + std::to_string(M.darts.size() + 1); d.a = pB[i].a; d.b = pB[i].b; d.apexAlt = pB[i].apex;
+          d.apexUst = lerp(pB[i].a, pB[i].b, 0.5);
+          M.reason += " | ic pens " + d.id + ": " + pb + "/" + pB[i].ad + " UCGEN (A'da esi yok)"; M.darts.push_back(d);
+      }
+      // kosuda dartLeg olmayan dusen kenar yok (kosu kurali); pens olmayan dusen bacak kalmaz
     }
+    for (const IcPens& d : B->darts) M.darts.push_back(d);
     // id catismasi: A'nin kenari .1, B'ninki .2 (retarget haritasi)
     std::vector<std::pair<EdgeRef, EdgeRef>> yeniden;   // eski -> yeni
     auto idVar = [&](const std::string& id) { for (const Edge& e : kA.kalan) if (e.id == id) return true; for (const Edge& e : kB.kalan) if (e.id == id) return true; return false; };
@@ -831,7 +863,7 @@ namespace {
 //
 // COZULEMEZSE: graf DEGISMEZ ve hata ADIYLA doner (ERR_UNSOLVABLE zinciri). Sessiz
 // yaklastirma yok; cagiran taraf ya hatayi tasir ya da combo tabanini kullanmaya devam eder.
-struct PensCift { std::string panel; std::string bacak1, bacak2; };
+struct PensCift { std::string panel; std::string bacak1, bacak2; int ic = -1; };   // ic >= 0: Panel.darts[ic] (ic halka pens)
 
 std::vector<PensCift> pensleriBul(const Garment& g) {
     std::vector<PensCift> out;
@@ -842,9 +874,11 @@ std::vector<PensCift> pensleriBul(const Garment& g) {
             if (e1.kind != "dartLeg") continue;
             const Edge& e2 = p.edges[(i + 1) % n];
             if (e2.kind != "dartLeg" || e1.to != e2.from) continue;
-            out.push_back({p.id, e1.id, e2.id});
+            out.push_back({p.id, e1.id, e2.id, -1});
             ++i;
         }
+        // ic halka pensler (2026-09-09): agiz a-b ayni cozucuye girer; cozum b ucunun xOffsetMM'ine yazilir
+        for (std::size_t k = 0; k < p.darts.size(); ++k) out.push_back({p.id, p.darts[k].id, p.darts[k].id, static_cast<int>(k)});
     }
     return out;
 }
@@ -855,14 +889,15 @@ CozumSonucu cozPens(const Garment& g, const Body& body, bool onArkaEsit,
                     const solver::SolverCtx& sctx, const std::string& seamId) {
     CozumSonucu R; R.g = g;
     if (!sctx.dolu) { R.hata = "cozPens: solver contract yuklenmedi (SolverCtx bos)"; return R; }
+    // Bel dikisi OLMAYABILIR (2026-09-09, op merge: bel dikissiz giysi ic halka pensle gelir). Dikis
+    // yalniz bilgi icin olculur; kisit bedenden (gogus-bel supresyonu) gelir, dikisten degil.
     const Seam* s = g.seam(seamId);
-    if (!s) { R.hata = "cozPens: dikis yok: " + seamId; return R; }
     const std::vector<PensCift> pensler = pensleriBul(g);
-    if (pensler.empty()) { R.hata = "cozPens: grafta pens (dartLeg cifti) yok"; return R; }
+    if (pensler.empty()) { R.hata = "cozPens: grafta pens (dartLeg cifti ya da ic halka pens) yok"; return R; }
 
-    // Dikisin iki tarafinin SU ANKI uzunluklari (pens agzi mevcut haliyle)
+    // Dikisin iki tarafinin SU ANKI uzunluklari (pens agzi mevcut haliyle); dikis yoksa 0
     double La = 0, Lb = 0;
-    try {
+    if (s) try {
         for (const EdgeRef& r : s->a) La += edgeLen(g, r, body, onArkaEsit);
         for (const EdgeRef& r : s->b) Lb += edgeLen(g, r, body, onArkaEsit);
     } catch (const std::exception& ex) { R.hata = std::string("cozPens: ") + ex.what(); return R; }
@@ -877,12 +912,17 @@ CozumSonucu cozPens(const Garment& g, const Body& body, bool onArkaEsit,
     std::vector<double> mevcutAgiz;
     for (const PensCift& pc : pensler) {
         const Panel* p = g.panel(pc.panel);
-        const Edge* b1 = p ? p->edge(pc.bacak1) : nullptr;
-        const Edge* b2 = p ? p->edge(pc.bacak2) : nullptr;
-        if (!p || !b1 || !b2) { R.hata = "cozPens: pens kenari cozulemedi: " + pc.panel; return R; }
+        const RefPoint* solRef = nullptr; const RefPoint* sagRef = nullptr;
+        if (p && pc.ic >= 0) { solRef = &p->darts[pc.ic].a; sagRef = &p->darts[pc.ic].b; }
+        else {
+            const Edge* b1 = p ? p->edge(pc.bacak1) : nullptr;
+            const Edge* b2 = p ? p->edge(pc.bacak2) : nullptr;
+            if (b1 && b2) { solRef = &b1->from; sagRef = &b2->to; }
+        }
+        if (!p || !solRef || !sagRef) { R.hata = "cozPens: pens kenari cozulemedi: " + pc.panel; return R; }
         const EvalCtx pctx = p->ctxFor(body, onArkaEsit);
         Point sol, sag;
-        try { sol = eval(b1->from, pctx); sag = eval(b2->to, pctx); }
+        try { sol = eval(*solRef, pctx); sag = eval(*sagRef, pctx); }
         catch (const std::exception& ex) { R.hata = std::string("cozPens: ") + ex.what(); return R; }
         const double agiz = std::hypot(sag.x - sol.x, sag.y - sol.y);
         mevcutAgiz.push_back(agiz);
@@ -951,6 +991,13 @@ CozumSonucu cozPens(const Garment& g, const Body& body, bool onArkaEsit,
         const double dx = yeni.x - eski.x;
         if (std::fabs(dx) < 1e-12) continue;
         Panel* p = R.g.panel(pensler[k].panel);
+        if (p && pensler[k].ic >= 0) {   // ic halka pens: agzin b ucu ve asagi/yukari apeks x'i agizla birlikte kaymaz, yalniz b
+            IcPens& d = p->darts[pensler[k].ic];
+            for (Term& tm : d.b.terms) tm.a.xOffsetMM += dx;
+            d.b.normalize();
+            R.cozumler.push_back({pensler[k].panel, d.id, seamId, prob.sertUzunluklar[k].hedefMM, dx, sc.enBuyukSertArtikMM});
+            continue;
+        }
         Edge* b2 = p ? p->edge(pensler[k].bacak2) : nullptr;
         if (!b2) { R.hata = "cozPens: cozum yazilamadi: " + pensler[k].panel; return R; }
         const RefPoint eskiUc = b2->to;

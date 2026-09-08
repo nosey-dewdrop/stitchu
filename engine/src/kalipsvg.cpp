@@ -188,6 +188,17 @@ std::string kalipSVG(const Garment& g, const Body& body, const std::string& body
             s << "    <path data-katman=\"8\" data-tur=\"pens\" data-edge=\"" << esc(e.id)
               << "\" stroke-width=\"" << f3(wIc) << "\" d=\"" << pathD(e.path(ctx), pr.dx, pr.dy) << "\"/>\n";
         }
+        // katman 8: ic halka pensler (balik pensi): a -> apexUst -> b -> apexAlt -> a
+        for (const IcPens& d : p.darts) {
+            EvalCtx ctx = p.ctxFor(body, opts.onArkaEsit);
+            const RefPoint* zincir[5] = {&d.a, &d.apexUst, &d.b, &d.apexAlt, &d.a};
+            for (int i = 0; i < 4; ++i) {
+                Edge t; t.from = *zincir[i]; t.to = *zincir[i + 1];
+                if (t.from == t.to) continue;
+                s << "    <path data-katman=\"8\" data-tur=\"pens\" data-edge=\"" << esc(d.id) << "." << (i + 1)
+                  << "\" stroke-width=\"" << f3(wIc) << "\" d=\"" << pathD(t.path(ctx), pr.dx, pr.dy) << "\"/>\n";
+            }
+        }
         // katman 4: centikler (kenara dik, kesim cizgisine dogru; on 1 / arka 2 cizgi)
         {
             EvalCtx ctx = p.ctxFor(body, opts.onArkaEsit);

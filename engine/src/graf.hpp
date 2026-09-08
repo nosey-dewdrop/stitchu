@@ -145,6 +145,16 @@ struct Edge {
 
 struct RingEase { std::string ring; double mm = 0.0; };
 
+// IC HALKA PENS (2026-09-09): panelin DIS halkasina degmeyen pens (balik pensi). Agiz a-b (eski bel
+// hattinda), yukari apeks apexUst, asagi apeks apexAlt. Bel dikisi olmayan giysi (op merge) bel
+// pensini boyle tasir; kalipta ic cizgi (katman 8), supresyon kapisinda agiz genisligi sayilir.
+// apexAlt == agiz ortasi ise pens ucgendir (yalniz yukari) ve bu hal reason'da adiyla durur.
+struct IcPens {
+    std::string id;
+    RefPoint a, b;            // agiz uclari
+    RefPoint apexUst, apexAlt;
+};
+
 struct Panel {
     std::string id;
     std::vector<Edge> edges;       // kapali halka: edges[i].to == edges[i+1].from
@@ -156,6 +166,7 @@ struct Panel {
     std::string reason;           // parca neden var (parca_sayisi yasasi)
     std::string onto;             // dolu ise bu panel KONAK panelin YUZUNE dikilir (aplike/ust-dikis: yama, band);
                                   // kenarlari bir Seam'e girmez, komsuluk konagin uzerinden kurulur (op addPanel.onto)
+    std::vector<IcPens> darts;    // ic halka pensler (op merge uretir); dis halka pensleri dartLeg kenarlaridir
 
     int edgeIndex(const std::string& edgeId) const;   // -1 yoksa
     const Edge* edge(const std::string& edgeId) const;

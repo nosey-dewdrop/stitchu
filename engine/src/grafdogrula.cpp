@@ -537,16 +537,16 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
         std::string sHata;
         const solver::SolverCtx sctx = solver::SolverCtx::fromContract(contract, bodyContract, sHata);
         const bool pensVar = [&]{
-            for (const Panel& p : gCoz.panels) for (const Edge& e : p.edges) if (e.kind == "dartLeg") return true;
+            for (const Panel& p : gCoz.panels) { if (!p.darts.empty()) return true; for (const Edge& e : p.edges) if (e.kind == "dartLeg") return true; }
             return false;
         }();
         if (!pensVar) {
             H("pens_cozum", gCoz.id, "grafta pens yok; kisit cozumu calismadi", true, true);
         } else if (!sctx.dolu) {
             H("pens_cozum", gCoz.id, "cozucu sozlesmesi yuklenmedi: " + sHata + " (graf DEGISMEDI, combo tabani olculuyor)", false);
-        } else if (!gCoz.seam("bel")) {
-            H("pens_cozum", gCoz.id, "'bel' dikisi yok; pens kisiti baglanamadi (graf DEGISMEDI)", true, true);
         } else {
+            // 'bel' dikisi olmayabilir (op merge, 2026-09-09): kisit bedenden gelir, dikis yalniz bilgi
+
             const CozumSonucu pc = cozPens(gCoz, body, onArkaEsit, sctx, "bel");
             if (!pc.ok) {
                 H("pens_cozum", gCoz.id, pc.hata + " (graf DEGISMEDI, combo tabani olculuyor)", false);
@@ -822,6 +822,14 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
                 if (!pensDetay.empty()) pensDetay += ", ";
                 pensDetay += p.id + " " + f2(agiz);
                 ++i;   // cift islendi
+            }
+            // ic halka pensler (2026-09-09, op merge): agiz a-b
+            for (const IcPens& d : p.darts) {
+                double agiz = 0;
+                try { agiz = distance(eval(d.a, pctx), eval(d.b, pctx)); } catch (const std::exception&) { continue; }
+                pensToplam += agiz; ++pensSayisi;
+                if (!pensDetay.empty()) pensDetay += ", ";
+                pensDetay += p.id + "/" + d.id + " (ic) " + f2(agiz);
             }
         }
         // Gogus ve bel cevresi: BEDENIN olcusu + giysinin o halkadaki bollugu.

@@ -99,8 +99,24 @@
     <path data-panel="on_govde" data-yan="sag" data-edge="side_front" data-tur="centik" d="M 1014.833 316.900 L 998.081 310.741"/>
     <path data-panel="on_govde" data-edge="cf.1" data-tur="kat" stroke-dasharray="29.747 19.831 5.949 19.831" d="M 816.708 27.000 L 816.708 390.000"/>
     <path data-panel="on_govde" data-edge="cf.2" data-tur="kat" stroke-dasharray="29.747 19.831 5.949 19.831" d="M 816.708 390.000 L 816.708 970.000"/>
+    <path data-panel="on_govde" data-yan="sag" data-edge="ic_pens_1.1" data-tur="pens" d="M 881.349 390.000 L 876.646 243.800"/>
+    <path data-panel="on_govde" data-yan="sag" data-edge="ic_pens_1.2" data-tur="pens" d="M 876.646 243.800 L 871.943 390.000"/>
+    <path data-panel="on_govde" data-yan="sag" data-edge="ic_pens_1.3" data-tur="pens" d="M 871.943 390.000 L 876.646 593.000"/>
+    <path data-panel="on_govde" data-yan="sag" data-edge="ic_pens_1.4" data-tur="pens" d="M 876.646 593.000 L 881.349 390.000"/>
     <path data-panel="on_govde" data-yan="sol" data-edge="side_front" data-tur="centik" d="M 618.583 316.900 L 635.335 310.741"/>
+    <path data-panel="on_govde" data-yan="sol" data-edge="ic_pens_1.1" data-tur="pens" d="M 752.068 390.000 L 756.771 243.800"/>
+    <path data-panel="on_govde" data-yan="sol" data-edge="ic_pens_1.2" data-tur="pens" d="M 756.771 243.800 L 761.474 390.000"/>
+    <path data-panel="on_govde" data-yan="sol" data-edge="ic_pens_1.3" data-tur="pens" d="M 761.474 390.000 L 756.771 593.000"/>
+    <path data-panel="on_govde" data-yan="sol" data-edge="ic_pens_1.4" data-tur="pens" d="M 756.771 593.000 L 752.068 390.000"/>
     <path data-panel="arka_govde" data-yan="sag" data-edge="side_back" data-tur="centik" d="M 1183.616 -147.080 L 1166.822 -153.124"/>
+    <path data-panel="arka_govde" data-yan="sag" data-edge="ic_pens_1.1" data-tur="pens" d="M 1128.299 -288.860 L 1030.759 -179.853"/>
+    <path data-panel="arka_govde" data-yan="sag" data-edge="ic_pens_1.2" data-tur="pens" d="M 1030.759 -179.853 L 1121.091 -294.904"/>
+    <path data-panel="arka_govde" data-yan="sag" data-edge="ic_pens_1.3" data-tur="pens" d="M 1121.091 -294.904 L 1255.126 -447.435"/>
+    <path data-panel="arka_govde" data-yan="sag" data-edge="ic_pens_1.4" data-tur="pens" d="M 1255.126 -447.435 L 1128.299 -288.860"/>
     <path data-panel="arka_govde" data-yan="sol" data-edge="side_back" data-tur="centik" d="M 449.801 -147.080 L 466.594 -153.124"/>
+    <path data-panel="arka_govde" data-yan="sol" data-edge="ic_pens_1.1" data-tur="pens" d="M 505.118 -288.860 L 602.658 -179.853"/>
+    <path data-panel="arka_govde" data-yan="sol" data-edge="ic_pens_1.2" data-tur="pens" d="M 602.658 -179.853 L 512.325 -294.904"/>
+    <path data-panel="arka_govde" data-yan="sol" data-edge="ic_pens_1.3" data-tur="pens" d="M 512.325 -294.904 L 378.290 -447.435"/>
+    <path data-panel="arka_govde" data-yan="sol" data-edge="ic_pens_1.4" data-tur="pens" d="M 378.290 -447.435 L 505.118 -288.860"/>
   </g>
 </svg>

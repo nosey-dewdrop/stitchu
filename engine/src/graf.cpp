@@ -609,12 +609,20 @@ JVal toJSON(const Panel& p) {
     }
     if (!p.reason.empty()) o.set("reason", JVal::str(p.reason));
     if (!p.onto.empty()) o.set("onto", JVal::str(p.onto));
+    if (!p.darts.empty()) {
+        JVal ds = JVal::arr();
+        for (const IcPens& d : p.darts) {
+            JVal x = JVal::obj(); x.set("id", JVal::str(d.id)); x.set("from", toJSON(d.a)); x.set("to", toJSON(d.b));
+            x.set("apexUp", toJSON(d.apexUst)); x.set("apexDown", toJSON(d.apexAlt)); ds.push(x);
+        }
+        o.set("darts", ds);
+    }
     return o;
 }
 bool fromJSON(const JVal& v, Panel& out, std::string& err) {
     out = Panel();
     const std::string where = "Panel " + v.strOr("id", "?");
-    if (!onlyKeys(v, {"id", "edges", "grainDeg", "onFold", "cutCount", "seamAllowanceMM", "ease", "reason", "onto"}, err, where)) return false;
+    if (!onlyKeys(v, {"id", "edges", "grainDeg", "onFold", "cutCount", "seamAllowanceMM", "ease", "reason", "onto", "darts"}, err, where)) return false;
     if (!needStr(v, "id", out.id, err, where)) return false;
     const JVal* es = v.get("edges");
     if (!es || !es->isArr()) { err = where + ": edges eksik"; return false; }
@@ -636,6 +644,20 @@ bool fromJSON(const JVal& v, Panel& out, std::string& err) {
     }
     out.reason = v.strOr("reason", "");
     out.onto = v.strOr("onto", "");
+    if (const JVal* ds = v.get("darts")) {
+        if (!ds->isArr()) { err = where + ": darts dizi degil"; return false; }
+        for (const JVal& x : ds->a) {
+            IcPens d;
+            if (!onlyKeys(x, {"id", "from", "to", "apexUp", "apexDown"}, err, where + " darts")) return false;
+            if (!needStr(x, "id", d.id, err, where + " darts")) return false;
+            for (const char* k : {"from", "to", "apexUp", "apexDown"}) {
+                const JVal* q = x.get(k); RefPoint rp;
+                if (!q || !fromJSON(*q, rp, err)) { err = where + " darts " + d.id + ": " + k + " " + err; return false; }
+                if (std::string(k) == "from") d.a = rp; else if (std::string(k) == "to") d.b = rp; else if (std::string(k) == "apexUp") d.apexUst = rp; else d.apexAlt = rp;
+            }
+            out.darts.push_back(d);
+        }
+    }
     return true;
 }
 
