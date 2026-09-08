@@ -10,6 +10,7 @@
 #include "../src/body.hpp"
 #include "../src/graf.hpp"
 #include "../src/grafdogrula.hpp"
+#include "../src/grafop.hpp"
 
 using namespace stitchu;
 using namespace stitchu::graf;
@@ -29,10 +30,11 @@ int main(int argc, char** argv) {
         return 2;
     }
     const std::string grafYol = argv[1], bodyId = argv[2];
-    std::string bicim = "md";
+    std::string bicim = "md", hedefYol;
     for (int i = 3; i < argc; ++i) {
         if (!std::strcmp(argv[i], "--json")) bicim = "json";
         else if (!std::strcmp(argv[i], "--md")) bicim = "md";
+        else if (!std::strcmp(argv[i], "--hedef") && i + 1 < argc) hedefYol = argv[++i];
         else { std::fprintf(stderr, "ERR_UNKNOWN_FLAG: %s\n", argv[i]); return 2; }
     }
     std::string metin, contractMetin;
@@ -64,6 +66,16 @@ int main(int argc, char** argv) {
     } catch (const std::exception& e) {
         std::fprintf(stderr, "ERR_VALIDATE: %s\n", e.what());
         return 2;
+    }
+    // --hedef (2026-09-09, hakem A3 kusur 1): siluet hedefi grafin bollugundan olculur; sapma satiri (bilgi).
+    // Hedef grafta uygulanmadiysa (grafuygula --hedef kosmadi) sapma buyuk cikar ve bu SATIRDA gorunur.
+    if (!hedefYol.empty()) {
+        std::string ht, herr; JVal hv;
+        if (!readFile(hedefYol, ht) || !parse(ht, hv, herr)) { std::fprintf(stderr, "ERR_READ: %s (%s)\n", hedefYol.c_str(), herr.c_str()); return 2; }
+        const std::vector<HedefSatir> hs = hedefOlc(g, hv, body, herr);
+        if (!herr.empty()) { std::fprintf(stderr, "ERR_HEDEF: %s\n", herr.c_str()); return 2; }
+        for (const HedefSatir& h : hs) { Hukum hk; hk.kural = "hedef"; hk.hedef = h.ring; hk.deger = h.metin + (h.metin.find("SINIRA") != std::string::npos ? "" : ""); hk.gecti = true; hk.bilgi = true; R.hukumler.push_back(hk); }
+        if (hs.empty()) { Hukum hk; hk.kural = "hedef"; hk.hedef = g.id; hk.deger = "hedefler[] bos: okuma siluet olcumu tasimiyor"; hk.gecti = true; hk.bilgi = true; R.hukumler.push_back(hk); }
     }
     std::string out = (bicim == "json") ? emit(R.toJSON()) : R.toMarkdown();
     std::fwrite(out.data(), 1, out.size(), stdout);

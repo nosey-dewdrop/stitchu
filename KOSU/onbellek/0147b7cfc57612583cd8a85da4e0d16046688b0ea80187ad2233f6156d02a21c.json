@@ -417,9 +417,9 @@
  ],
  "_kullanim": "A3 hattinin girdisi. Bu okuma es on okumasinin arka.koken='fotograf' iddiasini tasiyor.",
  "eksikPrimitif": [
-  "IC HALKA PENS (bel pensi, bel dikisi yokken): panel modeli dis halkadir; merge bel pensini dusurur (reason'da adiyla). Kumeye eklenecek primitif: pens (ic halka)",
-  "bagimsiz parca (bel bandi): komsuluk kurali, primitif yok",
-  "CB kapanma turu okunamadi: taban grafin fermuari duruyor (ilan)"
+  "KAPANDI 2026-09-09: ic halka pens (balik pensi) Panel.darts olarak merge ile geliyor; grafdogrula pens_cozum agzi cozuyor",
+  "OKUMA: bagimsiz parca (bel bandi/kusak) — hicbir panele dikili degil, komsuluk_bagli kurali reddeder; aksesuar, kalip parcasi degil",
+  "OKUMA: CB kapanma turu okunamadi; tabanin fermuari duruyor (ilan)"
  ],
  "primitifCeviri": "2026-09-09 (Damla karari): opDemeti graf-v1 PRIMITIF kumesine yeniden yazildi (elle; okuma kalemleri degismedi, her op 'neden' ile bir kaleme bagli). Eski ad-sozlugu op'lari (setHemLength/setNeckline/addPanel/addClosure/addPatch/mergeSeam/setWidthTarget) ve kisaltmalar kaldirildi; setWidthTarget hedefler[] oldu."
 }

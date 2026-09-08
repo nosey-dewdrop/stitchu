@@ -597,8 +597,8 @@
  ],
  "_kullanim": "A3 hattinin girdisi.",
  "eksikPrimitif": [
-  "bagimsiz parca (bel bandi/kusak): hicbir panele dikili degil; komsuluk_bagli kurali bagimsiz parcayi reddediyor, primitif yok (aksesuar)",
-  "yama parcanin yatay yeri fotograftan oran olarak cikarilmadi (DOGRULANMADI, secildi)"
+  "OKUMA: bagimsiz parca (bel bandi/kusak) — hicbir panele dikili degil, komsuluk_bagli kurali reddeder; aksesuar, kalip parcasi degil",
+  "OKUMA: yama parcanin yatay yeri fotograftan oran olarak cikarilmadi (DOGRULANMADI, secildi)"
  ],
  "primitifCeviri": "2026-09-09 (Damla karari): opDemeti graf-v1 PRIMITIF kumesine yeniden yazildi (elle; okuma kalemleri degismedi, her op 'neden' ile bir kaleme bagli). Eski ad-sozlugu op'lari (setHemLength/setNeckline/addPanel/addClosure/addPatch/mergeSeam/setWidthTarget) ve kisaltmalar kaldirildi; setWidthTarget hedefler[] oldu."
 }

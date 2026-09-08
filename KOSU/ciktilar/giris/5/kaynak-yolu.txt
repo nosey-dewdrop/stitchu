@@ -4,3 +4,4 @@ gorunum arka
 okuyan isci-A3 (llmCagri 0)
 arka.koken fotograf
 cizim taban+ops (8 primitif emir; KOSU/ciktilar/graf-ilk/graf.json + ops.json -> grafuygula/grafciz --ops)
+hedef 1 siluet orani -> grafuygula/grafciz --hedef hedefler.json (bolluk mm, sinir kirpmasi notes'ta)

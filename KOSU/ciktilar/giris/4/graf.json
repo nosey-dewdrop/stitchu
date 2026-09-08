@@ -287,7 +287,7 @@
         },
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 0
         },
         {
           "ring": "girth.hip",
@@ -635,7 +635,7 @@
         },
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 0
         },
         {
           "ring": "girth.hip",

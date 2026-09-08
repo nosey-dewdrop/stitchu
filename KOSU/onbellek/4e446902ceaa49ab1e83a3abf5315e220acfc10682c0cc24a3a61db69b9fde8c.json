@@ -426,8 +426,8 @@
  ],
  "_kullanim": "A3 hattinin girdisi; ayni sha ikinci kez okunmaz.",
  "eksikPrimitif": [
-  "kumas grain ekseni 45 derece: Panel.grainDeg alani var, op yok (grain yazan primitif) — kalibi degistirmez, kesim planini degistirir",
-  "ikinci katin bel dikisine YAKALANMASI: ayni dikise ucuncu katman yok; kat yuze dikili (onto) olarak yazildi, konstruksiyon notu farkli"
+  "PRIMITIF: setGrain{panel, deg} — Panel.grainDeg alani var, yazan op yok (kesim planini degistirir, kalibi degil)",
+  "OKUMA: ikinci katin bel dikisine yakalanmasi — ayni dikise ucuncu katman dikis modelinde yok; kat yuze dikili (onto) yazildi, konstruksiyon notu farkli"
  ],
  "primitifCeviri": "2026-09-09 (Damla karari): opDemeti graf-v1 PRIMITIF kumesine yeniden yazildi (elle; okuma kalemleri degismedi, her op 'neden' ile bir kaleme bagli). Eski ad-sozlugu op'lari (setHemLength/setNeckline/addPanel/addClosure/addPatch/mergeSeam/setWidthTarget) ve kisaltmalar kaldirildi; setWidthTarget hedefler[] oldu."
 }

@@ -569,9 +569,9 @@
  ],
  "_kullanim": "A3 hattinin girdisi.",
  "eksikPrimitif": [
-  "kesme hattinin kavisli-dis bicimi: kontrol noktasi uydurulmadan yazilamadi (oran verilmedi), duz kesildi",
-  "kol agzindaki dusey dugme/carpma detayi: kapanma yalniz dikise yazilir, kol agzi dikis degil",
-  "kumas grain ekseni: op yok"
+  "OKUMA: kesme hattinin kavisli-dis bicimi icin kontrol noktasi orani verilmedi, duz kesildi",
+  "OKUMA: kol agzi dusey dugme detayi — kapanma yalniz dikise yazilir, kol agzi dikis degil (detay, kalip parcasi degil)",
+  "PRIMITIF: setGrain{panel, deg} — Panel.grainDeg alani var, yazan op yok (kesim planini degistirir, kalibi degil)"
  ],
  "primitifCeviri": "2026-09-09 (Damla karari): opDemeti graf-v1 PRIMITIF kumesine yeniden yazildi (elle; okuma kalemleri degismedi, her op 'neden' ile bir kaleme bagli). Eski ad-sozlugu op'lari (setHemLength/setNeckline/addPanel/addClosure/addPatch/mergeSeam/setWidthTarget) ve kisaltmalar kaldirildi; setWidthTarget hedefler[] oldu."
 }

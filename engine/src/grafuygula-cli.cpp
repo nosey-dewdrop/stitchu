@@ -1,5 +1,7 @@
 // grafuygula-cli.cpp — TABAN + PRIMITIF EMIR LISTESI -> GRAF (2026-09-09, Damla karari).
-//   engine/build/grafuygula <taban.json> <ops.json> [--id <grafId>]   -> graf JSON stdout
+//   engine/build/grafuygula <taban.json> <ops.json> [--id <grafId>] [--hedef <hedefler.json> --beden <bodyId>]   -> graf JSON stdout
+// --hedef (2026-09-09): vision-graf-v1 hedefler[] (siluet orani) ops SONRASI halka bolluguna cevrilir (grafop.hpp
+// hedefUygula), contract cozucu.hedef sinirina kirpilir; istenen/uygulanan/sapma notes'a ve stderr'e yazilir.
 // ops.json: [{"op": "...", "args": {...}, ...}] — graf-v1 ops[] bicimi; op/args disindaki alanlar
 // (neden gibi) okunmaz. Bos liste ERR_NO_OPS (exit 2): motor taban elbiseyi degil, taban + emir
 // listesini uygular; emir yoksa uretilecek sey yoktur. Bir op reddedilirse ERR_OP <sira> <ad>: <neden>
@@ -10,6 +12,7 @@
 #include <sstream>
 #include <string>
 
+#include "../src/body.hpp"
 #include "../src/graf.hpp"
 #include "../src/grafop.hpp"
 
@@ -39,8 +42,12 @@ bool opsOku(const std::string& yol, std::vector<OpRecord>& out, std::string& err
 
 int main(int argc, char** argv) {
     if (argc < 3) { std::fprintf(stderr, "kullanim: grafuygula <taban.json> <ops.json> [--id <grafId>]\n"); return 2; }
-    std::string id;
-    for (int i = 3; i + 1 < argc; ++i) if (std::string(argv[i]) == "--id") id = argv[i + 1];
+    std::string id, hedefYol, bedenId;
+    for (int i = 3; i + 1 < argc; ++i) {
+        if (std::string(argv[i]) == "--id") id = argv[i + 1];
+        else if (std::string(argv[i]) == "--hedef") hedefYol = argv[i + 1];
+        else if (std::string(argv[i]) == "--beden") bedenId = argv[i + 1];
+    }
     std::string metin, err;
     if (!readFile(argv[1], metin)) { std::fprintf(stderr, "ERR_READ: %s\n", argv[1]); return 2; }
     Garment taban;
@@ -54,6 +61,18 @@ int main(int argc, char** argv) {
     for (size_t i = 0; i < ops.size(); ++i) {
         r = applyOp(r.g, ops[i], ctx);
         if (!r.ok) { std::fprintf(stderr, "ERR_OP %zu %s: %s\n", i, ops[i].op.c_str(), r.hata.c_str()); return 1; }
+    }
+    if (!hedefYol.empty()) {
+        if (bedenId.empty()) { std::fprintf(stderr, "ERR_HEDEF: --hedef icin --beden <bodyId> zorunlu (oran bedene gore mm olur)\n"); return 2; }
+        std::string ht; JVal hv;
+        if (!readFile(hedefYol, ht) || !parse(ht, hv, err)) { std::fprintf(stderr, "ERR_READ: %s (%s)\n", hedefYol.c_str(), err.c_str()); return 2; }
+        Body body;
+        try { body = bedenId.rfind("EU", 0) == 0 ? Body::graded(bedenId) : Body::fromContract(bedenId); }
+        catch (const std::exception& e) { std::fprintf(stderr, "ERR_UNKNOWN_BODY: %s (%s)\n", bedenId.c_str(), e.what()); return 2; }
+        std::string hh;
+        const std::vector<HedefSatir> hs = hedefUygula(r.g, hv, body, contract, hh);
+        if (!hh.empty()) { std::fprintf(stderr, "ERR_HEDEF: %s\n", hh.c_str()); return 1; }
+        for (const HedefSatir& h : hs) std::fprintf(stderr, "hedef: %s\n", h.metin.c_str());
     }
     if (!id.empty()) r.g.id = id;
     r.g.notes = taban.notes + (taban.notes.empty() ? "" : "\n") + "grafuygula: taban " + taban.id + " + " + std::to_string(ops.size()) + " emir (" + argv[2] + ")";

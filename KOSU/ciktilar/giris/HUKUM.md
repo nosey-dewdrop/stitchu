@@ -35,6 +35,18 @@ Motorda bunun icin eklenen primitifler (giysi adi yok): `sew` (dik), `addPanel` 
 (panel kaldir), `merge` (panel birlestir; bel pensi ic halka/balik pensi olur, `Panel.darts`), `reshapeEdge kind/finish`
 (kat kenarinin bir bolumu serbest kenar = yarik). `contract/graf-v1.json` yasa 11, 19 op.
 
+## Olcum motora giriyor (hakem A3 tur 1, kusur 1 — kapatildi)
+
+Okumanin `hedefler[]` orani (siluet bel/enGenis) artik boru ile motora gider: `grafuygula --hedef hedefler.json --beden gercek36`
+ve `grafciz --hedef` hedef orani halka BOLLUGUNA cevirir (`grafop.hpp hedefUygula`; oran grafa yazilmaz, yasa 3), contract
+`cozucu.hedef` sinirina kirpar (easeMinMM 0, easeMaxKat 2), istenen/gereken/uygulanan/sapma'yi notes'a yazar; `grafdogrula
+--hedef` ayni satiri `hedef` hukmu olarak basar (kabul komutu `N_hedef_motora`). Olculen (5/5): istenen 0.38-0.51, gereken
+bolluk -214..-317 mm (bedenden KUCUK giysi ister) -> alt sinir 0 mm'ye KIRPILDI (bel bollugu 25 -> 0), giysi orani 0.7333,
+sapma 0.23-0.35. Bu sapma olcumun ilanidir: siluet "bel/enGenis" orani (kollar, poz, cekim) giysinin bel/gogus cevre orani
+degildir; okumalar zaten ZAYIF/SUPHELI etiketi tasiyor. Motor hedefi yutmadi, kirptigini ve sapmayi yazdi. 1=2 ayni kaldi:
+iki cekimin farkli oranlari (0.4954 / 0.5063) ayni sinira kirpilir. A4/A6 sorusu: guveni dusuk olcum bollugu oynatmali mi
+(bugun oynatiyor, sinira kadar) — kural contract'ta, sayi uydurulmadi.
+
 ## Kalan kusurlar (adim adiyla)
 
 - Flat'te arka panellerin omuz dikisinden "acilmis kitap" pozunda durmasi ve kol pozu: cizici gorunum kurali, A4

@@ -157,19 +157,19 @@ def prog(ad, girdi, kaynak, ops, eksik=(), not_=""):
 prog("P1-keskin-koseli-yaka", "yatik bebe yaka ama koseleri sivri, kisa kollu, A etekli midi elbise", "KOSU/regresyon/girdiler.json P1",
      yatik_parca("on_beden", "neck_front", dis_oran=0.4, omuz_oran=0.6) + [flare("on_etek", "hem_front", 1.3), flare("arka_etek", "hem_back", 1.3),
      extendTo("on_etek", "hem_front", "knee"), extendTo("arka_etek", "hem_back", "knee")],
-     eksik=["kisa kol: taban kol agzi dirsekte; omuz-dirsek arasinda landmark yok, ara nokta (extendTo) yazilamiyor -> extendTo yLerp (landmark cifti + oran) primitif eksigi"])
+     eksik=["PRIMITIF: extendTo{yLandmark, yLandmark2, yLerp} — kenari iki landmark ARASI bir orana baglama (bugun yalniz tek landmark); omuz-dirsek arasi kol agzi boyu bununla yazilir"])
 
 prog("P2-ayrik-panelli-buzgulu-kol", "prenses dikisli beden, balon kol, kolda lastik buzgu, uzun kollu maxi elbise", "girdiler.json P2",
      prenses(True) + prenses(False) + [extendTo("kol", "hem", "wrist"), gather("kol", "hem", 1.3)] + kol_bandi(2.2) +
      [extendTo("on_etek", "hem_front", "ankle"), extendTo("arka_etek", "hem_back", "ankle")],
-     eksik=["lastik: bant dikisinin orani (2.2) secildi, kumas/lastik esnemesi bir sayi olarak grafta yok",
-            "prenses dikisine emilen pens: bacaklar seam olunca pens cozucusu (cozPens, yalniz dartLeg cifti + ic pens) onlari gormez -> bel dikisi iki tarafi esit cikmaz (dikis_uzunluk bel, centik bel). Eksik: dikise gomulu supresyonu cozen kisit (A4 supresyon isi)",
-            "balon kolun kendini kesmesi (kendini_kesme kol): kol agzi 1.3 acilinca koltukalti kenari kapakla kesisiyor; cozum reshape ile mumkun, burada yazilmadi"])
+     eksik=["OKUMA: bant dikisinin orani (2.2) secildi; lastik esnemesi kumas katalogundan gelir (A6 fabric-catalog), graf eksigi degil",
+            "COZUCU (A4): dikise gomulu supresyon — bacaklar seam olunca cozPens (dartLeg cifti + ic pens) onlari gormez, bel dikisinin iki tarafi esit cikmaz (dikis_uzunluk/centik bel)",
+            "OKUMA/PROGRAM: kol agzi 1.3 acilinca koltukalti kenari kapakla kesisiyor (kendini_kesme kol); reshapeEdge ile duzeltilebilir, bu programda yazilmadi"])
 
 prog("P3-etek-tek-topoloji", "A formlu kemerli midi etek", "girdiler.json P3",
      [drop("kol", "faced"), drop("on_beden", "faced"), drop("arka_beden", "faced")] + bel_bandi(True) + bel_bandi(False) +
      [flare("on_etek", "hem_front", 1.3), flare("arka_etek", "hem_back", 1.3), extendTo("on_etek", "hem_front", "knee"), extendTo("arka_etek", "hem_back", "knee")],
-     eksik=["bel bandinin dikis uzunlugu: dogrulayici once fitLength'i (band kenari) sonra pens agzini (cozPens) cozuyor; bant, pens acilmadan onceki zincire uyduruluyor -> dikis_uzunluk kirmizi. Eksik primitif degil, cozum SIRASI (grafdogrula.cpp; A4 supresyon/kisit isi)"])
+     eksik=["COZUCU (A4): cozum SIRASI — grafdogrula once fitLength (band kenari) sonra pens agzini (cozPens) cozuyor; bant pens acilmadan onceki zincire uyduruluyor (dikis_uzunluk bel bandi, kendini_kesme bant)"])
 
 prog("P4-kolsuz-dik-yaka-mini", "kolsuz, dik yakali, mini A etekli elbise", "girdiler.json P4",
      [drop("kol", "faced")] + dik_bant() + [flare("on_etek", "hem_front", 1.3), flare("arka_etek", "hem_back", 1.3),
@@ -189,8 +189,8 @@ prog("P5-ust-gomlek-yaka-buzgu", "gomlek yakali, uzun kollu, yakasi buzgulu bluz
       gather("on_beden", "neck_front", 1.3), gather("arka_beden", "neck_back", 1.3)] + dik_bant(ratio=1.3) +
      [addPanel(_fall), sew("boyun_ust_dikisi", [("boyun_ust_parca", "alt")], [("boyun_bandi", "ust")], True), fitLength("boyun_ust_parca", "alt", "boyun_ust_dikisi", 1.0),
       extendTo("kol", "hem", "wrist")],
-     eksik=["bel altina uzayan beden: pens apeksi yerinde kalir, pens etege kadar acik iner (gercek kalipta pens bel altinda kapanir) -> reshapeEdge ile apeks tasinabilir, burada yazilmadi",
-            "buzgulu boyun: gather boyun kenarini eksen etrafinda buyutur, omuz-boyun kosesi disari kayar; kumas EKLEME (yarip acma / slash-spread) yok -> band kisiti (1.3) bu bedende cozulmuyor (kisit kirmizi), boyun_ust_dikisi ve kol_oyugu uzunluklari sapar. Eksik primitif: kenara kumas ekleyen 'yar ve ac' (slash&spread)"])
+     eksik=["OKUMA/PROGRAM: bel altina uzayan bedende pens apeksi yerinde kalir, pens etek ucuna acik iner; reshapeEdge ile apeks tasinabilir, bu programda yazilmadi",
+            "PRIMITIF: slashSpread{panel, edge, ratio} — kenara kumas EKLEME (yarip acma); gather komsu koseleri tasiyor, omuz/oyuk uzunlugu bozuluyor, band kisiti (1.3) cozulmuyor (kisit, boyun_ust_dikisi, kol_oyugu kirmizilari)"])
 
 prog("P6-a2-cumlesi", "bel dikisli, kolsuz, yuvarlak yakali, etek ucu genisleyen, arkadan kapanan elbise", "0509-kosu.md A2 girdi cumlesi",
      [drop("kol", "faced"), flare("on_etek", "hem_front", 1.3), flare("arka_etek", "hem_back", 1.3)])
@@ -213,8 +213,8 @@ prog("P7-tek-omuz-asimetrik-fiyonk", "bel hizasinda fiyonklu tek omuz asimetrik 
       # tek omuz: ayna tarafinin omuz + boyun kenari tek egik serbest kenar olur (sag omuzdan sol koltukaltina)
       reshape("on_tam", "shoulder.2", kind="cut", finish="faced"),
       addPanel(_fiyonk, onto="on_tam")],
-     eksik=["ayna sonrasi KENDI-AYNA dikisleri (arka_orta_beden/etek: a=b=arka_beden/cb) iki panele acilamiyor: dikis referansini yeniden yazan primitif (resew) YOK -> arka_ayna/cb ve ayna omuz-tarafi dikisleri acik kalir, dogrulayici kapanma/dikis_cifti kirmizi basar",
-            "tek omuzun egik hatti: sag omuz ucundan sol koltukaltina TEK kenar; bugun shoulder.2 serbest kenar yapildi ama neck_front.2 ile birlestirilmedi (kenar birlestirme = iki kenari tek kenar yapan primitif yok)"],
+     eksik=["PRIMITIF: resew{seam, a, b} — var olan dikisin kenar referanslarini yeniden yazma; ayna sonrasi kendi-ayna dikisi (arka_orta_beden: a=b=arka_beden/cb) iki panele acilamiyor, arka_ayna/cb acik kalir (kapanma/dikis_cifti kirmizi, ERR_NO_VIEW)",
+            "PRIMITIF: joinEdges{panel, edgeA, edgeB} — bitisik iki kenari tek kenar yapma (subdivide'in tersi); tek omuzun egik hatti shoulder.2 + neck_front.2 tek kenar olmali"],
      not_="KISMEN: ayna + 6 dikis + iki birlestirme motordan gecti; kalan iki kalem eksikPrimitif")
 
 _kimono_top = A("shoulderTip", 2.2, yL="shoulderTip", yL2="elbow", yLerp=0.3)
@@ -227,7 +227,7 @@ prog("P8-kimono-kollu-wrap", "kimono kollu wrap (SOZLUK DISI)", "A6 brief",
       reshape("arka_beden", "armhole_back.2", kind="cut", finish="hem", control=[]),
       reshape("on_beden", "armhole_front.1", control=[]), reshape("arka_beden", "armhole_back.1", control=[]),
       sew("kol_alti_kimono", [("on_beden", "armhole_front.1")], [("arka_beden", "armhole_back.1")], False)],
-     eksik=["wrap on: on parca CF'yi asip obur yan dikise gider -> ayna + kendi-ayna dikis acma (resew) gerekli, P7 ile ayni eksik"],
+     eksik=["PRIMITIF: resew (P7 ile ayni) — wrap on parca CF'yi asip obur yan dikise gider; ayna + kendi-ayna dikisini acma gerekir"],
      not_="kimono kol: kol paneli kaldirilip omuz/oyuk koseleri disari tasindi (moveVertex), koltukalti hatti one-arkaya dikildi")
 
 def _etek_bandi(on=True):
@@ -241,7 +241,7 @@ def _etek_bandi(on=True):
 prog("P9-korse-ustlu-balon-etek", "korse ustlu balon etek (SOZLUK DISI)", "A6 brief",
      [drop("kol", "faced")] + ust_kesim(True) + ust_kesim(False) +
      [gather("on_etek", "hem_front", 1.5), gather("arka_etek", "hem_back", 1.5)] + _etek_bandi(True) + _etek_bandi(False),
-     eksik=["korse balenleri / kup dikisi bu promptta istenmedi; ust kenar duz (koltukalti hizasi), gogus ustu kavis kontrol noktasi uydurulmadi"])
+     eksik=["OKUMA: ust kenar duz (koltukalti hizasi); gogus ustu kavis icin kontrol noktasi orani verilmedi, uydurulmadi"])
 
 prog("P10-keyhole-yakali-dropped-waist", "keyhole yakali dropped waist (SOZLUK DISI)", "A6 brief",
      keyhole() + [extendTo("on_beden", "waist_front.1", "highHip"), extendTo("on_beden", "waist_front.2", "highHip"),
@@ -268,8 +268,8 @@ prog("BUGRA-1-buttoned-corset-bustier", "Bugra Buttoned Corset Bustier: 6 parca 
       sew("on_orta_dugme", [("on_ust_kap", "cf.2.1"), ("on_alt_kap", "cf.2.2")], [("on_ust_kap", "cf.2.1"), ("on_alt_kap", "cf.2.2")], True),
       closure("on_orta_dugme", "buttons", 0.05, 0.95)],
      eksik=["Bugra'da orta arka KATLI ve kapanma onde: tabanin arka orta fermuar dikisi ust kesimle silinip alt parcada yeniden dikildi (arka_orta_alt zipper); fermuari HIC dikmemek icin dikis kaldiran primitif yok -> arka kapanma fazladan (Bugra'da yok)",
-            "kap dikisinin gogus kavisi: kontrol noktasi uydurulmadi, duz kesim; kap kesimi orta on parcada pens-dikisi ile kesisiyor (kendini_kesme on_alt_kap) — kesim noktasi apeksin ustunde secilmeliydi, program duzeltilmedi",
-            "supresyon kapisi: pensler prenses dikisine emilince dartLeg/ic pens kalmiyor, kapi %0 gorur (A4: kapi dikise gomulu supresyonu olcmuyor)"],
+            "OKUMA/PROGRAM: kap dikisi duz (kavis orani yok); kesim noktasi apeksin altinda secildi, pens-dikisiyle kesisiyor (kendini_kesme on_alt_kap) — program duzeltilmedi",
+            "COZUCU (A4): supresyon kapisi dikise gomulu supresyonu olcmuyor — pensler prenses dikisine emilince %0 gorur"],
      not_="6 parca: on_ust_kap, on_alt_kap, on_yan, arka_orta, arka_yan (+ arka orta 2 parca, kat degil)")
 
 # ---- Bugra 2: Locket Top: front body (buttons), back body (dart, hip length), collar + lining, lower/upper sleeve (upper gathered %29-35)
@@ -287,8 +287,8 @@ prog("BUGRA-2-locket-top", "Bugra Locket Top: front body (dugmeli), back body (b
      [addPanel(_astar), sew("astar_dikisi", [("boyun_parca", "omuz_ustu"), ("boyun_parca", "dis")], [("boyun_parca_astar", "omuz_ustu"), ("boyun_parca_astar", "dis")], False),
       subdivide("kol", "underarm_front", [0.5]), subdivide("kol", "underarm_back", [0.5]),
       split("kol", "underarm_back.2", "underarm_front.2", "kol_ust", "kol_alt", "kol_kesim", 1.3)],
-     eksik=["arka bel pensi Bugra'da kalca boyunda BALIK pensi: burada pens agzi kalcaya tasindi, apeks yerinde -> pens etek ucuna acik iner; ic halka pens (Panel.darts) yalniz merge uretiyor, sifirdan ic pens yazan primitif (dart op) yok",
-            "yatik parcanin dis kenarina astar: astarin dis kenarlari parcaya dikildi; parcanin omuz_ustu/dis kenarlari cut oldugu icin sew onlari seam'e cevirdi (dogru), ic kenar astarda raw"],
+     eksik=["PRIMITIF: dart{panel, mouth a/b, apexUp, apexDown} — sifirdan ic halka (balik) pens; bugun Panel.darts yalniz merge ile dogar; Bugra arka bel pensi bu yuzden etek ucuna acik iniyor",
+            "OKUMA: astar ic kenari raw (boyun dikisine ikinci katman olarak girmesi ayni-dikise-ucuncu-katman sinirina takilir; PRIMITIF adayi degil, dikis modeli siniri, foto 1 ile ayni)"],
      not_="6 parca: on_beden(2), arka_beden(2), boyun_parca, boyun_parca_astar, kol_ust(2), kol_alt(2)")
 
 # ------------------------------------------------------------------ KOSTUR
@@ -367,17 +367,24 @@ for s in satirlar:
 tam = [s for s in satirlar if s["motor"] == "UYGULANDI" and s["kirmizi"] == 0 and not s["eksik"]]
 kismi = [s for s in satirlar if s["motor"] == "UYGULANDI" and (s["kirmizi"] not in (0, None) or s["eksik"])]
 red = [s for s in satirlar if s["motor"] != "UYGULANDI"]
-eksikler = OD()
+kova = OD([("PRIMITIF", OD()), ("COZUCU (A4)", OD()), ("OKUMA/PROGRAM", OD())])
 for s in satirlar + foto:
-    for e in s["eksik"]: eksikler.setdefault(e.split(":")[0].split("->")[-1].strip()[:90], []).append(s.get("ad") or f"foto {s.get('no')}")
+    for e in s["eksik"]:
+        k = "PRIMITIF" if e.startswith("PRIMITIF") else ("COZUCU (A4)" if e.startswith("COZUCU") else "OKUMA/PROGRAM")
+        anahtar = e.split(" — ")[0] if k == "PRIMITIF" else e[:110]
+        kova[k].setdefault(anahtar, []).append(s.get("ad") or f"foto {s.get('no')}")
 md += ["", "## Ozet", "",
        f"- Motordan gecen ve 0 kirmizi ve eksiksiz: **{len(tam)}/{len(satirlar)}** ({', '.join(s['ad'] for s in tam) or '—'})",
        f"- Motordan gecen ama eksik primitif ilan eden ya da kirmizi tasiyan: **{len(kismi)}** ({', '.join(s['ad'] for s in kismi) or '—'})",
        f"- Motorun reddettigi program: **{len(red)}** ({', '.join(s['ad'] + ' — ' + s['motor'] for s in red) or '—'})",
        f"- Fotograflar: {sum(1 for f in foto if f['kirmizi']==0)}/5 grafdogrula 0 kirmizi; eksik primitif ilani olan: {sum(1 for f in foto if f['eksik'])}/5", "",
-       "## Eksik primitif adaylari (kumeye eklenecekler; her biri geometri emri, giysi adi degil)", ""]
-for e, kim in eksikler.items(): md.append(f"- {e} — ({', '.join(kim)})")
-md += ["", "Not: 'eksik' satirlarinin bir kismi primitif degil OKUMA eksigidir (oran verilmedi, kontrol noktasi uydurulmadi); tabloda ayrilmadan, oldugu gibi durur."]
+       "## Eksikler uc kovada (hakem A3 kusur 2: kovalar ayri)", "",
+       "**1. EKSIK PRIMITIF — kumeye eklenecek op (ad + args imzasi; geometri emri, giysi adi degil):**", ""]
+for e, kim in kova["PRIMITIF"].items(): md.append(f"- `{e.replace('PRIMITIF: ', '')}` — ({', '.join(kim)})")
+md += ["", "**2. COZUCU / KAPI eksigi (primitif degil; A4 supresyon-kisit isi):**", ""]
+for e, kim in kova["COZUCU (A4)"].items(): md.append(f"- {e.replace('COZUCU (A4): ', '')} — ({', '.join(kim)})")
+md += ["", "**3. OKUMA / PROGRAM eksigi (oran verilmedi, kontrol noktasi uydurulmadi, program duzeltilmedi; kumeyle ilgisi yok):**", ""]
+for e, kim in kova["OKUMA/PROGRAM"].items(): md.append(f"- {e.replace('OKUMA/PROGRAM: ', '').replace('OKUMA: ', '')} — ({', '.join(kim)})")
 open("KOSU/ciktilar/giris/TAMLIK.md", "w").write("\n".join(md) + "\n")
 
 # ------------------------------------------------------------------ KONTAK (12 flat)

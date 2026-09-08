@@ -58,17 +58,20 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 | 11 | `extendTo` | `{"panel":"arka_govde","edge":"hem_back","yLandmark":"landmark.knee","yOffsetMM":0}` | arka hem on hem ile ayni boyda (es fotograf arka/hem 0.42) |
 | 12 | `extendTo` | `{"panel":"kol","edge":"hem","yLandmark":"landmark.elbow","yOffsetMM":0}` | kenar kol/hem: shoulderTip..wrist 0.40 -> landmark.elbow (0.55) |
 
-**Cozucu hedefi** (grafa YAZILMAZ, yasa 3): 1 adet.
-- girth.waist / girth.bust = 0.4654 (kaynak: siluet-orani bel/enGenis) — OLCUM ZAYIF (kalite=ZAYIF), celiskiTablosu'na bak
+**Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 1 adet.
+- istenen: girth.waist / girth.bust = 0.4654 (kaynak: siluet-orani bel/enGenis) — OLCUM ZAYIF (kalite=ZAYIF), celiskiTablosu'na bak
+- motor: siluet-orani hedef girth.waist/girth.bust = 0.4654 (siluet-orani bel/enGenis; OLCUM ZAYIF (kalite=ZAYIF), celiskiTablosu'na bak) | gereken bolluk -241.14000000000001 mm, uygulanan 0 mm (onceki 25; SINIRA KIRPILDI) | giysi orani 0.7333333333333333, sapma 0.2679333333333333
+- dogrulayici (gercek36): siluet-orani hedef girth.waist/girth.bust = 0.4654 (siluet-orani bel/enGenis; OLCUM ZAYIF (kalite=ZAYIF), celiskiTablosu'na bak) | gereken bolluk -241.14000000000001 mm, grafta 0 mm | giysi orani 0.7333333333333333, sapma 0.2679333333333333
+Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus cevre orani degildir (kollar, poz); okuma zaten ZAYIF/SUPHELI etiketi tasiyor. Motor hedefi yutmadi, kirptigini ve sapmayi yazdi.
 
 ## Cizildi mi?
 
 | cikti | durum | bayt |
 |---|---|---|
 | flat.svg | OK (data-ops=12) | 18042 |
-| flat.png | OK | 89489 |
+| flat.png | OK | 90186 |
 | kalip-36.svg | OK | 11212 |
-| kalip-36.png | OK | 43313 |
+| kalip-36.png | OK | 43457 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 
@@ -85,5 +88,5 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 ## Primitif kumesiyle YAZILAMAYANLAR (eksikPrimitif — kumeye eklenecek primitifin adresi)
 
-- bagimsiz parca (bel bandi/kusak): hicbir panele dikili degil; komsuluk_bagli kurali bagimsiz parcayi reddediyor, primitif yok (aksesuar)
-- yama parcanin yatay yeri fotograftan oran olarak cikarilmadi (DOGRULANMADI, secildi)
+- OKUMA: bagimsiz parca (bel bandi/kusak) — hicbir panele dikili degil, komsuluk_bagli kurali reddeder; aksesuar, kalip parcasi degil
+- OKUMA: yama parcanin yatay yeri fotograftan oran olarak cikarilmadi (DOGRULANMADI, secildi)

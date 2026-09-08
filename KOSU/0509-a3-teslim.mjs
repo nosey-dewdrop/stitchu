@@ -11,7 +11,7 @@ if (!sha || !dizin) { console.error('kullanim: node KOSU/0509-a3-teslim.mjs <sha
 
 const r = uret(sha, dizin);
 if (!r.grafYol) { console.error(JSON.stringify({ no, sha: sha.slice(0, 12), MOTOR_REDDETTI: r.motor }, null, 1)); process.exit(1); }
-const c = ciz(r.opsYol, dizin);
+const c = ciz(r.opsYol, dizin, r.hedefYol);
 const p = {};
 for (const ad of ['flat', 'kalip-36'])
   p[ad] = c[ad].durum === 'OK' ? await png(`${dizin}/${ad}.svg`, `${dizin}/${ad}.png`, 900) : { ok: false, neden: c[ad].stderr };
@@ -21,12 +21,13 @@ let dogrula = { durum: 'KOSMADI' };
 {
   // grafdogrula kirmizi varsa exit 1 doner ama JSON'u yine stdout'a yazar: spawnSync ile exit koduna
   // bakmadan okunur (execFileSync firlatiyordu ve her kirmizi teslim "HATA" gorunuyordu — olculdu 2026-09-09).
-  const d = spawnSync('engine/build/grafdogrula', [r.grafYol, 'gercek36', '--json'], { encoding: 'utf8', maxBuffer: 64e6 });
+  const d = spawnSync('engine/build/grafdogrula', [r.grafYol, 'gercek36', '--json', '--hedef', r.hedefYol], { encoding: 'utf8', maxBuffer: 64e6 });
   try {
     const j = JSON.parse(d.stdout);
     if (typeof j.kirmizi !== 'number') throw new Error('grafdogrula ciktisinda `kirmizi` alani yok');
     dogrula = { durum: 'KOSTU', kirmizi: j.kirmizi,
-                fail: j.hukumler.filter((h) => !h.gecti && !h.bilgi).map((h) => `${h.kural}: ${h.hedef}`) };
+                fail: j.hukumler.filter((h) => !h.gecti && !h.bilgi).map((h) => `${h.kural}: ${h.hedef}`),
+                hedef: j.hukumler.filter((h) => h.kural === 'hedef').map((h) => h.deger) };
   } catch (e) {
     dogrula = { durum: 'HATA', exit: d.status, stderr: String(d.stderr || e.message).trim().split('\n').slice(-2).join(' | ') };
   }
@@ -68,8 +69,11 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 |---|---|---|---|
 ${(o.opDemeti || []).map((x, i) => `| ${i + 1} | \`${x.op}\` | \`${JSON.stringify(x.args).slice(0, 160)}${JSON.stringify(x.args).length > 160 ? '…' : ''}\` | ${x.neden} |`).join('\n')}
 
-**Cozucu hedefi** (grafa YAZILMAZ, yasa 3): ${r.hedefler.length} adet.
-${r.hedefler.map((h) => `- ${h.ring} / ${h.ratioTo} = ${h.ratio} (kaynak: ${h.kaynak})${h.uyari ? ` — ${h.uyari}` : ''}`).join('\n')}
+**Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; \`grafuygula --hedef\` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): ${r.hedefler.length} adet.
+${r.hedefler.map((h) => `- istenen: ${h.ring} / ${h.ratioTo} = ${h.ratio} (kaynak: ${h.kaynak})${h.uyari ? ` — ${h.uyari}` : ''}`).join('\n')}
+${(r.motor.hedef || []).map((h) => `- motor: ${h}`).join('\n')}
+${(dogrula.hedef || []).map((h) => `- dogrulayici (gercek36): ${h}`).join('\n')}
+Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus cevre orani degildir (kollar, poz); okuma zaten ZAYIF/SUPHELI etiketi tasiyor. Motor hedefi yutmadi, kirptigini ve sapmayi yazdi.
 
 ## Cizildi mi?
 

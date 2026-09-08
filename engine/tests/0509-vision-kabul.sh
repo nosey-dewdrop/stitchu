@@ -8,7 +8,10 @@
 #   (5) her teslimde ops.json var, bos degil; flat.svg data-ops = op sayisi (cizici ops SONRASI cizdi)
 #   (6) OP'SUZ CIZIM = KIRMIZI: teslim flat'i tabanin op'suz flat'iyla bayt-ayni olamaz;
 #       grafciz --ops bos liste -> exit 2 (ERR_NO_OPS) olmali
-#   (7) bayt farki OLCULUR: 5 flat ikiser ikiser karsilastirilir, tablo basilir (ayni olanlar adiyla)
+#   (7) bayt farki OLCULUR: 5 flat ikiser ikiser karsilastirilir, tablo basilir (ayni olanlar adiyla);
+#       ayni flat yalniz AYNI fotograf govdesinin iki cekimi icin kabul (kaynak-yolu.txt dosya koku, sira degil)
+#   (8) OLCUM MOTORA GIRER: her teslimde hedefler.json var; grafdogrula --hedef en az bir 'hedef' satiri basar
+#       (siluet orani -> bolluk; sapma yazili). Bos hedefler[] de satir basar ("bos") — sessizlik yok.
 # Ayrica bu adimin iki gecidi (sema, guvenli-taban/arka_koken) kosulur.
 set -uo pipefail
 cd "$(dirname "$0")/../.."
@@ -41,14 +44,22 @@ os.unlink(bos)
 r = subprocess.run(["engine/build/grafciz", TABAN, "croquis36", "flat"], capture_output=True, text=True)
 tabanFlat = hashlib.md5(r.stdout.encode()).hexdigest() if r.returncode == 0 else None
 
-dolu = 0; flatMd5 = {}
+dolu = 0; flatMd5 = {}; govde = {}
 for n in range(1, 6):
     d = f"KOSU/ciktilar/giris/{n}"
     g = f"{d}/graf.json"
     if not os.path.exists(g): say(f"{n}_graf", "FAIL yok"); kirmizi += 1; continue
+    try: govde[n] = re.sub(r"(-arka)?\.(jpg|jpeg|png)$", "", open(f"{d}/kaynak-yolu.txt").read().split("\n")[0].split("/")[-1])
+    except Exception: govde[n] = f"?{n}"
+    hy = f"{d}/hedefler.json"
     try:
-        out = subprocess.run(["engine/build/grafdogrula", g, "gercek36", "--json"], capture_output=True, text=True, timeout=60)
+        cmd = ["engine/build/grafdogrula", g, "gercek36", "--json"] + (["--hedef", hy] if os.path.exists(hy) else [])
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
         j = json.loads(out.stdout)
+        hed = [h for h in j["hukumler"] if h.get("kural") == "hedef"]
+        if not os.path.exists(hy): say(f"{n}_hedef_motora", "FAIL hedefler.json yok"); kirmizi += 1
+        elif not hed: say(f"{n}_hedef_motora", "FAIL grafdogrula --hedef satir basmadi"); kirmizi += 1
+        else: say(f"{n}_hedef_motora", f"OK ({len(hed)} hedef: " + "; ".join(h["deger"].split(" | ")[-1] for h in hed) + ")")
         if j["kirmizi"] == 0: say(f"{n}_grafdogrula", "OK (0 kirmizi)")
         else:
             fails = [f"{h['kural']}:{h['hedef']}" for h in j["hukumler"] if not h.get("gecti") and not h.get("bilgi")]
@@ -90,9 +101,12 @@ for a in range(1, 6):
             if e: ayni.append((a, b))
             print(f"  {a}-{b}: {'AYNI' if e else 'FARKLI'}")
 say("flat_ikiser_farkli", f"{'OK' if not ayni else 'BILGI'} ({len(flatMd5)} flat, ayni cift: {ayni or 'yok'})")
-# 1-2 ayni giysinin iki cekimi (KOSU/0509-a3-secim.md): ayni okuma -> ayni flat BEKLENIR ve ilan edilir; baska bir cift ayni ise KIRMIZI
+# ayni fotograf govdesinin iki cekimi (or. biba-O1194418-dress ve -arka; KOSU/0509-a3-secim.md: ikisi de ON yuz) ayni
+# okumaya cozunur -> ayni flat BEKLENIR ve ilan edilir; FARKLI govdeler ayni flat verirse KIRMIZI. Kural sira numarasina
+# degil kaynak-yolu.txt dosya kokune bagli.
 for a, b in ayni:
-    if (a, b) != (1, 2): say(f"flat_ayni_{a}_{b}", "FAIL farkli giysiler ayni flat"); kirmizi += 1
+    if govde.get(a) != govde.get(b): say(f"flat_ayni_{a}_{b}", f"FAIL farkli giysiler ayni flat ({govde.get(a)} / {govde.get(b)})"); kirmizi += 1
+    else: say(f"flat_ayni_{a}_{b}", f"BILGI ayni govde iki cekim ({govde.get(a)}), ayni flat beklenir")
 
 for f in v1:
     if json.load(open("KOSU/onbellek/" + f)).get("celiskiTablosu"): dolu += 1

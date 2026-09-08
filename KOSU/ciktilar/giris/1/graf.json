@@ -350,7 +350,7 @@
         },
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 0
         }
       ],
       "reason": "on govde (kat)"
@@ -694,7 +694,7 @@
         },
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 0
         }
       ],
       "reason": "arka govde (iki parca, arka orta fermuar)"
@@ -918,7 +918,7 @@
       "ease": [
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 0
         },
         {
           "ring": "girth.hip",
@@ -1144,7 +1144,7 @@
       "ease": [
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 0
         },
         {
           "ring": "girth.hip",
@@ -1417,7 +1417,7 @@
       "ease": [
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 0
         },
         {
           "ring": "girth.hip",

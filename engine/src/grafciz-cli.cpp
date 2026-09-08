@@ -39,10 +39,11 @@ static bool readContract(const char* rel, JVal& out) {
 }
 
 int main(int argc, char** argv) {
-    std::string grafYol, opsYol, bodyId, mod;
+    std::string grafYol, opsYol, hedefYol, bodyId, mod;
     { std::vector<std::string> pos;
       for (int i = 1; i < argc; ++i) {
           if (std::string(argv[i]) == "--ops") { if (i + 1 >= argc) { std::fprintf(stderr, "ERR_NO_OPS: --ops dosya yolu bekliyor\n"); return 2; } opsYol = argv[++i]; }
+          else if (std::string(argv[i]) == "--hedef") { if (i + 1 >= argc) { std::fprintf(stderr, "ERR_HEDEF: --hedef dosya yolu bekliyor\n"); return 2; } hedefYol = argv[++i]; }
           else pos.push_back(argv[i]);
       }
       if (pos.size() < 3) {
@@ -89,6 +90,16 @@ int main(int argc, char** argv) {
     } catch (const std::exception& e) {
         std::fprintf(stderr, "ERR_UNKNOWN_BODY: %s (%s)\n", bodyId.c_str(), e.what());
         return 2;
+    }
+
+    // --hedef (2026-09-09): siluet orani ops SONRASI bolluga cevrilir (grafop.hpp hedefUygula); cizim o grafla.
+    if (!hedefYol.empty()) {
+        std::string ht; JVal hv, contract;
+        if (!readFile(hedefYol, ht) || !parse(ht, hv, err)) { std::fprintf(stderr, "ERR_READ: %s (%s)\n", hedefYol.c_str(), err.c_str()); return 2; }
+        if (!readContract("contract/graf-v1.json", contract)) { std::fprintf(stderr, "ERR_READ: contract/graf-v1.json\n"); return 2; }
+        std::string hh; const std::vector<HedefSatir> hs = hedefUygula(g, hv, body, contract, hh);
+        if (!hh.empty()) { std::fprintf(stderr, "ERR_HEDEF: %s\n", hh.c_str()); return 1; }
+        for (const HedefSatir& h : hs) std::fprintf(stderr, "hedef: %s\n", h.metin.c_str());
     }
 
     std::string svg, hata;

@@ -55,17 +55,20 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 | 7 | `sew` | `{"seam":"on_orta","a":[{"panel":"on_beden","edge":"cf"},{"panel":"on_etek","edge":"cf"}],"b":[{"panel":"on_beden","edge":"cf"},{"panel":"on_etek","edge":"cf"}],…` | kapanma okumasi: yer on_orta -> on orta kat kenari kendi ayna kopyasiyla dikilir (kat acilir) |
 | 8 | `closure` | `{"seam":"on_orta","type":"buttons","fromFraction":0.06,"toFraction":0.34}` | kapanma okumasi: on_orta / dugme, oranBas 0.06 oranSon 0.34 (4 dugme, yaka altindan bele) |
 
-**Cozucu hedefi** (grafa YAZILMAZ, yasa 3): 1 adet.
-- girth.waist / girth.bust = 0.4954 (kaynak: siluet-orani bel/enGenis)
+**Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 1 adet.
+- istenen: girth.waist / girth.bust = 0.4954 (kaynak: siluet-orani bel/enGenis)
+- motor: siluet-orani hedef girth.waist/girth.bust = 0.4954 (siluet-orani bel/enGenis) | gereken bolluk -214.14 mm, uygulanan 0 mm (onceki 25; SINIRA KIRPILDI) | giysi orani 0.7333333333333333, sapma 0.23793333333333327
+- dogrulayici (gercek36): siluet-orani hedef girth.waist/girth.bust = 0.4954 (siluet-orani bel/enGenis) | gereken bolluk -214.14 mm, grafta 0 mm | giysi orani 0.7333333333333333, sapma 0.23793333333333327
+Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus cevre orani degildir (kollar, poz); okuma zaten ZAYIF/SUPHELI etiketi tasiyor. Motor hedefi yutmadi, kirptigini ve sapmayi yazdi.
 
 ## Cizildi mi?
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=8) | 22512 |
-| flat.png | OK | 87194 |
+| flat.svg | OK (data-ops=8) | 22503 |
+| flat.png | OK | 93156 |
 | kalip-36.svg | OK | 13873 |
-| kalip-36.png | OK | 38860 |
+| kalip-36.png | OK | 38043 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 
@@ -84,5 +87,5 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 ## Primitif kumesiyle YAZILAMAYANLAR (eksikPrimitif — kumeye eklenecek primitifin adresi)
 
-- kumas grain ekseni 45 derece: Panel.grainDeg alani var, op yok (grain yazan primitif) — kalibi degistirmez, kesim planini degistirir
-- ikinci katin bel dikisine YAKALANMASI: ayni dikise ucuncu katman yok; kat yuze dikili (onto) olarak yazildi, konstruksiyon notu farkli
+- PRIMITIF: setGrain{panel, deg} — Panel.grainDeg alani var, yazan op yok (kesim planini degistirir, kalibi degil)
+- OKUMA: ikinci katin bel dikisine yakalanmasi — ayni dikise ucuncu katman dikis modelinde yok; kat yuze dikili (onto) yazildi, konstruksiyon notu farkli

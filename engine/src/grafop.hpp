@@ -86,5 +86,13 @@ CozumSonucu cozumle(const Garment& g, const Body& body, bool onArkaEsit, const O
 CozumSonucu cozPens(const Garment& g, const Body& body, bool onArkaEsit,
                     const solver::SolverCtx& sctx, const std::string& seamId);
 
+// SILUET HEDEFI (2026-09-09, hakem A3 kusur 1: okumanin olcumu motora girmiyordu). vision-graf-v1 hedefler[]:
+// {ring, ratioTo, ratio, kaynak, uyari}. hedefUygula: hedef orani halka bolluguna cevirir (Panel.ease mm) ve
+// contract cozucu.hedef sinirina kirpar; her hedef icin rapor satiri (istenen / gereken / uygulanan / sapma).
+// hedefOlc: grafi DEGISTIRMEDEN ayni satirlari olcer (grafdogrula --hedef). Oran grafa yazilmaz (yasa 3).
+struct HedefSatir { std::string ring, ratioTo, kaynak, uyari; double istenen = 0, gerekenMM = 0, uygulananMM = 0, oncekiMM = 0, giysiOran = 0, sapma = 0; bool kirpildi = false; std::string metin; };
+std::vector<HedefSatir> hedefUygula(Garment& g, const JVal& hedefler, const Body& body, const JVal& contract, std::string& hata);
+std::vector<HedefSatir> hedefOlc(const Garment& g, const JVal& hedefler, const Body& body, std::string& hata);
+
 } // namespace graf
 } // namespace stitchu

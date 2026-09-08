@@ -1077,5 +1077,64 @@ CozumSonucu cozumle(const Garment& g, const Body& body, bool onArkaEsit, const O
     return R;
 }
 
+// ---------------------------------------------------------------- siluet hedefi (2026-09-09)
+namespace {
+double halkaBollugu(const Garment& g, const std::string& ring) {
+    double e = 0; for (const Panel& p : g.panels) for (const RingEase& re : p.ease) if (re.ring == ring) e = std::max(e, re.mm);
+    return e;
+}
+bool hedefOku(const JVal& h, HedefSatir& out, std::string& err) {
+    if (!needS(h, "ring", out.ring, err) || !needS(h, "ratioTo", out.ratioTo, err) || !needN(h, "ratio", out.istenen, err)) return false;
+    out.kaynak = h.strOr("kaynak", ""); out.uyari = h.strOr("uyari", "");
+    return true;
+}
+std::string hedefMetin(const HedefSatir& s, bool uygulandi) {
+    return "siluet-orani hedef " + s.ring + "/" + s.ratioTo + " = " + fmtNum(s.istenen) + " (" + s.kaynak + (s.uyari.empty() ? "" : "; " + s.uyari) + ") | gereken bolluk " + fmtNum(s.gerekenMM) + " mm, "
+         + (uygulandi ? ("uygulanan " + fmtNum(s.uygulananMM) + " mm (onceki " + fmtNum(s.oncekiMM) + (s.kirpildi ? "; SINIRA KIRPILDI" : "") + ")") : ("grafta " + fmtNum(s.uygulananMM) + " mm"))
+         + " | giysi orani " + fmtNum(s.giysiOran) + ", sapma " + fmtNum(s.sapma);
+}
+}
+std::vector<HedefSatir> hedefOlc(const Garment& g, const JVal& hedefler, const Body& body, std::string& hata) {
+    std::vector<HedefSatir> out;
+    const JVal* arr = hedefler.isArr() ? &hedefler : hedefler.get("hedefler");
+    if (!arr || !arr->isArr()) { hata = "hedefler: dizi bekleniyor"; return out; }
+    for (const JVal& h : arr->a) {
+        HedefSatir s; std::string err;
+        if (!hedefOku(h, s, err)) { hata = "hedef: " + err; return out; }
+        if (!body.hasRing(s.ring) || !body.hasRing(s.ratioTo)) { hata = "hedef: bedende halka yok " + s.ring + "/" + s.ratioTo; return out; }
+        const double ref = body.ring(s.ratioTo) + halkaBollugu(g, s.ratioTo);
+        s.uygulananMM = s.oncekiMM = halkaBollugu(g, s.ring);
+        s.gerekenMM = s.istenen * ref - body.ring(s.ring);
+        s.giysiOran = (body.ring(s.ring) + s.uygulananMM) / ref; s.sapma = s.giysiOran - s.istenen;
+        s.metin = hedefMetin(s, false); out.push_back(s);
+    }
+    return out;
+}
+std::vector<HedefSatir> hedefUygula(Garment& g, const JVal& hedefler, const Body& body, const JVal& contract, std::string& hata) {
+    std::vector<HedefSatir> out = hedefOlc(g, hedefler, body, hata);
+    if (!hata.empty()) return out;
+    double eMin = std::numeric_limits<double>::quiet_NaN(), eKat = eMin;
+    if (const JVal* cz = contract.get("cozucu")) if (const JVal* hd = cz->get("hedef")) {
+        if (const JVal* a = hd->get("easeMinMM")) eMin = a->numOr("deger", eMin);
+        if (const JVal* b = hd->get("easeMaxKat")) eKat = b->numOr("deger", eKat);
+    }
+    if (std::isnan(eMin) || std::isnan(eKat)) { hata = "hedef: contract cozucu.hedef sinirlari yok (easeMinMM/easeMaxKat)"; return out; }
+    for (HedefSatir& s : out) {
+        const double eMax = std::max(eMin, s.oncekiMM * eKat);
+        double e = s.gerekenMM; s.kirpildi = false;
+        if (e < eMin) { e = eMin; s.kirpildi = true; }
+        if (e > eMax) { e = eMax; s.kirpildi = true; }
+        bool var = false;
+        for (Panel& p : g.panels) for (RingEase& re : p.ease) if (re.ring == s.ring) { re.mm = e; var = true; }
+        if (!var) { hata = "hedef: hicbir panel " + s.ring + " bollugu tasimiyor; hedef baglanacak halka yok"; return out; }
+        s.uygulananMM = e;
+        const double ref = body.ring(s.ratioTo) + halkaBollugu(g, s.ratioTo);
+        s.giysiOran = (body.ring(s.ring) + e) / ref; s.sapma = s.giysiOran - s.istenen;
+        s.metin = hedefMetin(s, true);
+        g.notes += (g.notes.empty() ? "" : "\n") + std::string("HEDEF (grafa oran yazilmaz, bolluk mm): ") + s.metin;
+    }
+    return out;
+}
+
 } // namespace graf
 } // namespace stitchu

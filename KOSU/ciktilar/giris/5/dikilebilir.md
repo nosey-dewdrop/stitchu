@@ -52,17 +52,20 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 | 7 | `extendTo` | `{"panel":"on_govde","edge":"hem_front","yLandmark":"landmark.knee","yOffsetMM":0}` | on hem arka ile ayni boyda (es fotograf) |
 | 8 | `extendTo` | `{"panel":"kol","edge":"hem","yLandmark":"landmark.elbow","yOffsetMM":0}` | kenar kol/hem: shoulderTip..wrist 0.40 -> landmark.elbow |
 
-**Cozucu hedefi** (grafa YAZILMAZ, yasa 3): 1 adet.
-- girth.waist / girth.bust = 0.3815 (kaynak: siluet-orani bel/enGenis) — OLCUM ZAYIF
+**Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 1 adet.
+- istenen: girth.waist / girth.bust = 0.3815 (kaynak: siluet-orani bel/enGenis) — OLCUM ZAYIF
+- motor: siluet-orani hedef girth.waist/girth.bust = 0.3815 (siluet-orani bel/enGenis; OLCUM ZAYIF) | gereken bolluk -316.65 mm, uygulanan 0 mm (onceki 25; SINIRA KIRPILDI) | giysi orani 0.7333333333333333, sapma 0.3518333333333333
+- dogrulayici (gercek36): siluet-orani hedef girth.waist/girth.bust = 0.3815 (siluet-orani bel/enGenis; OLCUM ZAYIF) | gereken bolluk -316.65 mm, grafta 0 mm | giysi orani 0.7333333333333333, sapma 0.3518333333333333
+Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus cevre orani degildir (kollar, poz); okuma zaten ZAYIF/SUPHELI etiketi tasiyor. Motor hedefi yutmadi, kirptigini ve sapmayi yazdi.
 
 ## Cizildi mi?
 
 | cikti | durum | bayt |
 |---|---|---|
 | flat.svg | OK (data-ops=8) | 17016 |
-| flat.png | OK | 86640 |
+| flat.png | OK | 87499 |
 | kalip-36.svg | OK | 9919 |
-| kalip-36.png | OK | 44652 |
+| kalip-36.png | OK | 44692 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 
@@ -78,6 +81,6 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 ## Primitif kumesiyle YAZILAMAYANLAR (eksikPrimitif — kumeye eklenecek primitifin adresi)
 
-- IC HALKA PENS (bel pensi, bel dikisi yokken): panel modeli dis halkadir; merge bel pensini dusurur (reason'da adiyla). Kumeye eklenecek primitif: pens (ic halka)
-- bagimsiz parca (bel bandi): komsuluk kurali, primitif yok
-- CB kapanma turu okunamadi: taban grafin fermuari duruyor (ilan)
+- KAPANDI 2026-09-09: ic halka pens (balik pensi) Panel.darts olarak merge ile geliyor; grafdogrula pens_cozum agzi cozuyor
+- OKUMA: bagimsiz parca (bel bandi/kusak) — hicbir panele dikili degil, komsuluk_bagli kurali reddeder; aksesuar, kalip parcasi degil
+- OKUMA: CB kapanma turu okunamadi; tabanin fermuari duruyor (ilan)

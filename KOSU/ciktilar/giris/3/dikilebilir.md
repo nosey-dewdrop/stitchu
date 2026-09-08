@@ -61,17 +61,20 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 | 13 | `fitLength` | `{"panel":"kol","edge":"cap_front","target":{"seam":"kol_oyugu","ratio":1.14,"easeMM":0}}` | dikis kol_oyugu oranAralik [1.08,1.2] -> orta oran 1.14; toplama kol_oyugu dikisinin oranidir: kapak kenarlari zaten bu dikise kisitli (fitLength), oran yeniden yazilir ve her bedende cozulur |
 | 14 | `fitLength` | `{"panel":"kol","edge":"cap_back","target":{"seam":"kol_oyugu","ratio":1.14,"easeMM":0}}` | dikis kol_oyugu oranAralik [1.08,1.2] -> orta oran 1.14; toplama kol_oyugu dikisinin oranidir: kapak kenarlari zaten bu dikise kisitli (fitLength), oran yeniden yazilir ve her bedende cozulur |
 
-**Cozucu hedefi** (grafa YAZILMAZ, yasa 3): 1 adet.
-- girth.waist / girth.bust = 0.4036 (kaynak: siluet-orani bel/enGenis) — OLCUM SUPHELI, celiskiTablosu'na bak
+**Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 1 adet.
+- istenen: girth.waist / girth.bust = 0.4036 (kaynak: siluet-orani bel/enGenis) — OLCUM SUPHELI, celiskiTablosu'na bak
+- motor: siluet-orani hedef girth.waist/girth.bust = 0.4036 (siluet-orani bel/enGenis; OLCUM SUPHELI, celiskiTablosu'na bak) | gereken bolluk -296.76 mm, uygulanan 0 mm (onceki 25; SINIRA KIRPILDI) | giysi orani 0.7333333333333333, sapma 0.32973333333333327
+- dogrulayici (gercek36): siluet-orani hedef girth.waist/girth.bust = 0.4036 (siluet-orani bel/enGenis; OLCUM SUPHELI, celiskiTablosu'na bak) | gereken bolluk -296.76 mm, grafta 0 mm | giysi orani 0.7333333333333333, sapma 0.32973333333333327
+Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus cevre orani degildir (kollar, poz); okuma zaten ZAYIF/SUPHELI etiketi tasiyor. Motor hedefi yutmadi, kirptigini ve sapmayi yazdi.
 
 ## Cizildi mi?
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=14) | 25425 |
-| flat.png | OK | 90185 |
+| flat.svg | OK (data-ops=14) | 25416 |
+| flat.png | OK | 94933 |
 | kalip-36.svg | OK | 16156 |
-| kalip-36.png | OK | 39702 |
+| kalip-36.png | OK | 39759 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 
@@ -89,6 +92,6 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 ## Primitif kumesiyle YAZILAMAYANLAR (eksikPrimitif — kumeye eklenecek primitifin adresi)
 
-- kesme hattinin kavisli-dis bicimi: kontrol noktasi uydurulmadan yazilamadi (oran verilmedi), duz kesildi
-- kol agzindaki dusey dugme/carpma detayi: kapanma yalniz dikise yazilir, kol agzi dikis degil
-- kumas grain ekseni: op yok
+- OKUMA: kesme hattinin kavisli-dis bicimi icin kontrol noktasi orani verilmedi, duz kesildi
+- OKUMA: kol agzi dusey dugme detayi — kapanma yalniz dikise yazilir, kol agzi dikis degil (detay, kalip parcasi degil)
+- PRIMITIF: setGrain{panel, deg} — Panel.grainDeg alani var, yazan op yok (kesim planini degistirir, kalibi degil)
