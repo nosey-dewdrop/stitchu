@@ -36,6 +36,7 @@ Yasa 5: celiskide **olcum kazanir**. Bos tablo "celiski yok" demek degildir.
 |---|---|---|---|---|
 | en genis nokta / bel orani | Giysi bedende oturuyor; en genis yer etek ucu, bel belirgin dar | siluet enGenis/omuz = 2.1558 — omuzun IKI KATI. Bir elbisede boyle bir genislik yok. | **olcum** (siluet-orani) | Olcum kazandi ve KENDINI curuttu: 2.16 giysinin degil, ACIK DURAN KOLLARIN genisligi (manken kollari yana acik, avuclar disarida). Yani bu fotografta siluet 'genislik' oranlari giysiyi degil pozu olcuyor. bel/enGenis = 0.4036 bu yuzden op'a SUPHELI etiketiyle girdi; duzeltmesi poz landmark'i (kaynak a), kurulmadi. OVERLAY-HUKMU.md ayni sonuca varmisti. |
 | bel yuksekligi | Bel dogal belde, gogus altindaki kesmenin belirgin altinda | belKonum = 0.4894 (giysi boyunun yarisi) | **olcum** (siluet-orani) | Celiski: siluetin 'en dar nokta'si bel degil, kollarin govdeye en yakin oldugu yer. Dogal bel bir elbisede ~0.35 olur (bkz. biba-O1194418: 0.3552, kollari asagida). Op'a bel KONUMU girmedi; yalniz ORAN girdi ve o da supheli isaretli. |
+| bel yuksekligi — poz landmark'i (kaynak a) HAKEM | Dogal bel; siluetin 0.4894'u bana yuksek geldi | poz landmark'i (MediaPipe pose landmarker lite, self-host web/vendor/pose/, headless Chrome'da kosuldu, guven 0.759): belY = 0.405. Siluet 0.4894 diyordu. | **olcum** (poz-landmark) | UC KAYNAK da olculdu ve poz siluetin hatasini ADIYLA acikladi: siluetin 'en dar nokta'si kollarin govdeye yaklastigi yerdi, bel degil. Poz omuz/kalca noktalarindan beli 0.405'te buluyor. Ayrica siluetin anlamsiz enGenis/omuz=2.1558 degeri de aciklandi: poz kolBoyu/omuzGen=1.2083 diyor, yani kollar gercekten omuzdan uzun ve acik; siluetin 'genislik' paydasi kollari olcuyordu. belY orani DOGRULANMADI bir sabit (omuz-kalca'nin 0.55'i) kullaniyor, o kalem ayrica isaretli. |
 
 ## Motora ne gecti?
 
@@ -78,7 +79,6 @@ Okuma dili (fotograf) ile motorun op sozlugu ayni sey degil. Ceviri ve **cevrile
 
 ## Olculmedi
 
-- poz landmark (kaynak a): MediaPipe kurulmadi — bu fotografta EKSIKLIGI OLCULDU, kol/govde ayrimi yapilamadigi icin genislik oranlari kullanilamaz hale geldi
 - arka yuz: fotograf yok
 
 ## Motorun op sozlugunde KARSILIGI OLMAYANLAR

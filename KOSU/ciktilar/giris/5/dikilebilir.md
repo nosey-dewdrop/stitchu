@@ -72,7 +72,7 @@ Okuma dili (fotograf) ile motorun op sozlugu ayni sey degil. Ceviri ve **cevrile
 
 ## Olculmedi
 
-- poz landmark (kaynak a): MediaPipe kurulmadi
+- poz landmark (kaynak a): KOSULDU -> ERR_NO_POSE (arka yuz cekimi, yuz/uzuv gorunmuyor).
 
 ## Motorun op sozlugunde KARSILIGI OLMAYANLAR
 

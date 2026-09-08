@@ -76,7 +76,7 @@ Okuma dili (fotograf) ile motorun op sozlugu ayni sey degil. Ceviri ve **cevrile
 
 ## Olculmedi
 
-- poz landmark (kaynak a): MediaPipe kurulmadi; oranlar landmark'a gore CIKARIM
+- poz landmark (kaynak a): KOSULDU -> ERR_NO_POSE (manken govdesi, bas yok).
 - arka yuz: hicbir fotografta yok
 
 ## Motorun op sozlugunde KARSILIGI OLMAYANLAR

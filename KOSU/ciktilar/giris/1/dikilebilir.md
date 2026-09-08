@@ -80,7 +80,7 @@ Okuma dili (fotograf) ile motorun op sozlugu ayni sey degil. Ceviri ve **cevrile
 
 ## Olculmedi
 
-- poz landmark (kaynak a): MediaPipe kurulmadi; landmark adlari body-v1 semasindan, fotograftan DEGIL. Butun 'oran' alanlari bu yuzden landmark'a gore CIKARIM, poz olcumu degil.
+- poz landmark (kaynak a): KOSULDU (MediaPipe lite, self-host, headless Chrome) -> ERR_NO_POSE. Model insan pozu icin egitildi, bu kare manken govdesi (bas yok). Oranlar landmark'a gore CIKARIM.
 - arka yuz: es dosya arka degil (bkz. arka.neden)
 
 ## Motorun op sozlugunde KARSILIGI OLMAYANLAR

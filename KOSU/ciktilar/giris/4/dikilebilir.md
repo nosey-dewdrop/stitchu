@@ -76,7 +76,7 @@ Okuma dili (fotograf) ile motorun op sozlugu ayni sey degil. Ceviri ve **cevrile
 
 ## Olculmedi
 
-- poz landmark (kaynak a): MediaPipe kurulmadi
+- poz landmark (kaynak a): KOSULDU -> poz BULUNDU ama guven 0.180; esik altı sayildi ve KULLANILMADI (dusuk guvenli pozu olcum diye kullanmak siluetten daha kotu olurdu).
 
 ## Motorun op sozlugunde KARSILIGI OLMAYANLAR
 

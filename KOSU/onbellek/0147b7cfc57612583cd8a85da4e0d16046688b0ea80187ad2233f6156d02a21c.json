@@ -273,7 +273,7 @@
   }
  ],
  "olculmedi": [
-  "poz landmark (kaynak a): MediaPipe kurulmadi"
+  "poz landmark (kaynak a): KOSULDU -> ERR_NO_POSE (arka yuz cekimi, yuz/uzuv gorunmuyor)."
  ],
  "okunamayanlar": [
   "arka pens mi kemer buzmesi mi (celiskiTablosu'nda)",
