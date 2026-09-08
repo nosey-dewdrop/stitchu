@@ -391,7 +391,7 @@
   "resume": "Workflow scriptPath=KOSU/0509-kosu.js args={\"baslat\":\"A2\"}",
   "adimDurumlari": {
     "A1": "GECTI",
-    "A2": "ISCI"
+    "A2": "GECTI (2026-09-08 hakem, kosu disinda elle kapatildi)"
   },
   "A1_kapanis_notu": "6 Eyl, ana oturum: kosu 8.5 butce asimiyla DURDU olarak kapanmisti, ama hakem A1a ve A1b'yi GECIRDI (altAdim) ve karar ajani hukmu 'DEVAM — A1b GECTI, A2 ACIK' (A1_gecit_karari.hukum). Butce asimi 8.5'e gore protokol hatasi sinyalidir, urun kusuru degil; A1 urunu degistirmedi. Ana oturum kabul komutlarini KENDI kostu ve yesil olduklarini olctu: 'bash engine/tests/0509-kapi.sh --kendi-check' -> OZET 17 hukum gecti, 1 kirmizi (ilanli flat_ayni_insan_check); 'node engine/tests/0509-emsal-olcum.mjs --json' -> JSON dondu; 'node engine/tests/0509-wasm-sanity.mjs' -> JSON dondu, tabandanFark []. Bu yuzden durum GECTI'ye cevrildi; esik gevsetilmedi, verilmis hukum kaydedildi. A1 YENIDEN KOSULMAZ (26 commit tekrar yanmasin); sirada A2.",
   "A2b_pencereler": {
@@ -476,5 +476,10 @@
   "A2bIzinListesi_ne": "KARAR Q3 (2026-09-06, A2 karar ajani): H7 artik IZIN LISTESINI SAYMAZ; sayilan yalniz IZIN DISI yazilabilir dosyalardir ve tavani <=0'dir (sabit 2 degil). Izin bu alanda ADIYLA ilan edilir; ilan yoksa izin de yoktur, her yazilabilir dosya ihlaldir. 0509-kapi.sh bu listede BIR KERELIGINE bulunur (Q1+Q3 gecit onarimi); A2c'de listeden DUSER.",
   "A2IzinListesi": [
     "engine/tests/0509-yanlislama.sh (A2 olcut 4: yanlislama testi, 2026-09-07 elle kapatma)"
+  ],
+  "A3IzinListesi": [
+    "contract/vision-graf-v1.json (A3 brief alani: fotograf -> graf tarifi semasi; 0509-kosu.md 13.18 izin tablosu)",
+    "engine/tests/0509-vision-*.sh (A3'un kendi gecit/olcum scriptleri)",
+    "KOSU/onbellek/** (13.6/5.3: fotograf okumasi onbellekten beslenir)"
   ]
 }
