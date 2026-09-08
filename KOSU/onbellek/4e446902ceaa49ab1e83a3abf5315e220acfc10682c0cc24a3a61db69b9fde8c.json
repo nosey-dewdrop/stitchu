@@ -1,80 +1,317 @@
 {
-  "girdiYolu": "GIRDI/hedef-fotograflar/biba-O1194418-dress-arka.jpg",
-  "sha256": "4e446902ceaa49ab1e83a3abf5315e220acfc10682c0cc24a3a61db69b9fde8c",
-  "semaSurumu": "graf-v1",
-  "okuyan": "isci-A1b",
-  "tarih": "2026-09-06",
-  "yontem": "Kosu iscisi fotografa DOGRUDAN bakti (Read araci). Dis LLM cagrisi YOK; llmCagri = 0.",
-  "gorunum": "on (DOSYA ADI 'arka' DIYOR — ADLA ICERIK CELISIYOR)",
-  "ADLANDIRMA_CELISKISI": {
-    "iddia": "dosya adi -arka.jpg, yani arka yuz bekleniyor",
-    "olculen": "fotografta giysinin ON yuzu duruyor: on orta dugme sirasi (4 dugme), sweetheart yaka, onde ortada sivri dusen peplum — ucu de on yuz isaretcisi. Arka yuze ait tek bir isaretci (arka yaka, arka fermuar, sirt dikisi) GORUNMUYOR.",
-    "fark": "ayni giysinin ON yuzunun IKINCI cekimi: kol pozisyonu ve isik biraz farkli, kadraj biraz genis. Ayni giysi, ayni yuz.",
-    "sonuc": "Bu cift bir ON-ARKA CIFTI DEGILDIR. Brief madde 3(a) 'on-arka cifti' diyor; bugun elimizdeki dosya bunu KARSILAMIYOR.",
-    "yapilan": "Sessizce on-arka gibi kullanilmadi. 6 Eyl (A1 gecit karari 1): girdi adi F2-biba-arka-yok oldu; bu tarif ON gorunum olarak kullanilir, arka yuz 'absent' adiyla isaretlenir (madde 4) ve girdi ADLANDIRMA_CELISKISI ilaniyla tasinir. Girdi setten CIKARILMADI. Gercek on-arka topolojisi ARTIK SETTE VAR: F1-mary-quant-on-arka (arka yuzu olculdu, KOSU/onbellek/0147b7cf...json).",
-    "DOGRULANMADI": null,
-    "kontrolOrnegi": {
-      "olculen": "mary-quant-O365926-dress-arka.jpg AYNI yontemle okundu: GERCEK arka yuz (arka yaka, sirt orta dikisi, arka kemer; on dugme YOK).",
-      "sonuc": "'-arka' adlandirma konvansiyonu GENEL OLARAK dogru; sorun biba-O1194418 CIFTINE OZGU.",
-      "kapsam": "16 on-arka ciftinin 2'si acildi (biba-O1194418, mary-quant-O365926). Kalan 14 cift OKUNMADI — bu sayilar DOGRULANMADI.",
-      "dosyaAyniligi": "16 ciftin hepsinde on ve arka dosyalari sha256 olarak FARKLI (kopya-dosya hatasi degil); olculdu."
-    },
-    "_oncekiYapilan": "Sessizce on-arka gibi kullanilmadi. Regresyon girdisi F1-biba-on-arka bu tarifi ON gorunum olarak kullanir, arka yuz 'absent' adiyla isaretlenir (madde 4). Gercek bir arka fotograf gerekiyorsa acikSorular'da."
+ "girdiYolu": "GIRDI/hedef-fotograflar/biba-O1194418-dress-arka.jpg",
+ "sha256": "4e446902ceaa49ab1e83a3abf5315e220acfc10682c0cc24a3a61db69b9fde8c",
+ "semaSurumu": "vision-graf-v1",
+ "okuyan": "isci-A3",
+ "tarih": "2026-09-08",
+ "yontem": "Kosu iscisi fotografa DOGRUDAN bakti (Read araci). Dis LLM cagrisi YOK, /api/analyze cagrilmadi; llmCagri = 0. NOT: A1b'nin enum tarifi vision-graf-v1'e (geometri) yeniden yazildi.",
+ "gorunum": "on",
+ "cift": "88ab9466d20c66e47a91c0275aefa5234a33780d29a49c7c50bfd7064ee7ef2d",
+ "tabanGraf": "KOSU/ciktilar/graf-ilk/graf.json",
+ "ADLANDIRMA_CELISKISI": "Dosya adi '-arka' diyor; icerik ON. Sessizce duzeltilmedi (madde 4): gorunum='on' yazildi ve celiski hem burada hem celiskiTablosu'nda ilan edildi.",
+ "paneller": [
+  {
+   "id": "on_beden",
+   "gorulduMu": true,
+   "guven": 0.95,
+   "kanit": "CF'de aynalanmis chevron; es fotografla ayni yuz."
   },
-  "tarif": {
-    "giysiSinifi": "elbise",
-    "siluet": "bel dikisli oturan beden + peplum + A midi etek",
-    "yaka": {
-      "tip": "sweetheart / kalp yaka",
-      "enYakinOp": "scoop",
-      "guven": 0.75
-    },
-    "kol": {
-      "tip": "kisa-orta set-in, omuz basi buzgulu (puff)",
-      "enYakinOp": "sleeveStyle=puff, sleeveLength=short",
-      "guven": 0.8
-    },
-    "beden": {
-      "kapanis": "on orta dugme sirasi (4 dugme gorunuyor)",
-      "guven": 0.7
-    },
-    "bel": {
-      "hat": "dogal bel dikisi",
-      "peplum": "onde sivri dusen ayri peplum kati",
-      "guven": 0.85
-    },
-    "etek": {
-      "tip": "A form midi",
-      "guven": 0.85
-    },
-    "kumas": {
-      "desen": "bias cizgi, on ortada chevron aynalama"
-    }
+  {
+   "id": "on_beden_yan",
+   "gorulduMu": true,
+   "guven": 0.8,
+   "kanit": "Gogus altinda cizgi acisi kiriliyor, iki tarafta simetrik."
   },
-  "okunamayanlar": [
-    "ARKA YUZ HALA OKUNAMADI (bu dosya da on yuz)",
-    "pens mi prenses mi: desen dikisleri gizliyor",
-    "kapanis yeri (yan/arka fermuar)"
-  ],
-  "enYakinSpec": {
-    "garment": "dress",
-    "shaping": "dart",
-    "fabric": "woven",
-    "neckline": "scoop",
-    "sleeveStyle": "straight",
-    "sleeveLength": "short",
-    "skirtStyle": "aLine",
-    "skirtLength": "midi",
-    "_kayip": [
-      "sweetheart yaka enum'da yok",
-      "peplum degeri okunamadi",
-      "bias grain ekseni yok",
-      "ARKA YUZ: absent",
-      "DUZELTME 2026-09-06 (A1b, olculdu): ilk tarif sleeveStyle='puff' yaziyordu; motor bunu reddetti (\"invalid sleeveStyle 'puff' (valid: none, straight, balloon)\", regresyon kosumu). Puf kol motorda AYRI eksende: sleeveCap='puffed' (web/js/create.js:78), sarti sleeveStyle='straight'. Tarif degismedi, ESLEME duzeltildi."
-    ],
-    "sleeveCap": "puffed"
+  {
+   "id": "arka_beden",
+   "gorulduMu": false,
+   "guven": 0.15,
+   "kanit": "Bu fotograf da ON yuzu gosteriyor; arka panel GORULMEDI."
   },
-  "esemeNotu": {
-    "sleeveCap": "Fotograftaki kabarik omuz basi = sleeveCap 'puffed'; kol GOVDESI duz (balon degil), o yuzden sleeveStyle 'straight'."
+  {
+   "id": "peplum_on",
+   "gorulduMu": true,
+   "guven": 0.9,
+   "kanit": "Bel hattinda ayri kat, onde sivri uc."
+  },
+  {
+   "id": "on_etek",
+   "gorulduMu": true,
+   "guven": 0.9,
+   "kanit": "Peplumun altindan cikan bagimsiz chevron ekseni."
+  },
+  {
+   "id": "arka_etek",
+   "gorulduMu": false,
+   "guven": 0.15,
+   "kanit": "Gorulmedi."
+  },
+  {
+   "id": "kol",
+   "gorulduMu": true,
+   "guven": 0.95,
+   "kanit": "Omuz basinda buzgu kivrimlari; dirsek ustu duz agiz."
   }
+ ],
+ "kenarlar": [
+  {
+   "panel": "on_beden",
+   "kenar": "neck_front",
+   "landmarkUst": "landmark.neckFront",
+   "landmarkAlt": "landmark.bust",
+   "oran": 0.33,
+   "bicim": "kavisli-ic",
+   "guven": 0.8,
+   "not": "Sweetheart; es fotografla ayni okuma."
+  },
+  {
+   "panel": "on_etek",
+   "kenar": "hem",
+   "landmarkUst": "landmark.waist",
+   "landmarkAlt": "landmark.ankle",
+   "oran": 0.6,
+   "bicim": "duz",
+   "guven": 0.75,
+   "not": "Bu cekimde etek ucu tam gorunuyor (tripod kesmemis): siluet etekUcu/omuz 0.5094, es fotografta 0.4348. Ayni giysi, farkli kadraj."
+  },
+  {
+   "panel": "kol",
+   "kenar": "hem",
+   "landmarkUst": "landmark.shoulderTip",
+   "landmarkAlt": "landmark.wrist",
+   "oran": 0.47,
+   "bicim": "duz",
+   "guven": 0.85
+  },
+  {
+   "panel": "kol",
+   "kenar": "cap",
+   "landmarkUst": "landmark.shoulderTip",
+   "landmarkAlt": "landmark.bust",
+   "oran": 0.0,
+   "bicim": "kavisli-dis",
+   "buzguAraligi": [
+    1.15,
+    1.35
+   ],
+   "guven": 0.8,
+   "not": "Puf kol basi."
+  },
+  {
+   "panel": "peplum_on",
+   "kenar": "hem",
+   "landmarkUst": "landmark.waist",
+   "landmarkAlt": "landmark.hip",
+   "oran": 0.62,
+   "bicim": "kirik",
+   "guven": 0.85
+  }
+ ],
+ "dikisler": [
+  {
+   "id": "bel_dikisi",
+   "a": "on_beden/waist_front",
+   "b": "peplum_on/waist",
+   "oranAralik": [
+    1.0,
+    1.0
+   ],
+   "gorunurMu": true,
+   "guven": 0.9
+  },
+  {
+   "id": "on_yan_dikis",
+   "a": "on_beden/side",
+   "b": "on_beden_yan/side",
+   "oranAralik": [
+    1.0,
+    1.0
+   ],
+   "gorunurMu": true,
+   "guven": 0.75
+  },
+  {
+   "id": "kol_oyugu",
+   "a": "kol/cap",
+   "b": "on_beden/armhole",
+   "oranAralik": [
+    1.15,
+    1.35
+   ],
+   "gorunurMu": true,
+   "guven": 0.8
+  }
+ ],
+ "kapanma": {
+  "yer": "on_orta",
+  "tur": "dugme",
+  "oranBas": 0.06,
+  "oranSon": 0.34,
+  "guven": 0.9,
+  "not": "4 dugme; ARKA olsaydi bu paci gorunmezdi — celiskinin ikinci kaniti."
+ },
+ "simetri": {
+  "cfAyna": true,
+  "cbAyna": true,
+  "guven": 0.9,
+  "kanit": "CF chevron aynasi; cbAyna cikarim."
+ },
+ "katmanlar": [
+  {
+   "ad": "peplum_on",
+   "ustunde": "on_etek",
+   "oranBas": 0.0,
+   "oranSon": 0.3,
+   "guven": 0.9
+  }
+ ],
+ "arka": {
+  "koken": "turetildi",
+  "guven": 0.25,
+  "neden": "Bu dosyanin KENDISI 'arka' adini tasiyor ama ON yuzu gosteriyor; giysinin arkasi hicbir fotografta yok. En sade dikilebilir arka kuruldu: duz arka beden + duz arka etek, orta arka kapanmasiz (kapanma onde). Onizlemede gorunur ilan."
+ },
+ "kisaltmalar": [
+  {
+   "isim": "sweetheart yaka",
+   "opDemeti": [
+    "setNeckline"
+   ],
+   "guven": 0.75
+  },
+  {
+   "isim": "peplum",
+   "opDemeti": [
+    "addPanel",
+    "attachSeam",
+    "setHemProfile"
+   ],
+   "guven": 0.9
+  },
+  {
+   "isim": "puf kol basi",
+   "opDemeti": [
+    "setEase"
+   ],
+   "guven": 0.8
+  }
+ ],
+ "opDemeti": [
+  {
+   "op": "setHemLength",
+   "args": {
+    "panel": "on_etek",
+    "edge": "hem",
+    "target": {
+     "landmarkUst": "landmark.waist",
+     "landmarkAlt": "landmark.ankle",
+     "ratio": 0.6
+    }
+   },
+   "neden": "kenar on_etek/hem"
+  },
+  {
+   "op": "setHemLength",
+   "args": {
+    "panel": "kol",
+    "edge": "hem",
+    "target": {
+     "landmarkUst": "landmark.shoulderTip",
+     "landmarkAlt": "landmark.wrist",
+     "ratio": 0.47
+    }
+   },
+   "neden": "kenar kol/hem"
+  },
+  {
+   "op": "setEase",
+   "args": {
+    "seam": "kol_oyugu",
+    "side": "kol",
+    "ratioRange": [
+     1.15,
+     1.35
+    ]
+   },
+   "neden": "dikis kol_oyugu + 'puf kol basi' kisaltmasi"
+  },
+  {
+   "op": "setNeckline",
+   "args": {
+    "panel": "on_beden",
+    "edge": "neck_front",
+    "shape": "kavisli-ic",
+    "ratio": 0.33
+   },
+   "neden": "kenar on_beden/neck_front"
+  },
+  {
+   "op": "setWidthTarget",
+   "args": {
+    "ring": "girth.waist",
+    "ratioTo": "girth.bust",
+    "ratio": 0.5063,
+    "kaynak": "siluet-orani bel/enGenis"
+   },
+   "neden": "olcum (kaynak b)"
+  },
+  {
+   "op": "addPanel",
+   "args": {
+    "id": "peplum_on",
+    "attachTo": "on_beden/waist_front",
+    "hemRatio": {
+     "landmarkUst": "landmark.waist",
+     "landmarkAlt": "landmark.hip",
+     "on": 0.62,
+     "yan": 0.3
+    }
+   },
+   "neden": "panel peplum_on + 'peplum' kisaltmasi"
+  },
+  {
+   "op": "addClosure",
+   "args": {
+    "yer": "on_orta",
+    "tur": "dugme",
+    "oranBas": 0.06,
+    "oranSon": 0.34,
+    "adet": 4
+   },
+   "neden": "kapanma okumasi"
+  }
+ ],
+ "celiskiTablosu": [
+  {
+   "kalem": "gorunum (on mu arka mi)",
+   "claude": "Dosya adi 'arka'; ben fotografa bakinca ON goruyorum (sweetheart yaka, on paci, sivri peplum ucu)",
+   "olcum": "siluet oranlari iki dosyada neredeyse ayni: boy/omuz 2.3459 vs 2.3199, belKonum 0.3570 vs 0.3552, bel/enGenis 0.5063 vs 0.4954. Ayni giysinin ayni yuzu.",
+   "kazanan": "olcum",
+   "kaynak": "siluet-orani",
+   "sonuc": "Dosya ADI curutuldu. gorunum='on' yazildi, arka.koken='turetildi'. Ad degistirilmedi (GIRDI/ salt okunur)."
+  },
+  {
+   "kalem": "etek ucu genisligi",
+   "claude": "Iki fotografta ayni etek",
+   "olcum": "etekUcu/omuz 0.5094 (bu) vs 0.4348 (es) — %17 fark",
+   "kazanan": "olcum",
+   "kaynak": "siluet-orani",
+   "sonuc": "Fark giysiden degil KADRAJDAN: es fotografta tripod etek ucunu kesiyor (sapKesimi 65 satir). Bu dosyanin sayisi daha guvenilir, op'a 0.60 girdi."
+  }
+ ],
+ "olculmedi": [
+  "poz landmark (kaynak a): MediaPipe kurulmadi; oranlar landmark'a gore CIKARIM",
+  "arka yuz: hicbir fotografta yok"
+ ],
+ "okunamayanlar": [
+  "arka yuzun her ayrintisi",
+  "prenses mi pens mi",
+  "etek panel sayisi",
+  "arka kapanma"
+ ],
+ "eksikOp": [
+  "sweetheart yaka enum'da yok",
+  "bias grain ekseni graf-v1'de yok",
+  "peplumun on/yan iki oranli hem profili"
+ ],
+ "_kullanim": "A3 hattinin girdisi; ayni sha ikinci kez okunmaz."
 }
