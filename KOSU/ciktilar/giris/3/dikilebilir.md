@@ -1,0 +1,88 @@
+# 3. biba-O120579-dress.jpg — dikilebilir mi?
+
+**Kaynak fotograf:** `GIRDI/hedef-fotograflar/biba-O120579-dress.jpg` (sha 97bd652fde35)
+**Gorunum:** on · **Arka:** turetildi (TURETILDI, fotograftan degil)
+**Okuyan:** isci-A3 — dis LLM cagrisi YOK, llmCagri 0.
+
+## Fotograftan ne okundu?
+
+| kalem | okuma | guven |
+|---|---|---|
+| panel `on_beden` | GORULDU — Gogus altinda yatay bir kesme cizgisi var (desen o hatta kesiliyor): ust beden ayri parca. Ustte anahtar deligi acikligi CF'yi isaretliyor. | 0.9 |
+| panel `on_beden_yan` | GORULDU — Gogus alti kesme cizgisinin altinda, bele dogru daralan panel. Yan siniri desen yogunlugundan zor secilliyor; guven dusuk. | 0.65 |
+| panel `yaka_bandi` | GORULDU — Boyunda dik duran, boyunu saran ayri bant. Ust kenari boyun cevresinin USTUNDE bitiyor; bandin kendi dikisi CF'de anahtar deligi olarak aciliyor. | 0.9 |
+| panel `arka_beden` | gorulmedi (tabandan) — Gorunmuyor; tabandan. | 0.2 |
+| panel `on_etek` | GORULDU — Belden asagi genisleyen, ete uzanan parca; kalca hizasinda desen yonu degismiyor, yani tek kesim (godet/parca eki yok). | 0.85 |
+| panel `arka_etek` | gorulmedi (tabandan) — Gorunmuyor. | 0.2 |
+| panel `kol` | GORULDU — Bilege kadar uzun, dar kol. Omuz basinda kucuk buzgu kabarikligi; kol agzinda dikey dugme/carpma detayi var. | 0.95 |
+| kenar `yaka_bandi/neck_front` | landmark.neckFront..landmark.bustLine oraninda **0**, duz | 0.85 |
+| kenar `on_beden/anahtar_deligi` | landmark.neckFront..landmark.bustLine oraninda **0.55**, kirik | 0.8 |
+| kenar `on_beden/gogus_alti` | landmark.bustLine..landmark.waist oraninda **0.18**, kavisli-dis | 0.75 |
+| kenar `on_etek/hem` | landmark.waist..landmark.ankle oraninda **0.62**, duz | 0.8 |
+| kenar `kol/hem` | landmark.shoulderTip..landmark.wrist oraninda **1**, duz | 0.9 |
+| kenar `kol/cap` | landmark.shoulderTip..landmark.bustLine oraninda **0**, kavisli-dis, buzgu [1.08,1.2] | 0.75 |
+| dikis `gogus_alti_dikisi` | on_beden/gogus_alti ↔ on_beden_yan/ust, oran [1,1.12] | 0.7 |
+| dikis `bel_dikisi` | on_beden_yan/waist ↔ on_etek/waist, oran [1,1] | 0.8 |
+| dikis `yaka_dikisi` | yaka_bandi/alt ↔ on_beden/neck_front, oran [1,1] | 0.85 |
+| dikis `kol_oyugu` | kol/cap ↔ on_beden/armhole, oran [1.08,1.2] | 0.75 |
+| kapanma | okunamadi / okunamadi | 0.2 |
+| simetri | cfAyna true, cbAyna true | 0.85 |
+
+## Olcum ne dedi? (celiski tablosu)
+
+Yasa 5: celiskide **olcum kazanir**. Bos tablo "celiski yok" demek degildir.
+
+| kalem | Claude (ne) | olcum (ne kadar) | kazanan | sonuc |
+|---|---|---|---|---|
+| en genis nokta / bel orani | Giysi bedende oturuyor; en genis yer etek ucu, bel belirgin dar | siluet enGenis/omuz = 2.1558 — omuzun IKI KATI. Bir elbisede boyle bir genislik yok. | **olcum** (siluet-orani) | Olcum kazandi ve KENDINI curuttu: 2.16 giysinin degil, ACIK DURAN KOLLARIN genisligi (manken kollari yana acik, avuclar disarida). Yani bu fotografta siluet 'genislik' oranlari giysiyi degil pozu olcuyor. bel/enGenis = 0.4036 bu yuzden op'a SUPHELI etiketiyle girdi; duzeltmesi poz landmark'i (kaynak a), kurulmadi. OVERLAY-HUKMU.md ayni sonuca varmisti. |
+| bel yuksekligi | Bel dogal belde, gogus altindaki kesmenin belirgin altinda | belKonum = 0.4894 (giysi boyunun yarisi) | **olcum** (siluet-orani) | Celiski: siluetin 'en dar nokta'si bel degil, kollarin govdeye en yakin oldugu yer. Dogal bel bir elbisede ~0.35 olur (bkz. biba-O1194418: 0.3552, kollari asagida). Op'a bel KONUMU girmedi; yalniz ORAN girdi ve o da supheli isaretli. |
+
+## Motora ne gecti?
+
+Okuma dili (fotograf) ile motorun op sozlugu ayni sey degil. Ceviri ve **cevrilemeyenler**:
+
+| okuma op'u | motor op'u | not |
+|---|---|---|
+| — | `extendTo` | {"panel":"on_etek","edge":"hem_front","yLandmark":"landmark.knee","yOffsetMM":0} |
+| — | `extendTo` | {"panel":"kol","edge":"hem","yLandmark":"landmark.wrist","yOffsetMM":0} |
+| — | `gather` | {"panel":"kol","edge":"cap_back","ratio":1.14} |
+| `splitPanel` | **YOK** | motorun op sozlugunde karsiligi yok (contract/graf-v1.json oplar) — dogduran okuma: kenar on_beden/gogus_alti |
+| `addPanel` | **YOK** | motorun op sozlugunde karsiligi yok (contract/graf-v1.json oplar) — dogduran okuma: panel yaka_bandi + 'dik yaka' kisaltmasi |
+| `addSlit` | **YOK** | motorun op sozlugunde karsiligi yok (contract/graf-v1.json oplar) — dogduran okuma: kenar on_beden/anahtar_deligi |
+
+**Cozucu hedefi** (grafa YAZILMAZ, contract yasa 3): 1 adet.
+- girth.waist / girth.bust = 0.4036 (kaynak: siluet-orani bel/enGenis) — OLCUM SUPHELI, celiskiTablosu'na bak
+
+**Landmark kaybi** (motor ara noktaya baglanamiyor, en yakin landmark secildi):
+- `extendTo`: istenen oran 0.62 (landmark.waist..landmark.ankle, govde zinciri) = 0.749; en yakin landmark landmark.knee (0.72), fark 0.029 — motor ARA NOKTAYA baglayamiyor (extendTo landmark ister)
+- `gather`: aralik [1.08, 1.2] -> orta 1.1400 (cozucu tek sayi ister)
+
+## Cizildi mi?
+
+| cikti | durum | bayt |
+|---|---|---|
+| flat.svg | OK | 21413 |
+| flat.png | OK | 88253 |
+| kalip-36.svg | OK | 12734 |
+| kalip-36.png | OK | 43042 |
+
+**grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
+
+## Okunamayanlar (sessiz default YOK)
+
+- kapanma yeri ve turu (on yuzde yok, arka gorunmuyor)
+- yaka bandinin yuksekligi (oran olarak okunamadi, landmark yok)
+- gogus alti kesmenin altinda pens var mi (desen gizliyor)
+- etek panel sayisi
+- kol agzindaki dugme adedi
+
+## Olculmedi
+
+- poz landmark (kaynak a): MediaPipe kurulmadi — bu fotografta EKSIKLIGI OLCULDU, kol/govde ayrimi yapilamadigi icin genislik oranlari kullanilamaz hale geldi
+- arka yuz: fotograf yok
+
+## Motorun op sozlugunde KARSILIGI OLMAYANLAR
+
+- anahtar deligi (keyhole): graf-v1'de 'yarik' kenar turu yok; addSlit UYDURMA BIR AD DEGIL ama motorda karsiligi da YOK — eksikOp'ta duruyor
+- dik yaka bandi yuksekligi: landmark'a gore oran verilemedi, mm de verilemez (yasa 2)
+- bias grain ekseni

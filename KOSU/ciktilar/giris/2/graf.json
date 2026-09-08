@@ -1,7 +1,7 @@
 {
- "id": "foto-88ab9466",
+ "id": "foto-4e446902",
  "version": "graf-v1",
- "notes": "A3 URETIM. Kaynak fotograf: GIRDI/hedef-fotograflar/biba-O1194418-dress.jpg (sha 88ab9466d20c).\nBu graf TABAN GRAF (KOSU/ciktilar/graf-ilk/graf.json) uzerine, fotograf okumasindan cevrilen op'lar uygulanarak uretildi.\nUygulanan op: 3. Cevrilemeyen okuma op'u: 3 (adlari graf disinda, uretim raporunda).\nCozucu HEDEFI (grafa yazilmaz, contract yasa 3): 1.\nARKA TURETILDI: Es dosya adi 'biba-O1194418-dress-arka.jpg' ARKA diyor ama icerigi OLCULDU: yine ON yuz (ayni sweetheart yaka, ayni 4 dugmeli on paci, ayni sivri peplum ucu). Siluet olcumu de ayni sonuca variyor: boy/omuz 2.3199 vs 2.3459, belKonum 0.3552 vs 0.3570 — iki dosya ayni giysinin ayni yuzu. Arka yuz OKUNAMADI, en sade dikilebilir arka kuruldu: duz arka beden + duz arka etek, orta arka kapanmasiz (on orta zaten dugmeli).\nUYDURULAN SAYI YOK: her deger okumadan (oran) ya da contract'tan.",
+ "notes": "A3 URETIM. Kaynak fotograf: GIRDI/hedef-fotograflar/biba-O1194418-dress-arka.jpg (sha 4e446902ceaa).\nBu graf TABAN GRAF (KOSU/ciktilar/graf-ilk/graf.json) uzerine, fotograf okumasindan cevrilen op'lar uygulanarak uretildi.\nUygulanan op: 3. Cevrilemeyen okuma op'u: 3 (adlari graf disinda, uretim raporunda).\nCozucu HEDEFI (grafa yazilmaz, contract yasa 3): 1.\nARKA TURETILDI: Bu dosyanin KENDISI 'arka' adini tasiyor ama ON yuzu gosteriyor; giysinin arkasi hicbir fotografta yok. En sade dikilebilir arka kuruldu: duz arka beden + duz arka etek, orta arka kapanmasiz (kapanma onde). Onizlemede gorunur ilan.\nUYDURULAN SAYI YOK: her deger okumadan (oran) ya da contract'tan.",
  "panels": [
   {
    "id": "on_beden",

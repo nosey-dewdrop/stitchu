@@ -1,0 +1,85 @@
+# 4. mary-quant-O365926-dress.jpg — dikilebilir mi?
+
+**Kaynak fotograf:** `GIRDI/hedef-fotograflar/mary-quant-O365926-dress.jpg` (sha f35565a6e4e4)
+**Gorunum:** on · **Arka:** fotograf (fotograftan)
+**Okuyan:** isci-A3 — dis LLM cagrisi YOK, llmCagri 0.
+
+## Fotograftan ne okundu?
+
+| kalem | okuma | guven |
+|---|---|---|
+| panel `on_beden` | GORULDU — Dikey seersucker cizgi CF pacisinda kesiliyor ve iki yanda simetrik devam ediyor; cizgi yonu panelin dogrultusunu dogrudan gosteriyor. | 0.95 |
+| panel `yaka_bandi` | GORULDU — Omuzlari ortan genis, DUZ BEYAZ (kontrast kumas) yatik yaka; kendi dikisiyle bedene oturuyor. Kare-ye yakin, omuz uclarina kadar uzaniyor. | 0.95 |
+| panel `kol` | GORULDU — Kisa, duz, mansetsiz kol; cizgiler kolda govdeyle AYNI dikey yonde, yani kol ayri parca ve duz kesilmis. | 0.95 |
+| panel `kemer` | GORULDU — Belde ayni kumastan ince kemer; onde tokali/dugmeli. Bedene DIKILI DEGIL (arka fotografta serbest gecio), ayri parca. | 0.9 |
+| panel `cep_torba` | GORULDU — Kalca hizasinda iki adet YAMA cep, beyaz kapakli; cebin kendi cizgileri govdeninkiyle ayni yonde. | 0.9 |
+| panel `arka_beden` | gorulmedi (tabandan) — Bu fotografta gorulmuyor AMA es fotografta (0147b7cf) GERCEKTEN gorunuyor; guven oradan geliyor. | 0.9 |
+| panel `on_etek` | gorulmedi (tabandan) — AYRI bir etek paneli YOK: cizgiler omuzdan ete kadar KESINTISIZ iniyor. Bel dikisi bulunmuyor -> shift/gomlek elbise, tek kat govde. | 0.85 |
+| kenar `yaka_bandi/neck_front` | landmark.neckFront..landmark.bustLine oraninda **0.1**, kavisli-ic | 0.85 |
+| kenar `yaka_bandi/dis_kenar` | landmark.neckFront..landmark.bustLine oraninda **0.62**, kavisli-dis | 0.85 |
+| kenar `on_beden/hem` | landmark.waist..landmark.ankle oraninda **0.42**, duz | 0.8 |
+| kenar `kol/hem` | landmark.shoulderTip..landmark.wrist oraninda **0.4**, duz | 0.9 |
+| kenar `kol/cap` | landmark.shoulderTip..landmark.bustLine oraninda **0**, kavisli-dis | 0.8 |
+| dikis `omuz` | on_beden/shoulder ↔ arka_beden/shoulder, oran [1,1] (GORUNMUYOR, cikarim) | 0.6 |
+| dikis `kol_oyugu` | kol/cap ↔ on_beden/armhole, oran [1,1.05] | 0.8 |
+| dikis `yan_dikis` | on_beden/side ↔ arka_beden/side, oran [1,1] | 0.75 |
+| dikis `yaka_dikisi` | yaka_bandi/ic ↔ on_beden/neck_front, oran [1,1] | 0.9 |
+| kapanma | on_orta / dugme | 0.9 |
+| simetri | cfAyna true, cbAyna true | 0.9 |
+
+## Olcum ne dedi? (celiski tablosu)
+
+Yasa 5: celiskide **olcum kazanir**. Bos tablo "celiski yok" demek degildir.
+
+| kalem | Claude (ne) | olcum (ne kadar) | kazanan | sonuc |
+|---|---|---|---|---|
+| giysi boyu | Diz ustunde biten kisa elbise; bel-ayakbilegi araliginda ~0.42 | siluet boy/omuz = 2.5061 | **olcum** (siluet-orani) | Olcum bu fotografta KULLANILAMAZ ve nedeni olculdu: siluet giysiyi degil, giysi + manken AYAGI + zemin tahtasini iceriyor (bu cekim askidaki manken ayakligiyla, parke zemin uzerinde). sapKes ayagi kesmeye calisti ama parke zemin kontrasti dusuk. kalite=ZAYIF etiketi bundan. Op'a semantik 0.42 girdi, olcum girmedi; sapma bu satirda ilan. |
+| bel daralmasi | Shift/gomlek elbise: belde daralma AZ, kemer kumasi topluyor ama kesim duz | bel/enGenis = 0.4654 | **olcum** (siluet-orani) | Celiski GERCEK: 0.4654 belirgin oturan bir bedeni tarif eder, ben duz kesim goruyorum. Kok sebep olculdu: siluetin 'en genis' noktasi kollar ACIK oldugu icin kol hizasi (enGenis/omuz 1.4735 > 1). Yani payda yanlis. Yasa 5 geregi olcum kazanir ve op'a o girdi, ama SUPHELI etiketiyle; duzeltmesi poz landmark'i (kaynak a), kurulmadi. |
+| bel dikisi var mi | YOK — cizgiler omuzdan ete kesintisiz | siluet profilinde 0.3-0.5 araliginda kirilma yok (profil f=0.4 ve f=0.5 genislikleri yakin) | **olcum** (siluet-orani) | Celiski yok, iki kaynak ayni sey soyluyor. mergeSeam op'u bu iki kaynakla birlikte dogdu. |
+
+## Motora ne gecti?
+
+Okuma dili (fotograf) ile motorun op sozlugu ayni sey degil. Ceviri ve **cevrilemeyenler**:
+
+| okuma op'u | motor op'u | not |
+|---|---|---|
+| — | `extendTo` | {"panel":"kol","edge":"hem","yLandmark":"landmark.elbow","yOffsetMM":0} |
+| `setHemLength` | **YOK** | kenar yok: on_beden/hem — dogduran okuma: kenar on_beden/hem |
+| `mergeSeam` | **YOK** | motorun op sozlugunde karsiligi yok (contract/graf-v1.json oplar) — dogduran okuma: panel on_etek gorulmedi: cizgiler kesintisiz, bel dikisi YOK -> taban grafin bel dikisi kaldirilir |
+| `addPanel` | **YOK** | motorun op sozlugunde karsiligi yok (contract/graf-v1.json oplar) — dogduran okuma: panel yaka_bandi + kenar dis_kenar |
+| `addClosure` | **YOK** | dikis yok: on_orta (taban grafta on orta dikis bulunmuyor) — dogduran okuma: kapanma okumasi |
+| `addPatch` | **YOK** | motorun op sozlugunde karsiligi yok (contract/graf-v1.json oplar) — dogduran okuma: panel cep_torba + katman kaydi |
+
+**Cozucu hedefi** (grafa YAZILMAZ, contract yasa 3): 1 adet.
+- girth.waist / girth.bust = 0.4654 (kaynak: siluet-orani bel/enGenis) — OLCUM ZAYIF (kalite=ZAYIF), celiskiTablosu'na bak
+
+**Landmark kaybi** (motor ara noktaya baglanamiyor, en yakin landmark secildi):
+- `extendTo`: istenen oran 0.4 (landmark.shoulderTip..landmark.wrist, kol zinciri) = 0.400; en yakin landmark landmark.elbow (0.55), fark 0.150 — motor ARA NOKTAYA baglayamiyor (extendTo landmark ister)
+
+## Cizildi mi?
+
+| cikti | durum | bayt |
+|---|---|---|
+| flat.svg | OK | 21422 |
+| flat.png | OK | 82695 |
+| kalip-36.svg | OK | 12734 |
+| kalip-36.png | OK | 41871 |
+
+**grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
+
+## Okunamayanlar (sessiz default YOK)
+
+- dugme adedi (6 mi 7 mi)
+- arka pens var mi (on yuzden gorunmez; es fotografta OKUNDU)
+- cep torbasinin tam derinligi
+- kemerin bedene dikili olup olmadigi (arka fotograf serbest gecio diyor)
+
+## Olculmedi
+
+- poz landmark (kaynak a): MediaPipe kurulmadi
+
+## Motorun op sozlugunde KARSILIGI OLMAYANLAR
+
+- yatik genis yaka: graf-v1'de yaka paneli 'dik' varsayimiyla; yatik yaka icin dis kenar profili yok
+- yama cep: addPatch motorda YOK, kalibi degistirmez ama kesim listesinde parca olarak eksik
+- kemer: ayri parca, graf-v1'de karsiligi yok

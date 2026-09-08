@@ -68,7 +68,7 @@ Okuma dili (fotograf) ile motorun op sozlugu ayni sey degil. Ceviri ve **cevrile
 | kalip-36.svg | OK | 12734 |
 | kalip-36.png | OK | 41871 |
 
-**grafdogrula (gercek36):** KOSTU — kirmizi hukum: 0
+**grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 
 ## Okunamayanlar (sessiz default YOK)
 

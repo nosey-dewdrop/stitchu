@@ -20,7 +20,13 @@ let dogrula = { durum: 'KOSMADI' };
 try {
   const out = execFileSync('engine/build/grafdogrula', [r.grafYol, 'gercek36', '--json'], { encoding: 'utf8' });
   const j = JSON.parse(out);
-  dogrula = { durum: 'KOSTU', kirmizi: (j.kirmizi ?? j.hukumler?.filter?.((h) => h.durum === 'FAIL')?.length ?? 0), ham: j };
+  // grafdogrula ciktisinda kirmizi sayisi TEK yerde: ust duzey `kirmizi`.
+  // Ilk yazimda `j.kirmizi ?? ...filter(h.durum==='FAIL')` vardi; `durum` diye bir
+  // alan YOK (alan adi `gecti`), yani fallback her zaman 0 doner ve gecit YALANCI
+  // YESIL yanardi. Olculdu: gercekte 2 kirmizi varken 0 basiliyordu.
+  if (typeof j.kirmizi !== 'number') throw new Error('grafdogrula ciktisinda `kirmizi` alani yok');
+  dogrula = { durum: 'KOSTU', kirmizi: j.kirmizi,
+              fail: j.hukumler.filter((h) => !h.gecti && !h.bilgi).map((h) => `${h.kural}: ${h.hedef}`) };
 } catch (e) {
   dogrula = { durum: 'HATA', stderr: String(e.stderr || e.message).trim().split('\n').slice(-2).join(' | ') };
 }
@@ -75,7 +81,7 @@ ${r.kayiplar.map((k) => `- \`${k.op}\`: ${k.kayip}`).join('\n') || '- yok'}
 | kalip-36.svg | ${c['kalip-36'].durum} | ${sat(c['kalip-36'].bayt)} |
 | kalip-36.png | ${p['kalip-36'].ok ? 'OK' : 'HATA'} | ${sat(p['kalip-36'].bayt)} |
 
-**grafdogrula (gercek36):** ${dogrula.durum}${dogrula.kirmizi !== undefined ? ` — kirmizi hukum: ${dogrula.kirmizi}` : ''}${dogrula.stderr ? ` (${dogrula.stderr})` : ''}
+**grafdogrula (gercek36):** ${dogrula.durum}${dogrula.kirmizi !== undefined ? ` — kirmizi hukum: **${dogrula.kirmizi}**` : ''}${dogrula.fail?.length ? ` (${dogrula.fail.join('; ')})` : ''}${dogrula.stderr ? ` (${dogrula.stderr})` : ''}
 
 ## Okunamayanlar (sessiz default YOK)
 
@@ -94,6 +100,6 @@ writeFileSync(`${dizin}/dikilebilir.md`, md);
 console.log(JSON.stringify({
   no, sha: sha.slice(0, 12), girdi: o.girdiYolu, dizin,
   uygulanan: r.uygulanan.map((x) => x.op), cevrilemeyen: r.cevrilemeyen.length,
-  cizim: c, png: p, grafdogrula: { durum: dogrula.durum, kirmizi: dogrula.kirmizi },
+  cizim: c, png: p, grafdogrula: { durum: dogrula.durum, kirmizi: dogrula.kirmizi, fail: dogrula.fail },
   celiskiSatiri: (o.celiskiTablosu || []).length,
 }, null, 1));

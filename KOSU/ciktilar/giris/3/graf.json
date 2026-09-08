@@ -1,7 +1,7 @@
 {
- "id": "foto-88ab9466",
+ "id": "foto-97bd652f",
  "version": "graf-v1",
- "notes": "A3 URETIM. Kaynak fotograf: GIRDI/hedef-fotograflar/biba-O1194418-dress.jpg (sha 88ab9466d20c).\nBu graf TABAN GRAF (KOSU/ciktilar/graf-ilk/graf.json) uzerine, fotograf okumasindan cevrilen op'lar uygulanarak uretildi.\nUygulanan op: 3. Cevrilemeyen okuma op'u: 3 (adlari graf disinda, uretim raporunda).\nCozucu HEDEFI (grafa yazilmaz, contract yasa 3): 1.\nARKA TURETILDI: Es dosya adi 'biba-O1194418-dress-arka.jpg' ARKA diyor ama icerigi OLCULDU: yine ON yuz (ayni sweetheart yaka, ayni 4 dugmeli on paci, ayni sivri peplum ucu). Siluet olcumu de ayni sonuca variyor: boy/omuz 2.3199 vs 2.3459, belKonum 0.3552 vs 0.3570 — iki dosya ayni giysinin ayni yuzu. Arka yuz OKUNAMADI, en sade dikilebilir arka kuruldu: duz arka beden + duz arka etek, orta arka kapanmasiz (on orta zaten dugmeli).\nUYDURULAN SAYI YOK: her deger okumadan (oran) ya da contract'tan.",
+ "notes": "A3 URETIM. Kaynak fotograf: GIRDI/hedef-fotograflar/biba-O120579-dress.jpg (sha 97bd652fde35).\nBu graf TABAN GRAF (KOSU/ciktilar/graf-ilk/graf.json) uzerine, fotograf okumasindan cevrilen op'lar uygulanarak uretildi.\nUygulanan op: 3. Cevrilemeyen okuma op'u: 3 (adlari graf disinda, uretim raporunda).\nCozucu HEDEFI (grafa yazilmaz, contract yasa 3): 1.\nARKA TURETILDI: Arka fotograf YOK. En sade dikilebilir arka kuruldu: duz arka beden + duz arka etek, orta arka kapanma (giysinin giyilebilmesi bunu gerektiriyor ve on yuzde kapanma yok). Onizlemede gorunur ilan: arka fotograftan degil, TURETILDI.\nUYDURULAN SAYI YOK: her deger okumadan (oran) ya da contract'tan.",
  "panels": [
   {
    "id": "on_beden",
@@ -1222,7 +1222,7 @@
       "ring": "girth.biceps",
       "xFactor": 2,
       "xOffsetMM": 0,
-      "yLandmark": "landmark.elbow"
+      "yLandmark": "landmark.wrist"
      }
     },
     {
@@ -1235,7 +1235,7 @@
       "ring": "girth.biceps",
       "xFactor": 2,
       "xOffsetMM": 0,
-      "yLandmark": "landmark.elbow"
+      "yLandmark": "landmark.wrist"
      },
      "to": {
       "landmark": "landmark.underarm",
@@ -1243,7 +1243,7 @@
       "ring": "girth.biceps",
       "xFactor": -2,
       "xOffsetMM": 0,
-      "yLandmark": "landmark.elbow"
+      "yLandmark": "landmark.wrist"
      },
      "finish": "hem"
     },
@@ -1257,7 +1257,7 @@
       "ring": "girth.biceps",
       "xFactor": -2,
       "xOffsetMM": 0,
-      "yLandmark": "landmark.elbow"
+      "yLandmark": "landmark.wrist"
      },
      "to": {
       "landmark": "landmark.underarm",
@@ -1401,7 +1401,7 @@
     }
    ],
    "reverse": false,
-   "ratio": 1.25,
+   "ratio": 1.14,
    "easeMM": 0,
    "reason": "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)"
   },
@@ -1705,7 +1705,7 @@
    "args": {
     "panel": "kol",
     "edge": "hem",
-    "yLandmark": "landmark.elbow",
+    "yLandmark": "landmark.wrist",
     "yOffsetMM": 0
    }
   },
@@ -1714,7 +1714,7 @@
    "args": {
     "panel": "kol",
     "edge": "cap_back",
-    "ratio": 1.25
+    "ratio": 1.14
    }
   }
  ]

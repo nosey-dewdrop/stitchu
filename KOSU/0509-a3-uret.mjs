@@ -131,6 +131,73 @@ export function uret(sha, cikisDizin) {
     uygulanan.push(temiz);
   }
 
+  // ---------------------------------------------------------------- OP'LARI UYGULA
+  //
+  // OLCULEN ARIZA (2026-09-08, ilk 5 teslim): bes farkli elbise BAYT AYNI flat/kalip
+  // uretti. Kok neden ARANDI ve bulundu: `ops[]` bir PROGRAM DEGIL, bir KAYIT.
+  // contract/graf-v1.json: "Uygulanan op kayitlari, sirayla" — yani op'lar zaten
+  // uygulanmis varsayilir ve geometri panels/seams'te durur. engine/src/grafciz-cli.cpp
+  // icinde 'ops' kelimesi HIC GECMIYOR (rg ile olculdu): cizici op'lari calistirmaz.
+  // Motorda applyOp() VAR (engine/src/grafop.cpp) ama onu disari veren bir CLI YOK.
+  //
+  // O CLI'yi yazmak engine/src/ + engine/CMakeLists.txt demek; A3'un izin listesi
+  // disi (madde 3) -> acikSorular'a yazildi, KENDI BASIMA ACMADIM.
+  //
+  // BURADA YAPILAN: op'un geometrik etkisi grafin KENDI diline (landmark referansi)
+  // yazilir. Bu bir kestirme degil, grafin tasarlandigi bicim: kenar zaten
+  // "landmark.knee"ye bagli, extendTo o bagi degistirir. Uygulanamayan op ADIYLA
+  // uygulanamayan[] listesine duser ve raporda gorunur.
+  const uygulanamayan = [];
+  for (const o of uygulanan) {
+    const a = o.args;
+    if (o.op === 'extendTo') {
+      const pn = graf.panels.find((x) => x.id === a.panel);
+      const e = pn && pn.edges.find((x) => x.id === a.edge);
+      if (!e) { uygulanamayan.push({ op: o.op, neden: `kenar yok ${a.panel}/${a.edge}` }); continue; }
+
+      // OLCULEN ARIZA (2026-09-08, ikinci kosum): ilk uygulama `from.landmark`i
+      // yeniden yaziyordu ve KOL PANELINI YIRTTI (grafdogrula: "panel_kapali kol:
+      // underarm_front.to != hem.from", "halka KOPUK kol_agzi"). Kok neden:
+      // bir uc noktasinda `landmark` X CAPASI, y ise AYRI bir alandan
+      // (`yLandmark`) geliyor. Kol hem'inde landmark='landmark.underarm'
+      // (bicepsin x'i) ama yLandmark='landmark.elbow'. landmark'i degistirmek
+      // kenari yatayda baska bir halkaya tasidi, komsu uclarla bulusmaz oldu.
+      //
+      // DOGRUSU: yalniz Y REFERANSI tasinir. Kenarin kendi uclari + AYNI y'ye
+      // bakan butun komsu uclar birlikte, yoksa panel acilir.
+      const yEski = new Set();
+      for (const uc of [e.from, e.to]) {
+        if (!uc) continue;
+        if (uc.yLandmark) yEski.add(uc.yLandmark);
+        else if (uc.landmark) yEski.add(uc.landmark);
+      }
+      if (!yEski.size) { uygulanamayan.push({ op: o.op, neden: `kenar ${a.edge} bir landmark'a bagli degil` }); continue; }
+
+      let dokunulan = 0;
+      for (const k of pn.edges) {
+        for (const uc of [k.from, k.to]) {
+          if (!uc) continue;
+          if (uc.yLandmark && yEski.has(uc.yLandmark)) { uc.yLandmark = a.yLandmark; dokunulan++; }
+          else if (!uc.yLandmark && uc.landmark && yEski.has(uc.landmark)) { uc.landmark = a.yLandmark; dokunulan++; }
+        }
+      }
+      if (!dokunulan) uygulanamayan.push({ op: o.op, neden: `${a.panel}/${a.edge}: tasinacak y ucu bulunamadi` });
+    } else if (o.op === 'gather') {
+      // gather kenari kendi dogrultusunda ratio kat uzatir. Kenar bir dikise
+      // baglıysa dikisin orani guncellenir (contract: "a = buzulen taraf").
+      const s = graf.seams.find((x) => (x.a || []).some((r) => r.panel === a.panel && r.edge === a.edge)
+                                    || (x.b || []).some((r) => r.panel === a.panel && r.edge === a.edge));
+      if (!s) { uygulanamayan.push({ op: o.op, neden: `kenar ${a.panel}/${a.edge} bir dikiste degil` }); continue; }
+      s.ratio = a.ratio;   // dikisin iki tarafi arasindaki oran; cozucu bunu gorur
+    } else if (o.op === 'closure') {
+      const s = graf.seams.find((x) => x.id === a.seam);
+      if (!s) { uygulanamayan.push({ op: o.op, neden: `dikis yok ${a.seam}` }); continue; }
+      s.closure = { type: a.type, fromFraction: a.fromFraction, toFraction: a.toFraction };
+    } else {
+      uygulanamayan.push({ op: o.op, neden: 'uretici bu op\'un geometrik etkisini yazmiyor' });
+    }
+  }
+
   graf.id = `foto-${sha.slice(0, 8)}`;
   graf.notes = `A3 URETIM. Kaynak fotograf: ${okuma.girdiYolu} (sha ${sha.slice(0,12)}).\n`
     + `Bu graf TABAN GRAF (${TABAN}) uzerine, fotograf okumasindan cevrilen op'lar uygulanarak uretildi.\n`
@@ -147,7 +214,7 @@ export function uret(sha, cikisDizin) {
     `${okuma.girdiYolu}\nsha256 ${sha}\ngorunum ${okuma.gorunum}\n`
     + `okuyan ${okuma.okuyan} (llmCagri 0)\narka.koken ${okuma.arka?.koken}\n`);
 
-  return { okuma, grafYol, uygulanan, cevrilemeyen, hedefler, kayiplar };
+  return { okuma, grafYol, uygulanan, cevrilemeyen, hedefler, kayiplar, uygulanamayan };
 }
 
 export function ciz(grafYol, cikisDizin) {
@@ -173,6 +240,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     sha: sha.slice(0, 12), girdi: r.okuma.girdiYolu, cikis: dizin,
     uygulananOp: r.uygulanan.map((o) => o.op),
     cevrilemeyen: r.cevrilemeyen, cozucuHedefi: r.hedefler.length,
-    landmarkKaybi: r.kayiplar, cizim: c,
+    landmarkKaybi: r.kayiplar, uygulanamayan: r.uygulanamayan, cizim: c,
   }, null, 1));
 }
