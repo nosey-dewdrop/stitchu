@@ -45,8 +45,8 @@
   {
    "panel": "yaka_bandi_arka",
    "kenar": "neck_back",
-   "landmarkUst": "landmark.neckBack",
-   "landmarkAlt": "landmark.bust",
+   "landmarkUst": "landmark.nape",
+   "landmarkAlt": "landmark.bustLine",
    "oran": 0.05,
    "bicim": "duz",
    "guven": 0.85,
@@ -55,8 +55,8 @@
   {
    "panel": "yaka_bandi_arka",
    "kenar": "dis_kenar",
-   "landmarkUst": "landmark.neckBack",
-   "landmarkAlt": "landmark.bust",
+   "landmarkUst": "landmark.nape",
+   "landmarkAlt": "landmark.bustLine",
    "oran": 0.55,
    "bicim": "duz",
    "guven": 0.85,
@@ -65,7 +65,7 @@
   {
    "panel": "arka_beden",
    "kenar": "cb",
-   "landmarkUst": "landmark.neckBack",
+   "landmarkUst": "landmark.nape",
    "landmarkAlt": "landmark.waist",
    "oran": 1.0,
    "bicim": "duz",

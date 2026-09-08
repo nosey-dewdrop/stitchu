@@ -57,7 +57,7 @@
    "panel": "on_beden",
    "kenar": "neck_front",
    "landmarkUst": "landmark.neckFront",
-   "landmarkAlt": "landmark.bust",
+   "landmarkAlt": "landmark.bustLine",
    "oran": 0.33,
    "bicim": "kavisli-ic",
    "guven": 0.8,
@@ -107,7 +107,7 @@
    "panel": "kol",
    "kenar": "cap",
    "landmarkUst": "landmark.shoulderTip",
-   "landmarkAlt": "landmark.bust",
+   "landmarkAlt": "landmark.bustLine",
    "oran": 0.0,
    "bicim": "kavisli-dis",
    "buzguAraligi": [

@@ -19,6 +19,7 @@ import json, os, sys, glob, hashlib
 
 BICIM = "json" if "--json" in sys.argv[1:] else "metin"
 sema = json.load(open("contract/vision-graf-v1.json"))
+LM = {k for k in json.load(open("contract/body-v1.json"))["landmarklar"] if k.startswith("landmark.")}
 T = sema["tipler"]
 kirmizi, hukumler = [], []
 
@@ -109,6 +110,15 @@ for yol in dosyalar:
             fail(f"{e}.opDemeti[{i}].neden", f"op '{o.get('op')}' nedensiz (semaya aykiri)")
     if d.get("opDemeti") and nedensiz == 0:
         ok(f"{e}.opDemeti", f"{len(d['opDemeti'])} op, hepsi bir okuma kalemine bagli")
+
+    # landmark adlari body-v1'de GERCEKTEN var mi (uydurma ad = madde 4 ihlali)
+    import re as _re
+    ham = json.dumps(d, ensure_ascii=False)
+    yok = sorted({m for m in _re.findall(r'"(landmark\.[A-Za-z]+)"', ham) if m not in LM})
+    if yok:
+        fail(f"{e}.landmark-adlari", f"body-v1'de olmayan ad: {', '.join(yok)}")
+    else:
+        ok(f"{e}.landmark-adlari", f"{len(set(_re.findall(chr(34)+r'(landmark\.[A-Za-z]+)'+chr(34), ham)))} ad, hepsi contract/body-v1.json'da")
 
     tg = d.get("tabanGraf")
     if tg and not os.path.exists(tg):

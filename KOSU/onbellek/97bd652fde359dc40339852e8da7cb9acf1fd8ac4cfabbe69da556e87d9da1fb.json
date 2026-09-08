@@ -56,7 +56,7 @@
    "panel": "yaka_bandi",
    "kenar": "neck_front",
    "landmarkUst": "landmark.neckFront",
-   "landmarkAlt": "landmark.bust",
+   "landmarkAlt": "landmark.bustLine",
    "oran": 0.0,
    "bicim": "duz",
    "guven": 0.85,
@@ -66,7 +66,7 @@
    "panel": "on_beden",
    "kenar": "anahtar_deligi",
    "landmarkUst": "landmark.neckFront",
-   "landmarkAlt": "landmark.bust",
+   "landmarkAlt": "landmark.bustLine",
    "oran": 0.55,
    "bicim": "kirik",
    "guven": 0.8,
@@ -75,7 +75,7 @@
   {
    "panel": "on_beden",
    "kenar": "gogus_alti",
-   "landmarkUst": "landmark.bust",
+   "landmarkUst": "landmark.bustLine",
    "landmarkAlt": "landmark.waist",
    "oran": 0.18,
    "bicim": "kavisli-dis",
@@ -106,7 +106,7 @@
    "panel": "kol",
    "kenar": "cap",
    "landmarkUst": "landmark.shoulderTip",
-   "landmarkAlt": "landmark.bust",
+   "landmarkAlt": "landmark.bustLine",
    "oran": 0.0,
    "bicim": "kavisli-dis",
    "buzguAraligi": [
@@ -216,7 +216,7 @@
    "args": {
     "panel": "on_beden",
     "at": {
-     "landmarkUst": "landmark.bust",
+     "landmarkUst": "landmark.bustLine",
      "landmarkAlt": "landmark.waist",
      "ratio": 0.18
     },
