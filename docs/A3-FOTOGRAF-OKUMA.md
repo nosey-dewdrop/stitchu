@@ -69,3 +69,18 @@ Onemli olan sonuclardan uc tanesi:
   ZORUNDA; siluet %15 fark verdi -> fark giysiden degil kadrajdan.
 - **Olcum kendini curuttu.** biba-O120579'da 2.16 degeri "bu fotografta benim
   genislik oranlarim kullanilamaz" demek oldu; op'a SUPHELI etiketiyle girdi.
+
+## Kaynaksiz duran tek sayi: belY = 0.55 (DOGRULANMADI)
+
+Poz landmark'i bel cizgisini `belY = omuzY + 0.55 * (kalcaY - omuzY)` ile
+turetiyor (`web/js/vision-landmark.js:72-74`). Bu **0.55** sayisinin kaynagi
+yok: `contract/body-v1.json` bu orani tasimiyor, o yuzden kodda
+`_belYKaynak: "DOGRULANMADI: ..."` etiketiyle duruyor ve contract'a
+YAZILMADI (A3'un izin listesinde yalniz `contract/vision-graf-v1.json` var;
+`body-v1.json` A4'un listesinde).
+
+**A4'te uygulanacak karar (karar ajani, 2026-09-08):** belY orani ya IKI
+KAYNAKLA (antropometrik tablo + olculmus flat seti) `contract/body-v1.json`'a
+yazilir, ya da olcumden turetilir. Kaynaksiz sabit olarak contract'a GIRMEZ.
+Kilitli sozlesmeye kaynaksiz sabit yazmak "uydurma sabit" kalemidir; eksik
+olan KAYNAKTIR, izin degil.

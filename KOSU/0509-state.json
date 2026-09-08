@@ -69,7 +69,10 @@
   "[A4'E DEVREDILDI, 2026-09-08 hakem] On ve arka pens agzi birebir ayni (8.96/8.96); cozucu supresyonu pensler arasinda ESIT paylastiriyor. Gercek kalipta arka bel pensi onden BELIRGIN genistir (kurek/bel kavisi). Kalibin bele oturmasini etkiler, olcen kapi yok.",
   "[A4'E DEVREDILDI, 2026-09-08 hakem] Etek pensleri gogus-bel payindan besleniyor; KALCA-bel farki hicbir kapinin sorusu degil.",
   "[BILGI, 2026-09-08 hakem] Supresyon her bedende 215.00mm SABIT: Burda tablosunda gogus ve bel ayni adimla (40mm) buyuyor. Beden serisi pens agzini hic degistirmiyor; agzin olcuye duyarliligi yalniz contract elle bozulunca gorulur. A4/A7'de bilinsin.",
-  "[DUZELTME, 2026-09-08 hakem] Onceki hakemin 'EU34..EU44 diye beden YOK' iddiasi YANLIS. gradeTablosu.bedenler gercek (kaynak contract/tables.json draft.euSizeChart), motor Body::graded (body.cpp:86) okuyor. DOGRUSU: 8 ad, 7 BAGIMSIZ olcu seti (gercek36 == EU36, ayni insan iki kaynaktan). Disari 'sekiz bedende dogrulandi' DEGIL, 'yedi bagimsiz olcu setinde' denir."
+  "[DUZELTME, 2026-09-08 hakem] Onceki hakemin 'EU34..EU44 diye beden YOK' iddiasi YANLIS. gradeTablosu.bedenler gercek (kaynak contract/tables.json draft.euSizeChart), motor Body::graded (body.cpp:86) okuyor. DOGRUSU: 8 ad, 7 BAGIMSIZ olcu seti (gercek36 == EU36, ayni insan iki kaynaktan). Disari 'sekiz bedende dogrulandi' DEGIL, 'yedi bagimsiz olcu setinde' denir.",
+  "[A6a'YA DEVREDILDI, 2026-09-08 karar ajani — KARAR 2] OP SOZLUGU EKSIK: setNeckline, addPanel, addClosure, addPatch, mergeSeam karsiliksiz. A3'te bes teslimin DORDUNUN bayt ayni cikmasinin asil sebebi bu (kok neden KOSU/ciktilar/giris/HUKUM.md'de md5 kanitiyla yazili). Kapanacak adim A6a (grafderle koprusu: spec -> op dizisi -> graf); A6b kalan kompozisyonlar + kol kapisiyla dogrular. Olculdu: teslim graf.json'da seams = omuz, yan_beden, kol_oyugu, bel, yan_etek, kol_alti, arka_orta_beden(zipper), arka_orta_etek(zipper) — arka orta dikis ve kapanma VAR, yani addClosure'in tikanmasi A2 regresyonu DEGIL, ON ORTA dikisi doguracak panel-bolme yetenegi yoklugudur: sozluk/derleme isi, cozucu ya da taban graf kusuru degil. 11.7 YENIDEN AC gerekmiyor (kok neden onceki adimda degil, henuz yazilmamis katmanda). A5 arasinda kalir: A5'in 8 edit'i bu bes op'a BAGIMLI OLANLARI (yaka V olsun, yan cep, etek ucuna firfir) kapsadigi icin A5 isçisi eksik op'u 'absent' ADIYLA ilan eder, SESSIZ ATLAMAZ; A6a'da kapandiktan sonra A6b'de yeniden kosulur. HEDEF madde 9 (sabit menu yasagi) geregi bunlar 'ozellik' degil primitif sozluk; A3'te tek tek eklenmeleri madde 9 ihlali olurdu.",
+  "[DAMLA'NIN, HICBIR ISCI DEGISTIRMEZ — 2026-09-08 karar ajani, KARAR 4] GIRDI/hedef-fotograflar/biba-O1194418-dress-arka.jpg dosya ADI YANLIS: icerigi ON. Dosya adi DEGISTIRILMEZ (GIRDI/ salt okunur, madde 3). Mevcut cozum dogru ve yeterli: okumada gorunum='on' + ADLANDIRMA_CELISKISI ilani duruyor (KOSU/onbellek/4e446902ceaa49ab1e83a3abf5315e220acfc10682c0cc24a3a61db69b9fde8c.json:11; KOSU/regresyon/girdiler.json:34). Gercek on+arka cifti olarak mary-quant-O365926 AYRICA teslim edilmis, yani brief'in 'biri on+arka cifti' sarti fiilen karsilanmis, teslim eksik degil. A6'nin 10 fotograf secimi bu dosyayi 'arka' olarak KULLANMAZ. Yanlis adi sessizce 'arka' saymak 12.6 ihlali olurdu.",
+  "[A4'E DEVREDILDI, 2026-09-08 karar ajani — KARAR 5] belY orani = omuz + 0.55*(kalca-omuz) KAYNAKSIZ; contract/body-v1.json bu orani tasimiyor. A3'te contract'a YAZILMADI (A3IzinListesi'nde yalniz contract/vision-graf-v1.json var; body-v1.json A4'un listesinde, 13.18). A4'te uygulanacak karar: belY orani ya IKI KAYNAKLA (antropometrik tablo + olculmus flat seti) contract/body-v1.json'a yazilir ya da OLCUMDEN turetilir; KAYNAKSIZ SABIT OLARAK CONTRACT'A GIRMEZ. A3'te yapilan tek sey ilanin adiyla durmasi: web/js/vision-landmark.js:72-74 (_belYKaynak: 'DOGRULANMADI: ...') ve docs/A3-FOTOGRAF-OKUMA.md. Gerekce: kaynaksiz sabiti kilitli sozlesmeye yazmak 3.7 'uydurma sabit' kalemidir; eksik olan KAYNAKTIR, izin degil."
  ],
  "banned": [
   "izin disi dokunus: engine/tests/0509-kapi-kendi-check.sh, engine/tests/0509-kapi-sizinti.py, engine/tests/0509-kapi-tablo.mjs, engine/tests/0509-karar-kabul.sh"
@@ -188,7 +191,13 @@
   "2026-09-07 A2a: H7 kok sebep = kosucu izinAlt (4 glob) ile state A2bIzinListesi (3 glob) celisiyordu; A1b kalintisi 6 dosya yazilabilir kalmisti. Kilit DAR (daha siki) ilana gore yeniden kuruldu, ilan GENISLETILMEDI. chmod committe tasinmadigi icin kosucu her --kilit cagrisinda tekrar edecek: kosucu/state tek kaynaga inmeli (acikSorular).",
   "[A2 Q1 2026-09-07] izin listesi TEK KAYNAK = KOSU/0509-state.json <altAdim>IzinListesi. Kosucu stateIzinListesi() ile okur; --kilit ve --kilit-diff yalniz bu listeyle cagrilir; faz.izin/izinAlt BRIEF metnidir, yetki degil; ilan yoksa liste bos -> kilit acilmaz, adim BASLAMAZ. Uygulama: KOSU/0509-kosu.js stateIzinListesi + el() _izin (commit d9adf9de).",
   "[A2 Q2 2026-09-07] YENI KARAR YOK: kilit her alt adim basinda fiilen yeniden kurulur, kaniti --kilit satiri + --kendi-check H7 satiri; zaten 0509-kosu.js el('basla') icinde yazili, ek is acilmadi.",
-  "[A2 Q3 2026-09-07] Bir kerelik izinler yeni alt adim el('basla') --kilit'ten ONCE kosucu tarafindan dusurulur: ILAN_GECIS + ilanGecisi(); A2c'de A2bIzinListesi -= engine/tests/0509-kapi.sh ve A2cIzinListesi = ['engine/CMakeLists.txt'] tek commit'te, ardindan H7 okunur. Isci kendi iznini ilan edemez (commit d9adf9de)."
+  "[A2 Q3 2026-09-07] Bir kerelik izinler yeni alt adim el('basla') --kilit'ten ONCE kosucu tarafindan dusurulur: ILAN_GECIS + ilanGecisi(); A2c'de A2bIzinListesi -= engine/tests/0509-kapi.sh ve A2cIzinListesi = ['engine/CMakeLists.txt'] tek commit'te, ardindan H7 okunur. Isci kendi iznini ilan edemez (commit d9adf9de).",
+  {
+   "tarih": "2026-09-08",
+   "adim": "A3",
+   "karar": "KARAR AJANI 5 CEVAP + 1 EK. (1) applyOp CLI'si A5'te acilir -> A5IzinListesi yazildi, A3 genisletilmez. (2) Op sozlugu eksigi (setNeckline/addPanel/addClosure/addPatch/mergeSeam) A6a'ya adiyla baglandi; A5 arada 'absent' ilan eder. (3) izin listesi tek-kaynak sorusu KAPALI — uyari BAYAT, KARAR Q1 (2026-09-07) zaten uygulanmis (0509-kosu.js:396-410 stateIzinListesi() YALNIZ state.json'u okuyor; :420-421,:428,:436 tek degerden besleniyor; faz.izin olu metin). (4) GIRDI dosya adi degistirilmez, ilan yeterli, A6 onu 'arka' saymaz. (5) belY=0.55 simdi contract'a girmez, A4'te kaynakli girer ya da hic girmez. EK: A3 icin DEVAM/DUR VERILMEDI — HAKEM HUKMU YOK (adimDurumlari.A3='ISI BITTI (hakem yargilar)', KOSU/ciktilar/ altinda A3'e ait hakem cikti dosyasi yok). Zincir §11.1 ISCI -> HAKEM -> GECTI/KUSUR; siradaki adim A3'e TAZE HAKEM (10.1: once terzi/geometri merceği). Isçinin ilan ettigi kusur (5 teslimin 4'u bayt ayni) bir SATIS ENGELI adayidir; satis engeli olup olmadigini 10.1 geregi HAKEM olcer. DEVAM sarti bos kalmasin diye kalan kusur simdiden ADIYLA baglandi: 'op sozlugu eksik -> A6a', 'applyOp CLI yok -> A5'.",
+   "uygulandi": true
+  }
  ],
  "ilkYesil": {
   "emsal_mm_olcum": "A1b",
@@ -263,7 +272,15 @@
    "arac_onarimi": "H7 yazilirken 'python3 - <arg> <<HEREDOC' kalibinin BOZUK oldugu bulundu: heredoc stdin'i kaplar, script stdin'den okunacagi icin argüman KOD olarak calisir ve dosya listesi hic okunmaz -> gecit her zaman 0 basar, ASLA kizarmaz. Suzgec ve okuyucu AYRI dosyalara ($TMPD) alindi. Negatif test: golden-reference.csv u+w yapilinca H7 FAIL (1 izin disi), geri kurulunca OK (0).",
    "kabulKomutu_notu": "Q1 kurali METRIK GECMISINDEN BAGIMSIZ olcusun diye komut sabit bir 'dusurulen' listesi beklemez (o liste metrik.jsonl'in son 3 satirina bagli, ornegin sanalDikisMM null gelirse seriden zaten cikar): KURALI olcer — esik altindaki her metrik dusurulmus, dusurulen her metrik esik altinda olmali. Falsifiye edildi: engine/golden-reference.csv u+w yapilinca exit 1 (H7), geri kurulunca exit 0."
   },
-  "A2_Q1_Q2_Q3_2026-09-07": "UYGULANDI (KOSU/0509-kosu.js, commit d9adf9de; H7 YESIL 18/18)"
+  "A2_Q1_Q2_Q3_2026-09-07": "UYGULANDI (KOSU/0509-kosu.js, commit d9adf9de; H7 YESIL 18/18)",
+  "karar_ajani_2026-09-08_A3": {
+   "karar1_applyOp_CLI": "UYGULANDI: state.A5IzinListesi + A5IzinListesi_ne yazildi. A3IzinListesi degismedi.",
+   "karar2_op_sozlugu": "UYGULANDI: devredilen[] 'op sozlugu eksik -> A6a' adiyla; A5 'absent' ilan sarti yazildi.",
+   "karar3_izin_tek_kaynak": "IS YOK (bayat uyari). Dogrulandi: 0509-kosu.js:396-410 stateIzinListesi() yalniz state.json okuyor; :420-421/:428/:436 tek degerden besleniyor.",
+   "karar4_girdi_dosya_adi": "UYGULANDI: devredilen[] 'GIRDI dosya adi yanlis; teslim gecerli, ad Damla'nin; A6 onu arka saymaz'.",
+   "karar5_belY_0.55": "UYGULANDI: devredilen[] A4'e baglandi; ilan web/js/vision-landmark.js:72-74 ve docs/A3-FOTOGRAF-OKUMA.md'de adiyla duruyor.",
+   "ek_devam_dur": "VERILMEDI: hakem hukmu yok. A3'e taze hakem kosulur."
+  }
  },
  "acikEngeller": [
   {
@@ -392,7 +409,7 @@
  "adimDurumlari": {
   "A1": "GECTI",
   "A2": "GECTI (2026-09-08 hakem, kosu disinda elle kapatildi)",
-  "A3": "ISI BITTI (hakem yargilar)"
+  "A3": "ISI BITTI; KARARLAR UYGULANDI (2026-09-08); DEVAM/DUR YOK — TAZE HAKEM BEKLIYOR"
  },
  "A1_kapanis_notu": "6 Eyl, ana oturum: kosu 8.5 butce asimiyla DURDU olarak kapanmisti, ama hakem A1a ve A1b'yi GECIRDI (altAdim) ve karar ajani hukmu 'DEVAM — A1b GECTI, A2 ACIK' (A1_gecit_karari.hukum). Butce asimi 8.5'e gore protokol hatasi sinyalidir, urun kusuru degil; A1 urunu degistirmedi. Ana oturum kabul komutlarini KENDI kostu ve yesil olduklarini olctu: 'bash engine/tests/0509-kapi.sh --kendi-check' -> OZET 17 hukum gecti, 1 kirmizi (ilanli flat_ayni_insan_check); 'node engine/tests/0509-emsal-olcum.mjs --json' -> JSON dondu; 'node engine/tests/0509-wasm-sanity.mjs' -> JSON dondu, tabandanFark []. Bu yuzden durum GECTI'ye cevrildi; esik gevsetilmedi, verilmis hukum kaydedildi. A1 YENIDEN KOSULMAZ (26 commit tekrar yanmasin); sirada A2.",
  "A2b_pencereler": {
@@ -497,5 +514,11 @@
   "teslim": "KOSU/ciktilar/giris/1..5 (graf.json, flat.svg/png, kalip-36.svg/png, kaynak-yolu.txt, dikilebilir.md) + giris-foto-5.png",
   "acikKusur": "5 teslimin 4'u BAYT AYNI flat/kalip uretiyor. Kok neden olculdu ve KOSU/ciktilar/giris/HUKUM.md'de yazili: (1) ops[] bir program degil kayit, grafciz op calistirmaz, applyOp'u disari veren CLI yok; (2) 1/2/4'un okumasi taban grafin zaten oldugu landmark'lara cozunuyor -> uygulanan fark sifir. Dar bogaz OKUMA DEGIL, OP SOZLUGU.",
   "kapanacakAdim": "A6/A6c (op sozlugu + cumle->graf); applyOp CLI'si icin acikSorular"
- }
+ },
+ "A5IzinListesi": [
+  "engine/src/grafop.hpp, engine/src/grafop.cpp (applyOp disari verilir)",
+  "engine/src/grafuygula-cli.cpp (yeni ikili: graf.json + op JSON -> yeni graf.json)",
+  "engine/CMakeLists.txt (yalniz ekleme: add_executable grafuygula)"
+ ],
+ "A5IzinListesi_ne": "KARAR 1 (2026-09-08 karar ajani): applyOp'u disari veren CLI A5'te acilir, A3 ya da A6'ya YAZILMAZ. A5 isçisinin ILK teslimi bu ikilidir. Gerekce: A5'in teslimi (KOSU/0509-kosu.js:254-256) KOSU/ciktilar/edit/etkilenen-<op>.json'un grafop.cpp icinde CALISMA ZAMANINDA BFS ile yazilmasini ve edit_locality_check'in o dosyayi okumasini sart kosuyor; bu dosyayi uretecek tek yol applyOp'u calistiran bir ikilidir. CLI olmadan A5 teslim edilemez -> A5 yapisal olarak ilk zorunlu sahibi. A3'un izin listesi GENISLETILMEZ. Olculdu: grafop.cpp:459 applyOp var, hicbir add_executable onu cagirmiyor; grafciz-cli.cpp'de 'ops' gecmiyor."
 }
