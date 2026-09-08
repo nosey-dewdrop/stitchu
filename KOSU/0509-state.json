@@ -1,27 +1,25 @@
 {
   "adim": "A3",
-  "durum": "HAZIR",
-  "deneme": 0,
+  "durum": "ISCI",
+  "deneme": 1,
   "butce": {
-    "tag": "adim-A2a-once",
-    "commit": 2,
+    "tag": "adim-A3-once",
+    "commit": 0,
     "derlemeCommit": 0,
-    "saat": 7.51,
-    "olcumTarihi": "2026-09-07T08:15",
-    "altAdim": "A2a/A2b",
+    "saat": 0.0,
+    "olcumTarihi": "2026-09-08T13:55",
+    "altAdim": "A3",
     "kilitIhlali": [],
     "yerelMinimum": false,
-    "metrikSerisi": "sanalDikisMM 0 -> 0 -> 0 (esik 2.0 alti, seriden dusuruldu); anaSapmaMM 0.693 sabit (A4 yukumlulugu, A2'de seriye girmez)",
+    "metrikSerisi": "cpp.dallanma 436 (taban 436, esit); js.dallanma 18 / js.sabitMM 2 / js.metin 34 (hepsi taban); anaSapmaMM 0.693 ve sanalDikisMM esik alti, seriden dusuruldu",
     "kapiBozuk": false,
-    "gecitYesil": false,
-    "kirmizilar": [
-      "flat_ayni_insan_check = 1 (esik 0) — ILANLI KIRMIZI, tavan 34, A4'te kapanacak"
-    ],
+    "gecitYesil": true,
+    "kirmizilar": [],
     "regresyonFarki": [
       "kosmadi: K2-prenses-roba (flatSVG firlatti, beklenen DUSER); fark=0"
     ]
   },
-  "tag": "adim-A2a-once",
+  "tag": "adim-A3-once",
   "yol": [
     "A1",
     "A2",
@@ -29,7 +27,8 @@
     "A2-yeniden",
     "A2a-faz",
     "A2-H7-kilit-kirmizi",
-    "A2a-faz-H7-kirmizi-2"
+    "A2a-faz-H7-kirmizi-2",
+    "A3"
   ],
   "taban": {
     "cpp.dallanma": 436,
@@ -231,7 +230,8 @@
     "A1a": "GECTI",
     "A1b": "GECTI (teslimler yesil; olcek_check durust henuz-yok, A2 bekliyor)",
     "A2a": "GECTI (2026-09-07 yeniden dogrulandi: H7 kilit onarildi, kendi-check 18/18, solver_check 37 hukum, hedefli ctest 4/4, KABUL P1 GECTI, sanalDikis 0.00mm/8 beden, enum 436 taban korundu)",
-    "A2b": "GECTI (2026-09-08 hakem: A2 GECTI. Dort olcut olculdu: pens 8 dartLeg/bacak farki 0.01mm, kapanma 7 halka + 2 zipper + ERR_NOT_WEARABLE kirmizi basabiliyor, sanalDikis vacuous degil, yanlislama 0.0->20.0. solver_utils bagli ve is yapiyor: gogus 840/880/920 -> pens agzi 8.96/10.62/12.29)"
+    "A2b": "GECTI (2026-09-08 hakem: A2 GECTI. Dort olcut olculdu: pens 8 dartLeg/bacak farki 0.01mm, kapanma 7 halka + 2 zipper + ERR_NOT_WEARABLE kirmizi basabiliyor, sanalDikis vacuous degil, yanlislama 0.0->20.0. solver_utils bagli ve is yapiyor: gogus 840/880/920 -> pens agzi 8.96/10.62/12.29)",
+    "A3": "ACIK"
   },
   "kararUygulandi": {
     "karar1": "state.json ilanliKirmizi + kabul komutu H9/H10 (tavan 34) ile olculuyor",
