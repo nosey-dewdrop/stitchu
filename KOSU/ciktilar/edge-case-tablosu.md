@@ -1,6 +1,6 @@
 # EDGE CASE SÜPÜRME TABLOSU (M4-edge)
 
-üretildi: `node engine/tests/edge_case_supurme_check.mjs` · 2026-09-06
+üretildi: `node engine/tests/edge_case_supurme_check.mjs` · 2026-09-08
 
 YASA: her vaka ya geçerli bir çıktı verir ya **adıyla** reddedilir ve reddin yanında
 kullanıcının yapabileceği **sonraki adım** durur. Sessiz çöküş 0, sessiz default 0,
@@ -63,3 +63,12 @@ etiket tarafı bankalı okuma JSON'ları, kalıp tarafı sevk edilen wasm baytı
 | kumaş | örme, crosswise streç %95 | KALIP TEMİZ | 5 parça |
 | motor | asimetrik pat + ön ortası görünür fermuar | KALIP 5 parça | issues 0 |
 | motor | editExtendMM = -50 (negatif uzatma) | ADIYLA RED (2 adım · uygulanan 0) | UZATILMADI: istenen -50.0000 mm. uzatma mm'si pozitif degil; bir kalibi negatif uzatmak KISALTMAKTIR ve bu operator kisaltmaz — ayri bir islemdir, sessizce yapilmaz |
+| A3 foto | dosya adi "-arka" ama icerik ON (biba-O1194418) | ADIYLA CELISKI | gorunum="on" yazildi, arka.koken="turetildi"; olcum kaniti boy/omuz 2.3459 vs 2.3199, belKonum 0.3570 vs 0.3552 (ayni yuz). Dosya adi DEGISTIRILMEDI (GIRDI/ salt okunur) |
+| A3 foto | onbellegi olmayan fotograf (ossie-clark-O46229) | ADIYLA RED | ERR_NO_CACHE: "Fotograf okumasi icin dis cagri YAPILMAZ (anahtar yok). Canli worker A10'da, yalniz kredi varsa." Sessiz "promptla devam" YOK |
+| A3 foto | sema disi worker cevabi, 2 yeniden istemede duzelmiyor | GUVENLI TABAN | ERR_FALLBACK_BASE + gorunur ilan: "Fotografin tam okunamadi, sade bir tabandan basladim, yaziyla duzelt." RET DEGIL (8.8). 3 cagri (1 ilk + 2 yeniden) |
+| A3 foto | poz landmark'i manken cekiminde (4/5 fotograf) | ADIYLA OLCULEMEDI | ERR_NO_POSE — model insan pozu icin egitildi, girdi manken/aski. Tek isabet biba-O120579 (guven 0.759, basi ve kollari olan cekim) |
+| A3 foto | poz bulundu ama guven 0.180 (mary-quant-O365926) | ESIK ALTI, KULLANILMADI | Dusuk guvenli pozu olcum diye kullanmak siluetten daha kotu olurdu; okumada olculmedi[] satirinda adiyla |
+| A3 foto | siluet "en genis nokta" = omuzun 2.16 kati (biba-O120579) | OLCUM KENDINI CURUTTU | Deger giysinin degil ACIK KOLLARIN genisligi; poz landmark'i dogruladi (kolBoyu/omuzGen 1.2083). Op'a SUPHELI etiketiyle girdi |
+| A3 foto | ayni giysinin on/arka boyu %15 farkli olculdu | KADRAJ HATASI ILAN | Ayni giysinin iki yuzu ayni boyda olmak zorunda -> fark olcumun degil cekimin; op'a semantik oran girdi |
+| A3 motor | okuma op'u motorun sozlugunde yok (setNeckline/addPanel/addPatch/mergeSeam) | ADIYLA CEVRILEMEDI | dikilebilir.md "cevrilemeyen" tablosu; sessizce atlanmadi. Kapanacak adim A6/A6c |
+| A3 motor | extendTo ile kol hem'i tasinirken landmark (x capasi) yeniden yazildi | PANEL YIRTILDI, ONARILDI | grafdogrula: "panel_kapali kol: underarm_front.to != hem.from" + "halka KOPUK kol_agzi". Kok neden: y referansi ayri alanda (yLandmark); yalniz o tasinmali |
