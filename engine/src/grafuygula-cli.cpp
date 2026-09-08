@@ -75,7 +75,9 @@ int main(int argc, char** argv) {
         for (const HedefSatir& h : hs) std::fprintf(stderr, "hedef: %s\n", h.metin.c_str());
     }
     if (!id.empty()) r.g.id = id;
-    r.g.notes = taban.notes + (taban.notes.empty() ? "" : "\n") + "grafuygula: taban " + taban.id + " + " + std::to_string(ops.size()) + " emir (" + argv[2] + ")";
+    // notes: taban notu + uretim satiri + (varsa) HEDEF satirlari (hedefUygula ekledi; uzerine YAZILMAZ — hakem A3 tur 2 devri)
+    r.g.notes = taban.notes + (taban.notes.empty() ? "" : "\n") + "grafuygula: taban " + taban.id + " + " + std::to_string(ops.size()) + " emir (" + argv[2] + ")"
+              + (r.g.notes.size() > taban.notes.size() ? "\n" + r.g.notes.substr(taban.notes.size() + (taban.notes.empty() ? 0 : 1)) : "");
     const std::string out = toJSONText(r.g);
     std::fwrite(out.data(), 1, out.size(), stdout);
     std::fprintf(stderr, "uygulanan %zu op; %zu panel, %zu dikis\n", ops.size(), r.g.panels.size(), r.g.seams.size());

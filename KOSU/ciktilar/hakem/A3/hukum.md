@@ -44,3 +44,29 @@ giris-foto-5.png: bes satir, solda flat sagda kalip. 1 ve 2 goze birebir ayni (m
 Zemin sorusu: primitif motor (grafuygula + grafciz --ops + 19 op + ic halka pens) uzerine A4-A12 kurulur; ama olcum borusu takilmadan "fotograftan olcu" iddiasi hic test edilmemis kalir. Kusur 1 kapaninca ALIRDIM.
 
 Sure: 38 dk.
+
+---
+
+# TUR 2 — 2026-09-09, HEAD 9bb0e9d9 (10.1: yeni kusur acilmadi, tur 1 kusurlari olculdu)
+
+**NIHAI HUKUM: BITTI.** Tur 1'in tek ENGEL'i (olcum motora girmiyor) olculerek kapandi; kusur 2 ve 4 kapandi; kusur 3 A4'un isi. Yeni gorulenler devredilene yazildi.
+
+| kusur | durum | kanit |
+|---|---|---|
+| 1 — olcum motora girmiyor (ENGEL) | **KAPANDI** | `grafdogrula --md --hedef` 'siluet-orani' satiri 5/5 = 1 (olcutum >=1). Grafta gercek etki: girth.waist ease 25 -> 0 mm bes teslimde (taban 25). kabul.sh `N_hedef_motora` 5/5 OK, sapma 0.227-0.352. Kirpma ilanli: grafciz stderr "gereken bolluk -241.14 mm, uygulanan 0 mm (onceki 25; SINIRA KIRPILDI)", dikilebilir.md 61-65 ayni satir. Sessiz yutma yok. contract cozucu.hedef easeMinMM 0 kaynakli, easeMaxKat 2.0 DOGRULANMADI etiketli. |
+| 1 — "md5 5" olcutum | **GERI CEKILDI** | Fiziksel olarak yanlis olcuttu: 1 ve 2 ayni elbisenin ayni on yuzu, ayni op listesi; iki cekimin %2 olcum gurultusu (0.4954 / 0.5063) farkli kalip uretmemeli — uretseydi motor gurultuyu kaliba tasiyor olurdu. Ikisi ayni alt sinira kirpilinca ayni flat = dogru davranis. md5 4/5 kabul. |
+| 2 — tamlik listesi giysi adiyla | **KAPANDI** | tamlik.py yeniden kostum (tam=3 kismi=9 red=0); `grep -cE '^- (kisa kol\|lastik\|wrap on\|buzgulu boyun)'` = 0. Uc kova. Kova 1, 7 kalem, hepsi op imzasi: extendTo{yLandmark,yLandmark2,yLerp}, slashSpread{panel,edge,ratio}, resew{seam,a,b} (P7, P8), joinEdges{panel,edgeA,edgeB}, dart{panel,mouth a/b,apexUp,apexDown}, setGrain{panel,deg}. Kova 2 (A4 cozucu/kapi) 3, kova 3 (okuma/program) 14. |
+| 3 — croquis flat | bu turda olculmedi | A4, buFazinKusuru=false |
+| 4 — overlay kontak | **KAPANDI** | `_yerel/giris/overlay-{1..5}.png` 5 dosya; gitignore OK, `git ls-files _yerel` = 0. overlay-4.png'yi actim: solda Mary Quant fotografi, sagda flat %55 saydam; govde/cep/yaka fotografla hizali, kol panelleri 45 derece yukari cikip fotografin disina tasiyor — A4 kusuru artik gozle gorunuyor, overlay isini yapiyor. |
+| not — istisna sira numarasina bagli | **KAPANDI** | kabul.sh:52 govde = kaynak-yolu.txt dosya koku ('-arka' + uzanti atilir); :108 farkli govde ayni flat = FAIL; :109 ayni govde = BILGI. Cikti: "flat_ayni_1_2 BILGI ayni govde iki cekim (biba-O1194418-dress)". |
+
+**Bayat build — KAPANDI.** Binary'ler ve grafop.cpp/grafop.hpp/grafdogrula-cli.cpp 02:20; daha yeni .cpp yok. `grafciz --ops --hedef` yeniden cizim md5 69533a50 == giris/4/flat.svg; `grafuygula --hedef` yeniden uretim md5 7849af3c == giris/4/graf.json. ctest hedefli 4/4.
+
+**Yeni gorulen — DEVREDILEN (kusur acilmadi):**
+1. graf.json notes'unda HEDEF kaydi YOK. grafuygula'yi `--hedef` ile kendim yeniden kostum: notes'ta 'hedef' 0. grafuygula-cli.cpp:4 yorumu ve kaynak-yolu.txt "sinir kirpmasi notes'ta" diyor — yanlis; kayit stderr/dikilebilir.md/kabul.sh'ta var, graf artefaktinda yok. Graf'i tek basina okuyan (A4+) bel bollugunun neden 0 oldugunu goremez. Kapanis: `grep -c siluet-orani giris/4/graf.json` >= 1. A3 tek satir ya da A4.
+2. Hedef birimi: "bel/enGenis" siluet GENISLIK orani, girth.waist/girth.bust CEVRE orani olarak veriliyor; bes fotografta gereken bolluk yaklasik -200 mm, hepsi 0'a kirpiliyor. Boru dogru, olcum yanlis birimde: olcumun kaliba etkisi bes fotografta AYNI. Isci dikilebilir.md:65'te bunu kendi yazmis. Kapanis A6c/A4 okuma kalibrasyonu: genislik -> cevre donusumu (ya da enGenis yerine gogus hizasi genisligi) ve en az bir fotografta kirpilmamis hedef (sapma < 0.05).
+3. A4 devirleri aynen duruyor: flat_ayni_insan_check 34, supresyon %33.33 tautolojisi, on=arka pens agzi 17.92/17.92.
+
+**alirMiydim: ALIRDIM** — primitif motor (grafuygula + grafciz --ops + 19 op + ic halka pens + hedef borusu) uzerine A4-A12 kurulur: op'suz cizim kirmizi, gevsetme 0, alan disi 0, olcum artik grafi degistiriyor ve kirpildigini soyluyor. Sart: hedef birimi duzeltilmeden "fotograftan olcu" disari SOYLENMEZ — bugun bes fotografin hepsi ayni sinira dusuyor, olcumun ayirt edici etkisi henuz sifir.
+
+Sure (tur 2): 18 dk.
