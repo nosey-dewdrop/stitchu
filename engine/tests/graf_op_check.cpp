@@ -301,6 +301,113 @@ int main(int argc, char** argv) {
       OpCtx bos; CozumSonucu cz5 = cozumle(g, body, false, bos);
       ok(!cz5.ok && cz5.hata.find("OpCtx") != std::string::npos, "  negatif: contract cozucu yuklenmeden cozumle reddi: " + cz5.hata); }
 
+    // ---- 2026-09-09 primitifler (Damla karari): sew / merge / drop / addPanel / reshapeEdge kind
+    // JSON arg ile (applyOp), grafuygula ve grafciz --ops'un kullandigi yol.
+    auto J = [&](const std::string& metin) { JVal v; std::string e; if (!parse(metin, v, e)) throw std::runtime_error("test json: " + e); return v; };
+    auto ap = [&](const Garment& g0, const std::string& op, const std::string& args) { return applyOp(g0, {op, J(args)}, ctx); };
+    // sew: on orta kat kenari kendi ayna kopyasiyla dikilir (on kapanma) -> fold->seam, onFold=false, cutCount 2
+    Garment gSew;
+    { OpResult r = ap(g, "sew", R"({"seam":"on_orta","a":[{"panel":"on_beden","edge":"cf"},{"panel":"on_etek","edge":"cf"}],"b":[{"panel":"on_beden","edge":"cf"},{"panel":"on_etek","edge":"cf"}],"reverse":true,"ratio":1})");
+      ok(r.ok, "sew on_orta (cf x2, kendi aynasiyla): " + (r.ok ? "ok" : r.hata)); if (!r.ok) return 1;
+      const Panel* p = r.g.panel("on_beden"); const Panel* q = r.g.panel("on_etek");
+      ok(p->edge("cf")->kind == "seam" && q->edge("cf")->kind == "seam", "  cf kenarlari fold -> seam");
+      ok(!p->onFold && p->cutCount == 2 && !q->onFold && q->cutCount == 2, "  kat acildi: onFold=false, cutCount=2");
+      ok(r.g.seam("on_orta") && r.g.seam("on_orta")->a.size() == 2 && r.g.seam("on_orta")->reverse, "  dikis eklendi (2 kenarli zincir, reverse ilan edildi)");
+      ok(locality(g, r.g, {"on_beden", "on_etek"}, why), "  locality: diger 3 panel bayt-ayni " + why);
+      OpResult c = ap(r.g, "closure", R"({"seam":"on_orta","type":"buttons","fromFraction":0.05,"toFraction":0.8})");
+      ok(c.ok, "  closure buttons on_orta: " + (c.ok ? "ok" : c.hata));
+      gSew = c.g;
+      { DogrulamaRaporu R2 = dogrula(c.g, body, contract); int topo = 0; for (const Hukum& h : R2.hukumler) if (h.kural == "topoloji" && !h.gecti) ++topo;
+        ok(topo == 0, "  dogrulayici topoloji: ayna kapanmasi kabul (0 topoloji kirmizisi)"); }
+      OpResult n = ap(g, "sew", R"({"seam":"x","a":[{"panel":"on_beden","edge":"dart_on_beden.1"}],"b":[{"panel":"on_beden","edge":"cf"}],"reverse":false})");
+      ok(!n.ok && n.hata.find("pens bacagi") != std::string::npos, "  negatif: dartLeg dikise girmez: " + n.hata);
+      OpResult n2 = ap(g, "sew", R"({"seam":"x","a":[{"panel":"on_beden","edge":"cf"}],"b":[{"panel":"on_beden","edge":"cf"}]})");
+      ok(!n2.ok && n2.hata.find("reverse") != std::string::npos, "  negatif: reverse ilansiz red: " + n2.hata);
+      OpResult n3 = ap(g, "sew", R"({"seam":"omuz","a":[{"panel":"on_beden","edge":"cf"}],"b":[{"panel":"on_beden","edge":"cf"}],"reverse":true})");
+      ok(!n3.ok && n3.hata.find("zaten var") != std::string::npos, "  negatif: var olan dikis id: " + n3.hata); }
+
+    // merge: on beden + on etek bel boyunca tek panel; bel dikisi arka icin kalir, ikinci merge ile kalkar
+    { OpResult r = ap(g, "merge", R"({"seam":"bel","panelA":"on_beden","panelB":"on_etek","panel":"on_govde"})");
+      ok(r.ok, "merge on_beden+on_etek (bel): " + (r.ok ? "ok" : r.hata)); if (!r.ok) return 1;
+      const Panel* m = r.g.panel("on_govde");
+      ok(m && !r.g.panel("on_beden") && !r.g.panel("on_etek") && r.g.panels.size() == 4, "  4 panel: on_govde var, on_beden/on_etek yok");
+      ok(m && m->closed(&why), "  birlesik panel kapali: " + why);
+      ok(m && m->edge("cf.1") && m->edge("cf.2") && m->edge("hem_front") && m->edge("neck_front") && !m->edge("waist_front.1"), "  kenarlar: cf.1/cf.2 (catisma), hem_front, neck_front; bel kenarlari gitti");
+      ok(m && m->reason.find("dusen pens bacaklari") != std::string::npos && m->reason.find("dart_on_beden.1") != std::string::npos, "  dusen pens bacaklari reason'da ADIYLA (ic pens tasinmiyor, bilinen sinir)");
+      const Seam* bel = r.g.seam("bel");
+      ok(bel && bel->a.size() == 2 && bel->b.size() == 2 && bel->a[0].panel == "arka_beden", "  bel dikisi arka icin kaldi (2+2 kenar)");
+      bool ringOk = false; for (const Ring& ri : r.g.rings) if (ri.id == "etek_ucu") for (const EdgeRef& e : ri.edges) if (e.panel == "on_govde" && e.edge == "hem_front") ringOk = true;
+      ok(ringOk, "  halka referanslari yeni panele tasindi (etek_ucu -> on_govde/hem_front)");
+      bool belHalka = false; for (const Ring& ri : r.g.rings) if (ri.id == "bel_halka") for (const EdgeRef& e : ri.edges) if (e.panel == "on_govde") belHalka = true;
+      ok(!belHalka, "  bel halkasinda on_govde yok (bel kenarlari dustu)");
+      ok(locality(g, r.g, {"on_beden", "on_etek"}, why), "  locality: arka_beden/arka_etek/kol bayt-ayni " + why);
+      double easeHip = 0, easeBust = 0; for (const RingEase& re : m->ease) { if (re.ring == "girth.hip") easeHip = re.mm; if (re.ring == "girth.bust") easeBust = re.mm; }
+      ok(easeHip > 0 && easeBust > 0, "  bolluk birlesti: gogus " + f2(easeBust) + " + kalca " + f2(easeHip));
+      OpResult r2 = ap(r.g, "merge", R"({"seam":"bel","panelA":"arka_beden","panelB":"arka_etek","panel":"arka_govde"})");
+      ok(r2.ok && !r2.g.seam("bel") && r2.g.panels.size() == 3, "  ikinci merge: bel dikisi kalkti, 3 panel: " + (r2.ok ? "ok" : r2.hata));
+      { DogrulamaRaporu R2 = dogrula(r2.g, body, contract); int topo = 0; for (const Hukum& h : R2.hukumler) if (h.kural == "topoloji" && !h.gecti) ++topo;
+        ok(topo == 0, "  dogrulayici topoloji 0 kirmizi (kapali, bagli)"); }
+      OpResult n = ap(g, "merge", R"({"seam":"bel","panelA":"on_beden","panelB":"arka_etek","panel":"x"})");
+      ok(!n.ok, "  negatif: kavsak yapisal esit degil / yanlis cift: " + n.hata);
+      OpResult n2 = ap(g, "merge", R"({"seam":"omuz","panelA":"on_beden","panelB":"on_etek","panel":"x"})");
+      ok(!n2.ok && n2.hata.find("tasimiyor") != std::string::npos, "  negatif: dikis o panelleri tasimiyor: " + n2.hata); }
+
+    // drop: kol kaldir -> kol_oyugu dikisi gider, oyuk kenarlari cut/faced, kol_agzi halkasi gider
+    { OpResult r = ap(g, "drop", R"({"panel":"kol","finish":"faced"})");
+      ok(r.ok, "drop kol: " + (r.ok ? "ok" : r.hata)); if (!r.ok) return 1;
+      ok(!r.g.panel("kol") && !r.g.seam("kol_oyugu") && r.g.seams.size() == g.seams.size() - 2, "  kol yok; kol_oyugu ve kol_alti dikisleri gitti");
+      const Edge* e = r.g.panel("on_beden")->edge("armhole_front.1");
+      ok(e && e->kind == "cut" && e->finish == "faced" && e->fitSeam.empty(), "  oyuk kenari cut/faced");
+      bool agzi = false; for (const Ring& ri : r.g.rings) if (ri.id == "kol_agzi") agzi = true;
+      ok(!agzi && r.g.rings.size() == g.rings.size() - 1, "  kol_agzi halkasi gitti, digerleri duruyor");
+      { DogrulamaRaporu R2 = dogrula(r.g, body, contract); int topo = 0; for (const Hukum& h : R2.hukumler) if (h.kural == "topoloji" && !h.gecti) ++topo;
+        ok(topo == 0, "  dogrulayici topoloji 0 kirmizi (kolsuz giysi bagli)"); }
+      OpResult n = ap(g, "drop", R"({"panel":"yok","finish":"faced"})");
+      ok(!n.ok && n.hata.find("yok") != std::string::npos, "  negatif: olmayan panel: " + n.hata);
+      OpResult n2 = ap(g, "drop", R"({"panel":"kol"})");
+      ok(!n2.ok && n2.hata.find("finish") != std::string::npos, "  negatif: finish zorunlu: " + n2.hata); }
+
+    // addPanel onto: on_beden yuzune dikdortgen parca (aplike) -> komsuluk bagli, poz konaktan
+    { const char* yama = R"({"onto":"on_beden","panel":{"id":"on_yama","grainDeg":0,"onFold":false,"cutCount":2,"seamAllowanceMM":0,"reason":"test yama","edges":[
+        {"id":"ust","kind":"cut","finish":"hem","from":{"landmark":"landmark.waist","xOf":"ringQuarter","ring":"girth.waist","xFactor":0.3,"yLandmark":"landmark.bustLine"},"to":{"landmark":"landmark.waist","xOf":"ringQuarter","ring":"girth.waist","xFactor":0.8,"yLandmark":"landmark.bustLine"}},
+        {"id":"dis","kind":"cut","finish":"hem","from":{"landmark":"landmark.waist","xOf":"ringQuarter","ring":"girth.waist","xFactor":0.8,"yLandmark":"landmark.bustLine"},"to":{"landmark":"landmark.waist","xOf":"ringQuarter","ring":"girth.waist","xFactor":0.8,"yLandmark":"landmark.underbust"}},
+        {"id":"alt","kind":"cut","finish":"hem","from":{"landmark":"landmark.waist","xOf":"ringQuarter","ring":"girth.waist","xFactor":0.8,"yLandmark":"landmark.underbust"},"to":{"landmark":"landmark.waist","xOf":"ringQuarter","ring":"girth.waist","xFactor":0.3,"yLandmark":"landmark.underbust"}},
+        {"id":"ic","kind":"cut","finish":"hem","from":{"landmark":"landmark.waist","xOf":"ringQuarter","ring":"girth.waist","xFactor":0.3,"yLandmark":"landmark.underbust"},"to":{"landmark":"landmark.waist","xOf":"ringQuarter","ring":"girth.waist","xFactor":0.3,"yLandmark":"landmark.bustLine"}}]}})";
+      OpResult r = ap(g, "addPanel", yama);
+      ok(r.ok, "addPanel on_yama onto on_beden: " + (r.ok ? "ok" : r.hata)); if (!r.ok) return 1;
+      ok(r.g.panels.size() == 6 && r.g.panel("on_yama")->onto == "on_beden", "  6 panel, onto=on_beden");
+      ok(locality(g, r.g, {}, why), "  locality: 5 taban paneli bayt-ayni " + why);
+      { DogrulamaRaporu R2 = dogrula(r.g, body, contract); int topo = 0; bool poz = false;
+        for (const Hukum& h : R2.hukumler) { if (h.kural == "topoloji" && !h.gecti) ++topo; if (h.kural == "yerlestirme" && h.hedef == "on_yama" && h.gecti) poz = true; }
+        ok(topo == 0, "  dogrulayici: komsuluk bagli (onto konak uzerinden), 0 topoloji kirmizisi");
+        ok(poz, "  yerlestirme: on_yama konagin pozunu aldi"); }
+      ok(toJSONText(r.g).find("\"onto\": \"on_beden\"") != std::string::npos, "  JSON gidis: onto alani yazildi");
+      Garment back; std::string e2; ok(fromJSONText(toJSONText(r.g), back, e2) && back.panel("on_yama")->onto == "on_beden", "  JSON donus: onto okundu " + e2);
+      OpResult n = ap(g, "addPanel", R"({"onto":"yok","panel":{"id":"p","grainDeg":0,"onFold":false,"cutCount":1,"seamAllowanceMM":0,"edges":[]}})");
+      ok(!n.ok, "  negatif: acik panel / olmayan konak: " + n.hata); }
+
+    // reshapeEdge kind: kat kenarinin ust parcasi serbest kenar (yarik) -> cut+finish, panel hala onFold (cf.2 fold)
+    { OpResult s1 = subdivide(g, "on_beden", "cf", {0.35}, ctx);
+      OpResult r = ap(s1.g, "reshapeEdge", R"({"panel":"on_beden","edge":"cf.1","kind":"cut","finish":"faced"})");
+      ok(s1.ok && r.ok, "reshapeEdge cf.1 kind=cut finish=faced (yarik): " + (r.ok ? "ok" : r.hata)); if (!r.ok) return 1;
+      const Panel* p = r.g.panel("on_beden");
+      ok(p->edge("cf.1")->kind == "cut" && p->edge("cf.1")->finish == "faced" && p->edge("cf.2")->kind == "fold" && p->onFold, "  cf.1 cut/faced, cf.2 fold, panel onFold");
+      OpResult r2 = ap(s1.g, "reshapeEdge", R"({"panel":"on_beden","edge":"cf.1","kind":"cut"})");
+      ok(!r2.ok && r2.hata.find("finish") != std::string::npos, "  negatif: cut finish'siz red: " + r2.hata);
+      OpResult r3 = ap(g, "reshapeEdge", R"({"panel":"on_beden","edge":"dart_on_beden.1","kind":"cut","finish":"hem"})");
+      ok(!r3.ok && r3.hata.find("dartLeg") != std::string::npos, "  negatif: dartLeg turu degismez: " + r3.hata);
+      OpResult r4 = ap(g, "reshapeEdge", R"({"panel":"on_beden","edge":"cf","kind":"seam"})");
+      ok(r4.ok && !r4.g.panel("on_beden")->onFold && r4.g.panel("on_beden")->cutCount == 2, "  kind=seam: kat kalmadi -> onFold=false, cutCount=2"); }
+
+    // replay: yeni op'lar da kayittan yeniden oynatilir (spec-diff)
+    { OpResult a1 = ap(g, "merge", R"({"seam":"bel","panelA":"on_beden","panelB":"on_etek","panel":"on_govde"})");
+      OpResult a2 = ap(a1.g, "sew", R"({"seam":"on_orta","a":[{"panel":"on_govde","edge":"cf.1"},{"panel":"on_govde","edge":"cf.2"}],"b":[{"panel":"on_govde","edge":"cf.1"},{"panel":"on_govde","edge":"cf.2"}],"reverse":true})");
+      OpResult a3 = ap(a2.g, "drop", R"({"panel":"kol","finish":"faced"})");
+      ok(a1.ok && a2.ok && a3.ok, "replay hazirlik: merge + sew + drop");
+      std::vector<OpRecord> recs(a3.g.ops.begin() + static_cast<long>(ops0), a3.g.ops.end());
+      OpResult rr = replay(g, recs, ctx);
+      ok(rr.ok && toJSONText(rr.g) == toJSONText(a3.g), "replay(taban, 3 yeni kayit) == zincir sonucu (bayt-ayni)"); }
+
     // ---- replay + bilinmeyen op
     { OpResult a1 = subdivide(g, "on_beden", "armhole_front.1", {0.4}, ctx);
       OpResult a2 = suppress(a1.g, "on_beden", "waist_front.2", 0.5, 0.2, apex, "pens_bel", true, ctx);

@@ -1565,6 +1565,10 @@ target_link_libraries(grafciz PRIVATE engine)
 
 add_executable(grafdogrula src/grafdogrula-cli.cpp)
 target_link_libraries(grafdogrula PRIVATE engine)
+# 2026-09-09 (Damla karari, A3 elle): taban + primitif emir listesi -> graf. grafciz --ops ayni yolu
+# cizim icin kullanir; op'suz cizim ERR_NO_OPS. engine/build/grafuygula <taban.json> <ops.json> [--id x]
+add_executable(grafuygula src/grafuygula-cli.cpp)
+target_link_libraries(grafuygula PRIVATE engine)
 
 # 0509 A2b: OLCEK GECIDI birim testi. Kapi scripti (engine/tests/0509-kapi.sh) olcek_check'i
 # "graftan cizim yok" gerekcesiyle HENUZ-YOK basiyordu; cizim artik VAR (engine/build/grafciz)

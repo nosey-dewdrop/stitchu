@@ -154,6 +154,8 @@ struct Panel {
     double seamAllowanceMM = 0.0;  // 0 = contract varsayilani F2b'de doldurur; burada sayi uydurulmaz
     std::vector<RingEase> ease;    // halka basina cevre bollugu, mm (kumas = bedene bolluk alani)
     std::string reason;           // parca neden var (parca_sayisi yasasi)
+    std::string onto;             // dolu ise bu panel KONAK panelin YUZUNE dikilir (aplike/ust-dikis: yama, band);
+                                  // kenarlari bir Seam'e girmez, komsuluk konagin uzerinden kurulur (op addPanel.onto)
 
     int edgeIndex(const std::string& edgeId) const;   // -1 yoksa
     const Edge* edge(const std::string& edgeId) const;

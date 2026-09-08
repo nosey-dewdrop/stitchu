@@ -466,6 +466,11 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
                 };
                 birlestir(s.a); birlestir(s.b);
             }
+            // onto (2026-09-09): yuze dikili panel (aplike) konagina baglidir; kenari dikise girmez
+            for (const Panel& p : g0.panels) if (!p.onto.empty() && ebeveyn.count(p.onto)) {
+                const std::string a = bul(p.id), b = bul(p.onto);
+                if (a != b) ebeveyn[a] = b;
+            }
             std::set<std::string> kokler;
             for (const Panel& p : g0.panels) kokler.insert(bul(p.id));
             if (kokler.size() > 1) {
@@ -700,6 +705,11 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
                 }
             }
         }
+        // onto (2026-09-09): yuze dikili panel konagin pozunu alir (beden koordinatinda zaten onun ustunde)
+        { bool ilerle = true;
+          while (ilerle) { ilerle = false;
+              for (const Panel& p : g.panels) if (!p.onto.empty() && !poses[p.id].set && poses.count(p.onto) && poses[p.onto].set) {
+                  poses[p.id] = poses[p.onto]; poses[p.id].by = "onto " + p.onto; ilerle = true; } } }
         for (PanelPoz& pz : R.pozlar) {
             const Pose& p = poses[pz.panel];
             pz.yerlesti = p.set; pz.a = p.a; pz.b = p.b; pz.c = p.c; pz.d = p.d; pz.tx = p.tx; pz.ty = p.ty; pz.ayna = p.ayna; pz.yerlestiren = p.by;

@@ -606,12 +606,13 @@ JVal toJSON(const Panel& p) {
         o.set("ease", b);
     }
     if (!p.reason.empty()) o.set("reason", JVal::str(p.reason));
+    if (!p.onto.empty()) o.set("onto", JVal::str(p.onto));
     return o;
 }
 bool fromJSON(const JVal& v, Panel& out, std::string& err) {
     out = Panel();
     const std::string where = "Panel " + v.strOr("id", "?");
-    if (!onlyKeys(v, {"id", "edges", "grainDeg", "onFold", "cutCount", "seamAllowanceMM", "ease", "reason"}, err, where)) return false;
+    if (!onlyKeys(v, {"id", "edges", "grainDeg", "onFold", "cutCount", "seamAllowanceMM", "ease", "reason", "onto"}, err, where)) return false;
     if (!needStr(v, "id", out.id, err, where)) return false;
     const JVal* es = v.get("edges");
     if (!es || !es->isArr()) { err = where + ": edges eksik"; return false; }
@@ -632,6 +633,7 @@ bool fromJSON(const JVal& v, Panel& out, std::string& err) {
         }
     }
     out.reason = v.strOr("reason", "");
+    out.onto = v.strOr("onto", "");
     return true;
 }
 

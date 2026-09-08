@@ -45,6 +45,14 @@ struct Poz {
 // dikis grafi okunur (madde: sabit menu yok).
 std::string foldRoluOf(const Panel& p) {
     for (const Edge& e : p.edges) if (e.kind == "fold") return e.role;
+    // 2026-09-09 (op sew: on orta kapanma): kat kenari DIKISE cevrilmis panel eksenini kaybetmez.
+    // x=0'da duran, rolu "cf" ile baslayan seam kenari on gorunumun eksenidir (on orta dugme
+    // paci). Arka eksen (cb) burada ACILMAZ: taban grafta cb zaten seam'dir ve arka paneller
+    // bugun on gorunume dikis yayilimiyla giriyor; on/arka gorunum ayrimi A4'un isi (devredilen:
+    // flat_ayni_insan_check, "arka gorunumde kapanma yok"). Burada yalniz "eksen kayboldu" hatasi
+    // kapatilir, taban cizimi bayt-ayni kalir.
+    for (const Edge& e : p.edges)
+        if (e.kind == "seam" && e.role.rfind("cf", 0) == 0 && e.from.xSifir() && e.to.xSifir()) return "cf";
     return {};
 }
 
@@ -153,6 +161,13 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
                 for (const EdgeRef& r2 : *yan)
                     if (!gorunum.count(r2.panel)) { gorunum[r2.panel] = bul; degisti = true; }
         }
+        if (!degisti) break;
+    }
+    // Yuze dikili panel (onto, 2026-09-09): konagin gorunumune girer; dikisi yoktur, yayilim ona ulasmaz.
+    for (std::size_t tur = 0; tur < g.panels.size(); ++tur) {
+        bool degisti = false;
+        for (const Panel& p : g.panels)
+            if (!p.onto.empty() && !gorunum.count(p.id) && gorunum.count(p.onto)) { gorunum[p.id] = gorunum[p.onto]; degisti = true; }
         if (!degisti) break;
     }
     // Gorunum sirasi: grafin panel sirasindaki ilk gorulme sirasi (deterministik, alfabetik degil).

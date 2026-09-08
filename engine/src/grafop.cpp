@@ -379,8 +379,259 @@ OpResult opReshapeEdge(const Garment& g0, const JVal& a, const OpCtx&) {
         if (!(ctl.empty() || ctl.size() == 2)) return fail("reshapeEdge: control 0 ya da 2 nokta");
         e.control = ctl; any = true;
     }
-    if (!any) return fail("reshapeEdge: from/to/control'dan en az biri gerekli");
+    // kind / finish (2026-09-09, Damla karari: primitif kumesi geometri emirleridir; "kenari yeniden
+    // yaz" kenarin TURUNU de yazar — kat kenarinin bir bolumu serbest kenar olur (yarik), serbest
+    // kenar dikise girer). dartLeg yalniz suppress uretir, burada yazilamaz.
+    if (a.has("kind")) {
+        std::string k; if (!needS(a, "kind", k, err)) return fail("reshapeEdge: " + err);
+        if (k != "cut" && k != "seam" && k != "fold") return fail("reshapeEdge: kind '" + k + "' yazilamaz (cut|seam|fold; dartLeg yalniz suppress)");
+        if (e.kind == "dartLeg") return fail("reshapeEdge: dartLeg kenarinin turu degistirilmez " + eid);
+        e.kind = k;
+        if (k != "cut") e.finish.clear();
+        any = true;
+    }
+    if (a.has("finish")) {
+        std::string f; if (!needS(a, "finish", f, err)) return fail("reshapeEdge: " + err);
+        if (e.kind != "cut") return fail("reshapeEdge: finish yalniz cut kenara yazilir; " + eid + " kind=" + e.kind);
+        e.finish = f; any = true;
+    }
+    if (e.kind == "cut" && e.finish.empty()) return fail("reshapeEdge: cut kenarinin finish gerekcesi zorunlu " + eid);
+    bool foldVar = false; for (const Edge& x : p->edges) if (x.kind == "fold") foldVar = true;
+    if (p->onFold && !foldVar) { p->onFold = false; if (p->cutCount < 2) p->cutCount = 2; }
+    if (!p->onFold && foldVar) p->onFold = true;
+    if (!any) return fail("reshapeEdge: from/to/control/kind/finish'ten en az biri gerekli");
     return done(g, "reshapeEdge", a);
+}
+
+// ---------------------------------------------------------------- 2026-09-09 primitifler (Damla karari)
+// Kume geometri emirleridir, giysi adi icermez: kes(split) uzat(extend/extendTo) kisalt(shorten)
+// genislet(flare) kenari-yeniden-yaz(reshapeEdge) panel-ekle(addPanel) panel-birlestir(merge)
+// dik(sew) toplama(gather) kapanma(closure) pens(suppress) ayna(mirror) + panel-kaldir(drop).
+// A3 olcumu: bes okumanin tasidigi bilgi motora giremiyordu cunku "dik", "birlestir", "panel ekle"
+// ve "kaldir" yoktu; sozluk (setNeckline/addPatch...) ACILMADI, eksik primitifler yazildi.
+
+bool refListesi(const JVal* v, std::vector<EdgeRef>& out, std::string& err) {
+    if (!v || !v->isArr() || v->a.empty()) { err = "kenar listesi eksik ya da bos"; return false; }
+    for (const JVal& r : v->a) {
+        std::string p, e;
+        if (!needS(r, "panel", p, err) || !needS(r, "edge", e, err)) return false;
+        out.push_back({p, e});
+    }
+    return true;
+}
+void katDurumunuGuncelle(Panel& p) {
+    bool foldVar = false; for (const Edge& x : p.edges) if (x.kind == "fold") foldVar = true;
+    if (p.onFold && !foldVar) { p.onFold = false; if (p.cutCount < 2) p.cutCount = 2; }
+    if (!p.onFold && foldVar) p.onFold = true;
+}
+
+// DIK: mevcut kenarlari yeni bir dikiste birlestirir. fold -> seam (kat acilir, parca 2 kesilir),
+// cut -> seam (finish silinir). Ayni kenar iki tarafta da olabilir (kendi ayna kopyasiyla dikis:
+// on/arka orta kapanma); dogrulayici bunu yalniz closure ilan edilince kabul eder.
+OpResult opSew(const Garment& g0, const JVal& a, const OpCtx& ctx) {
+    std::string sid, err; std::vector<EdgeRef> A, B;
+    if (!needS(a, "seam", sid, err)) return fail("sew: " + err);
+    if (!refListesi(a.get("a"), A, err)) return fail("sew a: " + err);
+    if (!refListesi(a.get("b"), B, err)) return fail("sew b: " + err);
+    const JVal* rv = a.get("reverse");
+    if (!rv || !rv->isBool()) return fail("sew: reverse (bool) zorunlu — a'nin basi b'nin hangi ucuyla dikiliyor, sessiz varsayim yok");
+    const double ratio = a.numOr("ratio", 1.0);
+    if (!checkRatio(ratio, ctx, "sew", err)) return fail(err);
+    if (g0.seam(sid)) return fail("sew: dikis id zaten var " + sid);
+    Garment g = g0;
+    std::vector<std::string> paneller;
+    for (const std::vector<EdgeRef>* side : {&A, &B}) for (const EdgeRef& r : *side) {
+        Panel* p = g.panel(r.panel); Edge* e = p ? p->edge(r.edge) : nullptr;
+        if (!e) return fail("sew: kenar yok " + refStr(r.panel, r.edge));
+        if (e->kind == "dartLeg") return fail("sew: pens bacagi dikise girmez " + refStr(r.panel, r.edge));
+        e->kind = "seam"; e->finish.clear();
+        bool var = false; for (const std::string& q : paneller) if (q == r.panel) var = true;
+        if (!var) paneller.push_back(r.panel);
+    }
+    for (const std::string& pid : paneller) katDurumunuGuncelle(*g.panel(pid));
+    Seam s; s.id = sid; s.a = A; s.b = B; s.reverse = rv->b; s.ratio = ratio; s.easeMM = a.numOr("easeMM", 0.0);
+    s.reason = "sew";
+    g.seams.push_back(s);
+    return done(g, "sew", a);
+}
+
+// PANEL EKLE: kapali yeni panel. onto verilirse panel KONAK panelin yuzune dikilir (aplike/ust-dikis);
+// kenarlari dikise girmez, komsuluk konak uzerinden kurulur. onto yoksa panel ancak sonraki bir
+// sew ile giysiye baglanir; bagsiz kalirsa dogrulayici komsuluk_bagli ile adiyla reddeder.
+OpResult opAddPanel(const Garment& g0, const JVal& a, const OpCtx&) {
+    std::string err;
+    const JVal* pj = a.get("panel"); if (!pj) return fail("addPanel: panel eksik");
+    Panel np; if (!fromJSON(*pj, np, err)) return fail("addPanel: panel: " + err);
+    std::string why; if (!np.closed(&why)) return fail("addPanel: yeni panel kapali degil: " + why);
+    if (np.edges.size() < 3) return fail("addPanel: en az 3 kenar");
+    if (g0.panel(np.id)) return fail("addPanel: panel id zaten var " + np.id);
+    if (a.has("onto")) {
+        std::string h; if (!needS(a, "onto", h, err)) return fail("addPanel: " + err);
+        if (!g0.panel(h)) return fail("addPanel: konak panel yok " + h);
+        np.onto = h;
+    }
+    for (const Edge& e : np.edges) {
+        if (e.kind == "cut" && e.finish.empty()) return fail("addPanel: cut kenarinin finish gerekcesi zorunlu " + np.id + "/" + e.id);
+        if (e.kind == "dartLeg") return fail("addPanel: dartLeg yalniz suppress uretir " + np.id + "/" + e.id);
+    }
+    katDurumunuGuncelle(np);
+    Garment g = g0; g.panels.push_back(np);
+    return done(g, "addPanel", a);
+}
+
+// PANEL KALDIR: panel ve ona degen HER dikis kaldirilir; o dikislerde kalan kenarlar serbest (cut)
+// olur, finish zorunlu. Halka/kisit referanslari temizlenir. Kaldirilan dikisin obur tarafinda
+// baska bir panel yalniz kaliyorsa bu ilan edilmez, dogrulayici komsuluk_bagli ile yakalar.
+OpResult opDrop(const Garment& g0, const JVal& a, const OpCtx&) {
+    std::string pid, fin, err;
+    if (!needS(a, "panel", pid, err) || !needS(a, "finish", fin, err)) return fail("drop: " + err);
+    if (!g0.panel(pid)) return fail("drop: panel yok " + pid);
+    Garment g = g0;
+    std::vector<std::string> silinenDikis;
+    for (size_t i = 0; i < g.seams.size();) {
+        Seam& s = g.seams[i];
+        bool degiyor = false;
+        for (const EdgeRef& r : s.a) if (r.panel == pid) degiyor = true;
+        for (const EdgeRef& r : s.b) if (r.panel == pid) degiyor = true;
+        if (!degiyor) { ++i; continue; }
+        for (const std::vector<EdgeRef>* side : {&s.a, &s.b}) for (const EdgeRef& r : *side) {
+            if (r.panel == pid) continue;
+            Edge* e = g.edge(r); if (!e) continue;
+            e->kind = "cut"; e->finish = fin;
+        }
+        silinenDikis.push_back(s.id);
+        g.seams.erase(g.seams.begin() + static_cast<long>(i));
+    }
+    for (Panel& p : g.panels) for (Edge& e : p.edges)
+        for (const std::string& sd : silinenDikis) if (e.fitSeam == sd) e.fitSeam.clear();
+    for (size_t i = 0; i < g.rings.size();) {
+        Ring& r = g.rings[i];
+        for (size_t j = 0; j < r.edges.size();) { if (r.edges[j].panel == pid) r.edges.erase(r.edges.begin() + static_cast<long>(j)); else ++j; }
+        if (r.edges.empty()) g.rings.erase(g.rings.begin() + static_cast<long>(i)); else ++i;
+    }
+    for (Panel& p : g.panels) if (p.onto == pid) return fail("drop: " + p.id + " bu panelin yuzune dikili (onto); once onu kaldir");
+    for (size_t i = 0; i < g.panels.size(); ++i) if (g.panels[i].id == pid) { g.panels.erase(g.panels.begin() + static_cast<long>(i)); break; }
+    return done(g, "drop", a);
+}
+
+// PANEL BIRLESTIR: iki paneli aralarindaki dikis boyunca TEK panele diker; dikis kalkar. Her panelde
+// dikise giren kenarlar halkada BITISIK bir kosu olusturmali; kosunun icinde kalan pens bacaklari
+// (bel pensi gibi) birlestirmeyle dusuer ve reason'a adiyla yazilir — panel modeli DIS HALKADIR, ic
+// (balik) pens tasimaz; bu sinir tamlik tablosunda ilan edilir. Kavsak koseler yapisal esit olmali,
+// degilse adiyla reddedilir (sessiz kaydirma yok).
+OpResult opMerge(const Garment& g0, const JVal& a, const OpCtx&) {
+    std::string sid, pa, pb, np, err;
+    if (!needS(a, "seam", sid, err) || !needS(a, "panelA", pa, err) || !needS(a, "panelB", pb, err) || !needS(a, "panel", np, err)) return fail("merge: " + err);
+    if (pa == pb) return fail("merge: iki panel ayni");
+    if (g0.panel(np) && np != pa && np != pb) return fail("merge: panel id zaten var " + np);
+    const Seam* s0 = g0.seam(sid); if (!s0) return fail("merge: dikis yok " + sid);
+    const Panel* A = g0.panel(pa); const Panel* B = g0.panel(pb);
+    if (!A || !B) return fail("merge: panel yok " + (A ? pb : pa));
+    if (A->onto != B->onto) return fail("merge: biri yuze dikili (onto) biri degil");
+    // her panelin bu dikisteki kenarlari
+    auto refsOf = [&](const std::string& pid) { std::vector<std::string> v; for (const std::vector<EdgeRef>* side : {&s0->a, &s0->b}) for (const EdgeRef& r : *side) if (r.panel == pid) v.push_back(r.edge); return v; };
+    const std::vector<std::string> rA = refsOf(pa), rB = refsOf(pb);
+    if (rA.empty() || rB.empty()) return fail("merge: dikis " + sid + " iki paneli de tasimiyor (" + pa + ": " + std::to_string(rA.size()) + ", " + pb + ": " + std::to_string(rB.size()) + ")");
+    // Iki panel dikisin KARSI taraflarinda ve zincirde AYNI bolgede olmali (on beden on etekle
+    // dikilir, arka etekle degil): zincir konumlari orantili araliklar olarak kesismeli (reverse'e gore).
+    { auto aralik = [&](const std::vector<EdgeRef>& side, const std::string& pid, double& lo, double& hi) -> bool {
+          int mn = -1, mx = -1; for (size_t i = 0; i < side.size(); ++i) if (side[i].panel == pid) { if (mn < 0) mn = static_cast<int>(i); mx = static_cast<int>(i); }
+          if (mn < 0 || side.empty()) return false; lo = double(mn) / side.size(); hi = double(mx + 1) / side.size(); return true; };
+      double aLo, aHi, bLo, bHi; bool aInA = aralik(s0->a, pa, aLo, aHi), aInB = aralik(s0->b, pa, aLo, aHi);
+      bool bInA = aralik(s0->a, pb, bLo, bHi), bInB = aralik(s0->b, pb, bLo, bHi);
+      if ((aInA && bInA) || (aInB && bInB)) return fail("merge: " + pa + " ve " + pb + " dikisin AYNI tarafinda; birlestirme karsi taraflar arasinda olur");
+      if (s0->reverse) { const double t = bLo; bLo = 1.0 - bHi; bHi = 1.0 - t; }
+      if (aHi <= bLo + 1e-9 || bHi <= aLo + 1e-9) return fail("merge: " + pa + " ile " + pb + " dikis " + sid + " zincirinde ayni bolgede degil (" + pa + " [" + fmtNum(aLo) + "," + fmtNum(aHi) + "], " + pb + " [" + fmtNum(bLo) + "," + fmtNum(bHi) + "]); bu ikisi birbirine dikilmiyor"); }
+    // kosu: dikis kenarlarini kapsayan en kisa dairesel aralik; icinde yalniz dikis kenari ya da dartLeg olabilir
+    struct Kosu { std::vector<Edge> kalan; std::vector<std::string> dusen, dusenPens; };
+    auto kosu = [&](const Panel& P, const std::vector<std::string>& refs, Kosu& out, std::string& why) -> bool {
+        const int n = static_cast<int>(P.edges.size());
+        std::vector<bool> isRef(n, false);
+        for (const std::string& e : refs) { const int i = P.edgeIndex(e); if (i < 0) { why = "kenar yok " + P.id + "/" + e; return false; } isRef[i] = true; }
+        // baslangic: bir ref kenari ki oncesi (dairesel) ref/dartLeg degil
+        int bas = -1;
+        for (int i = 0; i < n; ++i) if (isRef[i]) {
+            int j = (i + n - 1) % n;
+            while (j != i && !isRef[j] && P.edges[j].kind == "dartLeg") j = (j + n - 1) % n;
+            if (!isRef[j]) { bas = i; break; }
+        }
+        if (bas < 0) { why = "dikis kenarlari panelin tamamini kapliyor " + P.id; return false; }
+        int son = bas, k = bas, refSeen = 0;
+        while (true) {
+            if (isRef[k]) { ++refSeen; son = k; }
+            else if (P.edges[k].kind == "dartLeg") { /* kosu icinde pens */ }
+            else break;
+            if (refSeen == static_cast<int>(refs.size())) { // kalan dartLeg'ler kosu disinda kalir
+                break;
+            }
+            k = (k + 1) % n;
+            if (k == bas) break;
+        }
+        if (refSeen != static_cast<int>(refs.size())) { why = "dikis kenarlari bitisik bir kosu degil " + P.id; return false; }
+        for (int i = bas; ; i = (i + 1) % n) {
+            if (!isRef[i]) out.dusenPens.push_back(P.edges[i].id);
+            out.dusen.push_back(P.edges[i].id);
+            if (i == son) break;
+        }
+        for (int i = (son + 1) % n; i != bas; i = (i + 1) % n) out.kalan.push_back(P.edges[i]);
+        return true;
+    };
+    Kosu kA, kB; std::string why;
+    if (!kosu(*A, rA, kA, why)) return fail("merge: " + why);
+    if (!kosu(*B, rB, kB, why)) return fail("merge: " + why);
+    if (kA.kalan.empty() || kB.kalan.empty()) return fail("merge: birlestirmeden sonra kenar kalmiyor");
+    // kavsak: A'nin kalaninin sonu B'nin kalaninin basi; B'nin sonu A'nin basi (yapisal)
+    if (kA.kalan.back().to != kB.kalan.front().from || kB.kalan.back().to != kA.kalan.front().from)
+        return fail("merge: kavsak koseler yapisal esit degil (" + pa + "/" + kA.kalan.back().id + ".to vs " + pb + "/" + kB.kalan.front().id + ".from; " + pb + "/" + kB.kalan.back().id + ".to vs " + pa + "/" + kA.kalan.front().id + ".from)");
+    Panel M = *A; M.id = np; M.edges.clear();
+    M.reason = (A->reason.empty() ? "" : A->reason + " | ") + "merge " + pa + "+" + pb + " along " + sid;
+    if (!kA.dusenPens.empty() || !kB.dusenPens.empty()) {
+        M.reason += " | dusen pens bacaklari:";
+        for (const std::string& e : kA.dusenPens) M.reason += " " + pa + "/" + e;
+        for (const std::string& e : kB.dusenPens) M.reason += " " + pb + "/" + e;
+    }
+    // id catismasi: A'nin kenari .1, B'ninki .2 (retarget haritasi)
+    std::vector<std::pair<EdgeRef, EdgeRef>> yeniden;   // eski -> yeni
+    auto idVar = [&](const std::string& id) { for (const Edge& e : kA.kalan) if (e.id == id) return true; for (const Edge& e : kB.kalan) if (e.id == id) return true; return false; };
+    for (Edge e : kA.kalan) {
+        std::string nid = e.id;
+        for (const Edge& f : kB.kalan) if (f.id == e.id) nid = e.id + ".1";
+        if (nid != e.id && idVar(nid)) return fail("merge: kenar id catisiyor " + nid);
+        yeniden.push_back({{pa, e.id}, {np, nid}}); e.id = nid; M.edges.push_back(e);
+    }
+    for (Edge e : kB.kalan) {
+        std::string nid = e.id;
+        for (const Edge& f : kA.kalan) if (f.id == e.id) nid = e.id + ".2";
+        if (nid != e.id && idVar(nid)) return fail("merge: kenar id catisiyor " + nid);
+        yeniden.push_back({{pb, e.id}, {np, nid}}); e.id = nid; M.edges.push_back(e);
+    }
+    M.cutCount = std::max(A->cutCount, B->cutCount);
+    for (const RingEase& re : B->ease) { bool var = false; for (RingEase& x : M.ease) if (x.ring == re.ring) { x.mm = std::max(x.mm, re.mm); var = true; } if (!var) M.ease.push_back(re); }
+    katDurumunuGuncelle(M);
+    if (!M.closed(&why)) return fail("merge: birlesik panel kapali degil: " + why);
+    Garment g = g0;
+    // dikis: A/B referanslari dusur; bos kalirsa dikis kalkar
+    { Seam* s = g.seam(sid);
+      for (std::vector<EdgeRef>* side : {&s->a, &s->b})
+          for (size_t j = 0; j < side->size();) { if ((*side)[j].panel == pa || (*side)[j].panel == pb) side->erase(side->begin() + static_cast<long>(j)); else ++j; }
+      if (s->a.empty() != s->b.empty()) return fail("merge: dikis " + sid + " tek tarafli kaldi");
+      if (s->a.empty()) for (size_t i = 0; i < g.seams.size(); ++i) if (g.seams[i].id == sid) { g.seams.erase(g.seams.begin() + static_cast<long>(i)); break; } }
+    auto retgt = [&](EdgeRef& r) { for (const auto& y : yeniden) if (r == y.first) { r = y.second; return true; } return false; };
+    for (Seam& s : g.seams) { for (EdgeRef& r : s.a) retgt(r); for (EdgeRef& r : s.b) retgt(r); }
+    for (size_t i = 0; i < g.rings.size();) {
+        Ring& r = g.rings[i];
+        for (size_t j = 0; j < r.edges.size();) {
+            EdgeRef& x = r.edges[j];
+            if (x.panel == pa || x.panel == pb) { if (!retgt(x)) { r.edges.erase(r.edges.begin() + static_cast<long>(j)); continue; } }
+            ++j;
+        }
+        if (r.edges.empty()) g.rings.erase(g.rings.begin() + static_cast<long>(i)); else ++i;
+    }
+    for (Panel& p : g.panels) if (p.onto == pa || p.onto == pb) p.onto = np;
+    // A'nin yerine M, B silinir
+    for (size_t i = 0; i < g.panels.size(); ++i) if (g.panels[i].id == pb) { g.panels.erase(g.panels.begin() + static_cast<long>(i)); break; }
+    for (size_t i = 0; i < g.panels.size(); ++i) if (g.panels[i].id == pa) { g.panels[i] = M; break; }
+    return done(g, "merge", a);
 }
 
 OpResult opMoveVertex(const Garment& g0, const JVal& a, const OpCtx&) {
@@ -452,6 +703,7 @@ const OpEntry kOps[] = {
     {"extend", opExtend}, {"shorten", opShorten}, {"extendTo", opExtendTo}, {"split", opSplit},
     {"overlay", opOverlay}, {"attach", opAttach}, {"reshapeEdge", opReshapeEdge}, {"moveVertex", opMoveVertex},
     {"mirror", opMirror}, {"closure", opClosure}, {"fitLength", opFitLength},
+    {"sew", opSew}, {"addPanel", opAddPanel}, {"drop", opDrop}, {"merge", opMerge},
 };
 JVal A() { return JVal::obj(); }
 } // namespace
