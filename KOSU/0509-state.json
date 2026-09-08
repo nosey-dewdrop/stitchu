@@ -481,5 +481,7 @@
     "contract/vision-graf-v1.json (A3 brief alani: fotograf -> graf tarifi semasi; 0509-kosu.md 13.18 izin tablosu)",
     "engine/tests/0509-vision-*.sh (A3'un kendi gecit/olcum scriptleri)",
     "KOSU/onbellek/** (13.6/5.3: fotograf okumasi onbellekten beslenir)"
-  ]
+  ],
+  "pushBekliyor": false,
+  "pushBekleyenCommitler": []
 }
