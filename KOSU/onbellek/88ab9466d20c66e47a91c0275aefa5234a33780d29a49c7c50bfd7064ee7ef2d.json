@@ -1,71 +1,356 @@
 {
-  "girdiYolu": "GIRDI/hedef-fotograflar/biba-O1194418-dress.jpg",
-  "sha256": "88ab9466d20c66e47a91c0275aefa5234a33780d29a49c7c50bfd7064ee7ef2d",
-  "semaSurumu": "graf-v1",
-  "okuyan": "isci-A1b",
-  "tarih": "2026-09-06",
-  "yontem": "Kosu iscisi fotografa DOGRUDAN bakti (Read araci). Dis LLM cagrisi YOK, canli worker (/api/analyze) cagrilmadi; llmCagri = 0.",
-  "gorunum": "on",
-  "tarif": {
-    "giysiSinifi": "elbise",
-    "siluet": "bel dikisli, oturan beden + peplum + genisleyen A etek",
-    "yaka": {
-      "tip": "sweetheart / kalp yaka",
-      "not": "on yaka cizgisi ortada hafif yukselen iki kavis; omuz uclarina dogru genis ve kare-ye yakin aciliyor. Motorun bugunku enum'unda birebir karsiligi YOK; en yakin op 'scoop' (genis oval). Bu bir ESLEME, olcum degil.",
-      "guven": 0.75
-    },
-    "kol": {
-      "tip": "kisa-orta boy (dirsek ustu) set-in kol",
-      "kolBasi": "omuz basinda BUZGULU/kabarik tepe (puff / gathered sleeve head); omuz cizgisi yukari kalkik",
-      "agiz": "duz, mansetsiz",
-      "enYakinOp": "sleeveStyle=puff, sleeveLength=short",
-      "guven": 0.8
-    },
-    "beden": {
-      "dikisler": "on ortada dugme paci; govde panelleri bel hattinda kesiliyor (bel dikisi acik). Prenses dikisi GORUNMUYOR — cizgi deseni panel sinirlarini gizliyor, o yuzden pens/prenses ayrimi OKUNAMADI.",
-      "kapanis": "on orta dugme sirasi, 4 (belki 5) dugme; dugmeler koyu, oval",
-      "guven": 0.6
-    },
-    "bel": {
-      "hat": "dogal bel, belirgin bel dikisi",
-      "peplum": "bel dikisinden asagi inen ayri bir peplum kati; onde ortada sivri/catallı dusuyor, yanlarda kivrilarak yukseliyor",
-      "guven": 0.85
-    },
-    "etek": {
-      "tip": "A form, diz alti (midi)",
-      "guven": 0.85
-    },
-    "kumas": {
-      "desen": "capraz (bias) yonlendirilmis ince siyah-krem cizgi; on ortada cizgiler V/chevron olusturacak sekilde aynalanmis",
-      "not": "Desen yonu KALIBIN kendisini degistirmez ama parcalarin GRAIN yonunu degistirir (bias kesim). Bugunku spec'te grain ekseni YOK; bu bilgi tarife yaziliyor, spec'e gecmiyor."
-    }
+ "girdiYolu": "GIRDI/hedef-fotograflar/biba-O1194418-dress.jpg",
+ "sha256": "88ab9466d20c66e47a91c0275aefa5234a33780d29a49c7c50bfd7064ee7ef2d",
+ "semaSurumu": "vision-graf-v1",
+ "okuyan": "isci-A3",
+ "tarih": "2026-09-08",
+ "yontem": "Kosu iscisi fotografa DOGRUDAN bakti (Read araci). Dis LLM cagrisi YOK, /api/analyze cagrilmadi; llmCagri = 0. NOT: bu sha'da A1b'nin enum tabanli tarifi vardi; bu dosya vision-graf-v1 semasina (geometri) YENIDEN yazildi, isim degil kenar/oran tasiyor.",
+ "gorunum": "on",
+ "cift": "4e446902ceaa49ab1e83a3abf5315e220acfc10682c0cc24a3a61db69b9fde8c",
+ "tabanGraf": "KOSU/ciktilar/graf-ilk/graf.json",
+ "paneller": [
+  {
+   "id": "on_beden",
+   "gorulduMu": true,
+   "guven": 0.95,
+   "kanit": "Bias cizgi on ortada V/chevron olusturacak sekilde aynalanmis; ayna ekseni CF. Cizgiler yaka ile bel arasinda kesintisiz, yani beden tek kat."
   },
-  "okunamayanlar": [
-    "arka yuz: bu fotografta gorunmuyor (mankenin arkasi cekilmemis)",
-    "pens mi prenses mi: cizgi deseni panel dikislerini gizliyor",
-    "etek panel sayisi: okunamadi",
-    "fermuar/kapanis yeri (yan mi arka mi): gorunmuyor"
-  ],
-  "enYakinSpec": {
-    "_ne": "Tarifin BUGUNKU motor spec'ine en yakin cevirisi. Cevrilemeyen her nitelik okunamayanlar/notlarda adiyla duruyor; sessiz default yok.",
-    "garment": "dress",
-    "shaping": "dart",
-    "fabric": "woven",
-    "neckline": "scoop",
-    "sleeveStyle": "straight",
-    "sleeveLength": "short",
-    "skirtStyle": "aLine",
-    "skirtLength": "midi",
-    "peplum": "yok-op",
-    "_kayip": [
-      "sweetheart yaka: enum'da yok, scoop'a esleniyor (guven 0.75)",
-      "peplum: create.js'te 'peplum' ekseni VAR ama bu tarifin sivri-onlu peplumu icin bir deger okunamadi; regresyonda peplum ACILMADAN kosuluyor, fark buradan gelirse adiyla yazilir",
-      "bias grain: spec'te eksen yok",
-      "DUZELTME 2026-09-06 (A1b, olculdu): ilk tarif sleeveStyle='puff' yaziyordu; motor bunu reddetti (\"invalid sleeveStyle 'puff' (valid: none, straight, balloon)\", regresyon kosumu). Puf kol motorda AYRI eksende: sleeveCap='puffed' (web/js/create.js:78), sarti sleeveStyle='straight'. Tarif degismedi, ESLEME duzeltildi."
-    ],
-    "sleeveCap": "puffed"
+  {
+   "id": "on_beden_yan",
+   "gorulduMu": true,
+   "guven": 0.8,
+   "kanit": "Gogus altindan kol oyuguna dogru cizgi acisi KIRILIYOR (sol ve sagda simetrik). Bias kumasta aci kirilmasi bir dikis demektir; prenses/yan-on panel siniri."
   },
-  "esemeNotu": {
-    "sleeveCap": "Fotograftaki kabarik omuz basi = sleeveCap 'puffed'; kol GOVDESI duz (balon degil), o yuzden sleeveStyle 'straight'."
+  {
+   "id": "arka_beden",
+   "gorulduMu": false,
+   "guven": 0.2,
+   "kanit": "Arka yuz bu fotografta gorunmuyor; panel tabandan geliyor."
+  },
+  {
+   "id": "peplum_on",
+   "gorulduMu": true,
+   "guven": 0.9,
+   "kanit": "Bel hattinda ayri bir kat basliyor: cizgi yonu bel dikisinde sifirlaniyor ve peplum icinde YENIDEN chevron kuruyor. Onde ortada sivri dusuyor, yanlarda yukseliyor; alt kenari etek uzerinde serbest duruyor (govde ile birlesmiyor)."
+  },
+  {
+   "id": "on_etek",
+   "gorulduMu": true,
+   "guven": 0.9,
+   "kanit": "Peplumun altindan cikan, kendi chevron ekseni olan genisleyen parca. Etek chevron'u peplumunkinden BAGIMSIZ (ayri kesim)."
+  },
+  {
+   "id": "arka_etek",
+   "gorulduMu": false,
+   "guven": 0.2,
+   "kanit": "Gorunmuyor; tabandan."
+  },
+  {
+   "id": "kol",
+   "gorulduMu": true,
+   "guven": 0.95,
+   "kanit": "Iki kolda da cizgiler govdeninkinden farkli acida; omuz basinda kumas toplanmis (buzgu kivrimlari cizgileri kiriyor). Dirsek ustunde duz agizla bitiyor."
   }
+ ],
+ "kenarlar": [
+  {
+   "panel": "on_beden",
+   "kenar": "neck_front",
+   "landmarkUst": "landmark.neckFront",
+   "landmarkAlt": "landmark.bust",
+   "oran": 0.33,
+   "bicim": "kavisli-ic",
+   "guven": 0.8,
+   "not": "Sweetheart: ortada iki kucuk kavis yukari, omuza dogru genis aciliyor. Yaka en alt noktasi gogus cizgisinin belirgin USTUNDE."
+  },
+  {
+   "panel": "on_beden",
+   "kenar": "omuz",
+   "landmarkUst": "landmark.shoulderTip",
+   "landmarkAlt": "landmark.shoulderTip",
+   "oran": 1.0,
+   "bicim": "duz",
+   "guven": 0.6,
+   "not": "Omuz dikisi kol buzgusunun altinda kaliyor, yeri cikarim."
+  },
+  {
+   "panel": "peplum_on",
+   "kenar": "hem",
+   "landmarkUst": "landmark.waist",
+   "landmarkAlt": "landmark.hip",
+   "oran": 0.62,
+   "bicim": "kirik",
+   "guven": 0.85,
+   "not": "Peplum ucu onde ortada en asagida (oran ~0.62 bel-kalca araliginda), yanlarda ~0.30'a yukseliyor. 'kirik' cunku onde sivri bir kose var."
+  },
+  {
+   "panel": "on_etek",
+   "kenar": "hem",
+   "landmarkUst": "landmark.waist",
+   "landmarkAlt": "landmark.ankle",
+   "oran": 0.6,
+   "bicim": "duz",
+   "guven": 0.7,
+   "not": "Diz alti (midi). Fotografta etek ucu tripod/kaide yuzunden tam kesilmemis; oran siluet olcumuyle CELISIYOR, celiskiTablosu'na yazildi."
+  },
+  {
+   "panel": "kol",
+   "kenar": "hem",
+   "landmarkUst": "landmark.shoulderTip",
+   "landmarkAlt": "landmark.wrist",
+   "oran": 0.47,
+   "bicim": "duz",
+   "guven": 0.85,
+   "not": "Kol agzi dirsegin biraz ustunde; mansetsiz, duz."
+  },
+  {
+   "panel": "kol",
+   "kenar": "cap",
+   "landmarkUst": "landmark.shoulderTip",
+   "landmarkAlt": "landmark.bust",
+   "oran": 0.0,
+   "bicim": "kavisli-dis",
+   "buzguAraligi": [
+    1.15,
+    1.35
+   ],
+   "guven": 0.8,
+   "not": "Kol basi BUZGULU: omuz ucunda kumas dikey kivrimlar halinde toplanmis, tepe omuz cizgisinin ustune kalkiyor. Buzgu miktari fotograftan tek sayi olarak okunamaz; aralik verildi, cozucu icinden secer."
+  }
+ ],
+ "dikisler": [
+  {
+   "id": "bel_dikisi",
+   "a": "on_beden/waist_front",
+   "b": "peplum_on/waist",
+   "oranAralik": [
+    1.0,
+    1.0
+   ],
+   "gorunurMu": true,
+   "guven": 0.9,
+   "not": "Bel dikisi acik: cizgi yonu tam o hatta sifirlaniyor. Buzgu YOK (kivrim gorunmuyor), o yuzden oran 1.0 kapali aralik."
+  },
+  {
+   "id": "etek_beli",
+   "a": "peplum_on/waist",
+   "b": "on_etek/waist",
+   "oranAralik": [
+    1.0,
+    1.0
+   ],
+   "gorunurMu": false,
+   "guven": 0.5,
+   "not": "Peplum etegin ustune biniyor, ikisinin bel hattinda ayni yere dikildigi CIKARIM. Dikisin kendisi peplumun altinda kaliyor."
+  },
+  {
+   "id": "on_yan_dikis",
+   "a": "on_beden/side",
+   "b": "on_beden_yan/side",
+   "oranAralik": [
+    1.0,
+    1.0
+   ],
+   "gorunurMu": true,
+   "guven": 0.75,
+   "not": "Bias cizgi acisinin kirildigi hat. Iki tarafta simetrik."
+  },
+  {
+   "id": "kol_oyugu",
+   "a": "kol/cap",
+   "b": "on_beden/armhole",
+   "oranAralik": [
+    1.15,
+    1.35
+   ],
+   "gorunurMu": true,
+   "guven": 0.8,
+   "not": "Kol tarafi oyuktan UZUN (buzgu). Aralik kenardaki buzguAraligi ile ayni; tek sayi fotograftan cikmaz."
+  }
+ ],
+ "kapanma": {
+  "yer": "on_orta",
+  "tur": "dugme",
+  "oranBas": 0.06,
+  "oranSon": 0.34,
+  "guven": 0.9,
+  "not": "4 adet koyu, oval/dilimli dugme; yakanin hemen altindan bel dikisine kadar. Besinci bir dugme peplum uzerinde devam ediyor olabilir, SECILEMEDI."
+ },
+ "simetri": {
+  "cfAyna": true,
+  "cbAyna": true,
+  "guven": 0.95,
+  "kanit": "Bias cizgiler on ortada birebir aynalanmis chevron yapiyor; sol ve sag kol cizgi acilari da ayna. cbAyna arka gorunmedigi icin CIKARIM (guven ayrisiyor, okunamayanlar'da)."
+ },
+ "katmanlar": [
+  {
+   "ad": "peplum_on",
+   "ustunde": "on_etek",
+   "oranBas": 0.0,
+   "oranSon": 0.3,
+   "guven": 0.9,
+   "not": "oranBas/oranSon bel-etekUcu araliginda; peplum etegin ust %30'unu ortuyor."
+  }
+ ],
+ "arka": {
+  "koken": "turetildi",
+  "guven": 0.3,
+  "neden": "Es dosya adi 'biba-O1194418-dress-arka.jpg' ARKA diyor ama icerigi OLCULDU: yine ON yuz (ayni sweetheart yaka, ayni 4 dugmeli on paci, ayni sivri peplum ucu). Siluet olcumu de ayni sonuca variyor: boy/omuz 2.3199 vs 2.3459, belKonum 0.3552 vs 0.3570 — iki dosya ayni giysinin ayni yuzu. Arka yuz OKUNAMADI, en sade dikilebilir arka kuruldu: duz arka beden + duz arka etek, orta arka kapanmasiz (on orta zaten dugmeli).",
+  "sha256": "4e446902ceaa49ab1e83a3abf5315e220acfc10682c0cc24a3a61db69b9fde8c"
+ },
+ "kisaltmalar": [
+  {
+   "isim": "sweetheart yaka",
+   "opDemeti": [
+    "setNeckline"
+   ],
+   "guven": 0.75,
+   "not": "Kisaltma, olcum degil. Cozumu: neck_front kenarini 'kavisli-ic' bicimde, oran 0.33'te kuran tek op. Motorun enum'unda 'sweetheart' YOK; en yakin karsilik genis oval. Fark eksikOp'ta."
+  },
+  {
+   "isim": "peplum",
+   "opDemeti": [
+    "addPanel",
+    "attachSeam",
+    "setHemProfile"
+   ],
+   "guven": 0.9
+  },
+  {
+   "isim": "puf kol basi",
+   "opDemeti": [
+    "setEase"
+   ],
+   "guven": 0.8,
+   "not": "Cozumu tek bir isim degil: kol cap kenarina buzgu araligi + kol_oyugu dikisinde oranAralik>1."
+  }
+ ],
+ "opDemeti": [
+  {
+   "op": "setHemLength",
+   "args": {
+    "panel": "on_etek",
+    "edge": "hem",
+    "target": {
+     "landmarkUst": "landmark.waist",
+     "landmarkAlt": "landmark.ankle",
+     "ratio": 0.6
+    }
+   },
+   "neden": "kenar on_etek/hem, oran 0.60 (midi)"
+  },
+  {
+   "op": "setHemLength",
+   "args": {
+    "panel": "kol",
+    "edge": "hem",
+    "target": {
+     "landmarkUst": "landmark.shoulderTip",
+     "landmarkAlt": "landmark.wrist",
+     "ratio": 0.47
+    }
+   },
+   "neden": "kenar kol/hem, oran 0.47"
+  },
+  {
+   "op": "setEase",
+   "args": {
+    "seam": "kol_oyugu",
+    "side": "kol",
+    "ratioRange": [
+     1.15,
+     1.35
+    ]
+   },
+   "neden": "dikis kol_oyugu oranAralik + kenar kol/cap buzguAraligi (puf kol basi kisaltmasi)"
+  },
+  {
+   "op": "setNeckline",
+   "args": {
+    "panel": "on_beden",
+    "edge": "neck_front",
+    "shape": "kavisli-ic",
+    "ratio": 0.33
+   },
+   "neden": "kenar on_beden/neck_front; 'sweetheart yaka' kisaltmasinin cozumu"
+  },
+  {
+   "op": "setWidthTarget",
+   "args": {
+    "ring": "girth.waist",
+    "ratioTo": "girth.bust",
+    "ratio": 0.4954,
+    "kaynak": "siluet-orani bel/enGenis"
+   },
+   "neden": "olcum (kaynak b) — semantik degil, siluet; cozucuye HEDEF"
+  },
+  {
+   "op": "addPanel",
+   "args": {
+    "id": "peplum_on",
+    "attachTo": "on_beden/waist_front",
+    "hemRatio": {
+     "landmarkUst": "landmark.waist",
+     "landmarkAlt": "landmark.hip",
+     "on": 0.62,
+     "yan": 0.3
+    }
+   },
+   "neden": "panel peplum_on + katman kaydi + 'peplum' kisaltmasi"
+  },
+  {
+   "op": "addClosure",
+   "args": {
+    "yer": "on_orta",
+    "tur": "dugme",
+    "oranBas": 0.06,
+    "oranSon": 0.34,
+    "adet": 4
+   },
+   "neden": "kapanma okumasi"
+  }
+ ],
+ "celiskiTablosu": [
+  {
+   "kalem": "etek boyu",
+   "claude": "diz alti / midi — yaklasik bel-ayakbilegi araliginda 0.60",
+   "olcum": "siluet etekUcu/omuz = 0.4348 ve alt satirlar tripod tarafindan kesilmis (sapKesimi 65 satir kesti); olculen boy giysinin TAM boyu degil",
+   "kazanan": "olcum",
+   "kaynak": "siluet-orani",
+   "sonuc": "Olcum 'boyu ben tam goremedim' diyor, 0.60'i CURUTMUYOR ama DOGRULAMIYOR da. Op'ta 0.60 KALDI ve bu satir sapmayi ilan ediyor; onizleme (A5) gosterir."
+  },
+  {
+   "kalem": "bel daralmasi",
+   "claude": "belirgin oturan bel, bel dikisli",
+   "olcum": "bel/enGenis = 0.4954 (siluet)",
+   "kazanan": "olcum",
+   "kaynak": "siluet-orani",
+   "sonuc": "Celiski YOK: iki kaynak ayni yone isaret ediyor. Sayi (0.4954) semantigin yerine gecti, op'a o girdi."
+  },
+  {
+   "kalem": "en genis nokta",
+   "claude": "peplum yanlarda en genis yer",
+   "olcum": "enGenis/omuz = 1.0155, enGenisY siluet boyunun %32'sinde — yani peplum hattinda",
+   "kazanan": "olcum",
+   "kaynak": "siluet-orani",
+   "sonuc": "Dogrulandi; peplum katmaninin oranSon degeri bu olcumle uyumlu."
+  }
+ ],
+ "olculmedi": [
+  "poz landmark (kaynak a): MediaPipe kurulmadi; landmark adlari body-v1 semasindan, fotograftan DEGIL. Butun 'oran' alanlari bu yuzden landmark'a gore CIKARIM, poz olcumu degil.",
+  "arka yuz: es dosya arka degil (bkz. arka.neden)"
+ ],
+ "okunamayanlar": [
+  "prenses mi pens mi: bias cizgi acisi bir dikis oldugunu soyluyor ama pens agzi gorunmuyor; 'on_beden_yan' paneli bu yuzden guven 0.8",
+  "etek panel sayisi: chevron ekseni tek, ama yan dikis gorunmuyor (2 mi 4 mu)",
+  "arka kapanma (fermuar?): gorunmuyor",
+  "5. dugme: peplum uzerinde devam ediyor olabilir, secilemedi",
+  "cbAyna: arka gorunmedigi icin cikarim"
+ ],
+ "eksikOp": [
+  "sweetheart yaka: motorun yaka enum'unda karsiligi yok; genis ovale esleniyor (kisaltma guveni 0.75)",
+  "bias grain: kumasin 45 derece yonlendirilmesi kalibi degistirmez ama parcalarin grain acisini degistirir; graf-v1'de grain ekseni YOK",
+  "peplum ucunun onde sivri, yanda yuksek profili: setHemProfile op'u tek oran aliyor, iki oranli (on/yan) profil karsiligi yok"
+ ],
+ "_kullanim": "Bu dosya A3 hattinin girdisi. vision-bridge once buraya bakar; ayni sha icin ikinci kez okuma YAPILMAZ."
 }
