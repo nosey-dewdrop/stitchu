@@ -203,7 +203,7 @@ static Garment tabanBase(const Ease& ez) {
     // kapak zinciri arka koseden (cap_back) tepeye, oradan on koseye (cap_front); oyuk zinciri arka koltukaltindan omuz ucuna,
     // omuz dikisinden on omuz ucuna gecip on koltukaltina iner (armhole_front.2 ve .1 kendi yonlerine TERS yurunur)
     Seam oyuk; oyuk.id = "kol_oyugu"; oyuk.a = {{"kol", "cap_back"}, {"kol", "cap_front"}}; oyuk.b = {{"arka_beden", "armhole_back.1"}, {"arka_beden", "armhole_back.2"}, {"on_beden", "armhole_front.2"}, {"on_beden", "armhole_front.1"}};
-    oyuk.notchFractions = {0.25, 0.75};   // A4 (hakem kusur 2): kol takma centigi — arka kapak (0.25, kalipta 2 cizgi) / on kapak (0.75, 1 cizgi)
+    oyuk.notchFractions = {0.25, 0.5, 0.75};   // A4 (hakem kusur 2 + tur2 kusur 7): kol takma centigi — arka kapak 0.25 (2 cizgi), TEPE 0.5 (omuz dikisi), on kapak 0.75 (1 cizgi)
     oyuk.reverse = false; oyuk.ratio = 1.04; oyuk.reason = "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)";
     // bel zinciri CF'den yan dikise, yan dikisten (yan_beden / yan_etek esleri) CB'ye
     // Bel dikisi zinciri artik BOLUNMUS kenarlarla (pens araya girdi). Pens BACAKLARI

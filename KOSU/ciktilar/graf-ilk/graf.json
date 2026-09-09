@@ -1389,7 +1389,7 @@
       "reverse": false,
       "ratio": 1.04,
       "easeMM": 0,
-      "notchFractions": [0.25, 0.75],
+      "notchFractions": [0.25, 0.5, 0.75],
       "reason": "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)"
     },
     {

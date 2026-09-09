@@ -158,3 +158,5 @@ oturan flat beden bilgisiyle, cevre/4 x k (k ~ 0.93) omuz hukmuyle birlikte ture
 grafta koltukalti hizasinda (dart_*.1 to = landmark.underarm) — kalipta sivri uzun pens, taban geometrisi;
 vocab_reference_check bust +2 / hip +1 (KAPI B nitelik adi ve landmark.hip; beden referansi, arac siniri, A6 ilani).
 Kilit: elle calisma icin acildi, oturum sonunda A5IzinListesi ile kuruldu; muhur yenilendi.
+Hakem: tur 1 BITMEDI/ALIRDIM (6 kusur) -> tur 4 kapatti; tur 2 BITTI/ALIRDIM (2 kucuk kusur) -> tur 5 kapatti. A4 BITTI.
+Okuma kovasi (A3/A6, A4 degil): Mary Quant 4/5 okumasi fotografa uymuyor (yuvarlak yaka + beyaz yatik yaka + kemer; bizde V band).

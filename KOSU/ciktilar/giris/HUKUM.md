@@ -78,6 +78,14 @@ Devredilen sayi: gogusYarimOverTorso 0.50 (n=4), belYarimOverTorso 0.406 (n=6); 
 
 Kapilar tur 4 sonrasi: KABUL kirmizi=0 · flat_ayni_insan OK 5 · grafdogrula 5/5 0 kirmizi · regresyon fark=0 · ctest graf_ir/op/dikilebilir gecti.
 
+## Hakem tur 2 (BITTI / ALIRDIM, `KOSU/ciktilar/hakem/A4/hukum-tur2.md`) -> tur 5 kapanislari
+
+Tur 1'in 5 kusuru olcumle KAPANDI (kusur 4 ilanli devir A6c). Iki yeni kusur, ikisi de kapandi:
+- **7 kol kapagi tepe centigi:** taban kol_oyugu notchFractions 0.25/0.5/0.75 (arka 2 / tepe 1 / on 1); kalip-36 kol: `data-edge="cap_` centik 5.
+- **8 centik kapisi tautoloji:** panel centigi cozumde dikisin kesrinden turetildigi icin "iki tarafta sapma" tanim geregi 0; satir artik BILGI (TURETILMIS), kirmizi iddiasi kaldirildi; kesir araligi ve zincir cozumu ayri kurallarda olculuyor.
+Hakemin dokumu (A4 kusuru degil): Mary Quant okumasi (4/5) fotografa uymuyor (yuvarlak yaka + beyaz yatik yaka + kemer, bizde V band) — A3/A6 okuma kovasi; 4/flat'te pens cizgisi yama cebin icinden geciyor; kol kapagi bezier tepesi eksenden 98 mm yanda 2.6 mm yukarida (sig eyer, gozle gorunmez).
+Son kapilar: KABUL kirmizi=0 · flat_ayni_insan OK 5 · ctest graf_ir/op/dikilebilir/flat_ayni gecti · regresyon fark=0 · bundle_fresh PASS.
+
 ## Ilanli / kapsam disi
 
 - `vocab_reference_check` A3'ten beri kirmizi (A6 ilani); bu turda `bust` +2, `hip` +1 (working tree): KAPI B'nin

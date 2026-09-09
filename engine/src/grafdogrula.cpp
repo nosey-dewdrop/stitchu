@@ -690,7 +690,9 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
             }
             if (!(worst <= tol.centikMM)) okN = false;
             d.centikArtikMM.push_back(worst);
-            H("centik", s.id + " @" + f4(f), !dz.ok ? "zincir cozulmedi, centik yeri tanimsiz" : std::isinf(worst) ? "bir tarafta panel centigi yok" : ("iki tarafta en kotu sapma " + f2(worst) + " mm" + (s.reverse ? " (b'de 1-f)" : "")), okN);
+            // A4 tur2 (hakem kusur 8): panel centigi cozumde dikisin kesrinden TURETILIR (grafop cozPens); iki tarafin sapmasi
+            // tanim geregi 0 — bu satir olcum degil bilgidir (kirmizi iddiasi yok). Kesir araligi (0,1) ve zincir cozumu ayri kurallarda.
+            H("centik", s.id + " @" + f4(f), std::string("TURETILMIS (A4): ") + (!dz.ok ? "zincir cozulmedi, centik yeri tanimsiz" : std::isinf(worst) ? "bir tarafta panel centigi yok" : ("iki tarafta en kotu sapma " + f2(worst) + " mm" + (s.reverse ? " (b'de 1-f)" : ""))), okN, true);
         }
         R.dikisler.push_back(d);
         chains[s.id] = {ca, cb};

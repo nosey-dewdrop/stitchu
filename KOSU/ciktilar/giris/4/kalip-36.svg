@@ -11,6 +11,7 @@
     <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.4" stroke-width="0.350" d="M 117.750 666.172 L 123.000 463.172"/>
     <path data-katman="4" data-tur="centik" data-edge="side_front" stroke-width="0.350" d="M 264.568 368.496 L 271.412 369.966"/>
     <path data-katman="4" data-tur="centik" data-edge="armhole_front.1" stroke-width="0.350" d="M 219.280 207.852 L 225.958 205.753"/>
+    <path data-katman="4" data-tur="centik" data-edge="armhole_front.2" stroke-width="0.350" d="M 234.724 118.057 L 231.988 111.614"/>
     <path data-katman="7" data-tur="grain" stroke-width="0.350" d="M 178.750 290.793 L 178.750 812.379"/>
     <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 181.150 296.793 L 178.750 290.793 L 176.350 296.793"/>
     <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 176.350 806.379 L 178.750 812.379 L 181.150 806.379"/>
@@ -48,6 +49,8 @@
     <path data-katman="4" data-tur="centik" data-edge="cap_front" stroke-width="0.350" d="M 1002.434 82.734 L 1005.672 76.528"/>
     <path data-katman="4" data-tur="centik" data-edge="cap_back" stroke-width="0.350" d="M 775.461 84.122 L 772.223 77.916"/>
     <path data-katman="4" data-tur="centik" data-edge="cap_back" stroke-width="0.350" d="M 780.781 81.346 L 777.542 75.140"/>
+    <path data-katman="4" data-tur="centik" data-edge="cap_back" stroke-width="0.350" d="M 887.277 60.014 L 887.252 53.014"/>
+    <path data-katman="4" data-tur="centik" data-edge="cap_back" stroke-width="0.350" d="M 893.277 59.993 L 893.252 52.993"/>
     <path data-katman="7" data-tur="grain" stroke-width="0.350" d="M 890.277 113.331 L 890.277 279.993"/>
     <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 892.677 119.331 L 890.277 113.331 L 887.877 119.331"/>
     <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 887.877 273.993 L 890.277 279.993 L 892.677 273.993"/>
