@@ -93,6 +93,14 @@
   }
  },
  {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_beden_alt",
+   "edge": "armhole_front.1.1",
+   "control": []
+  }
+ },
+ {
   "op": "subdivide",
   "args": {
    "panel": "arka_beden",
@@ -144,6 +152,14 @@
     "yLandmark": "landmark.underarm",
     "yOffsetMM": 6.7
    }
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_beden_alt",
+   "edge": "armhole_back.1.1",
+   "control": []
   }
  },
  {

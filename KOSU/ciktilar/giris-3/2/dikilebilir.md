@@ -32,7 +32,7 @@ Yasa 5: celiskide **olcum kazanir**. Bos tablo "celiski yok" demek degildir.
 ## Motora ne gecti? (primitif emir listesi)
 
 Okuma dogrudan graf-v1 primitifleriyle yazilir (vision-graf-v1 yasa 9); ceviri katmani YOK.
-Motor (`grafuygula`) taban grafa bu 21 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
+Motor (`grafuygula`) taban grafa bu 23 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
 Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 | # | primitif | args | doguran okuma kalemi |
@@ -45,19 +45,21 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 | 6 | `split` | `{"panel":"on_beden","vertexA":"cf.2","vertexB":"armhole_front.1.2","panelA":"on_beden_alt","panelB":"on_beden_ust","seam":"ust_on","seamRatio":1}` | askili ust: govde koltukalti hizasinda kesilir: ust govde ayri panel |
 | 7 | `drop` | `{"panel":"on_beden_ust","finish":"faced"}` | askili ust: govde koltukalti hizasinda kesilir: ust govde kalkar, ust kenar pervazli |
 | 8 | `moveVertex` | `{"panel":"on_beden_alt","edge":"ust_on.a","to":{"landmark":"landmark.bustLine","xOf":"ringQuarter","ring":"girth.bust","xFactor":1,"yLandmark":"landmark.underar…` | askili ust: govde koltukalti hizasinda kesilir: ust kenar YATAY (yan tepe tam yTop hizasina; kol oyugu kesri yaklasikti, ortada chevron yapiyordu) |
-| 9 | `subdivide` | `{"panel":"arka_beden","edge":"cb","fractions":[0.5064]}` | askili ust: govde koltukalti hizasinda kesilir: CB'de kesim noktasi |
-| 10 | `subdivide` | `{"panel":"arka_beden","edge":"armhole_back.1","fractions":[0.147]}` | askili ust: govde koltukalti hizasinda kesilir: arka kol oyugunda kesim noktasi |
-| 11 | `split` | `{"panel":"arka_beden","vertexA":"cb.2","vertexB":"armhole_back.1.2","panelA":"arka_beden_alt","panelB":"arka_beden_ust","seam":"ust_arka","seamRatio":1}` | askili ust: govde koltukalti hizasinda kesilir: arka ust govde ayri panel |
-| 12 | `drop` | `{"panel":"arka_beden_ust","finish":"faced"}` | askili ust: govde koltukalti hizasinda kesilir: arka ust govde kalkar |
-| 13 | `moveVertex` | `{"panel":"arka_beden_alt","edge":"ust_arka.a","to":{"landmark":"landmark.bustLine","xOf":"ringQuarter","ring":"girth.bust","xFactor":1,"yLandmark":"landmark.und…` | askili ust: govde koltukalti hizasinda kesilir: arka ust kenar yatay |
-| 14 | `sew` | `{"seam":"arka_orta_beden","a":[{"panel":"arka_beden_alt","edge":"cb.2"}],"b":[{"panel":"arka_beden_alt","edge":"cb.2"}],"reverse":true,"ratio":1}` | arka orta kapanma: drop ile dusen arka orta dikisi yeniden (cb.2 kendi aynasiyla) |
-| 15 | `closure` | `{"seam":"arka_orta_beden","type":"zipper","fromFraction":0,"toFraction":1}` | arka orta fermuar (fotografta arka gorunmuyor: cikarim) |
-| 16 | `addPanel` | `{"onto":"on_beden_alt","panel":{"id":"aski_on","edges":[{"id":"ic","kind":"cut","role":"strap","from":{"landmark":"landmark.bustLine","xOf":"ringQuarter","ring"…` | ince aski (12 mm), gogus ucu hizasindan omuza |
-| 17 | `addPanel` | `{"onto":"arka_beden_alt","panel":{"id":"aski_arka","edges":[{"id":"ic","kind":"cut","role":"strap","from":{"landmark":"landmark.bustLine","xOf":"ringQuarter","r…` | ince aski (12 mm), gogus ucu hizasindan omuza |
-| 18 | `extendTo` | `{"panel":"on_etek","edge":"hem_front","yLandmark":"landmark.knee","yOffsetMM":60}` | etek ucu diz alti (~6 cm) |
-| 19 | `extendTo` | `{"panel":"arka_etek","edge":"hem_back","yLandmark":"landmark.knee","yOffsetMM":60}` | etek ucu diz alti (~6 cm) (arka ayni) |
-| 20 | `flare` | `{"panel":"on_etek","edge":"hem_front","factor":1.45}` | A-line etek: etek ucu belirgin acik |
-| 21 | `flare` | `{"panel":"arka_etek","edge":"hem_back","factor":1.45}` | A-line etek: etek ucu belirgin acik (arka ayni) |
+| 9 | `reshapeEdge` | `{"panel":"on_beden_alt","edge":"armhole_front.1.1","control":[]}` | askili ust: govde koltukalti hizasinda kesilir: yan ust parca DUZ (kol oyugu kubiginin kalan kontrolleri kosede kulak yapiyordu) |
+| 10 | `subdivide` | `{"panel":"arka_beden","edge":"cb","fractions":[0.5064]}` | askili ust: govde koltukalti hizasinda kesilir: CB'de kesim noktasi |
+| 11 | `subdivide` | `{"panel":"arka_beden","edge":"armhole_back.1","fractions":[0.147]}` | askili ust: govde koltukalti hizasinda kesilir: arka kol oyugunda kesim noktasi |
+| 12 | `split` | `{"panel":"arka_beden","vertexA":"cb.2","vertexB":"armhole_back.1.2","panelA":"arka_beden_alt","panelB":"arka_beden_ust","seam":"ust_arka","seamRatio":1}` | askili ust: govde koltukalti hizasinda kesilir: arka ust govde ayri panel |
+| 13 | `drop` | `{"panel":"arka_beden_ust","finish":"faced"}` | askili ust: govde koltukalti hizasinda kesilir: arka ust govde kalkar |
+| 14 | `moveVertex` | `{"panel":"arka_beden_alt","edge":"ust_arka.a","to":{"landmark":"landmark.bustLine","xOf":"ringQuarter","ring":"girth.bust","xFactor":1,"yLandmark":"landmark.und…` | askili ust: govde koltukalti hizasinda kesilir: arka ust kenar yatay |
+| 15 | `reshapeEdge` | `{"panel":"arka_beden_alt","edge":"armhole_back.1.1","control":[]}` | askili ust: govde koltukalti hizasinda kesilir: arka yan ust parca duz |
+| 16 | `sew` | `{"seam":"arka_orta_beden","a":[{"panel":"arka_beden_alt","edge":"cb.2"}],"b":[{"panel":"arka_beden_alt","edge":"cb.2"}],"reverse":true,"ratio":1}` | arka orta kapanma: drop ile dusen arka orta dikisi yeniden (cb.2 kendi aynasiyla) |
+| 17 | `closure` | `{"seam":"arka_orta_beden","type":"zipper","fromFraction":0,"toFraction":1}` | arka orta fermuar (fotografta arka gorunmuyor: cikarim) |
+| 18 | `addPanel` | `{"onto":"on_beden_alt","panel":{"id":"aski_on","edges":[{"id":"ic","kind":"cut","role":"strap","from":{"landmark":"landmark.bustLine","xOf":"ringQuarter","ring"…` | ince aski (12 mm), gogus ucu hizasindan omuza |
+| 19 | `addPanel` | `{"onto":"arka_beden_alt","panel":{"id":"aski_arka","edges":[{"id":"ic","kind":"cut","role":"strap","from":{"landmark":"landmark.bustLine","xOf":"ringQuarter","r…` | ince aski (12 mm), gogus ucu hizasindan omuza |
+| 20 | `extendTo` | `{"panel":"on_etek","edge":"hem_front","yLandmark":"landmark.knee","yOffsetMM":60}` | etek ucu diz alti (~6 cm) |
+| 21 | `extendTo` | `{"panel":"arka_etek","edge":"hem_back","yLandmark":"landmark.knee","yOffsetMM":60}` | etek ucu diz alti (~6 cm) (arka ayni) |
+| 22 | `flare` | `{"panel":"on_etek","edge":"hem_front","factor":1.45}` | A-line etek: etek ucu belirgin acik |
+| 23 | `flare` | `{"panel":"arka_etek","edge":"hem_back","factor":1.45}` | A-line etek: etek ucu belirgin acik (arka ayni) |
 
 **Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 0 adet.
 
@@ -69,10 +71,10 @@ Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=21) | 21848 |
-| flat.png | OK | 49944 |
-| kalip-36.svg | OK | 12217 |
-| kalip-36.png | OK | 32845 |
+| flat.svg | OK (data-ops=23) | 21716 |
+| flat.png | OK | 48364 |
+| kalip-36.svg | OK | 12038 |
+| kalip-36.png | OK | 31873 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

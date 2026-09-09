@@ -33,7 +33,7 @@ Yasa 5: celiskide **olcum kazanir**. Bos tablo "celiski yok" demek degildir.
 ## Motora ne gecti? (primitif emir listesi)
 
 Okuma dogrudan graf-v1 primitifleriyle yazilir (vision-graf-v1 yasa 9); ceviri katmani YOK.
-Motor (`grafuygula`) taban grafa bu 21 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
+Motor (`grafuygula`) taban grafa bu 22 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
 Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 | # | primitif | args | doguran okuma kalemi |
@@ -58,7 +58,8 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 | 18 | `attach` | `{"hostPanel":"kol","hostEdge":"hem","edge":"ust","ratio":0.6667,"seam":"kol_agzi","panel":{"id":"kol_bandi","edges":[{"id":"ust","kind":"seam","role":"cuff_top"…` | kol agzi buzgulu dar banda dikilir |
 | 19 | `sew` | `{"seam":"kol_bandi_yan","a":[{"panel":"kol_bandi","edge":"yan1"}],"b":[{"panel":"kol_bandi","edge":"yan2"}],"reverse":true,"ratio":1}` | band halka olur: iki yan kenari birbirine |
 | 20 | `addPanel` | `{"onto":"on_roba","panel":{"id":"yaka_on","edges":[{"id":"ic","kind":"cut","role":"collar_inner","from":{"landmark":"landmark.neckBase","xFactor":1,"yOffsetMM":…` | bebe yaka: roba yuzune, boyun cizgisi boyunca, ~50 mm genis |
-| 21 | `closure` | `{"seam":"roba_on","type":"open","fromFraction":0,"toFraction":0.15}` | on yaka altinda kisa dugme/yirtmac (fotografta tek dugme + yirtmac) |
+| 21 | `addPanel` | `{"onto":"arka_roba","panel":{"id":"yaka_arka","edges":[{"id":"ic","kind":"cut","role":"collar_inner","from":{"landmark":"landmark.neckBase","xFactor":1,"yOffset…` | bebe yaka: roba yuzune, boyun cizgisi boyunca, ~50 mm genis (arka) |
+| 22 | `closure` | `{"seam":"roba_on","type":"open","fromFraction":0,"toFraction":0.15}` | on yaka altinda kisa dugme/yirtmac (fotografta tek dugme + yirtmac) |
 
 **Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 0 adet.
 
@@ -70,10 +71,10 @@ Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=21) | 21576 |
-| flat.png | OK | 60607 |
-| kalip-36.svg | OK | 18699 |
-| kalip-36.png | OK | 28530 |
+| flat.svg | OK (data-ops=22) | 23988 |
+| flat.png | OK | 62292 |
+| kalip-36.svg | OK | 20913 |
+| kalip-36.png | OK | 27214 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

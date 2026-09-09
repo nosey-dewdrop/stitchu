@@ -125,14 +125,14 @@
     <g data-view="front" data-eksen="cf" transform="translate(190.477 0)">
       <path data-panel="on_beden_alt" data-edge="dart_on_beden.1" data-tur="pens" d="M 41.537 414.400 L 38.784 293.740 L 36.032 414.400"/>
       <path data-panel="on_beden_alt" data-edge="dart_on_beden.1" data-tur="pens" d="M -41.537 414.400 L -38.784 293.740 L -36.032 414.400"/>
-      <path data-panel="on_etek" data-edge="dart_on_etek.1" data-tur="pens" d="M 62.650 414.400 L 65.379 629.500 L 68.109 414.400"/>
-      <path data-panel="on_etek" data-edge="dart_on_etek.1" data-tur="pens" d="M -62.650 414.400 L -65.379 629.500 L -68.109 414.400"/>
+      <path data-panel="on_etek" data-edge="dart_on_etek.1" data-tur="pens" d="M 62.650 414.400 L 65.379 532.705 L 68.109 414.400"/>
+      <path data-panel="on_etek" data-edge="dart_on_etek.1" data-tur="pens" d="M -62.650 414.400 L -65.379 532.705 L -68.109 414.400"/>
     </g>
     <g data-view="back" data-eksen="cb" transform="translate(631.432 0)">
       <path data-panel="arka_beden_alt" data-edge="dart_arka_beden.1" data-tur="pens" d="M 41.537 414.400 L 38.784 293.740 L 36.032 414.400"/>
       <path data-panel="arka_beden_alt" data-edge="dart_arka_beden.1" data-tur="pens" d="M -41.537 414.400 L -38.784 293.740 L -36.032 414.400"/>
-      <path data-panel="arka_etek" data-edge="dart_arka_etek.1" data-tur="pens" d="M 62.650 414.400 L 65.379 629.500 L 68.109 414.400"/>
-      <path data-panel="arka_etek" data-edge="dart_arka_etek.1" data-tur="pens" d="M -62.650 414.400 L -65.379 629.500 L -68.109 414.400"/>
+      <path data-panel="arka_etek" data-edge="dart_arka_etek.1" data-tur="pens" d="M 62.650 414.400 L 65.379 532.705 L 68.109 414.400"/>
+      <path data-panel="arka_etek" data-edge="dart_arka_etek.1" data-tur="pens" d="M -62.650 414.400 L -65.379 532.705 L -68.109 414.400"/>
       <path data-panel="arka_beden_ust" data-edge="arka_orta_beden" data-tur="fermuar_cekecek" d="M 2.500 -14.000 L -2.500 -14.000 L -2.500 -22.000 L 2.500 -22.000 Z"/>
       <path data-panel="arka_etek" data-edge="arka_orta_etek" data-tur="fermuar_cekecek" d="M 2.500 414.400 L -2.500 414.400 L -2.500 406.400 L 2.500 406.400 Z"/>
     </g>

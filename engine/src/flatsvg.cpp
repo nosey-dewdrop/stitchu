@@ -325,6 +325,7 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
         Poz poz;                                  // panel -> gorunum (afin: n/pi, d)
         std::vector<PathCommand> kapakBasi;       // S -> O kubik
         std::set<std::string> kapakKenar;         // dikise giren (cizilmeyen) kenarlar
+        bool puf = false;                         // kapak buzgulu: kapak basinda kisa buzgu cizgileri
     };
     std::map<std::string, std::map<std::string, Sarkma>> sarkma;   // panel -> gorunum -> poz
     // kol ekseni: croquis'te shoulderTip->wrist (sevkPoz kolAcisiDeg), yoksa duz asagi
@@ -382,9 +383,13 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
             // KAPAK BASI (A4 tur 8): omuz ucundan DISA teget cikar, tup ekseni boyunca asagi donup O'ya iner (disbukey yay).
             // Eski kurulus disa uzanim (an) ~0 ya da negatifken duz diyagonal cikiyordu (kor hakem tur 7: "kol omuz uzantisi").
             const double L = std::hypot(O.x - S.x, O.y - S.y);
-            const Point c1{ S.x + 0.55 * L * nKol.x, S.y + 0.55 * L * nKol.y };
-            const Point c2{ O.x - 0.55 * L * dKol.x, O.y - 0.55 * L * dKol.y };
+            // Duz kol: omuzdan yumusak iner (tumsek yok; kor hakem tur 10 "kol basi tumsegi"); puf (kapak buzgulu): disa kubbe
+            double gr = 1.0; for (const Edge& ke : p.edges) if (kapak.count(ke.id)) gr = std::max(gr, ke.gatherRatio);
+            const bool puf = gr > 1.0 + 1e-9;
+            const Point c1{ S.x + (puf ? 0.6 : 0.25) * L * nKol.x, S.y + (puf ? 0.6 : 0.25) * L * nKol.y };
+            const Point c2{ O.x - (puf ? 0.5 : 0.7) * L * dKol.x, O.y - (puf ? 0.5 : 0.7) * L * dKol.y };
             sk.kapakBasi = { PathCommand::move(S), PathCommand::curve(O, c1, c2) };
+            sk.puf = puf;
             sk.kapakKenar = kapak;
             sarkma[p.id][kv.first] = sk;
         }
@@ -532,6 +537,18 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
             };
             auto yaz = [&](std::map<std::string, std::vector<Cizgi>>& katman, const std::vector<PathCommand>& cmds, const std::string& edge, const std::string& tur) { yazPoz(katman, cmds, edge, tur, z); };
             if (sk) yazPoz(kalin, sk->kapakBasi, "kapak_basi", "kapak", Poz{});   // kapak basi ZATEN gorunum koordinatinda
+            if (sk && sk->puf && sk->kapakBasi.size() == 2) {   // buzgu cizgileri: kapak basi boyunca 5 kisa isin (satici flat puf dili)
+                const PathCommand& kc = sk->kapakBasi[1]; const Point S0 = sk->kapakBasi[0].to;
+                for (int i2 = 1; i2 <= 5; ++i2) {
+                    const double t = i2 / 6.0;
+                    const Point q = cubicPoint(S0, kc, t), q2 = cubicPoint(S0, kc, std::min(1.0, t + 0.02));
+                    Point tg{ q2.x - q.x, q2.y - q.y }; const double Lt = std::hypot(tg.x, tg.y); if (Lt < 1e-9) continue;
+                    const Point nn{ tg.y / Lt, -tg.x / Lt };   // ice dogru (tup eksenine)
+                    const double len = 9.0 + 4.0 * (i2 == 3 ? 1 : 0);
+                    const Point a{ q.x - nn.x * 2.0, q.y - nn.y * 2.0 }, b{ q.x - nn.x * (2.0 + len), q.y - nn.y * (2.0 + len) };
+                    yazPoz(pens, { PathCommand::move(a), PathCommand::line(b) }, "kapak_buzgu", "buzgu", Poz{});
+                }
+            }
             for (std::size_t i = 0; i < p.edges.size(); ++i) {
                 const Edge& e = p.edges[i];
                 if (sk && sk->kapakKenar.count(e.id)) continue;
@@ -631,6 +648,7 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
             }
         };
         const double f0 = std::min(sm.closure.fromFraction, sm.closure.toFraction), f1 = std::max(sm.closure.fromFraction, sm.closure.toFraction);
+        if ((f1 - f0) * toplam < 20.0) continue;   // 20 mm altinda kapama: sembol yok (okuma "kapama yok" demek icin 0..0 yazar)
         if (sm.closure.type == "buttons") {
             const int nB = std::max(2, int(std::lround((f1 - f0) * toplam / 60.0)));
             const double r = 3.5;

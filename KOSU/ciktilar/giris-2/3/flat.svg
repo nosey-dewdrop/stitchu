@@ -85,12 +85,12 @@
   </g>
   <g id="details" fill="none" stroke="#111111" stroke-width="1.912" stroke-linejoin="round" stroke-linecap="round">
     <g data-view="front" data-eksen="cf" transform="translate(188.800 0)">
-      <path data-panel="on_govde" data-edge="ic_pens_1" data-tur="pens" d="M 38.784 198.300 L 41.537 414.400 L 38.784 629.500 L 36.032 414.400 Z"/>
-      <path data-panel="on_govde" data-edge="ic_pens_1" data-tur="pens" d="M -38.784 198.300 L -41.537 414.400 L -38.784 629.500 L -36.032 414.400 Z"/>
+      <path data-panel="on_govde" data-edge="ic_pens_1" data-tur="pens" d="M 38.784 243.465 L 41.537 414.400 L 38.784 532.705 L 36.032 414.400 Z"/>
+      <path data-panel="on_govde" data-edge="ic_pens_1" data-tur="pens" d="M -38.784 243.465 L -41.537 414.400 L -38.784 532.705 L -36.032 414.400 Z"/>
     </g>
     <g data-view="back" data-eksen="cb" transform="translate(626.400 0)">
-      <path data-panel="arka_govde" data-edge="ic_pens_1" data-tur="pens" d="M 38.784 198.300 L 41.537 414.400 L 38.784 629.500 L 36.032 414.400 Z"/>
-      <path data-panel="arka_govde" data-edge="ic_pens_1" data-tur="pens" d="M -38.784 198.300 L -41.537 414.400 L -38.784 629.500 L -36.032 414.400 Z"/>
+      <path data-panel="arka_govde" data-edge="ic_pens_1" data-tur="pens" d="M 38.784 243.465 L 41.537 414.400 L 38.784 532.705 L 36.032 414.400 Z"/>
+      <path data-panel="arka_govde" data-edge="ic_pens_1" data-tur="pens" d="M -38.784 243.465 L -41.537 414.400 L -38.784 532.705 L -36.032 414.400 Z"/>
       <path data-panel="arka_govde" data-edge="arka_orta_beden" data-tur="fermuar_cekecek" d="M 2.500 -16.000 L -2.500 -16.000 L -2.500 -24.000 L 2.500 -24.000 Z"/>
       <path data-panel="arka_govde" data-edge="arka_orta_etek" data-tur="fermuar_cekecek" d="M 2.500 414.400 L -2.500 414.400 L -2.500 406.400 L 2.500 406.400 Z"/>
     </g>

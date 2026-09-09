@@ -99,7 +99,11 @@ static Panel govde(bool on, const Ease& ez) {
     const double eksen = 0.35, wG = 0.25;
     const RefPoint vDartL = pensTabaniP(eksen, -1.0, wG);
     const RefPoint vDartR = pensTabaniP(eksen, +1.0, wG);
+    // Apeks (A4 tur 10, 2026-09-09): koltukalti hizasi DEGIL — gogus hattinin bel yonunde %15 altinda (Aldrich: bel pensi apeksi gogus
+    // ucunun 2.5-3 cm altinda; gercek36'da gogus->bel 190 mm x 0.15 = 28 mm). Koltukaltinda apeks kalipta sivri uzun pens, flat'te
+    // "prenses gibi okunan" bedenin %75'i boyunca pens yapiyordu (kor hakem tur 10).
     Anchor apexA; apexA.landmark = "landmark.underarm"; apexA.xOf = "ringQuarter"; apexA.ring = "girth.waist"; apexA.xFactor = eksen;
+    apexA.yLandmark = "landmark.bustLine"; apexA.yLandmark2 = "landmark.waist"; apexA.yLerp = 0.15;
     const RefPoint vApex = P(apexA);
     Edge waist1 = E("waist_" + s + ".1", "seam", "waist_" + s, vWaistC, vDartL); waist1.rolePart = 1; waist1.roleCount = 2;
     Edge dartL = E("dart_" + p.id + ".1", "dartLeg", "waist_dart", vDartL, vApex); dartL.rolePart = 1; dartL.roleCount = 2;
@@ -151,7 +155,9 @@ static Panel etek(bool on, const Ease& ez) {
     const double eksenE = 0.59, wE = 0.205;
     const RefPoint vDartR = pensTabaniP(eksenE, +1.0, wE);
     const RefPoint vDartL = pensTabaniP(eksenE, -1.0, wE);
+    // Etek pensi apeksi: kalca hizasi DEGIL, bel->kalca %55 (Aldrich etek pensi 12-14 cm; 215 x 0.55 = 118 mm) — A4 tur 10
     Anchor apexE; apexE.landmark = "landmark.hip"; apexE.xOf = "ringQuarter"; apexE.ring = "girth.waist"; apexE.xFactor = eksenE;
+    apexE.yLandmark = "landmark.waist"; apexE.yLandmark2 = "landmark.hip"; apexE.yLerp = 0.55;
     const RefPoint vApexE = P(apexE);
     Edge waist1 = E("waist_" + s + ".1", "seam", "waist_" + s, vWaistS, vDartR); waist1.rolePart = 1; waist1.roleCount = 2; waist1.notches = {0.82};
     Edge dartR = E("dart_" + p.id + ".1", "dartLeg", "waist_dart", vDartR, vApexE); dartR.rolePart = 1; dartR.roleCount = 2;

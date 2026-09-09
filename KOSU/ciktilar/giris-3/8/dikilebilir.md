@@ -28,7 +28,7 @@ Yasa 5: celiskide **olcum kazanir**. Bos tablo "celiski yok" demek degildir.
 ## Motora ne gecti? (primitif emir listesi)
 
 Okuma dogrudan graf-v1 primitifleriyle yazilir (vision-graf-v1 yasa 9); ceviri katmani YOK.
-Motor (`grafuygula`) taban grafa bu 9 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
+Motor (`grafuygula`) taban grafa bu 10 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
 Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 | # | primitif | args | doguran okuma kalemi |
@@ -42,6 +42,7 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 | 7 | `extendTo` | `{"panel":"arka_govde","edge":"hem_back","yLandmark":"landmark.hip","yOffsetMM":10}` | ust: etek ucu kalca hizasi (arka ayni) |
 | 8 | `sew` | `{"seam":"on_orta","a":[{"panel":"on_govde","edge":"cf.1"},{"panel":"on_govde","edge":"cf.2"}],"b":[{"panel":"on_govde","edge":"cf.1"},{"panel":"on_govde","edge"…` | CF tam boy dugme pacasi |
 | 9 | `closure` | `{"seam":"on_orta","type":"buttons","fromFraction":0.02,"toFraction":0.97}` | CF tam boy dugme pacasi: dugme |
+| 10 | `closure` | `{"seam":"arka_orta_beden","type":"zipper","fromFraction":0,"toFraction":0.01}` | onden dugmeli giyside arka orta fermuar YOK: tabanin CB fermuari sifir uzunluga (0..0) cekilir (cift kapama: hakem tur 10) |
 
 **Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 0 adet.
 
@@ -53,10 +54,10 @@ Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=9) | 22825 |
-| flat.png | OK | 54256 |
-| kalip-36.svg | OK | 6513 |
-| kalip-36.png | OK | 50563 |
+| flat.svg | OK (data-ops=10) | 21672 |
+| flat.png | OK | 50195 |
+| kalip-36.svg | OK | 6514 |
+| kalip-36.png | OK | 48932 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

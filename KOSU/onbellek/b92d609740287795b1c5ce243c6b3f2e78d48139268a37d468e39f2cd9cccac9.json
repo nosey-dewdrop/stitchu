@@ -203,6 +203,15 @@
    "neden": "bustier ust kenar: ust kenar YATAY (yan tepe tam yTop hizasina; kol oyugu kesri yaklasikti, ortada chevron yapiyordu)"
   },
   {
+   "op": "reshapeEdge",
+   "args": {
+    "panel": "on_beden_alt",
+    "edge": "armhole_front.1.1",
+    "control": []
+   },
+   "neden": "bustier ust kenar: yan ust parca DUZ (kol oyugu kubiginin kalan kontrolleri kosede kulak yapiyordu)"
+  },
+  {
    "op": "subdivide",
    "args": {
     "panel": "arka_beden",
@@ -260,6 +269,15 @@
     }
    },
    "neden": "bustier ust kenar: arka ust kenar yatay"
+  },
+  {
+   "op": "reshapeEdge",
+   "args": {
+    "panel": "arka_beden_alt",
+    "edge": "armhole_back.1.1",
+    "control": []
+   },
+   "neden": "bustier ust kenar: arka yan ust parca duz"
   },
   {
    "op": "sew",

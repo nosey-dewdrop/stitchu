@@ -1,7 +1,7 @@
 {
   "id": "foto-7427c328",
   "version": "graf-v1",
-  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b oyugu ve kapagi kaynakli kurar (KAPI 2, docs/GRAF-IR.md F2b kapilari; F3e devredilmez); croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).\ngrafuygula: taban taban-elbise + 18 emir (KOSU/ciktilar/giris-3/11/ops.json)",
+  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b oyugu ve kapagi kaynakli kurar (KAPI 2, docs/GRAF-IR.md F2b kapilari; F3e devredilmez); croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).\ngrafuygula: taban taban-elbise + 19 emir (KOSU/ciktilar/giris-3/11/ops.json)",
   "panels": [
     {
       "id": "on_govde_alt",
@@ -371,7 +371,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.35,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.bustLine",
+            "yLandmark2": "landmark.waist",
+            "yLerp": 0.15
           },
           "apexDown": {
             "landmark": "landmark.waist",
@@ -379,7 +382,9 @@
             "ring": "girth.waist",
             "xFactor": 0.35,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.hip"
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.hip",
+            "yLerp": 0.55
           }
         }
       ]
@@ -774,7 +779,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.35,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.bustLine",
+            "yLandmark2": "landmark.waist",
+            "yLerp": 0.15
           },
           "apexDown": {
             "landmark": "landmark.waist",
@@ -782,7 +790,9 @@
             "ring": "girth.waist",
             "xFactor": 0.35,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.hip"
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.hip",
+            "yLerp": 0.55
           }
         }
       ]
@@ -1155,7 +1165,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.35,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.bustLine",
+            "yLandmark2": "landmark.waist",
+            "yLerp": 0.15
           },
           "apexDown": {
             "landmark": "landmark.waist",
@@ -1163,7 +1176,9 @@
             "ring": "girth.waist",
             "xFactor": 0.35,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.hip"
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.hip",
+            "yLerp": 0.55
           }
         }
       ]
@@ -1558,7 +1573,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.35,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.bustLine",
+            "yLandmark2": "landmark.waist",
+            "yLerp": 0.15
           },
           "apexDown": {
             "landmark": "landmark.waist",
@@ -1566,7 +1584,9 @@
             "ring": "girth.waist",
             "xFactor": 0.35,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.hip"
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.hip",
+            "yLerp": 0.55
           }
         }
       ]
@@ -2127,9 +2147,9 @@
           "finish": "raw"
         },
         {
-          "id": "cf",
-          "kind": "fold",
-          "role": "cf",
+          "id": "lob",
+          "kind": "cut",
+          "role": "collar_outer",
           "from": {
             "landmark": "landmark.waist",
             "xFactor": 0,
@@ -2137,59 +2157,40 @@
             "yLandmark": "landmark.neckFront"
           },
           "to": {
-            "landmark": "landmark.waist",
-            "xFactor": 0,
-            "xOffsetMM": 0,
-            "yLandmark": "landmark.neckFront",
-            "yOffsetMM": 5e+01
-          }
-        },
-        {
-          "id": "dis1",
-          "kind": "cut",
-          "role": "collar_outer",
-          "from": {
-            "landmark": "landmark.waist",
-            "xFactor": 0,
-            "xOffsetMM": 0,
-            "yLandmark": "landmark.neckFront",
-            "yOffsetMM": 5e+01
-          },
-          "to": {
             "landmark": "landmark.neckBase",
-            "xFactor": 1.1,
+            "xFactor": 0.55,
             "xOffsetMM": 0,
             "yLandmark": "landmark.neckFront",
-            "yOffsetMM": 45
+            "yOffsetMM": 52
           },
           "control": [
             {
-              "landmark": "landmark.neckBase",
-              "xFactor": 0.45,
+              "landmark": "landmark.waist",
+              "xFactor": 0,
               "xOffsetMM": 0,
               "yLandmark": "landmark.neckFront",
-              "yOffsetMM": 5e+01
+              "yOffsetMM": 4e+01
             },
             {
               "landmark": "landmark.neckBase",
-              "xFactor": 0.85,
+              "xFactor": 0.2,
               "xOffsetMM": 0,
               "yLandmark": "landmark.neckFront",
-              "yOffsetMM": 52
+              "yOffsetMM": 55
             }
           ],
           "finish": "faced"
         },
         {
-          "id": "dis2",
+          "id": "dis",
           "kind": "cut",
           "role": "collar_outer",
           "from": {
             "landmark": "landmark.neckBase",
-            "xFactor": 1.1,
+            "xFactor": 0.55,
             "xOffsetMM": 0,
             "yLandmark": "landmark.neckFront",
-            "yOffsetMM": 45
+            "yOffsetMM": 52
           },
           "to": {
             "landmark": "landmark.neckBase",
@@ -2199,17 +2200,108 @@
           "control": [
             {
               "landmark": "landmark.neckBase",
-              "xFactor": 1.5,
+              "xFactor": 1.2,
               "xOffsetMM": 0,
               "yLandmark": "landmark.neckFront",
-              "yOffsetMM": 25
+              "yOffsetMM": 45
             },
             {
               "landmark": "landmark.neckBase",
               "xFactor": 1.45,
               "xOffsetMM": 0,
               "yLandmark": "landmark.neckFront",
-              "yOffsetMM": -1e+01
+              "yOffsetMM": 5
+            }
+          ],
+          "finish": "faced"
+        }
+      ],
+      "grainDeg": 0,
+      "onFold": false,
+      "cutCount": 2,
+      "seamAllowanceMM": 0,
+      "reason": "Peter Pan yaka on: iki lob, CF'de yuvarlak uclar bulusur; boyun cizgisine dikili, ~50 mm genis",
+      "onto": "on_roba"
+    },
+    {
+      "id": "yaka_arka",
+      "edges": [
+        {
+          "id": "ic",
+          "kind": "cut",
+          "role": "collar_inner",
+          "from": {
+            "landmark": "landmark.neckBase",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.nape",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "control": [
+            {
+              "landmark": "landmark.neckBase",
+              "xFactor": 0.85,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.nape",
+              "yOffsetMM": 8
+            },
+            {
+              "landmark": "landmark.neckBase",
+              "xFactor": 0.4,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.nape"
+            }
+          ],
+          "finish": "raw"
+        },
+        {
+          "id": "cb",
+          "kind": "fold",
+          "role": "cb",
+          "from": {
+            "landmark": "landmark.nape",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.nape",
+            "xFactor": 0,
+            "xOffsetMM": 0,
+            "yOffsetMM": 48
+          }
+        },
+        {
+          "id": "dis",
+          "kind": "cut",
+          "role": "collar_outer",
+          "from": {
+            "landmark": "landmark.nape",
+            "xFactor": 0,
+            "xOffsetMM": 0,
+            "yOffsetMM": 48
+          },
+          "to": {
+            "landmark": "landmark.neckBase",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "control": [
+            {
+              "landmark": "landmark.neckBase",
+              "xFactor": 0.6,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.nape",
+              "yOffsetMM": 52
+            },
+            {
+              "landmark": "landmark.neckBase",
+              "xFactor": 1.45,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.nape",
+              "yOffsetMM": 25
             }
           ],
           "finish": "faced"
@@ -2219,8 +2311,8 @@
       "onFold": true,
       "cutCount": 1,
       "seamAllowanceMM": 0,
-      "reason": "yatik yaka: boyun cizgisine dikili, dis kenar ~50 mm disari; on yarim",
-      "onto": "on_roba"
+      "reason": "Peter Pan yaka arka: CB katli tek parca, ~48 mm genis",
+      "onto": "arka_roba"
     }
   ],
   "seams": [
@@ -2920,9 +3012,9 @@
               "finish": "raw"
             },
             {
-              "id": "cf",
-              "kind": "fold",
-              "role": "cf",
+              "id": "lob",
+              "kind": "cut",
+              "role": "collar_outer",
               "from": {
                 "landmark": "landmark.waist",
                 "xFactor": 0,
@@ -2930,53 +3022,36 @@
                 "yOffsetMM": 0
               },
               "to": {
-                "landmark": "landmark.waist",
-                "xFactor": 0,
-                "yLandmark": "landmark.neckFront",
-                "yOffsetMM": 5e+01
-              }
-            },
-            {
-              "id": "dis1",
-              "kind": "cut",
-              "role": "collar_outer",
-              "from": {
-                "landmark": "landmark.waist",
-                "xFactor": 0,
-                "yLandmark": "landmark.neckFront",
-                "yOffsetMM": 5e+01
-              },
-              "to": {
                 "landmark": "landmark.neckBase",
-                "xFactor": 1.1,
+                "xFactor": 0.55,
                 "yLandmark": "landmark.neckFront",
-                "yOffsetMM": 45
+                "yOffsetMM": 52
               },
               "control": [
                 {
-                  "landmark": "landmark.neckBase",
-                  "xFactor": 0.45,
+                  "landmark": "landmark.waist",
+                  "xFactor": 0,
                   "yLandmark": "landmark.neckFront",
-                  "yOffsetMM": 5e+01
+                  "yOffsetMM": 4e+01
                 },
                 {
                   "landmark": "landmark.neckBase",
-                  "xFactor": 0.85,
+                  "xFactor": 0.2,
                   "yLandmark": "landmark.neckFront",
-                  "yOffsetMM": 52
+                  "yOffsetMM": 55
                 }
               ],
               "finish": "faced"
             },
             {
-              "id": "dis2",
+              "id": "dis",
               "kind": "cut",
               "role": "collar_outer",
               "from": {
                 "landmark": "landmark.neckBase",
-                "xFactor": 1.1,
+                "xFactor": 0.55,
                 "yLandmark": "landmark.neckFront",
-                "yOffsetMM": 45
+                "yOffsetMM": 52
               },
               "to": {
                 "landmark": "landmark.neckBase",
@@ -2986,15 +3061,105 @@
               "control": [
                 {
                   "landmark": "landmark.neckBase",
-                  "xFactor": 1.5,
+                  "xFactor": 1.2,
                   "yLandmark": "landmark.neckFront",
-                  "yOffsetMM": 25
+                  "yOffsetMM": 45
                 },
                 {
                   "landmark": "landmark.neckBase",
                   "xFactor": 1.45,
                   "yLandmark": "landmark.neckFront",
-                  "yOffsetMM": -1e+01
+                  "yOffsetMM": 5
+                }
+              ],
+              "finish": "faced"
+            }
+          ],
+          "grainDeg": 0,
+          "onFold": false,
+          "cutCount": 2,
+          "seamAllowanceMM": 0,
+          "ease": [],
+          "reason": "Peter Pan yaka on: iki lob, CF'de yuvarlak uclar bulusur; boyun cizgisine dikili, ~50 mm genis"
+        }
+      }
+    },
+    {
+      "op": "addPanel",
+      "args": {
+        "onto": "arka_roba",
+        "panel": {
+          "id": "yaka_arka",
+          "edges": [
+            {
+              "id": "ic",
+              "kind": "cut",
+              "role": "collar_inner",
+              "from": {
+                "landmark": "landmark.neckBase",
+                "xFactor": 1,
+                "yOffsetMM": 0
+              },
+              "to": {
+                "landmark": "landmark.nape",
+                "xFactor": 0
+              },
+              "control": [
+                {
+                  "landmark": "landmark.neckBase",
+                  "xFactor": 0.85,
+                  "yLandmark": "landmark.nape",
+                  "yOffsetMM": 8
+                },
+                {
+                  "landmark": "landmark.neckBase",
+                  "xFactor": 0.4,
+                  "yLandmark": "landmark.nape",
+                  "yOffsetMM": 0
+                }
+              ],
+              "finish": "raw"
+            },
+            {
+              "id": "cb",
+              "kind": "fold",
+              "role": "cb",
+              "from": {
+                "landmark": "landmark.nape",
+                "xFactor": 0
+              },
+              "to": {
+                "landmark": "landmark.nape",
+                "xFactor": 0,
+                "yOffsetMM": 48
+              }
+            },
+            {
+              "id": "dis",
+              "kind": "cut",
+              "role": "collar_outer",
+              "from": {
+                "landmark": "landmark.nape",
+                "xFactor": 0,
+                "yOffsetMM": 48
+              },
+              "to": {
+                "landmark": "landmark.neckBase",
+                "xFactor": 1,
+                "yOffsetMM": 0
+              },
+              "control": [
+                {
+                  "landmark": "landmark.neckBase",
+                  "xFactor": 0.6,
+                  "yLandmark": "landmark.nape",
+                  "yOffsetMM": 52
+                },
+                {
+                  "landmark": "landmark.neckBase",
+                  "xFactor": 1.45,
+                  "yLandmark": "landmark.nape",
+                  "yOffsetMM": 25
                 }
               ],
               "finish": "faced"
@@ -3005,7 +3170,7 @@
           "cutCount": 1,
           "seamAllowanceMM": 0,
           "ease": [],
-          "reason": "yatik yaka: boyun cizgisine dikili, dis kenar ~50 mm disari; on yarim"
+          "reason": "Peter Pan yaka arka: CB katli tek parca, ~48 mm genis"
         }
       }
     }

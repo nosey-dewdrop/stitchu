@@ -7,10 +7,10 @@
     <path data-katman="14" data-tur="dikis" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 218.118 463.672 L 255.000 273.372 C 216.892 265.529 186.000 220.042 186.000 188.322 C 186.000 149.192 195.626 117.472 207.500 117.472 L 96.000 73.172 C 96.000 93.220 66.451 109.472 30.000 109.472 L 30.000 463.172 L 30.000 816.172 L 338.750 816.172 L 267.500 666.172 L 218.118 463.672 Z"/>
     <path data-katman="6" data-tur="kat" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 30.000 109.472 L 30.000 816.172"/>
     <text data-katman="15" x="33.760" y="438.086" font-size="9.400" fill="#111111" stroke="none" transform="rotate(-90 33.760 438.086)">ON FOLD</text>
-    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.1" stroke-width="0.350" d="M 94.641 463.172 L 89.938 259.172"/>
-    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.2" stroke-width="0.350" d="M 89.938 259.172 L 77.773 463.172"/>
-    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.3" stroke-width="0.350" d="M 77.773 463.172 L 89.938 666.172"/>
-    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.4" stroke-width="0.350" d="M 89.938 666.172 L 94.641 463.172"/>
+    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.1" stroke-width="0.350" d="M 94.641 463.172 L 89.938 301.842"/>
+    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.2" stroke-width="0.350" d="M 89.938 301.842 L 77.773 463.172"/>
+    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.3" stroke-width="0.350" d="M 77.773 463.172 L 89.938 574.822"/>
+    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.4" stroke-width="0.350" d="M 89.938 574.822 L 94.641 463.172"/>
     <path data-katman="4" data-tur="centik" data-edge="side_front" stroke-width="0.350" d="M 236.559 368.522 L 243.431 369.854"/>
     <path data-katman="4" data-tur="centik" data-edge="armhole_front.1" stroke-width="0.350" d="M 189.280 207.852 L 195.958 205.753"/>
     <path data-katman="4" data-tur="centik" data-edge="armhole_front.2" stroke-width="0.350" d="M 204.724 118.057 L 201.988 111.614"/>
@@ -27,10 +27,10 @@
   <g data-panel="arka_govde">
     <path data-katman="1" data-tur="kesim" stroke-width="1.000" d="M 677.061 469.579 L 715.585 259.377 L 687.027 250.944 L 683.858 249.524 L 680.053 247.069 L 673.721 241.378 L 667.409 233.628 L 663.559 227.643 L 658.706 218.031 L 656.254 211.585 L 654.518 205.449 L 653.526 199.957 L 653.215 195.035 L 653.563 177.846 L 654.857 158.838 L 656.759 145.034 L 657.234 143.228 L 658.957 140.817 L 656.941 144.147 L 655.194 155.675 L 644.789 96.728 L 546.600 57.716 L 542.184 54.862 L 538.373 51.148 L 534.567 48.151 L 530.789 45.673 L 523.249 41.756 L 511.596 37.455 L 503.395 35.265 L 494.773 33.499 L 485.720 32.121 L 476.251 31.124 L 461.345 30.359 L 426.212 30.000 L 426.212 853.308 L 812.425 853.308 L 722.197 663.355 Z"/>
     <path data-katman="14" data-tur="dikis" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 646.428 470.308 L 681.212 280.508 C 649.180 272.665 623.212 227.179 623.212 195.458 C 623.212 156.329 627.913 124.608 633.712 124.608 L 522.212 80.308 C 522.212 69.262 492.663 60.308 456.212 60.308 L 456.212 470.308 L 456.212 823.308 L 764.962 823.308 L 693.712 673.308 L 646.428 470.308 Z"/>
-    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.1" stroke-width="0.350" d="M 520.853 470.308 L 516.150 266.308"/>
-    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.2" stroke-width="0.350" d="M 516.150 266.308 L 501.887 470.308"/>
-    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.3" stroke-width="0.350" d="M 501.887 470.308 L 516.150 673.308"/>
-    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.4" stroke-width="0.350" d="M 516.150 673.308 L 520.853 470.308"/>
+    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.1" stroke-width="0.350" d="M 520.853 470.308 L 516.150 308.978"/>
+    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.2" stroke-width="0.350" d="M 516.150 308.978 L 501.887 470.308"/>
+    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.3" stroke-width="0.350" d="M 501.887 470.308 L 516.150 581.958"/>
+    <path data-katman="8" data-tur="pens" data-edge="ic_pens_1.4" stroke-width="0.350" d="M 516.150 581.958 L 520.853 470.308"/>
     <path data-katman="4" data-tur="centik" data-edge="side_back" stroke-width="0.350" d="M 663.279 378.359 L 670.165 379.621"/>
     <path data-katman="4" data-tur="centik" data-edge="side_back" stroke-width="0.350" d="M 664.361 372.457 L 671.246 373.719"/>
     <path data-katman="4" data-tur="centik" data-edge="armhole_back.1" stroke-width="0.350" d="M 625.200 212.092 L 632.071 210.750"/>

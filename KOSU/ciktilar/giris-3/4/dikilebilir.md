@@ -30,7 +30,7 @@ Yasa 5: celiskide **olcum kazanir**. Bos tablo "celiski yok" demek degildir.
 ## Motora ne gecti? (primitif emir listesi)
 
 Okuma dogrudan graf-v1 primitifleriyle yazilir (vision-graf-v1 yasa 9); ceviri katmani YOK.
-Motor (`grafuygula`) taban grafa bu 11 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
+Motor (`grafuygula`) taban grafa bu 12 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
 Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 | # | primitif | args | doguran okuma kalemi |
@@ -46,6 +46,7 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 | 9 | `fitLength` | `{"panel":"kol","edge":"cap_back","target":{"seam":"kol_oyugu","ratio":1.05,"easeMM":0}}` | kapak kol: kapak neredeyse duz (arka kapak) |
 | 10 | `sew` | `{"seam":"on_orta","a":[{"panel":"on_govde","edge":"cf.1"},{"panel":"on_govde","edge":"cf.2"}],"b":[{"panel":"on_govde","edge":"cf.1"},{"panel":"on_govde","edge"…` | on orta dugme pacasi (fotografta CF'nin sagina kaymis asimetrik; ayna kisiti: CF'de yazildi) |
 | 11 | `closure` | `{"seam":"on_orta","type":"buttons","fromFraction":0.02,"toFraction":0.62}` | on orta dugme pacasi (fotografta CF'nin sagina kaymis asimetrik; ayna kisiti: CF'de yazildi): dugme |
+| 12 | `closure` | `{"seam":"arka_orta_beden","type":"zipper","fromFraction":0,"toFraction":0.01}` | onden dugmeli giyside arka orta fermuar YOK: tabanin CB fermuari sifir uzunluga (0..0) cekilir (cift kapama: hakem tur 10) |
 
 **Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 0 adet.
 
@@ -57,10 +58,10 @@ Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=11) | 22042 |
-| flat.png | OK | 53109 |
+| flat.svg | OK (data-ops=12) | 20884 |
+| flat.png | OK | 49399 |
 | kalip-36.svg | OK | 10061 |
-| kalip-36.png | OK | 39036 |
+| kalip-36.png | OK | 38256 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

@@ -87,7 +87,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.35,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.bustLine",
+            "yLandmark2": "landmark.waist",
+            "yLerp": 0.15
           }
         },
         {
@@ -101,7 +104,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.35,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.bustLine",
+            "yLandmark2": "landmark.waist",
+            "yLerp": 0.15
           },
           "to": {
             "combo": [
@@ -445,7 +451,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.35,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.bustLine",
+            "yLandmark2": "landmark.waist",
+            "yLerp": 0.15
           }
         },
         {
@@ -459,7 +468,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.35,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.bustLine",
+            "yLandmark2": "landmark.waist",
+            "yLerp": 0.15
           },
           "to": {
             "combo": [
@@ -863,7 +875,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.59,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.hip",
+            "yLerp": 0.55
           }
         },
         {
@@ -877,7 +892,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.59,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.hip",
+            "yLerp": 0.55
           },
           "to": {
             "combo": [
@@ -1095,7 +1113,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.59,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.hip",
+            "yLerp": 0.55
           }
         },
         {
@@ -1109,7 +1130,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.59,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.hip",
+            "yLerp": 0.55
           },
           "to": {
             "combo": [

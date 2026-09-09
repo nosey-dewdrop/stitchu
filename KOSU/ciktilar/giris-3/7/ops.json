@@ -79,6 +79,14 @@
   }
  },
  {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_govde_alt",
+   "edge": "armhole_front.1.1",
+   "control": []
+  }
+ },
+ {
   "op": "subdivide",
   "args": {
    "panel": "arka_govde",
@@ -130,6 +138,14 @@
     "yLandmark": "landmark.underarm",
     "yOffsetMM": -13.3
    }
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_govde_alt",
+   "edge": "armhole_back.1.1",
+   "control": []
   }
  },
  {
@@ -204,9 +220,9 @@
        "landmark": "landmark.bustLine",
        "xOf": "ringQuarter",
        "ring": "girth.bust",
-       "xFactor": 0.93,
+       "xFactor": 1,
        "yLandmark": "landmark.underarm",
-       "yOffsetMM": 2
+       "yOffsetMM": -13.3
       },
       "finish": "faced"
      },
@@ -218,15 +234,15 @@
        "landmark": "landmark.bustLine",
        "xOf": "ringQuarter",
        "ring": "girth.bust",
-       "xFactor": 0.93,
+       "xFactor": 1,
        "yLandmark": "landmark.underarm",
-       "yOffsetMM": 2
+       "yOffsetMM": -13.3
       },
       "to": {
        "landmark": "landmark.waist",
        "xFactor": 0,
        "yLandmark": "landmark.underarm",
-       "yOffsetMM": 2
+       "yOffsetMM": -13.3
       },
       "finish": "raw"
      },
@@ -238,7 +254,7 @@
        "landmark": "landmark.waist",
        "xFactor": 0,
        "yLandmark": "landmark.underarm",
-       "yOffsetMM": 2
+       "yOffsetMM": -13.3
       },
       "to": {
        "landmark": "landmark.waist",
@@ -300,9 +316,9 @@
        "landmark": "landmark.bustLine",
        "xOf": "ringQuarter",
        "ring": "girth.bust",
-       "xFactor": 0.93,
+       "xFactor": 1,
        "yLandmark": "landmark.underarm",
-       "yOffsetMM": 2
+       "yOffsetMM": -13.3
       },
       "finish": "faced"
      },
@@ -314,15 +330,15 @@
        "landmark": "landmark.bustLine",
        "xOf": "ringQuarter",
        "ring": "girth.bust",
-       "xFactor": 0.93,
+       "xFactor": 1,
        "yLandmark": "landmark.underarm",
-       "yOffsetMM": 2
+       "yOffsetMM": -13.3
       },
       "to": {
        "landmark": "landmark.waist",
        "xFactor": 0,
        "yLandmark": "landmark.underarm",
-       "yOffsetMM": 2
+       "yOffsetMM": -13.3
       },
       "finish": "raw"
      },
@@ -334,7 +350,7 @@
        "landmark": "landmark.waist",
        "xFactor": 0,
        "yLandmark": "landmark.underarm",
-       "yOffsetMM": 2
+       "yOffsetMM": -13.3
       },
       "to": {
        "landmark": "landmark.waist",

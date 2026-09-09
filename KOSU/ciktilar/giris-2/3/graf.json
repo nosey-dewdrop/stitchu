@@ -358,7 +358,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.35,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.bustLine",
+            "yLandmark2": "landmark.waist",
+            "yLerp": 0.15
           },
           "apexDown": {
             "landmark": "landmark.waist",
@@ -366,7 +369,9 @@
             "ring": "girth.waist",
             "xFactor": 0.35,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.hip"
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.hip",
+            "yLerp": 0.55
           }
         }
       ]
@@ -720,7 +725,10 @@
             "xOf": "ringQuarter",
             "ring": "girth.waist",
             "xFactor": 0.35,
-            "xOffsetMM": 0
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.bustLine",
+            "yLandmark2": "landmark.waist",
+            "yLerp": 0.15
           },
           "apexDown": {
             "landmark": "landmark.waist",
@@ -728,7 +736,9 @@
             "ring": "girth.waist",
             "xFactor": 0.35,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.hip"
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.hip",
+            "yLerp": 0.55
           }
         }
       ]

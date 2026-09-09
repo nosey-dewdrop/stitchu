@@ -3,5 +3,5 @@ sha256 26d8c73c016b28f2e187247bb587a717871264603b8345a78cee8ff8fbf1a983
 gorunum on
 okuyan isci-A4-tur6 (llmCagri 0)
 arka.koken fotograf
-cizim taban+ops (28 primitif emir; KOSU/ciktilar/graf-ilk/graf.json + ops.json -> grafuygula/grafciz --ops)
+cizim taban+ops (30 primitif emir; KOSU/ciktilar/graf-ilk/graf.json + ops.json -> grafuygula/grafciz --ops)
 hedef 0 siluet orani -> grafuygula/grafciz --hedef hedefler.json (bolluk mm, sinir kirpmasi notes'ta)

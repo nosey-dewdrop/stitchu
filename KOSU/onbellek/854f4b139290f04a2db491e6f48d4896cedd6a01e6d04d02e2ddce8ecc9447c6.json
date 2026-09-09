@@ -290,6 +290,16 @@
     "toFraction": 0.62
    },
    "neden": "on orta dugme pacasi (fotografta CF'nin sagina kaymis asimetrik; ayna kisiti: CF'de yazildi): dugme"
+  },
+  {
+   "op": "closure",
+   "args": {
+    "seam": "arka_orta_beden",
+    "type": "zipper",
+    "fromFraction": 0.0,
+    "toFraction": 0.01
+   },
+   "neden": "onden dugmeli giyside arka orta fermuar YOK: tabanin CB fermuari sifir uzunluga (0..0) cekilir (cift kapama: hakem tur 10)"
   }
  ],
  "celiskiTablosu": [],

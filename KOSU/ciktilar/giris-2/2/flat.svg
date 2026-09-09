@@ -23,8 +23,8 @@
       <path data-panel="on_govde" data-edge="side_front.1" data-tur="seam" d="M -215.322 779.500 C -204.981 748.284 -195.033 716.797 -184.233 685.750 C -177.665 666.870 -169.612 649.248 -165.632 629.500"/>
       <path data-panel="on_govde" data-edge="side_front.2" data-tur="seam" d="M 165.632 629.500 C 160.581 602.652 156.332 575.658 151.154 548.837 C 148.579 535.500 146.079 521.469 142.062 508.506 C 132.077 476.285 114.809 448.645 110.813 414.400"/>
       <path data-panel="on_govde" data-edge="side_front.2" data-tur="seam" d="M -165.632 629.500 C -160.581 602.652 -156.332 575.658 -151.154 548.837 C -148.579 535.500 -146.079 521.469 -142.062 508.506 C -132.077 476.285 -114.809 448.645 -110.813 414.400"/>
-      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M 188.800 46.900 C 258.973 18.545 198.323 109.021 226.678 179.194"/>
-      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M -188.800 46.900 C -258.973 18.545 -198.323 109.021 -226.678 179.194"/>
+      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M 188.800 46.900 C 220.697 34.011 190.590 89.883 226.678 179.194"/>
+      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M -188.800 46.900 C -220.697 34.011 -190.590 89.883 -226.678 179.194"/>
       <path data-panel="kol" data-edge="underarm_front" data-tur="kol" d="M 226.678 179.194 L 387.100 576.208"/>
       <path data-panel="kol" data-edge="underarm_front" data-tur="kol" d="M -226.678 179.194 L -387.100 576.208"/>
       <path data-panel="kol" data-edge="hem" data-tur="kol" d="M 387.100 576.208 L 302.694 610.314"/>
@@ -45,8 +45,8 @@
       <path data-panel="arka_govde" data-edge="side_back.1" data-tur="seam" d="M -215.322 779.500 C -204.981 748.284 -195.033 716.797 -184.233 685.750 C -177.665 666.870 -169.612 649.248 -165.632 629.500"/>
       <path data-panel="arka_govde" data-edge="side_back.2" data-tur="seam" d="M 165.632 629.500 C 160.581 602.652 156.332 575.658 151.154 548.837 C 148.579 535.500 146.079 521.469 142.062 508.506 C 132.077 476.285 114.809 448.645 110.813 414.400"/>
       <path data-panel="arka_govde" data-edge="side_back.2" data-tur="seam" d="M -165.632 629.500 C -160.581 602.652 -156.332 575.658 -151.154 548.837 C -148.579 535.500 -146.079 521.469 -142.062 508.506 C -132.077 476.285 -114.809 448.645 -110.813 414.400"/>
-      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M 188.800 46.900 C 258.973 18.545 198.323 109.021 226.678 179.194"/>
-      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M -188.800 46.900 C -258.973 18.545 -198.323 109.021 -226.678 179.194"/>
+      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M 188.800 46.900 C 220.697 34.011 190.590 89.883 226.678 179.194"/>
+      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M -188.800 46.900 C -220.697 34.011 -190.590 89.883 -226.678 179.194"/>
       <path data-panel="kol" data-edge="underarm_front" data-tur="kol" d="M 226.678 179.194 L 387.100 576.208"/>
       <path data-panel="kol" data-edge="underarm_front" data-tur="kol" d="M -226.678 179.194 L -387.100 576.208"/>
       <path data-panel="kol" data-edge="hem" data-tur="kol" d="M 387.100 576.208 L 302.694 610.314"/>
@@ -93,12 +93,12 @@
   </g>
   <g id="details" fill="none" stroke="#111111" stroke-width="2.061" stroke-linejoin="round" stroke-linecap="round">
     <g data-view="front" data-eksen="cf" transform="translate(387.100 0)">
-      <path data-panel="on_govde" data-edge="ic_pens_1" data-tur="pens" d="M 38.784 198.300 L 41.537 414.400 L 38.784 629.500 L 36.032 414.400 Z"/>
-      <path data-panel="on_govde" data-edge="ic_pens_1" data-tur="pens" d="M -38.784 198.300 L -41.537 414.400 L -38.784 629.500 L -36.032 414.400 Z"/>
+      <path data-panel="on_govde" data-edge="ic_pens_1" data-tur="pens" d="M 38.784 243.465 L 41.537 414.400 L 38.784 532.705 L 36.032 414.400 Z"/>
+      <path data-panel="on_govde" data-edge="ic_pens_1" data-tur="pens" d="M -38.784 243.465 L -41.537 414.400 L -38.784 532.705 L -36.032 414.400 Z"/>
     </g>
     <g data-view="back" data-eksen="cb" transform="translate(1221.301 0)">
-      <path data-panel="arka_govde" data-edge="ic_pens_1" data-tur="pens" d="M 38.784 198.300 L 41.537 414.400 L 38.784 629.500 L 36.032 414.400 Z"/>
-      <path data-panel="arka_govde" data-edge="ic_pens_1" data-tur="pens" d="M -38.784 198.300 L -41.537 414.400 L -38.784 629.500 L -36.032 414.400 Z"/>
+      <path data-panel="arka_govde" data-edge="ic_pens_1" data-tur="pens" d="M 38.784 243.465 L 41.537 414.400 L 38.784 532.705 L 36.032 414.400 Z"/>
+      <path data-panel="arka_govde" data-edge="ic_pens_1" data-tur="pens" d="M -38.784 243.465 L -41.537 414.400 L -38.784 532.705 L -36.032 414.400 Z"/>
       <path data-panel="arka_govde" data-edge="arka_orta_beden" data-tur="fermuar_cekecek" d="M 2.500 -20.000 L -2.500 -20.000 L -2.500 -28.000 L 2.500 -28.000 Z"/>
       <path data-panel="arka_govde" data-edge="arka_orta_etek" data-tur="fermuar_cekecek" d="M 2.500 414.400 L -2.500 414.400 L -2.500 406.400 L 2.500 406.400 Z"/>
     </g>

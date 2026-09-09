@@ -642,6 +642,10 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
     // olculdu). Tepe bir eksen kenarina (kat/x=0 dikis/kesim) dayaniyorsa kenar orada BITER: V yaka, sivri etek ucu, yaka
     // bandi ucu OKUMANIN kosesidir (5 teslimde 9 boyle kose olculdu), kapi tasarimi yargilamaz.
     for (const Panel& p : g.panels) {
+        // 2026-09-09 (A4 tur 10): kat DEGIL + 2 kesim + eksen kenari YOK olan panel (Peter Pan yaka lobu: iki ayri parca CF'de
+        // yuvarlak uclarla bulusur) icin eksen bir ayna dikisi degildir; teget hukmu uygulanmaz.
+        bool eksenKenarVar = false; for (const Edge& k : p.edges) if (k.from.xSifir() && k.to.xSifir()) eksenKenarVar = true;
+        if (!p.onFold && p.cutCount >= 2 && !eksenKenarVar) continue;
         const EvalCtx ctx = p.ctxFor(body, onArkaEsit);
         const std::size_t n = p.edges.size();
         auto eksenKenar = [](const Edge& k) { return k.from.xSifir() && k.to.xSifir(); };
