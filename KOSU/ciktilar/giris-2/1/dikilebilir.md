@@ -33,8 +33,8 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 | # | primitif | args | doguran okuma kalemi |
 |---|---|---|---|
-| 1 | `flare` | `{"panel":"on_bacak","edge":"paca_front","factor":1.15}` | paca genis: bacak dizden asagi hafif acilir (fotografta bol duz paca) |
-| 2 | `flare` | `{"panel":"arka_bacak","edge":"paca_back","factor":1.15}` | arka paca ayni |
+| 1 | `flare` | `{"panel":"on_bacak","edge":"paca_front","factor":1.35}` | paca genis: bol duz paca (fotografta bacak tabana kadar genis) |
+| 2 | `flare` | `{"panel":"arka_bacak","edge":"paca_back","factor":1.35}` | arka paca ayni |
 | 3 | `extendTo` | `{"panel":"on_bacak","edge":"paca_front","yLandmark":"landmark.ankle","yOffsetMM":30}` | paca yere kadar: bilek + 3 cm |
 | 4 | `extendTo` | `{"panel":"arka_bacak","edge":"paca_back","yLandmark":"landmark.ankle","yOffsetMM":30}` | arka paca ayni |
 
@@ -48,10 +48,10 @@ Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=4) | 16844 |
-| flat.png | OK | 47569 |
-| kalip-36.svg | OK | 6140 |
-| kalip-36.png | OK | 57889 |
+| flat.svg | OK (data-ops=4) | 16740 |
+| flat.png | OK | 45444 |
+| kalip-36.svg | OK | 6096 |
+| kalip-36.png | OK | 55785 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

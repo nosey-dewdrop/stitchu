@@ -36,7 +36,7 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 | 1 | `drop` | `{"panel":"kol","finish":"faced"}` | fotografta kol yok: kol paneli kalkar, kol oyugu pervazli serbest kenar |
 | 2 | `merge` | `{"seam":"bel","panelA":"on_beden","panelB":"on_etek","panel":"on_govde"}` | fotografta bel dikisi yok: on beden + on etek tek panel (bel pensi ic halka pense doner) |
 | 3 | `merge` | `{"seam":"bel","panelA":"arka_beden","panelB":"arka_etek","panel":"arka_govde"}` | ayni: arka |
-| 4 | `reshapeEdge` | `{"panel":"on_govde","edge":"neck_front","from":{"landmark":"landmark.neckBase","xFactor":1.6,"yLandmark":"landmark.shoulderTip","yLandmark2":"landmark.neckBase"…` | yuksek kayik yaka (drape, boyna yakin) |
+| 4 | `reshapeEdge` | `{"panel":"on_govde","edge":"neck_front","from":{"landmark":"landmark.neckBase","xFactor":1.6,"yLandmark":"landmark.shoulderTip","yLandmark2":"landmark.neckBase"…` | yuksek kayik yaka (drape, boyna yakin; CF'de hafif yukari, tepe yok) |
 | 5 | `reshapeEdge` | `{"panel":"arka_govde","edge":"neck_back","from":{"landmark":"landmark.neckBase","xFactor":1.6,"yLandmark":"landmark.shoulderTip","yLandmark2":"landmark.neckBase…` | arka yaka yuksek |
 | 6 | `extendTo` | `{"panel":"on_govde","edge":"hem_front","yLandmark":"landmark.ankle","yOffsetMM":20}` | yere kadar: bilek + 2 cm |
 | 7 | `extendTo` | `{"panel":"arka_govde","edge":"hem_back","yLandmark":"landmark.ankle","yOffsetMM":20}` | yere kadar: bilek + 2 cm (arka ayni) |
@@ -53,10 +53,10 @@ Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=9) | 20571 |
-| flat.png | OK | 68344 |
-| kalip-36.svg | OK | 6738 |
-| kalip-36.png | OK | 76708 |
+| flat.svg | OK (data-ops=9) | 20573 |
+| flat.png | OK | 68940 |
+| kalip-36.svg | OK | 6772 |
+| kalip-36.png | OK | 78096 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

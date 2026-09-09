@@ -172,16 +172,16 @@
             "xOffsetMM": 0,
             "yLandmark": "landmark.neckFront",
             "yLandmark2": "landmark.bustLine",
-            "yLerp": -0.12
+            "yLerp": -0.05
           },
           "control": [
             {
               "landmark": "landmark.neckBase",
-              "xFactor": 1.2,
+              "xFactor": 1.25,
               "xOffsetMM": 0,
               "yLandmark": "landmark.neckFront",
               "yLandmark2": "landmark.bustLine",
-              "yLerp": -0.14
+              "yLerp": -0.06
             },
             {
               "landmark": "landmark.neckBase",
@@ -189,7 +189,7 @@
               "xOffsetMM": 0,
               "yLandmark": "landmark.neckFront",
               "yLandmark2": "landmark.bustLine",
-              "yLerp": -0.13
+              "yLerp": -0.05
             }
           ],
           "finish": "faced"
@@ -204,7 +204,7 @@
             "xOffsetMM": 0,
             "yLandmark": "landmark.neckFront",
             "yLandmark2": "landmark.bustLine",
-            "yLerp": -0.12
+            "yLerp": -0.05
           },
           "to": {
             "landmark": "landmark.waist",
@@ -1005,22 +1005,22 @@
           "xFactor": 0,
           "yLandmark": "landmark.neckFront",
           "yLandmark2": "landmark.bustLine",
-          "yLerp": -0.12
+          "yLerp": -0.05
         },
         "control": [
           {
             "landmark": "landmark.neckBase",
-            "xFactor": 1.2,
+            "xFactor": 1.25,
             "yLandmark": "landmark.neckFront",
             "yLandmark2": "landmark.bustLine",
-            "yLerp": -0.14
+            "yLerp": -0.06
           },
           {
             "landmark": "landmark.neckBase",
             "xFactor": 0.6,
             "yLandmark": "landmark.neckFront",
             "yLandmark2": "landmark.bustLine",
-            "yLerp": -0.13
+            "yLerp": -0.05
           }
         ]
       }

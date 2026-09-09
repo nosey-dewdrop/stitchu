@@ -74,7 +74,7 @@
           "to": {
             "combo": [
               {
-                "w": 1.075,
+                "w": 1.175,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -84,7 +84,7 @@
                 "yOffsetMM": 3e+01
               },
               {
-                "w": -0.07499999999999996,
+                "w": -0.17500000000000004,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -151,7 +151,7 @@
           "from": {
             "combo": [
               {
-                "w": 1.075,
+                "w": 1.175,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -161,7 +161,7 @@
                 "yOffsetMM": 3e+01
               },
               {
-                "w": -0.07499999999999996,
+                "w": -0.17500000000000004,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -175,7 +175,7 @@
           "to": {
             "combo": [
               {
-                "w": -0.07499999999999996,
+                "w": -0.17500000000000004,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -185,7 +185,7 @@
                 "yOffsetMM": 3e+01
               },
               {
-                "w": 1.075,
+                "w": 1.175,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -207,7 +207,7 @@
           "from": {
             "combo": [
               {
-                "w": -0.07499999999999996,
+                "w": -0.17500000000000004,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -217,7 +217,7 @@
                 "yOffsetMM": 3e+01
               },
               {
-                "w": 1.075,
+                "w": 1.175,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -480,7 +480,7 @@
           "to": {
             "combo": [
               {
-                "w": 1.075,
+                "w": 1.175,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -490,7 +490,7 @@
                 "yOffsetMM": 3e+01
               },
               {
-                "w": -0.07499999999999996,
+                "w": -0.17500000000000004,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -510,7 +510,7 @@
           "from": {
             "combo": [
               {
-                "w": 1.075,
+                "w": 1.175,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -520,7 +520,7 @@
                 "yOffsetMM": 3e+01
               },
               {
-                "w": -0.07499999999999996,
+                "w": -0.17500000000000004,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -534,7 +534,7 @@
           "to": {
             "combo": [
               {
-                "w": -0.07499999999999996,
+                "w": -0.17500000000000004,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -544,7 +544,7 @@
                 "yOffsetMM": 3e+01
               },
               {
-                "w": 1.075,
+                "w": 1.175,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -566,7 +566,7 @@
           "from": {
             "combo": [
               {
-                "w": -0.07499999999999996,
+                "w": -0.17500000000000004,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -576,7 +576,7 @@
                 "yOffsetMM": 3e+01
               },
               {
-                "w": 1.075,
+                "w": 1.175,
                 "landmark": "landmark.hip",
                 "xOf": "ringQuarter",
                 "ring": "girth.hip",
@@ -956,7 +956,7 @@
       "args": {
         "panel": "on_bacak",
         "edge": "paca_front",
-        "factor": 1.15
+        "factor": 1.35
       }
     },
     {
@@ -964,7 +964,7 @@
       "args": {
         "panel": "arka_bacak",
         "edge": "paca_back",
-        "factor": 1.15
+        "factor": 1.35
       }
     },
     {

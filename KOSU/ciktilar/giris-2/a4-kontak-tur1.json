@@ -1,0 +1,98 @@
+[
+ {
+  "no": 1,
+  "ilan": "genis duz pacali pantolon (yuksek bel)",
+  "op": 4,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 0,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "bel_halka": 221.63640638802258,
+    "kalca_halka": 331.265,
+    "paca": 228.57284999999996
+   },
+   "gercek36": {
+    "bel_halka": 342.51776562898584,
+    "kalca_halka": 475,
+    "paca": 327.75
+   }
+  }
+ },
+ {
+  "no": 2,
+  "ilan": "pileli uzun kollu tunik (kalca alti, manset bandi) — dosya adi 'gomlek', gorunen tunik",
+  "op": 9,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 0,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "yaka": 164.81210503886223,
+    "kol_oyugu_halka": 357.62106568075177,
+    "etek_ucu": 430.6445,
+    "kol_agzi": 182.0732548971283,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "yaka": 154.51024924172958,
+    "kol_oyugu_halka": 376.61409485737136,
+    "etek_ucu": 617.5,
+    "kol_agzi": 310.5,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ },
+ {
+  "no": 3,
+  "ilan": "kolsuz sutun elbise (yuksek kayik yaka, yere kadar, yanda drape)",
+  "op": 9,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 0,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "yaka": 231.36382063607186,
+    "kol_oyugu_halka": 357.62106568075177,
+    "etek_ucu": 357.7662,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "yaka": 216.37434238182482,
+    "kol_oyugu_halka": 376.61409485737136,
+    "etek_ucu": 513,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ },
+ {
+  "no": 4,
+  "ilan": "gomlek (yakali, uzun kol, mansetli; sal altinda) — dosya adi 'bluz', gorunen gomlek",
+  "op": 11,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 0,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "yaka": 164.81210503886223,
+    "kol_oyugu_halka": 357.62106568075177,
+    "etek_ucu": 364.3915,
+    "kol_agzi": 182.0732548971283,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "yaka": 154.51024924172958,
+    "kol_oyugu_halka": 376.61409485737136,
+    "etek_ucu": 522.5,
+    "kol_agzi": 310.5,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ }
+]
