@@ -4,8 +4,8 @@
 // Sayilar OLCULUR, yazilmaz: halka toplamlari grafdogrula --json (halkalar[].toplamMM) iki bedende ayri; beden landmark'lari
 // engine/build/body_check dump. Gorseller teslim dizinindeki png'ler (flat.png / kalip-36.png) ve GIRDI ekran goruntusu.
 // Kullanim: node KOSU/0509-a4-kontak.mjs <set-dizini> <tur> [no...]   ör. node KOSU/0509-a4-kontak.mjs giris-3 6
-// Cikti: KOSU/ciktilar/<set>/a4-kontak-tur<tur>.svg + .png
-import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
+// Cikti: KOSU/ciktilar/<set>/a4-kontak-tur<tur>.png (+ .json ozet; ara svg silinir)
+import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { png } from './0509-a3-png.mjs';
 
@@ -89,5 +89,6 @@ s += '</svg>\n';
 const svgYol = `${kok}/a4-kontak-tur${tur}.svg`, pngYol = `${kok}/a4-kontak-tur${tur}.png`;
 writeFileSync(svgYol, s);
 const p = await png(svgYol, pngYol, 1600, Math.round(1600 * H / W));
+if (p.ok) unlinkSync(svgYol);   // svg base64 gomulu png'lerle 30 MB (2026-09-09 olculdu): repoya png girer, svg ara urun
 writeFileSync(`${kok}/a4-kontak-tur${tur}.json`, JSON.stringify(ozet, null, 1) + '\n');
 console.log(JSON.stringify({ svg: svgYol, png: pngYol, pngOk: p.ok, satir: nolar.length, ozet: ozet.map((o) => `${o.no}: op ${o.op}, kirmizi g36 ${o.kirmiziGercek}` ) }, null, 1));
