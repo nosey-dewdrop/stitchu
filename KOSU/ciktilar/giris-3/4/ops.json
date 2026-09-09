@@ -183,5 +183,14 @@
    "fromFraction": 0,
    "toFraction": 0.01
   }
+ },
+ {
+  "op": "closure",
+  "args": {
+   "seam": "arka_orta_etek",
+   "type": "zipper",
+   "fromFraction": 0,
+   "toFraction": 0.01
+  }
  }
 ]

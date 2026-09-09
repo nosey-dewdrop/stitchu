@@ -574,5 +574,32 @@
   "engine/CMakeLists.txt (yalniz ekleme: add_executable grafuygula)"
  ],
  "A5IzinListesi_ne": "GUNCELLENDI 2026-09-09 (Damla karari): applyOp CLI (grafuygula) ve grafciz --ops A3'te ELLE acildi; A5 bu ikilileri KULLANIR. A5'in 8 edit'i dogrudan primitif listesi olarak yazilir. ESKI: KARAR 1 (2026-09-08 karar ajani): applyOp'u disari veren CLI A5'te acilir, A3 ya da A6'ya YAZILMAZ. A5 isçisinin ILK teslimi bu ikilidir. Gerekce: A5'in teslimi (KOSU/0509-kosu.js:254-256) KOSU/ciktilar/edit/etkilenen-<op>.json'un grafop.cpp icinde CALISMA ZAMANINDA BFS ile yazilmasini ve edit_locality_check'in o dosyayi okumasini sart kosuyor; bu dosyayi uretecek tek yol applyOp'u calistiran bir ikilidir. CLI olmadan A5 teslim edilemez -> A5 yapisal olarak ilk zorunlu sahibi. A3'un izin listesi GENISLETILMEZ. Olculdu: grafop.cpp:459 applyOp var, hicbir add_executable onu cagirmiyor; grafciz-cli.cpp'de 'ops' gecmiyor.",
- "emsalKaldirildi": "2026-09-09 Damla: emsal flat (deer-and-doe/Mica/K5) ve flat-olcum SILINDI; croquis36 = manken 90-60-90/178 (contract croquis36.manken); flat gozle hakem (kor, png, internetten fashion flat kiyasi)"
+ "emsalKaldirildi": "2026-09-09 Damla: emsal flat (deer-and-doe/Mica/K5) ve flat-olcum SILINDI; croquis36 = manken 90-60-90/178 (contract croquis36.manken); flat gozle hakem (kor, png, internetten fashion flat kiyasi)",
+ "A4Tur6_11": {
+  "tarih": "2026-09-09",
+  "hakem": [
+   "tur6 HAYIR 3/11",
+   "tur7 HAYIR 3/11",
+   "tur8 HAYIR 4/11",
+   "tur10 EVET 6/11",
+   "tur11 EVET 6/11"
+  ],
+  "hukum": "A4 BITTI (0-K 5: iki tur ust uste EVET)",
+  "teslim": [
+   "KOSU/ciktilar/giris-3/1..11",
+   "KOSU/ciktilar/giris-2/1..4"
+  ],
+  "kontak": "KOSU/ciktilar/giris-3/a4-kontak-tur12.png",
+  "dogrulayiciKirmizi": {
+   "giris-3/5": "supresyon 3.5 mm (tolerans 2)"
+  },
+  "acik": [
+   "bel/kalca 0.68 manken karari",
+   "puf kol balon govdesi yok",
+   "arka yaka CB kubbe",
+   "omuz ucu boynuzu",
+   "manken_insan_ayrim_check emsal turevi (add_test silme H15)",
+   "eski web cizicisi 3 ctest kirmizi (flat_mirror_check, cizim_giysi_mi, flat_artifact_census)"
+  ]
+ }
 }

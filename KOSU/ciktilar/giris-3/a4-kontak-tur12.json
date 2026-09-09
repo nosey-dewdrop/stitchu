@@ -28,7 +28,7 @@
  {
   "no": 2,
   "ilan": "ince askili elbise (duz ust kenar, bel dikisi, diz alti A-line)",
-  "op": 21,
+  "op": 23,
   "kirmiziGercek": 0,
   "kirmiziCroquis": 0,
   "fail": [],
@@ -50,7 +50,7 @@
  {
   "no": 3,
   "ilan": "babydoll mini (bebe yaka, roba, puf kisa kol, bel dikissiz)",
-  "op": 21,
+  "op": 22,
   "kirmiziGercek": 0,
   "kirmiziCroquis": 2,
   "fail": [],
@@ -76,7 +76,7 @@
  {
   "no": 4,
   "ilan": "kayik yakali kapak kollu mini (asimetrik dugme, bel dikissiz)",
-  "op": 11,
+  "op": 13,
   "kirmiziGercek": 0,
   "kirmiziCroquis": 0,
   "fail": [],
@@ -130,7 +130,7 @@
  {
   "no": 6,
   "ilan": "babydoll (genis buzgulu aski, gogus buzgusu, gogus alti dikis, buzgulu etek)",
-  "op": 28,
+  "op": 30,
   "kirmiziGercek": 0,
   "kirmiziCroquis": 0,
   "fail": [],
@@ -152,7 +152,7 @@
  {
   "no": 7,
   "ilan": "omuz acik mini (asimetrik band; simetrik karikatur)",
-  "op": 19,
+  "op": 21,
   "kirmiziGercek": 0,
   "kirmiziCroquis": 0,
   "fail": [],
@@ -172,7 +172,7 @@
  {
   "no": 8,
   "ilan": "kolsuz kayik yakali dugmeli ust (kalca boyu)",
-  "op": 9,
+  "op": 11,
   "kirmiziGercek": 0,
   "kirmiziCroquis": 0,
   "fail": [],
@@ -196,7 +196,7 @@
  {
   "no": 9,
   "ilan": "bustier mini (sweetheart ust kenar, kap dikisleri, fiyonk aski, bel dikisi)",
-  "op": 22,
+  "op": 24,
   "kirmiziGercek": 0,
   "kirmiziCroquis": 0,
   "fail": [],
@@ -218,7 +218,7 @@
  {
   "no": 10,
   "ilan": "kare yakali genis askili A-line mini (gogus alti buzgulu dikis)",
-  "op": 28,
+  "op": 30,
   "kirmiziGercek": 0,
   "kirmiziCroquis": 0,
   "fail": [],
@@ -240,7 +240,7 @@
  {
   "no": 11,
   "ilan": "bol ust (firfirli bebe yaka, roba, buzgu, puf kol)",
-  "op": 18,
+  "op": 19,
   "kirmiziGercek": 0,
   "kirmiziCroquis": 2,
   "fail": [],

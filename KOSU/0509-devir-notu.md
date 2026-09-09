@@ -226,3 +226,15 @@ MOTOR BULGULARI (acik, dokunulmadi): bumpSeamRatio coklu kenar zincirinde kenar 
 6 numarada bel buzgusu bu yuzden yazilmadi); gather homotetisi yan tepeyi tasiyor (1.5 buzgu yan dikisi 42 mm uzatiyor; 1.25 ile
 gecti); fitLength kubigi yalniz UZATIR (kisa olan tarafa yazilmali); puf kol kapak kisiti 1.5 uzeri cozulmuyor (|d|<=120); body_check
 dump beden argumanini yok sayiyor (hep croquis36). Asimetri (Jackie, Leia): kat eksenli cizim, simetrik karikatur; eksikPrimitif'te.
+
+HAKEM SONUCU (0-K 5, iki tur ust uste EVET = A4 bitti): tur 8 HAYIR 4/11 (askilar, kanat, kum saati siddeti) -> askilar omuza dogru
+daralan, ortme kurali (yaka altindaki boyun cizgisi), kisa etekte flare yok; tur 10 EVET 6/11 (KOSU/ciktilar/hakem/A4/tur10-hakem4.md);
+tur 11 EVET 6/11 (tur11-hakem5.md). A4 BITTI (tur 10 + 11). Kalan hakem itirazlari (kapatilmadi, ilanli): (a) bel/kalca 0.68 = manken
+90-60-90 (0-K 2, degistirilmez; satici 0.75-0.85); (b) puf kol kutu gibi (kapak buzgu cizgileri var, balon govdesi yok: kol tupu
+sabit genislik — kol tupune "balon" izdusumu yok); (c) arka yaka CB'de kubbe (satici: kucuk cukur) — taban neck_back kubigi;
+(d) omuz ucu boynuzu (1, 5, 8): kolsuz giyside omuz dikisi ucu ile kol oyugu pervaz izinin bulusmasi; (e) 3/7/11 bel dikissiz
+govdede belde kose (Catmull-Rom bel tepesi; manken ust kalca 100 mm'de +31 mm). Son duzeltme (tur 11 sonrasi): onden dugmeli
+giyside etek CB fermuari da kapatildi (arka_orta_etek 0..0.01). wasm bundle yeniden derlendi (kol acisi + olcek zarfi), wasm_body_check yesil.
+
+A5 ICIN (koşucu args baslat A5; brief 0509-kosu.md): giris-3/1..11 ve giris-2/1..4 teslimleri = A5 edit setinin girdisi; edit = ops.json'a
+op ekleme (grafuygula), onizleme = grafciz --ops. Motor bulgulari yukarida (bumpSeamRatio zinciri, gather homotetisi, fitLength yon).

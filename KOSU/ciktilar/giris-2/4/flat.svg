@@ -1,4 +1,4 @@
-<svg data-ops="12" xmlns="http://www.w3.org/2000/svg" viewBox="-20.000 -40.000 1648.402 787.720" data-scale="1:1" data-unit-mm="1" data-graf="taban-elbise" data-body="croquis36" data-size="croquis36" data-panel="3" data-gorunum="2" data-kavis="beden" data-y-waist="414.400" data-y-bust="213.300" data-y-hip="629.500">
+<svg data-ops="13" xmlns="http://www.w3.org/2000/svg" viewBox="-20.000 -40.000 1648.402 787.720" data-scale="1:1" data-unit-mm="1" data-graf="taban-elbise" data-body="croquis36" data-size="croquis36" data-panel="3" data-gorunum="2" data-kavis="beden" data-y-waist="414.400" data-y-bust="213.300" data-y-hip="629.500">
   <title>taban-elbise flat @ croquis36</title>
   <rect x="-20.000" y="-40.000" width="1648.402" height="787.720" fill="#ffffff"/>
   <g id="croquis" fill="none" stroke="none">
@@ -89,8 +89,6 @@
       <path data-panel="arka_govde" data-edge="neck_back" data-tur="ustdikis" d="M -60.101 2.058 L -60.261 2.340 L -59.029 1.357 L -57.746 0.575 L -55.874 -0.371 L -53.725 -1.299 L -51.464 -2.149 L -49.117 -2.928 L -46.699 -3.647 L -44.062 -4.347 L -41.429 -4.962 L -38.903 -5.495 L -36.346 -5.989 L -33.700 -6.456 L -30.913 -6.884 L -28.301 -7.243 L -25.674 -7.575 L -22.807 -7.887 L -20.161 -8.134 L -17.507 -8.358 L -14.630 -8.553 L -11.965 -8.701 L -9.187 -8.835 L -6.414 -8.915 L -3.741 -8.974"/>
       <path data-panel="arka_govde" data-edge="hem_back" data-tur="ustdikis" d="M 9.176 716.689 L 15.999 716.617 L 22.839 716.523 L 29.742 716.373 L 36.569 716.201 L 43.486 715.994 L 50.312 715.745 L 57.138 715.474 L 64.050 715.156 L 70.873 714.806 L 77.693 714.430 L 84.599 714.001 L 91.412 713.542 L 98.219 713.050 L 105.117 712.505 L 111.911 711.917 L 118.694 711.286 L 125.462 710.608 L 132.280 709.866 L 139.081 709.044 L 145.793 708.153 L 152.466 707.167 L 159.027 706.069 L 165.275 704.823 L 171.525 703.261"/>
       <path data-panel="arka_govde" data-edge="hem_back" data-tur="ustdikis" d="M -9.176 716.689 L -15.999 716.617 L -22.839 716.523 L -29.742 716.373 L -36.569 716.201 L -43.486 715.994 L -50.312 715.745 L -57.138 715.474 L -64.050 715.156 L -70.873 714.806 L -77.693 714.430 L -84.599 714.001 L -91.412 713.542 L -98.219 713.050 L -105.117 712.505 L -111.911 711.917 L -118.694 711.286 L -125.462 710.608 L -132.280 709.866 L -139.081 709.044 L -145.793 708.153 L -152.466 707.167 L -159.027 706.069 L -165.275 704.823 L -171.525 703.261"/>
-      <path data-panel="arka_govde" data-edge="arka_orta_etek" data-tur="fermuar" d="M -4.000 414.400 L -4.000 426.696 L -4.000 438.992 L -4.000 451.287 L -4.000 463.583 L -4.000 475.879 L -4.000 488.175 L -4.000 500.471 L -4.000 512.767 L -4.000 525.062 L -4.000 537.358 L -4.000 549.654 L -4.000 561.950 L -4.000 574.246 L -4.000 586.542 L -4.000 598.837 L -4.000 611.133 L -4.000 623.429 L -4.000 635.725 L -4.000 648.021 L -4.000 660.317 L -4.000 672.612 L -4.000 684.908 L -4.000 697.204 L -4.000 709.500"/>
-      <path data-panel="arka_govde" data-edge="arka_orta_etek" data-tur="fermuar" d="M 4.000 414.400 L 4.000 426.696 L 4.000 438.992 L 4.000 451.287 L 4.000 463.583 L 4.000 475.879 L 4.000 488.175 L 4.000 500.471 L 4.000 512.767 L 4.000 525.062 L 4.000 537.358 L 4.000 549.654 L 4.000 561.950 L 4.000 574.246 L 4.000 586.542 L 4.000 598.837 L 4.000 611.133 L 4.000 623.429 L 4.000 635.725 L 4.000 648.021 L 4.000 660.317 L 4.000 672.612 L 4.000 684.908 L 4.000 697.204 L 4.000 709.500"/>
     </g>
   </g>
   <g id="details" fill="none" stroke="#111111" stroke-width="2.061" stroke-linejoin="round" stroke-linecap="round">
@@ -111,7 +109,6 @@
     <g data-view="back" data-eksen="cb" transform="translate(1221.301 0)">
       <path data-panel="arka_govde" data-edge="ic_pens_1" data-tur="pens" d="M 38.784 243.465 L 41.537 414.400 L 38.784 532.705 L 36.032 414.400 Z"/>
       <path data-panel="arka_govde" data-edge="ic_pens_1" data-tur="pens" d="M -38.784 243.465 L -41.537 414.400 L -38.784 532.705 L -36.032 414.400 Z"/>
-      <path data-panel="arka_govde" data-edge="arka_orta_etek" data-tur="fermuar_cekecek" d="M 2.500 414.400 L -2.500 414.400 L -2.500 406.400 L 2.500 406.400 Z"/>
     </g>
   </g>
 </svg>

@@ -251,7 +251,17 @@
     "fromFraction": 0.0,
     "toFraction": 0.01
    },
-   "neden": "onden dugmeli giyside arka orta fermuar YOK: tabanin CB fermuari sifir uzunluga (0..0) cekilir (cift kapama: hakem tur 10)"
+   "neden": "onden dugmeli giyside arka orta fermuar YOK: tabanin CB fermuari sifira yakin (0..0.01, 20 mm alti sembol yok) (cift kapama: hakem tur 10)"
+  },
+  {
+   "op": "closure",
+   "args": {
+    "seam": "arka_orta_etek",
+    "type": "zipper",
+    "fromFraction": 0.0,
+    "toFraction": 0.01
+   },
+   "neden": "ayni: etek CB fermuari (merge sonrasi arka_orta_etek duruyor; hakem tur 11 'kalcadan etek ucuna fermuar')"
   }
  ],
  "celiskiTablosu": [],
