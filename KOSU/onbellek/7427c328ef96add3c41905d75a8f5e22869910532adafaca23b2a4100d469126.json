@@ -225,7 +225,7 @@
     "yLandmark": "landmark.hip",
     "yOffsetMM": 40
    },
-   "neden": "ust: kalca + 4 cm"
+   "neden": "ust: kalca + 4 cm; flare YOK (4 cm'lik etekte flare kanat yapiyordu, hakem tur 8)"
   },
   {
    "op": "extendTo",
@@ -235,25 +235,7 @@
     "yLandmark": "landmark.hip",
     "yOffsetMM": 40
    },
-   "neden": "ust: kalca + 4 cm (arka ayni)"
-  },
-  {
-   "op": "flare",
-   "args": {
-    "panel": "on_govde_alt",
-    "edge": "hem_front",
-    "factor": 1.25
-   },
-   "neden": "bol etek ucu"
-  },
-  {
-   "op": "flare",
-   "args": {
-    "panel": "arka_govde_alt",
-    "edge": "hem_back",
-    "factor": 1.25
-   },
-   "neden": "bol etek ucu (arka ayni)"
+   "neden": "ust: kalca + 4 cm; flare YOK (4 cm'lik etekte flare kanat yapiyordu, hakem tur 8) (arka ayni)"
   },
   {
    "op": "extendTo",

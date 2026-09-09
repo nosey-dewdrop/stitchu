@@ -116,22 +116,6 @@
   }
  },
  {
-  "op": "flare",
-  "args": {
-   "panel": "on_govde_alt",
-   "edge": "hem_front",
-   "factor": 1.25
-  }
- },
- {
-  "op": "flare",
-  "args": {
-   "panel": "arka_govde_alt",
-   "edge": "hem_back",
-   "factor": 1.25
-  }
- },
- {
   "op": "extendTo",
   "args": {
    "panel": "kol",

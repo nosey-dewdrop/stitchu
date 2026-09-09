@@ -398,6 +398,24 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
         return s != sarkma.end() && s->second.count(gv) > 0;
     };
 
+    // ---- 2b) ORTME (A4 tur 8, kor hakem tur 7/8 "yaka bibi"): yuze dikili (onto) parcanin bir kenari konak kenarinin IKI UCUNU
+    // paylasiyorsa (yaka ic kenari = boyun cizgisi) konak kenari ortuludur: cizilmez, ust dikis izi de basilmaz. Giysi dali degil:
+    // "ustteki parca alttakini orter" izdusum kurali; olcut geometrik (uc noktalar 0.5 mm icinde).
+    std::set<std::string> ortulu;   // "panel|edge"
+    for (const Panel& c : g.panels) {
+        if (c.onto.empty()) continue;
+        const Panel* h = g.panel(c.onto); if (!h) continue;
+        for (const Edge& ce : c.edges) {
+            const Point a = eval(ce.from, ctxs[c.id]), b = eval(ce.to, ctxs[c.id]);
+            for (const Edge& he : h->edges) {
+                if (he.kind == "fold" || he.kind == "dartLeg") continue;
+                const Point ha = eval(he.from, ctxs[h->id]), hb = eval(he.to, ctxs[h->id]);
+                auto es = [](Point p, Point q) { return std::fabs(p.x - q.x) < 0.5 && std::fabs(p.y - q.y) < 0.5; };
+                if ((es(a, ha) && es(b, hb)) || (es(a, hb) && es(b, ha))) ortulu.insert(h->id + "|" + he.id);
+            }
+        }
+    }
+
     // ---- 3) kenar sinifi (kalin/ince) — dikis partnerinin gorunumu
     auto sinifla = [&](const Panel& p, const Edge& e, const std::string& gv) {
         KenarSinif k;
@@ -534,6 +552,7 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
                 }
                 const KenarSinif ks = sinifla(p, e, gv);
                 if (!ks.ciz) continue;
+                if (ortulu.count(p.id + "|" + e.id)) continue;   // yuze dikili parca ortuyor
                 const std::vector<PathCommand> cmds = sk ? e.path(ctx) : kenarYolu(p, e);
                 if (sk) yaz(kalin, cmds, e.id, "kol");   // sarkan tup: dis/ic/agiz hepsi siluet
                 else yaz(ks.kalin ? kalin : ince, cmds, e.id, e.kind);

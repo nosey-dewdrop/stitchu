@@ -205,24 +205,6 @@
    "neden": "ust: etek ucu kalca hizasi (arka ayni)"
   },
   {
-   "op": "flare",
-   "args": {
-    "panel": "on_govde",
-    "edge": "hem_front",
-    "factor": 1.12
-   },
-   "neden": "etek ucunda pili acikligi: hafif acik"
-  },
-  {
-   "op": "flare",
-   "args": {
-    "panel": "arka_govde",
-    "edge": "hem_back",
-    "factor": 1.12
-   },
-   "neden": "etek ucunda pili acikligi: hafif acik (arka ayni)"
-  },
-  {
    "op": "sew",
    "args": {
     "seam": "on_orta",

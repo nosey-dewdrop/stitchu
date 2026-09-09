@@ -28,7 +28,7 @@ Yasa 5: celiskide **olcum kazanir**. Bos tablo "celiski yok" demek degildir.
 ## Motora ne gecti? (primitif emir listesi)
 
 Okuma dogrudan graf-v1 primitifleriyle yazilir (vision-graf-v1 yasa 9); ceviri katmani YOK.
-Motor (`grafuygula`) taban grafa bu 11 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
+Motor (`grafuygula`) taban grafa bu 9 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
 Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 | # | primitif | args | doguran okuma kalemi |
@@ -40,10 +40,8 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 | 5 | `reshapeEdge` | `{"panel":"arka_govde","edge":"neck_back","from":{"landmark":"landmark.neckBase","xFactor":1.85,"yLandmark":"landmark.shoulderTip","yLandmark2":"landmark.neckBas…` | arka kayik |
 | 6 | `extendTo` | `{"panel":"on_govde","edge":"hem_front","yLandmark":"landmark.hip","yOffsetMM":10}` | ust: etek ucu kalca hizasi |
 | 7 | `extendTo` | `{"panel":"arka_govde","edge":"hem_back","yLandmark":"landmark.hip","yOffsetMM":10}` | ust: etek ucu kalca hizasi (arka ayni) |
-| 8 | `flare` | `{"panel":"on_govde","edge":"hem_front","factor":1.12}` | etek ucunda pili acikligi: hafif acik |
-| 9 | `flare` | `{"panel":"arka_govde","edge":"hem_back","factor":1.12}` | etek ucunda pili acikligi: hafif acik (arka ayni) |
-| 10 | `sew` | `{"seam":"on_orta","a":[{"panel":"on_govde","edge":"cf.1"},{"panel":"on_govde","edge":"cf.2"}],"b":[{"panel":"on_govde","edge":"cf.1"},{"panel":"on_govde","edge"…` | CF tam boy dugme pacasi |
-| 11 | `closure` | `{"seam":"on_orta","type":"buttons","fromFraction":0.02,"toFraction":0.97}` | CF tam boy dugme pacasi: dugme |
+| 8 | `sew` | `{"seam":"on_orta","a":[{"panel":"on_govde","edge":"cf.1"},{"panel":"on_govde","edge":"cf.2"}],"b":[{"panel":"on_govde","edge":"cf.1"},{"panel":"on_govde","edge"…` | CF tam boy dugme pacasi |
+| 9 | `closure` | `{"seam":"on_orta","type":"buttons","fromFraction":0.02,"toFraction":0.97}` | CF tam boy dugme pacasi: dugme |
 
 **Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 0 adet.
 
@@ -55,10 +53,10 @@ Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=11) | 22834 |
-| flat.png | OK | 55638 |
-| kalip-36.svg | OK | 6550 |
-| kalip-36.png | OK | 51748 |
+| flat.svg | OK (data-ops=9) | 22825 |
+| flat.png | OK | 54256 |
+| kalip-36.svg | OK | 6513 |
+| kalip-36.png | OK | 50563 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

@@ -113,22 +113,6 @@
   }
  },
  {
-  "op": "flare",
-  "args": {
-   "panel": "on_govde",
-   "edge": "hem_front",
-   "factor": 1.12
-  }
- },
- {
-  "op": "flare",
-  "args": {
-   "panel": "arka_govde",
-   "edge": "hem_back",
-   "factor": 1.12
-  }
- },
- {
   "op": "sew",
   "args": {
    "seam": "on_orta",

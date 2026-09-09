@@ -281,7 +281,7 @@
         "landmark": "landmark.bustLine",
         "xOf": "ringQuarter",
         "ring": "girth.bust",
-        "xFactor": 1.0,
+        "xFactor": 0.93,
         "yLandmark": "landmark.underarm",
         "yOffsetMM": -43
        },
@@ -295,7 +295,7 @@
         "landmark": "landmark.bustLine",
         "xOf": "ringQuarter",
         "ring": "girth.bust",
-        "xFactor": 1.0,
+        "xFactor": 0.93,
         "yLandmark": "landmark.underarm",
         "yOffsetMM": -43
        },
@@ -303,7 +303,7 @@
         "landmark": "landmark.bustLine",
         "xOf": "ringQuarter",
         "ring": "girth.bust",
-        "xFactor": 1.0,
+        "xFactor": 0.93,
         "yLandmark": "landmark.underarm",
         "yOffsetMM": 2
        },
@@ -317,7 +317,7 @@
         "landmark": "landmark.bustLine",
         "xOf": "ringQuarter",
         "ring": "girth.bust",
-        "xFactor": 1.0,
+        "xFactor": 0.93,
         "yLandmark": "landmark.underarm",
         "yOffsetMM": 2
        },
@@ -356,6 +356,103 @@
     }
    },
    "neden": "omuz bandi: ust kenar boyunca yuze dikili band (40 mm)"
+  },
+  {
+   "op": "addPanel",
+   "args": {
+    "onto": "arka_govde_alt",
+    "panel": {
+     "id": "band_arka",
+     "edges": [
+      {
+       "id": "ust",
+       "kind": "cut",
+       "role": "band",
+       "from": {
+        "landmark": "landmark.waist",
+        "xFactor": 0,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": -43
+       },
+       "to": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.93,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": -43
+       },
+       "finish": "faced"
+      },
+      {
+       "id": "dis",
+       "kind": "cut",
+       "role": "band",
+       "from": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.93,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": -43
+       },
+       "to": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.93,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": 2
+       },
+       "finish": "faced"
+      },
+      {
+       "id": "alt",
+       "kind": "cut",
+       "role": "band",
+       "from": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.93,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": 2
+       },
+       "to": {
+        "landmark": "landmark.waist",
+        "xFactor": 0,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": 2
+       },
+       "finish": "raw"
+      },
+      {
+       "id": "cf",
+       "kind": "fold",
+       "role": "cf",
+       "from": {
+        "landmark": "landmark.waist",
+        "xFactor": 0,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": 2
+       },
+       "to": {
+        "landmark": "landmark.waist",
+        "xFactor": 0,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": -43
+       }
+      }
+     ],
+     "grainDeg": 0,
+     "onFold": true,
+     "cutCount": 1,
+     "seamAllowanceMM": 0,
+     "ease": [],
+     "reason": "omuz acik band (ust kenarin ustunde 40 mm)"
+    }
+   },
+   "neden": "arka band (ayni)"
   },
   {
    "op": "extendTo",

@@ -185,3 +185,44 @@ SORULMAZ). (e) Kalan emsal metinleri: contract/flat-convention-v1.json croquis/s
 medyaniydi — yeni kaynak lazim: manken kol pozu), KOSU/0509-kosu.js A1b/A4 metinleri, engine/tests/cizim_giysi_mi.mjs yorumu,
 manken_insan_ayrim_check.mjs (flat-olcum.json yok, v2 kopyasi); vocab_reference_check bust/hip ilanli. Kilit A5 listesiyle
 kurulu, muhur yenilendi. Koşucu calistirilmaz; A5 elle bitene kadar.
+
+## A4 TUR 6-8 (9 Eyl gece, elle; Damla 0-K 3a: 11 Etsy ilani) — sonraki oturum BURADAN
+
+Ne yapildi (commit 7afd256f..HEAD): (1) CIZICI (engine/src/flatsvg.cpp): croquis = mankene giyilmis izdusum: duz halka-arasi kenar (yan
+dikis) mankenin ara kesitlerini izleyen kubik (bedeniIzle; siluet: koltukalti/bel/ust kalca/kalca, gogus kesitleri ALINMADI: S yapiyordu);
+kalca altinda C1 gecis (etek kalcada kirilmiyor); yatay etek ucu sarkan kubik (kosede dusey teget; sag 0.05 x genislik, etsy-01/05 PIL
+olcumu, contract/flat-convention-v1.json kavis blogu); buzgulu kenar dikildigi boya sikisir (grafop scaleEdges'in tersi, yalniz croquis);
+ust dikis izi orneklenerek ic ofset + iki ucta %5 kirpik (kose tasmasi yok); pens V bacak, balik pensi elmas; kapama sembolleri (dugme
+daire, fermuar kesikli cift cizgi + cekecek); kol tupu poz olcegi croquis'te /2 (agiz "L kancasi" gitti); kapak basi omuz ucundan disa teget;
+eksenli panelde x<0 eksene kirpilir (pantolon ag uzantisi); croquis'te pens agzi COZULMEZ (cozulmusGraf pensCoz=false: bel dikisinde yan
+basamak yoktu). Kol ekseni 82.2 -> 68 derece (contract body-v1 croquisOranlar + flat-convention sevkPoz; kaynak kor hakem web ornegi n=5,
+DOGRULANMADI; elbow/wrist landmark + farkTablosu body_check dump ile yenilendi, body_check yesil). (2) MOTOR (grafop.cpp): subdivide
+halka/dikis zincirini YONUYLE acar (gogus_halka kopuk kusuru); attach iki kenari da seam yapar; drop kenar kaybeden halkayi siler.
+grafdogrula: ayna dikisi ZINCIR olabilir + kapanmasiz dikili ayna (pantolon ag); halka kapanisinda "dikili ayna" kat gibi. graf_op_check
++2 beklenti, PASS. (3) PANTOLON TABANI: engine/tests/graf_ir_check.cpp tabanPantolon (iki bacak, ag kavisi, on ic bacak kubik + fitLength),
+--emit KOSU/ciktilar/graf-ilk/pantolon.json (pin); 0509-a3-uret.mjs tabani okumadaki tabanGraf'tan secer. (4) OKUMALAR: 11 Etsy
+(KOSU/onbellek, isci-A4-tur6; uretici scriptler oturum scratchpad'indeydi, onbellek JSON'lari kaynak) -> KOSU/ciktilar/giris-3/1..11,
+dogrulayici gercek36 10/11 yesil (5: supresyon 3.5 mm emilmeyen bel, tolerans 2; apeksten bagimsiz, cozPens band+etek dagilimi). Dior seti
+-> giris-2/1..4 (pantolon, tunik, sutun elbise, gomlek), 4/4 yesil; GIRDI/hedef-fotograflar-2 KAYNAKLAR.md dosya/tarif eslesmesi 2 dosyada
+YANLIS (gomlek.jpg pileli tunik gosteriyor, bluz.jpg sal altinda gomlek, etek.jpg saçaklı PALTO — etek okunmadi, uydurulmadi; dogru
+etek fotografi lazim). (5) KONTAK (0-K 4): KOSU/0509-a4-kontak.mjs bastan: ilan | flat | kalip | op sayisi | halka toplamlari iki bedende |
+dogrulayici; KOSU/ciktilar/giris-3/a4-kontak-tur8.png, giris-2/a4-kontak-tur2.png. (6) EMSAL TEMIZLIGI: 0509-kapi.sh emsal geciti
+kaldirildi (kendi-check 17/18, tek kirmizi H7 = kilit acik), 0509-kosu.js A1/A4 metinleri, cizim_giysi_mi.mjs yorumu, body-v1
+_iyiFlatOlcumu blogu silindi. KALAN: engine/tests/manken_insan_ayrim_check.mjs (emsal olcumunden turemis kapi; add_test silmek H15
+ihlali — kaldirma karari acik), vocab_reference_check bust+2/hip+1 (A6 ilani). olcekAraligi max 1335 -> 1465 (yere kadar elbise;
+kaynak Aldrich waist-to-floor).
+
+HAKEM (0-K 5, kor, yalniz png, her tur WebSearch): tur 6 HAYIR 3/11 (KOSU/ciktilar/hakem/A4/tur6-hakem1.md: cizgi tasmasi, kollar dik,
+pens tek cizgi, kapama yok, kalcada kirilma, chevron ust kenar) -> hepsi kapatildi; tur 7 HAYIR 3/11 (tur7-hakem2.md: askilar duz kesik,
+pens tek cizgi, kose kancasi, band-etek kopuk, yaka bibi) -> aski omuz uzerinden kubik, pens V, kose teget, croquis pens cozumu yok;
+yaka bibi (3, 11) ACIK: onto yaka altindaki boyun cizgisi cizilmeye devam ediyor (kirpma yok). Tur 8 hakem: asagida.
+
+CTEST: graf/flat alt kumesi 3 kirmizi — flat_mirror_check, cizim_giysi_mi, flat_artifact_census: ucu de ESKI web cizicisini
+(web/lib/flat-from-pattern.js) sevkPoz bandiyla kiyasliyor, bu oturumda dokunulan dosyalari okumuyor; kol acisi bandi 65-70'e cekilince
+cizim_giysi_mi (b) eski cizicide yine kirmizi. Eski web cizicisinin akibeti karar ister (A6/A10). ONCEDEN KIRMIZI MIYDI: DOGRULANMADI
+(bu oturumda HEAD~ ile kosulmadi).
+
+MOTOR BULGULARI (acik, dokunulmadi): bumpSeamRatio coklu kenar zincirinde kenar basina carpar (iki kenar gather 1.6 -> 2.56 hedef; olculdu,
+6 numarada bel buzgusu bu yuzden yazilmadi); gather homotetisi yan tepeyi tasiyor (1.5 buzgu yan dikisi 42 mm uzatiyor; 1.25 ile
+gecti); fitLength kubigi yalniz UZATIR (kisa olan tarafa yazilmali); puf kol kapak kisiti 1.5 uzeri cozulmuyor (|d|<=120); body_check
+dump beden argumanini yok sayiyor (hep croquis36). Asimetri (Jackie, Leia): kat eksenli cizim, simetrik karikatur; eksikPrimitif'te.

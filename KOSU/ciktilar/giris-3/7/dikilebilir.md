@@ -27,7 +27,7 @@ Yasa 5: celiskide **olcum kazanir**. Bos tablo "celiski yok" demek degildir.
 ## Motora ne gecti? (primitif emir listesi)
 
 Okuma dogrudan graf-v1 primitifleriyle yazilir (vision-graf-v1 yasa 9); ceviri katmani YOK.
-Motor (`grafuygula`) taban grafa bu 18 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
+Motor (`grafuygula`) taban grafa bu 19 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
 Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 | # | primitif | args | doguran okuma kalemi |
@@ -48,8 +48,9 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 | 14 | `sew` | `{"seam":"arka_orta_beden","a":[{"panel":"arka_govde_alt","edge":"cb.1.2"}],"b":[{"panel":"arka_govde_alt","edge":"cb.1.2"}],"reverse":true,"ratio":1}` | arka orta kapanma: drop ile dusen arka orta dikisi yeniden (cb.2 kendi aynasiyla) |
 | 15 | `closure` | `{"seam":"arka_orta_beden","type":"zipper","fromFraction":0,"toFraction":1}` | arka orta fermuar (fotografta arka gorunmuyor: cikarim) |
 | 16 | `addPanel` | `{"onto":"on_govde_alt","panel":{"id":"band_on","edges":[{"id":"ust","kind":"cut","role":"band","from":{"landmark":"landmark.waist","xFactor":0,"yLandmark":"land…` | omuz bandi: ust kenar boyunca yuze dikili band (40 mm) |
-| 17 | `extendTo` | `{"panel":"on_govde_alt","edge":"hem_front","yLandmark":"landmark.hip","yOffsetMM":140}` | mini: kalca + ~14 cm |
-| 18 | `extendTo` | `{"panel":"arka_govde_alt","edge":"hem_back","yLandmark":"landmark.hip","yOffsetMM":140}` | mini: kalca + ~14 cm (arka ayni) |
+| 17 | `addPanel` | `{"onto":"arka_govde_alt","panel":{"id":"band_arka","edges":[{"id":"ust","kind":"cut","role":"band","from":{"landmark":"landmark.waist","xFactor":0,"yLandmark":"…` | arka band (ayni) |
+| 18 | `extendTo` | `{"panel":"on_govde_alt","edge":"hem_front","yLandmark":"landmark.hip","yOffsetMM":140}` | mini: kalca + ~14 cm |
+| 19 | `extendTo` | `{"panel":"arka_govde_alt","edge":"hem_back","yLandmark":"landmark.hip","yOffsetMM":140}` | mini: kalca + ~14 cm (arka ayni) |
 
 **Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 0 adet.
 
@@ -61,10 +62,10 @@ Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=18) | 19807 |
-| flat.png | OK | 39811 |
-| kalip-36.svg | OK | 7754 |
-| kalip-36.png | OK | 35411 |
+| flat.svg | OK (data-ops=19) | 22561 |
+| flat.png | OK | 39842 |
+| kalip-36.svg | OK | 9465 |
+| kalip-36.png | OK | 30809 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

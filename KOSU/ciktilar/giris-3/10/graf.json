@@ -1484,10 +1484,9 @@
             "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
-            "xFactor": 0.55,
+            "xFactor": 0.468,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.neckBase",
-            "yOffsetMM": 1.1
+            "yLandmark": "landmark.neckBase"
           },
           "finish": "bound"
         },
@@ -1499,41 +1498,20 @@
             "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
-            "xFactor": 0.55,
+            "xFactor": 0.468,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.neckBase",
-            "yOffsetMM": 1.1
+            "yLandmark": "landmark.neckBase"
           },
           "to": {
             "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
-            "xFactor": 0.55,
-            "xOffsetMM": 4e+01,
+            "xFactor": 0.468,
+            "xOffsetMM": 26,
             "yLandmark": "landmark.neckBase",
-            "yOffsetMM": 4.1
+            "yOffsetMM": 4
           },
-          "control": [
-            {
-              "landmark": "landmark.bustLine",
-              "xOf": "ringQuarter",
-              "ring": "girth.bust",
-              "xFactor": 0.55,
-              "xOffsetMM": -4,
-              "yLandmark": "landmark.neckBase",
-              "yOffsetMM": -34.9
-            },
-            {
-              "landmark": "landmark.bustLine",
-              "xOf": "ringQuarter",
-              "ring": "girth.bust",
-              "xFactor": 0.55,
-              "xOffsetMM": 44,
-              "yLandmark": "landmark.neckBase",
-              "yOffsetMM": -34.9
-            }
-          ],
-          "finish": "bound"
+          "finish": "raw"
         },
         {
           "id": "dis",
@@ -1543,10 +1521,10 @@
             "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
-            "xFactor": 0.55,
-            "xOffsetMM": 4e+01,
+            "xFactor": 0.468,
+            "xOffsetMM": 26,
             "yLandmark": "landmark.neckBase",
-            "yOffsetMM": 4.1
+            "yOffsetMM": 4
           },
           "to": {
             "landmark": "landmark.bustLine",
@@ -1588,7 +1566,7 @@
       "onFold": false,
       "cutCount": 2,
       "seamAllowanceMM": 0,
-      "reason": "aski (40 mm), ust kenardan omuz cizgisine, omuz uzerinden arkaya kivrilir; alt kenar raw = ust kenar dikisine yakalanir",
+      "reason": "aski (40 mm altta, 26.0 mm omuzda), ust kenardan omuz cizgisine daralarak; alt kenar raw = ust kenar dikisine yakalanir",
       "onto": "on_beden_ust2"
     },
     {
@@ -1611,10 +1589,9 @@
             "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
-            "xFactor": 0.55,
+            "xFactor": 0.468,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.neckBase",
-            "yOffsetMM": 1.1
+            "yLandmark": "landmark.neckBase"
           },
           "finish": "bound"
         },
@@ -1626,41 +1603,20 @@
             "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
-            "xFactor": 0.55,
+            "xFactor": 0.468,
             "xOffsetMM": 0,
-            "yLandmark": "landmark.neckBase",
-            "yOffsetMM": 1.1
+            "yLandmark": "landmark.neckBase"
           },
           "to": {
             "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
-            "xFactor": 0.55,
-            "xOffsetMM": 4e+01,
+            "xFactor": 0.468,
+            "xOffsetMM": 26,
             "yLandmark": "landmark.neckBase",
-            "yOffsetMM": 4.1
+            "yOffsetMM": 4
           },
-          "control": [
-            {
-              "landmark": "landmark.bustLine",
-              "xOf": "ringQuarter",
-              "ring": "girth.bust",
-              "xFactor": 0.55,
-              "xOffsetMM": -4,
-              "yLandmark": "landmark.neckBase",
-              "yOffsetMM": -34.9
-            },
-            {
-              "landmark": "landmark.bustLine",
-              "xOf": "ringQuarter",
-              "ring": "girth.bust",
-              "xFactor": 0.55,
-              "xOffsetMM": 44,
-              "yLandmark": "landmark.neckBase",
-              "yOffsetMM": -34.9
-            }
-          ],
-          "finish": "bound"
+          "finish": "raw"
         },
         {
           "id": "dis",
@@ -1670,10 +1626,10 @@
             "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
-            "xFactor": 0.55,
-            "xOffsetMM": 4e+01,
+            "xFactor": 0.468,
+            "xOffsetMM": 26,
             "yLandmark": "landmark.neckBase",
-            "yOffsetMM": 4.1
+            "yOffsetMM": 4
           },
           "to": {
             "landmark": "landmark.bustLine",
@@ -1715,7 +1671,7 @@
       "onFold": false,
       "cutCount": 2,
       "seamAllowanceMM": 0,
-      "reason": "aski (40 mm), ust kenardan omuz cizgisine, omuz uzerinden arkaya kivrilir; alt kenar raw = ust kenar dikisine yakalanir",
+      "reason": "aski (40 mm altta, 26.0 mm omuzda), ust kenardan omuz cizgisine daralarak; alt kenar raw = ust kenar dikisine yakalanir",
       "onto": "arka_beden_ust2"
     }
   ],
@@ -2277,10 +2233,10 @@
                 "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
-                "xFactor": 0.55,
+                "xFactor": 0.468,
                 "xOffsetMM": 0,
                 "yLandmark": "landmark.neckBase",
-                "yOffsetMM": 1.1
+                "yOffsetMM": 0
               },
               "finish": "bound"
             },
@@ -2292,41 +2248,21 @@
                 "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
-                "xFactor": 0.55,
+                "xFactor": 0.468,
                 "xOffsetMM": 0,
                 "yLandmark": "landmark.neckBase",
-                "yOffsetMM": 1.1
+                "yOffsetMM": 0
               },
               "to": {
                 "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
-                "xFactor": 0.55,
-                "xOffsetMM": 4e+01,
+                "xFactor": 0.468,
+                "xOffsetMM": 26,
                 "yLandmark": "landmark.neckBase",
-                "yOffsetMM": 4.1
+                "yOffsetMM": 4
               },
-              "control": [
-                {
-                  "landmark": "landmark.bustLine",
-                  "xOf": "ringQuarter",
-                  "ring": "girth.bust",
-                  "xFactor": 0.55,
-                  "xOffsetMM": -4,
-                  "yLandmark": "landmark.neckBase",
-                  "yOffsetMM": -34.9
-                },
-                {
-                  "landmark": "landmark.bustLine",
-                  "xOf": "ringQuarter",
-                  "ring": "girth.bust",
-                  "xFactor": 0.55,
-                  "xOffsetMM": 44,
-                  "yLandmark": "landmark.neckBase",
-                  "yOffsetMM": -34.9
-                }
-              ],
-              "finish": "bound"
+              "finish": "raw"
             },
             {
               "id": "dis",
@@ -2336,10 +2272,10 @@
                 "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
-                "xFactor": 0.55,
-                "xOffsetMM": 4e+01,
+                "xFactor": 0.468,
+                "xOffsetMM": 26,
                 "yLandmark": "landmark.neckBase",
-                "yOffsetMM": 4.1
+                "yOffsetMM": 4
               },
               "to": {
                 "landmark": "landmark.bustLine",
@@ -2382,7 +2318,7 @@
           "cutCount": 2,
           "seamAllowanceMM": 0,
           "ease": [],
-          "reason": "aski (40 mm), ust kenardan omuz cizgisine, omuz uzerinden arkaya kivrilir; alt kenar raw = ust kenar dikisine yakalanir"
+          "reason": "aski (40 mm altta, 26.0 mm omuzda), ust kenardan omuz cizgisine daralarak; alt kenar raw = ust kenar dikisine yakalanir"
         }
       }
     },
@@ -2410,10 +2346,10 @@
                 "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
-                "xFactor": 0.55,
+                "xFactor": 0.468,
                 "xOffsetMM": 0,
                 "yLandmark": "landmark.neckBase",
-                "yOffsetMM": 1.1
+                "yOffsetMM": 0
               },
               "finish": "bound"
             },
@@ -2425,41 +2361,21 @@
                 "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
-                "xFactor": 0.55,
+                "xFactor": 0.468,
                 "xOffsetMM": 0,
                 "yLandmark": "landmark.neckBase",
-                "yOffsetMM": 1.1
+                "yOffsetMM": 0
               },
               "to": {
                 "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
-                "xFactor": 0.55,
-                "xOffsetMM": 4e+01,
+                "xFactor": 0.468,
+                "xOffsetMM": 26,
                 "yLandmark": "landmark.neckBase",
-                "yOffsetMM": 4.1
+                "yOffsetMM": 4
               },
-              "control": [
-                {
-                  "landmark": "landmark.bustLine",
-                  "xOf": "ringQuarter",
-                  "ring": "girth.bust",
-                  "xFactor": 0.55,
-                  "xOffsetMM": -4,
-                  "yLandmark": "landmark.neckBase",
-                  "yOffsetMM": -34.9
-                },
-                {
-                  "landmark": "landmark.bustLine",
-                  "xOf": "ringQuarter",
-                  "ring": "girth.bust",
-                  "xFactor": 0.55,
-                  "xOffsetMM": 44,
-                  "yLandmark": "landmark.neckBase",
-                  "yOffsetMM": -34.9
-                }
-              ],
-              "finish": "bound"
+              "finish": "raw"
             },
             {
               "id": "dis",
@@ -2469,10 +2385,10 @@
                 "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
-                "xFactor": 0.55,
-                "xOffsetMM": 4e+01,
+                "xFactor": 0.468,
+                "xOffsetMM": 26,
                 "yLandmark": "landmark.neckBase",
-                "yOffsetMM": 4.1
+                "yOffsetMM": 4
               },
               "to": {
                 "landmark": "landmark.bustLine",
@@ -2515,7 +2431,7 @@
           "cutCount": 2,
           "seamAllowanceMM": 0,
           "ease": [],
-          "reason": "aski (40 mm), ust kenardan omuz cizgisine, omuz uzerinden arkaya kivrilir; alt kenar raw = ust kenar dikisine yakalanir"
+          "reason": "aski (40 mm altta, 26.0 mm omuzda), ust kenardan omuz cizgisine daralarak; alt kenar raw = ust kenar dikisine yakalanir"
         }
       }
     },

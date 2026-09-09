@@ -384,7 +384,7 @@
         "landmark": "landmark.bustLine",
         "xOf": "ringQuarter",
         "ring": "girth.bust",
-        "xFactor": 0.5,
+        "xFactor": 0.425,
         "xOffsetMM": 0,
         "yLandmark": "landmark.neckBase",
         "yOffsetMM": 0.0
@@ -399,7 +399,7 @@
         "landmark": "landmark.bustLine",
         "xOf": "ringQuarter",
         "ring": "girth.bust",
-        "xFactor": 0.5,
+        "xFactor": 0.425,
         "xOffsetMM": 0,
         "yLandmark": "landmark.neckBase",
         "yOffsetMM": 0.0
@@ -408,32 +408,12 @@
         "landmark": "landmark.bustLine",
         "xOf": "ringQuarter",
         "ring": "girth.bust",
-        "xFactor": 0.5,
-        "xOffsetMM": 45,
+        "xFactor": 0.425,
+        "xOffsetMM": 29.2,
         "yLandmark": "landmark.neckBase",
-        "yOffsetMM": 3.0
+        "yOffsetMM": 4.0
        },
-       "control": [
-        {
-         "landmark": "landmark.bustLine",
-         "xOf": "ringQuarter",
-         "ring": "girth.bust",
-         "xFactor": 0.5,
-         "xOffsetMM": -4.5,
-         "yLandmark": "landmark.neckBase",
-         "yOffsetMM": -40.5
-        },
-        {
-         "landmark": "landmark.bustLine",
-         "xOf": "ringQuarter",
-         "ring": "girth.bust",
-         "xFactor": 0.5,
-         "xOffsetMM": 49.50000000000001,
-         "yLandmark": "landmark.neckBase",
-         "yOffsetMM": -40.5
-        }
-       ],
-       "finish": "bound"
+       "finish": "raw"
       },
       {
        "id": "dis",
@@ -443,10 +423,10 @@
         "landmark": "landmark.bustLine",
         "xOf": "ringQuarter",
         "ring": "girth.bust",
-        "xFactor": 0.5,
-        "xOffsetMM": 45,
+        "xFactor": 0.425,
+        "xOffsetMM": 29.2,
         "yLandmark": "landmark.neckBase",
-        "yOffsetMM": 3.0
+        "yOffsetMM": 4.0
        },
        "to": {
         "landmark": "landmark.bustLine",
@@ -489,7 +469,7 @@
      "cutCount": 2,
      "seamAllowanceMM": 0,
      "ease": [],
-     "reason": "aski (45 mm), ust kenardan omuz cizgisine, omuz uzerinden arkaya kivrilir; alt kenar raw = ust kenar dikisine yakalanir"
+     "reason": "aski (45 mm altta, 29.2 mm omuzda), ust kenardan omuz cizgisine daralarak; alt kenar raw = ust kenar dikisine yakalanir"
     }
    },
    "neden": "genis aski (45 mm), buzgulu"
@@ -518,7 +498,7 @@
         "landmark": "landmark.bustLine",
         "xOf": "ringQuarter",
         "ring": "girth.bust",
-        "xFactor": 0.5,
+        "xFactor": 0.425,
         "xOffsetMM": 0,
         "yLandmark": "landmark.neckBase",
         "yOffsetMM": 0.0
@@ -533,7 +513,7 @@
         "landmark": "landmark.bustLine",
         "xOf": "ringQuarter",
         "ring": "girth.bust",
-        "xFactor": 0.5,
+        "xFactor": 0.425,
         "xOffsetMM": 0,
         "yLandmark": "landmark.neckBase",
         "yOffsetMM": 0.0
@@ -542,32 +522,12 @@
         "landmark": "landmark.bustLine",
         "xOf": "ringQuarter",
         "ring": "girth.bust",
-        "xFactor": 0.5,
-        "xOffsetMM": 45,
+        "xFactor": 0.425,
+        "xOffsetMM": 29.2,
         "yLandmark": "landmark.neckBase",
-        "yOffsetMM": 3.0
+        "yOffsetMM": 4.0
        },
-       "control": [
-        {
-         "landmark": "landmark.bustLine",
-         "xOf": "ringQuarter",
-         "ring": "girth.bust",
-         "xFactor": 0.5,
-         "xOffsetMM": -4.5,
-         "yLandmark": "landmark.neckBase",
-         "yOffsetMM": -40.5
-        },
-        {
-         "landmark": "landmark.bustLine",
-         "xOf": "ringQuarter",
-         "ring": "girth.bust",
-         "xFactor": 0.5,
-         "xOffsetMM": 49.50000000000001,
-         "yLandmark": "landmark.neckBase",
-         "yOffsetMM": -40.5
-        }
-       ],
-       "finish": "bound"
+       "finish": "raw"
       },
       {
        "id": "dis",
@@ -577,10 +537,10 @@
         "landmark": "landmark.bustLine",
         "xOf": "ringQuarter",
         "ring": "girth.bust",
-        "xFactor": 0.5,
-        "xOffsetMM": 45,
+        "xFactor": 0.425,
+        "xOffsetMM": 29.2,
         "yLandmark": "landmark.neckBase",
-        "yOffsetMM": 3.0
+        "yOffsetMM": 4.0
        },
        "to": {
         "landmark": "landmark.bustLine",
@@ -623,7 +583,7 @@
      "cutCount": 2,
      "seamAllowanceMM": 0,
      "ease": [],
-     "reason": "aski (45 mm), ust kenardan omuz cizgisine, omuz uzerinden arkaya kivrilir; alt kenar raw = ust kenar dikisine yakalanir"
+     "reason": "aski (45 mm altta, 29.2 mm omuzda), ust kenardan omuz cizgisine daralarak; alt kenar raw = ust kenar dikisine yakalanir"
     }
    },
    "neden": "genis aski (45 mm), buzgulu"
