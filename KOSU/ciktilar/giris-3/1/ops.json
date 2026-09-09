@@ -82,7 +82,7 @@
    "panel": "on_etek",
    "edge": "hem_front",
    "yLandmark": "landmark.hip",
-   "yOffsetMM": 210
+   "yOffsetMM": 234
   }
  },
  {
@@ -91,7 +91,7 @@
    "panel": "arka_etek",
    "edge": "hem_back",
    "yLandmark": "landmark.hip",
-   "yOffsetMM": 210
+   "yOffsetMM": 234
   }
  },
  {
@@ -99,7 +99,7 @@
   "args": {
    "panel": "on_etek",
    "edge": "hem_front",
-   "factor": 1.35
+   "factor": 1.321
   }
  },
  {
@@ -107,7 +107,7 @@
   "args": {
    "panel": "arka_etek",
    "edge": "hem_back",
-   "factor": 1.35
+   "factor": 1.321
   }
  },
  {

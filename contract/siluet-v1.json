@@ -1,0 +1,46 @@
+{
+  "_contract": "siluet-v1 — FOTOGRAFTAN FLAT OKUMASI (0-K.10, 10 Eyl 2026). Flat, gordugunun mankene (croquis36: 90-60-90/178) cizilmis halidir. Okuma, fotograftaki giysinin siluetini manken landmark'larina ORANLA noktalarla verir; cizici (KOSU/siluet-ciz.mjs) yalniz bu noktalari cizer. Cevre, 1/4, 2pi, pens payi, bolluk hesabi bu dosyaya ve ciziciye GIRMEZ. Taban elbise mirasi yok: hicbir okuma pens/bel oyugu/kum saati ile baslamaz; oturma yalniz fotografta oturuyorsa.",
+  "version": 1,
+  "koordinat": {
+    "_tanim": "contract/body-v1.json bedenler.croquis36.landmarklar ile ayni sistem: x=0 on-orta (CF), y=0 omuz cizgisi (neckBase), +y asagi, birim mm. Bir nokta iki ifadeyle yazilir: x = '<landmark>*<kesir>[+<mm>]' (kesir x landmark.x yarim genisligi), y = '<landmark>[..<landmark2>@<t>][+<mm>]' (iki landmark arasi lerp). Ornek: gogus: ['bustLine*1.04', 'bustLine'] = manken gogus yarim genisliginin 1.04 kati, gogus hattinda.",
+    "xIfade": "^(\\w+)\\*(-?[0-9.]+)(?:([+-][0-9.]+))?$",
+    "yIfade": "^(\\w+)(?:\\.\\.(\\w+)@([0-9.]+))?(?:([+-][0-9.]+))?$"
+  },
+  "gorunum": {
+    "_tanim": "on ve arka ayri okunur. Arka fotografta/satici flat'inde YOKSA: arka.koken='turetildi' yazilir, kontur onden kopyalanir, yalniz yaka/kapama arka olarak verilir; eksik[] 'arka gorunmuyor' tasir.",
+    "kontur": {
+      "_sira": "Yarim kontur, CF'den saat yonunde: yakaOrta -> yakaOmuz -> (aski) -> omuzUc -> koltukalti -> gogus -> bel -> kalca -> etekYan -> etekOrta. Sol yarim ayna; ayna=false ise konturSol ile sol yarimin noktalari ayri verilir (off-shoulder, asimetrik pat).",
+      "yakaOrta": "yaka cukuru (x=0)",
+      "yakaOmuz": "yakanin omuzla / askinin ic kenariyla bulustugu nokta",
+      "askiUst": "aski ucu (omuz uzerinde); yoksa null. YASA: askiUst.x <= shoulderTip.x (manken omuz noktasini asamaz)",
+      "omuzUc": "omuz noktasi / aski dis kenarinin ust kenara indigi nokta / off-shoulder'da bandin dis ucu",
+      "koltukalti": "kol oyugu tabani",
+      "gogus": "en genis ust yer (gogus hatti)",
+      "bel": "bel",
+      "kalca": "kalca",
+      "etekYan": "etek ucu yan",
+      "etekOrta": "etek ucu orta (x=0); uzunluk buradan okunur"
+    },
+    "kavis": "yakaBicim: V|yuvarlak|kayik|kare|kalp|duz|off-shoulder. yanKavis: her zaman yumusak (Catmull-Rom), belde kose YOK. etekKavis: hafif sarkik.",
+    "kol": "null | {tip: 'kapak'|'puf'|'duz', dis: pt (kolun dis-alt ucu), ic: pt (kol agzinin govdeye yakin ucu), bant: bool, buzgu: bool, sisme: mm (puf: dis kenarin disari bombesi)}",
+    "ogeler": "gorunen her ic cizgi transkribe edilir: {tip, noktalar:[pt...], ...}. tip: dikis (ince duz), kesikli (ust dikis/pervaz izi), buzgu (kisa cizgiler; noktalar bir yol, yon: 'asagi'|'yukari'), pens (uc, a, b), dugme (noktalar [bas, son], adet, cap), pat (noktalar [bas, son], genislik), fiyonk (nokta, boy), bag (nokta, boy), drape (noktalar cift cift), bebeYaka (genislik), firfir (noktalar), fermuar (noktalar [bas, son]), roba (=dikis). ayna:true ise sol yarima da cizilir (x isareti cevrilir).",
+    "oturma": "{bel: bool, gogus: bool} — fotografta giysi oraya OTURUYOR mu. YASA: bel=false ise flat'te bel genisligi gogus genisliginin altina inemez (kirmizi).",
+    "eksik": "atlanan/gorulemeyen oge adiyla (bos liste = hepsi transkribe edildi)."
+  },
+  "cizgi": {
+    "_kaynak": "0-K.10.f",
+    "disKonturMM": 2.4,
+    "icDikisMM": 1.0,
+    "kesikliMM": 0.9,
+    "kesikli": "5,3",
+    "buzguTikMM": 9,
+    "_yasa": "dis kontur ic dikisin en az 2 kati; etek ucu ve yan dikis hafif kavisli; flat'te dikis payi / centik / kat cizgisi yok; dolgu beyaz, golge yok."
+  },
+  "yanlislama": {
+    "_kaynak": "0-K.10 YANLISLAMA; kosucu KOSU/siluet-yanlisla.mjs",
+    "1": "ayni fotograf iki kez -> ayni flat (sha ayni -> svg bayt-ayni)",
+    "2": "iki farkli fotograf -> farkli siluet (kontur imzasi farkli)",
+    "3": "fotografta bol duran giysi (oturma.bel=false) flat'te oturamaz (bel < gogus*0.97 kirmizi)",
+    "4": "aski ucu manken omuz noktasini asamaz (askiUst.x <= shoulderTip.x)"
+  }
+}

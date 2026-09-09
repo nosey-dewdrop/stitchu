@@ -1,7 +1,8 @@
 GIRDI/hedef-fotograflar-3/etsy-04.png
 sha256 854f4b139290f04a2db491e6f48d4896cedd6a01e6d04d02e2ddce8ecc9447c6
 gorunum on
-okuyan isci-A4-tur6 (llmCagri 0)
 arka.koken ilan-flat
-cizim taban+ops (13 primitif emir; KOSU/ciktilar/graf-ilk/graf.json + ops.json -> grafuygula/grafciz --ops)
-hedef 0 siluet orani -> grafuygula/grafciz --hedef hedefler.json (bolluk mm, sinir kirpmasi notes'ta)
+kalip = ops-topoloji.json (13 op) + siluetten etek ucu/klos -> ops.json (15 op) + hedefler.json (2) -> grafuygula/grafciz gercek36
+okuyan siluet-v1: Claude, 10 Eyl 2026 (Read ile ekran goruntusune bakildi; dis LLM cagrisi 0)
+cizim flat = KOSU/siluet-ciz.mjs (okuma KOSU/onbellek/siluet-854f4b139290….json; motor flat'e girmez)
+kalip = ops-topoloji.json (13 op) + siluetten etek ucu/klos -> ops.json (15 op) + hedefler.json (2) -> grafuygula/grafciz gercek36

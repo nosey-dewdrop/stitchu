@@ -8,6 +8,7 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync, unlinkSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { png } from './0509-a3-png.mjs';
+import { ciz, nokta } from './siluet-ciz.mjs';
 
 const [set, tur, ...secim] = process.argv.slice(2);
 if (!set || !tur) { console.error('kullanim: node KOSU/0509-a4-kontak.mjs <set-dizini> <tur> [no...]'); process.exit(2); }
@@ -40,7 +41,7 @@ const H = 120 + nolar.length * (ROW_H + PAD);
 let s = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="Helvetica, Arial, sans-serif">\n`;
 s += `<rect width="${W}" height="${H}" fill="#fff"/>\n`;
 s += `<text x="${PAD}" y="40" font-size="28" font-weight="bold">A4 kontak — ${esc(set)} tur ${esc(tur)} — ${new Date().toISOString().slice(0, 10)}</text>\n`;
-s += `<text x="${PAD}" y="72" font-size="16" fill="#444">sutunlar: ilan (fotograf + saticinin flat'i, GIRDI/hedef-fotograflar-3) | bizim flat (croquis36 = manken 90-60-90/178, on+arka) | kalip (gercek36) | sayilar (op, halka toplamlari mm iki bedende, dogrulayici)</text>\n`;
+s += `<text x="${PAD}" y="72" font-size="16" fill="#444">sutunlar: ilan (fotograf + saticinin flat'i, GIRDI/hedef-fotograflar-3) | bizim flat (siluet-v1: fotograftan okunan noktalar mankene 90-60-90/178 cizildi, KOSU/siluet-ciz.mjs; motor yok) | kalip (gercek36, siluetten hedef: KOSU/siluet-kalip.mjs) | sayilar (op, flat genislikleri / kalip halkalari mm, dogrulayici, yanlislama)</text>\n`;
 s += `<text x="${PAD}" y="96" font-size="16" fill="#444">croquis36 landmark yarim genislik: gogus ${f0(lm(B.croquis36, 'landmark.bustLine')[0])} / bel ${f0(lm(B.croquis36, 'landmark.waist')[0])} / kalca ${f0(lm(B.croquis36, 'landmark.hip')[0])} mm, omuz->bel ${f0(lm(B.croquis36, 'landmark.waist')[1])} mm · gercek36: gogus ${f0(lm(B.gercek36, 'landmark.bustLine')[0])} / bel ${f0(lm(B.gercek36, 'landmark.waist')[0])} / kalca ${f0(lm(B.gercek36, 'landmark.hip')[0])} mm, omuz->bel ${f0(lm(B.gercek36, 'landmark.waist')[1])} mm</text>\n`;
 
 const ozet = [];
@@ -52,7 +53,7 @@ nolar.forEach((no, i) => {
   const okuma = existsSync(`${d}/ops.json`) ? JSON.parse(readFileSync(`${d}/ops.json`, 'utf8')) : [];
   const dikil = existsSync(`${d}/dikilebilir.md`) ? readFileSync(`${d}/dikilebilir.md`, 'utf8') : '';
   const ad = (dikil.match(/^# .*$/m) || [''])[0].replace(/^# \d+\. /, '');
-  const ilanAd = (() => { try { const sha = (kaynak[1] || '').split(' ')[1]; const o = JSON.parse(readFileSync(`KOSU/onbellek/${sha}.json`, 'utf8')); return o.ilan || ''; } catch { return ''; } })();
+  const ilanAd = (() => { try { const sha = (kaynak[1] || '').split(' ')[1]; const o = JSON.parse(readFileSync(`KOSU/onbellek/siluet-${sha}.json`, 'utf8')); return o.ilan || ''; } catch { return ''; } })();
   let x = PAD;
   const img = (yol, w) => {
     if (!yol || !existsSync(yol)) { s += `<rect x="${x}" y="${y0}" width="${w}" height="${ROW_H}" fill="#f6f6f6" stroke="#ccc"/><text x="${x + 10}" y="${y0 + 30}" font-size="14" fill="#c00">YOK: ${esc(yol)}</text>\n`; x += w + PAD; return; }
@@ -64,18 +65,32 @@ nolar.forEach((no, i) => {
   img(`${d}/flat.png`, COL.flat);
   img(`${d}/kalip-36.png`, COL.kalip);
   // sayilar
-  const hc = existsSync(`${d}/graf.json`) ? halkalar(`${d}/graf.json`, 'croquis36') : { h: {}, kirmizi: null, fail: [] };
   const hg = existsSync(`${d}/graf.json`) ? halkalar(`${d}/graf.json`, 'gercek36') : { h: {}, kirmizi: null, fail: [] };
+  // croquis36 kolonu = FLAT genislikleri (siluet konturu, tam genislik mm); kalipla ayni satirda okunsun diye halka adiyla
+  const sil = existsSync(`${d}/siluet.json`) ? JSON.parse(readFileSync(`${d}/siluet.json`, 'utf8')) : null;
+  const hc = { h: {}, kirmizi: null, fail: [] };
+  let yanlis = [];
+  if (sil) {
+    const K = sil.on.kontur, g2 = (k) => K[k] ? 2 * Math.abs(nokta(K[k]).x) : NaN;
+    hc.h = { gogus_halka: g2('gogus'), bel_halka: g2('bel'), kalca_halka: g2('kalca'), etek_ucu: g2('etekYan'), yaka: 2 * Math.abs(nokta(K.yakaOmuz).x), kol_oyugu_halka: NaN };
+    hc.uzunluk = nokta(K.etekOrta).y;
+    const r = ciz(sil); yanlis = r.kirmizi; hc.kirmizi = r.kirmizi.length;
+  }
+  const kirpma = (kaynak.find((l) => l.startsWith('KIRPMA ')) || '').slice(7);
+  const topoSayi = existsSync(`${d}/ops-topoloji.json`) ? JSON.parse(readFileSync(`${d}/ops-topoloji.json`, 'utf8')).length : null;
   const sat = [
     [`${no}. ${ilanAd || ad}`, 18, '#000', true],
     [`ilan: ${ilanYol.split('/').pop()}`, 13, '#444'],
-    [`op sayisi: ${okuma.length} (${[...new Set(okuma.map((o) => o.op))].join(', ')})`, 13, '#000'],
+    [`op sayisi: ${okuma.length} (topoloji ${topoSayi ?? '-'} + siluetten etek ucu/klos; ${[...new Set(okuma.map((o) => o.op))].join(', ')})`, 13, '#000'],
+    [`siluet: ${sil ? (sil.on.ogeler || []).length + ' on oge, ' + (sil.arka?.ogeler || []).length + ' arka oge, arka ' + (sil.arka?.koken || '-') + ', uzunluk ' + f0(hc.uzunluk) + ' mm (omuzdan)' : 'YOK'}`, 13, '#000'],
     ['', 8],
-    ['halka toplamlari (dikilen, mm)      croquis36   gercek36', 13, '#000', true],
+    ['genislik/halka (mm)          flat(croquis36) kalip(gercek36)', 13, '#000', true],
     ...['gogus_halka', 'bel_halka', 'kalca_halka', 'etek_ucu', 'yaka', 'kol_oyugu_halka'].map((r) => [`${r.padEnd(22, ' ')} ${f0(hc.h[r]).padStart(8, ' ')}   ${f0(hg.h[r]).padStart(8, ' ')}`, 13, '#000']),
     ['', 8],
     [`dogrulayici gercek36 kirmizi: ${hg.kirmizi == null ? '-' : hg.kirmizi}${hg.fail?.length ? ' (' + hg.fail.join('; ') + ')' : ''}`, 13, hg.kirmizi ? '#c00' : '#060'],
-    [`dogrulayici croquis36 kirmizi: ${hc.kirmizi == null ? '-' : hc.kirmizi}${hc.fail?.length ? ' (' + hc.fail.join('; ') + ')' : ''}`, 13, hc.kirmizi ? '#c00' : '#060'],
+    [`yanlislama (flat) kirmizi: ${hc.kirmizi == null ? '-' : hc.kirmizi}${yanlis.length ? ' (' + yanlis.join('; ') + ')' : ''}`, 13, hc.kirmizi ? '#c00' : '#060'],
+    ...(kirpma ? [[kirpma, 12, '#a60']] : []),
+    ...(sil && sil.eksik && sil.eksik.length ? sil.eksik.map((e) => ['eksik: ' + e, 12, '#a60']) : []),
   ];
   let ty = y0 + 24;
   for (const [t, fs, col, bold] of sat) {
@@ -83,7 +98,7 @@ nolar.forEach((no, i) => {
     ty += fs + 6;
   }
   s += `<line x1="${PAD}" y1="${y0 + ROW_H + PAD / 2}" x2="${W - PAD}" y2="${y0 + ROW_H + PAD / 2}" stroke="#ddd"/>\n`;
-  ozet.push({ no, ilan: ilanAd || ad, op: okuma.length, kirmiziGercek: hg.kirmizi, kirmiziCroquis: hc.kirmizi, fail: hg.fail, halka: { croquis36: hc.h, gercek36: hg.h } });
+  ozet.push({ no, ilan: (sil && sil.ilan) || ilanAd || ad, op: okuma.length, kirmiziGercek: hg.kirmizi, yanlislamaKirmizi: hc.kirmizi, fail: hg.fail, halka: { flatCroquis36: hc.h, kalipGercek36: hg.h }, kirpma: kirpma || null, eksik: sil ? sil.eksik : null });
 });
 s += '</svg>\n';
 const svgYol = `${kok}/a4-kontak-tur${tur}.svg`, pngYol = `${kok}/a4-kontak-tur${tur}.png`;

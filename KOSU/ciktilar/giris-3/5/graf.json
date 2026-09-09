@@ -1,7 +1,7 @@
 {
   "id": "foto-d7e45930",
   "version": "graf-v1",
-  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b oyugu ve kapagi kaynakli kurar (KAPI 2, docs/GRAF-IR.md F2b kapilari; F3e devredilmez); croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).\ngrafuygula: taban taban-elbise + 17 emir (KOSU/ciktilar/giris-3/5/ops.json)",
+  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b oyugu ve kapagi kaynakli kurar (KAPI 2, docs/GRAF-IR.md F2b kapilari; F3e devredilmez); croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).\ngrafuygula: taban taban-elbise + 17 emir (KOSU/ciktilar/giris-3/5/ops.json)\nHEDEF (grafa oran yazilmaz, bolluk mm): siluet-orani hedef girth.waist/girth.bust = 0.859 (siluet-orani enGenis (siluet-v1 kontur bel/gogus, croquis36 = flat genisligi); payda = cizilen en genis yarim kesit 280.2978 mm x 4 (genislik birimi, girth.bust cevresi degil)) | gereken bolluk 303.1032408 mm, uygulanan 5e+01 mm (onceki 25; SINIRA KIRPILDI) | giysi orani 0.7888888888888889, sapma -0.07011111111111112\nHEDEF (grafa oran yazilmaz, bolluk mm): siluet-orani hedef girth.hip/girth.bust = 1.1988 (siluet-orani enGenis (siluet-v1 kontur kalca/gogus); payda = cizilen en genis yarim kesit 280.2978 mm x 4 (genislik birimi, girth.bust cevresi degil)) | gereken bolluk 444.0840105600001 mm, uygulanan 1e+02 mm (onceki 5e+01; SINIRA KIRPILDI) | giysi orani 1.1111111111111112, sapma -0.08768888888888893",
   "panels": [
     {
       "id": "on_beden_alt",
@@ -264,7 +264,7 @@
         },
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 5e+01
         }
       ],
       "reason": "on govde (kat) | split of on_beden"
@@ -563,7 +563,7 @@
         },
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 5e+01
         }
       ],
       "reason": "on govde (kat) | split of on_beden"
@@ -825,7 +825,7 @@
         },
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 5e+01
         }
       ],
       "reason": "arka govde (iki parca, arka orta fermuar) | split of arka_beden"
@@ -1113,7 +1113,7 @@
         },
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 5e+01
         }
       ],
       "reason": "arka govde (iki parca, arka orta fermuar) | split of arka_beden"
@@ -1135,7 +1135,7 @@
             "xFactor": 0,
             "xOffsetMM": 0,
             "yLandmark": "landmark.hip",
-            "yOffsetMM": 1.7e+02
+            "yOffsetMM": 189
           }
         },
         {
@@ -1147,15 +1147,15 @@
             "xFactor": 0,
             "xOffsetMM": 0,
             "yLandmark": "landmark.hip",
-            "yOffsetMM": 1.7e+02
+            "yOffsetMM": 189
           },
           "to": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
-            "xFactor": 1.15,
+            "xFactor": 1.132,
             "xOffsetMM": 0,
             "yLandmark": "landmark.hip",
-            "yOffsetMM": 1.7e+02
+            "yOffsetMM": 189
           },
           "finish": "hem"
         },
@@ -1168,10 +1168,10 @@
           "from": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
-            "xFactor": 1.15,
+            "xFactor": 1.132,
             "xOffsetMM": 0,
             "yLandmark": "landmark.hip",
-            "yOffsetMM": 1.7e+02
+            "yOffsetMM": 189
           },
           "to": {
             "landmark": "landmark.hip",
@@ -1347,11 +1347,11 @@
       "ease": [
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 5e+01
         },
         {
           "ring": "girth.hip",
-          "mm": 5e+01
+          "mm": 1e+02
         }
       ],
       "reason": "on etek (kat)"
@@ -1373,7 +1373,7 @@
             "xFactor": 0,
             "xOffsetMM": 0,
             "yLandmark": "landmark.hip",
-            "yOffsetMM": 1.7e+02
+            "yOffsetMM": 189
           }
         },
         {
@@ -1385,15 +1385,15 @@
             "xFactor": 0,
             "xOffsetMM": 0,
             "yLandmark": "landmark.hip",
-            "yOffsetMM": 1.7e+02
+            "yOffsetMM": 189
           },
           "to": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
-            "xFactor": 1.15,
+            "xFactor": 1.132,
             "xOffsetMM": 0,
             "yLandmark": "landmark.hip",
-            "yOffsetMM": 1.7e+02
+            "yOffsetMM": 189
           },
           "finish": "hem"
         },
@@ -1406,10 +1406,10 @@
           "from": {
             "landmark": "landmark.hip",
             "xOf": "ringQuarter",
-            "xFactor": 1.15,
+            "xFactor": 1.132,
             "xOffsetMM": 0,
             "yLandmark": "landmark.hip",
-            "yOffsetMM": 1.7e+02
+            "yOffsetMM": 189
           },
           "to": {
             "landmark": "landmark.hip",
@@ -1585,11 +1585,11 @@
       "ease": [
         {
           "ring": "girth.waist",
-          "mm": 25
+          "mm": 5e+01
         },
         {
           "ring": "girth.hip",
-          "mm": 5e+01
+          "mm": 1e+02
         }
       ],
       "reason": "arka etek (iki parca, arka orta fermuar)"
@@ -2131,7 +2131,7 @@
         "panel": "on_etek",
         "edge": "hem_front",
         "yLandmark": "landmark.hip",
-        "yOffsetMM": 1.7e+02
+        "yOffsetMM": 189
       }
     },
     {
@@ -2140,7 +2140,7 @@
         "panel": "arka_etek",
         "edge": "hem_back",
         "yLandmark": "landmark.hip",
-        "yOffsetMM": 1.7e+02
+        "yOffsetMM": 189
       }
     },
     {
@@ -2148,7 +2148,7 @@
       "args": {
         "panel": "on_etek",
         "edge": "hem_front",
-        "factor": 1.15
+        "factor": 1.132
       }
     },
     {
@@ -2156,7 +2156,7 @@
       "args": {
         "panel": "arka_etek",
         "edge": "hem_back",
-        "factor": 1.15
+        "factor": 1.132
       }
     },
     {

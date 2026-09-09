@@ -1,0 +1,390 @@
+[
+ {
+  "op": "drop",
+  "args": {
+   "panel": "kol",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "merge",
+  "args": {
+   "seam": "bel",
+   "panelA": "on_beden",
+   "panelB": "on_etek",
+   "panel": "on_govde"
+  }
+ },
+ {
+  "op": "merge",
+  "args": {
+   "seam": "bel",
+   "panelA": "arka_beden",
+   "panelB": "arka_etek",
+   "panel": "arka_govde"
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_govde",
+   "edge": "cf.1",
+   "fractions": [
+    0.3891
+   ]
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_govde",
+   "edge": "armhole_front.1",
+   "fractions": [
+    0.312
+   ]
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "on_govde",
+   "vertexA": "cf.1.2",
+   "vertexB": "armhole_front.1.2",
+   "panelA": "on_govde_alt",
+   "panelB": "on_govde_ust",
+   "seam": "ust_on",
+   "seamRatio": 1
+  }
+ },
+ {
+  "op": "drop",
+  "args": {
+   "panel": "on_govde_ust",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "moveVertex",
+  "args": {
+   "panel": "on_govde_alt",
+   "edge": "ust_on.a",
+   "to": {
+    "landmark": "landmark.bustLine",
+    "xOf": "ringQuarter",
+    "ring": "girth.bust",
+    "xFactor": 1,
+    "yLandmark": "landmark.underarm",
+    "yOffsetMM": -13.3
+   }
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_govde_alt",
+   "edge": "armhole_front.1.1",
+   "control": []
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "arka_govde",
+   "edge": "cb.1",
+   "fractions": [
+    0.4719
+   ]
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "arka_govde",
+   "edge": "armhole_back.1",
+   "fractions": [
+    0.312
+   ]
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "arka_govde",
+   "vertexA": "cb.1.2",
+   "vertexB": "armhole_back.1.2",
+   "panelA": "arka_govde_alt",
+   "panelB": "arka_govde_ust",
+   "seam": "ust_arka",
+   "seamRatio": 1
+  }
+ },
+ {
+  "op": "drop",
+  "args": {
+   "panel": "arka_govde_ust",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "moveVertex",
+  "args": {
+   "panel": "arka_govde_alt",
+   "edge": "ust_arka.a",
+   "to": {
+    "landmark": "landmark.bustLine",
+    "xOf": "ringQuarter",
+    "ring": "girth.bust",
+    "xFactor": 1,
+    "yLandmark": "landmark.underarm",
+    "yOffsetMM": -13.3
+   }
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_govde_alt",
+   "edge": "armhole_back.1.1",
+   "control": []
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "arka_orta_beden",
+   "a": [
+    {
+     "panel": "arka_govde_alt",
+     "edge": "cb.1.2"
+    }
+   ],
+   "b": [
+    {
+     "panel": "arka_govde_alt",
+     "edge": "cb.1.2"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1
+  }
+ },
+ {
+  "op": "closure",
+  "args": {
+   "seam": "arka_orta_beden",
+   "type": "zipper",
+   "fromFraction": 0,
+   "toFraction": 1
+  }
+ },
+ {
+  "op": "addPanel",
+  "args": {
+   "onto": "on_govde_alt",
+   "panel": {
+    "id": "band_on",
+    "edges": [
+     {
+      "id": "ust",
+      "kind": "cut",
+      "role": "band",
+      "from": {
+       "landmark": "landmark.waist",
+       "xFactor": 0,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -43
+      },
+      "to": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.93,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -43
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "dis",
+      "kind": "cut",
+      "role": "band",
+      "from": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.93,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -43
+      },
+      "to": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 1,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -13.3
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "alt",
+      "kind": "cut",
+      "role": "band",
+      "from": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 1,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -13.3
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xFactor": 0,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -13.3
+      },
+      "finish": "raw"
+     },
+     {
+      "id": "cf",
+      "kind": "fold",
+      "role": "cf",
+      "from": {
+       "landmark": "landmark.waist",
+       "xFactor": 0,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -13.3
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xFactor": 0,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -43
+      }
+     }
+    ],
+    "grainDeg": 0,
+    "onFold": true,
+    "cutCount": 1,
+    "seamAllowanceMM": 0,
+    "ease": [],
+    "reason": "omuz acik band (ust kenarin ustunde 40 mm)"
+   }
+  }
+ },
+ {
+  "op": "addPanel",
+  "args": {
+   "onto": "arka_govde_alt",
+   "panel": {
+    "id": "band_arka",
+    "edges": [
+     {
+      "id": "ust",
+      "kind": "cut",
+      "role": "band",
+      "from": {
+       "landmark": "landmark.waist",
+       "xFactor": 0,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -43
+      },
+      "to": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.93,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -43
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "dis",
+      "kind": "cut",
+      "role": "band",
+      "from": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.93,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -43
+      },
+      "to": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 1,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -13.3
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "alt",
+      "kind": "cut",
+      "role": "band",
+      "from": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 1,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -13.3
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xFactor": 0,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -13.3
+      },
+      "finish": "raw"
+     },
+     {
+      "id": "cf",
+      "kind": "fold",
+      "role": "cf",
+      "from": {
+       "landmark": "landmark.waist",
+       "xFactor": 0,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -13.3
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xFactor": 0,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -43
+      }
+     }
+    ],
+    "grainDeg": 0,
+    "onFold": true,
+    "cutCount": 1,
+    "seamAllowanceMM": 0,
+    "ease": [],
+    "reason": "omuz acik band (ust kenarin ustunde 40 mm)"
+   }
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_govde_alt",
+   "edge": "hem_front",
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 140
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_govde_alt",
+   "edge": "hem_back",
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 140
+  }
+ }
+]

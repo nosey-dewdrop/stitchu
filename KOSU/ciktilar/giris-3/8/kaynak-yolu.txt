@@ -1,7 +1,10 @@
 GIRDI/hedef-fotograflar-3/etsy-08.png
 sha256 a9dc6dbc21e7e6bc6c39876686e635cfcda1e7fdbcfe1f4f3a85187f73fb2a74
 gorunum on
-okuyan isci-A4-tur6 (llmCagri 0)
 arka.koken ilan-flat
-cizim taban+ops (11 primitif emir; KOSU/ciktilar/graf-ilk/graf.json + ops.json -> grafuygula/grafciz --ops)
-hedef 0 siluet orani -> grafuygula/grafciz --hedef hedefler.json (bolluk mm, sinir kirpmasi notes'ta)
+kalip = ops-topoloji.json (11 op) + siluetten etek ucu/klos -> ops.json (13 op) + hedefler.json (2) -> grafuygula/grafciz gercek36
+kalip = ops-topoloji.json (11 op) + siluetten etek ucu/klos -> ops.json (13 op) + hedefler.json (2) -> grafuygula/grafciz gercek36
+okuyan siluet-v1: Claude, 10 Eyl 2026 (Read ile ekran goruntusune bakildi; dis LLM cagrisi 0)
+cizim flat = KOSU/siluet-ciz.mjs (okuma KOSU/onbellek/siluet-a9dc6dbc21e7….json; motor flat'e girmez)
+KIRPMA kalip etek ucu kalcaya kirpildi: siluet -68 mm (kalcanin ustunde), motor kalca halkasiz kesemiyor
+kalip = ops-topoloji.json (11 op) + siluetten etek ucu/klos -> ops.json (13 op) + hedefler.json (2) -> grafuygula/grafciz gercek36

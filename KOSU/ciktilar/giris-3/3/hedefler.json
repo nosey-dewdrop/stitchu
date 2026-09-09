@@ -1,1 +1,14 @@
-[]
+[
+ {
+  "ring": "girth.waist",
+  "ratioTo": "girth.bust",
+  "ratio": 1.0446,
+  "kaynak": "siluet-orani enGenis (siluet-v1 kontur bel/gogus, croquis36 = flat genisligi)"
+ },
+ {
+  "ring": "girth.hip",
+  "ratioTo": "girth.bust",
+  "ratio": 1.2602,
+  "kaynak": "siluet-orani enGenis (siluet-v1 kontur kalca/gogus)"
+ }
+]

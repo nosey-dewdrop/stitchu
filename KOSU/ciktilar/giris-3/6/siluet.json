@@ -1,0 +1,273 @@
+{
+ "semaSurumu": "siluet-v1",
+ "girdiYolu": "GIRDI/hedef-fotograflar-3/etsy-06.png",
+ "sha256": "751443d17724400f7b8d7775c32867a982607cd8044c9991e1ad26cbe0135116",
+ "okuyan": "Claude, 10 Eyl 2026 (Read ile ekran goruntusune bakildi; dis LLM cagrisi 0)",
+ "ilan": "babydoll mini: genis buzgulu aski, buzgulu ust kenar, orta bag + fiyonk, gogus alti buzgulu dikis, bol drape etek",
+ "gorulen": "fotograf (insan ustunde, on) + satici flat'i (on)",
+ "oturma": {
+  "gogus": true,
+  "bel": false
+ },
+ "on": {
+  "yakaBicim": "yuvarlak",
+  "aski": {
+   "genislik": 40
+  },
+  "kontur": {
+   "yakaOrta": [
+    "neckFront*0",
+    "underarm-40"
+   ],
+   "yakaOmuz": [
+    "bustLine*0.55",
+    "underarm-58"
+   ],
+   "askiUst": [
+    "shoulderTip*0.80",
+    "shoulderTip..neckBase@0.5"
+   ],
+   "omuzUc": [
+    "bustLine*0.90",
+    "underarm-55"
+   ],
+   "koltukalti": [
+    "bustLine*1.05",
+    "underarm+5"
+   ],
+   "gogus": [
+    "bustLine*1.08",
+    "bustLine"
+   ],
+   "bel": [
+    "bustLine*1.15",
+    "waist"
+   ],
+   "kalca": [
+    "hip*1.25",
+    "hip"
+   ],
+   "etekYan": [
+    "hip*1.45",
+    "hip..knee@0.45"
+   ],
+   "etekOrta": [
+    "hip*0",
+    "hip..knee@0.45"
+   ]
+  },
+  "ogeler": [
+   {
+    "tip": "buzgu",
+    "yon": "asagi",
+    "boy": 14,
+    "aralik": 8,
+    "noktalar": [
+     [
+      "bustLine*0.08",
+      "underarm-41"
+     ],
+     [
+      "bustLine*0.55",
+      "underarm-56"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "yon": "asagi",
+    "boy": 12,
+    "aralik": 8,
+    "noktalar": [
+     [
+      "bustLine*0.74",
+      "underarm-60"
+     ],
+     [
+      "shoulderTip*0.80",
+      "shoulderTip..neckBase@0.5+6"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "ayna": false,
+    "catmull": true,
+    "noktalar": [
+     [
+      "bustLine*-1.07",
+      "underbust-4"
+     ],
+     [
+      "neckFront*0",
+      "underbust-12"
+     ],
+     [
+      "bustLine*1.07",
+      "underbust-4"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "yon": "asagi",
+    "boy": 18,
+    "aralik": 10,
+    "noktalar": [
+     [
+      "bustLine*0.06",
+      "underbust-8"
+     ],
+     [
+      "bustLine*1.0",
+      "underbust-2"
+     ]
+    ]
+   },
+   {
+    "tip": "fiyonk",
+    "ayna": false,
+    "boy": 16,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "underarm-36"
+     ]
+    ]
+   },
+   {
+    "tip": "bag",
+    "ayna": false,
+    "boy": 170,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "underarm-30"
+     ]
+    ]
+   },
+   {
+    "tip": "drape",
+    "bombe": 5,
+    "noktalar": [
+     [
+      "hip*0.30",
+      "underbust+70"
+     ],
+     [
+      "hip*0.42",
+      "hip+150"
+     ],
+     [
+      "hip*0.78",
+      "underbust+50"
+     ],
+     [
+      "hip*0.95",
+      "hip+120"
+     ]
+    ]
+   }
+  ]
+ },
+ "arka": {
+  "koken": "turetildi",
+  "yakaBicim": "duz",
+  "aski": {
+   "genislik": 40
+  },
+  "kontur": {
+   "yakaOrta": [
+    "nape*0",
+    "underarm-56"
+   ],
+   "yakaOmuz": [
+    "bustLine*0.55",
+    "underarm-58"
+   ],
+   "askiUst": [
+    "shoulderTip*0.80",
+    "shoulderTip..neckBase@0.5"
+   ],
+   "omuzUc": [
+    "bustLine*0.90",
+    "underarm-55"
+   ],
+   "koltukalti": [
+    "bustLine*1.05",
+    "underarm+5"
+   ],
+   "gogus": [
+    "bustLine*1.08",
+    "bustLine"
+   ],
+   "bel": [
+    "bustLine*1.15",
+    "waist"
+   ],
+   "kalca": [
+    "hip*1.25",
+    "hip"
+   ],
+   "etekYan": [
+    "hip*1.45",
+    "hip..knee@0.45"
+   ],
+   "etekOrta": [
+    "hip*0",
+    "hip..knee@0.45"
+   ]
+  },
+  "ogeler": [
+   {
+    "tip": "dikis",
+    "ayna": false,
+    "noktalar": [
+     [
+      "bustLine*-1.07",
+      "underbust-4"
+     ],
+     [
+      "bustLine*1.07",
+      "underbust-4"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "yon": "asagi",
+    "boy": 18,
+    "aralik": 10,
+    "noktalar": [
+     [
+      "bustLine*0.06",
+      "underbust-2"
+     ],
+     [
+      "bustLine*1.0",
+      "underbust-2"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "yon": "asagi",
+    "boy": 12,
+    "aralik": 8,
+    "noktalar": [
+     [
+      "bustLine*0.74",
+      "underarm-60"
+     ],
+     [
+      "shoulderTip*0.80",
+      "shoulderTip..neckBase@0.5+6"
+     ]
+    ]
+   }
+  ]
+ },
+ "eksik": [
+  "arka gorunmuyor: onden turetildi"
+ ]
+}

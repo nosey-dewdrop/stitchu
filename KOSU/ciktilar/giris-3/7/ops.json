@@ -375,7 +375,7 @@
    "panel": "on_govde_alt",
    "edge": "hem_front",
    "yLandmark": "landmark.hip",
-   "yOffsetMM": 140
+   "yOffsetMM": 189
   }
  },
  {
@@ -384,7 +384,7 @@
    "panel": "arka_govde_alt",
    "edge": "hem_back",
    "yLandmark": "landmark.hip",
-   "yOffsetMM": 140
+   "yOffsetMM": 189
   }
  }
 ]

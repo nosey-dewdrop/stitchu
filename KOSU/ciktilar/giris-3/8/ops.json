@@ -100,7 +100,7 @@
    "panel": "on_govde",
    "edge": "hem_front",
    "yLandmark": "landmark.hip",
-   "yOffsetMM": 10
+   "yOffsetMM": 0
   }
  },
  {
@@ -109,7 +109,7 @@
    "panel": "arka_govde",
    "edge": "hem_back",
    "yLandmark": "landmark.hip",
-   "yOffsetMM": 10
+   "yOffsetMM": 0
   }
  },
  {
@@ -165,6 +165,22 @@
    "type": "zipper",
    "fromFraction": 0,
    "toFraction": 0.01
+  }
+ },
+ {
+  "op": "flare",
+  "args": {
+   "panel": "on_govde",
+   "edge": "hem_front",
+   "factor": 1.073
+  }
+ },
+ {
+  "op": "flare",
+  "args": {
+   "panel": "arka_govde",
+   "edge": "hem_back",
+   "factor": 1.073
   }
  }
 ]

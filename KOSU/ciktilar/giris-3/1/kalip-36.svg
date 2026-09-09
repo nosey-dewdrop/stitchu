@@ -1,85 +1,85 @@
-<svg data-ops="9" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1628.865 533.000" width="1628.865mm" height="533.000mm" data-scale="1:1" data-unit-mm="1" data-sheet="stitchu-pattern-sheet-v1" data-graf="taban-elbise" data-body="gercek36" data-parca="5">
+<svg data-ops="9" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1643.470 557.000" width="1643.470mm" height="557.000mm" data-scale="1:1" data-unit-mm="1" data-sheet="stitchu-pattern-sheet-v1" data-graf="taban-elbise" data-body="gercek36" data-parca="5">
   <title>taban-elbise kalip @ gercek36</title>
-  <rect width="1628.865" height="533.000" fill="#ffffff"/>
+  <rect width="1643.470" height="557.000" fill="#ffffff"/>
   <g font-family="Helvetica,Arial,sans-serif" fill="none" stroke="#111111">
   <g data-panel="on_beden">
-    <path data-katman="1" data-tur="kesim" stroke-width="1.000" d="M 30.000 187.385 L 30.000 436.239 L 226.362 436.239 L 266.628 229.022 L 253.062 225.654 L 245.253 222.733 L 237.634 218.614 L 233.931 216.143 L 226.813 210.469 L 220.181 203.958 L 217.085 200.444 L 211.398 193.016 L 208.835 189.151 L 204.330 181.247 L 202.411 177.261 L 199.292 169.358 L 197.186 161.742 L 196.137 154.661 L 196.002 151.243 L 196.418 137.730 L 197.609 125.085 L 199.469 113.787 L 201.866 104.199 L 203.670 98.963 L 205.526 94.825 L 207.251 91.959 L 208.761 90.459 L 208.340 90.670 L 208.604 90.478 L 210.975 71.162 L 99.913 30.000 L 87.543 63.216 L 81.213 78.318 L 74.671 92.827 L 64.635 113.363 L 54.571 132.269 L 44.752 149.368 L 30.000 173.360 L 30.000 181.222 Z"/>
-    <path data-katman="14" data-tur="dikis" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 30.000 190.547 L 30.000 426.239 L 94.641 426.239 L 103.075 264.909 L 111.508 426.239 L 218.118 426.239 L 255.000 236.439 C 216.892 228.596 186.000 183.109 186.000 151.389 C 186.000 112.259 195.626 80.539 207.500 80.539 L 105.900 42.884 C 82.800 108.597 49.800 162.684 30.000 190.547 Z"/>
+    <path data-katman="1" data-tur="kesim" stroke-width="1.000" d="M 30.000 187.385 L 30.000 436.239 L 230.518 435.795 L 266.446 228.976 L 253.062 225.654 L 245.253 222.733 L 237.634 218.614 L 233.931 216.143 L 226.813 210.469 L 220.181 203.958 L 217.085 200.444 L 211.398 193.016 L 208.835 189.151 L 204.330 181.247 L 202.411 177.261 L 199.292 169.358 L 197.186 161.742 L 196.137 154.661 L 196.002 151.243 L 196.418 137.730 L 197.609 125.085 L 199.469 113.787 L 201.866 104.199 L 203.670 98.963 L 205.526 94.825 L 207.251 91.959 L 208.761 90.459 L 208.340 90.670 L 208.604 90.478 L 210.975 71.162 L 99.913 30.000 L 87.543 63.216 L 81.213 78.318 L 74.671 92.827 L 64.635 113.363 L 54.571 132.269 L 44.752 149.368 L 30.000 173.360 L 30.000 181.222 Z"/>
+    <path data-katman="14" data-tur="dikis" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 30.000 190.547 L 30.000 426.239 L 96.281 426.239 L 103.581 264.909 L 110.881 426.239 L 222.100 425.827 L 255.000 236.439 C 216.892 228.596 186.000 183.109 186.000 151.389 C 186.000 112.259 195.626 80.539 207.500 80.539 L 105.900 42.884 C 82.800 108.597 49.800 162.684 30.000 190.547 Z"/>
     <path data-katman="6" data-tur="kat" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 30.000 190.547 L 30.000 426.239"/>
     <text data-katman="15" x="33.760" y="233.119" font-size="9.400" fill="#111111" stroke="none" transform="rotate(-90 33.760 233.119)">ON FOLD</text>
-    <path data-katman="8" data-tur="pens" data-edge="dart_on_beden.1" stroke-width="0.350" d="M 94.641 426.239 L 103.075 264.909"/>
-    <path data-katman="8" data-tur="pens" data-edge="dart_on_beden.2" stroke-width="0.350" d="M 103.075 264.909 L 111.508 426.239"/>
-    <path data-katman="4" data-tur="centik" data-edge="waist_front.2" stroke-width="0.350" d="M 159.893 426.239 L 159.893 433.239"/>
-    <path data-katman="4" data-tur="centik" data-edge="side_front" stroke-width="0.350" d="M 236.559 331.339 L 243.430 332.674"/>
-    <path data-katman="7" data-tur="grain" stroke-width="0.350" d="M 148.314 131.560 L 148.314 334.679"/>
-    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 150.714 137.560 L 148.314 131.560 L 145.914 137.560"/>
-    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 145.914 328.679 L 148.314 334.679 L 150.714 328.679"/>
-    <text data-katman="15" x="148.314" y="119.373" text-anchor="middle" font-size="6.300" fill="#111111" stroke="none">ON BEDEN</text>
-    <text data-katman="15" x="148.314" y="125.973" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">CUT 1X ON FOLD</text>
-    <text data-katman="15" x="148.314" y="132.573" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">EU 36</text>
-    <text data-katman="15" x="148.314" y="139.173" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">Seam Allowance 1 cm - 3/8 in</text>
-    <text data-katman="15" x="148.314" y="145.773" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">#1 / 5</text>
+    <path data-katman="8" data-tur="pens" data-edge="dart_on_beden.1" stroke-width="0.350" d="M 96.281 426.239 L 103.581 264.909"/>
+    <path data-katman="8" data-tur="pens" data-edge="dart_on_beden.2" stroke-width="0.350" d="M 103.581 264.909 L 110.881 426.239"/>
+    <path data-katman="4" data-tur="centik" data-edge="waist_front.2" stroke-width="0.350" d="M 161.750 426.050 L 161.775 433.050"/>
+    <path data-katman="4" data-tur="centik" data-edge="side_front" stroke-width="0.350" d="M 238.550 331.133 L 245.447 332.331"/>
+    <path data-katman="7" data-tur="grain" stroke-width="0.350" d="M 148.223 131.560 L 148.223 334.679"/>
+    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 150.623 137.560 L 148.223 131.560 L 145.823 137.560"/>
+    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 145.823 328.679 L 148.223 334.679 L 150.623 328.679"/>
+    <text data-katman="15" x="148.223" y="119.373" text-anchor="middle" font-size="6.300" fill="#111111" stroke="none">ON BEDEN</text>
+    <text data-katman="15" x="148.223" y="125.973" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">CUT 1X ON FOLD</text>
+    <text data-katman="15" x="148.223" y="132.573" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">EU 36</text>
+    <text data-katman="15" x="148.223" y="139.173" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">Seam Allowance 1 cm - 3/8 in</text>
+    <text data-katman="15" x="148.223" y="145.773" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">#1 / 5</text>
   </g>
   <g data-panel="arka_beden">
-    <path data-katman="1" data-tur="kesim" stroke-width="1.000" d="M 306.628 30.604 L 306.628 448.525 L 515.178 448.525 L 553.086 241.681 L 540.919 238.088 L 534.717 235.326 L 528.541 231.353 L 525.504 228.941 L 519.615 223.357 L 514.084 216.896 L 506.710 205.964 L 502.554 198.136 L 497.681 186.096 L 494.653 174.349 L 493.746 167.067 L 493.629 163.534 L 494.195 140.918 L 495.751 121.520 L 498.025 107.074 L 499.476 101.719 L 500.464 100.561 L 499.707 101.120 L 498.977 103.294 L 497.604 83.448 L 397.515 46.353 L 392.155 42.418 L 384.982 38.349 L 381.322 36.688 L 373.925 34.043 L 362.816 31.518 L 351.905 30.316 L 341.383 30.000 L 319.371 30.502 Z"/>
-    <path data-katman="14" data-tur="dikis" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 316.628 40.525 L 316.628 438.525 L 381.269 438.525 L 390.752 277.195 L 400.235 438.525 L 506.844 438.525 L 541.628 248.725 C 509.596 240.882 483.628 195.395 483.628 163.675 C 483.628 124.545 488.329 92.825 494.128 92.825 L 392.528 55.170 C 369.758 35.725 339.398 40.525 316.628 40.525 Z"/>
-    <path data-katman="8" data-tur="pens" data-edge="dart_arka_beden.1" stroke-width="0.350" d="M 381.269 438.525 L 390.752 277.195"/>
-    <path data-katman="8" data-tur="pens" data-edge="dart_arka_beden.2" stroke-width="0.350" d="M 390.752 277.195 L 400.235 438.525"/>
-    <path data-katman="4" data-tur="centik" data-edge="side_back" stroke-width="0.350" d="M 523.695 346.575 L 530.581 347.837"/>
-    <path data-katman="4" data-tur="centik" data-edge="side_back" stroke-width="0.350" d="M 524.777 340.674 L 531.662 341.936"/>
-    <path data-katman="7" data-tur="grain" stroke-width="0.350" d="M 429.857 134.631 L 429.857 343.893"/>
-    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 432.257 140.631 L 429.857 134.631 L 427.457 140.631"/>
-    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 427.457 337.893 L 429.857 343.893 L 432.257 337.893"/>
-    <text data-katman="15" x="429.857" y="122.075" text-anchor="middle" font-size="6.300" fill="#111111" stroke="none">ARKA BEDEN</text>
-    <text data-katman="15" x="429.857" y="128.675" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">CUT 2X MIRRORED</text>
-    <text data-katman="15" x="429.857" y="135.275" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">EU 36</text>
-    <text data-katman="15" x="429.857" y="141.875" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">Seam Allowance 1 cm - 3/8 in</text>
-    <text data-katman="15" x="429.857" y="148.475" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">#2 / 5</text>
+    <path data-katman="1" data-tur="kesim" stroke-width="1.000" d="M 306.446 30.604 L 306.446 448.525 L 519.537 448.525 L 552.712 241.625 L 540.737 238.088 L 534.535 235.326 L 528.359 231.353 L 525.321 228.941 L 519.433 223.357 L 513.902 216.896 L 506.527 205.964 L 502.372 198.136 L 497.498 186.096 L 494.471 174.349 L 493.564 167.067 L 493.447 163.534 L 494.013 140.918 L 495.569 121.520 L 497.843 107.074 L 499.294 101.719 L 500.282 100.561 L 499.524 101.120 L 498.795 103.294 L 497.421 83.448 L 397.332 46.353 L 391.973 42.418 L 384.800 38.349 L 381.139 36.688 L 373.743 34.043 L 362.633 31.518 L 351.723 30.316 L 341.200 30.000 L 319.189 30.502 Z"/>
+    <path data-katman="14" data-tur="dikis" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 316.446 40.525 L 316.446 438.525 L 382.727 438.525 L 391.261 277.195 L 399.794 438.525 L 511.013 438.525 L 541.446 248.725 C 509.414 240.882 483.446 195.395 483.446 163.675 C 483.446 124.545 488.147 92.825 493.946 92.825 L 392.346 55.170 C 369.576 35.725 339.216 40.525 316.446 40.525 Z"/>
+    <path data-katman="8" data-tur="pens" data-edge="dart_arka_beden.1" stroke-width="0.350" d="M 382.727 438.525 L 391.261 277.195"/>
+    <path data-katman="8" data-tur="pens" data-edge="dart_arka_beden.2" stroke-width="0.350" d="M 391.261 277.195 L 399.794 438.525"/>
+    <path data-katman="4" data-tur="centik" data-edge="side_back" stroke-width="0.350" d="M 525.755 346.587 L 532.666 347.695"/>
+    <path data-katman="4" data-tur="centik" data-edge="side_back" stroke-width="0.350" d="M 526.705 340.662 L 533.616 341.771"/>
+    <path data-katman="7" data-tur="grain" stroke-width="0.350" d="M 429.579 134.631 L 429.579 343.893"/>
+    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 431.979 140.631 L 429.579 134.631 L 427.179 140.631"/>
+    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 427.179 337.893 L 429.579 343.893 L 431.979 337.893"/>
+    <text data-katman="15" x="429.579" y="122.075" text-anchor="middle" font-size="6.300" fill="#111111" stroke="none">ARKA BEDEN</text>
+    <text data-katman="15" x="429.579" y="128.675" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">CUT 2X MIRRORED</text>
+    <text data-katman="15" x="429.579" y="135.275" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">EU 36</text>
+    <text data-katman="15" x="429.579" y="141.875" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">Seam Allowance 1 cm - 3/8 in</text>
+    <text data-katman="15" x="429.579" y="148.475" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">#2 / 5</text>
   </g>
   <g data-panel="on_etek">
-    <path data-katman="1" data-tur="kesim" stroke-width="1.000" d="M 593.086 30.000 L 593.086 503.000 L 957.851 503.000 L 859.073 253.456 L 798.940 35.901 L 690.250 30.000 L 678.001 30.000 Z"/>
-    <path data-katman="14" data-tur="dikis" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 593.086 60.000 L 593.086 473.000 L 913.711 473.000 L 830.586 263.000 L 775.772 64.687 L 689.436 60.000 L 683.718 171.650 L 678.001 60.000 L 593.086 60.000 Z"/>
-    <path data-katman="6" data-tur="kat" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 593.086 60.000 L 593.086 473.000"/>
-    <text data-katman="15" x="596.846" y="266.500" font-size="9.400" fill="#111111" stroke="none" transform="rotate(-90 596.846 266.500)">ON FOLD</text>
-    <path data-katman="8" data-tur="pens" data-edge="dart_on_etek.1" stroke-width="0.350" d="M 689.436 60.000 L 683.718 171.650"/>
-    <path data-katman="8" data-tur="pens" data-edge="dart_on_etek.2" stroke-width="0.350" d="M 683.718 171.650 L 678.001 60.000"/>
-    <path data-katman="4" data-tur="centik" data-edge="waist_front.1" stroke-width="0.350" d="M 717.547 61.526 L 717.927 54.536"/>
-    <path data-katman="7" data-tur="grain" stroke-width="0.350" d="M 775.468 148.250 L 775.468 384.750"/>
-    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 777.868 154.250 L 775.468 148.250 L 773.068 154.250"/>
-    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 773.068 378.750 L 775.468 384.750 L 777.868 378.750"/>
-    <text data-katman="15" x="775.468" y="134.060" text-anchor="middle" font-size="6.300" fill="#111111" stroke="none">ON ETEK</text>
-    <text data-katman="15" x="775.468" y="140.660" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">CUT 1X ON FOLD</text>
-    <text data-katman="15" x="775.468" y="147.260" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">EU 36</text>
-    <text data-katman="15" x="775.468" y="153.860" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">Seam Allowance 1 cm - 3/8 in</text>
-    <text data-katman="15" x="775.468" y="160.460" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">For Hem 3 cm - 1 1/8 in</text>
-    <text data-katman="15" x="775.468" y="167.060" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">#3 / 5</text>
+    <path data-katman="1" data-tur="kesim" stroke-width="1.000" d="M 592.712 30.000 L 592.712 527.000 L 964.966 527.000 L 871.275 253.809 L 805.948 36.673 L 694.403 30.000 L 680.466 30.000 Z"/>
+    <path data-katman="14" data-tur="dikis" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 592.712 60.000 L 592.712 497.000 L 922.962 497.000 L 842.712 263.000 L 783.253 65.369 L 693.506 60.000 L 686.986 171.650 L 680.466 60.000 L 592.712 60.000 Z"/>
+    <path data-katman="6" data-tur="kat" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 592.712 60.000 L 592.712 497.000"/>
+    <text data-katman="15" x="596.472" y="278.500" font-size="9.400" fill="#111111" stroke="none" transform="rotate(-90 596.472 278.500)">ON FOLD</text>
+    <path data-katman="8" data-tur="pens" data-edge="dart_on_etek.1" stroke-width="0.350" d="M 693.506 60.000 L 686.986 171.650"/>
+    <path data-katman="8" data-tur="pens" data-edge="dart_on_etek.2" stroke-width="0.350" d="M 686.986 171.650 L 680.466 60.000"/>
+    <path data-katman="4" data-tur="centik" data-edge="waist_front.1" stroke-width="0.350" d="M 722.903 61.759 L 723.321 54.771"/>
+    <path data-katman="7" data-tur="grain" stroke-width="0.350" d="M 778.839 154.250 L 778.839 402.750"/>
+    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 781.239 160.250 L 778.839 154.250 L 776.439 160.250"/>
+    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 776.439 396.750 L 778.839 402.750 L 781.239 396.750"/>
+    <text data-katman="15" x="778.839" y="139.340" text-anchor="middle" font-size="6.300" fill="#111111" stroke="none">ON ETEK</text>
+    <text data-katman="15" x="778.839" y="145.940" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">CUT 1X ON FOLD</text>
+    <text data-katman="15" x="778.839" y="152.540" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">EU 36</text>
+    <text data-katman="15" x="778.839" y="159.140" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">Seam Allowance 1 cm - 3/8 in</text>
+    <text data-katman="15" x="778.839" y="165.740" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">For Hem 3 cm - 1 1/8 in</text>
+    <text data-katman="15" x="778.839" y="172.340" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">#3 / 5</text>
   </g>
   <g data-panel="arka_etek">
-    <path data-katman="1" data-tur="kesim" stroke-width="1.000" d="M 997.851 30.000 L 997.851 503.000 L 1392.615 503.000 L 1294.427 254.944 L 1257.284 30.000 L 1091.470 30.000 Z"/>
-    <path data-katman="14" data-tur="dikis" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 1027.851 60.000 L 1027.851 473.000 L 1348.476 473.000 L 1265.351 263.000 L 1231.831 60.000 L 1124.201 60.000 L 1107.836 171.650 L 1091.470 60.000 L 1027.851 60.000 Z"/>
-    <path data-katman="8" data-tur="pens" data-edge="dart_arka_etek.1" stroke-width="0.350" d="M 1124.201 60.000 L 1107.836 171.650"/>
-    <path data-katman="8" data-tur="pens" data-edge="dart_arka_etek.2" stroke-width="0.350" d="M 1107.836 171.650 L 1091.470 60.000"/>
-    <path data-katman="7" data-tur="grain" stroke-width="0.350" d="M 1195.233 148.250 L 1195.233 384.750"/>
-    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 1197.633 154.250 L 1195.233 148.250 L 1192.833 154.250"/>
-    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 1192.833 378.750 L 1195.233 384.750 L 1197.633 378.750"/>
-    <text data-katman="15" x="1195.233" y="134.060" text-anchor="middle" font-size="6.300" fill="#111111" stroke="none">ARKA ETEK</text>
-    <text data-katman="15" x="1195.233" y="140.660" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">CUT 2X MIRRORED</text>
-    <text data-katman="15" x="1195.233" y="147.260" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">EU 36</text>
-    <text data-katman="15" x="1195.233" y="153.860" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">Seam Allowance 1 cm - 3/8 in</text>
-    <text data-katman="15" x="1195.233" y="160.460" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">For Hem 3 cm - 1 1/8 in</text>
-    <text data-katman="15" x="1195.233" y="167.060" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">#4 / 5</text>
+    <path data-katman="1" data-tur="kesim" stroke-width="1.000" d="M 1004.966 30.000 L 1004.966 527.000 L 1407.220 527.000 L 1314.070 255.387 L 1272.760 30.000 L 1100.467 30.000 Z"/>
+    <path data-katman="14" data-tur="dikis" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 1034.966 60.000 L 1034.966 497.000 L 1365.216 497.000 L 1284.966 263.000 L 1247.759 60.000 L 1135.760 60.000 L 1118.114 171.650 L 1100.467 60.000 L 1034.966 60.000 Z"/>
+    <path data-katman="8" data-tur="pens" data-edge="dart_arka_etek.1" stroke-width="0.350" d="M 1135.760 60.000 L 1118.114 171.650"/>
+    <path data-katman="8" data-tur="pens" data-edge="dart_arka_etek.2" stroke-width="0.350" d="M 1118.114 171.650 L 1100.467 60.000"/>
+    <path data-katman="7" data-tur="grain" stroke-width="0.350" d="M 1206.093 154.250 L 1206.093 402.750"/>
+    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 1208.493 160.250 L 1206.093 154.250 L 1203.693 160.250"/>
+    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 1203.693 396.750 L 1206.093 402.750 L 1208.493 396.750"/>
+    <text data-katman="15" x="1206.093" y="139.340" text-anchor="middle" font-size="6.300" fill="#111111" stroke="none">ARKA ETEK</text>
+    <text data-katman="15" x="1206.093" y="145.940" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">CUT 2X MIRRORED</text>
+    <text data-katman="15" x="1206.093" y="152.540" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">EU 36</text>
+    <text data-katman="15" x="1206.093" y="159.140" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">Seam Allowance 1 cm - 3/8 in</text>
+    <text data-katman="15" x="1206.093" y="165.740" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">For Hem 3 cm - 1 1/8 in</text>
+    <text data-katman="15" x="1206.093" y="172.340" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">#4 / 5</text>
   </g>
   <g data-panel="cep_kapagi_on">
-    <path data-katman="1" data-tur="kesim" stroke-width="1.000" d="M 1432.615 30.000 L 1598.865 30.000 L 1598.865 90.600 L 1432.615 90.600 Z"/>
-    <path data-katman="14" data-tur="dikis" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 1442.615 40.000 L 1588.865 40.000 L 1588.865 80.600 L 1442.615 80.600 L 1442.615 40.000 Z"/>
-    <path data-katman="7" data-tur="grain" stroke-width="0.350" d="M 1515.740 45.150 L 1515.740 75.450"/>
-    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 1518.140 51.150 L 1515.740 45.150 L 1513.340 51.150"/>
-    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 1513.340 69.450 L 1515.740 75.450 L 1518.140 69.450"/>
-    <text data-katman="15" x="1515.740" y="43.332" text-anchor="middle" font-size="6.300" fill="#111111" stroke="none">CEP KAPAGI ON</text>
-    <text data-katman="15" x="1515.740" y="49.932" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">CUT 2X MIRRORED</text>
-    <text data-katman="15" x="1515.740" y="56.532" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">EU 36</text>
-    <text data-katman="15" x="1515.740" y="63.132" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">Seam Allowance 1 cm - 3/8 in</text>
-    <text data-katman="15" x="1515.740" y="69.732" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">#5 / 5</text>
+    <path data-katman="1" data-tur="kesim" stroke-width="1.000" d="M 1447.220 30.000 L 1613.470 30.000 L 1613.470 90.600 L 1447.220 90.600 Z"/>
+    <path data-katman="14" data-tur="dikis" stroke-width="0.350" stroke-dasharray="4.233 4.233" d="M 1457.220 40.000 L 1603.470 40.000 L 1603.470 80.600 L 1457.220 80.600 L 1457.220 40.000 Z"/>
+    <path data-katman="7" data-tur="grain" stroke-width="0.350" d="M 1530.345 45.150 L 1530.345 75.450"/>
+    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 1532.745 51.150 L 1530.345 45.150 L 1527.945 51.150"/>
+    <path data-katman="7" data-tur="grainOk" stroke-width="0.350" d="M 1527.945 69.450 L 1530.345 75.450 L 1532.745 69.450"/>
+    <text data-katman="15" x="1530.345" y="43.332" text-anchor="middle" font-size="6.300" fill="#111111" stroke="none">CEP KAPAGI ON</text>
+    <text data-katman="15" x="1530.345" y="49.932" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">CUT 2X MIRRORED</text>
+    <text data-katman="15" x="1530.345" y="56.532" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">EU 36</text>
+    <text data-katman="15" x="1530.345" y="63.132" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">Seam Allowance 1 cm - 3/8 in</text>
+    <text data-katman="15" x="1530.345" y="69.732" text-anchor="middle" font-size="4.400" fill="#111111" stroke="none">#5 / 5</text>
   </g>
   </g>
 </svg>

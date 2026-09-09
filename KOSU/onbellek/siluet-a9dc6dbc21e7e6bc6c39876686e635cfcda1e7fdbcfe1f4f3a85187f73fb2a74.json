@@ -1,0 +1,211 @@
+{
+ "semaSurumu": "siluet-v1",
+ "girdiYolu": "GIRDI/hedef-fotograflar-3/etsy-08.png",
+ "sha256": "a9dc6dbc21e7e6bc6c39876686e635cfcda1e7fdbcfe1f4f3a85187f73fb2a74",
+ "okuyan": "Claude, 10 Eyl 2026 (Read ile ekran goruntusune bakildi; dis LLM cagrisi 0)",
+ "ilan": "kolsuz kayik yakali dugmeli ust (kalca boyu): CF pat + 9 dugme, bel pens cizgisi, etek ucunda pili",
+ "gorulen": "fotograf (insan ustunde, on) + satici flat'i (on + arka)",
+ "oturma": {
+  "gogus": true,
+  "bel": true
+ },
+ "on": {
+  "yakaBicim": "kayik",
+  "kontur": {
+   "yakaOrta": [
+    "neckFront*0",
+    "neckFront-10"
+   ],
+   "yakaOmuz": [
+    "shoulderTip*0.75",
+    "shoulderTip..neckBase@0.6"
+   ],
+   "askiUst": null,
+   "omuzUc": [
+    "shoulderTip*0.97",
+    "shoulderTip"
+   ],
+   "koltukalti": [
+    "bustLine*1.02",
+    "underarm+15"
+   ],
+   "gogus": [
+    "bustLine*1.04",
+    "bustLine"
+   ],
+   "bel": [
+    "waist*1.12",
+    "waist"
+   ],
+   "kalca": [
+    "highHip*1.10",
+    "highHip-15"
+   ],
+   "etekYan": [
+    "highHip*1.18",
+    "highHip+25"
+   ],
+   "etekOrta": [
+    "hip*0",
+    "highHip+35"
+   ]
+  },
+  "ogeler": [
+   {
+    "tip": "pat",
+    "ayna": false,
+    "genislik": 20,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "neckFront-10"
+     ],
+     [
+      "neckFront*0",
+      "highHip+35"
+     ]
+    ]
+   },
+   {
+    "tip": "dugme",
+    "ayna": false,
+    "adet": 9,
+    "cap": 9,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "neckFront+14"
+     ],
+     [
+      "neckFront*0",
+      "highHip+6"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "bustLine*0.55",
+      "underbust-10"
+     ],
+     [
+      "waist*0.70",
+      "waist+30"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "waist*0.70",
+      "waist+30"
+     ],
+     [
+      "highHip*0.62",
+      "highHip+34"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "waist*0.70",
+      "waist+30"
+     ],
+     [
+      "highHip*0.88",
+      "highHip+30"
+     ]
+    ]
+   }
+  ]
+ },
+ "arka": {
+  "koken": "satici flat'i (arka)",
+  "yakaBicim": "kayik",
+  "kontur": {
+   "yakaOrta": [
+    "nape*0",
+    "nape+30"
+   ],
+   "yakaOmuz": [
+    "shoulderTip*0.75",
+    "shoulderTip..neckBase@0.6"
+   ],
+   "askiUst": null,
+   "omuzUc": [
+    "shoulderTip*0.97",
+    "shoulderTip"
+   ],
+   "koltukalti": [
+    "bustLine*1.02",
+    "underarm+15"
+   ],
+   "gogus": [
+    "bustLine*1.04",
+    "bustLine"
+   ],
+   "bel": [
+    "waist*1.12",
+    "waist"
+   ],
+   "kalca": [
+    "highHip*1.10",
+    "highHip-15"
+   ],
+   "etekYan": [
+    "highHip*1.18",
+    "highHip+25"
+   ],
+   "etekOrta": [
+    "hip*0",
+    "highHip+35"
+   ]
+  },
+  "ogeler": [
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "bustLine*0.55",
+      "underbust-10"
+     ],
+     [
+      "waist*0.70",
+      "waist+30"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "waist*0.70",
+      "waist+30"
+     ],
+     [
+      "highHip*0.62",
+      "highHip+34"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "waist*0.70",
+      "waist+30"
+     ],
+     [
+      "highHip*0.88",
+      "highHip+30"
+     ]
+    ]
+   }
+  ]
+ },
+ "eksik": []
+}

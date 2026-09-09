@@ -422,8 +422,8 @@
   "args": {
    "panel": "on_etek",
    "edge": "hem_front",
-   "yLandmark": "landmark.knee",
-   "yOffsetMM": 60
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 491
   }
  },
  {
@@ -431,8 +431,8 @@
   "args": {
    "panel": "arka_etek",
    "edge": "hem_back",
-   "yLandmark": "landmark.knee",
-   "yOffsetMM": 60
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 491
   }
  },
  {
@@ -440,7 +440,7 @@
   "args": {
    "panel": "on_etek",
    "edge": "hem_front",
-   "factor": 1.45
+   "factor": 1.409
   }
  },
  {
@@ -448,7 +448,7 @@
   "args": {
    "panel": "arka_etek",
    "edge": "hem_back",
-   "factor": 1.45
+   "factor": 1.409
   }
  }
 ]
