@@ -160,3 +160,28 @@ vocab_reference_check bust +2 / hip +1 (KAPI B nitelik adi ve landmark.hip; bede
 Kilit: elle calisma icin acildi, oturum sonunda A5IzinListesi ile kuruldu; muhur yenilendi.
 Hakem: tur 1 BITMEDI/ALIRDIM (6 kusur) -> tur 4 kapatti; tur 2 BITTI/ALIRDIM (2 kucuk kusur) -> tur 5 kapatti. A4 BITTI.
 Okuma kovasi (A3/A6, A4 degil): Mary Quant 4/5 okumasi fotografa uymuyor (yuvarlak yaka + beyaz yatik yaka + kemer; bizde V band).
+
+## A4 DEVIR (9 Eyl gece, elle; Damla'nin 0-K karari 0509-kosu.md basinda) — sonraki oturum BURADAN
+
+Ne yapildi (commit'ler d7d30d3d..HEAD): (1) Croquis36 = MANKEN 90-60-90 / 178 / 55 (contract/body-v1.json croquis36.manken);
+body.cpp'de tek kurulus `BodyBuilder::kur` (gercek36 ile ayni formul, girdiler manken), x = kesit yarimi (izdusum); cevre/4 tup
+yasasi ve emsal/sablon bandlari body_check'ten kalkti; contract croquis36 sayilari `engine/build/body_check dump` ile yazildi;
+mankenOlcum blogu (VS fotografi Jasmine Tookes 2014, gozle px, DOGRULANMADI, kiyas). (2) Flat'te giysi mankene GIYILMIS izdusum:
+graf.cpp eval ringQuarter croquis'te kesit yarimi x (1 + bolluk/cevre) (kalip cevre/4 kalir); flatsvg kol tupu croquis'te panel/2;
+grafdogrula halka_kesit/supresyon croquis'te izdusum ilanina kiyaslar. Kutuk bel gitti; giris/1-5 flat'leri yeniden cizildi,
+KABUL 0, ctest yesil. (3) Emsal SILINDI: GIRDI/iyi-flat, flat-secim.md, flat-olcum.py/json, 0509-emsal-olcum.mjs; state
+kabulKomutlari'ndan cikti; mannequin-chart-v1 tarih. (4) Bes giysi seti GIRDI/hedef-fotograflar-2/ (Dior HC FW26, gorunway /
+Vogue Scandinavia: bluz 00001, gomlek 00019, etek 00010, pantolon 00028, elbise 00030; Bershka/Stradivarius 403, Instagram yok).
+
+Sirada (bu sirayla, hepsi 0-K'ya gore): (a) PANTOLON TABANI yok — engine/tests/graf_ir_check.cpp'ye ikinci taban (on/arka bacak
+paneli: bel-yan-agiz(hem)-ic bacak-ag kavisi(kubik)-CF/CB ag dikisi; dikisler yan, ic bacak, ag; halkalar bel, paca; --emit ile
+KOSU/ciktilar/graf-ilk/pantolon.json) ve 0509-a3-uret.mjs/teslim'e taban secimi (ops.json'da "taban" alani). (b) Bes fotografin
+OKUMASI (ops) elle yazilir: KOSU/onbellek sha anahtariyla (0509-a3-uret.mjs uret(sha)), teslim dizini KOSU/ciktilar/giris-2/1..5;
+etek = drop on_beden/arka_beden/kol + bel bandi; bluz/gomlek = drop etek + hem kalcada, gomlek cf kapanma + yaka bandi;
+elbise = pileli (gather). (c) Kontak (0-K madde 4): satir = fotograf kucuk resmi + op sayisi + croquis36 sayilari (gogus/bel/kalca
+yarimi, omuz-bel) + gercek36 sayilari + flat + kalip; KOSU/0509-a4-kontak.mjs emsal 13'e bagli, bastan yazilacak. (d) Goz hakemi
+x2: taze, kor, yalniz png, her turda WebSearch ile o an buldugu fashion flat'lerle kiyas, evet/hayir + 3 madde ("alir miydim"
+SORULMAZ). (e) Kalan emsal metinleri: contract/flat-convention-v1.json croquis/sevkPoz kaynaklari (kolAcisiDeg 82.2 emsal
+medyaniydi — yeni kaynak lazim: manken kol pozu), KOSU/0509-kosu.js A1b/A4 metinleri, engine/tests/cizim_giysi_mi.mjs yorumu,
+manken_insan_ayrim_check.mjs (flat-olcum.json yok, v2 kopyasi); vocab_reference_check bust/hip ilanli. Kilit A5 listesiyle
+kurulu, muhur yenilendi. Koşucu calistirilmaz; A5 elle bitene kadar.
