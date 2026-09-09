@@ -85,7 +85,9 @@ static Panel govde(bool on, const Ease& ez) {
     const RefPoint vTop = P(L(top, 0.0));                                     // CF/CB ust
     const RefPoint vWaistC = P(L("landmark.waist", 0.0));                    // CF/CB bel
     const RefPoint vWaistS = P(Q("landmark.waist", 1.0));                    // yan bel (cevre/4 + bolluk)
-    const RefPoint vUnder = P(Q("landmark.underarm", 1.0, "girth.bust"));    // yan koltukalti (gogus/4 + bolluk, koltukalti y)
+    // A4 (2026-09-09, hakem kusur 5): yan dikisin ust ucu = kol oyugu tabani GOGUS HATTINDA (Aldrich: oyuk derinligi gogus
+    // hatti); koltukalti y'sinde olunca gogus kesiti bedenden 11 mm eksik cikiyordu (yan dikis bele dogru daraliyor).
+    const RefPoint vUnder = P(Q("landmark.bustLine", 1.0, "girth.bust"));    // yan oyuk tabani (gogus/4 + bolluk, gogus hatti y)
     const RefPoint vTip = P(L("landmark.shoulderTip"));
     const RefPoint vNeck = P(L("landmark.neckBase"));
     const std::string s = on ? "front" : "back";
@@ -201,6 +203,7 @@ static Garment tabanBase(const Ease& ez) {
     // kapak zinciri arka koseden (cap_back) tepeye, oradan on koseye (cap_front); oyuk zinciri arka koltukaltindan omuz ucuna,
     // omuz dikisinden on omuz ucuna gecip on koltukaltina iner (armhole_front.2 ve .1 kendi yonlerine TERS yurunur)
     Seam oyuk; oyuk.id = "kol_oyugu"; oyuk.a = {{"kol", "cap_back"}, {"kol", "cap_front"}}; oyuk.b = {{"arka_beden", "armhole_back.1"}, {"arka_beden", "armhole_back.2"}, {"on_beden", "armhole_front.2"}, {"on_beden", "armhole_front.1"}};
+    oyuk.notchFractions = {0.25, 0.75};   // A4 (hakem kusur 2): kol takma centigi — arka kapak (0.25, kalipta 2 cizgi) / on kapak (0.75, 1 cizgi)
     oyuk.reverse = false; oyuk.ratio = 1.04; oyuk.reason = "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)";
     // bel zinciri CF'den yan dikise, yan dikisten (yan_beden / yan_etek esleri) CB'ye
     // Bel dikisi zinciri artik BOLUNMUS kenarlarla (pens araya girdi). Pens BACAKLARI

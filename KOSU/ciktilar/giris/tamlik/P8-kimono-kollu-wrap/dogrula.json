@@ -1,4 +1,6 @@
 {
- "kirmizi": 0,
- "fails": []
+ "kirmizi": 1,
+ "fails": [
+  "halka_kesit:gogus_halka (bust)"
+ ]
 }

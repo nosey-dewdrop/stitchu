@@ -1,7 +1,7 @@
 # A4 hukmu (elle, 2026-09-09) — flat fashion flat oldu, motor gercek olcuyor
 
 Onceki hukum (A3, 9 Eyl): bes fotograf primitif emir listesiyle motordan gecti; kalan kusur "arka paneller acilmis
-kitap pozunda, kol pozu" (A4). Bu dosya A4'un OLCUMUNU ilan eder; kontak `KOSU/ciktilar/giris/a4-kontak-tur3.png`,
+kitap pozunda, kol pozu" (A4). Bu dosya A4'un OLCUMUNU ilan eder; kontak `KOSU/ciktilar/giris/a4-kontak-tur4.png` (tur1-3 de duruyor),
 hakem `KOSU/ciktilar/hakem/A4/`.
 
 ## Damla'nin tek olcutu: emsalin yaninda ayni turden bir fashion flat gibi gorunuyor mu?
@@ -63,6 +63,20 @@ Devredilen sayi: gogusYarimOverTorso 0.50 (n=4), belYarimOverTorso 0.406 (n=6); 
   grafi ciziyordu (kapi baska geometri, urun baska). `cozulmusGraf` ile flat ve kalip cozulmus grafla.
 - **Kalip sayfasi:** kesim cizgisi pens agzini kopruler (ofset V bacaklari X ciziyordu), etiket Bugra yazimi: parca adi,
   CUT 2X MIRRORED, EU 36, Seam Allowance 1 cm - 3/8 in, For Hem 3 cm - 1 1/8 in, #n / N; grain oku, centik (on 1 / arka 2).
+
+## Hakem tur 1 (BITMEDI / ALIRDIM) -> tur 4 kapanislari (calistirma ciktisiyla)
+
+| kusur | kapanis | olcum |
+|---|---|---|
+| 1 kol kapagi tepesi cukur | cozumle: eksene (x=0) komsu kontrol yalniz x'te kayar (teget yatay); yeni kapi `eksen_teget` (contract toleranslar.eksenTegetDeg 5, DOGRULANMADI): konturun ekseni TEPE ile gectigi yerde teget yataydan sapma | kol/cap_front.from 0.42, cap_back.to 0.42 derece; V yaka / sivri etek gibi eksen kenarina dayanan uclar tasarim kosesi, olculmez (5 teslimde 9 kose) |
+| 2 kol/oyuk centigi yok | taban (graf_ir_check --emit): kol_oyugu notchFractions 0.25/0.75; centikler dikisin kesrinden TURETILIR (cozPens, tum paneller); kalipta arka kapak 2 cizgi | kalip-36 kol: sol 2 / sag 1 centik; grafdogrula centik 4 hukum yesil (bel, yan, kol_oyugu x2). graf_dikilebilir negatif testi yeniden yazildi: panel centigi turetilmis veri (elle 0.6 -> cozumde 0.5) |
+| 3 teslim 5 arka yaka iki ucgen | flatsvg eksen kurali: x=0'da duran HER kenar (dikis/kesim/kat) eksendir; yaka bandi (cut cb) arka gorunumde yerinde | giris/5/flat.png arka: band CB'de aynali, tup gibi degil |
+| 4 hedef sinira kirpili | DEVIR (A6c okuma kalibrasyonu); birim genislik, sapma 0.06-0.31 | — |
+| 5 gogus kesiti 888.86 vs 900 | taban: yan dikis ust ucu = oyuk tabani GOGUS HATTINDA (Aldrich; eskiden koltukalti y); yeni kapi `halka_kesit`: kesit x2 - (beden + bolluk) <= 2 mm | gogus 900.00 - 900 = 0.00; kalca 950 - 950 = 0.00 |
+| 6 commit'siz agac | tur3 + tur4 commit | git log |
+| (ek) birlesik panelde bel olculmuyordu | supresyon kapisi panel panel: bel hattini iceriden gecen panel -> kesit - ic pens agzi; belde biten panel -> halka kenarlari; ic pens acilinca yan tepe agiz kadar disari | giris/4: dikilen bel 660.19 (kesit 184.23 - 19.14, 185.86 - 20.86) - 660 = 0.19 mm (once -80) |
+
+Kapilar tur 4 sonrasi: KABUL kirmizi=0 · flat_ayni_insan OK 5 · grafdogrula 5/5 0 kirmizi · regresyon fark=0 · ctest graf_ir/op/dikilebilir gecti.
 
 ## Ilanli / kapsam disi
 

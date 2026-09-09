@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
     ok(R.dikilebilir(), "taban graf gercek36'da DIKILEBILIR (0 kirmizi)");
     auto count = [&](const std::string& k, bool onlyPass) { int n = 0; for (const Hukum& h : R.hukumler) if (h.kural == k && !h.bilgi && (!onlyPass || h.gecti)) ++n; return n; };
     ok(count("dikis_uzunluk", true) == 8, "8 dikis uzunluk hukmu yesil (6 + arka_orta_beden/etek kapanma dikisi, 2026-09-07) (" + std::to_string(count("dikis_uzunluk", true)) + ")");
-    ok(count("centik", true) == 2, "2 centik hukmu yesil (bel 0.33 + yan 0.5; bel centigi pens bolunmesiyle tek kesre indi, 2026-09-07)");
+    ok(count("centik", true) == 4, "4 centik hukmu yesil (bel 0.33 + yan 0.5 + kol_oyugu 0.25/0.75, A4 2026-09-09) (" + std::to_string(count("centik", true)) + ")");
     ok(count("kendini_kesme", true) == 5, "5 panel kendini kesmiyor");
     ok(count("halka_kapanma", true) == 7, "7 halka kapaniyor (yaka, kol oyugu, bel, etek ucu, kol agzi + gogus, kalca; son ikisi 2026-09-07 supresyonu olcunun icine almak icin eklendi)");
     ok(count("panel_kapali", true) == 5, "5 panel kapali");
@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
     ok(R.uydurmalar.size() >= 2 && R.toJSON().get("uydurma") && R.toJSON().get("uydurma")->a.size() == R.uydurmalar.size() && R.toMarkdown().find("## Uydurma") != std::string::npos,
        "rapor 'uydurma' bolumu: " + std::to_string(R.uydurmalar.size()) + " DOGRULANMADI kalemi (JSON + markdown)");
     for (const std::string& u : R.uydurmalar) std::printf("      uydurma: %s\n", u.c_str());
-    ok(R.toleranslar.size() == 4 && R.toMarkdown().find("| tolerans | mm | kaynak |") != std::string::npos, "rapor basliginda 4 esik kaynak sutunuyla (karar 5)");
+    ok(R.toleranslar.size() == 5 && R.toMarkdown().find("| tolerans | mm | kaynak |") != std::string::npos, "rapor basliginda 5 esik kaynak sutunuyla (karar 5; +eksenTegetDeg A4)");
     { int fit = 0; for (const Hukum& h : R.hukumler) if (h.kural == "kisit" && h.bilgi && h.gecti && h.hedef.rfind("kol/", 0) == 0) ++fit;
       ok(fit == 2, "2 kisit (cap_front/cap_back) gercek36'da cozuldu, bilgi satirinda kontrol kaymasi mm"); }
     for (const DikisSatir& d : R.dikisler) std::printf("      dikis %-12s a %8.2f hedef %8.2f artik %+7.3f  uc-bosluk %6.2f\n", d.seam.c_str(), d.lenA, d.hedefA, d.artikMM, d.ucBoslukMM);
@@ -144,7 +144,13 @@ int main(int argc, char** argv) {
       neg("panel_kapali", "etek pens bacaklari silindi (kontur acik kaldi)", x); }
     { Garment x = g; x.seam("bel")->ratio = 1.3; neg("dikis_uzunluk", "bel.ratio elle 1.3 (kenar uzatilmadan)", x); }
     { Garment x = g; x.seam("bel")->ratio = 9.0; neg("dikis_uzunluk", "bel.ratio 9.0 aralik disi", x); }
-    { Garment x = g; x.panel("on_beden")->edge("side_front")->notches = {0.6}; neg("centik", "on_beden/side_front centigi 0.6'ya kaydi (arka 0.5)", x); }
+    { // A4 (2026-09-09): panel centigi TURETILMIS veridir — cozucu (cozPens) her dikisin notchFractions kesrini iki tarafa
+      // yeniden oturtur; elle 0.6'ya kaydirilan panel centigi cozumde dikisin 0.5'ine geri gelir, kural YESIL kalir. Eski
+      // negatif test ("0.6 -> kirmizi") bu yuzden anlamsizlasti; yerine turetmenin kendisi olculur.
+      Garment x = g; x.panel("on_beden")->edge("side_front")->notches = {0.6};
+      DogrulamaRaporu Rx = dogrula(x, gercek, contract, false, bodyContract); bool yesil = true; std::string sat;
+      for (const Hukum& h : Rx.hukumler) if (h.kural == "centik" && h.hedef.rfind("yan_beden", 0) == 0) { yesil = h.gecti; sat = h.deger; }
+      ok(yesil && sat.find("0.00 mm") != std::string::npos, "centik turetilmis veri: on_beden/side_front elle 0.6 -> cozumde dikisin 0.5'ine oturur (yan_beden centik 0.00 mm): " + sat.substr(0, 80)); }
     { Garment x = g; Panel* p = x.panel("on_etek"); const RefPoint a = p->vertex(2), b = p->vertex(3); p->setVertex(2, b); p->setVertex(3, a);
       neg("kendini_kesme", "on_etek etek-ucu ve kalca koseleri yer degistirdi (papyon)", x); }
     { OpResult e = extend(g, "on_beden", "waist_front.2", 25.0, ctx);   // 2026-09-07: bel kenari pens icin bolundu

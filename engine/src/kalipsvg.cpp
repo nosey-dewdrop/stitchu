@@ -228,7 +228,7 @@ std::string kalipSVG(const Garment& g, const Body& body, const std::string& body
                     // Kesim cizgisi yonu: panel merkezinden DISARI
                     Point c{ pr.kutu.x + pr.kutu.width / 2, pr.kutu.y + pr.kutu.height / 2 };
                     if ((m.x - c.x) * n.x + (m.y - c.y) * n.y < 0) { n.x = -n.x; n.y = -n.y; }
-                    int adet = e.role.find("back") != std::string::npos ? 2 : 1;
+                    int adet = (e.role.find("back") != std::string::npos || e.id.find("back") != std::string::npos) ? 2 : 1;   // arka taraf 2 cizgi (rol ya da kenar adi)
                     for (int k = 0; k < adet; ++k) {
                         double off = (adet == 1) ? 0.0 : (k == 0 ? -centikCift / 2 : centikCift / 2);
                         Point o{ m.x + (tg.x / L) * off, m.y + (tg.y / L) * off };

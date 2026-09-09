@@ -85,7 +85,7 @@
             "xOffsetMM": 0
           },
           "to": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -100,7 +100,7 @@
           "rolePart": 1,
           "roleCount": 4,
           "from": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -110,7 +110,7 @@
             "combo": [
               {
                 "w": 0.29289321881345237,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -153,7 +153,7 @@
               "combo": [
                 {
                   "w": 0.7238576250846032,
-                  "landmark": "landmark.underarm",
+                  "landmark": "landmark.bustLine",
                   "xOf": "ringQuarter",
                   "ring": "girth.bust",
                   "xFactor": 1,
@@ -173,7 +173,7 @@
               "combo": [
                 {
                   "w": 0.47385762508460316,
-                  "landmark": "landmark.underarm",
+                  "landmark": "landmark.bustLine",
                   "xOf": "ringQuarter",
                   "ring": "girth.bust",
                   "xFactor": 1,
@@ -209,7 +209,7 @@
             "combo": [
               {
                 "w": 0.29289321881345237,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -285,7 +285,7 @@
             "combo": [
               {
                 "w": 0.29289321881345237,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -338,7 +338,7 @@
               "combo": [
                 {
                   "w": 0.11192881254230161,
-                  "landmark": "landmark.underarm",
+                  "landmark": "landmark.bustLine",
                   "xOf": "ringQuarter",
                   "ring": "girth.bust",
                   "xFactor": 1,
@@ -599,7 +599,7 @@
             "combo": [
               {
                 "w": 0.29289321881345237,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -737,7 +737,7 @@
             "xOffsetMM": 0
           },
           "to": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -752,7 +752,7 @@
           "rolePart": 1,
           "roleCount": 4,
           "from": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -762,7 +762,7 @@
             "combo": [
               {
                 "w": 0.29289321881345237,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -805,7 +805,7 @@
               "combo": [
                 {
                   "w": 0.7238576250846032,
-                  "landmark": "landmark.underarm",
+                  "landmark": "landmark.bustLine",
                   "xOf": "ringQuarter",
                   "ring": "girth.bust",
                   "xFactor": 1,
@@ -825,7 +825,7 @@
               "combo": [
                 {
                   "w": 0.47385762508460316,
-                  "landmark": "landmark.underarm",
+                  "landmark": "landmark.bustLine",
                   "xOf": "ringQuarter",
                   "ring": "girth.bust",
                   "xFactor": 1,
@@ -861,7 +861,7 @@
             "combo": [
               {
                 "w": 0.29289321881345237,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -937,7 +937,7 @@
             "combo": [
               {
                 "w": 0.29289321881345237,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -990,7 +990,7 @@
               "combo": [
                 {
                   "w": 0.11192881254230161,
-                  "landmark": "landmark.underarm",
+                  "landmark": "landmark.bustLine",
                   "xOf": "ringQuarter",
                   "ring": "girth.bust",
                   "xFactor": 1,
@@ -1251,7 +1251,7 @@
             "combo": [
               {
                 "w": 0.29289321881345237,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -2194,6 +2194,7 @@
       "reverse": false,
       "ratio": 1.04,
       "easeMM": 0,
+      "notchFractions": [0.25, 0.75],
       "reason": "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)"
     },
     {

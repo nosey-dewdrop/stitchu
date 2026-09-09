@@ -11,10 +11,10 @@
   </g>
   <g id="outline" fill="none" stroke="#111111" stroke-width="4.294" stroke-linejoin="round" stroke-linecap="round">
     <g data-view="front" data-eksen="cf" transform="translate(404.360 0)">
-      <path data-panel="on_beden" data-edge="side_front" data-tur="seam" d="M 188.118 390.000 L 225.000 243.800"/>
-      <path data-panel="on_beden" data-edge="side_front" data-tur="seam" d="M -188.118 390.000 L -225.000 243.800"/>
-      <path data-panel="on_beden" data-edge="armhole_front.1" data-tur="seam" d="M 225.000 243.800 L 404.360 283.430"/>
-      <path data-panel="on_beden" data-edge="armhole_front.1" data-tur="seam" d="M -225.000 243.800 L -404.360 283.430"/>
+      <path data-panel="on_beden" data-edge="side_front" data-tur="seam" d="M 188.118 390.000 L 225.000 254.900"/>
+      <path data-panel="on_beden" data-edge="side_front" data-tur="seam" d="M -188.118 390.000 L -225.000 254.900"/>
+      <path data-panel="on_beden" data-edge="armhole_front.1" data-tur="seam" d="M 225.000 254.900 L 404.360 283.430"/>
+      <path data-panel="on_beden" data-edge="armhole_front.1" data-tur="seam" d="M -225.000 254.900 L -404.360 283.430"/>
       <path data-panel="on_beden" data-edge="armhole_front.2" data-tur="cut" d="M 404.360 283.430 L 404.360 147.070"/>
       <path data-panel="on_beden" data-edge="armhole_front.2" data-tur="cut" d="M -404.360 283.430 L -404.360 147.070"/>
       <path data-panel="on_beden" data-edge="shoulder" data-tur="seam" d="M 404.360 147.070 L 49.100 0.000"/>
@@ -29,10 +29,10 @@
       <path data-panel="on_etek" data-edge="side_front.2" data-tur="seam" d="M -237.500 593.000 L -182.686 394.687"/>
     </g>
     <g data-view="back" data-eksen="cb" transform="translate(1273.080 0)">
-      <path data-panel="arka_beden" data-edge="side_back" data-tur="seam" d="M 190.216 390.000 L 225.000 243.800"/>
-      <path data-panel="arka_beden" data-edge="side_back" data-tur="seam" d="M -190.216 390.000 L -225.000 243.800"/>
-      <path data-panel="arka_beden" data-edge="armhole_back.1" data-tur="seam" d="M 225.000 243.800 L 404.360 283.430"/>
-      <path data-panel="arka_beden" data-edge="armhole_back.1" data-tur="seam" d="M -225.000 243.800 L -404.360 283.430"/>
+      <path data-panel="arka_beden" data-edge="side_back" data-tur="seam" d="M 190.216 390.000 L 225.000 254.900"/>
+      <path data-panel="arka_beden" data-edge="side_back" data-tur="seam" d="M -190.216 390.000 L -225.000 254.900"/>
+      <path data-panel="arka_beden" data-edge="armhole_back.1" data-tur="seam" d="M 225.000 254.900 L 404.360 283.430"/>
+      <path data-panel="arka_beden" data-edge="armhole_back.1" data-tur="seam" d="M -225.000 254.900 L -404.360 283.430"/>
       <path data-panel="arka_beden" data-edge="armhole_back.2" data-tur="cut" d="M 404.360 283.430 L 404.360 147.070"/>
       <path data-panel="arka_beden" data-edge="armhole_back.2" data-tur="cut" d="M -404.360 283.430 L -404.360 147.070"/>
       <path data-panel="arka_beden" data-edge="shoulder" data-tur="seam" d="M 404.360 147.070 L 49.100 0.000"/>

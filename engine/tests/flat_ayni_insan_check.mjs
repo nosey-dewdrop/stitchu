@@ -284,7 +284,7 @@ for (const [k, ad] of [['dBel', 'bel y farki'], ['dOmuz', 'omuz ucu x farki'], [
 const bulgular = [...bulgularOnArka];
 const dusus = rows.map((r) => r.kalcaDusus).filter((v) => typeof v === 'number' && !Number.isNaN(v));
 if (dusus.length >= 2 && Math.max(...dusus) - Math.min(...dusus) < 0.05) {
-  bulgular.push(`kalca y - bel y ${dusus.length} flat'te de ${dusus[0].toFixed(1)} mm — SABIT, olcum degil (flat-from-pattern.js MANKEN_KALCA_DERINLIK_MM); kalca hatti y sutunu bel y'nin kopyasidir, croquis36 hip.y landmark'indan gelmeli`);
+  bulgular.push(`kalca y - bel y ${dusus.length} flat'te de ${dusus[0].toFixed(1)} mm — sabit (ayni Body: croquis36 hip.y - waist.y = 593 - 390 = 203; eski web cizicide sabit bir uydurma sayiydi, simdi landmark farki)`);
 }
 for (const r of rows) {
   if (r.hata) continue;

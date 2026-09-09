@@ -87,13 +87,13 @@ for (const [i, n] of N.entries()) {
   const cr = { gogus: halfWidthAt(toPolyline(f.sil.d), gogusMM), bel: parseFloat(f.sil['data-manken-bel-yarim-mm']),
                omuzUc: parseFloat(f.sil['data-omuz-uc'].split(' ')[0]), gogusY: gogusMM, belY: belMM, omuzUcY: parseFloat(f.sil['data-omuz-uc'].split(' ')[1]) };
   const gi = { gogus: halfWidthAt(f.giysi, gogusMM), bel: halfWidthAt(f.giysi, belMM) };
-  const satir = [['gogus yarim', em.gogus, cr.gogus, gi.gogus], ['bel yarim', em.bel, cr.bel, gi.bel], ['omuz ucu x', em.omuzUc, cr.omuzUc, null],
+  const satir = [['gogus yarim', em.gogus, cr.gogus, gi.gogus], ['bel yarim', em.bel, cr.bel, gi.bel], ['omuz ucu x (13 cut-in, askı kenarı!)', em.omuzUc, cr.omuzUc, null],
                  ['omuz->gogus y', em.gogusY, cr.gogusY, null], ['omuz->bel y', em.belY, cr.belY, null], ['omuz->omuz ucu y', em.omuzUcY, cr.omuzUcY, null]];
   const f1 = (v) => (v == null || Number.isNaN(v) ? '—' : v.toFixed(0));
   g += `<text x="${TAB_X}" y="${y0 + 14}" font-size="11" font-weight="600">mm (emsal 13 bizim olcege: ${mmPerEmsalPX.toFixed(3)} mm/px)</text>`
      + `<text x="${TAB_X}" y="${y0 + 30}" font-size="9" fill="#666">kalem | emsal | croquis36 | giysi (cizim) | croquis-emsal</text>`;
   satir.forEach(([k, e, c, gg], j) => {
-    g += `<text x="${TAB_X}" y="${y0 + 46 + j * 14}" font-size="9" font-family="monospace">${k.padEnd(18)} ${f1(e).padStart(5)} ${f1(c).padStart(6)} ${f1(gg).padStart(6)}  ${(c - e >= 0 ? '+' : '') + f1(c - e)}</text>`;
+    g += `<text x="${TAB_X}" y="${y0 + 46 + j * 14}" font-size="9" font-family="monospace">${k.padEnd(30)} ${f1(e).padStart(5)} ${f1(c).padStart(6)} ${f1(gg).padStart(6)}  ${(c - e >= 0 ? '+' : '') + f1(c - e)}</text>`;
   });
   if (i === 0) bulgular = satir.map(([k, e, c]) => `${k}: emsal ${f1(e)} / croquis36 ${f1(c)} / fark ${(c - e >= 0 ? '+' : '') + f1(c - e)} mm`);
   g += `<text x="${PAD}" y="${y0 - 6}" font-size="12" font-weight="600">${n}. ${ad}</text>`

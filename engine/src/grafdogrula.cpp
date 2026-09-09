@@ -18,21 +18,21 @@ namespace graf {
 Tolerans Tolerans::fromContract(const JVal& contract) {
     Tolerans t;
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    t.dikisUzunlukMM = t.centikMM = t.halkaKapanmaMM = t.pensBacakMM = t.ratioMin = t.ratioMax = nan;
+    t.dikisUzunlukMM = t.centikMM = t.halkaKapanmaMM = t.pensBacakMM = t.ratioMin = t.ratioMax = t.eksenTegetDeg = nan;
     if (const JVal* tl = contract.get("toleranslar")) {
         auto rd = [&](const char* k, double& out) {
             const JVal* v = tl->get(k); if (!v) return;
             const JVal* d = v->get("deger"); if (d && d->isNum()) out = d->n;
             t.tablo.push_back({k, v->strOr("kaynak", "KAYNAK YOK"), (d && d->isNum()) ? d->n : nan});
         };
-        rd("dikisUzunlukMM", t.dikisUzunlukMM); rd("centikMM", t.centikMM); rd("halkaKapanmaMM", t.halkaKapanmaMM); rd("pensBacakMM", t.pensBacakMM);
+        rd("dikisUzunlukMM", t.dikisUzunlukMM); rd("centikMM", t.centikMM); rd("halkaKapanmaMM", t.halkaKapanmaMM); rd("pensBacakMM", t.pensBacakMM); rd("eksenTegetDeg", t.eksenTegetDeg);
     }
     if (const JVal* ar = contract.get("araliklar")) {
         const JVal* r = ar->get("ratio");
         const JVal* a = r ? r->get("aralik") : nullptr;
         if (a && a->isArr() && a->a.size() == 2) { t.ratioMin = a->a[0].n; t.ratioMax = a->a[1].n; }
     }
-    t.dolu = !std::isnan(t.dikisUzunlukMM) && !std::isnan(t.centikMM) && !std::isnan(t.halkaKapanmaMM) && !std::isnan(t.pensBacakMM) &&
+    t.dolu = !std::isnan(t.dikisUzunlukMM) && !std::isnan(t.centikMM) && !std::isnan(t.halkaKapanmaMM) && !std::isnan(t.pensBacakMM) && !std::isnan(t.eksenTegetDeg) &&
              !std::isnan(t.ratioMin) && !std::isnan(t.ratioMax);
     return t;
 }
@@ -621,6 +621,32 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
         R.pozlar.push_back(pz);
     }
 
+    // ---- eksen_teget (A4 hakem kusur 1): kontur x=0 eksenden bir TEPE ile geciyorsa (eksendeki tepeyi iki eksen-disi
+    // kenar paylasiyor: kol kapagi cap_back -> cap_front) tegeti yatay olmali, ayna tek tepe yapsin (kol kapagi cukuru
+    // olculdu). Tepe bir eksen kenarina (kat/x=0 dikis/kesim) dayaniyorsa kenar orada BITER: V yaka, sivri etek ucu, yaka
+    // bandi ucu OKUMANIN kosesidir (5 teslimde 9 boyle kose olculdu), kapi tasarimi yargilamaz.
+    for (const Panel& p : g.panels) {
+        const EvalCtx ctx = p.ctxFor(body, onArkaEsit);
+        const std::size_t n = p.edges.size();
+        auto eksenKenar = [](const Edge& k) { return k.from.xSifir() && k.to.xSifir(); };
+        for (std::size_t i = 0; i < n; ++i) {
+            const Edge& e = p.edges[i];
+            if (e.kind == "dartLeg" || eksenKenar(e)) continue;
+            for (int uc = 0; uc < 2; ++uc) {
+                const RefPoint& rp = uc == 0 ? e.from : e.to;
+                if (!rp.xSifir()) continue;
+                const Edge& komsu = p.edges[uc == 0 ? (i + n - 1) % n : (i + 1) % n];
+                if (eksenKenar(komsu) || komsu.kind == "dartLeg") continue;   // eksen kenarina dayanan uc: tasarim kosesi
+                Point a, b;
+                try { a = e.at(ctx, uc == 0 ? 0.0 : 1.0); b = e.at(ctx, uc == 0 ? 0.02 : 0.98); } catch (const std::exception&) { continue; }
+                const double L = std::hypot(b.x - a.x, b.y - a.y);
+                if (L < 1e-9) continue;
+                const double aci = std::fabs(std::atan2(std::fabs(b.y - a.y), std::fabs(b.x - a.x)) * 180.0 / M_PI);
+                H("eksen_teget", p.id + "/" + e.id + (uc == 0 ? ".from" : ".to"), "eksende teget yataydan " + f2(aci) + " derece (tolerans " + f2(tol.eksenTegetDeg) + ")", aci <= tol.eksenTegetDeg);
+            }
+        }
+    }
+
     // ---- dikis_zincir (karar 7): yapisal, beden gerekmez
     const ZincirCozumu zc = zincirleriCoz(g);
     for (const Seam& s : g.seams) {
@@ -748,7 +774,14 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
                   if (n >= 2) { toplam += xmax - xmin; ++kesilen; kesitNot += (kesitNot.empty() ? "" : ", ") + pid + " " + f2(xmax - xmin); }
                   else kesitNot += (kesitNot.empty() ? "" : ", ") + pid + " KESMIYOR@y" + f2(y);
               }
-              if (kesilen > 0) { hs.toplamMM = toplam; kesitNot = "yatay kesit @ " + lm + " y=" + f2(y) + " (yarim giysi): " + kesitNot; }
+              if (kesilen > 0) { hs.toplamMM = toplam; kesitNot = "yatay kesit @ " + lm + " y=" + f2(y) + " (yarim giysi): " + kesitNot;
+                  // HALKA KESIT = BEDEN + BOLLUK (A4 hakem kusur 5): kesit x2 ile grafin ilan ettigi cevre (beden + panel bollugu) farki
+                  const std::string hn = "girth." + ring.role;
+                  if (body.hasRing(hn)) {
+                      double eR = 0; for (const Panel& p : g.panels) for (const RingEase& re : p.ease) if (re.ring == hn) eR = std::max(eR, re.mm);
+                      const double ilan = body.ring(hn) + eR, fark = toplam * 2.0 - ilan;
+                      H("halka_kesit", ring.id + " (" + ring.role + ")", "kesit x2 " + f2(toplam * 2.0) + " mm - (beden " + f2(body.ring(hn)) + " + bolluk " + f2(eR) + ") = " + f2(fark) + " mm, tolerans " + f2(tol.dikisUzunlukMM), std::fabs(fark) <= tol.dikisUzunlukMM);
+                  } }
           } }
         const Zincir z = zincirCoz(g, ring.edges, zc, true);
         double worst = 0; std::string desc;
@@ -868,10 +901,42 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
         const bool varW = body.hasRing("girth.waist");
         double pensPayi = 0; { const JVal* cz = contract.get("cozucu"); const JVal* pn = cz ? cz->get("pens") : nullptr; const JVal* pp = pn ? pn->get("pensPayi") : nullptr; if (pp) pensPayi = pp->numOr("deger", 0); }
         const HalkaSatir* bel = nullptr; for (const HalkaSatir& h : R.halkalar) if (h.role == "waist_ring") bel = &h;
+        // DIKILEN BEL (yarim giysi): bel halkasi KAPALI zincirse zincir uzunlugu (pens agizlari zaten disarida); bel dikisi
+        // olmayan / birlesik (op merge) giyside bel YATAY KESITI - ic pens agizlari (balik pensi agzi kesitte sayilir, dikilince
+        // kapanir). Hangisi olculdugu satirda yazar.
+        double dikilenYarim = 0; std::string dikilenKaynak;
+        if (bel && bel->gecti && bel->toplamMM > 0) { dikilenYarim = bel->toplamMM; dikilenKaynak = "halka " + bel->ring + " x2"; }
+        else if (varW && body.hasLandmark("landmark.waist")) {
+            // panel panel: bel hattini ICINDEN gecen (birlesik, bel dikissiz) panel -> yatay kesit - ic pens agzi;
+            // belde biten/baslayan (bel dikisli) panel -> bel halkasindaki kenarlarinin uzunlugu
+            const double y = body.landmark("landmark.waist").y; double toplam = 0; int sayilan = 0; std::string det;
+            for (const Panel& p : g.panels) {
+                bool eksenli = false; for (const Edge& e : p.edges) if (e.kind != "dartLeg" && e.from.xSifir() && e.to.xSifir()) eksenli = true;
+                if (!eksenli) continue;
+                std::vector<Point> P; const EvalCtx pctx = p.ctxFor(body, onArkaEsit);
+                try { P = flattenOutline(p.outline(pctx), 24); } catch (const std::exception&) { continue; }
+                double ymin = 1e300, ymax = -1e300; for (const Point& q : P) { ymin = std::min(ymin, q.y); ymax = std::max(ymax, q.y); }
+                if (ymin < y - 1.0 && ymax > y + 1.0) {   // bel hattini iceriden gecer: kesit
+                    double xmin = 1e300, xmax = -1e300, agiz = 0; int n = 0;
+                    for (size_t i = 0; i < P.size(); ++i) { const Point& a = P[i]; const Point& b = P[(i + 1) % P.size()];
+                        if ((a.y - y) * (b.y - y) > 0 || a.y == b.y) continue;
+                        const double x = a.x + (y - a.y) / (b.y - a.y) * (b.x - a.x); xmin = std::min(xmin, x); xmax = std::max(xmax, x); ++n; }
+                    if (n < 2) continue;
+                    for (const IcPens& d : p.darts) { try { const Point a = eval(d.a, pctx), b = eval(d.b, pctx); if ((a.y - y) * (b.y - y) <= 1e-6) agiz += distance(a, b); } catch (const std::exception&) {} }
+                    toplam += (xmax - xmin) - agiz; ++sayilan; det += (det.empty() ? "" : ", ") + p.id + " kesit " + f2(xmax - xmin) + (agiz > 0 ? " - agiz " + f2(agiz) : "");
+                } else if (bel) {   // belde biten panel: bel halkasindaki kenarlari
+                    const Ring* rg = nullptr; for (const Ring& r : g.rings) if (r.id == bel->ring) rg = &r;
+                    double L = 0; int k = 0;
+                    if (rg) for (const EdgeRef& ref : rg->edges) if (ref.panel == p.id) { const Edge* e = p.edge(ref.edge); if (e) { try { L += e->length(pctx); ++k; } catch (const std::exception&) {} } }
+                    if (k > 0) { toplam += L; ++sayilan; det += (det.empty() ? "" : ", ") + p.id + " halka " + f2(L); }
+                }
+            }
+            if (sayilan > 0) { dikilenYarim = toplam; dikilenKaynak = "panel panel x2: " + det; }
+        }
         if (!varW) {
             H("supresyon", g.id, "OLCULEMEDI: bedende girth.waist yok", true, true);
-        } else if (!bel || bel->toplamMM <= 0) {
-            H("supresyon", g.id, "OLCULEMEDI: grafta bel halkasi (waist_ring) yok; emilmeyen supresyon olculemez", true, true);
+        } else if (dikilenYarim <= 0) {
+            H("supresyon", g.id, "OLCULEMEDI: grafta kapali bel halkasi yok ve bel kesiti alinamadi; emilmeyen supresyon olculemez", true, true);
         } else {
             double easeW = 0, easeB = 0, easeH = 0;
             for (const Panel& p : g.panels)
@@ -881,7 +946,7 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
                     if (re.ring == "girth.hip") easeH = std::max(easeH, re.mm);
                 }
             const double hedef = body.ring("girth.waist") + easeW;
-            const double dikilen = bel->toplamMM * 2.0;   // yarim giysi -> tam cevre
+            const double dikilen = dikilenYarim * 2.0;   // yarim giysi -> tam cevre
             const double emilmeyen = dikilen - hedef;
             const double pensTam = pensToplam * 2.0;
             std::string cift;   // grafin govde halkalari (rol -> girth.<rol>, landmark'li) - bel: supresyon ciftleri
@@ -894,7 +959,7 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
             (void)easeB; (void)easeH;
             const bool ok = std::fabs(emilmeyen) <= tol.dikisUzunlukMM;
             H("supresyon", g.id,
-              "dikilen bel " + f2(dikilen) + " mm (halka " + bel->ring + " x2) - hedef " + f2(hedef) + " (beden " + f2(body.ring("girth.waist")) + " + bolluk " + f2(easeW) + ") = EMILMEYEN " + f2(emilmeyen) + " mm, tolerans " + f2(tol.dikisUzunlukMM) + " | "
+              "dikilen bel " + f2(dikilen) + " mm (" + dikilenKaynak + ") - hedef " + f2(hedef) + " (beden " + f2(body.ring("girth.waist")) + " + bolluk " + f2(easeW) + ") = EMILMEYEN " + f2(emilmeyen) + " mm, tolerans " + f2(tol.dikisUzunlukMM) + " | "
               "supresyon ciftleri: " + (cift.empty() ? "yok" : cift) + " | pens " + std::to_string(pensSayisi) + " adet, agiz toplami (tam cevre) " + f2(pensTam) + " mm, pens payi contract " + f2(pensPayi * 100.0) + "% (Aldrich, DOGRULANMADI) | "
               "pens detayi (yarim panel): " + (pensDetay.empty() ? "YOK" : pensDetay),
               ok);

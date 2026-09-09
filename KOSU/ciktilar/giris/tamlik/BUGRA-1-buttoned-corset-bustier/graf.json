@@ -86,7 +86,7 @@
             "xOffsetMM": 0
           },
           "to": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -98,7 +98,7 @@
           "id": "on_ust_kesim.a.1",
           "kind": "cut",
           "from": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -108,7 +108,7 @@
             "combo": [
               {
                 "w": 0.4,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -132,7 +132,7 @@
             "combo": [
               {
                 "w": 0.4,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -285,7 +285,7 @@
             "combo": [
               {
                 "w": 0.2,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -316,7 +316,7 @@
             "combo": [
               {
                 "w": 0.2,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -384,7 +384,7 @@
             "combo": [
               {
                 "w": 0.2,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -411,7 +411,7 @@
             "combo": [
               {
                 "w": 0.4,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -434,7 +434,7 @@
             "combo": [
               {
                 "w": 0.4,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -511,7 +511,7 @@
             "combo": [
               {
                 "w": 0.2,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -635,7 +635,7 @@
             "xOffsetMM": 0
           },
           "to": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -647,7 +647,7 @@
           "id": "arka_ust_kesim.a.1",
           "kind": "cut",
           "from": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -657,7 +657,7 @@
             "combo": [
               {
                 "w": 0.4,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -681,7 +681,7 @@
             "combo": [
               {
                 "w": 0.4,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -731,7 +731,7 @@
             "combo": [
               {
                 "w": 0.4,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,
@@ -853,7 +853,7 @@
             "combo": [
               {
                 "w": 0.4,
-                "landmark": "landmark.underarm",
+                "landmark": "landmark.bustLine",
                 "xOf": "ringQuarter",
                 "ring": "girth.bust",
                 "xFactor": 1,

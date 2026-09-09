@@ -169,7 +169,7 @@
             "xOffsetMM": 0
           },
           "to": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -181,7 +181,7 @@
           "id": "on_ust_kesim.a",
           "kind": "cut",
           "from": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -378,7 +378,7 @@
             "xOffsetMM": 0
           },
           "to": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -390,7 +390,7 @@
           "id": "arka_ust_kesim.a",
           "kind": "cut",
           "from": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,

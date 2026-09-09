@@ -1,7 +1,10 @@
 {
- "kirmizi": 2,
+ "kirmizi": 5,
  "fails": [
+  "halka_kesit:gogus_halka (bust)",
+  "kendini_kesme:arka_orta",
   "kendini_kesme:on_alt_kap",
+  "kendini_kesme:on_ust_kap",
   "supresyon:BUGRA-1-buttoned-corset-bustier"
  ]
 }

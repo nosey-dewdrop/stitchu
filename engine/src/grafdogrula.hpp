@@ -34,7 +34,7 @@ namespace graf {
 
 struct ToleransSatir { std::string ad, kaynak; double deger = 0; };
 struct Tolerans {
-    double dikisUzunlukMM = 0, centikMM = 0, halkaKapanmaMM = 0, pensBacakMM = 0;
+    double dikisUzunlukMM = 0, centikMM = 0, halkaKapanmaMM = 0, pensBacakMM = 0, eksenTegetDeg = 0;
     double ratioMin = 0, ratioMax = 0;
     bool dolu = false;
     std::vector<ToleransSatir> tablo;   // ad + deger + kaynak (contract'tan oldugu gibi)

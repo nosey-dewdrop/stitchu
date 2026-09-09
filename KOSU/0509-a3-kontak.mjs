@@ -34,7 +34,7 @@ for (const n of N) {
 }
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="${y + 20}" viewBox="0 0 640 ${y + 20}">`
   + `<rect width="100%" height="100%" fill="#fff"/>`
-  + `<text x="${PAD}" y="26" font-size="15" font-weight="700">A3 — bes fotograftan kalip ve flat</text>`
+  + `<text x="${PAD}" y="26" font-size="15" font-weight="700">A4 — bes fotograftan kalip ve flat (grafciz, croquis36 / gercek36)</text>`
   + `<text x="${PAD}" y="44" font-size="10" fill="#666">Fotograflar telifli, kontakta YOK. Her satir: solda flat, sagda kalip sayfasi.</text>`
   + g + `</svg>`;
 writeFileSync('KOSU/ciktilar/giris/giris-foto-5.svg', svg);

@@ -103,11 +103,10 @@ void growCmds(Rect& r, const std::vector<PathCommand>& cmds, const Poz& z, bool&
 // Panelin gorunum ekseni: kat kenari ya da x=0 dikisi (rol cb* -> "cb", degilse "cf"). Yoksa bos.
 std::string eksenOf(const Panel& p) {
     for (const Edge& e : p.edges) if (e.kind == "fold") return e.role.rfind("cb", 0) == 0 ? "cb" : "cf";
+    // x=0'da duran her kenar (dikis, kesim: dugme paci, pervazli yaka bandi orta arkasi) eksendir; rol cb* -> arka, degilse on.
+    // Kol gibi eksensiz panel x=0 kenar tasimaz (A4 hakem kusur 3: boyun bandi cut cb kenariyla eksenliydi, tup gibi ciziliyordu).
     for (const Edge& e : p.edges)
-        if (e.kind == "seam" && e.from.xSifir() && e.to.xSifir()) {
-            if (e.role.rfind("cb", 0) == 0) return "cb";
-            if (e.role.rfind("cf", 0) == 0) return "cf";
-        }
+        if (e.kind != "dartLeg" && e.from.xSifir() && e.to.xSifir()) return e.role.rfind("cb", 0) == 0 ? "cb" : "cf";
     return {};
 }
 

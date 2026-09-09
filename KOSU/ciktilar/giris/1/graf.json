@@ -169,7 +169,7 @@
             "xOffsetMM": 0
           },
           "to": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -184,7 +184,7 @@
           "rolePart": 1,
           "roleCount": 2,
           "from": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -205,7 +205,7 @@
               "combo": [
                 {
                   "w": 0.44771525016920644,
-                  "landmark": "landmark.underarm",
+                  "landmark": "landmark.bustLine",
                   "xOf": "ringQuarter",
                   "ring": "girth.bust",
                   "xFactor": 1,
@@ -518,7 +518,7 @@
             "xOffsetMM": 0
           },
           "to": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -533,7 +533,7 @@
           "rolePart": 1,
           "roleCount": 2,
           "from": {
-            "landmark": "landmark.underarm",
+            "landmark": "landmark.bustLine",
             "xOf": "ringQuarter",
             "ring": "girth.bust",
             "xFactor": 1,
@@ -554,7 +554,7 @@
               "combo": [
                 {
                   "w": 0.44771525016920644,
-                  "landmark": "landmark.underarm",
+                  "landmark": "landmark.bustLine",
                   "xOf": "ringQuarter",
                   "ring": "girth.bust",
                   "xFactor": 1,
@@ -1501,6 +1501,7 @@
       "reverse": false,
       "ratio": 1.25,
       "easeMM": 0,
+      "notchFractions": [0.25, 0.75],
       "reason": "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)"
     },
     {

@@ -163,13 +163,13 @@ prog("P2-ayrik-panelli-buzgulu-kol", "prenses dikisli beden, balon kol, kolda la
      prenses(True) + prenses(False) + [extendTo("kol", "hem", "wrist"), gather("kol", "hem", 1.3)] + kol_bandi(2.2) +
      [extendTo("on_etek", "hem_front", "ankle"), extendTo("arka_etek", "hem_back", "ankle")],
      eksik=["OKUMA: bant dikisinin orani (2.2) secildi; lastik esnemesi kumas katalogundan gelir (A6 fabric-catalog), graf eksigi degil",
-            "COZUCU (A4): dikise gomulu supresyon — bacaklar seam olunca cozPens (dartLeg cifti + ic pens) onlari gormez, bel dikisinin iki tarafi esit cikmaz (dikis_uzunluk/centik bel)",
+            "COZUCU (A6): dikise gomulu supresyon — A4 kapisi artik OLCUYOR (EMILMEYEN 37.62 mm: dikilen bel 722.62 vs 685.00), ama cozucu prenses dikisine intake yazmiyor; bacaklar seam olunca cozPens onlari gormez",
             "OKUMA/PROGRAM: kol agzi 1.3 acilinca koltukalti kenari kapakla kesisiyor (kendini_kesme kol); reshapeEdge ile duzeltilebilir, bu programda yazilmadi"])
 
 prog("P3-etek-tek-topoloji", "A formlu kemerli midi etek", "girdiler.json P3",
      [drop("kol", "faced"), drop("on_beden", "faced"), drop("arka_beden", "faced")] + bel_bandi(True) + bel_bandi(False) +
      [flare("on_etek", "hem_front", 1.3), flare("arka_etek", "hem_back", 1.3), extendTo("on_etek", "hem_front", "knee"), extendTo("arka_etek", "hem_back", "knee")],
-     eksik=["COZUCU (A4): cozum SIRASI — grafdogrula once fitLength (band kenari) sonra pens agzini (cozPens) cozuyor; bant pens acilmadan onceki zincire uyduruluyor (dikis_uzunluk bel bandi, kendini_kesme bant)"])
+     eksik=["COZUCU (A6): cozum SIRASI — grafdogrula once fitLength (band kenari) sonra pens agzini (cozPens) cozuyor; A4 agiz/yan tepe kaydirmasi bandi yeniden uydurmuyor (dikis_uzunluk bel bandi, kendini_kesme bant)"])
 
 prog("P4-kolsuz-dik-yaka-mini", "kolsuz, dik yakali, mini A etekli elbise", "girdiler.json P4",
      [drop("kol", "faced")] + dik_bant() + [flare("on_etek", "hem_front", 1.3), flare("arka_etek", "hem_back", 1.3),
@@ -269,7 +269,7 @@ prog("BUGRA-1-buttoned-corset-bustier", "Bugra Buttoned Corset Bustier: 6 parca 
       closure("on_orta_dugme", "buttons", 0.05, 0.95)],
      eksik=["Bugra'da orta arka KATLI ve kapanma onde: tabanin arka orta fermuar dikisi ust kesimle silinip alt parcada yeniden dikildi (arka_orta_alt zipper); fermuari HIC dikmemek icin dikis kaldiran primitif yok -> arka kapanma fazladan (Bugra'da yok)",
             "OKUMA/PROGRAM: kap dikisi duz (kavis orani yok); kesim noktasi apeksin altinda secildi, pens-dikisiyle kesisiyor (kendini_kesme on_alt_kap) — program duzeltilmedi",
-            "COZUCU (A4): supresyon kapisi dikise gomulu supresyonu olcmuyor — pensler prenses dikisine emilince %0 gorur"],
+            "COZUCU (A6): supresyon kapisi A4'te EMILMEYEN'i olcuyor (37.62 mm, KIRMIZI: pens yok, kup dikislerine intake yazilmamis); dikise gomulu intake cozucusu yok"],
      not_="6 parca: on_ust_kap, on_alt_kap, on_yan, arka_orta, arka_yan (+ arka orta 2 parca, kat degil)")
 
 # ---- Bugra 2: Locket Top: front body (buttons), back body (dart, hip length), collar + lining, lower/upper sleeve (upper gathered %29-35)
@@ -367,10 +367,10 @@ for s in satirlar:
 tam = [s for s in satirlar if s["motor"] == "UYGULANDI" and s["kirmizi"] == 0 and not s["eksik"]]
 kismi = [s for s in satirlar if s["motor"] == "UYGULANDI" and (s["kirmizi"] not in (0, None) or s["eksik"])]
 red = [s for s in satirlar if s["motor"] != "UYGULANDI"]
-kova = OD([("PRIMITIF", OD()), ("COZUCU (A4)", OD()), ("OKUMA/PROGRAM", OD())])
+kova = OD([("PRIMITIF", OD()), ("COZUCU (A6)", OD()), ("OKUMA/PROGRAM", OD())])
 for s in satirlar + foto:
     for e in s["eksik"]:
-        k = "PRIMITIF" if e.startswith("PRIMITIF") else ("COZUCU (A4)" if e.startswith("COZUCU") else "OKUMA/PROGRAM")
+        k = "PRIMITIF" if e.startswith("PRIMITIF") else ("COZUCU (A6)" if e.startswith("COZUCU") else "OKUMA/PROGRAM")
         anahtar = e.split(" — ")[0] if k == "PRIMITIF" else e[:110]
         kova[k].setdefault(anahtar, []).append(s.get("ad") or f"foto {s.get('no')}")
 md += ["", "## Ozet", "",
@@ -382,7 +382,7 @@ md += ["", "## Ozet", "",
        "**1. EKSIK PRIMITIF — kumeye eklenecek op (ad + args imzasi; geometri emri, giysi adi degil):**", ""]
 for e, kim in kova["PRIMITIF"].items(): md.append(f"- `{e.replace('PRIMITIF: ', '')}` — ({', '.join(kim)})")
 md += ["", "**2. COZUCU / KAPI eksigi (primitif degil; A4 supresyon-kisit isi):**", ""]
-for e, kim in kova["COZUCU (A4)"].items(): md.append(f"- {e.replace('COZUCU (A4): ', '')} — ({', '.join(kim)})")
+for e, kim in kova["COZUCU (A6)"].items(): md.append(f"- {e.replace('COZUCU (A6): ', '')} — ({', '.join(kim)})")
 md += ["", "**3. OKUMA / PROGRAM eksigi (oran verilmedi, kontrol noktasi uydurulmadi, program duzeltilmedi; kumeyle ilgisi yok):**", ""]
 for e, kim in kova["OKUMA/PROGRAM"].items(): md.append(f"- {e.replace('OKUMA/PROGRAM: ', '').replace('OKUMA: ', '')} — ({', '.join(kim)})")
 open("KOSU/ciktilar/giris/TAMLIK.md", "w").write("\n".join(md) + "\n")

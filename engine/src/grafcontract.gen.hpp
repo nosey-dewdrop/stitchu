@@ -6,7 +6,7 @@
 namespace stitchu {
 namespace graf {
 
-// contract/graf-v1.json (35312 bayt)
+// contract/graf-v1.json (35771 bayt)
 inline const char* kGrafContractJSON() { return R"stitchu({
   "_contract": "graf-v1 — GRAF IR SOZLESMESI (F2a, 2026-09-05). HEDEF.md madde 9: sozluk Edge/Panel/Stitch primitifleriyle kurulur, sabit menu yok. Madde 4-5: BIR giysi grafi, IKI beden (gercek36 = kalip, croquis36 = flat), iki cikti. Madde 2: edit = grafa op, kaydi tekrar oynatilabilir. Bu dosya alan adlarinin, enum'larin, toleranslarin ve op tablosunun TEK kaynagidir: engine/src/graf.hpp (tipler + JSON gidis-donus), engine/src/grafop.hpp (op'lar), engine/src/grafdogrula.hpp (dogrulayici + sanal dikis) buradan okur. F4a (fotograf) ve F4b (prompt) hedef semasi da BU dosyadir: vision/prompt katmani dogrudan bu belgeyi uretir. Alan adlari Ingilizce, aciklamalar TR+EN (1.2.0: Anchor/Term oran->xFactor, ofsetMM->xOffsetMM, yOran->yLerp, yOfsetMM->yOffsetMM; Panel bolluk->ease (tip Bolluk->RingEase), Panel/Seam gerekce->reason; op suppress intakeOran->intakeFraction, extendTo yOfsetMM->yOffsetMM. Eski Turkce anahtar gelirse sema 'tanimsiz alan', parse 'bilinmeyen alan' der — sessiz kabul yok). Kaynagi olmayan sayi 'DOGRULANMADI' tasir ve en kisitlayici secildi.",
   "version": "1.2.0",
@@ -172,6 +172,10 @@ inline const char* kGrafContractJSON() { return R"stitchu({
   },
   "toleranslar": {
     "_tanim": "grafdogrula.hpp Tolerans::fromContract buradan okur; NaN kalirsa dogrulayici adiyla reddeder. Hepsi mm. Karar 5 (F2a): 2.0 mm uc kuralda ayni zincir ayni etiket; centik 0.5 mm kalir ve ASIL hukum kesir esitligidir (notchFractions iki tarafta ayni sayi; 0.5 mm yalniz sayisal artik siniri). Dogrulayici bu tabloyu kaynak sutunuyla F6 raporunun basligina basar.",
+    "eksenTegetDeg": {
+      "deger": 5.0,
+      "kaynak": "A4 hakem kusur 1 (2026-09-09): konturun kat/ayna eksenini (x=0) bir TEPE ile gectigi yerde (tepeyi iki eksen-disi kenar paylasir, or. kol kapagi) tegeti yataydan en fazla 5 derece sapar; aynalanan iki yarim tek tepe yapar. Eksen kenarina dayanan uc (V yaka, sivri etek) tasarim kosesidir, olculmez. DOGRULANMADI: yayin yok; 5 derece cizim cozunurlugunun ustunde, gevsetme yonunde secilmedi."
+    },
     "dikisUzunlukMM": {
       "deger": 2.0,
       "kaynak": "contract/body-v1.json ayniInsan.toleransMM ile AYNI zincir: URBN Apparel Technical Manual 'Position points, olcu <5 in' = 1/8 in = 3.175 mm ust sinir (knowledge/POM-TOLERANS-URBN-2026-08-23.md); repodaki CLO sayisi engine/src/validator.hpp:23 pairedSeamTolerance 3.0 (yayin degil, yazilim varsayilani); GarmentCode StitchingRule.isMatching tol=0.05 GORELI (500 mm'de 25 mm — bizim kapimizin esigi degil, knowledge/TEKNOLOJI-2026-08-23.md:66). En kisitlayici yayinli degerin altinda, cizim cozunurlugunun (1 mm) ustunde: 2.0 — DOGRULANMADI etiketi ayniInsan ile ayni, gevsetme yonunde degil."
