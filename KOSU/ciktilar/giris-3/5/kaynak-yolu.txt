@@ -1,0 +1,7 @@
+GIRDI/hedef-fotograflar-3/etsy-05.png
+sha256 d7e45930ff2f2da60fb6733eaa86b7898bbb40680ee863c799f214f71c164c81
+gorunum on
+okuyan isci-A4-tur6 (llmCagri 0)
+arka.koken turetildi
+cizim taban+ops (17 primitif emir; KOSU/ciktilar/graf-ilk/graf.json + ops.json -> grafuygula/grafciz --ops)
+hedef 0 siluet orani -> grafuygula/grafciz --hedef hedefler.json (bolluk mm, sinir kirpmasi notes'ta)

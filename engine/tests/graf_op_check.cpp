@@ -225,7 +225,10 @@ int main(int argc, char** argv) {
       ok(r.ok, "attach volan -> kol/hem ratio 1.5: " + (r.ok ? "ok" : r.hata)); if (!r.ok) return 1;
       ok(r.g.panel("volan") && r.g.seam("volan_kol") && hasRef(r.g.seam("volan_kol")->a, "volan", "top") && hasRef(r.g.seam("volan_kol")->b, "kol", "hem"), "  yeni panel + dikis (a=volan.top, b=kol.hem)");
       ok(std::fabs(len(r.g, "volan", "top", body) - 1.5 * hem) < 1e-6, "  volan ust kenari 1.5 x kol agzi (" + f2(len(r.g, "volan", "top", body)) + ")");
-      ok(locality(g, r.g, {}, why), "  locality: konak dahil hicbir eski panel degismedi " + why);
+      // 2026-09-09 (A4 tur 6): konak kenari dikise girer -> kind=seam (eski beklenti "konak degismez" topoloji yasa 3 ile celisiyordu:
+      // dikis tarafi cut kenar tasiyamaz). Yalniz konak panel degisir, o da yalniz o kenarin kind/finish'inde.
+      ok(locality(g, r.g, {"kol"}, why), "  locality: konak disinda hicbir eski panel degismedi " + why);
+      { const Edge* h = r.g.edge({"kol", "hem"}); ok(h && h->kind == "seam" && h->finish.empty(), "  konak kol/hem kind=seam, finish bos (dikise girdi)"); }
       Panel acik = volan; acik.edges.pop_back();
       OpResult n = attach(g, "kol", "hem", acik, "top", 1.5, "v2", ctx);
       ok(!n.ok && n.hata.find("kapali") != std::string::npos, "  negatif: acik panel reddi: " + n.hata);
@@ -357,6 +360,25 @@ int main(int argc, char** argv) {
       ok(!n2.ok && n2.hata.find("tasimiyor") != std::string::npos, "  negatif: dikis o panelleri tasimiyor: " + n2.hata); }
 
     // drop: kol kaldir -> kol_oyugu dikisi gider, oyuk kenarlari cut/faced, kol_agzi halkasi gider
+    // 2026-09-09 (A4 tur 6): subdivide, halka/dikis zincirini YONUYLE acar — gogus_halka [side_front, side_back] arka kenari ters gezer
+    { OpResult s1 = ap(g, "subdivide", R"({"panel":"on_beden","edge":"side_front","fractions":[0.6]})");
+      OpResult s2 = ap(s1.g, "subdivide", R"({"panel":"arka_beden","edge":"side_back","fractions":[0.6]})");
+      ok(s1.ok && s2.ok, "subdivide side_front + side_back @0.6");
+      const Ring* rg = nullptr; for (const Ring& x : s2.g.rings) if (x.id == "gogus_halka") rg = &x;
+      ok(rg && rg->edges.size() == 4 && rg->edges[2].edge == "side_back.2" && rg->edges[3].edge == "side_back.1",
+         "  gogus_halka zinciri: side_front.1, side_front.2, side_back.2, side_back.1 (ters gezilen kenarin parcalari ters)");
+      { DogrulamaRaporu R2 = dogrula(s2.g, body, contract); bool kopuk = false; std::string sat;
+        for (const Hukum& h : R2.hukumler) if (h.kural == "halka_kapanma" && h.hedef.rfind("gogus_halka", 0) == 0 && !h.gecti) { kopuk = true; sat = h.deger; }
+        ok(!kopuk, "  halka_kapanma gogus_halka bolunmeden sonra yesil: " + sat); } }
+    // 2026-09-09 (A4 tur 6): attach -> iki kenar da kind=seam (konak cut kenari 'cut' kalinca topoloji kirmizisiydi)
+    { OpResult r = ap(g, "attach", R"({"hostPanel":"kol","hostEdge":"hem","edge":"ust","ratio":1.5,"seam":"kol_agzi_band","panel":{"id":"band","edges":[
+        {"id":"ust","kind":"seam","role":"cuff_top","from":{"landmark":"landmark.underarm","xOf":"ringQuarter","xFactor":1.2,"yLandmark":"landmark.elbow"},"to":{"landmark":"landmark.underarm","xOf":"ringQuarter","xFactor":-1.2,"yLandmark":"landmark.elbow"}},
+        {"id":"yan1","kind":"seam","role":"cuff_side","from":{"landmark":"landmark.underarm","xOf":"ringQuarter","xFactor":-1.2,"yLandmark":"landmark.elbow"},"to":{"landmark":"landmark.underarm","xOf":"ringQuarter","xFactor":-1.2,"yLandmark":"landmark.elbow","yOffsetMM":20}},
+        {"id":"alt","kind":"cut","role":"cuff_hem","finish":"hem","from":{"landmark":"landmark.underarm","xOf":"ringQuarter","xFactor":-1.2,"yLandmark":"landmark.elbow","yOffsetMM":20},"to":{"landmark":"landmark.underarm","xOf":"ringQuarter","xFactor":1.2,"yLandmark":"landmark.elbow","yOffsetMM":20}},
+        {"id":"yan2","kind":"seam","role":"cuff_side","from":{"landmark":"landmark.underarm","xOf":"ringQuarter","xFactor":1.2,"yLandmark":"landmark.elbow","yOffsetMM":20},"to":{"landmark":"landmark.underarm","xOf":"ringQuarter","xFactor":1.2,"yLandmark":"landmark.elbow"}}],
+        "grainDeg":0,"onFold":false,"cutCount":2,"seamAllowanceMM":0,"ease":[],"reason":"test bandi"}})");
+      ok(r.ok, "attach band -> kol/hem: " + (r.ok ? "ok" : r.hata));
+      if (r.ok) { const Edge* h = r.g.edge({"kol", "hem"}); ok(h && h->kind == "seam" && h->finish.empty(), "  konak kol/hem kind=seam, finish bos"); } }
     { OpResult r = ap(g, "drop", R"({"panel":"kol","finish":"faced"})");
       ok(r.ok, "drop kol: " + (r.ok ? "ok" : r.hata)); if (!r.ok) return 1;
       ok(!r.g.panel("kol") && !r.g.seam("kol_oyugu") && r.g.seams.size() == g.seams.size() - 2, "  kol yok; kol_oyugu ve kol_alti dikisleri gitti");

@@ -28,6 +28,12 @@ struct FlatOpts {
     double kenarBoslukMM = 20.0;    // viewBox pay
     double gorunumArasiMM = 60.0;   // on ve arka gorunumun arasi
     bool onArkaEsit = false;
+    // KAVIS (A4 tur 6): croquis'te duz halka-arasi kenar bedeni izleyen kubik olur, yatay etek ucu hafif sarkar.
+    // Sayilar contract/flat-convention-v1.json kavis blogundan (grafciz-cli okur); 0 = kapali.
+    bool kavis = false;
+    double kavisMinDyMM = 0.0;       // bundan kisa dikey uzanimli kenar duz kalir
+    double kavisTolMM = 0.0;         // kubik fit toleransi ve "beden burada duz" esigi
+    double etekUcuSagOverWidth = 0.0;  // etek ucu sarkmasi / tam etek ucu genisligi
 };
 
 // contract: contract/graf-v1.json (toleranslar + dogrulayici icin). bodyContract: contract/body-v1.json

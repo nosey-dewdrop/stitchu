@@ -1,0 +1,136 @@
+<svg data-ops="20" xmlns="http://www.w3.org/2000/svg" viewBox="-20.000 -20.000 855.200 847.388" data-scale="1:1" data-unit-mm="1" data-graf="taban-elbise" data-body="croquis36" data-size="croquis36" data-panel="6" data-gorunum="2" data-kavis="beden" data-y-waist="414.400" data-y-bust="213.300" data-y-hip="629.500">
+  <title>taban-elbise flat @ croquis36</title>
+  <rect x="-20.000" y="-20.000" width="855.200" height="847.388" fill="#ffffff"/>
+  <g id="croquis" fill="none" stroke="none">
+    <g data-view="front" data-eksen="cf" transform="translate(188.800 0)">
+      <path data-rol="siluet" data-view="front" data-kaynak="croquis-landmark" data-manken-bust-y="213.300" data-manken-koltukalti-y="198.300" data-manken-bel-y="414.400" data-manken-kalca-y="629.500" data-omuz-uc="188.800 46.900" data-manken-bel-yarim-mm="106.400" d="M 70.700 0.000 L 188.800 46.900 L 123.000 198.300 L 133.400 213.300 L 126.500 278.300 L 106.400 414.400 L 137.200 514.400 L 156.900 629.500 L -156.900 629.500 L -137.200 514.400 L -106.400 414.400 L -126.500 278.300 L -133.400 213.300 L -123.000 198.300 L -188.800 46.900 L -70.700 0.000 Z"/>
+    </g>
+    <g data-view="back" data-eksen="cb" transform="translate(626.400 0)">
+      <path data-rol="siluet" data-view="back" data-kaynak="croquis-landmark" data-manken-bust-y="213.300" data-manken-koltukalti-y="198.300" data-manken-bel-y="414.400" data-manken-kalca-y="629.500" data-omuz-uc="188.800 46.900" data-manken-bel-yarim-mm="106.400" d="M 70.700 0.000 L 188.800 46.900 L 123.000 198.300 L 133.400 213.300 L 126.500 278.300 L 106.400 414.400 L 137.200 514.400 L 156.900 629.500 L -156.900 629.500 L -137.200 514.400 L -106.400 414.400 L -126.500 278.300 L -133.400 213.300 L -123.000 198.300 L -188.800 46.900 L -70.700 0.000 Z"/>
+    </g>
+  </g>
+  <g id="outline" fill="none" stroke="#111111" stroke-width="2.138" stroke-linejoin="round" stroke-linecap="round">
+    <g data-view="front" data-eksen="cf" transform="translate(188.800 0)">
+      <path data-panel="on_beden_alt" data-edge="side_front" data-tur="seam" d="M 138.729 414.400 C 133.821 382.090 139.301 352.169 142.669 320.134 C 144.244 305.156 144.174 291.065 144.800 276.144 C 145.733 253.944 146.020 235.403 142.272 213.300"/>
+      <path data-panel="on_beden_alt" data-edge="side_front" data-tur="seam" d="M -138.729 414.400 C -133.821 382.090 -139.301 352.169 -142.669 320.134 C -144.244 305.156 -144.174 291.065 -144.800 276.144 C -145.733 253.944 -146.020 235.403 -142.272 213.300"/>
+      <path data-panel="on_beden_alt" data-edge="armhole_front.1.1" data-tur="cut" d="M 142.272 213.300 C 143.536 212.538 144.778 211.435 145.991 210.035"/>
+      <path data-panel="on_beden_alt" data-edge="armhole_front.1.1" data-tur="cut" d="M -142.272 213.300 C -143.536 212.538 -144.778 211.435 -145.991 210.035"/>
+      <path data-panel="on_beden_alt" data-edge="ust_on.a" data-tur="cut" d="M 145.991 210.035 C 135.158 168.300 49.795 168.300 0.000 204.984"/>
+      <path data-panel="on_beden_alt" data-edge="ust_on.a" data-tur="cut" d="M -145.991 210.035 C -135.158 168.300 -49.795 168.300 0.000 204.984"/>
+      <path data-panel="on_etek" data-edge="hem_front" data-tur="cut" d="M 0.000 807.388 C 59.628 807.388 119.255 801.426 178.883 789.500"/>
+      <path data-panel="on_etek" data-edge="hem_front" data-tur="cut" d="M 0.000 807.388 C -59.628 807.388 -119.255 801.426 -178.883 789.500"/>
+      <path data-panel="on_etek" data-edge="side_front.1" data-tur="seam" d="M 178.883 789.500 L 165.632 629.500"/>
+      <path data-panel="on_etek" data-edge="side_front.1" data-tur="seam" d="M -178.883 789.500 L -165.632 629.500"/>
+      <path data-panel="on_etek" data-edge="side_front.2" data-tur="seam" d="M 165.632 629.500 C 165.530 602.625 165.951 575.695 164.890 548.837 C 164.371 535.689 163.959 521.411 161.470 508.506 C 155.199 475.997 137.798 448.490 137.896 414.400"/>
+      <path data-panel="on_etek" data-edge="side_front.2" data-tur="seam" d="M -165.632 629.500 C -165.530 602.625 -165.951 575.695 -164.890 548.837 C -164.371 535.689 -163.959 521.411 -161.470 508.506 C -155.199 475.997 -137.798 448.490 -137.896 414.400"/>
+      <path data-panel="aski_on" data-edge="ic" data-tur="cut" d="M 82.696 183.000 L 82.696 36.900"/>
+      <path data-panel="aski_on" data-edge="ic" data-tur="cut" d="M -82.696 183.000 L -82.696 36.900"/>
+      <path data-panel="aski_on" data-edge="ust" data-tur="cut" d="M 82.696 36.900 L 92.696 36.900"/>
+      <path data-panel="aski_on" data-edge="ust" data-tur="cut" d="M -82.696 36.900 L -92.696 36.900"/>
+      <path data-panel="aski_on" data-edge="dis" data-tur="cut" d="M 92.696 36.900 L 92.696 183.000"/>
+      <path data-panel="aski_on" data-edge="dis" data-tur="cut" d="M -92.696 36.900 L -92.696 183.000"/>
+    </g>
+    <g data-view="back" data-eksen="cb" transform="translate(626.400 0)">
+      <path data-panel="arka_beden_alt" data-edge="side_back" data-tur="seam" d="M 138.729 414.400 C 133.821 382.090 139.301 352.169 142.669 320.134 C 144.244 305.156 144.174 291.065 144.800 276.144 C 145.733 253.944 146.020 235.403 142.272 213.300"/>
+      <path data-panel="arka_beden_alt" data-edge="side_back" data-tur="seam" d="M -138.729 414.400 C -133.821 382.090 -139.301 352.169 -142.669 320.134 C -144.244 305.156 -144.174 291.065 -144.800 276.144 C -145.733 253.944 -146.020 235.403 -142.272 213.300"/>
+      <path data-panel="arka_beden_alt" data-edge="armhole_back.1.1" data-tur="cut" d="M 142.272 213.300 C 144.136 212.538 145.967 211.435 147.756 210.035"/>
+      <path data-panel="arka_beden_alt" data-edge="armhole_back.1.1" data-tur="cut" d="M -142.272 213.300 C -144.136 212.538 -145.967 211.435 -147.756 210.035"/>
+      <path data-panel="arka_beden_alt" data-edge="ust_arka.a" data-tur="cut" d="M 147.756 210.035 L 0.000 205.019"/>
+      <path data-panel="arka_beden_alt" data-edge="ust_arka.a" data-tur="cut" d="M -147.756 210.035 L 0.000 205.019"/>
+      <path data-panel="arka_etek" data-edge="hem_back" data-tur="cut" d="M 0.000 807.388 C 59.628 807.388 119.255 801.426 178.883 789.500"/>
+      <path data-panel="arka_etek" data-edge="hem_back" data-tur="cut" d="M 0.000 807.388 C -59.628 807.388 -119.255 801.426 -178.883 789.500"/>
+      <path data-panel="arka_etek" data-edge="side_back.1" data-tur="seam" d="M 178.883 789.500 L 165.632 629.500"/>
+      <path data-panel="arka_etek" data-edge="side_back.1" data-tur="seam" d="M -178.883 789.500 L -165.632 629.500"/>
+      <path data-panel="arka_etek" data-edge="side_back.2" data-tur="seam" d="M 165.632 629.500 C 165.530 602.625 165.951 575.695 164.890 548.837 C 164.371 535.689 163.959 521.411 161.470 508.506 C 155.199 475.997 137.798 448.490 137.896 414.400"/>
+      <path data-panel="arka_etek" data-edge="side_back.2" data-tur="seam" d="M -165.632 629.500 C -165.530 602.625 -165.951 575.695 -164.890 548.837 C -164.371 535.689 -163.959 521.411 -161.470 508.506 C -155.199 475.997 -137.798 448.490 -137.896 414.400"/>
+      <path data-panel="aski_arka" data-edge="ic" data-tur="cut" d="M 82.696 183.000 L 82.696 36.900"/>
+      <path data-panel="aski_arka" data-edge="ic" data-tur="cut" d="M -82.696 183.000 L -82.696 36.900"/>
+      <path data-panel="aski_arka" data-edge="ust" data-tur="cut" d="M 82.696 36.900 L 92.696 36.900"/>
+      <path data-panel="aski_arka" data-edge="ust" data-tur="cut" d="M -82.696 36.900 L -92.696 36.900"/>
+      <path data-panel="aski_arka" data-edge="dis" data-tur="cut" d="M 92.696 36.900 L 92.696 183.000"/>
+      <path data-panel="aski_arka" data-edge="dis" data-tur="cut" d="M -92.696 36.900 L -92.696 183.000"/>
+    </g>
+  </g>
+  <g id="seams" fill="none" stroke="#111111" stroke-width="1.069" stroke-linejoin="round" stroke-linecap="round">
+    <g data-view="front" data-eksen="cf" transform="translate(188.800 0)">
+      <path data-panel="on_beden_alt" data-edge="waist_front.1" data-tur="seam" d="M 0.000 414.400 L 41.537 414.400"/>
+      <path data-panel="on_beden_alt" data-edge="waist_front.1" data-tur="seam" d="M 0.000 414.400 L -41.537 414.400"/>
+      <path data-panel="on_beden_alt" data-edge="dart_on_beden.1" data-tur="pens_agzi" d="M 41.537 414.400 L 69.454 414.400"/>
+      <path data-panel="on_beden_alt" data-edge="dart_on_beden.1" data-tur="pens_agzi" d="M -41.537 414.400 L -69.454 414.400"/>
+      <path data-panel="on_beden_alt" data-edge="waist_front.2" data-tur="seam" d="M 69.454 414.400 L 138.729 414.400"/>
+      <path data-panel="on_beden_alt" data-edge="waist_front.2" data-tur="seam" d="M -69.454 414.400 L -138.729 414.400"/>
+      <path data-panel="on_etek" data-edge="waist_front.1" data-tur="seam" d="M 137.896 414.400 L 62.650 414.400"/>
+      <path data-panel="on_etek" data-edge="waist_front.1" data-tur="seam" d="M -137.896 414.400 L -62.650 414.400"/>
+      <path data-panel="on_etek" data-edge="dart_on_etek.1" data-tur="pens_agzi" d="M 62.650 414.400 L 35.567 414.400"/>
+      <path data-panel="on_etek" data-edge="dart_on_etek.1" data-tur="pens_agzi" d="M -62.650 414.400 L -35.567 414.400"/>
+      <path data-panel="on_etek" data-edge="waist_front.2" data-tur="seam" d="M 35.567 414.400 L 0.000 414.400"/>
+      <path data-panel="on_etek" data-edge="waist_front.2" data-tur="seam" d="M -35.567 414.400 L 0.000 414.400"/>
+      <path data-panel="aski_on" data-edge="alt" data-tur="cut" d="M 92.696 183.000 L 82.696 183.000"/>
+      <path data-panel="aski_on" data-edge="alt" data-tur="cut" d="M -92.696 183.000 L -82.696 183.000"/>
+    </g>
+    <g data-view="back" data-eksen="cb" transform="translate(626.400 0)">
+      <path data-panel="arka_beden_alt" data-edge="cb.2" data-tur="seam" d="M 0.000 205.019 L 0.000 414.400"/>
+      <path data-panel="arka_beden_alt" data-edge="cb.2" data-tur="seam" d="M 0.000 205.019 L 0.000 414.400"/>
+      <path data-panel="arka_beden_alt" data-edge="waist_back.1" data-tur="seam" d="M 0.000 414.400 L 41.537 414.400"/>
+      <path data-panel="arka_beden_alt" data-edge="waist_back.1" data-tur="seam" d="M 0.000 414.400 L -41.537 414.400"/>
+      <path data-panel="arka_beden_alt" data-edge="dart_arka_beden.1" data-tur="pens_agzi" d="M 41.537 414.400 L 69.454 414.400"/>
+      <path data-panel="arka_beden_alt" data-edge="dart_arka_beden.1" data-tur="pens_agzi" d="M -41.537 414.400 L -69.454 414.400"/>
+      <path data-panel="arka_beden_alt" data-edge="waist_back.2" data-tur="seam" d="M 69.454 414.400 L 138.729 414.400"/>
+      <path data-panel="arka_beden_alt" data-edge="waist_back.2" data-tur="seam" d="M -69.454 414.400 L -138.729 414.400"/>
+      <path data-panel="arka_etek" data-edge="cb" data-tur="seam" d="M 0.000 414.400 L 0.000 789.500"/>
+      <path data-panel="arka_etek" data-edge="cb" data-tur="seam" d="M 0.000 414.400 L 0.000 789.500"/>
+      <path data-panel="arka_etek" data-edge="waist_back.1" data-tur="seam" d="M 137.896 414.400 L 62.650 414.400"/>
+      <path data-panel="arka_etek" data-edge="waist_back.1" data-tur="seam" d="M -137.896 414.400 L -62.650 414.400"/>
+      <path data-panel="arka_etek" data-edge="dart_arka_etek.1" data-tur="pens_agzi" d="M 62.650 414.400 L 35.567 414.400"/>
+      <path data-panel="arka_etek" data-edge="dart_arka_etek.1" data-tur="pens_agzi" d="M -62.650 414.400 L -35.567 414.400"/>
+      <path data-panel="arka_etek" data-edge="waist_back.2" data-tur="seam" d="M 35.567 414.400 L 0.000 414.400"/>
+      <path data-panel="arka_etek" data-edge="waist_back.2" data-tur="seam" d="M -35.567 414.400 L 0.000 414.400"/>
+      <path data-panel="aski_arka" data-edge="alt" data-tur="cut" d="M 92.696 183.000 L 82.696 183.000"/>
+      <path data-panel="aski_arka" data-edge="alt" data-tur="cut" d="M -92.696 183.000 L -82.696 183.000"/>
+    </g>
+  </g>
+  <g id="topstitch" fill="none" stroke="#111111" stroke-width="0.534" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="7.127 4.276">
+    <g data-view="front" data-eksen="cf" transform="translate(188.800 0)">
+      <path data-panel="on_beden_alt" data-edge="armhole_front.1.1" data-tur="ustdikis" d="M 138.505 209.021 C 139.769 208.259 141.011 207.156 142.224 205.755"/>
+      <path data-panel="on_beden_alt" data-edge="armhole_front.1.1" data-tur="ustdikis" d="M -138.505 209.021 C -139.769 208.259 -141.011 207.156 -142.224 205.755"/>
+      <path data-panel="on_beden_alt" data-edge="ust_on.a" data-tur="ustdikis" d="M 145.866 215.734 C 135.033 174.000 49.670 174.000 -0.125 210.684"/>
+      <path data-panel="on_beden_alt" data-edge="ust_on.a" data-tur="ustdikis" d="M -145.866 215.734 C -135.033 174.000 -49.670 174.000 0.125 210.684"/>
+      <path data-panel="on_etek" data-edge="hem_front" data-tur="ustdikis" d="M 0.000 801.687 C 59.628 801.687 119.255 795.724 178.883 783.799"/>
+      <path data-panel="on_etek" data-edge="hem_front" data-tur="ustdikis" d="M 0.000 801.687 C -59.628 801.687 -119.255 795.724 -178.883 783.799"/>
+      <path data-panel="aski_on" data-edge="ic" data-tur="ustdikis" d="M 88.397 183.000 L 88.397 36.900"/>
+      <path data-panel="aski_on" data-edge="ic" data-tur="ustdikis" d="M -88.397 183.000 L -88.397 36.900"/>
+      <path data-panel="aski_on" data-edge="ust" data-tur="ustdikis" d="M 82.696 42.601 L 92.696 42.601"/>
+      <path data-panel="aski_on" data-edge="ust" data-tur="ustdikis" d="M -82.696 42.601 L -92.696 42.601"/>
+      <path data-panel="aski_on" data-edge="dis" data-tur="ustdikis" d="M 86.994 36.900 L 86.994 183.000"/>
+      <path data-panel="aski_on" data-edge="dis" data-tur="ustdikis" d="M -86.994 36.900 L -86.994 183.000"/>
+    </g>
+    <g data-view="back" data-eksen="cb" transform="translate(626.400 0)">
+      <path data-panel="arka_beden_alt" data-edge="armhole_back.1.1" data-tur="ustdikis" d="M 145.195 218.195 C 147.059 217.433 148.890 216.330 150.679 214.929"/>
+      <path data-panel="arka_beden_alt" data-edge="armhole_back.1.1" data-tur="ustdikis" d="M -145.195 218.195 C -147.059 217.433 -148.890 216.330 -150.679 214.929"/>
+      <path data-panel="arka_beden_alt" data-edge="ust_arka.a" data-tur="ustdikis" d="M 147.562 215.733 L -0.193 210.717"/>
+      <path data-panel="arka_beden_alt" data-edge="ust_arka.a" data-tur="ustdikis" d="M -147.562 215.733 L 0.193 210.717"/>
+      <path data-panel="arka_etek" data-edge="hem_back" data-tur="ustdikis" d="M 0.000 801.687 C 59.628 801.687 119.255 795.724 178.883 783.799"/>
+      <path data-panel="arka_etek" data-edge="hem_back" data-tur="ustdikis" d="M 0.000 801.687 C -59.628 801.687 -119.255 795.724 -178.883 783.799"/>
+      <path data-panel="aski_arka" data-edge="ic" data-tur="ustdikis" d="M 88.397 183.000 L 88.397 36.900"/>
+      <path data-panel="aski_arka" data-edge="ic" data-tur="ustdikis" d="M -88.397 183.000 L -88.397 36.900"/>
+      <path data-panel="aski_arka" data-edge="ust" data-tur="ustdikis" d="M 82.696 42.601 L 92.696 42.601"/>
+      <path data-panel="aski_arka" data-edge="ust" data-tur="ustdikis" d="M -82.696 42.601 L -92.696 42.601"/>
+      <path data-panel="aski_arka" data-edge="dis" data-tur="ustdikis" d="M 86.994 36.900 L 86.994 183.000"/>
+      <path data-panel="aski_arka" data-edge="dis" data-tur="ustdikis" d="M -86.994 36.900 L -86.994 183.000"/>
+    </g>
+  </g>
+  <g id="details" fill="none" stroke="#111111" stroke-width="1.069" stroke-linejoin="round" stroke-linecap="round">
+    <g data-view="front" data-eksen="cf" transform="translate(188.800 0)">
+      <path data-panel="on_beden_alt" data-edge="dart_on_beden.1" data-tur="pens" d="M 55.495 414.400 L 55.495 283.685"/>
+      <path data-panel="on_beden_alt" data-edge="dart_on_beden.1" data-tur="pens" d="M -55.495 414.400 L -55.495 283.685"/>
+      <path data-panel="on_etek" data-edge="dart_on_etek.1" data-tur="pens" d="M 49.108 414.400 L 49.108 629.500"/>
+      <path data-panel="on_etek" data-edge="dart_on_etek.1" data-tur="pens" d="M -49.108 414.400 L -49.108 629.500"/>
+    </g>
+    <g data-view="back" data-eksen="cb" transform="translate(626.400 0)">
+      <path data-panel="arka_beden_alt" data-edge="dart_arka_beden.1" data-tur="pens" d="M 55.495 414.400 L 55.495 283.685"/>
+      <path data-panel="arka_beden_alt" data-edge="dart_arka_beden.1" data-tur="pens" d="M -55.495 414.400 L -55.495 283.685"/>
+      <path data-panel="arka_etek" data-edge="dart_arka_etek.1" data-tur="pens" d="M 49.108 414.400 L 49.108 629.500"/>
+      <path data-panel="arka_etek" data-edge="dart_arka_etek.1" data-tur="pens" d="M -49.108 414.400 L -49.108 629.500"/>
+    </g>
+  </g>
+</svg>

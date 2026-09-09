@@ -33,6 +33,7 @@
 #include <set>
 #include <sstream>
 
+#include "curvefit.hpp"
 #include "grafdogrula.hpp"
 
 namespace stitchu {
@@ -110,6 +111,93 @@ std::string eksenOf(const Panel& p) {
     return {};
 }
 
+
+// ---- KAVIS (A4 tur 6, 2026-09-09, Damla: "kavisli yan dikis, yumusak kum saati, hafif kavisli etek ucu").
+// Croquis = giysi MANKENE GIYILMIS izdusum. Grafta iki halka arasi duz cizilen kenar (bel->gogus yan dikisi,
+// kalca->bel), mankenin uzerinde iki halka ARASINDAKI kesitleri de izler: x(t) = k(t) x xBeden(y(t)), k = giysi/beden
+// orani uclarda olculur ve arada dogrusal gecer (bolluk iki halka arasinda orantili). Beden silueti torso landmark'lari
+// (koltukalti, gogus, gogus alti, bel, ust kalca, kalca) arasinda Catmull-Rom; disinda SABIT (kalca altinda etek
+// bedeni izlemez: kalcadan etek ucuna dogru cizgi; koltukaltinin ustunde omuz dogru). Graf DEGISMEZ, kalip DEGISMEZ:
+// bu yalniz croquis gorunumudur (gercek36 kalip cevre/4 duz kalir). Sonuc kubik(ler): curvefit fitCubics, tol mm.
+struct BedenSilueti {
+    std::vector<Point> lm;   // y artan sirada (x = kesit yarimi)
+    bool bos() const { return lm.size() < 2; }
+    double x(double y) const {
+        if (bos()) return 0;
+        if (y <= lm.front().y) return lm.front().x;
+        if (y >= lm.back().y) return lm.back().x;
+        std::size_t i = 0;
+        while (i + 1 < lm.size() && lm[i + 1].y < y) ++i;
+        const Point p1 = lm[i], p2 = lm[i + 1];
+        const Point p0 = i > 0 ? lm[i - 1] : Point{ 2 * p1.x - p2.x, 2 * p1.y - p2.y };
+        const Point p3 = i + 2 < lm.size() ? lm[i + 2] : Point{ 2 * p2.x - p1.x, 2 * p2.y - p1.y };
+        const double t = (y - p1.y) / (p2.y - p1.y), t2 = t * t, t3 = t2 * t;
+        // Catmull-Rom (x'te; y parametresi dogrusal)
+        return 0.5 * ((2 * p1.x) + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3);
+    }
+};
+BedenSilueti bedenSilueti(const Body& body) {
+    BedenSilueti b;
+    for (const char* lm : { "landmark.underarm", "landmark.bustLine", "landmark.underbust", "landmark.waist", "landmark.highHip", "landmark.hip" })
+        if (body.hasLandmark(lm)) { BodyPoint p = body.landmark(lm); if (p.x > 0 && (b.lm.empty() || p.y > b.lm.back().y)) b.lm.push_back({ p.x, p.y }); }
+    return b;
+}
+std::vector<PathCommand> kubikler(const std::vector<Point>& pts, double tolMM) {
+    std::vector<Vec2> v; v.reserve(pts.size());
+    for (Point p : pts) v.push_back({ p.x, p.y });
+    std::vector<PathCommand> out{ PathCommand::move(pts.front()) };
+    for (const CubicSeg& c : fitCubics(v, tolMM)) out.push_back(PathCommand::curve({ c.p3.x, c.p3.y }, { c.c1.x, c.c1.y }, { c.c2.x, c.c2.y }));
+    return out;
+}
+// Duz kenar -> bedeni izleyen kubik. Kosul: eksenli panel, kontrolsuz, iki ucu da x>0 (kat/eksen degil), dikey uzanim
+// esigin ustunde ve beden silueti bu y araliginda SABIT DEGIL (yoksa dogru dogru kalir).
+std::vector<PathCommand> bedeniIzle(const Edge& e, const EvalCtx& ctx, const BedenSilueti& bs, double minDyMM, double tolMM, bool& kavisli) {
+    kavisli = false;
+    const std::vector<PathCommand> duz = e.path(ctx);
+    if (!e.isLine() || bs.bos()) return duz;
+    const Point a = eval(e.from, ctx), b = eval(e.to, ctx);
+    if (std::fabs(b.y - a.y) < minDyMM) return duz;
+    const double xa = std::fabs(a.x), xb = std::fabs(b.x);
+    if (xa < 1e-6 || xb < 1e-6) return duz;
+    const double sgn = a.x < 0 ? -1.0 : 1.0;
+    if ((b.x < 0) != (a.x < 0)) return duz;
+    const double ba = bs.x(a.y), bb = bs.x(b.y);
+    if (ba <= 0 || bb <= 0) return duz;
+    const double ka = xa / ba, kb = xb / bb;
+    const int N = 32;
+    std::vector<Point> pts; pts.reserve(N + 1);
+    double sapma = 0;
+    for (int i = 0; i <= N; ++i) {
+        const double t = double(i) / N, y = a.y + t * (b.y - a.y);
+        const double x = sgn * ((1 - t) * ka + t * kb) * bs.x(y);
+        const double xd = a.x + t * (b.x - a.x);
+        sapma = std::max(sapma, std::fabs(x - xd));
+        pts.push_back({ x, y });
+    }
+    if (sapma < tolMM) return duz;   // beden bu aralikta duz: dogru kalir (bayt-ayni kalsin)
+    kavisli = true;
+    return kubikler(pts, tolMM);
+}
+// Yatay etek ucu (cut, finish hem) -> hafif kavis: ortada (x=0) sagOverWidth x tam genislik kadar asagi sarkan parabol
+// (kubik esdegeri). Kosul: eksenli panel, kontrolsuz, |dy| kucuk, bir ucu x=0'da.
+std::vector<PathCommand> etekUcuKavis(const Edge& e, const EvalCtx& ctx, double sagOverWidth, bool& kavisli) {
+    kavisli = false;
+    const std::vector<PathCommand> duz = e.path(ctx);
+    if (!e.isLine() || e.kind != "cut" || e.finish != "hem" || sagOverWidth <= 0) return duz;
+    const Point a = eval(e.from, ctx), b = eval(e.to, ctx);
+    if (std::fabs(b.y - a.y) > 1.0) return duz;
+    const bool aMerkez = std::fabs(a.x) < 1e-6, bMerkez = std::fabs(b.x) < 1e-6;
+    if (aMerkez == bMerkez) return duz;
+    const Point m = aMerkez ? a : b, u = aMerkez ? b : a;   // merkez, uc
+    const double w = std::fabs(u.x), s = sagOverWidth * 2.0 * w;
+    if (w < 1e-6 || s < 0.05) return duz;
+    // parabol y(x) = yUc + s (1 - (x/w)^2): merkezde yUc+s, ucta yUc. Kubik: P0=merkez(y+s), c1=(w/3, y+s), c2=(2w/3, y+2s/3), P3=uc
+    const Point P0{ m.x, u.y + s }, c1{ u.x / 3.0, u.y + s }, c2{ 2.0 * u.x / 3.0, u.y + 2.0 * s / 3.0 }, P3{ u.x, u.y };
+    kavisli = true;
+    if (aMerkez) return { PathCommand::move(P0), PathCommand::curve(P3, c1, c2) };
+    return { PathCommand::move(P3), PathCommand::curve(P0, c2, c1) };
+}
+
 struct KenarSinif { bool kalin = false; bool ciz = true; };
 
 }  // namespace
@@ -144,6 +232,66 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
 
     std::map<std::string, EvalCtx> ctxs;
     for (const Panel& p : g.panels) ctxs[p.id] = p.ctxFor(body, opts.onArkaEsit);
+
+    auto ctx_of = [&](const Panel& p) -> const EvalCtx& { return ctxs[p.id]; };
+    const bool croquis = body.id().rfind("croquis", 0) == 0;
+
+    // BUZGU SIKISMASI (A4 tur 6, 2026-09-09): croquis = giyilmis izdusum; buzgulu kenar (Edge.gatherRatio > 1, op gather /
+    // split seamRatio) grafta ratio kat UZUNDUR (kalip icin dogru), giyilince partnerinin boyuna buzulur. Cizimde o kenarin
+    // uclari grafop scaleEdges'in TERSIYLE geri alinir: kat eksenine dayanan kenar x'te 1/ratio (x=0 etrafinda), degilse uc
+    // noktalarinin agirlik merkezi etrafinda 1/ratio homoteti. Komsu kenarlar ayni tepeyi kullandigi icin panel kapali kalir.
+    // Kalip (gercek36) dokunulmaz. Buzgu isaretleri (kirisik cizgi) cizilmez: graf'ta yok, uydurulmaz.
+    struct TepeKaydir { std::map<std::string, Point> m; };   // "x|y" -> yeni nokta
+    std::map<std::string, TepeKaydir> buzgu;
+    auto anahtar = [](Point q) { return f3(q.x) + "|" + f3(q.y); };
+    if (croquis) {
+        for (const Panel& p : g.panels) {
+            if (!eksen.count(p.id)) continue;
+            bool eksenVar = p.onFold;
+            for (const Edge& e : p.edges) if (e.from.xSifir() && e.to.xSifir()) eksenVar = true;
+            for (const Edge& e : p.edges) {
+                if (!(e.gatherRatio > 1.0 + 1e-9)) continue;
+                const double k = 1.0 / e.gatherRatio;
+                const Point a = eval(e.from, ctx_of(p)), b = eval(e.to, ctx_of(p));
+                const bool katli = eksenVar && (e.from.xSifir() || e.to.xSifir());
+                const Point c{ (a.x + b.x) / 2, (a.y + b.y) / 2 };
+                auto tr = [&](Point q) { return katli ? Point{ q.x * k, q.y } : Point{ c.x + (q.x - c.x) * k, c.y + (q.y - c.y) * k }; };
+                buzgu[p.id].m[anahtar(a)] = tr(a);
+                buzgu[p.id].m[anahtar(b)] = tr(b);
+            }
+        }
+    }
+    auto kaydir = [&](const Panel& p, Point q) -> Point {
+        auto it = buzgu.find(p.id); if (it == buzgu.end()) return q;
+        auto jt = it->second.m.find(anahtar(q)); return jt == it->second.m.end() ? q : jt->second;
+    };
+    // kenar yolunun uclarini (ve buzgulu kenarin kontrollerini) kaydirilmis tepeye tasi
+    auto buzguUygula = [&](const Panel& p, const Edge& e, std::vector<PathCommand> cmds) -> std::vector<PathCommand> {
+        if (!buzgu.count(p.id) || cmds.empty()) return cmds;
+        const Point a = eval(e.from, ctx_of(p)), b = eval(e.to, ctx_of(p));
+        const Point a2 = kaydir(p, a), b2 = kaydir(p, b);
+        if (a2.x == a.x && a2.y == a.y && b2.x == b.x && b2.y == b.y) return cmds;
+        // afin: a->a2, b->b2 (dogru boyunca olcek + kaydirma); kontroller ayni donusumle
+        const double L2 = (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y);
+        auto tr = [&](Point q) {
+            if (L2 < 1e-12) return Point{ q.x + (a2.x - a.x), q.y + (a2.y - a.y) };
+            const double t = ((q.x - a.x) * (b.x - a.x) + (q.y - a.y) * (b.y - a.y)) / L2;   // dogru boyunca oran
+            const Point onLine{ a.x + t * (b.x - a.x), a.y + t * (b.y - a.y) };
+            const Point off{ q.x - onLine.x, q.y - onLine.y };                                 // dogruya dik sapma korunur
+            return Point{ a2.x + t * (b2.x - a2.x) + off.x, a2.y + t * (b2.y - a2.y) + off.y };
+        };
+        for (PathCommand& c : cmds) { c.to = tr(c.to); if (c.type == CmdType::Curve) { c.cp1 = tr(c.cp1); c.cp2 = tr(c.cp2); } }
+        return cmds;
+    };
+    // KAVIS (yalniz croquis): beden silueti + eksenli panel kenar yolu (duz -> bedeni izleyen kubik / etek ucu kavisi)
+    const BedenSilueti bs = croquis && opts.kavis ? bedenSilueti(body) : BedenSilueti{};
+    auto kenarYolu = [&](const Panel& p, const Edge& e) -> std::vector<PathCommand> {
+        if (!croquis || !opts.kavis) return buzguUygula(p, e, e.path(ctx_of(p)));
+        bool k = false;
+        std::vector<PathCommand> c = etekUcuKavis(e, ctx_of(p), opts.etekUcuSagOverWidth, k);
+        if (!k) c = bedeniIzle(e, ctx_of(p), bs, opts.kavisMinDyMM, opts.kavisTolMM, k);
+        return buzguUygula(p, e, c);
+    };
 
     // ---- 2) eksensiz panel (kol): gorunum basina sarkma pozu
     struct Sarkma {
@@ -249,7 +397,7 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
         Rect r; bool ilk = true;
         for (const Panel& p : g.panels) {
             if (!gorunumde(p.id, gv)) continue;
-            if (eksen.count(p.id)) { Poz z; growCmds(r, p.outline(ctxs[p.id]), z, ilk); }
+            if (eksen.count(p.id)) { Poz z; for (const Edge& e : p.edges) growCmds(r, kenarYolu(p, e), z, ilk); }
             else {
                 const Sarkma& sk = sarkma[p.id][gv];
                 growCmds(r, sk.kapakBasi, Poz{}, ilk);
@@ -284,7 +432,8 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
       << f3(vx) << " " << f3(vy) << " " << f3(vw) << " " << f3(vh) << "\""
       << " data-scale=\"1:1\" data-unit-mm=\"1\""
       << " data-graf=\"" << g.id << "\" data-body=\"" << bodyId << "\" data-size=\"" << bodyId << "\""
-      << " data-panel=\"" << yerlesen << "\" data-gorunum=\"" << gorunumSira.size() << "\"";
+      << " data-panel=\"" << yerlesen << "\" data-gorunum=\"" << gorunumSira.size() << "\""
+      << " data-kavis=\"" << (croquis && opts.kavis ? "beden" : "yok") << "\"";
     struct LmIlan { const char* attr; const char* lm; };
     const LmIlan ilanlar[] = { { "data-y-waist", "landmark.waist" }, { "data-y-bust", "landmark.bustLine" }, { "data-y-hip", "landmark.hip" } };
     for (const LmIlan& li : ilanlar)
@@ -343,7 +492,7 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
                     // pens cifti: bacak1 (agiz a -> apeks), bacak2 (apeks -> agiz b) — tek cizgi agiz ortasi -> apeks, kopru a -> b
                     if (i + 1 < p.edges.size() && p.edges[i + 1].kind == "dartLeg") {
                         const Edge& e2 = p.edges[i + 1];
-                        const Point a = eval(e.from, ctx), apex = eval(e.to, ctx), b = eval(e2.to, ctx);
+                        const Point a = kaydir(p, eval(e.from, ctx)), apex = eval(e.to, ctx), b = kaydir(p, eval(e2.to, ctx));
                         const Point orta{ (a.x + b.x) / 2, (a.y + b.y) / 2 };
                         yaz(pens, { PathCommand::move(orta), PathCommand::line(apex) }, e.id, "pens");
                         // kopru: komsu kenarin sinifinda
@@ -355,7 +504,7 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
                 }
                 const KenarSinif ks = sinifla(p, e, gv);
                 if (!ks.ciz) continue;
-                const std::vector<PathCommand> cmds = e.path(ctx);
+                const std::vector<PathCommand> cmds = sk ? e.path(ctx) : kenarYolu(p, e);
                 if (sk) yaz(kalin, cmds, e.id, "kol");   // sarkan tup: dis/ic/agiz hepsi siluet
                 else yaz(ks.kalin ? kalin : ince, cmds, e.id, e.kind);
                 // ust dikis izi: bitirmeli kesim kenari (hem/faced), panel icine ofset

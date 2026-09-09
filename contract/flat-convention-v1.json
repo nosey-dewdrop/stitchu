@@ -357,5 +357,14 @@
       "front",
       "back"
     ]
+  },
+  "kavis": {
+    "_law": "KAVIS (A4 tur 6, 2026-09-09, Damla 0-K 3a: 'kavisli yan dikis, yumusak kum saati, hafif kavisli etek ucu'). Croquis flat = giysi MANKENE GIYILMIS izdusum: grafta iki halka arasi DUZ cizilen kenar (yan dikis bel->gogus, kalca->bel, prenses) flat'te mankenin ara kesitlerini izleyen kubik olur (engine/src/flatsvg.cpp bedeniIzle: x(t) = k(t) x xBeden(y), k = giysi/beden orani uclarda). Yatay etek ucu (cut, finish hem, bir ucu x=0) ortada sarkan parabol olur (etekUcuKavis). Graf ve kalip DEGISMEZ; yalniz croquis gorunumu. Kok <svg data-kavis='beden|yok'>.",
+    "minDyMM": 30.0,
+    "_minDyMM": "bundan kisa dikey uzanimli kenar duz kalir (bel bandi gibi kisa kenarlar kavislenmez); secim, DOGRULANMADI",
+    "tolMM": 0.5,
+    "_tolMM": "curvefit fitCubics toleransi ve 'beden bu aralikta duz' esigi (sapma < tol -> kenar bayt-ayni duz kalir)",
+    "etekUcuSagOverWidth": 0.05,
+    "_etekUcuSagOverWidth": "etek ucu orta sarkmasi / tam etek ucu genisligi. OLCULDU (PIL, 2026-09-09) GIRDI/hedef-fotograflar-3 satici flat'lerinde: etsy-05 gingham mini: genislik 290 px, koseler y 1008/1009, orta 1024 -> 16/290 = 0.055; etsy-01 pinafore: genislik ~330 px, koseler 868/875, orta 886 -> 15/330 = 0.045. n=2, taban 0.05 (ortalama). Yon: orta ASAGI (kloş etegin onden gorunumu)."
   }
 }

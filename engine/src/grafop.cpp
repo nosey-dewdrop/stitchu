@@ -148,11 +148,25 @@ OpResult opSubdivide(const Garment& g0, const JVal& a, const OpCtx&) {
     for (const Edge& pe : parts) if (p->edgeIndex(pe.id) >= 0) return fail("subdivide: uretilen kenar id catisiyor " + pe.id);
     p->edges.erase(p->edges.begin() + idx);
     p->edges.insert(p->edges.begin() + idx, parts.begin(), parts.end());
-    // Dikis/halka referanslari: bolunen kenar yerine parcalari (sirayla)
+    // Dikis/halka referanslari: bolunen kenar yerine parcalari — ZINCIRIN YONUYLE (2026-09-09 olculdu, A4 tur 6:
+    // gogus_halka [side_front, side_back] arka kenari TERS gezer; parcalar hep ileri sirayla eklenince
+    // "side_front.2 -> side_back.1 tepe paylasmiyor" ile halka KOPUK cikiyordu). Yon komsudan okunur: onceki
+    // referans bolunen kenarin yalniz `to` ucunu paylasiyorsa (ya da ilk elemansa sonraki yalniz `from` ucunu)
+    // zincir bu kenari tersten gecer, parcalar ters sirayla girer. Ikisi de paylasilirsa (on/arka yan dikisi
+    // yapisal es) karar verilemez, eski davranis (ileri) kalir.
+    const Edge orig = g0.panel(pid)->edges[static_cast<size_t>(idx)];
+    auto paylasir = [&](const EdgeRef& r, const RefPoint& v) {
+        const Panel* q = g.panel(r.panel); const Edge* e = q ? q->edge(r.edge) : nullptr;
+        return e && (e->from == v || e->to == v);
+    };
     auto expand = [&](std::vector<EdgeRef>& refs) {
         for (size_t i = 0; i < refs.size(); ++i) {
             if (refs[i].panel != pid || refs[i].edge != eid) continue;
+            bool ters = false;
+            if (i > 0) ters = paylasir(refs[i - 1], orig.to) && !paylasir(refs[i - 1], orig.from);
+            else if (refs.size() > 1) ters = paylasir(refs[i + 1], orig.from) && !paylasir(refs[i + 1], orig.to);
             std::vector<EdgeRef> nw; for (const Edge& pe : parts) nw.push_back({pid, pe.id});
+            if (ters) std::reverse(nw.begin(), nw.end());
             refs.erase(refs.begin() + i);
             refs.insert(refs.begin() + i, nw.begin(), nw.end());
             i += nw.size() - 1;
@@ -368,6 +382,14 @@ OpResult opAttach(const Garment& g0, const JVal& a, const OpCtx& ctx) {
     if (!checkRatio(r >= 1.0 ? r : 1.0 / r, ctx, "attach", err)) return fail(err);
     Garment g = g0;
     g.panels.push_back(np);
+    // 2026-09-09 (A4 tur 6, olculdu: kol agzina band attach -> "dikis tarafi 'cut' kenari tasiyor" topoloji kirmizisi):
+    // dikise giren iki kenar da kind=seam olur, finish silinir (op sew ile ayni kural; fold konak kenari kabul edilmez).
+    for (const EdgeRef& ref : { EdgeRef{ hp, he }, EdgeRef{ np.id, ne } }) {
+        Edge* e = g.edge(ref);
+        if (!e) return fail("attach: kenar yok " + refStr(ref.panel, ref.edge));
+        if (e->kind == "fold" || e->kind == "dartLeg") return fail("attach: " + refStr(ref.panel, ref.edge) + " kind=" + e->kind + " dikise giremez");
+        e->kind = "seam"; e->finish.clear();
+    }
     Seam s; s.id = sid; s.reason = "attach " + np.id + " -> " + hp;
     if (r >= 1.0) { s.a = {{np.id, ne}}; s.b = {{hp, he}}; s.ratio = r; }
     else { s.a = {{hp, he}}; s.b = {{np.id, ne}}; s.ratio = 1.0 / r; }
@@ -518,10 +540,14 @@ OpResult opDrop(const Garment& g0, const JVal& a, const OpCtx&) {
     }
     for (Panel& p : g.panels) for (Edge& e : p.edges)
         for (const std::string& sd : silinenDikis) if (e.fitSeam == sd) e.fitSeam.clear();
+    // Halka: kenar kaybeden halka ARTIK HALKA DEGILDIR, tumuyle silinir (2026-09-09 olculdu, A4 tur 6: askili ustte ust govde
+    // dusunce kol oyugu halkasi iki koltukalti artigiyla "halka KOPUK" kirmizisi veriyordu; halka giysiden kalkti, artik referans
+    // kalmisti). Kenari dusen panelde olmayan halka dokunulmaz.
     for (size_t i = 0; i < g.rings.size();) {
         Ring& r = g.rings[i];
-        for (size_t j = 0; j < r.edges.size();) { if (r.edges[j].panel == pid) r.edges.erase(r.edges.begin() + static_cast<long>(j)); else ++j; }
-        if (r.edges.empty()) g.rings.erase(g.rings.begin() + static_cast<long>(i)); else ++i;
+        bool kayip = false;
+        for (const EdgeRef& ref : r.edges) if (ref.panel == pid) kayip = true;
+        if (kayip) g.rings.erase(g.rings.begin() + static_cast<long>(i)); else ++i;
     }
     for (Panel& p : g.panels) if (p.onto == pid) return fail("drop: " + p.id + " bu panelin yuzune dikili (onto); once onu kaldir");
     for (size_t i = 0; i < g.panels.size(); ++i) if (g.panels[i].id == pid) { g.panels.erase(g.panels.begin() + static_cast<long>(i)); break; }

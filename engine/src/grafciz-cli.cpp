@@ -121,6 +121,16 @@ int main(int argc, char** argv) {
         FlatOpts o;
         // croquis36 flat: on + arka ust uste iki kat (body.gen.hpp kCroquisOmuzHukmu)
         o.onArkaEsit = (bodyId == "croquis36");
+        // KAVIS (A4 tur 6): sayilar contract/flat-convention-v1.json kavis blogundan; blok yoksa ADIYLA hata (sessiz duz cizim yok)
+        {
+            JVal fc;
+            if (!readContract("contract/flat-convention-v1.json", fc)) { std::fprintf(stderr, "ERR_READ: contract/flat-convention-v1.json\n"); return 2; }
+            const JVal* kv = fc.get("kavis");
+            if (!kv || !kv->isObj()) { std::fprintf(stderr, "ERR_CONTRACT: flat-convention-v1.json kavis blogu yok\n"); return 2; }
+            o.kavis = true;
+            o.kavisMinDyMM = kv->numOr("minDyMM", -1); o.kavisTolMM = kv->numOr("tolMM", -1); o.etekUcuSagOverWidth = kv->numOr("etekUcuSagOverWidth", -1);
+            if (o.kavisMinDyMM < 0 || o.kavisTolMM <= 0 || o.etekUcuSagOverWidth < 0) { std::fprintf(stderr, "ERR_CONTRACT: kavis.minDyMM/tolMM/etekUcuSagOverWidth eksik\n"); return 2; }
+        }
         svg = flatSVG(g, body, bodyId, contract, bodyContract, o, hata);
     } else {
         JVal sheet, bodyContract;
