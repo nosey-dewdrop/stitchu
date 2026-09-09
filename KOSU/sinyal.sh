@@ -204,8 +204,9 @@ sinyal(){ MOD=$1; K=0; echo "== SINYAL ($MOD) $(date '+%Y-%m-%d %H:%M') HEAD $(g
     python3 KOSU/flat-olcum.py >/tmp/_fo.txt 2>&1 && grep -q 'ESIK KONTROL OK' /tmp/_fo.txt && echo "  YESIL flat-olcum" || { echo "  KIRMIZI flat-olcum"; K=1; }
     node engine/tests/primitif_ifade_check.mjs >/dev/null 2>&1 && echo "  YESIL primitif_ifade" || { echo "  KIRMIZI primitif_ifade"; K=1; }
     if ! taban_oku kapanan | grep -q P4; then # P4'e kadar iki bilinen kirmizi sayi piniyle
-      node KOSU/uret.mjs >/dev/null 2>&1; a=$(node engine/tests/flat_ayni_insan_check.mjs 2>&1 | grep -c 'FAIL  34 hukum kirmizi'); b=$(node engine/tests/cizim_giysi_mi.mjs 2>&1 | grep -c 'FAIL cizim_giysi_mi — 1 ihlal')
-      [ "$a" = 1 ] && [ "$b" = 1 ] && echo "  YESIL bilinen kirmizi pinleri sabit (34 hukum, 1 ihlal)" || { echo "  KIRMIZI pin degisti: flat_ayni=$a cizim=$b (regresyon ya da ilan guncellenmeli)"; K=1; }
+      # A4 (2026-09-09): flat_ayni_insan 34 pini KALKTI — kapi urun flat'lerini (KOSU/ciktilar/giris/N/flat.svg) olcer ve YESIL olmak zorunda
+      node KOSU/uret.mjs >/dev/null 2>&1; a=$(node engine/tests/flat_ayni_insan_check.mjs 2>&1 | grep -c '^OK '); b=$(node engine/tests/cizim_giysi_mi.mjs 2>&1 | grep -c 'FAIL cizim_giysi_mi — 1 ihlal')
+      [ "$a" = 1 ] && [ "$b" = 1 ] && echo "  YESIL flat_ayni_insan yesil + bilinen pin sabit (cizim 1 ihlal)" || { echo "  KIRMIZI flat_ayni=$a (1 bekleniyor: OK) cizim=$b (1 bekleniyor)"; K=1; }
     fi
   fi
   echo "-- 5 defter (0509-kosu.md §5.1-5.2)"; grep -E '^5\.[12]\.' 0509-kosu.md | sed 's/^/  /'

@@ -46,6 +46,7 @@ struct SolverCtx {
     int icProjeksiyon = 0;       // cozucu.gevsetme.icProjeksiyon (sert projeksiyon ic tur sayisi)
     double olcekMinMM = 0;       // body-v1 olcekAraligi.giysiYuksekligiMM.min (SERT)
     double olcekMaxMM = 0;       // ... .max (SERT)
+    double pensPayi = 0;         // graf-v1 cozucu.pens.pensPayi (A4): pens agzi = supresyon x pensPayi
     bool dolu = false;
     // graf-v1 contract + body-v1 contract; eksik/NaN alan -> dolu=false, hata ADIYLA doldurulur
     static SolverCtx fromContract(const graf::JVal& grafContract, const graf::JVal& bodyContract, std::string& hata);

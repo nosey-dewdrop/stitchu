@@ -63,18 +63,18 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 **Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 1 adet.
 - istenen: girth.waist / girth.bust = 0.4036 (kaynak: siluet-orani bel/enGenis) — OLCUM SUPHELI, celiskiTablosu'na bak
-- motor: siluet-orani hedef girth.waist/girth.bust = 0.4036 (siluet-orani bel/enGenis; OLCUM SUPHELI, celiskiTablosu'na bak) | gereken bolluk -296.76 mm, uygulanan 0 mm (onceki 25; SINIRA KIRPILDI) | giysi orani 0.7333333333333333, sapma 0.32973333333333327
-- dogrulayici (gercek36): siluet-orani hedef girth.waist/girth.bust = 0.4036 (siluet-orani bel/enGenis; OLCUM SUPHELI, celiskiTablosu'na bak) | gereken bolluk -296.76 mm, grafta 0 mm | giysi orani 0.7333333333333333, sapma 0.32973333333333327
+- motor: siluet-orani hedef girth.waist/girth.bust = 0.4036 (siluet-orani bel/enGenis; OLCUM SUPHELI, celiskiTablosu'na bak; payda = cizilen en genis yarim kesit 237.5 mm x 4 (genislik birimi, girth.bust cevresi degil)) | gereken bolluk -276.58 mm, uygulanan 0 mm (onceki 25; SINIRA KIRPILDI) | giysi orani 0.7333333333333333, sapma 0.32973333333333327
+- dogrulayici (gercek36): siluet-orani hedef girth.waist/girth.bust = 0.4036 (siluet-orani bel/enGenis; OLCUM SUPHELI, celiskiTablosu'na bak; payda = cizilen en genis yarim kesit 237.5 mm x 4 (genislik birimi, girth.bust cevresi degil)) | gereken bolluk -276.58 mm, grafta 0 mm | giysi orani 0.6947368421052632, sapma 0.2911368421052632
 Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus cevre orani degildir (kollar, poz); okuma zaten ZAYIF/SUPHELI etiketi tasiyor. Motor hedefi yutmadi, kirptigini ve sapmayi yazdi.
 
 ## Cizildi mi?
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=14) | 16893 |
-| flat.png | OK | 44691 |
-| kalip-36.svg | OK | 16156 |
-| kalip-36.png | OK | 39759 |
+| flat.svg | OK (data-ops=14) | 16885 |
+| flat.png | OK | 43531 |
+| kalip-36.svg | OK | 15748 |
+| kalip-36.png | OK | 40522 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

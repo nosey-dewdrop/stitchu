@@ -883,25 +883,20 @@ for a in ("adim","durum","deneme","butce","banned","devredilen","ilkYesil","kabu
 ' 2>/dev/null; then ok "H8 state-semasi"
   else fail "H8 state-semasi" "KOSU/0509-state.json bozuk ya da alan eksik"; fi
 
-  # --- H9 (karar 1): flat_ayni_insan_check ilanli kirmizi, tavan 34, kapanacak adim A4
+  # --- H9 (karar 1, A4 KAPANDI 2026-09-09): flat_ayni_insan_check ilani state.json'da kapali durur (kapanan adim A4)
   if python3 -c '
 import json
 d=json.load(open("KOSU/0509-state.json"))
 k=[x for x in d.get("ilanliKirmizi",[]) if x.get("gecit")=="flat_ayni_insan_check"]
-assert k, "ilanliKirmizi listesinde flat_ayni_insan_check yok"
-k=k[0]
-assert k.get("tavan")==34, "tavan 34 degil: %r"%k.get("tavan")
-assert k.get("kapanacakAdim")=="A4", "kapanacak adim A4 degil: %r"%k.get("kapanacakAdim")
-' 2>/dev/null; then ok "H9 karar1-flat-ayni-insan"
-  else fail "H9 karar1-flat-ayni-insan" "ilan/tavan 34/kapanacakAdim A4 state.json'da yok"; fi
+assert k, "ilanliKirmizi listesinde flat_ayni_insan_check kaydi yok"
+assert k[0].get("kapandi")=="A4", "ilan kapanmadi: %r"%k[0].get("kapandi")
+assert k[0].get("ilanliKirmizi") is False, "ilanliKirmizi hala true"
+' 2>/dev/null; then ok "H9 karar1-flat-ayni-insan (ilan A4'te kapandi)"
+  else fail "H9 karar1-flat-ayni-insan" "state.json'da flat_ayni_insan_check ilani kapanmis (kapandi=A4, ilanliKirmizi=false) degil"; fi
 
-  # --- H10 (karar 1): tavan asilmadi — gecidin bugunku sayisi <= 34
-  local sayi
-  sayi=$(ctest --test-dir "$BUILD" -R '^flat_ayni_insan_check$' -j1 --output-on-failure 2>>"$LOG" \
-         | sed -n 's/.*[^0-9]\([0-9][0-9]*\) hukum kirmizi.*/\1/p' | head -1)
-  if [ -z "${sayi:-}" ]; then fail "H10 karar1-tavan" "sayi olculemedi (ctest ciktisi eslesmedi), log: $LOG"
-  elif [ "$sayi" -le 34 ]; then ok "H10 karar1-tavan (sayi=$sayi <= 34)"
-  else fail "H10 karar1-tavan" "sayi=$sayi > tavan 34"; fi
+  # --- H10 (karar 1, A4): gecit YESIL olmak zorunda (pin kalkti: A4 kabul sarti)
+  if ctest --test-dir "$BUILD" -R '^flat_ayni_insan_check$' -j1 --output-on-failure >>"$LOG" 2>&1; then ok "H10 karar1-flat-ayni-insan-yesil"
+  else fail "H10 karar1-flat-ayni-insan-yesil" "flat_ayni_insan_check kirmizi (A4 sonrasi pin yok), log: $LOG"; fi
 
   # --- H11 (karar 2): sinyal_tam ilani, dondurulmus alt test kumesi
   if python3 -c '

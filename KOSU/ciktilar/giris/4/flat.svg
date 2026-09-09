@@ -77,8 +77,8 @@
       <path data-panel="on_govde" data-edge="cf.1" data-tur="seam" d="M 0.000 49.790 L 0.000 390.000"/>
       <path data-panel="on_govde" data-edge="cf.2" data-tur="seam" d="M 0.000 390.000 L 0.000 970.000"/>
       <path data-panel="on_govde" data-edge="cf.2" data-tur="seam" d="M 0.000 390.000 L 0.000 970.000"/>
-      <path data-panel="boyun_bandi" data-edge="ic" data-tur="seam" d="M 0.000 49.790 C 17.185 27.000 41.735 10.800 49.100 0.000"/>
-      <path data-panel="boyun_bandi" data-edge="ic" data-tur="seam" d="M 0.000 49.790 C -17.185 27.000 -41.735 10.800 -49.100 0.000"/>
+      <path data-panel="boyun_bandi" data-edge="ic" data-tur="seam" d="M 0.000 49.790 C 11.744 21.634 36.294 5.434 49.100 0.000"/>
+      <path data-panel="boyun_bandi" data-edge="ic" data-tur="seam" d="M 0.000 49.790 C -11.744 21.634 -36.294 5.434 -49.100 0.000"/>
     </g>
     <g data-view="back" data-eksen="cb" transform="translate(1082.566 0)">
       <path data-panel="arka_govde" data-edge="armhole_back.1" data-tur="seam" d="M 225.000 243.800 C 187.030 243.800 156.250 190.007 156.250 146.400"/>

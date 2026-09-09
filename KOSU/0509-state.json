@@ -251,7 +251,7 @@
    "sebep": "urun yolu flat-from-pattern.js EU38; graftan cizim A2'de gelir, croquis konvansiyonu A4'te oturur",
    "tavan": 34,
    "tavanKurali": "A2 ve A3'te sayi 34'u ASAMAZ; asarsa o adim duser",
-   "ilanliKirmizi": true,
+   "ilanliKirmizi": false,
    "hesapta": "gecitYesil hesabinda dusurulmez; JSON'da KIRMIZI basilmaya devam eder, sayisi her adimda metrige yazilir",
    "pinKalkar": "A4 kapanisi; A4'un kabul sarti bu gecidin YESIL olmasi, kirmizi kalirsa A4 GECMEZ",
    "tavanOlcumKomutu": "ctest --test-dir engine/build -R '^flat_ayni_insan_check$' -j1 --output-on-failure 2>&1 | sed -n 's/^FAIL  \\([0-9]*\\) hukum kirmizi.*/\\1/p'",
@@ -259,7 +259,10 @@
     "tarih": "2026-09-06",
     "deger": 34,
     "kaynak": "testin kendi son satiri: 'FAIL  34 hukum kirmizi (tolerans 2 mm ...)'"
-   }
+   },
+   "kapandi": "A4",
+   "kapanisTarihi": "2026-09-09",
+   "kapanisOlcumu": "node engine/tests/flat_ayni_insan_check.mjs (KOSU/ciktilar/giris/1-5/flat.svg, croquis36): OK 5 flat ayni insan (tolerans 2 mm), 0 hukum kirmizi; siluet yolu = croquis landmark yolu (flatsvg.cpp kural 4)"
   },
   {
    "gecit": "sinyal_tam",

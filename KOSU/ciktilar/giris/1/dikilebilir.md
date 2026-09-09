@@ -57,18 +57,18 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 **Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 1 adet.
 - istenen: girth.waist / girth.bust = 0.4954 (kaynak: siluet-orani bel/enGenis)
-- motor: siluet-orani hedef girth.waist/girth.bust = 0.4954 (siluet-orani bel/enGenis) | gereken bolluk -214.14 mm, uygulanan 0 mm (onceki 25; SINIRA KIRPILDI) | giysi orani 0.7333333333333333, sapma 0.23793333333333327
-- dogrulayici (gercek36): siluet-orani hedef girth.waist/girth.bust = 0.4954 (siluet-orani bel/enGenis) | gereken bolluk -214.14 mm, grafta 0 mm | giysi orani 0.7333333333333333, sapma 0.23793333333333327
+- motor: siluet-orani hedef girth.waist/girth.bust = 0.4954 (siluet-orani bel/enGenis; payda = cizilen en genis yarim kesit 296.875 mm x 4 (genislik birimi, girth.bust cevresi degil)) | gereken bolluk -71.71249999999999 mm, uygulanan 0 mm (onceki 25; SINIRA KIRPILDI) | giysi orani 0.7333333333333333, sapma 0.23793333333333327
+- dogrulayici (gercek36): siluet-orani hedef girth.waist/girth.bust = 0.4954 (siluet-orani bel/enGenis; payda = cizilen en genis yarim kesit 296.875 mm x 4 (genislik birimi, girth.bust cevresi degil)) | gereken bolluk -71.71249999999999 mm, grafta 0 mm | giysi orani 0.5557894736842105, sapma 0.06038947368421049
 Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus cevre orani degildir (kollar, poz); okuma zaten ZAYIF/SUPHELI etiketi tasiyor. Motor hedefi yutmadi, kirptigini ve sapmayi yazdi.
 
 ## Cizildi mi?
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=8) | 16204 |
-| flat.png | OK | 46502 |
-| kalip-36.svg | OK | 13873 |
-| kalip-36.png | OK | 38043 |
+| flat.svg | OK (data-ops=8) | 16196 |
+| flat.png | OK | 46486 |
+| kalip-36.svg | OK | 13334 |
+| kalip-36.png | OK | 38578 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

@@ -95,8 +95,8 @@
       <path data-panel="arka_govde" data-edge="hem_back" data-tur="ustdikis" d="M 0.000 960.244 L -237.500 960.244"/>
       <path data-panel="kol" data-edge="hem" data-tur="ustdikis" d="M 339.531 351.592 L 241.611 365.011"/>
       <path data-panel="kol" data-edge="hem" data-tur="ustdikis" d="M -339.531 351.592 L -241.611 365.011"/>
-      <path data-panel="boyun_bandi_arka" data-edge="omuz_ustu" data-tur="ustdikis" d="M 64.777 7.106 L 91.800 30.604"/>
-      <path data-panel="boyun_bandi_arka" data-edge="omuz_ustu" data-tur="ustdikis" d="M -64.777 7.106 L -91.800 30.604"/>
+      <path data-panel="boyun_bandi_arka" data-edge="omuz_ustu" data-tur="ustdikis" d="M 64.391 -11.350 L 91.414 12.149"/>
+      <path data-panel="boyun_bandi_arka" data-edge="omuz_ustu" data-tur="ustdikis" d="M -64.391 -11.350 L -91.414 12.149"/>
       <path data-panel="boyun_bandi_arka" data-edge="dis" data-tur="ustdikis" d="M 88.608 14.271 L 63.914 122.874"/>
       <path data-panel="boyun_bandi_arka" data-edge="dis" data-tur="ustdikis" d="M -88.608 14.271 L -63.914 122.874"/>
       <path data-panel="boyun_bandi_arka" data-edge="cb" data-tur="ustdikis" d="M 69.989 129.559 L 49.461 -20.236"/>

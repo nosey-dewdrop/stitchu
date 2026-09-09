@@ -89,10 +89,18 @@ const args = process.argv.slice(2);
 const wantJSON = args.includes('--json');
 let files = args.filter((a) => a.endsWith('.svg'));
 if (files.length === 0) {
-  const dir = join(ROOT, 'KOSU/ciktilar');
-  files = existsSync(dir)
-    ? readdirSync(dir).filter((f) => /^\d\d-.*\.svg$/.test(f)).sort().map((f) => join(dir, f))
-    : [];
+  // A4 (2026-09-09): URUN flat'leri grafciz'in cizdigi KOSU/ciktilar/giris/N/flat.svg kumesidir (croquis36, C++).
+  // Eski KOSU/ciktilar/0X-*.svg (web/lib/flat-from-pattern.js, EU38) HEDEF 14 geregi onayli degil; giris kumesi
+  // yoksa eskiye duser ki kapi bos kumeyle sessizce yesil olmasin.
+  const giris = join(ROOT, 'KOSU/ciktilar/giris');
+  if (existsSync(giris))
+    files = readdirSync(giris).filter((d) => /^\d+$/.test(d)).sort((a, b) => a - b).map((d) => join(giris, d, 'flat.svg')).filter((f) => existsSync(f));
+  if (files.length === 0) {
+    const dir = join(ROOT, 'KOSU/ciktilar');
+    files = existsSync(dir)
+      ? readdirSync(dir).filter((f) => /^\d\d-.*\.svg$/.test(f)).sort().map((f) => join(dir, f))
+      : [];
+  }
 }
 if (files.length === 0) { console.log('FAIL  olculecek flat yok (KOSU/ciktilar/0X-*.svg bulunamadi; once node KOSU/uret.mjs)'); process.exit(1); }
 

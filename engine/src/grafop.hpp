@@ -93,6 +93,8 @@ CozumSonucu cozPens(const Garment& g, const Body& body, bool onArkaEsit,
 struct HedefSatir { std::string ring, ratioTo, kaynak, uyari; double istenen = 0, gerekenMM = 0, uygulananMM = 0, oncekiMM = 0, giysiOran = 0, sapma = 0; bool kirpildi = false; std::string metin; };
 std::vector<HedefSatir> hedefUygula(Garment& g, const JVal& hedefler, const Body& body, const JVal& contract, std::string& hata);
 std::vector<HedefSatir> hedefOlc(const Garment& g, const JVal& hedefler, const Body& body, std::string& hata);
+// Cizim/olcum icin COZULMUS graf (cozumle + cozPens, dogrulayiciyla ayni sira). not_: cozulemeyen kalemler adiyla (bos = hepsi cozuldu).
+Garment cozulmusGraf(const Garment& g, const Body& body, bool onArkaEsit, const JVal& contract, const JVal& bodyContract, std::string& not_);
 
 } // namespace graf
 } // namespace stitchu

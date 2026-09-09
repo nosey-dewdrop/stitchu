@@ -60,18 +60,18 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 **Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 1 adet.
 - istenen: girth.waist / girth.bust = 0.4654 (kaynak: siluet-orani bel/enGenis) — OLCUM ZAYIF (kalite=ZAYIF), celiskiTablosu'na bak
-- motor: siluet-orani hedef girth.waist/girth.bust = 0.4654 (siluet-orani bel/enGenis; OLCUM ZAYIF (kalite=ZAYIF), celiskiTablosu'na bak) | gereken bolluk -241.14000000000001 mm, uygulanan 0 mm (onceki 25; SINIRA KIRPILDI) | giysi orani 0.7333333333333333, sapma 0.2679333333333333
-- dogrulayici (gercek36): siluet-orani hedef girth.waist/girth.bust = 0.4654 (siluet-orani bel/enGenis; OLCUM ZAYIF (kalite=ZAYIF), celiskiTablosu'na bak) | gereken bolluk -241.14000000000001 mm, grafta 0 mm | giysi orani 0.7333333333333333, sapma 0.2679333333333333
+- motor: siluet-orani hedef girth.waist/girth.bust = 0.4654 (siluet-orani bel/enGenis; OLCUM ZAYIF (kalite=ZAYIF), celiskiTablosu'na bak; payda = cizilen en genis yarim kesit 237.5 mm x 4 (genislik birimi, girth.bust cevresi degil)) | gereken bolluk -217.87 mm, uygulanan 0 mm (onceki 25; SINIRA KIRPILDI) | giysi orani 0.7333333333333333, sapma 0.2679333333333333
+- dogrulayici (gercek36): siluet-orani hedef girth.waist/girth.bust = 0.4654 (siluet-orani bel/enGenis; OLCUM ZAYIF (kalite=ZAYIF), celiskiTablosu'na bak; payda = cizilen en genis yarim kesit 237.5 mm x 4 (genislik birimi, girth.bust cevresi degil)) | gereken bolluk -217.87 mm, grafta 0 mm | giysi orani 0.6947368421052632, sapma 0.22933684210526323
 Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus cevre orani degildir (kollar, poz); okuma zaten ZAYIF/SUPHELI etiketi tasiyor. Motor hedefi yutmadi, kirptigini ve sapmayi yazdi.
 
 ## Cizildi mi?
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=12) | 14355 |
-| flat.png | OK | 43814 |
-| kalip-36.svg | OK | 11212 |
-| kalip-36.png | OK | 43457 |
+| flat.svg | OK (data-ops=12) | 14353 |
+| flat.png | OK | 43907 |
+| kalip-36.svg | OK | 11132 |
+| kalip-36.png | OK | 44184 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

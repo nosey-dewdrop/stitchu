@@ -6,6 +6,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <map>
+#include <set>
 #include <limits>
 #include <stdexcept>
 
@@ -952,34 +956,52 @@ CozumSonucu cozPens(const Garment& g, const Body& body, bool onArkaEsit,
     // Supresyon bedenden gelir (gogus cevresi - bel cevresi) ve bedene gore DEGISIR; boylece
     // agiz da degisir ve olcum gercekten olcuye baglanir.
     //
-    // Pens payi: supresyonun kalip konvansiyonundaki orani (Aldrich temel blok: supresyon
-    // pens ve yan dikis arasinda paylasilir, pens payi tipik 1/3). DOGRULANMADI: birincil
-    // kaynak elde olcumle teyit edilmedi; sayi contract'a tasinana kadar burada ADIYLA durur.
-    const double kPensPayi = 1.0 / 3.0;
+    // PENS PAYI ve HALKA CIFTI (A4, 2026-09-09; contract cozucu.pens): pensPayi contract'tan (eski kPensPayi
+    // sabiti tasindi). Her pensin halka cifti PANEL UYELIGINDEN okunur: rolu 'hip' olan halkaya uye panel
+    // (etek) hip - bel supresyonunu emer, obur paneller bust - bel. ON/ARKA AYRI: supresyon bedenin
+    // arkaPay'iyla bolunur (arka = ust x arkaPay(ust) - alt x arkaPay(alt), on = kalan); on ve arka pens
+    // agzi bu yuzden farkli cikar, uydurulan on/arka sayisi yok. Yarim panel kendi tarafinin yarisini alir.
+    const double pensPayi = sctx.pensPayi;
+    if (!(pensPayi > 0.0 && pensPayi < 1.0)) { R.hata = "cozPens: contract cozucu.pens.pensPayi (0,1) disinda ya da yok"; return R; }
     if (!body.hasRing("girth.bust") || !body.hasRing("girth.waist")) {
         R.hata = "cozPens: bedende girth.bust / girth.waist yok; supresyon hesaplanamaz";
         return R;
     }
-    double easeB = 0, easeW = 0;
-    for (const Panel& p : g.panels)
-        for (const RingEase& re : p.ease) {
-            if (re.ring == "girth.bust") easeB = std::max(easeB, re.mm);
-            if (re.ring == "girth.waist") easeW = std::max(easeW, re.mm);
-        }
-    const double supresyonTam = (body.ring("girth.bust") + easeB) - (body.ring("girth.waist") + easeW);
-    if (!(supresyonTam > 0)) {
-        R.hata = "cozPens: supresyon pozitif degil (" + fmtNum(supresyonTam) + " mm); bu bedende pens gerekmiyor";
-        return R;
+    auto bolluk = [&](const std::string& ring) { double e = 0; for (const Panel& p : g.panels) for (const RingEase& re : p.ease) if (re.ring == ring) e = std::max(e, re.mm); return e; };
+    auto panelTaraf = [&](const Panel& p) {   // "on" | "arka" | "" (eksensiz)
+        for (const Edge& e : p.edges) if (e.kind == "fold") return std::string(e.role.rfind("cb", 0) == 0 ? "arka" : "on");
+        for (const Edge& e : p.edges) if (e.kind == "seam" && e.from.xSifir() && e.to.xSifir()) { if (e.role.rfind("cb", 0) == 0) return std::string("arka"); if (e.role.rfind("cf", 0) == 0) return std::string("on"); }
+        return std::string();
+    };
+    auto panelUstHalka = [&](const std::string& panelId) {   // "girth.hip" (etek) | "girth.bust"
+        for (const Ring& r : g.rings) if (r.role == "hip") for (const EdgeRef& ref : r.edges) if (ref.panel == panelId) return std::string("girth.hip");
+        return std::string("girth.bust");
+    };
+    struct Anahtar { std::string ust, taraf; };
+    std::vector<Anahtar> anahtar;
+    std::map<std::string, int> sayac;   // "ust|taraf" -> o gruptaki pens sayisi
+    for (const PensCift& pc : pensler) {
+        const Panel* p = g.panel(pc.panel);
+        Anahtar k{ panelUstHalka(pc.panel), p ? panelTaraf(*p) : std::string() };
+        anahtar.push_back(k); sayac[k.ust + "|" + k.taraf]++;
     }
-    // Pensler YARIM panellerde; tam cevredeki pens payi yarim panellere bolunur.
-    const double pensPayiTam = supresyonTam * kPensPayi;
-    const double payPens = pensPayiTam / 2.0 / static_cast<double>(pensler.size());
-    (void)La; (void)Lb;   // bel dikisi esitligi ayri kapida (dikis_uzunluk) olculuyor
+    const double altTam = body.ring("girth.waist") + bolluk("girth.waist");
+    const double altArka = body.ringBackFrac("girth.waist");
     for (std::size_t k = 0; k < pensler.size(); ++k) {
-        const double hedefAgiz = payPens;   // agiz DOGRUDAN supresyon payidir (mevcut hale eklenmez)
+        const Anahtar& ak = anahtar[k];
+        if (!body.hasRing(ak.ust)) { R.hata = "cozPens: bedende " + ak.ust + " yok; " + pensler[k].panel + " pensinin supresyonu hesaplanamaz"; return R; }
+        const double ustTam = body.ring(ak.ust) + bolluk(ak.ust);
+        const double ustArka = body.ringBackFrac(ak.ust);
+        double sup;   // bu tarafin TAM supresyonu (iki yarim panel)
+        if (ak.taraf == "arka") sup = ustTam * ustArka - altTam * altArka;
+        else if (ak.taraf == "on") sup = ustTam * (1.0 - ustArka) - altTam * (1.0 - altArka);
+        else sup = (ustTam - altTam) / 2.0;   // eksensiz panel: iki tarafin ortalamasi (bilgi: taraf okunamadi)
+        if (!(sup > 0)) { R.hata = "cozPens: " + pensler[k].panel + " (" + ak.taraf + ", " + ak.ust + " - girth.waist) supresyonu pozitif degil (" + fmtNum(sup) + " mm); bu bedende pens gerekmiyor"; return R; }
+        const double hedefAgiz = sup * pensPayi / 2.0 / static_cast<double>(sayac[ak.ust + "|" + ak.taraf]);
         if (!(hedefAgiz > 0)) { R.hata = "cozPens: " + pensler[k].panel + " hedef agiz pozitif degil (" + fmtNum(hedefAgiz) + "); pens bu farki ememez"; return R; }
         prob.sertUzunluklar.push_back({pensler[k].panel + ".agiz", solIdx[k], sagIdx[k], hedefAgiz});
     }
+    (void)La; (void)Lb;   // bel dikisi esitligi ayri kapida (dikis_uzunluk) olculuyor
     prob.olcekKisiti = false;   // burada olcek kisiti yok: yalniz agiz genisligi cozuluyor
 
     const solver::Sonuc sc = solver::coz(prob, sctx);
@@ -1005,24 +1027,174 @@ CozumSonucu cozPens(const Garment& g, const Body& body, bool onArkaEsit,
             R.cozumler.push_back({pensler[k].panel, d.id, seamId, prob.sertUzunluklar[k].hedefMM, dx, sc.enBuyukSertArtikMM});
             continue;
         }
+        // DIS HALKA PENSI (A4, 2026-09-09 — olculdu, eski hal YANLISTI): taban graf agzin b ucunu a'nin
+        // KAT tarafina (b < a) koyuyordu; bel kenarlari [b, a] araligini iki kez sayiyor, dikilen bel =
+        // ceyrek + agiz cikiyordu (grafdogrula supresyon: dikilen 740 vs beden 660 + bolluk 0 = 80 mm
+        // EMILMEYEN). Dogru kurulus: agiz kenarin YAN ucuna dogru acilir (b = a + m), yan tepe agiz kadar
+        // disari kayar (yan = yan + m) -> dikilen bel = tabanin ceyregi; apeks agzin ortasina (bacaklar esit).
+        // Cozucunun dx'i (|b - a| = m, yon bagimsiz) burada yerini bu 1B kurulusa birakir; kayma raporlanir.
+        Edge* b1 = p ? p->edge(pensler[k].bacak1) : nullptr;
         Edge* b2 = p ? p->edge(pensler[k].bacak2) : nullptr;
-        if (!b2) { R.hata = "cozPens: cozum yazilamadi: " + pensler[k].panel; return R; }
-        const RefPoint eskiUc = b2->to;
-        for (Term& tm : b2->to.terms) tm.a.xOffsetMM += dx;
-        b2->to.normalize();
-        // KONTUR KAPALILIGI: pens agzinin sag tabani, bitisik bel kenarinin BASLANGICIYLA
-        // ayni noktadir. Yalniz pens bacagini kaydirirsak panel konturu ACILIR (panel_kapali
-        // kirmizisi). Ayni RefPoint'i tasiyan her kenar ucu birlikte kayar.
-        for (Edge& e : p->edges) {
-            if (e.id == pensler[k].bacak2) continue;
-            if (e.from == eskiUc) { for (Term& tm : e.from.terms) tm.a.xOffsetMM += dx; e.from.normalize(); }
-            if (e.to == eskiUc) { for (Term& tm : e.to.terms) tm.a.xOffsetMM += dx; e.to.normalize(); }
+        if (!b1 || !b2) { R.hata = "cozPens: cozum yazilamadi: " + pensler[k].panel; return R; }
+        const EvalCtx pctx = p->ctxFor(body, onArkaEsit);
+        const int i1 = p->edgeIndex(pensler[k].bacak1), i2 = p->edgeIndex(pensler[k].bacak2);
+        const std::size_t n = p->edges.size();
+        const Edge& onceki = p->edges[(i1 + n - 1) % n];
+        const Edge& sonraki = p->edges[(i2 + 1) % n];
+        const RefPoint uzakA = onceki.from, uzakB = sonraki.to;
+        Point A, Bold, PA, PB;
+        try { A = eval(b1->from, pctx); Bold = eval(b2->to, pctx); PA = eval(uzakA, pctx); PB = eval(uzakB, pctx); }
+        catch (const std::exception& ex) { R.hata = std::string("cozPens: ") + ex.what(); return R; }
+        const bool yanSonraki = std::fabs(PB.x) >= std::fabs(PA.x);   // yan tepe: eksenden uzak olan uc
+        const RefPoint yanRef = yanSonraki ? uzakB : uzakA;
+        const double yanX = yanSonraki ? PB.x : PA.x;
+        const double isaret = (yanX - A.x) >= 0 ? 1.0 : -1.0;
+        const double m = prob.sertUzunluklar[k].hedefMM;
+        // agiz, gecis yonunde a'dan SONRA acilir (bindirme yok): yan tepe sonraki uctaysa (eksen->a->b->yan)
+        // b yana dogru, onceki uctaysa (yan->a->b->eksen) b eksene dogru; yan tepe her iki halde de disari kayar
+        const double yonB = yanSonraki ? isaret : -isaret;
+        const double bYeni = A.x + yonB * m;
+        const double dxB = bYeni - Bold.x;
+        const double dxYan = isaret * m;                       // yan tepe agiz kadar disari
+        const RefPoint eskiUc = b2->to, eskiApeks = b1->to;
+        double apeksX = 0; try { apeksX = eval(eskiApeks, pctx).x; } catch (const std::exception&) {}
+        const double dxApeks = (A.x + bYeni) / 2.0 - apeksX;   // apeks agzin ortasina
+        auto kaydir = [&](const RefPoint& eski, double dx) {
+            if (std::fabs(dx) < 1e-12) return;
+            for (Edge& e : p->edges) {
+                if (e.from == eski) { for (Term& tm : e.from.terms) tm.a.xOffsetMM += dx; e.from.normalize(); }
+                if (e.to == eski) { for (Term& tm : e.to.terms) tm.a.xOffsetMM += dx; e.to.normalize(); }
+            }
+        };
+        // sira onemli: once b (eskiUc), sonra yan tepe, sonra apeks — her biri kendi eski RefPoint'iyle bulunur
+        kaydir(eskiUc, dxB);
+        kaydir(yanRef, dxYan);
+        kaydir(eskiApeks, dxApeks);
+        R.cozumler.push_back({pensler[k].panel, pensler[k].bacak2, seamId, m, dxB, sc.enBuyukSertArtikMM});
+    }
+    // YAN DIKIS DOGRULAMA (A4): on ve arka agiz farkli oldugu icin yan tepeler farkli kayar; iki tarafin
+    // yan dikisi arasinda mm farki dogar (olculdu: etek 4.84 mm). Kalipcilik gibi: UZUN tarafin bel-yan
+    // tepesi dikis boyunca (yalniz y) icerI alinir, iki taraf esitlenir. Yalniz kaydirilan yan tepeyi uc
+    // olarak tasiyan tek-kenar-dikisler ele alinir; kubik/kesir dikisler dokunulmaz (fitLength'in isi).
+    {
+        std::set<std::string> kayan;   // "panel|edgeId" : yan tepeyi tasiyan kenarlar (from/to eslesmesi asagida)
+        for (const Cozum& c : R.cozumler) kayan.insert(c.panel);
+        for (const Seam& sm : R.g.seams) {
+            if (sm.a.empty() || sm.b.empty()) continue;
+            double La = 0, Lb = 0; bool ok = true;
+            try { for (const EdgeRef& r : sm.a) La += edgeLen(R.g, r, body, onArkaEsit); for (const EdgeRef& r : sm.b) Lb += edgeLen(R.g, r, body, onArkaEsit); }
+            catch (const std::exception&) { ok = false; }
+            if (!ok) continue;
+            const double hedefA = sm.ratio * Lb + sm.easeMM;
+            const double fark = La - hedefA;   // >0: a uzun
+            if (std::fabs(fark) < 1e-6) continue;
+            // uzun tarafin, kaydirilan panelde ve yan tepede biten DUZ kenari
+            const std::vector<EdgeRef>& uzun = fark > 0 ? sm.a : sm.b;
+            const double kisalt = fark > 0 ? fark : -fark / std::max(sm.ratio, 1e-9);
+            bool yapildi = false;
+            for (const EdgeRef& r : uzun) {
+                Panel* p = R.g.panel(r.panel); Edge* e = p ? p->edge(r.edge) : nullptr;
+                if (!p || !e || !e->isLine() || !kayan.count(r.panel)) continue;
+                const EvalCtx pctx = p->ctxFor(body, onArkaEsit);
+                Point A, B; try { A = eval(e->from, pctx); B = eval(e->to, pctx); } catch (const std::exception&) { continue; }
+                // yan tepe: bu kenarin |x| buyuk ucu (bel tarafindaki yan tepe) — hangi uc pens tarafindan kaydirildi?
+                // Kaydirilan uc = xOffsetMM tasiyan uc; iki uc da tasiyorsa |x| buyuk olan
+                auto ofsetli = [](const RefPoint& rp) { for (const Term& t : rp.terms) if (std::fabs(t.a.xOffsetMM) > 1e-9) return true; return false; };
+                const bool fromMu = ofsetli(e->from) && !(ofsetli(e->to) && std::fabs(B.x) > std::fabs(A.x));
+                if (!ofsetli(e->from) && !ofsetli(e->to)) continue;
+                const Point V = fromMu ? A : B, O = fromMu ? B : A;   // V: kaydirilacak uc, O: sabit uc
+                const double L = std::hypot(V.x - O.x, V.y - O.y), Lh = L - kisalt;
+                const double dx = V.x - O.x;
+                if (!(Lh > std::fabs(dx))) continue;   // yalniz y ile esitlenemez (kenar yataya yakin)
+                const double dy = std::sqrt(Lh * Lh - dx * dx);
+                const double yYeni = O.y + (V.y > O.y ? dy : -dy);
+                const double dyOfs = yYeni - V.y;
+                RefPoint& uc = fromMu ? e->from : e->to;
+                const RefPoint eski = uc;
+                for (Edge& e2 : p->edges) {   // ayni tepeyi tasiyan her uc birlikte
+                    if (e2.from == eski) { for (Term& tm : e2.from.terms) tm.a.yOffsetMM += dyOfs; e2.from.normalize(); }
+                    if (e2.to == eski) { for (Term& tm : e2.to.terms) tm.a.yOffsetMM += dyOfs; e2.to.normalize(); }
+                }
+                R.cozumler.push_back({r.panel, r.edge, sm.id, hedefA, dyOfs, 0.0});
+                yapildi = true; break;
+            }
+            (void)yapildi;
         }
-        R.cozumler.push_back({pensler[k].panel, pensler[k].bacak2, seamId,
-                              prob.sertUzunluklar[k].hedefMM, dx, sc.enBuyukSertArtikMM});
+    }
+    // CENTIK YENIDEN YERLESIM (A4): dikisin ilan ettigi kesirler (notchFractions) gercektir; agiz ve yan tepe
+    // kayinca zincir uzunluklari degisir, panel centikleri dikisin kesrine yeniden oturtulur (kayan panellerde).
+    {
+        std::set<std::string> kayan; for (const Cozum& c : R.cozumler) kayan.insert(c.panel);
+        auto zincir = [&](const std::vector<EdgeRef>& refs, std::vector<double>& L, std::vector<bool>& ters) {
+            L.clear(); ters.clear();
+            std::vector<Point> P0, P1;
+            for (const EdgeRef& r : refs) {
+                const Panel* p = R.g.panel(r.panel); const Edge* e = p ? p->edge(r.edge) : nullptr;
+                if (!p || !e) return false;
+                const EvalCtx c = p->ctxFor(body, onArkaEsit);
+                P0.push_back(eval(e->from, c)); P1.push_back(eval(e->to, c)); L.push_back(e->length(c));
+            }
+            const std::size_t n = refs.size();
+            ters.assign(n, false);
+            if (n >= 2) {
+                auto d = [](Point a, Point b) { return std::hypot(a.x - b.x, a.y - b.y); };
+                // ilk kenarin yonu: sonu ikinci kenara degmeli
+                ters[0] = std::min(d(P0[0], P0[1]), d(P0[0], P1[1])) < std::min(d(P1[0], P0[1]), d(P1[0], P1[1]));
+                for (std::size_t i = 1; i < n; ++i) { const Point son = ters[i - 1] ? P0[i - 1] : P1[i - 1]; ters[i] = d(P1[i], son) < d(P0[i], son); }
+            }
+            return true;
+        };
+        for (const Seam& sm : R.g.seams) {
+            if (sm.notchFractions.empty()) continue;
+            bool ilgili = false;
+            for (const std::vector<EdgeRef>* yan : { &sm.a, &sm.b }) for (const EdgeRef& r : *yan) if (kayan.count(r.panel)) ilgili = true;
+            if (!ilgili) continue;
+            for (int yan = 0; yan < 2; ++yan) {
+                const std::vector<EdgeRef>& refs = yan == 0 ? sm.a : sm.b;
+                std::vector<double> L; std::vector<bool> ters;
+                try { if (!zincir(refs, L, ters)) continue; } catch (const std::exception&) { continue; }
+                double toplam = 0; for (double l : L) toplam += l;
+                if (!(toplam > 0)) continue;
+                for (const EdgeRef& r : refs) { Panel* p = R.g.panel(r.panel); Edge* e = p ? p->edge(r.edge) : nullptr; if (e) e->notches.clear(); }
+                for (double f : sm.notchFractions) {
+                    const double fs = (yan == 1 && sm.reverse) ? (1.0 - f) : f;
+                    double hedef = fs * toplam, cum = 0;
+                    for (std::size_t i = 0; i < refs.size(); ++i) {
+                        if (hedef <= cum + L[i] + 1e-9 || i + 1 == refs.size()) {
+                            double t = L[i] > 1e-9 ? std::min(1.0, std::max(0.0, (hedef - cum) / L[i])) : 0.5;
+                            if (ters[i]) t = 1.0 - t;
+                            Panel* p = R.g.panel(refs[i].panel); Edge* e = p ? p->edge(refs[i].edge) : nullptr;
+                            if (e) e->notches.push_back(t);
+                            break;
+                        }
+                        cum += L[i];
+                    }
+                }
+            }
+        }
     }
     R.ok = true;
     return R;
+}
+
+// COZULMUS GRAF (A4, 2026-09-09): cizici de dogrulayicinin olctugu grafi cizsin. Eskiden fitLength (cozumle) ve
+// pens agzi (cozPens) yalniz grafdogrula'nin kopyasinda cozuluyor, grafciz HAM grafi ciziyordu — kapi bir
+// geometriyi olcuyor, urun baska bir geometriyi gosteriyordu. Sira dogrulayiciyla ayni: cozumle, sonra cozPens.
+Garment cozulmusGraf(const Garment& g, const Body& body, bool onArkaEsit, const JVal& contract, const JVal& bodyContract, std::string& not_) {
+    not_.clear();
+    const OpCtx octx = OpCtx::fromContract(contract);
+    CozumSonucu cz = cozumle(g, body, onArkaEsit, octx);
+    Garment out = cz.ok ? cz.g : g;
+    if (!cz.ok) not_ += "kisit: " + cz.hata;
+    std::string sHata;
+    const solver::SolverCtx sctx = solver::SolverCtx::fromContract(contract, bodyContract, sHata);
+    bool pensVar = false;
+    for (const Panel& p : out.panels) { if (!p.darts.empty()) pensVar = true; for (const Edge& e : p.edges) if (e.kind == "dartLeg") pensVar = true; }
+    if (pensVar) {
+        if (!sctx.dolu) not_ += std::string(not_.empty() ? "" : " | ") + "pens: " + sHata;
+        else { CozumSonucu pc = cozPens(out, body, onArkaEsit, sctx, "bel"); if (pc.ok) out = pc.g; else not_ += std::string(not_.empty() ? "" : " | ") + "pens: " + pc.hata; }
+    }
+    return out;
 }
 
 CozumSonucu cozumle(const Garment& g, const Body& body, bool onArkaEsit, const OpCtx& ctx) {
@@ -1088,6 +1260,29 @@ bool hedefOku(const JVal& h, HedefSatir& out, std::string& err) {
     out.kaynak = h.strOr("kaynak", ""); out.uyari = h.strOr("uyari", "");
     return true;
 }
+// Grafin cizilen EN GENIS yarim kesiti (mm): eksenli (x=0 kat/dikis) panellerin konturu 5 mm'lik y adimlarinda
+// kesilir, gorunum basina en buyuk |x| alinir; kol gibi eksensiz paneller sayilmaz. 0 = olculemedi.
+double enGenisYarim(const Garment& g, const Body& body) {
+    double enGenis = 0;
+    for (const Panel& p : g.panels) {
+        bool eksenli = false;
+        for (const Edge& e : p.edges) if (e.kind == "fold" || (e.kind == "seam" && e.from.xSifir() && e.to.xSifir())) eksenli = true;
+        if (!eksenli) continue;
+        std::vector<Point> P;
+        try {
+            const EvalCtx ctx = p.ctxFor(body, false);
+            Point cur{0, 0};
+            for (const PathCommand& c : p.outline(ctx)) {
+                if (c.type == CmdType::Close) continue;
+                if (c.type == CmdType::Curve) for (Point q : flattenCubic(cur, c.to, c.cp1, c.cp2, 24)) P.push_back(q);
+                else P.push_back(c.to);
+                cur = c.to;
+            }
+        } catch (const std::exception&) { continue; }
+        for (const Point& q : P) enGenis = std::max(enGenis, std::fabs(q.x));
+    }
+    return enGenis;
+}
 std::string hedefMetin(const HedefSatir& s, bool uygulandi) {
     return "siluet-orani hedef " + s.ring + "/" + s.ratioTo + " = " + fmtNum(s.istenen) + " (" + s.kaynak + (s.uyari.empty() ? "" : "; " + s.uyari) + ") | gereken bolluk " + fmtNum(s.gerekenMM) + " mm, "
          + (uygulandi ? ("uygulanan " + fmtNum(s.uygulananMM) + " mm (onceki " + fmtNum(s.oncekiMM) + (s.kirpildi ? "; SINIRA KIRPILDI" : "") + ")") : ("grafta " + fmtNum(s.uygulananMM) + " mm"))
@@ -1102,7 +1297,16 @@ std::vector<HedefSatir> hedefOlc(const Garment& g, const JVal& hedefler, const B
         HedefSatir s; std::string err;
         if (!hedefOku(h, s, err)) { hata = "hedef: " + err; return out; }
         if (!body.hasRing(s.ring) || !body.hasRing(s.ratioTo)) { hata = "hedef: bedende halka yok " + s.ring + "/" + s.ratioTo; return out; }
-        const double ref = body.ring(s.ratioTo) + halkaBollugu(g, s.ratioTo);
+        // BIRIM (A4, 2026-09-09): siluet okumasi (kaynak 'enGenis') yatay GENISLIK oranidir, cevre degil. Payda
+        // grafin kendi cizilen en genis yarim kesiti (eksenli paneller, kol haric) x 4 = duz serilmis giysinin o
+        // seviyedeki cevre esdegeri; pay da ayni birimde ((halka + bolluk)/2 = duz genislik). Boylece oran
+        // genislik/genislik olur, siluetin bel/enGenis'i ile ayni sey olculur; ratioTo halkasi yalniz kayit.
+        double ref = body.ring(s.ratioTo) + halkaBollugu(g, s.ratioTo);
+        if (s.kaynak.find("enGenis") != std::string::npos) {
+            const double yarim = enGenisYarim(g, body);
+            if (yarim > 0) { ref = 4.0 * yarim; s.uyari += (s.uyari.empty() ? "" : "; ") + std::string("payda = cizilen en genis yarim kesit ") + fmtNum(yarim) + " mm x 4 (genislik birimi, " + s.ratioTo + " cevresi degil)"; }
+            else s.uyari += (s.uyari.empty() ? "" : "; ") + std::string("en genis kesit olculemedi, payda " + s.ratioTo + " cevresi (BIRIM UYUSMAZ)");
+        }
         s.uygulananMM = s.oncekiMM = halkaBollugu(g, s.ring);
         s.gerekenMM = s.istenen * ref - body.ring(s.ring);
         s.giysiOran = (body.ring(s.ring) + s.uygulananMM) / ref; s.sapma = s.giysiOran - s.istenen;

@@ -102,6 +102,14 @@ int main(int argc, char** argv) {
         for (const HedefSatir& h : hs) std::fprintf(stderr, "hedef: %s\n", h.metin.c_str());
     }
 
+    // COZULMUS GRAF (A4): cizici dogrulayicinin olctugu grafi cizer (fitLength + pens agzi bu bedende cozulur).
+    {
+        JVal contract, bodyContract; std::string cozNot;
+        if (!readContract("contract/graf-v1.json", contract) || !readContract("contract/body-v1.json", bodyContract)) { std::fprintf(stderr, "ERR_READ: contract/graf-v1.json ya da body-v1.json\n"); return 2; }
+        g = cozulmusGraf(g, body, bodyId == "croquis36", contract, bodyContract, cozNot);
+        if (!cozNot.empty()) std::fprintf(stderr, "cozum: %s (graf o kalemde HAM cizildi)\n", cozNot.c_str());
+        else std::fprintf(stderr, "cozum: fitLength + pens agzi %s bedeninde cozuldu, cizim cozulmus grafla\n", bodyId.c_str());
+    }
     std::string svg, hata;
     if (mod == "flat") {
         JVal contract, bodyContract;

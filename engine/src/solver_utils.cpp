@@ -178,6 +178,10 @@ SolverCtx SolverCtx::fromContract(const JVal& grafContract, const JVal& bodyCont
     }
     c.olcekMinMM = mn->n;
     c.olcekMaxMM = mx->n;
+    // PENS PAYI (A4): graf-v1 cozucu.pens.pensPayi (0,1); yoksa hata ADIYLA
+    const JVal* pn = cz ? cz->get("pens") : nullptr;
+    if (!degerOku(pn, "pensPayi", c.pensPayi, hata)) return c;
+    if (!(c.pensPayi > 0.0 && c.pensPayi < 1.0)) { hata = "cozucu.pens.pensPayi (0,1) disinda"; return c; }
     if (!(c.olcekMinMM > 0.0 && c.olcekMaxMM > c.olcekMinMM)) { hata = "olcekAraligi.giysiYuksekligiMM araligi bozuk"; return c; }
     c.dolu = true;
     return c;
