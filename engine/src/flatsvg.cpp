@@ -379,10 +379,11 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
             sk.poz.tx = U.x - xcMin * nKol.x / bol - yBic * dKol.x;
             sk.poz.ty = U.y - xcMin * nKol.y / bol - yBic * dKol.y;
             const Point O{ U.x + wB * nKol.x, U.y + wB * nKol.y };
-            const double an = (O.x - S.x) * nKol.x + (O.y - S.y) * nKol.y;   // disa uzanim
-            const double bd = (O.x - S.x) * dKol.x + (O.y - S.y) * dKol.y;   // asagi uzanim
-            const Point c1{ S.x + 0.55 * an * nKol.x + 0.02 * bd * dKol.x, S.y + 0.55 * an * nKol.y + 0.02 * bd * dKol.y };
-            const Point c2{ O.x - 0.45 * bd * dKol.x, O.y - 0.45 * bd * dKol.y };
+            // KAPAK BASI (A4 tur 8): omuz ucundan DISA teget cikar, tup ekseni boyunca asagi donup O'ya iner (disbukey yay).
+            // Eski kurulus disa uzanim (an) ~0 ya da negatifken duz diyagonal cikiyordu (kor hakem tur 7: "kol omuz uzantisi").
+            const double L = std::hypot(O.x - S.x, O.y - S.y);
+            const Point c1{ S.x + 0.55 * L * nKol.x, S.y + 0.55 * L * nKol.y };
+            const Point c2{ O.x - 0.55 * L * dKol.x, O.y - 0.55 * L * dKol.y };
             sk.kapakBasi = { PathCommand::move(S), PathCommand::curve(O, c1, c2) };
             sk.kapakKenar = kapak;
             sarkma[p.id][kv.first] = sk;

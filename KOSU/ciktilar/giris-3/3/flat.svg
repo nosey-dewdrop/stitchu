@@ -23,8 +23,8 @@
       <path data-panel="on_roba" data-edge="shoulder" data-tur="seam" d="M -188.800 46.900 L -70.700 0.000"/>
       <path data-panel="on_roba" data-edge="neck_front" data-tur="cut" d="M 70.700 0.000 C 70.700 21.484 39.047 38.900 0.000 38.900"/>
       <path data-panel="on_roba" data-edge="neck_front" data-tur="cut" d="M -70.700 0.000 C -70.700 21.484 -39.047 38.900 0.000 38.900"/>
-      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M 188.800 46.900 C 187.389 50.422 212.569 118.475 235.640 175.573"/>
-      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M -188.800 46.900 C -187.389 50.422 -212.569 118.475 -235.640 175.573"/>
+      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M 188.800 46.900 C 258.628 18.684 207.424 105.745 235.640 175.573"/>
+      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M -188.800 46.900 C -258.628 18.684 -207.424 105.745 -235.640 175.573"/>
       <path data-panel="kol" data-edge="underarm_front" data-tur="kol" d="M 235.209 174.507 L 235.137 187.997"/>
       <path data-panel="kol" data-edge="underarm_front" data-tur="kol" d="M -235.209 174.507 L -235.137 187.997"/>
       <path data-panel="kol" data-edge="hem" data-tur="kol" d="M 235.137 187.997 L 150.731 222.103"/>
@@ -49,8 +49,8 @@
       <path data-panel="arka_roba" data-edge="shoulder" data-tur="seam" d="M -188.800 46.900 L -70.700 0.000"/>
       <path data-panel="arka_roba" data-edge="neck_back" data-tur="cut" d="M 70.700 0.000 C 70.700 -11.046 39.047 -20.000 0.000 -20.000"/>
       <path data-panel="arka_roba" data-edge="neck_back" data-tur="cut" d="M -70.700 0.000 C -70.700 -11.046 -39.047 -20.000 0.000 -20.000"/>
-      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M 188.800 46.900 C 187.389 50.422 212.569 118.475 235.640 175.573"/>
-      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M -188.800 46.900 C -187.389 50.422 -212.569 118.475 -235.640 175.573"/>
+      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M 188.800 46.900 C 258.628 18.684 207.424 105.745 235.640 175.573"/>
+      <path data-panel="kol" data-edge="kapak_basi" data-tur="kapak" d="M -188.800 46.900 C -258.628 18.684 -207.424 105.745 -235.640 175.573"/>
       <path data-panel="kol" data-edge="underarm_front" data-tur="kol" d="M 235.209 174.507 L 235.137 187.997"/>
       <path data-panel="kol" data-edge="underarm_front" data-tur="kol" d="M -235.209 174.507 L -235.137 187.997"/>
       <path data-panel="kol" data-edge="hem" data-tur="kol" d="M 235.137 187.997 L 150.731 222.103"/>
