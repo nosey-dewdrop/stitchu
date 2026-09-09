@@ -64,8 +64,8 @@ Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus
 |---|---|---|
 | flat.svg | OK (data-ops=8) | 12739 |
 | flat.png | OK | 41815 |
-| kalip-36.svg | OK | 9821 |
-| kalip-36.png | OK | 45722 |
+| kalip-36.svg | OK | 10807 |
+| kalip-36.png | OK | 46683 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

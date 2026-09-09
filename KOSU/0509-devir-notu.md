@@ -134,3 +134,27 @@ UYARI — TEKRARLAR: chmod git nesnesi DEGIL, commit'te tasinmaz. Kosucu her alt
 basinda `--kilit` cagirdiginda GENIS listeyi acacagi icin H7 yeniden kizarir. Kalici
 cozum kosucu ile state'in tek kaynaga indirilmesidir; `0509-kosu.js` benim alanim disi,
 acikSorular'a yazildi.
+
+## A4 (9 Eyl, elle, Damla karari) — FLAT FASHION FLAT OLDU, MOTOR GERCEK OLCUYOR
+
+Ne yapmaya calisiyordum: Damla'nin tek olcutu — flat emsalin (flat-secim.md, deer-and-doe 13) yaninda ayni turden
+bir fashion flat gibi gorunsun; sonra sayilar (mm farki, flat_ayni_insan 34 -> 0, kalip ticari standart) ve A4'e
+devredilen motor kalemleri. Hepsi bu oturumda kapandi; hukum `KOSU/ciktilar/giris/HUKUM.md`, kontak
+`KOSU/ciktilar/giris/a4-kontak-tur3.png`, hakem `KOSU/ciktilar/hakem/A4/`.
+
+Ne degisti (3 tur, 3 commit): (1) `engine/src/flatsvg.cpp` bastan: gorunum = kat ekseni (cf/cb), kol koltukaltindan
+croquis kol ekseninde sarkan tup (genislik panel/pi, 07'de olculdu), kalinlik = dikis partnerinin gorunumu, croquis
+siluet olcum yolu. (2) Motor: `cozucu.pens.pensPayi` contract'a; pens agzi on/arka arkaPay ile ayri, etek kalca-bel;
+agiz dikisin ustune BINDIRILIYORDU (dikilen bel bedenden +40..80 mm) — cozPens agzi gecis yonunde acar, yan tepeyi
+kaydirir, yan dikisi dogrular, centikleri yeniden oturtur; supresyon kapisi EMILMEYEN'i olcer (0.00); gogus/kalca
+halkasi yatay kesit; siluet hedefi genislik birimi; grafciz COZULMUS grafi cizer (eskiden ham). (3) Kalip: kesim
+cizgisi pens agzini kopruler, etiket Bugra yazimi (EU 36, 1 cm - 3/8 in, #n/N). Kapi: flat_ayni_insan_check urun
+flat'lerini (giris/N/flat.svg) olcer, 34 pini kalkti (state.json kapandi=A4, 0509-kapi.sh H9/H10, sinyal.sh).
+
+Sonraki oturuma (karar ajani 9 Eyl): croquis yatay yasa (cevre/4) emsalden %7-8 genis — gogusYarimOverTorso emsal
+medyani 0.50 (n=4), bel 0.406 (n=6); bizde 0.538 / 0.437. A4'te DEGISTIRILMEDI (F1 gerekce zinciri, body_check (g),
+gen-contract, wasm_body_check bagli). Degistirilecekse: payda tanimi (nape mi SNP mi, 20 mm) sabitlensin, n>=8 kolsuz
+oturan flat beden bilgisiyle, cevre/4 x k (k ~ 0.93) omuz hukmuyle birlikte turetilsin. Ayrica: pens apeksi taban
+grafta koltukalti hizasinda (dart_*.1 to = landmark.underarm) — kalipta sivri uzun pens, taban geometrisi;
+vocab_reference_check bust +2 / hip +1 (KAPI B nitelik adi ve landmark.hip; beden referansi, arac siniri, A6 ilani).
+Kilit: elle calisma icin acildi, oturum sonunda A5IzinListesi ile kuruldu; muhur yenilendi.

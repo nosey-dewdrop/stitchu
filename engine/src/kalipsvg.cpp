@@ -3,6 +3,7 @@
 #include "kalipsvg.hpp"
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <sstream>
@@ -137,7 +138,21 @@ std::string kalipSVG(const Garment& g, const Body& body, const std::string& body
         pr.dp = p.seamAllowanceMM > 0 ? p.seamAllowanceMM : dpGovde;
         for (const Edge& e : p.edges)
             if (e.role.find("hem") != std::string::npos && p.seamAllowanceMM <= 0) pr.dp = std::max(pr.dp, dpEtek);
-        pr.kesimHatti = offsetOutline(pr.dikisHatti, pr.dp, p.onFold);
+        // KESIM HATTI (A4, 2026-09-09): dis halka pensi kesim cizgisinde KOPRULENIR — kesim hatti pens agzini
+        // duz gecer, bacaklar ic cizgi (katman 8) olarak durur. Eskiden V centigi 10 mm disari ofsetlenince iki
+        // bacak apekste kesisip X ciziyordu (olculdu: giris/1 kalip-36.png on_beden). Ticari kalip agzi kopruler.
+        std::vector<PathCommand> kesimTaban;
+        { bool ilk = true;
+          for (const Edge& e : p.edges) {
+              if (e.kind == "dartLeg") continue;
+              std::vector<PathCommand> ep = e.path(ctx);
+              for (const PathCommand& c : ep) {
+                  if (c.type == CmdType::Move) { if (ilk) { kesimTaban.push_back(c); ilk = false; } else if (!kesimTaban.empty()) { const Point son = kesimTaban.back().to; if (std::hypot(son.x - c.to.x, son.y - c.to.y) > 1e-6) kesimTaban.push_back(PathCommand::line(c.to)); } continue; }
+                  kesimTaban.push_back(c);
+              }
+          }
+          if (!kesimTaban.empty()) kesimTaban.push_back({CmdType::Close, {}, {}, {}}); }
+        pr.kesimHatti = offsetOutline(kesimTaban.empty() ? pr.dikisHatti : kesimTaban, pr.dp, p.onFold);
         if (p.onFold) pr.katHatti = foldLineOf(pr.dikisHatti);
         pr.kutu = bboxOf(pr.kesimHatti.empty() ? pr.dikisHatti : pr.kesimHatti);
         pr.dx = curX - pr.kutu.x;
@@ -250,14 +265,19 @@ std::string kalipSVG(const Garment& g, const Body& body, const std::string& body
             double tx = pr.kutu.x + pr.kutu.width * 0.5 + pr.dx;
             double ty = pr.kutu.y + pr.dy + pr.kutu.height * 0.22;
             const char* kesimTal = p.onFold ? "CUT 1X ON FOLD" : (p.cutCount >= 2 ? "CUT 2X MIRRORED" : "CUT 1X");
+            // ETIKET (A4): contract parcaEtiketi.satirlar sirasi ve Bugra yazimi — parca adi buyuk harf, beden 'EU 36',
+            // dikis payi cift birim (10 mm = 1 cm - 3/8 in), etek ucu payi varsa, parca numarasi.
+            std::string ad = p.id; for (char& ch : ad) { if (ch == '_') ch = ' '; else ch = static_cast<char>(std::toupper(static_cast<unsigned char>(ch))); }
+            std::string beden = bodyId;
+            if (bodyId == "gercek36") beden = "EU 36"; else if (bodyId.rfind("EU", 0) == 0) beden = "EU " + bodyId.substr(2);
+            auto payYaz = [](double mm) { char b[64]; if (std::fabs(mm - 10.0) < 1e-9) return std::string("1 cm - 3/8 in"); if (std::fabs(mm - 30.0) < 1e-9) return std::string("3 cm - 1 1/8 in"); if (std::fabs(mm - 15.0) < 1e-9) return std::string("1.5 cm - 5/8 in"); std::snprintf(b, sizeof b, "%.0f mm", mm); return std::string(b); };
+            bool etekUcu = false; for (const Edge& e : p.edges) if (e.finish == "hem") etekUcu = true;
             s << "    <text data-katman=\"15\" x=\"" << f3(tx) << "\" y=\"" << f3(ty) << "\" text-anchor=\"middle\""
-              << " font-size=\"" << f3(tParcaAdi) << "\" fill=\"#111111\" stroke=\"none\">" << esc(p.id) << "</text>\n";
-            const std::string satirlar[3] = {
-                std::string(kesimTal) + (p.cutCount > 1 && !p.onFold ? "" : ""),
-                bodyId,
-                "Seam Allowance " + f3(pr.dp) + " mm"
-            };
-            for (int i = 0; i < 3; ++i)
+              << " font-size=\"" << f3(tParcaAdi) << "\" fill=\"#111111\" stroke=\"none\">" << esc(ad) << "</text>\n";
+            std::vector<std::string> satirlar = { std::string(kesimTal), beden, "Seam Allowance " + payYaz(dpGovde) };
+            if (etekUcu) satirlar.push_back("For Hem " + payYaz(dpEtek));
+            satirlar.push_back("#" + std::to_string(&p - &g.panels[0] + 1) + " / " + std::to_string(g.panels.size()));
+            for (std::size_t i = 0; i < satirlar.size(); ++i)
                 s << "    <text data-katman=\"15\" x=\"" << f3(tx) << "\" y=\"" << f3(ty + tGovde * 1.5 * (i + 1))
                   << "\" text-anchor=\"middle\" font-size=\"" << f3(tGovde) << "\" fill=\"#111111\" stroke=\"none\">"
                   << esc(satirlar[i]) << "</text>\n";

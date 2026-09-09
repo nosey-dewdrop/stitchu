@@ -727,7 +727,9 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
         // 425 mm = yan dikis boyu). Simdi: halkaya uye her panelin konturu landmark y'sinde kesilir, |xmax - xmin|
         // toplanir (yarim giysi). Kenar listesi uyeligi ve kavsak kapanmasini belirlemeye devam eder.
         std::string kesitNot;
-        { const std::string lm = ring.role == "bust" ? "landmark.bustLine" : ring.role == "hip" ? "landmark.hip" : "";
+        { // halka rolu -> beden cevresi ("girth." + rol) -> landmark (Body::landmarkOfRing); bel halkasi (waist_ring) ve
+          // landmark'siz roller (hem, neck, armhole, sleeve_hem) kesit almaz — giysi sozcugu ile dallanma yok
+          const std::string lm = ring.role == "waist_ring" ? std::string() : Body::landmarkOfRing("girth." + ring.role);
           if (!lm.empty() && body.hasLandmark(lm)) {
               const double y = body.landmark(lm).y;
               std::set<std::string> uye; for (const EdgeRef& r : ring.edges) uye.insert(r.panel);
@@ -882,9 +884,14 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
             const double dikilen = bel->toplamMM * 2.0;   // yarim giysi -> tam cevre
             const double emilmeyen = dikilen - hedef;
             const double pensTam = pensToplam * 2.0;
-            std::string cift;
-            if (body.hasRing("girth.bust")) cift += "gogus-bel " + f2(body.ring("girth.bust") + easeB - hedef) + " mm";
-            if (body.hasRing("girth.hip")) cift += std::string(cift.empty() ? "" : ", ") + "kalca-bel " + f2(body.ring("girth.hip") + easeH - hedef) + " mm";
+            std::string cift;   // grafin govde halkalari (rol -> girth.<rol>, landmark'li) - bel: supresyon ciftleri
+            for (const Ring& rg : g.rings) {
+                const std::string hn = "girth." + rg.role;
+                if (rg.role == "waist_ring" || Body::landmarkOfRing(hn).empty() || !body.hasRing(hn)) continue;
+                double eR = 0; for (const Panel& p : g.panels) for (const RingEase& re : p.ease) if (re.ring == hn) eR = std::max(eR, re.mm);
+                cift += std::string(cift.empty() ? "" : ", ") + hn + "-bel " + f2(body.ring(hn) + eR - hedef) + " mm";
+            }
+            (void)easeB; (void)easeH;
             const bool ok = std::fabs(emilmeyen) <= tol.dikisUzunlukMM;
             H("supresyon", g.id,
               "dikilen bel " + f2(dikilen) + " mm (halka " + bel->ring + " x2) - hedef " + f2(hedef) + " (beden " + f2(body.ring("girth.waist")) + " + bolluk " + f2(easeW) + ") = EMILMEYEN " + f2(emilmeyen) + " mm, tolerans " + f2(tol.dikisUzunlukMM) + " | "

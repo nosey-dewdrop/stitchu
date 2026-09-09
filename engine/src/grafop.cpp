@@ -957,8 +957,8 @@ CozumSonucu cozPens(const Garment& g, const Body& body, bool onArkaEsit,
     // agiz da degisir ve olcum gercekten olcuye baglanir.
     //
     // PENS PAYI ve HALKA CIFTI (A4, 2026-09-09; contract cozucu.pens): pensPayi contract'tan (eski kPensPayi
-    // sabiti tasindi). Her pensin halka cifti PANEL UYELIGINDEN okunur: rolu 'hip' olan halkaya uye panel
-    // (etek) hip - bel supresyonunu emer, obur paneller bust - bel. ON/ARKA AYRI: supresyon bedenin
+    // sabiti tasindi). Her pensin halka cifti PANEL UYELIGINDEN okunur: panelin uye oldugu landmark'li govde
+    // halkasi (bele en yakin olani) ust halkadir; etek kalca - bel, beden gogus - bel supresyonunu emer. ON/ARKA AYRI: supresyon bedenin
     // arkaPay'iyla bolunur (arka = ust x arkaPay(ust) - alt x arkaPay(alt), on = kalan); on ve arka pens
     // agzi bu yuzden farkli cikar, uydurulan on/arka sayisi yok. Yarim panel kendi tarafinin yarisini alir.
     const double pensPayi = sctx.pensPayi;
@@ -973,9 +973,20 @@ CozumSonucu cozPens(const Garment& g, const Body& body, bool onArkaEsit,
         for (const Edge& e : p.edges) if (e.kind == "seam" && e.from.xSifir() && e.to.xSifir()) { if (e.role.rfind("cb", 0) == 0) return std::string("arka"); if (e.role.rfind("cf", 0) == 0) return std::string("on"); }
         return std::string();
     };
-    auto panelUstHalka = [&](const std::string& panelId) {   // "girth.hip" (etek) | "girth.bust"
-        for (const Ring& r : g.rings) if (r.role == "hip") for (const EdgeRef& ref : r.edges) if (ref.panel == panelId) return std::string("girth.hip");
-        return std::string("girth.bust");
+    auto panelUstHalka = [&](const std::string& panelId) {   // panelin uye oldugu, landmark'li, bel disi govde halkasi (bele en yakini)
+        std::string sec; double enYakin = 1e300;
+        const double belY = body.hasLandmark("landmark.waist") ? body.landmark("landmark.waist").y : 0.0;
+        for (const Ring& r : g.rings) {
+            const std::string hn = "girth." + r.role;
+            if (r.role == "waist_ring" || !body.hasRing(hn)) continue;
+            const std::string lm = Body::landmarkOfRing(hn);
+            if (lm.empty() || !body.hasLandmark(lm)) continue;
+            bool uye = false; for (const EdgeRef& ref : r.edges) if (ref.panel == panelId) uye = true;
+            if (!uye) continue;
+            const double d = std::fabs(body.landmark(lm).y - belY);
+            if (d < enYakin) { enYakin = d; sec = hn; }
+        }
+        return sec.empty() ? std::string("girth.bust") : sec;   // uyelik yoksa govde ust halkasi (eski davranis)
     };
     struct Anahtar { std::string ust, taraf; };
     std::vector<Anahtar> anahtar;

@@ -16,7 +16,7 @@
 //      ust dikis izi (kesikli) yalniz bitirmeli kesim kenarinda (hem/faced). Pens tek cizgi
 //      (agiz ortasi -> apeks), agiz kopru cizgisiyle kapanir. Centik flat'te yoktur.
 //   4. CROQUIS SILUETI olcum yolu: her gorunumde Body landmark'larindan (neckBase, shoulderTip,
-//      underarm, bustLine, underbust, waist, highHip, hip) cizilen gorunmez yol
+//      koltukalti, gogus hatti, gogus alti, bel, ust kalca, kalca) cizilen gorunmez yol
 //      (data-rol="siluet"); KAPI B (flat_ayni_insan_check) bel/gogus/kalca yarimini oradan olcer.
 //      Giysi degil BEDEN olculur: HEDEF 5 "ayni insan" iddiasi giysinin bollugundan bagimsizdir.
 //   Koordinat: gorunum grubu <g transform="translate(gx 0)">, grup ici x=0 CF/CB, y=0 omuz cizgisi

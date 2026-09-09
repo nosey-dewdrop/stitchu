@@ -1,10 +1,10 @@
 {
  "kirmizi": 5,
  "fails": [
-  "centik:bel @0.3300",
   "dikis_uzunluk:bel",
   "dikis_zincir:kol_oyugu",
   "halka_kapanma:kol_oyugu_halka (armhole)",
-  "kendini_kesme:kol_bandi"
+  "kendini_kesme:kol_bandi",
+  "supresyon:P2-ayrik-panelli-buzgulu-kol"
  ]
 }

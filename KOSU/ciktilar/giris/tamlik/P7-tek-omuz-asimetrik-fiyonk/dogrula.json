@@ -1,7 +1,6 @@
 {
- "kirmizi": 13,
+ "kirmizi": 12,
  "fails": [
-  "centik:bel @0.3300",
   "dikis_uzunluk:kol_oyugu",
   "dikis_uzunluk:kol_oyugu_2",
   "halka_kapanma:bel_halka (waist_ring)",
