@@ -191,7 +191,9 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
             for (Point q : { eval(e.from, ctxs[p.id]), eval(e.to, ctxs[p.id]) }) { xcMin = std::min(xcMin, q.x); xcMax = std::max(xcMax, q.x); yBic = std::max(yBic, q.y); }
         }
         if (!(xcMax > xcMin)) continue;
-        const double wB = (xcMax - xcMin) / kPi;
+        // croquis (manken): panel genisligi zaten izdusum (graf.cpp eval ringQuarter) -> tup capi = panel/2;
+        // gercek beden: panel = duz serilmis cevre -> cap = cevre/pi
+        const double wB = (xcMax - xcMin) / (body.id().rfind("croquis", 0) == 0 ? 2.0 : kPi);
         for (auto& kv : partnerPts) {
             Point S = kv.second.front(), U = kv.second.front();
             for (Point q : kv.second) { if (q.y < S.y) S = q; if (q.y > U.y) U = q; }

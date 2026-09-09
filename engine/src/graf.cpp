@@ -291,7 +291,16 @@ Point eval(const Anchor& a, const EvalCtx& ctx) {
         const double G = body.ring(ring) + ctx.ringEase(ring);
         const double backFrac = ctx.onArkaEsit ? 0.5 : body.ringBackFrac(ring);
         const double pay = a.xOf == "ringFront" ? (1.0 - backFrac) : a.xOf == "ringBack" ? backFrac : 0.5;
-        baseX = G * pay / 2.0;
+        if (body.id().rfind("croquis", 0) == 0) {
+            // CROQUIS = MANKEN USTUNDE IZDUSUM (A4, 2026-09-09, Damla: "kutuk gibi bel"): flat'te giysi genisligi duz
+            // serilmis cevre/4 DEGIL, giyilmis halin on izdusumu — bedenin kesit yari genisligi x (1 + bolluk/cevre).
+            // Kalip (gercek36) cevre/4 ile kesilmeye devam eder. Kesit orani olmayan halka (kol): daire kesiti, cap = cevre/pi.
+            double hw = body.ringHalfWidth(ring);
+            if (!(hw == hw) || hw <= 0) hw = body.ring(ring) / (2.0 * 3.14159265358979323846);
+            baseX = hw * (G / body.ring(ring)) * (2.0 * pay);
+        } else {
+            baseX = G * pay / 2.0;
+        }
     } else if (a.xOf == "widthHalf") {
         // beden GENISLIK olcusunun yarisi (width.crossFront gibi): width alani olcunun adini tasir (karar 3)
         if (a.width.empty() || !body.hasScalar(a.width))
