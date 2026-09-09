@@ -53,12 +53,12 @@
   "kol": {
    "tip": "kapak",
    "dis": [
-    "shoulderTip*1.16",
-    "shoulderTip+92"
+    "shoulderTip*1.13",
+    "shoulderTip+78"
    ],
    "ic": [
-    "bustLine*1.05",
-    "underarm+35"
+    "bustLine*1.03",
+    "underarm-12"
    ]
   },
   "ogeler": [
@@ -162,12 +162,12 @@
   "kol": {
    "tip": "kapak",
    "dis": [
-    "shoulderTip*1.16",
-    "shoulderTip+92"
+    "shoulderTip*1.13",
+    "shoulderTip+78"
    ],
    "ic": [
-    "bustLine*1.05",
-    "underarm+35"
+    "bustLine*1.03",
+    "underarm-12"
    ]
   },
   "ogeler": [

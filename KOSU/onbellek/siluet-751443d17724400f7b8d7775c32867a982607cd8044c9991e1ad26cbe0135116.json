@@ -127,11 +127,11 @@
    {
     "tip": "fiyonk",
     "ayna": false,
-    "boy": 16,
+    "boy": 26,
     "noktalar": [
      [
       "neckFront*0",
-      "underarm-36"
+      "underarm-34"
      ]
     ]
    },
@@ -142,29 +142,37 @@
     "noktalar": [
      [
       "neckFront*0",
-      "underarm-30"
+      "underarm-22"
      ]
     ]
    },
    {
     "tip": "drape",
-    "bombe": 5,
+    "bombe": 4,
     "noktalar": [
      [
-      "hip*0.30",
-      "underbust+70"
+      "bustLine*0.30",
+      "underbust-4"
      ],
      [
-      "hip*0.42",
+      "hip*0.40",
       "hip+150"
      ],
      [
-      "hip*0.78",
-      "underbust+50"
+      "bustLine*0.72",
+      "underbust-4"
      ],
      [
-      "hip*0.95",
-      "hip+120"
+      "hip*0.92",
+      "hip+110"
+     ],
+     [
+      "bustLine*0.50",
+      "underbust-4"
+     ],
+     [
+      "hip*0.62",
+      "hip+60"
      ]
     ]
    }
@@ -262,6 +270,28 @@
      [
       "shoulderTip*0.80",
       "shoulderTip..neckBase@0.5+6"
+     ]
+    ]
+   },
+   {
+    "tip": "drape",
+    "bombe": 4,
+    "noktalar": [
+     [
+      "bustLine*0.30",
+      "underbust-4"
+     ],
+     [
+      "hip*0.40",
+      "hip+150"
+     ],
+     [
+      "bustLine*0.72",
+      "underbust-4"
+     ],
+     [
+      "hip*0.92",
+      "hip+110"
      ]
     ]
    }

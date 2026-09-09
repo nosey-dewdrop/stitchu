@@ -53,18 +53,18 @@
   "kol": {
    "tip": "puf",
    "dis": [
-    "shoulderTip*1.34",
-    "shoulderTip+150"
+    "shoulderTip*1.15",
+    "shoulderTip+118"
    ],
    "ic": [
     "bustLine*1.12",
-    "underarm+45"
+    "underarm+28"
    ],
    "bant": true,
    "bantMM": 12,
    "buzgu": true,
-   "sisme": 40,
-   "kubbe": 44,
+   "sisme": 52,
+   "kubbe": 42,
    "firfir": true
   },
   "ogeler": [
@@ -97,7 +97,7 @@
    },
    {
     "tip": "bebeYaka",
-    "genislik": 42
+    "genislik": 50
    },
    {
     "tip": "pat",
@@ -178,18 +178,18 @@
   "kol": {
    "tip": "puf",
    "dis": [
-    "shoulderTip*1.34",
-    "shoulderTip+150"
+    "shoulderTip*1.15",
+    "shoulderTip+118"
    ],
    "ic": [
     "bustLine*1.12",
-    "underarm+45"
+    "underarm+28"
    ],
    "bant": true,
    "bantMM": 12,
    "buzgu": true,
-   "sisme": 40,
-   "kubbe": 44,
+   "sisme": 52,
+   "kubbe": 42,
    "firfir": true
   },
   "ogeler": [
@@ -208,23 +208,9 @@
     ]
    },
    {
-    "tip": "dikis",
-    "ayna": false,
-    "catmull": true,
-    "noktalar": [
-     [
-      "neckBase*-1.05",
-      "neckBase+4"
-     ],
-     [
-      "nape*0",
-      "nape+58"
-     ],
-     [
-      "neckBase*1.05",
-      "neckBase+4"
-     ]
-    ]
+    "tip": "bebeYaka",
+    "genislik": 50,
+    "arka": true
    }
   ]
  },

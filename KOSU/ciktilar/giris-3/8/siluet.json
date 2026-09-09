@@ -27,7 +27,7 @@
    ],
    "koltukalti": [
     "bustLine*1.02",
-    "underarm+15"
+    "underarm+2"
    ],
    "gogus": [
     "bustLine*1.04",
@@ -43,7 +43,7 @@
    ],
    "etekYan": [
     "highHip*1.18",
-    "highHip+25"
+    "highHip+33"
    ],
    "etekOrta": [
     "hip*0",
@@ -142,7 +142,7 @@
    ],
    "koltukalti": [
     "bustLine*1.02",
-    "underarm+15"
+    "underarm+2"
    ],
    "gogus": [
     "bustLine*1.04",
@@ -158,7 +158,7 @@
    ],
    "etekYan": [
     "highHip*1.18",
-    "highHip+25"
+    "highHip+33"
    ],
    "etekOrta": [
     "hip*0",

@@ -110,16 +110,20 @@
    {
     "tip": "buzgu",
     "yon": "yukari",
-    "boy": 22,
-    "aralik": 9,
+    "boy": 20,
+    "aralik": 8,
     "noktalar": [
      [
-      "bustLine*0.30",
-      "underbust-34"
+      "bustLine*0.22",
+      "underbust-30"
      ],
      [
-      "bustLine*0.78",
-      "underbust-30"
+      "bustLine*0.55",
+      "underbust-33"
+     ],
+     [
+      "bustLine*0.88",
+      "underbust-18"
      ]
     ]
    }
@@ -202,8 +206,24 @@
       "hip"
      ]
     ]
+   },
+   {
+    "tip": "dikis",
+    "ayna": false,
+    "noktalar": [
+     [
+      "bustLine*-1.05",
+      "underbust-5"
+     ],
+     [
+      "bustLine*1.05",
+      "underbust-5"
+     ]
+    ]
    }
   ]
  },
- "eksik": []
+ "eksik": [
+  "arka gogus alti dikisi: arka fotografta belirsiz, on dikisin devami olarak duz cizildi"
+ ]
 }

@@ -24,7 +24,7 @@
    "askiUst": null,
    "omuzUc": [
     "bustLine*1.12",
-    "shoulderTip+92"
+    "shoulderTip+100"
    ],
    "koltukalti": [
     "bustLine*1.06",
@@ -81,45 +81,6 @@
     ]
    },
    {
-    "tip": "drape",
-    "ayna": false,
-    "bombe": 6,
-    "noktalar": [
-     [
-      "bustLine*0.45",
-      "underarm+70"
-     ],
-     [
-      "bustLine*1.02",
-      "waist-60"
-     ],
-     [
-      "bustLine*0.55",
-      "waist-70"
-     ],
-     [
-      "waist*1.08",
-      "waist+10"
-     ],
-     [
-      "waist*0.60",
-      "waist+10"
-     ],
-     [
-      "hip*0.98",
-      "highHip+40"
-     ],
-     [
-      "waist*0.55",
-      "waist+80"
-     ],
-     [
-      "hip*1.0",
-      "hip+10"
-     ]
-    ]
-   },
-   {
     "tip": "buzgu",
     "ayna": false,
     "yon": "yukari",
@@ -133,6 +94,45 @@
      [
       "waist*1.12",
       "waist"
+     ]
+    ]
+   },
+   {
+    "tip": "drape",
+    "ayna": false,
+    "bombe": 6,
+    "noktalar": [
+     [
+      "bustLine*1.04",
+      "bustLine+30"
+     ],
+     [
+      "bustLine*0.45",
+      "underarm+90"
+     ],
+     [
+      "bustLine*1.05",
+      "underbust+20"
+     ],
+     [
+      "bustLine*0.50",
+      "waist-40"
+     ],
+     [
+      "waist*1.12",
+      "waist"
+     ],
+     [
+      "waist*0.55",
+      "waist+40"
+     ],
+     [
+      "waist*1.10",
+      "waist+60"
+     ],
+     [
+      "hip*0.60",
+      "highHip+50"
      ]
     ]
    }
@@ -154,7 +154,7 @@
    "askiUst": null,
    "omuzUc": [
     "bustLine*1.12",
-    "shoulderTip+92"
+    "shoulderTip+100"
    ],
    "koltukalti": [
     "bustLine*1.06",
@@ -210,7 +210,8 @@
      ]
     ]
    }
-  ]
+  ],
+  "aynala": true
  },
  "eksik": [
   "arka gorunmuyor: onden turetildi (band aynali)"

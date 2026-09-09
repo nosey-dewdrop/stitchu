@@ -93,11 +93,11 @@
     "tip": "kesikli",
     "noktalar": [
      [
-      "hip*1.07",
+      "hip*1.085",
       "hip-40"
      ],
      [
-      "hip*0.98",
+      "hip*1.01",
       "hip-40"
      ]
     ]
@@ -228,6 +228,39 @@
      [
       "hip*0.42",
       "knee..ankle@0.30+3"
+     ]
+    ]
+   },
+   {
+    "tip": "firfir",
+    "ayna": false,
+    "adim": 12,
+    "derinlik": 5,
+    "noktalar": [
+     [
+      "hip*-1.55",
+      "knee..ankle@0.30+4"
+     ],
+     [
+      "hip*0",
+      "knee..ankle@0.30+10"
+     ],
+     [
+      "hip*1.55",
+      "knee..ankle@0.30+4"
+     ]
+    ]
+   },
+   {
+    "tip": "kesikli",
+    "noktalar": [
+     [
+      "hip*1.085",
+      "hip-40"
+     ],
+     [
+      "hip*1.01",
+      "hip-40"
      ]
     ]
    }

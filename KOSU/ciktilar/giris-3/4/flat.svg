@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 996.0 933.2" width="996.0mm" height="933.2mm" data-siluet="v1" data-kaynak="854f4b139290f04a2db491e6f48d4896cedd6a01e6d04d02e2ddce8ecc9447c6">
-<rect width="996.0" height="933.2" fill="#fff"/>
-<g transform="translate(259.0 38.0)" data-gorunum="on">
-<path d="M 0.0 30.9 C 72.7 30.9 118.9 23.3 132.2 21.1 L 188.8 46.9 L 137.4 213.3 C 137.6 213.3 141.0 187.8 138.7 213.3 C 136.4 238.8 116.3 361.7 119.2 414.4 C 122.1 467.1 154.4 574.4 161.6 629.5 C 168.8 684.6 173.9 821.3 175.7 849.2 Q 87.9 855.2 0.0 849.2 Q -87.9 855.2 -175.7 849.2 C -173.9 821.3 -168.8 684.6 -161.6 629.5 C -154.4 574.4 -122.1 467.1 -119.2 414.4 C -116.3 361.7 -136.4 238.8 -138.7 213.3 C -141.0 187.8 -137.6 213.3 -137.4 213.3 L -188.8 46.9 L -132.2 21.1 C -118.9 23.3 -72.7 30.9 0.0 30.9 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
-<path d="M 188.8 46.9 C 205.4 44.9 222.6 88.3 219.0 138.9 Q 183.5 148.9 140.1 233.3 L 137.4 213.3 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
-<path d="M -188.8 46.9 C -205.4 44.9 -222.6 88.3 -219.0 138.9 Q -183.5 148.9 -140.1 233.3 L -137.4 213.3 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 973.4 933.2" width="973.4mm" height="933.2mm" data-siluet="v1" data-kaynak="854f4b139290f04a2db491e6f48d4896cedd6a01e6d04d02e2ddce8ecc9447c6">
+<rect width="973.4" height="933.2" fill="#fff"/>
+<g transform="translate(253.3 38.0)" data-gorunum="on">
+<path d="M 0.0 30.9 C 72.7 30.9 118.9 23.3 132.2 21.1 L 188.8 46.9 L 137.4 213.3 C 135.1 238.8 116.1 361.7 119.2 414.4 C 122.2 467.1 154.4 574.4 161.6 629.5 C 168.8 684.6 173.9 821.3 175.7 849.2 Q 87.9 855.2 0.0 849.2 Q -87.9 855.2 -175.7 849.2 C -173.9 821.3 -168.8 684.6 -161.6 629.5 C -154.4 574.4 -122.2 467.1 -119.2 414.4 C -116.1 361.7 -135.1 238.8 -137.4 213.3 C -137.4 155.1 -170.8 105.1 -188.8 46.9 L -132.2 21.1 C -118.9 23.3 -72.7 30.9 0.0 30.9 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M 188.8 46.9 C 202.3 44.9 216.3 82.0 213.3 124.9 Q 179.2 134.9 137.4 186.3 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M -188.8 46.9 C -202.3 44.9 -216.3 82.0 -213.3 124.9 Q -179.2 134.9 -137.4 186.3 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
 <path d="M 117.1 18.8 C 113.5 51.2 104.5 147.4 95.7 213.3 C 86.8 279.2 64.6 307.9 63.8 414.4 C 63.1 520.9 86.5 779.2 91.0 852.2" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 <path d="M -117.1 18.8 C -113.5 51.2 -104.5 147.4 -95.7 213.3 C -86.8 279.2 -64.6 307.9 -63.8 414.4 C -63.1 520.9 -86.5 779.2 -91.0 852.2" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 <path d="M 29.7 32.9 L 30.9 852.2 M 55.7 32.9 L 56.9 852.2" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
@@ -17,13 +17,13 @@
 <circle cx="43.8" cy="711.3" r="6.5" fill="#fff" stroke="#000" stroke-width="1"/><circle cx="41.8" cy="711.3" r="0.9" fill="#000"/><circle cx="45.7" cy="711.3" r="0.9" fill="#000"/>
 <circle cx="43.9" cy="804.2" r="6.5" fill="#fff" stroke="#000" stroke-width="1"/><circle cx="42.0" cy="804.2" r="0.9" fill="#000"/><circle cx="45.9" cy="804.2" r="0.9" fill="#000"/>
 </g>
-<text x="259.0" y="921.2" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ON</text>
-<g transform="translate(737.0 38.0)" data-gorunum="arka">
-<path d="M 0.0 2.0 C 72.7 2.0 118.9 16.9 132.2 21.1 L 188.8 46.9 L 137.4 213.3 C 137.6 213.3 141.0 187.8 138.7 213.3 C 136.4 238.8 116.3 361.7 119.2 414.4 C 122.1 467.1 154.4 574.4 161.6 629.5 C 168.8 684.6 173.9 821.3 175.7 849.2 Q 87.9 855.2 0.0 849.2 Q -87.9 855.2 -175.7 849.2 C -173.9 821.3 -168.8 684.6 -161.6 629.5 C -154.4 574.4 -122.1 467.1 -119.2 414.4 C -116.3 361.7 -136.4 238.8 -138.7 213.3 C -141.0 187.8 -137.6 213.3 -137.4 213.3 L -188.8 46.9 L -132.2 21.1 C -118.9 16.9 -72.7 2.0 0.0 2.0 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
-<path d="M 188.8 46.9 C 205.4 44.9 222.6 88.3 219.0 138.9 Q 183.5 148.9 140.1 233.3 L 137.4 213.3 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
-<path d="M -188.8 46.9 C -205.4 44.9 -222.6 88.3 -219.0 138.9 Q -183.5 148.9 -140.1 233.3 L -137.4 213.3 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="253.3" y="921.2" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ON</text>
+<g transform="translate(720.0 38.0)" data-gorunum="arka">
+<path d="M 0.0 2.0 C 72.7 2.0 118.9 16.9 132.2 21.1 L 188.8 46.9 L 137.4 213.3 C 135.1 238.8 116.1 361.7 119.2 414.4 C 122.2 467.1 154.4 574.4 161.6 629.5 C 168.8 684.6 173.9 821.3 175.7 849.2 Q 87.9 855.2 0.0 849.2 Q -87.9 855.2 -175.7 849.2 C -173.9 821.3 -168.8 684.6 -161.6 629.5 C -154.4 574.4 -122.2 467.1 -119.2 414.4 C -116.1 361.7 -135.1 238.8 -137.4 213.3 C -137.4 155.1 -170.8 105.1 -188.8 46.9 L -132.2 21.1 C -118.9 16.9 -72.7 2.0 0.0 2.0 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M 188.8 46.9 C 202.3 44.9 216.3 82.0 213.3 124.9 Q 179.2 134.9 137.4 186.3 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M -188.8 46.9 C -202.3 44.9 -216.3 82.0 -213.3 124.9 Q -179.2 134.9 -137.4 186.3 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
 <path d="M 117.1 18.8 C 112.0 51.2 95.6 147.4 86.7 213.3 C 77.8 279.2 63.1 307.9 63.8 414.4 C 64.6 520.9 86.5 779.2 91.0 852.2" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 <path d="M -117.1 18.8 C -112.0 51.2 -95.6 147.4 -86.7 213.3 C -77.8 279.2 -63.1 307.9 -63.8 414.4 C -64.6 520.9 -86.5 779.2 -91.0 852.2" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 </g>
-<text x="737.0" y="921.2" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ARKA</text>
+<text x="720.0" y="921.2" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ARKA</text>
 </svg>
