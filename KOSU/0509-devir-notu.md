@@ -238,3 +238,21 @@ giyside etek CB fermuari da kapatildi (arka_orta_etek 0..0.01). wasm bundle yeni
 
 A5 ICIN (koşucu args baslat A5; brief 0509-kosu.md): giris-3/1..11 ve giris-2/1..4 teslimleri = A5 edit setinin girdisi; edit = ops.json'a
 op ekleme (grafuygula), onizleme = grafciz --ops. Motor bulgulari yukarida (bumpSeamRatio zinciri, gather homotetisi, fitLength yon).
+
+## A4 YENIDEN (10 Eyl, Damla karari 0-K.10) — sonraki oturum BURADAN
+
+Tur12 GECMEDI (Damla): 11 satirin 11'i ayni kusur; flat kaliptan (taban elbise + cevre/4 + pens) turetiliyordu. Yeni hat:
+- OKUMA: contract/siluet-v1.json semasi; KOSU/onbellek/siluet-<sha>.json (11 Etsy). Nokta = manken landmark'ina oran
+  ('bustLine*1.04', 'hip..knee@0.55'); kontur (yakaOrta, yakaOmuz, askiUst, omuzUc, koltukalti, gogus, bel, kalca, etekYan,
+  etekOrta), yakaBicim, aski, kol {kapak|puf}, ogeler (dikis, kesikli, buzgu, pens, dugme, pat, fiyonk, bag, drape, bebeYaka,
+  firfir, fermuar, cepKapagi), konturSol (asimetri), oturma {gogus, bel}, eksik[].
+- FLAT: KOSU/siluet-ciz.mjs -> KOSU/siluet-uret.mjs <set> [no] -> flat.svg/png + siluet.json. Motor flat'e girmez.
+- KALIP: KOSU/siluet-kalip.mjs <set> [no]: ops-topoloji.json (tur6 op'lari, dondu) + extendTo etek ucu (siluet etekOrta,
+  gercek36 landmark'inda) + flare (etekYan/kalca) + hedefler.json (bel/gogus, kalca/gogus flat genislik orani, kaynak enGenis)
+  -> grafuygula --hedef -> graf.json -> grafciz kalip -> kalip-36.svg/png. Sinir: etek ucu kalcanin ustune cikamiyor (taban kalca
+  halkasi) -> 8/11 kalipta kalcaya kirpildi, kaynak-yolu.txt KIRPMA satiri, kontakta turuncu.
+- YANLISLAMA: node KOSU/siluet-yanlisla.mjs giris-3 (ayni sha -> bayt-ayni svg; 55 ikili farkli imza; bol giysi oturtulunca
+  kirmizi; aski omzu asinca kirmizi). 4/4 gecti.
+- KONTAK: node KOSU/0509-a4-kontak.mjs giris-3 <tur>; sayilar: flat genislikleri (croquis36) + kalip halkalari (gercek36).
+- HAKEM: kor, yalniz 11 flat.png, her tur web; KOSU/ciktilar/hakem/A4/tur13-hakem6.md ... 11/11 EVET iki tur ust uste = A4 biter.
+Eski hat (0509-a3-uret/teslim, grafciz flat) A5 icin duruyor ama flat artik oradan uretilmez.
