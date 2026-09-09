@@ -159,6 +159,9 @@ bh += `};\ninline constexpr BodyScalarRow kBodyGradeConst[] = {\n`;
 for (const [k, v] of Object.entries(grade._sabitler)) if (typeof v === 'number') bh += `    {"${k}", ${bnum(v)}},\n`;
 bh += `};\n\n`;
 const co = bodyV1.bedenler.croquis36.croquisOranlar;
+// A4 manken (2026-09-09): croquis36 = manken olculeri (90-60-90, 178) — body.cpp croquisOf buradan okur
+{ const mk = bodyV1.bedenler.croquis36.manken; if (!mk || typeof mk['girth.bust'] !== 'number' || typeof mk.boyMM !== 'number' || typeof mk.gercekBoyMM !== 'number') throw new Error('body-v1 croquis36.manken {girth.bust, girth.waist, girth.hip, boyMM, gercekBoyMM} yok');
+  bh += `inline constexpr BodyScalarRow kCroquisManken[] = {\n`; for (const [k, v] of Object.entries(mk)) if (typeof v === 'number') bh += `    {"${k}", ${bnum(v)}},\n`; bh += `};\n`; }
 bh += `inline constexpr BodyScalarRow kCroquisOran[] = {\n`;
 for (const [k, v] of Object.entries(co)) if (typeof v === 'number') bh += `    {"${k}", ${bnum(v)}},\n`;
 bh += `};\n\ninline constexpr BodyScalarRow kBodyKesitOran[] = {\n`;

@@ -208,6 +208,19 @@ static void writeSvg(const std::string& path) {
 }
 
 int main(int argc, char** argv) {
+    // A4 manken (2026-09-09): `body_check dump` -> croquisOf(graded(EU36)) JSON (contract croquis36 sayilari buradan yazilir)
+    if (argc > 1 && std::string(argv[1]) == "dump") {
+        const Body c = Body::croquisOf(Body::graded("EU36"));
+        std::printf("{\"landmarklar\":{");
+        bool ilk = true;
+        for (const auto& n : c.landmarkNames()) { const BodyPoint p = c.landmark(n); std::printf("%s\"%s\":[%.1f,%.1f]", ilk ? "" : ",", n.c_str(), p.x, p.y); ilk = false; }
+        std::printf("},\"halkalar\":{"); ilk = true;
+        for (const auto& n : c.ringNames()) { if (!c.hasRing(n)) continue; std::printf("%s\"%s\":[%.1f,%s]", ilk ? "" : ",", n.c_str(), c.ring(n), std::isnan(c.ringBackFrac(n)) ? "null" : std::to_string(c.ringBackFrac(n)).c_str()); ilk = false; }
+        std::printf("},\"skalar\":{"); ilk = true;
+        for (const auto& n : c.scalarNames()) { if (!c.hasScalar(n)) continue; std::printf("%s\"%s\":%.1f", ilk ? "" : ",", n.c_str(), c.scalar(n)); ilk = false; }
+        std::printf("}}\n");
+        return 0;
+    }
     std::printf("body_check — contract/body-v1.json (body.gen.hpp) vs engine/src/body.cpp\n");
     const double tol = stitchu::contract::kBodyKapiToleransMM;
     const Body g = Body::fromContract("gercek36"), c = Body::fromContract("croquis36");
@@ -246,10 +259,12 @@ int main(int argc, char** argv) {
     std::printf("(f) croquis36 bandlari (contract: figure-bands, sevkPoz -> kCroquisBand)\n");
     { auto band = [&](const char* name) { for (const auto& r : stitchu::contract::kCroquisBand) if (std::string(r.name) == name) return r; throw std::runtime_error(std::string("kCroquisBand yok: ") + name); };
       auto inBand = [&](const char* name, double v) { const auto r = band(name); ok(v >= r.lo && v <= r.hi, "croquis " + std::string(name) + " " + f1(v * (r.hi <= 1.0 ? 1000 : 1)) + (r.hi <= 1.0 ? "/1000" : "") + " in [" + f1(r.lo * (r.hi <= 1.0 ? 1000 : 1)) + "," + f1(r.hi * (r.hi <= 1.0 ? 1000 : 1)) + "] (" + r.kaynak + ")"); };
-      inBand("waistHalfOverBustHalf", c.landmark("landmark.waist").x / c.landmark("landmark.bustLine").x);
-      inBand("bustHalfOverHipHalf", c.landmark("landmark.bustLine").x / c.landmark("landmark.hip").x);
-      inBand("shoulderTipXOverBustHalf", c.landmark("landmark.shoulderTip").x / c.landmark("landmark.bustLine").x);
-      inBand("shoulderSlopeDeg", c.scalar("angle.shoulderSlope"));
+      // A4 MANKEN (2026-09-09): croquis36 = 90-60-90 / 178 manken, gercek bedenle ayni kurulus. Sablon/emsal bandlari
+      // (kCroquisBand) KALKTI; olculen: manken cevreleri contract'la ayni, boy 1780, x = kesit yarimi (izdusum).
+      (void)inBand;
+      ok(std::fabs(c.ring("girth.bust") - 900.0) < 1e-9 && std::fabs(c.ring("girth.waist") - 600.0) < 1e-9 && std::fabs(c.ring("girth.hip") - 900.0) < 1e-9, "croquis36 manken cevreleri 900/600/900 (contract croquis36.manken)");
+      ok(std::fabs(c.scalar("length.stature") - 1780.0) < 1e-9, "croquis36 boy 1780 (manken 178 cm): " + f1(c.scalar("length.stature")));
+      ok(c.landmark("landmark.shoulderTip").x > c.landmark("landmark.bustLine").x, "croquis36 omuz ucu gogus yariminin DISINDA (izdusum, gercek bedenle ayni kural): " + f1(c.landmark("landmark.shoulderTip").x) + " > " + f1(c.landmark("landmark.bustLine").x));
       // croquis36 icin koltukalti/gogus hatti sirasi (b)'de contract'tan okunur; burada varsayim yazilmaz (karar ajani 1).
       ok(g.landmark("landmark.underarm").y < g.landmark("landmark.bustLine").y, "gercek koltukalti gogus hattinin USTUNDE (Aldrich armscye depth 206 < Brusttiefe)"); }
 
@@ -271,13 +286,12 @@ int main(int argc, char** argv) {
       ok(c.landmark("landmark.elbow").x >= cside && c.landmark("landmark.wrist").x >= cside,
          c.id() + ": kol ekseni elbow.x " + f1(c.landmark("landmark.elbow").x) + " / wrist.x " + f1(c.landmark("landmark.wrist").x) + " >= koltukalti yarimi " + f1(cside));
       std::printf("  [..] %s\n", stitchu::contract::kCroquisOmuzHukmu);
-      auto bolluk = [&](const std::string& ring) { for (const auto& r : stitchu::contract::kCroquisBolluk) if (ring == r.name) return r.v; return 0.0; };
-      // TEK GENISLIK YASASI: her girth landmark'i (bel ve gogus alti dahil) x == cevre/4 x (1 + bolluk); bolluk yalniz contract'ta yazili halkada
+      // A4 MANKEN: croquis x = kesit yari genisligi (ANSUR breadthOverGirth x cevre/2), gercek bedenle AYNI yasa; cevre/4 tup yasasi KALKTI
       for (const char* n : {"landmark.bustLine", "landmark.hip", "landmark.underarm", "landmark.underbust", "landmark.waist", "landmark.highHip"}) {
-          const std::string ring = Body::ringOfLandmark(n) == "girth.upperBust" ? "girth.bust" : Body::ringOfLandmark(n);
-          const double want = c.ring(ring) / 4.0 * (1.0 + bolluk(ring));
+          const std::string ring = Body::ringOfLandmark(n);
+          const double want = c.ringHalfWidth(ring);
           ok(std::fabs(c.landmark(n).x - want) <= 0.05 + 1e-9,
-             c.id() + ": " + std::string(n) + ".x " + f1(c.landmark(n).x) + " == " + ring + "/4 x (1+" + f1(bolluk(ring) * 100) + "%) = " + f1(want) + " (tek genislik yasasi)");
+             c.id() + ": " + std::string(n) + ".x " + f1(c.landmark(n).x) + " == kesit yarimi(" + ring + ") = " + f1(want) + " (izdusum yasasi, manken)");
       }
     }
 

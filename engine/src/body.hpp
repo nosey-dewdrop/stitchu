@@ -58,6 +58,7 @@ public:
     static bool ringHasBreadth(const std::string& ringName);     // breadthOverGirth.<halka> contract'ta var mi
     std::vector<std::string> landmarkNames() const;
     std::vector<std::string> ringNames() const;
+    std::vector<std::string> scalarNames() const;
 
     // Landmark'in ait oldugu halka adi ("landmark.waist" -> "girth.waist"); yoksa "". Landmark adlari contract/body-v1.json ile ayni: "landmark.<ad>" (karar ajani 4, namespace).
     static std::string ringOfLandmark(const std::string& landmark);
