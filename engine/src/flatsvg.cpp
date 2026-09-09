@@ -1,13 +1,36 @@
-// flatsvg.cpp — bkz. flatsvg.hpp. Cizim, GEOMETRI ICAT ETMEDEN, iki var olan katmandan turer:
-//   nokta  : graf.hpp eval (landmark + oran -> mm)
-//   yerlesim: grafdogrula.hpp dogrula(...).pozlar (dikis agaci BFS, ilan edilen eslesme)
+// flatsvg.cpp — bkz. flatsvg.hpp. GRAFTAN FASHION FLAT (0509 A4, 2026-09-09, Damla karari: "flat emsal
+// flat'lerin yanina konunca ayni turden bir fashion flat gibi gorunmeli; kalip parcalarinin kagida
+// serilmis hali DEGIL").
+//
+// KURALLAR (hepsi grafin kendi yapisindan ve Body'den okunur; giysi-tipi dali YOK):
+//   1. GORUNUM = KAT EKSENI. Panel x=0'da bir kat kenari ya da x=0 dikisi tasiyorsa (rol cf* -> on,
+//      cb* -> arka) o gorunumun paneli; kendi beden koordinatinda durur, x=0'da aynalanir.
+//   2. EKSENSIZ PANEL (kol gibi) DIKILDIGI GORUNUMLERDE SARKAR. Dikis partneri eksenli panelin
+//      kenarlari (kol oyugu) gorunumde S (en ust: omuz ucu) ve U (en alt: koltukalti) noktalarini
+//      verir. Tup, U'dan bedenin kol ekseni dogrultusunda (croquis: shoulderTip->wrist) asagi iner;
+//      gorunur genisligi panel genisligi / pi (tup capi: yandan bakilan silindir capini gosterir,
+//      duz serilmis yarimi degil — GIRDI/iyi-flat 07'de olculdu: kol gorunur genisligi 0.49 x
+//      gogus yarimi, cevre/pi ile uyumlu, cevre/2 ile degil). Kapak basi S->O disbukey kubik.
+//   3. CIZGI HIYERARSISI = DIKIS PARTNERININ GORUNUMU. Kenarin dikis partneri AYNI gorunumde
+//      ciziliyorsa ic dikis (ince), obur gorunumdeyse ya da kesim kenariysa siluet (kalin);
+//      ust dikis izi (kesikli) yalniz bitirmeli kesim kenarinda (hem/faced). Pens tek cizgi
+//      (agiz ortasi -> apeks), agiz kopru cizgisiyle kapanir. Centik flat'te yoktur.
+//   4. CROQUIS SILUETI olcum yolu: her gorunumde Body landmark'larindan (neckBase, shoulderTip,
+//      underarm, bustLine, underbust, waist, highHip, hip) cizilen gorunmez yol
+//      (data-rol="siluet"); KAPI B (flat_ayni_insan_check) bel/gogus/kalca yarimini oradan olcer.
+//      Giysi degil BEDEN olculur: HEDEF 5 "ayni insan" iddiasi giysinin bollugundan bagimsizdir.
+//   Koordinat: gorunum grubu <g transform="translate(gx 0)">, grup ici x=0 CF/CB, y=0 omuz cizgisi
+//   (neckBase), birim mm — contract/body-v1.json ayniInsan.svgNitelikleri.
+//
+// DETERMINIZM: ayni graf + ayni beden -> BAYT-AYNI SVG. Sayilar %.3f, sira grafin kendi sirasi.
 #include "flatsvg.hpp"
 
 #include <algorithm>
 #include <cmath>
-#include <functional>
 #include <cstdio>
+#include <functional>
 #include <map>
+#include <set>
 #include <sstream>
 
 #include "grafdogrula.hpp"
@@ -17,68 +40,41 @@ namespace graf {
 
 namespace {
 
+const double kPi = 3.14159265358979323846;
+
 std::string f3(double v) {
-    if (!(v == v)) return "0.000";        // NaN sessizce yayilmasin
-    if (v == 0.0) v = 0.0;                // -0 -> 0 (bayt-ayni cikti)
+    if (!(v == v)) return "0.000";
+    if (v == 0.0) v = 0.0;
     char b[48];
     std::snprintf(b, sizeof b, "%.3f", v);
     return b;
 }
 
+// Afin poz: x' = a x + b y + tx, y' = c x + d y + ty; ayna: x' -> -x' (gorunum ekseni x=0).
 struct Poz {
     double a = 1, b = 0, c = 0, d = 1, tx = 0, ty = 0;
-    bool var = false;
-    // AYNA GORUNUMUN kat ekseninde alinir (aynaX), panelin kendi x'inde DEGIL. Fark
-    // kat kenari OLMAYAN panelde ortaya cikar: kol kendi duzleminde yansitilirsa iki kopya
-    // da ayni oyuga yapisir (olculdu: iki path'in ilk noktasi ayni); gorunum ekseninde
-    // yansitilinca sag ve sol kol karsilikli iki oyuga oturur.
     bool ayna = false;
-    double aynaX = 0;    // gorunumun kat ekseni (SVG koordinatinda)
     Point ap(Point p) const {
         double X = a * p.x + b * p.y + tx, Y = c * p.x + d * p.y + ty;
-        return { ayna ? (2 * aynaX - X) : X, Y };
+        return { ayna ? -X : X, Y };
     }
 };
 
-// Bir panelin GORUNUMU: hangi kat kenarini tasiyorsa o. Kat kenari olmayan panel (kol gibi)
-// dikildigi panelin gorunumunu alir. Giysi tipine bakan bir dal YOK: yalniz kenar rolu ve
-// dikis grafi okunur (madde: sabit menu yok).
-std::string foldRoluOf(const Panel& p) {
-    for (const Edge& e : p.edges) if (e.kind == "fold") return e.role;
-    // 2026-09-09 (op sew: on orta kapanma): kat kenari DIKISE cevrilmis panel eksenini kaybetmez.
-    // x=0'da duran, rolu "cf" ile baslayan seam kenari on gorunumun eksenidir (on orta dugme
-    // paci). Arka eksen (cb) burada ACILMAZ: taban grafta cb zaten seam'dir ve arka paneller
-    // bugun on gorunume dikis yayilimiyla giriyor; on/arka gorunum ayrimi A4'un isi (devredilen:
-    // flat_ayni_insan_check, "arka gorunumde kapanma yok"). Burada yalniz "eksen kayboldu" hatasi
-    // kapatilir, taban cizimi bayt-ayni kalir.
-    for (const Edge& e : p.edges)
-        if (e.kind == "seam" && e.role.rfind("cf", 0) == 0 && e.from.xSifir() && e.to.xSifir()) return "cf";
-    return {};
-}
-
-// Bir panelin degerlenmis konturunu poz altinda SVG path metnine cevirir.
 std::string pathD(const std::vector<PathCommand>& cmds, const Poz& z) {
     std::string d;
-    Point cur{ 0, 0 };
     for (const PathCommand& c : cmds) {
         switch (c.type) {
-            case CmdType::Move: { Point p = z.ap(c.to); d += "M " + f3(p.x) + " " + f3(p.y); cur = c.to; break; }
-            case CmdType::Line: { Point p = z.ap(c.to); d += " L " + f3(p.x) + " " + f3(p.y); cur = c.to; break; }
+            case CmdType::Move: { Point p = z.ap(c.to); d += "M " + f3(p.x) + " " + f3(p.y); break; }
+            case CmdType::Line: { Point p = z.ap(c.to); d += " L " + f3(p.x) + " " + f3(p.y); break; }
             case CmdType::Curve: {
                 Point p1 = z.ap(c.cp1), p2 = z.ap(c.cp2), p = z.ap(c.to);
                 d += " C " + f3(p1.x) + " " + f3(p1.y) + " " + f3(p2.x) + " " + f3(p2.y) + " " + f3(p.x) + " " + f3(p.y);
-                cur = c.to; break;
+                break;
             }
             case CmdType::Close: d += " Z"; break;
         }
     }
-    (void)cur;
     return d;
-}
-
-// Kenarin kendi yolu (Move + segment) — dikis/detay katmanlari icin.
-std::string edgeD(const Edge& e, const EvalCtx& ctx, const Poz& z) {
-    return pathD(e.path(ctx), z);
 }
 
 void grow(Rect& r, Point p, bool& first) {
@@ -88,43 +84,34 @@ void grow(Rect& r, Point p, bool& first) {
     r.x = x0; r.y = y0; r.width = x1 - x0; r.height = y1 - y0;
 }
 
-void growCmds(Rect& r, const std::vector<PathCommand>& cmds, const Poz& z, bool& first) {
+std::vector<Point> flatPts(const std::vector<PathCommand>& cmds) {
+    std::vector<Point> out;
     Point cur{ 0, 0 };
     for (const PathCommand& c : cmds) {
         if (c.type == CmdType::Close) continue;
-        if (c.type == CmdType::Curve) {
-            // Kubik: 24 adim duzlestirme (geometry.hpp ile ayni cozunurluk) — kontrol
-            // noktasi kutuyu sismedigi icin gercek egri ornekleniyor.
-            for (Point q : flattenCubic(cur, c.to, c.cp1, c.cp2, 24)) grow(r, z.ap(q), first);
-        } else {
-            grow(r, z.ap(c.to), first);
-        }
+        if (c.type == CmdType::Curve) { for (Point q : flattenCubic(cur, c.to, c.cp1, c.cp2, 24)) out.push_back(q); }
+        else out.push_back(c.to);
         cur = c.to;
     }
+    return out;
 }
 
-// Kenarin ortasinda, panelin icine dogru kisa bir normal (centik / topstitch yonu icin).
-Point normalIn(const Edge& e, const EvalCtx& ctx, Point merkez) {
-    Point a = e.at(ctx, 0.45), b = e.at(ctx, 0.55);
-    Point t{ b.x - a.x, b.y - a.y };
-    double L = std::sqrt(t.x * t.x + t.y * t.y);
-    if (L < 1e-9) return { 0, 0 };
-    Point n{ -t.y / L, t.x / L };
-    Point m = e.at(ctx, 0.5);
-    if ((merkez.x - m.x) * n.x + (merkez.y - m.y) * n.y < 0) { n.x = -n.x; n.y = -n.y; }
-    return n;
+void growCmds(Rect& r, const std::vector<PathCommand>& cmds, const Poz& z, bool& first) {
+    for (Point q : flatPts(cmds)) { grow(r, z.ap(q), first); Poz m = z; m.ayna = !z.ayna; grow(r, m.ap(q), first); }
 }
 
-Point centroidOf(const std::vector<PathCommand>& cmds) {
-    double sx = 0, sy = 0; int n = 0;
-    Point cur{ 0, 0 };
-    for (const PathCommand& c : cmds) {
-        if (c.type == CmdType::Close) continue;
-        sx += c.to.x; sy += c.to.y; ++n; cur = c.to;
-    }
-    (void)cur;
-    return n ? Point{ sx / n, sy / n } : Point{ 0, 0 };
+// Panelin gorunum ekseni: kat kenari ya da x=0 dikisi (rol cb* -> "cb", degilse "cf"). Yoksa bos.
+std::string eksenOf(const Panel& p) {
+    for (const Edge& e : p.edges) if (e.kind == "fold") return e.role.rfind("cb", 0) == 0 ? "cb" : "cf";
+    for (const Edge& e : p.edges)
+        if (e.kind == "seam" && e.from.xSifir() && e.to.xSifir()) {
+            if (e.role.rfind("cb", 0) == 0) return "cb";
+            if (e.role.rfind("cf", 0) == 0) return "cf";
+        }
+    return {};
 }
+
+struct KenarSinif { bool kalin = false; bool ciz = true; };
 
 }  // namespace
 
@@ -132,250 +119,285 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
                     const JVal& contract, const JVal& bodyContract,
                     const FlatOpts& opts, std::string& hata) {
     hata.clear();
+    (void)contract; (void)bodyContract;
     if (g.panels.empty()) { hata = "ERR_EMPTY_GARMENT: graf panelsiz"; return {}; }
 
-    // 1) GORUNUM AYRIMI (bu adimin kok degisikligi). Onceki hal panelleri dogrulayicinin
-    // dikis-agaci pozlariyla "acilmis kitap" gibi diziyordu: her parca yerli yerindeydi ama
-    // sayfa bir GIYSI gibi okunmuyordu. Teknik flat, giysinin ON ve ARKA gorunumudur.
-    // Kural yapisal: bir panel hangi KAT kenarini tasiyorsa o gorunume girer (rol "cf" -> on,
-    // "cb" -> arka); kat kenari olmayan panel (kol) dikildigi panelin gorunumunu alir.
-    // Gorunum icinde panel KENDI beden koordinatlarinda durur (poz birim) — hepsi ayni
-    // landmark kumesinden degerlendigi icin bel/omuz cizgileri zaten cakisir — ve x=0 kat
-    // ekseninde AYNALANIR: yarim panelden butun giysi.
-    DogrulamaRaporu R = dogrula(g, body, contract, opts.onArkaEsit);
-    std::map<std::string, std::string> gorunum;   // panel id -> fold rolu ("cf"/"cb")
-    for (const Panel& p : g.panels) {
-        std::string r = foldRoluOf(p);
-        if (!r.empty()) gorunum[p.id] = r;
-    }
-    // Kat kenari olmayan paneller: dikis grafinden yayilim (sabit nokta, en fazla panel sayisi tur).
-    for (std::size_t tur = 0; tur < g.panels.size(); ++tur) {
-        bool degisti = false;
-        for (const Seam& sm : g.seams) {
-            std::string bul;
-            for (const std::vector<EdgeRef>* yan : { &sm.a, &sm.b })
-                for (const EdgeRef& r2 : *yan)
-                    if (bul.empty() && gorunum.count(r2.panel)) bul = gorunum[r2.panel];
-            if (bul.empty()) continue;
-            for (const std::vector<EdgeRef>* yan : { &sm.a, &sm.b })
-                for (const EdgeRef& r2 : *yan)
-                    if (!gorunum.count(r2.panel)) { gorunum[r2.panel] = bul; degisti = true; }
-        }
-        if (!degisti) break;
-    }
-    // Yuze dikili panel (onto, 2026-09-09): konagin gorunumune girer; dikisi yoktur, yayilim ona ulasmaz.
+    // ---- 1) gorunumler
+    std::map<std::string, std::string> eksen;          // eksenli panel -> "cf"/"cb"
+    for (const Panel& p : g.panels) { std::string e = eksenOf(p); if (!e.empty()) eksen[p.id] = e; }
+    // onto: konagin gorunumu (konak eksenli ya da onto zinciri)
     for (std::size_t tur = 0; tur < g.panels.size(); ++tur) {
         bool degisti = false;
         for (const Panel& p : g.panels)
-            if (!p.onto.empty() && !gorunum.count(p.id) && gorunum.count(p.onto)) { gorunum[p.id] = gorunum[p.onto]; degisti = true; }
+            if (!p.onto.empty() && !eksen.count(p.id) && eksen.count(p.onto)) { eksen[p.id] = eksen[p.onto]; degisti = true; }
         if (!degisti) break;
     }
-    // Gorunum sirasi: grafin panel sirasindaki ilk gorulme sirasi (deterministik, alfabetik degil).
     std::vector<std::string> gorunumSira;
     for (const Panel& p : g.panels) {
-        auto it = gorunum.find(p.id);
-        if (it == gorunum.end()) continue;
-        if (std::find(gorunumSira.begin(), gorunumSira.end(), it->second) == gorunumSira.end())
-            gorunumSira.push_back(it->second);
+        auto it = eksen.find(p.id);
+        if (it == eksen.end()) continue;
+        if (std::find(gorunumSira.begin(), gorunumSira.end(), it->second) == gorunumSira.end()) gorunumSira.push_back(it->second);
     }
     if (gorunumSira.empty()) { hata = "ERR_NO_VIEW: hicbir panel kat kenari tasimiyor, gorunum kurulamadi"; return {}; }
+    std::stable_sort(gorunumSira.begin(), gorunumSira.end(), [](const std::string& a, const std::string& b) {
+        return (a.rfind("cf", 0) == 0) && !(b.rfind("cf", 0) == 0);   // on once, arka sonra
+    });
 
-    // 2) Her gorunumun kendi sinir kutusu (aynali: x -> [-w, +w]); gorunumler yan yana dizilir.
     std::map<std::string, EvalCtx> ctxs;
-    std::map<std::string, Point> merkezler;
-    std::map<std::string, Rect> gKutu;
-    for (const Panel& p : g.panels) {
-        EvalCtx ctx = p.ctxFor(body, opts.onArkaEsit);
-        ctxs[p.id] = ctx;
-        std::vector<PathCommand> o = p.outline(ctx);
-        merkezler[p.id] = centroidOf(o);
-    }
-    // TEMEL POZ. Kat kenari TASIYAN panel kendi beden koordinatlarinda durur (birim poz):
-    // hepsi ayni landmark kumesinden degerlendigi icin bel/omuz cizgileri zaten cakisir.
-    // Kat kenari OLMAYAN panel (kol gibi) kendi basina bir yer bilmez; dogrulayicinin
-    // dikis agacindan cikardigi 2B pozla, dikildigi panelin oyugundan ACILARAK oturur.
-    // Bu bir giysi-tipi dali degil: "kat kenarin varsa kendi eksenindesin, yoksa dikisin
-    // seni tasidigi yerdesin" cumlesi grafin kendi yapisindan okunur.
-    std::map<std::string, Poz> temelPoz;
-    for (const PanelPoz& pz : R.pozlar) {
-        Poz z; z.var = true;
-        const Panel* pp = g.panel(pz.panel);
-        if (pp && foldRoluOf(*pp).empty()) {
-            if (!pz.yerlesti) { z.var = false; }
-            else { z.a = pz.a; z.b = pz.b; z.c = pz.c; z.d = pz.d; z.tx = pz.tx; z.ty = pz.ty; }
-        }
-        temelPoz[pz.panel] = z;
-    }
-    for (const Panel& p : g.panels) if (!temelPoz.count(p.id)) { Poz z; z.var = true; temelPoz[p.id] = z; }
+    for (const Panel& p : g.panels) ctxs[p.id] = p.ctxFor(body, opts.onArkaEsit);
 
+    // ---- 2) eksensiz panel (kol): gorunum basina sarkma pozu
+    struct Sarkma {
+        Poz poz;                                  // panel -> gorunum (afin: n/pi, d)
+        std::vector<PathCommand> kapakBasi;       // S -> O kubik
+        std::set<std::string> kapakKenar;         // dikise giren (cizilmeyen) kenarlar
+    };
+    std::map<std::string, std::map<std::string, Sarkma>> sarkma;   // panel -> gorunum -> poz
+    // kol ekseni: croquis'te shoulderTip->wrist (sevkPoz kolAcisiDeg), yoksa duz asagi
+    Point dKol{ 0, 1 };
+    if (body.hasLandmark("landmark.shoulderTip") && body.hasLandmark("landmark.wrist")) {
+        BodyPoint s = body.landmark("landmark.shoulderTip"), w = body.landmark("landmark.wrist");
+        double L = std::hypot(w.x - s.x, w.y - s.y);
+        if (L > 1e-9) dKol = { (w.x - s.x) / L, (w.y - s.y) / L };
+    }
+    const Point nKol{ dKol.y, -dKol.x };   // disa (+x) bakan normal
+    for (const Panel& p : g.panels) {
+        if (eksen.count(p.id)) continue;
+        // bu panelin kenarlarini tasiyan dikisler; partner eksenli panel kenarlari gorunume gore
+        std::map<std::string, std::vector<Point>> partnerPts;   // gorunum -> partner kenar noktalari
+        std::set<std::string> kapak;
+        for (const Seam& sm : g.seams) {
+            for (int yan = 0; yan < 2; ++yan) {
+                const std::vector<EdgeRef>& bu = yan == 0 ? sm.a : sm.b;
+                const std::vector<EdgeRef>& obur = yan == 0 ? sm.b : sm.a;
+                bool benim = false;
+                for (const EdgeRef& r : bu) if (r.panel == p.id) benim = true;
+                if (!benim) continue;
+                bool partnerEksenli = false;
+                for (const EdgeRef& r : obur) {
+                    if (!eksen.count(r.panel) || r.panel == p.id) continue;
+                    const Panel* q = g.panel(r.panel); const Edge* e = q ? q->edge(r.edge) : nullptr;
+                    if (!e) continue;
+                    partnerEksenli = true;
+                    for (Point pt : flatPts(e->path(ctxs[q->id]))) partnerPts[eksen[r.panel]].push_back(pt);
+                }
+                if (partnerEksenli) for (const EdgeRef& r : bu) if (r.panel == p.id) kapak.insert(r.edge);
+            }
+        }
+        if (partnerPts.empty()) continue;   // eksenli panele dikili degil: CIZILMEZ (uydurma yer yok)
+        // panelin kapak uclari: kapak kenarlarinin uc noktalari -> x araligi ve alt seviye (yBic)
+        double xcMin = 1e9, xcMax = -1e9, yBic = -1e9;
+        for (const Edge& e : p.edges) {
+            if (!kapak.count(e.id)) continue;
+            for (Point q : { eval(e.from, ctxs[p.id]), eval(e.to, ctxs[p.id]) }) { xcMin = std::min(xcMin, q.x); xcMax = std::max(xcMax, q.x); yBic = std::max(yBic, q.y); }
+        }
+        if (!(xcMax > xcMin)) continue;
+        const double wB = (xcMax - xcMin) / kPi;
+        for (auto& kv : partnerPts) {
+            Point S = kv.second.front(), U = kv.second.front();
+            for (Point q : kv.second) { if (q.y < S.y) S = q; if (q.y > U.y) U = q; }
+            Sarkma sk;
+            // M(x,y) = U + (y - yBic) d + ((x - xcMin)/pi) n
+            sk.poz.a = nKol.x / kPi; sk.poz.b = dKol.x; sk.poz.c = nKol.y / kPi; sk.poz.d = dKol.y;
+            sk.poz.tx = U.x - xcMin * nKol.x / kPi - yBic * dKol.x;
+            sk.poz.ty = U.y - xcMin * nKol.y / kPi - yBic * dKol.y;
+            const Point O{ U.x + wB * nKol.x, U.y + wB * nKol.y };
+            const double an = (O.x - S.x) * nKol.x + (O.y - S.y) * nKol.y;   // disa uzanim
+            const double bd = (O.x - S.x) * dKol.x + (O.y - S.y) * dKol.y;   // asagi uzanim
+            const Point c1{ S.x + 0.55 * an * nKol.x + 0.02 * bd * dKol.x, S.y + 0.55 * an * nKol.y + 0.02 * bd * dKol.y };
+            const Point c2{ O.x - 0.45 * bd * dKol.x, O.y - 0.45 * bd * dKol.y };
+            sk.kapakBasi = { PathCommand::move(S), PathCommand::curve(O, c1, c2) };
+            sk.kapakKenar = kapak;
+            sarkma[p.id][kv.first] = sk;
+        }
+    }
+
+    // gorunumde cizilen paneller
+    auto gorunumde = [&](const std::string& panel, const std::string& gv) {
+        auto it = eksen.find(panel);
+        if (it != eksen.end()) return it->second == gv;
+        auto s = sarkma.find(panel);
+        return s != sarkma.end() && s->second.count(gv) > 0;
+    };
+
+    // ---- 3) kenar sinifi (kalin/ince) — dikis partnerinin gorunumu
+    auto sinifla = [&](const Panel& p, const Edge& e, const std::string& gv) {
+        KenarSinif k;
+        if (e.kind == "fold") { k.ciz = false; return k; }
+        if (e.kind == "dartLeg") { k.ciz = false; return k; }
+        if (e.kind == "cut") { k.kalin = e.finish != "raw"; return k; }
+        // seam: partner ayni gorunumde ciziliyorsa ince
+        bool partnerBurada = false, dikili = false;
+        for (const Seam& sm : g.seams)
+            for (int yan = 0; yan < 2; ++yan) {
+                const std::vector<EdgeRef>& bu = yan == 0 ? sm.a : sm.b;
+                const std::vector<EdgeRef>& obur = yan == 0 ? sm.b : sm.a;
+                bool benim = false;
+                for (const EdgeRef& r : bu) if (r.panel == p.id && r.edge == e.id) benim = true;
+                if (!benim) continue;
+                dikili = true;
+                for (const EdgeRef& r : obur) if (gorunumde(r.panel, gv)) partnerBurada = true;
+            }
+        k.kalin = !(dikili && partnerBurada);
+        return k;
+    };
+
+    // ---- 4) gorunum kutulari
+    std::map<std::string, Rect> gKutu;
     for (const std::string& gv : gorunumSira) {
         Rect r; bool ilk = true;
         for (const Panel& p : g.panels) {
-            if (!gorunum.count(p.id) || gorunum[p.id] != gv) continue;
-            if (!temelPoz[p.id].var) continue;
-            growCmds(r, p.outline(ctxs[p.id]), temelPoz[p.id], ilk);
+            if (!gorunumde(p.id, gv)) continue;
+            if (eksen.count(p.id)) { Poz z; growCmds(r, p.outline(ctxs[p.id]), z, ilk); }
+            else {
+                const Sarkma& sk = sarkma[p.id][gv];
+                growCmds(r, sk.kapakBasi, Poz{}, ilk);
+                for (const Edge& e : p.edges) if (!sk.kapakKenar.count(e.id)) growCmds(r, e.path(ctxs[p.id]), sk.poz, ilk);
+            }
         }
         if (ilk) { hata = "ERR_EMPTY_OUTLINE: gorunum " + gv + " bos"; return {}; }
-        // ayna: x ekseninde simetrik kutu
-        double w = std::max(std::fabs(r.x), std::fabs(r.x + r.width));
-        r.x = -w; r.width = 2 * w;
+        // croquis silueti de kutuya girer (olcum yolu, gorunmez)
+        for (const char* lm : { "landmark.neckBase", "landmark.shoulderTip", "landmark.underarm", "landmark.bustLine", "landmark.waist", "landmark.hip" })
+            if (body.hasLandmark(lm)) { BodyPoint b = body.landmark(lm); grow(r, { b.x, b.y }, ilk); grow(r, { -b.x, b.y }, ilk); }
         gKutu[gv] = r;
     }
-    // Gorunum kaydirmalari (yan yana, aralarinda pay).
-    std::map<std::string, Poz> pozlar;   // panel id -> gorunumunun kaydirmasi (ayna DISINDA)
-    double gx = 0, yUst = 0, yAlt = 0;
+    std::map<std::string, double> gx;
+    double x0 = 0, yUst = 0, yAlt = 0;
     for (const std::string& gv : gorunumSira) {
         const Rect& r = gKutu[gv];
-        double dx = gx - r.x;
-        for (const Panel& p : g.panels) {
-            if (!gorunum.count(p.id) || gorunum[p.id] != gv) continue;
-            Poz z = temelPoz[p.id];
-            if (!z.var) continue;   // dikis agacina baglanmayan kat kenarsiz panel: CIZILMEZ (uydurma yer yok)
-            z.tx += dx;
-            z.aynaX = dx;           // gorunumun kat ekseni: panel x=0'in bu gorunumdeki yeri
-            pozlar[p.id] = z;
-        }
-        yUst = std::min(yUst, r.y);
-        yAlt = std::max(yAlt, r.y + r.height);
-        gx += r.width + opts.gorunumArasiMM;
+        gx[gv] = x0 - r.x;
+        yUst = std::min(yUst, r.y); yAlt = std::max(yAlt, r.y + r.height);
+        x0 += r.width + opts.gorunumArasiMM;
     }
-    const int yerlesen = static_cast<int>(pozlar.size());
-    if (yerlesen == 0) { hata = "ERR_NO_PLACEMENT: hicbir panel gorunume dusmedi"; return {}; }
-
-    Rect bb;
-    bb.x = 0; bb.y = yUst; bb.width = gx - opts.gorunumArasiMM; bb.height = yAlt - yUst;
-
     const double pad = opts.kenarBoslukMM;
-    const double vx = bb.x - pad, vy = bb.y - pad;
-    const double vw = bb.width + 2 * pad, vh = bb.height + 2 * pad;
-
-    // 3) Cizgi kalinliklari: mutlak mm degil, cizimin buyuklugune orantili (her bedende ayni okunur).
+    const double vx = -pad, vy = yUst - pad, vw = (x0 - opts.gorunumArasiMM) + 2 * pad, vh = (yAlt - yUst) + 2 * pad;
     const double birim = std::max(vw, vh);
-    const double wOutline = birim / 400.0, wSeam = birim / 800.0, wDetail = birim / 1200.0;
+    // kontur : ic dikis : ust dikis = 4 : 2 : 1 (flat-convention sevkPoz.topstitch)
+    const double wOutline = birim / 400.0, wSeam = wOutline / 2.0, wTop = wOutline / 4.0;
+
+    int yerlesen = 0;
+    for (const Panel& p : g.panels) if (eksen.count(p.id) || sarkma.count(p.id)) ++yerlesen;
 
     std::ostringstream s;
     s << "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\""
       << f3(vx) << " " << f3(vy) << " " << f3(vw) << " " << f3(vh) << "\""
       << " data-scale=\"1:1\" data-unit-mm=\"1\""
-      << " data-graf=\"" << g.id << "\" data-body=\"" << bodyId << "\""
-      << " data-panel=\"" << yerlesen << "\"";
-
-    // croquis landmark ILANI (kabul_P1 1.5): sayilar Body'den, +-0 sapmayla.
-    // bodyContract yalniz kaynagi belgelemek icin gecer; deger her zaman degerlenen Body'dendir.
-    (void)bodyContract;
+      << " data-graf=\"" << g.id << "\" data-body=\"" << bodyId << "\" data-size=\"" << bodyId << "\""
+      << " data-panel=\"" << yerlesen << "\" data-gorunum=\"" << gorunumSira.size() << "\"";
     struct LmIlan { const char* attr; const char* lm; };
-    const LmIlan ilanlar[] = { { "data-y-waist", "landmark.waist" },
-                               { "data-y-bust", "landmark.bustLine" },
-                               { "data-y-hip", "landmark.hip" } };
-    for (const LmIlan& li : ilanlar) {
-        try {
-            BodyPoint bp = body.landmark(li.lm);
-            s << " " << li.attr << "=\"" << f3(bp.y) << "\"";
-        } catch (const std::exception&) { /* landmark yoksa ILAN EDILMEZ (uydurma sayi yok) */ }
-    }
+    const LmIlan ilanlar[] = { { "data-y-waist", "landmark.waist" }, { "data-y-bust", "landmark.bustLine" }, { "data-y-hip", "landmark.hip" } };
+    for (const LmIlan& li : ilanlar)
+        if (body.hasLandmark(li.lm)) s << " " << li.attr << "=\"" << f3(body.landmark(li.lm).y) << "\"";
     s << ">\n";
     s << "  <title>" << g.id << " flat @ " << bodyId << "</title>\n";
-    s << "  <rect x=\"" << f3(vx) << "\" y=\"" << f3(vy) << "\" width=\"" << f3(vw)
-      << "\" height=\"" << f3(vh) << "\" fill=\"#ffffff\"/>\n";
+    s << "  <rect x=\"" << f3(vx) << "\" y=\"" << f3(vy) << "\" width=\"" << f3(vw) << "\" height=\"" << f3(vh) << "\" fill=\"#ffffff\"/>\n";
 
-    // AYNA: her panel iki kez cizilir — kendisi ve x=0 kat ekseninde yansimasi. Yarim
-    // panelden BUTUN giysi bu sayede cikar (web/lib/flat-from-pattern.js'in "sag yari +
-    // ayna" konvansiyonu, C++'a tasindi). data-yan ile hangi yari oldugu ilan edilir.
-    auto ciftler = [&](const Panel& p, const std::function<void(const Poz&, const char*)>& yaz) {
-        auto it = pozlar.find(p.id);
-        if (it == pozlar.end() || !it->second.var) return;
-        Poz sag = it->second, sol = it->second;
-        sol.ayna = true;
-        yaz(sag, "sag");
-        yaz(sol, "sol");
+    auto viewAd = [](const std::string& gv) { return gv.rfind("cb", 0) == 0 ? "back" : "front"; };
+    auto grupAc = [&](const std::string& gv) {
+        s << "    <g data-view=\"" << viewAd(gv) << "\" data-eksen=\"" << gv << "\" transform=\"translate(" << f3(gx[gv]) << " 0)\">\n";
     };
 
-    // ---- katman: outline
-    s << "  <g id=\"outline\" fill=\"none\" stroke=\"#111111\" stroke-width=\"" << f3(wOutline)
-      << "\" stroke-linejoin=\"round\">\n";
-    for (const Panel& p : g.panels)
-        ciftler(p, [&](const Poz& z, const char* yan) {
-            s << "    <path data-panel=\"" << p.id << "\" data-yan=\"" << yan
-              << "\" data-gorunum=\"" << gorunum[p.id] << "\" d=\"" << pathD(p.outline(ctxs[p.id]), z) << "\"/>\n";
-        });
+    // ---- katman: croquis (olcum yolu, gorunmez) — KAPI B siluet secicisi
+    s << "  <g id=\"croquis\" fill=\"none\" stroke=\"none\">\n";
+    for (const std::string& gv : gorunumSira) {
+        grupAc(gv);
+        std::vector<Point> sag;
+        for (const char* lm : { "landmark.neckBase", "landmark.shoulderTip", "landmark.underarm", "landmark.bustLine", "landmark.underbust", "landmark.waist", "landmark.highHip", "landmark.hip" })
+            if (body.hasLandmark(lm)) { BodyPoint b = body.landmark(lm); sag.push_back({ b.x, b.y }); }
+        std::string d;
+        for (std::size_t i = 0; i < sag.size(); ++i) d += (i ? " L " : "M ") + f3(sag[i].x) + " " + f3(sag[i].y);
+        for (std::size_t i = sag.size(); i-- > 0;) d += " L " + f3(-sag[i].x) + " " + f3(sag[i].y);
+        d += " Z";
+        double belYarim = body.hasLandmark("landmark.waist") ? body.landmark("landmark.waist").x : 0;
+        s << "      <path data-rol=\"siluet\" data-view=\"" << viewAd(gv) << "\" data-kaynak=\"croquis-landmark\"";
+        if (body.hasLandmark("landmark.bustLine")) s << " data-manken-bust-y=\"" << f3(body.landmark("landmark.bustLine").y) << "\"";
+        if (body.hasLandmark("landmark.underarm")) s << " data-manken-koltukalti-y=\"" << f3(body.landmark("landmark.underarm").y) << "\"";
+        if (body.hasLandmark("landmark.waist")) s << " data-manken-bel-y=\"" << f3(body.landmark("landmark.waist").y) << "\"";
+        if (body.hasLandmark("landmark.hip")) s << " data-manken-kalca-y=\"" << f3(body.landmark("landmark.hip").y) << "\"";
+        if (body.hasLandmark("landmark.shoulderTip")) { BodyPoint t = body.landmark("landmark.shoulderTip"); s << " data-omuz-uc=\"" << f3(t.x) << " " << f3(t.y) << "\""; }
+        s << " data-manken-bel-yarim-mm=\"" << f3(belYarim) << "\" d=\"" << d << "\"/>\n";
+        s << "    </g>\n";
+    }
     s << "  </g>\n";
 
-    // ---- katman: seams (kind == seam olan kenarlar)
-    s << "  <g id=\"seams\" fill=\"none\" stroke=\"#111111\" stroke-width=\"" << f3(wSeam) << "\">\n";
-    for (const Panel& p : g.panels)
-        ciftler(p, [&](const Poz& z, const char* yan) {
-            for (const Edge& e : p.edges) {
-                if (e.kind != "seam") continue;
-                s << "    <path data-panel=\"" << p.id << "\" data-yan=\"" << yan << "\" data-edge=\"" << e.id
-                  << "\" data-role=\"" << e.role << "\" d=\"" << edgeD(e, ctxs[p.id], z) << "\"/>\n";
-            }
-        });
-    s << "  </g>\n";
-
-    // ---- katman: topstitch (dikisli kenarin panel icine kaymis izi; kesikli)
-    const double ofsMM = birim / 150.0;
-    s << "  <g id=\"topstitch\" fill=\"none\" stroke=\"#111111\" stroke-width=\"" << f3(wDetail)
-      << "\" stroke-dasharray=\"" << f3(birim / 120.0) << " " << f3(birim / 200.0) << "\">\n";
-    for (const Panel& p : g.panels)
-        ciftler(p, [&](const Poz& z, const char* yan) {
-            Point mrk = merkezler.count(p.id) ? merkezler[p.id] : Point{ 0, 0 };
-            for (const Edge& e : p.edges) {
-                if (e.kind != "seam") continue;
-                Point n = normalIn(e, ctxs[p.id], mrk);
-                if (n.x == 0 && n.y == 0) continue;
-                // Ofset panelin KENDI duzleminde uygulanir (aynadan once), boylece ayna
-                // yarisinda da ic tarafa dogru kayar.
-                // Ofset panelin KENDI duzleminde uygulanir (poz ve aynadan once), boylece
-                // iki yaride de panel icine dogru kayar.
-                Poz zo = z;
-                zo.tx += z.a * n.x * ofsMM + z.b * n.y * ofsMM;
-                zo.ty += z.c * n.x * ofsMM + z.d * n.y * ofsMM;
-                s << "    <path data-panel=\"" << p.id << "\" data-yan=\"" << yan << "\" data-edge=\"" << e.id
-                  << "\" d=\"" << edgeD(e, ctxs[p.id], zo) << "\"/>\n";
-            }
-        });
-    s << "  </g>\n";
-
-    // ---- katman: details (pens bacaklari, kat cizgisi, centikler)
-    s << "  <g id=\"details\" fill=\"none\" stroke=\"#111111\" stroke-width=\"" << f3(wDetail) << "\">\n";
-    const double centikMM = birim / 100.0;
-    for (const Panel& p : g.panels)
-        ciftler(p, [&](const Poz& z, const char* yan) {
+    // her gorunum icin kenar cizimi: kalin/ince/ustdikis/pens
+    struct Cizgi { std::string d, panel, edge, tur; };
+    std::map<std::string, std::vector<Cizgi>> kalin, ince, ust, pens;
+    for (const std::string& gv : gorunumSira) {
+        for (const Panel& p : g.panels) {
+            if (!gorunumde(p.id, gv)) continue;
             const EvalCtx& ctx = ctxs[p.id];
-            Point mrk = merkezler.count(p.id) ? merkezler[p.id] : Point{ 0, 0 };
-            for (const Edge& e : p.edges) {
-                // Kat kenari YALNIZ bir kez cizilir (iki yari ayni cizgiye oturur; iki kez
-                // basmak sayfaya kalinlasmis sahte bir cizgi koyar).
-                if (e.kind == "fold") {
-                    if (std::string(yan) == "sag")
-                        s << "    <path data-panel=\"" << p.id << "\" data-edge=\"" << e.id
-                          << "\" data-tur=\"kat\" stroke-dasharray=\"" << f3(birim / 60.0) << " " << f3(birim / 90.0)
-                          << " " << f3(birim / 300.0) << " " << f3(birim / 90.0) << "\" d=\"" << edgeD(e, ctx, z) << "\"/>\n";
-                } else if (e.kind == "dartLeg") {
-                    s << "    <path data-panel=\"" << p.id << "\" data-yan=\"" << yan << "\" data-edge=\"" << e.id
-                      << "\" data-tur=\"pens\" d=\"" << edgeD(e, ctx, z) << "\"/>\n";
+            const bool eksenli = eksen.count(p.id) > 0;
+            const Sarkma* sk = eksenli ? nullptr : &sarkma[p.id][gv];
+            const Poz z = eksenli ? Poz{} : sk->poz;
+            auto yazPoz = [&](std::map<std::string, std::vector<Cizgi>>& katman, const std::vector<PathCommand>& cmds, const std::string& edge, const std::string& tur, const Poz& zp) {
+                for (int yan = 0; yan < 2; ++yan) { Poz zz = zp; zz.ayna = yan == 1; katman[gv].push_back({ pathD(cmds, zz), p.id, edge, tur }); }
+            };
+            auto yaz = [&](std::map<std::string, std::vector<Cizgi>>& katman, const std::vector<PathCommand>& cmds, const std::string& edge, const std::string& tur) { yazPoz(katman, cmds, edge, tur, z); };
+            if (sk) yazPoz(kalin, sk->kapakBasi, "kapak_basi", "kapak", Poz{});   // kapak basi ZATEN gorunum koordinatinda
+            for (std::size_t i = 0; i < p.edges.size(); ++i) {
+                const Edge& e = p.edges[i];
+                if (sk && sk->kapakKenar.count(e.id)) continue;
+                if (e.kind == "dartLeg") {
+                    // pens cifti: bacak1 (agiz a -> apeks), bacak2 (apeks -> agiz b) — tek cizgi agiz ortasi -> apeks, kopru a -> b
+                    if (i + 1 < p.edges.size() && p.edges[i + 1].kind == "dartLeg") {
+                        const Edge& e2 = p.edges[i + 1];
+                        const Point a = eval(e.from, ctx), apex = eval(e.to, ctx), b = eval(e2.to, ctx);
+                        const Point orta{ (a.x + b.x) / 2, (a.y + b.y) / 2 };
+                        yaz(pens, { PathCommand::move(orta), PathCommand::line(apex) }, e.id, "pens");
+                        // kopru: komsu kenarin sinifinda
+                        const KenarSinif ks = i > 0 ? sinifla(p, p.edges[i - 1], gv) : KenarSinif{};
+                        yaz(ks.kalin ? kalin : ince, { PathCommand::move(a), PathCommand::line(b) }, e.id, "pens_agzi");
+                        ++i;
+                    }
+                    continue;
                 }
-                if (&e == &p.edges.back()) for (const IcPens& d : p.darts) {   // ic halka pensler, panel basina bir kez
-                    const RefPoint* zincir[5] = {&d.a, &d.apexUst, &d.b, &d.apexAlt, &d.a};
-                    for (int i = 0; i < 4; ++i) {
-                        Edge t; t.from = *zincir[i]; t.to = *zincir[i + 1];
-                        if (t.from == t.to) continue;
-                        s << "    <path data-panel=\"" << p.id << "\" data-yan=\"" << yan << "\" data-edge=\"" << d.id << "." << (i + 1)
-                          << "\" data-tur=\"pens\" d=\"" << edgeD(t, ctx, z) << "\"/>\n";
+                const KenarSinif ks = sinifla(p, e, gv);
+                if (!ks.ciz) continue;
+                const std::vector<PathCommand> cmds = e.path(ctx);
+                if (sk) yaz(kalin, cmds, e.id, "kol");   // sarkan tup: dis/ic/agiz hepsi siluet
+                else yaz(ks.kalin ? kalin : ince, cmds, e.id, e.kind);
+                // ust dikis izi: bitirmeli kesim kenari (hem/faced), panel icine ofset
+                if (e.kind == "cut" && (e.finish == "hem" || e.finish == "faced" || e.finish == "topstitch")) {
+                    // kenar ortasindaki ic normal (panel merkezine dogru)
+                    const std::vector<Point> pts = flatPts(cmds);
+                    Point mrk{ 0, 0 }; { std::vector<Point> o = flatPts(p.outline(ctx)); for (Point q : o) { mrk.x += q.x; mrk.y += q.y; } if (!o.empty()) { mrk.x /= o.size(); mrk.y /= o.size(); } }
+                    Point A = e.at(ctx, 0.45), B = e.at(ctx, 0.55);
+                    Point t{ B.x - A.x, B.y - A.y }; double L = std::hypot(t.x, t.y);
+                    if (L > 1e-9) {
+                        Point n{ -t.y / L, t.x / L }; Point m = e.at(ctx, 0.5);
+                        if ((mrk.x - m.x) * n.x + (mrk.y - m.y) * n.y < 0) { n.x = -n.x; n.y = -n.y; }
+                        const double ofs = birim / 150.0;
+                        std::vector<PathCommand> oc = cmds;
+                        for (PathCommand& c : oc) { c.to.x += n.x * ofs; c.to.y += n.y * ofs; c.cp1.x += n.x * ofs; c.cp1.y += n.y * ofs; c.cp2.x += n.x * ofs; c.cp2.y += n.y * ofs; }
+                        yaz(ust, oc, e.id, "ustdikis");
                     }
                 }
-                for (double t : e.notches) {
-                    Point m = e.at(ctx, t);
-                    Point n = normalIn(e, ctx, mrk);
-                    Point A = z.ap(m);
-                    Point B = z.ap({ m.x + n.x * centikMM, m.y + n.y * centikMM });
-                    s << "    <path data-panel=\"" << p.id << "\" data-yan=\"" << yan << "\" data-edge=\"" << e.id
-                      << "\" data-tur=\"centik\" d=\"M " << f3(A.x) << " " << f3(A.y)
-                      << " L " << f3(B.x) << " " << f3(B.y) << "\"/>\n";
-                }
             }
-        });
-    s << "  </g>\n";
+            // ic halka pensler (balik): tek dikey cizgi apexUst -> apexAlt, agiz kopru
+            for (const IcPens& dd : p.darts) {
+                const Point a = eval(dd.a, ctx), b = eval(dd.b, ctx), au = eval(dd.apexUst, ctx), aa = eval(dd.apexAlt, ctx);
+                yaz(pens, { PathCommand::move(au), PathCommand::line(aa) }, dd.id, "pens");
+                (void)a; (void)b;
+            }
+        }
+    }
+
+    auto katman = [&](const char* id, std::map<std::string, std::vector<Cizgi>>& m, double w, const char* ek) {
+        s << "  <g id=\"" << id << "\" fill=\"none\" stroke=\"#111111\" stroke-width=\"" << f3(w) << "\" stroke-linejoin=\"round\" stroke-linecap=\"round\"" << ek << ">\n";
+        for (const std::string& gv : gorunumSira) {
+            grupAc(gv);
+            for (const Cizgi& c : m[gv])
+                s << "      <path data-panel=\"" << c.panel << "\" data-edge=\"" << c.edge << "\" data-tur=\"" << c.tur << "\" d=\"" << c.d << "\"/>\n";
+            s << "    </g>\n";
+        }
+        s << "  </g>\n";
+    };
+    katman("outline", kalin, wOutline, "");
+    katman("seams", ince, wSeam, "");
+    const std::string dash = " stroke-dasharray=\"" + f3(birim / 120.0) + " " + f3(birim / 200.0) + "\"";
+    katman("topstitch", ust, wTop, dash.c_str());
+    katman("details", pens, wSeam, "");
     s << "</svg>\n";
     return s.str();
 }
