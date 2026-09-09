@@ -781,7 +781,10 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
                   const std::string hn = "girth." + ring.role;
                   if (body.hasRing(hn)) {
                       double eR = 0; for (const Panel& p : g.panels) for (const RingEase& re : p.ease) if (re.ring == hn) eR = std::max(eR, re.mm);
-                      const double ilan = body.ring(hn) + eR, fark = toplam * 2.0 - ilan;
+                      // croquis (manken): kesit izdusumdur -> ilan = 4 x kesit yarimi x (1 + bolluk/cevre) (graf.cpp eval ringQuarter ile ayni yasa)
+                      const bool izdusum = body.id().rfind("croquis", 0) == 0;
+                      const double ilan = izdusum ? 4.0 * body.ringHalfWidth(hn) * (1.0 + eR / body.ring(hn)) : body.ring(hn) + eR;
+                      const double fark = toplam * 2.0 - ilan;
                       H("halka_kesit", ring.id + " (" + ring.role + ")", "kesit x2 " + f2(toplam * 2.0) + " mm - (beden " + f2(body.ring(hn)) + " + bolluk " + f2(eR) + ") = " + f2(fark) + " mm, tolerans " + f2(tol.dikisUzunlukMM), std::fabs(fark) <= tol.dikisUzunlukMM);
                   } }
           } }
@@ -947,7 +950,8 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
                     if (re.ring == "girth.bust") easeB = std::max(easeB, re.mm);
                     if (re.ring == "girth.hip") easeH = std::max(easeH, re.mm);
                 }
-            const double hedef = body.ring("girth.waist") + easeW;
+            const bool izdusum = body.id().rfind("croquis", 0) == 0;   // manken: bel izdusumu (graf.cpp eval ringQuarter yasasi)
+            const double hedef = izdusum ? 4.0 * body.ringHalfWidth("girth.waist") * (1.0 + easeW / body.ring("girth.waist")) : body.ring("girth.waist") + easeW;
             const double dikilen = dikilenYarim * 2.0;   // yarim giysi -> tam cevre
             const double emilmeyen = dikilen - hedef;
             const double pensTam = pensToplam * 2.0;
@@ -961,7 +965,7 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
             (void)easeB; (void)easeH;
             const bool ok = std::fabs(emilmeyen) <= tol.dikisUzunlukMM;
             H("supresyon", g.id,
-              "dikilen bel " + f2(dikilen) + " mm (" + dikilenKaynak + ") - hedef " + f2(hedef) + " (beden " + f2(body.ring("girth.waist")) + " + bolluk " + f2(easeW) + ") = EMILMEYEN " + f2(emilmeyen) + " mm, tolerans " + f2(tol.dikisUzunlukMM) + " | "
+              "dikilen bel " + f2(dikilen) + " mm (" + dikilenKaynak + ") - hedef " + f2(hedef) + (izdusum ? " (manken izdusumu: 4 x kesit yarimi x (1 + bolluk/cevre))" : " (beden " + f2(body.ring("girth.waist")) + " + bolluk " + f2(easeW) + ")") + " = EMILMEYEN " + f2(emilmeyen) + " mm, tolerans " + f2(tol.dikisUzunlukMM) + " | "
               "supresyon ciftleri: " + (cift.empty() ? "yok" : cift) + " | pens " + std::to_string(pensSayisi) + " adet, agiz toplami (tam cevre) " + f2(pensTam) + " mm, pens payi contract " + f2(pensPayi * 100.0) + "% (Aldrich, DOGRULANMADI) | "
               "pens detayi (yarim panel): " + (pensDetay.empty() ? "YOK" : pensDetay),
               ok);

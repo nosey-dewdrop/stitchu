@@ -186,7 +186,7 @@ hukum P9
 }
 
 # ---------------------------------------------------------------- muhur
-liste(){ { ls KOSU/sinyal.sh KOSU/flat-olcum.py KOSU/uret.mjs HEDEF.md engine/tests/enum-dallanma-baseline.json engine/tests/enum_dallanma_check.sh 2>/dev/null; find engine/tests -type f \( -name '*.mjs' -o -name '*.cpp' -o -name '*.sh' -o -name '*.py' \) ; } | sort -u; }
+liste(){ { ls KOSU/sinyal.sh KOSU/uret.mjs HEDEF.md engine/tests/enum-dallanma-baseline.json engine/tests/enum_dallanma_check.sh 2>/dev/null; find engine/tests -type f \( -name '*.mjs' -o -name '*.cpp' -o -name '*.sh' -o -name '*.py' \) ; } | sort -u; }
 muhur_yaz(){ liste | xargs shasum -a 256 > KOSU/muhur.txt; echo "muhur yazildi: $(wc -l < KOSU/muhur.txt | tr -d ' ') dosya"; }
 muhur_kontrol(){ [ -f KOSU/muhur.txt ] || { echo "  KIRMIZI muhur yok"; return 1; }
   if shasum -a 256 -c KOSU/muhur.txt --status 2>/dev/null; then echo "  YESIL muhur saglam ($(wc -l < KOSU/muhur.txt | tr -d ' ') dosya)"; yeni=$(comm -13 <(cut -c67- KOSU/muhur.txt | sort) <(liste)); [ -n "$yeni" ] && echo "  bilgi — yeni (muhursuz) test dosyalari:" && echo "$yeni" | sed 's/^/    /'; return 0
@@ -201,7 +201,7 @@ sinyal(){ MOD=$1; K=0; echo "== SINYAL ($MOD) $(date '+%Y-%m-%d %H:%M') HEAD $(g
   for p in $(taban_oku kapanan | tr ',' ' '); do kabul_$p >/tmp/_k_$p.txt 2>&1 && echo "  YESIL $p" || { echo "  KIRMIZI $p"; grep KIRMIZI /tmp/_k_$p.txt | sed 's/^/    /'; K=1; }; done
   if [ "$MOD" = tam ]; then echo "-- 4 DEVIR.md KABUL zinciri"
     cmake --build engine/build -j2 >/dev/null 2>&1 && ctest --test-dir engine/build -R 'golden|recipe|primitif|edit_locality|manken|kumas|parca|vocab|flatten|surface|enum_dallanma|body_check|gen_contract|bundle_fresh|graf_ir_check|graf_op_check|graf_dikilebilir_check' -j1 >/tmp/_ct.txt 2>&1 && echo "  YESIL ctest $(grep -oE '[0-9]+ tests passed' /tmp/_ct.txt | head -1)" || { echo "  KIRMIZI ctest"; grep -E 'Failed|\*\*\*' /tmp/_ct.txt | head -5 | sed 's/^/    /'; K=1; }
-    python3 KOSU/flat-olcum.py >/tmp/_fo.txt 2>&1 && grep -q 'ESIK KONTROL OK' /tmp/_fo.txt && echo "  YESIL flat-olcum" || { echo "  KIRMIZI flat-olcum"; K=1; }
+    # flat-olcum.py SILINDI (2026-09-09, Damla: emsal yok; croquis = manken 90-60-90)
     node engine/tests/primitif_ifade_check.mjs >/dev/null 2>&1 && echo "  YESIL primitif_ifade" || { echo "  KIRMIZI primitif_ifade"; K=1; }
     if ! taban_oku kapanan | grep -q P4; then # P4'e kadar iki bilinen kirmizi sayi piniyle
       # A4 (2026-09-09): flat_ayni_insan 34 pini KALKTI — kapi urun flat'lerini (KOSU/ciktilar/giris/N/flat.svg) olcer ve YESIL olmak zorunda

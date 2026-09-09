@@ -64,10 +64,8 @@
  },
  "kabulKomutlari": [
   "bash engine/tests/0509-kapi.sh --kendi-check",
-  "node engine/tests/0509-emsal-olcum.mjs --json",
   "bash engine/tests/0509-kapi.sh --regresyon",
   "node engine/tests/0509-wasm-sanity.mjs",
-  "bash engine/tests/0509-kapi.sh --kendi-check >/dev/null 2>&1 && node engine/tests/0509-emsal-olcum.mjs --json >/dev/null 2>&1 && bash engine/tests/0509-kapi.sh --regresyon >/dev/null 2>&1 && node engine/tests/0509-wasm-sanity.mjs >/dev/null 2>&1 && bash engine/tests/0509-kapi.sh --ivme | python3 -c \"import json,sys;d=json.load(sys.stdin);[sys.exit(1) for m,k in d['seri'].items() if (k.get('esik') is not None and k['son']<=k['esik'])!=(m in d['dusurulen'])];sys.exit(0)\"",
   "bash engine/tests/0509-vision-kabul.sh"
  ],
  "devredilen": [
@@ -575,5 +573,6 @@
   "engine/src/grafuygula-cli.cpp (yeni ikili: graf.json + op JSON -> yeni graf.json)",
   "engine/CMakeLists.txt (yalniz ekleme: add_executable grafuygula)"
  ],
- "A5IzinListesi_ne": "GUNCELLENDI 2026-09-09 (Damla karari): applyOp CLI (grafuygula) ve grafciz --ops A3'te ELLE acildi; A5 bu ikilileri KULLANIR. A5'in 8 edit'i dogrudan primitif listesi olarak yazilir. ESKI: KARAR 1 (2026-09-08 karar ajani): applyOp'u disari veren CLI A5'te acilir, A3 ya da A6'ya YAZILMAZ. A5 isçisinin ILK teslimi bu ikilidir. Gerekce: A5'in teslimi (KOSU/0509-kosu.js:254-256) KOSU/ciktilar/edit/etkilenen-<op>.json'un grafop.cpp icinde CALISMA ZAMANINDA BFS ile yazilmasini ve edit_locality_check'in o dosyayi okumasini sart kosuyor; bu dosyayi uretecek tek yol applyOp'u calistiran bir ikilidir. CLI olmadan A5 teslim edilemez -> A5 yapisal olarak ilk zorunlu sahibi. A3'un izin listesi GENISLETILMEZ. Olculdu: grafop.cpp:459 applyOp var, hicbir add_executable onu cagirmiyor; grafciz-cli.cpp'de 'ops' gecmiyor."
+ "A5IzinListesi_ne": "GUNCELLENDI 2026-09-09 (Damla karari): applyOp CLI (grafuygula) ve grafciz --ops A3'te ELLE acildi; A5 bu ikilileri KULLANIR. A5'in 8 edit'i dogrudan primitif listesi olarak yazilir. ESKI: KARAR 1 (2026-09-08 karar ajani): applyOp'u disari veren CLI A5'te acilir, A3 ya da A6'ya YAZILMAZ. A5 isçisinin ILK teslimi bu ikilidir. Gerekce: A5'in teslimi (KOSU/0509-kosu.js:254-256) KOSU/ciktilar/edit/etkilenen-<op>.json'un grafop.cpp icinde CALISMA ZAMANINDA BFS ile yazilmasini ve edit_locality_check'in o dosyayi okumasini sart kosuyor; bu dosyayi uretecek tek yol applyOp'u calistiran bir ikilidir. CLI olmadan A5 teslim edilemez -> A5 yapisal olarak ilk zorunlu sahibi. A3'un izin listesi GENISLETILMEZ. Olculdu: grafop.cpp:459 applyOp var, hicbir add_executable onu cagirmiyor; grafciz-cli.cpp'de 'ops' gecmiyor.",
+ "emsalKaldirildi": "2026-09-09 Damla: emsal flat (deer-and-doe/Mica/K5) ve flat-olcum SILINDI; croquis36 = manken 90-60-90/178 (contract croquis36.manken); flat gozle hakem (kor, png, internetten fashion flat kiyasi)"
 }

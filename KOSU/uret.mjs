@@ -138,7 +138,7 @@ for (const [ad, baslik, spec] of SPECS) {
 }
 
 // -------- VITRIN: bizim ciktimiz ile satici referanslari YAN YANA, yazi yok --
-const REF_DIR = join(ROOT, 'GIRDI/iyi-flat/adaylar');
+const REF_DIR = join(ROOT, 'GIRDI/iyi-flat/adaylar');   // SILINDI (2026-09-09, Damla: emsal yok) — asagida yoksa bos liste
 const refs = existsSync(REF_DIR)
   ? readdirSync(REF_DIR).filter((f) => /\.png$/i.test(f)).sort()
   : [];
