@@ -106,7 +106,8 @@ int main(int argc, char** argv) {
     {
         JVal contract, bodyContract; std::string cozNot;
         if (!readContract("contract/graf-v1.json", contract) || !readContract("contract/body-v1.json", bodyContract)) { std::fprintf(stderr, "ERR_READ: contract/graf-v1.json ya da body-v1.json\n"); return 2; }
-        g = cozulmusGraf(g, body, bodyId == "croquis36", contract, bodyContract, cozNot);
+        // croquis: pens agzi COZULMEZ (kalip cozumu; flat'te yan dikis bel dikisinde surekli kalir), fitLength cozulur
+        g = cozulmusGraf(g, body, bodyId == "croquis36", contract, bodyContract, cozNot, mod != "flat");
         if (!cozNot.empty()) std::fprintf(stderr, "cozum: %s (graf o kalemde HAM cizildi)\n", cozNot.c_str());
         else std::fprintf(stderr, "cozum: fitLength + pens agzi %s bedeninde cozuldu, cizim cozulmus grafla\n", bodyId.c_str());
     }

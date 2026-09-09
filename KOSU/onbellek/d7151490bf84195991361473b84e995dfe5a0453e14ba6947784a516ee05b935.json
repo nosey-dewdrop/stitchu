@@ -155,6 +155,22 @@
    "neden": "straplez ust kenar (fotografta band tek omuzdan iner: ASIMETRIK, ayna kisiti): ust govde kalkar, ust kenar pervazli"
   },
   {
+   "op": "moveVertex",
+   "args": {
+    "panel": "on_govde_alt",
+    "edge": "ust_on.a",
+    "to": {
+     "landmark": "landmark.bustLine",
+     "xOf": "ringQuarter",
+     "ring": "girth.bust",
+     "xFactor": 1.0,
+     "yLandmark": "landmark.underarm",
+     "yOffsetMM": -13.3
+    }
+   },
+   "neden": "straplez ust kenar (fotografta band tek omuzdan iner: ASIMETRIK, ayna kisiti): ust kenar YATAY (yan tepe tam yTop hizasina; kol oyugu kesri yaklasikti, ortada chevron yapiyordu)"
+  },
+  {
    "op": "subdivide",
    "args": {
     "panel": "arka_govde",
@@ -196,6 +212,22 @@
     "finish": "faced"
    },
    "neden": "straplez ust kenar (fotografta band tek omuzdan iner: ASIMETRIK, ayna kisiti): arka ust govde kalkar"
+  },
+  {
+   "op": "moveVertex",
+   "args": {
+    "panel": "arka_govde_alt",
+    "edge": "ust_arka.a",
+    "to": {
+     "landmark": "landmark.bustLine",
+     "xOf": "ringQuarter",
+     "ring": "girth.bust",
+     "xFactor": 1.0,
+     "yLandmark": "landmark.underarm",
+     "yOffsetMM": -13.3
+    }
+   },
+   "neden": "straplez ust kenar (fotografta band tek omuzdan iner: ASIMETRIK, ayna kisiti): arka ust kenar yatay"
   },
   {
    "op": "sew",
@@ -243,7 +275,7 @@
         "landmark": "landmark.waist",
         "xFactor": 0,
         "yLandmark": "landmark.underarm",
-        "yOffsetMM": -38
+        "yOffsetMM": -43
        },
        "to": {
         "landmark": "landmark.bustLine",
@@ -251,7 +283,7 @@
         "ring": "girth.bust",
         "xFactor": 1.0,
         "yLandmark": "landmark.underarm",
-        "yOffsetMM": -38
+        "yOffsetMM": -43
        },
        "finish": "faced"
       },
@@ -265,7 +297,7 @@
         "ring": "girth.bust",
         "xFactor": 1.0,
         "yLandmark": "landmark.underarm",
-        "yOffsetMM": -38
+        "yOffsetMM": -43
        },
        "to": {
         "landmark": "landmark.bustLine",
@@ -273,7 +305,7 @@
         "ring": "girth.bust",
         "xFactor": 1.0,
         "yLandmark": "landmark.underarm",
-        "yOffsetMM": 8
+        "yOffsetMM": 2
        },
        "finish": "faced"
       },
@@ -287,13 +319,13 @@
         "ring": "girth.bust",
         "xFactor": 1.0,
         "yLandmark": "landmark.underarm",
-        "yOffsetMM": 8
+        "yOffsetMM": 2
        },
        "to": {
         "landmark": "landmark.waist",
         "xFactor": 0,
         "yLandmark": "landmark.underarm",
-        "yOffsetMM": 8
+        "yOffsetMM": 2
        },
        "finish": "raw"
       },
@@ -305,13 +337,13 @@
         "landmark": "landmark.waist",
         "xFactor": 0,
         "yLandmark": "landmark.underarm",
-        "yOffsetMM": 8
+        "yOffsetMM": 2
        },
        "to": {
         "landmark": "landmark.waist",
         "xFactor": 0,
         "yLandmark": "landmark.underarm",
-        "yOffsetMM": -38
+        "yOffsetMM": -43
        }
       }
      ],

@@ -223,8 +223,19 @@ Kavsak kavsakBul(const Garment& g, const std::string& pi, const RefPoint& A, con
         // farki kumasta iki kenar olmasi, geometride ayni noktada bulusmasi. Kapanma ilan
         // EDILMEMISSE (closure bos) bu dal calismaz: acik kalan arka orta halkayi kopuk birakir.
         if (P && Q && A.xSifir() && B.xSifir()) {
-            const bool ai = P->onFold || kapanmaAynasi(g, pi);
-            const bool aj = Q->onFold || kapanmaAynasi(g, pj);
+            // DIKILI AYNA (A4 tur 6, 2026-09-09, pantolon): panel kat DEGIL, x=0 kenari kendi ayna kopyasiyla KAPANMASIZ dikili
+            // (arka orta ag dikisi). Halka acisindan kat gibidir: kumasta iki kenar, dikilince tek nokta.
+            auto aynaDikili = [&](const std::string& pid) {
+                for (const Seam& sm : g.seams) {
+                    if (sm.a.empty() || sm.a.size() != sm.b.size()) continue;
+                    bool ayni = true; for (size_t k = 0; k < sm.a.size(); ++k) if (!(sm.a[k] == sm.b[k])) ayni = false;
+                    if (!ayni) continue;
+                    for (const EdgeRef& r : sm.a) { const Edge* e = g.edge(r); if (r.panel == pid && e && (e->from.xSifir() || e->to.xSifir())) return true; }
+                }
+                return false;
+            };
+            const bool ai = P->onFold || kapanmaAynasi(g, pi) || aynaDikili(pi);
+            const bool aj = Q->onFold || kapanmaAynasi(g, pj) || aynaDikili(pj);
             // en az bir taraf gercek KAPANMA olmali; iki kat zaten yukarida "kat" dondu
             if (ai && aj && (kapanmaAynasi(g, pi) || kapanmaAynasi(g, pj))) return {"kapanma", ""};
         }
@@ -417,10 +428,15 @@ DogrulamaRaporu dogrula(const Garment& g0, const Body& body, const JVal& contrac
                     if (!buDikiste.insert(key).second) {
                         const Panel* pp = g0.panel(r.panel);
                         const Edge* ee = g0.edge(r);
-                        const bool aynaKapanma = pp && ee && pp->cutCount == 2 && !s.closure.type.empty()
-                                                 && ee->from.xSifir() && ee->to.xSifir();
+                        // 2026-09-09 (A4 tur 6, pantolon tabani): ayna dikisi ZINCIR olabilir — on/arka orta + ag kavisi (cf/cb x=0'da
+                        // baslar, ag noktasi x<0'da biter) ve arka ag dikisinde kapanma yoktur (dikili). Istisna: cutCount==2 panelin
+                        // kenari ve ayni taraftaki zincirin bir ucu x=0'da (eksen: ayna kesimle dikilen kenarlar oradan baslar).
+                        bool zincirEksende = false;
+                        for (const EdgeRef& q : refs) { const Edge* qe = g0.edge(q); if (qe && (qe->from.xSifir() || qe->to.xSifir())) zincirEksende = true; }
+                        const bool aynaKapanma = pp && ee && pp->cutCount == 2 && zincirEksende
+                                                 && (!s.closure.type.empty() || refs.size() > 1 || (ee->from.xSifir() && ee->to.xSifir()));
                         if (aynaKapanma) {
-                            H("topoloji", key, "ayna kapanmasi: kenar dikis " + s.id + " icinde kendi ayna kopyasiyla eslesiyor (cutCount=2, closure " + s.closure.type + "); kumasta iki parca", true, true);
+                            H("topoloji", key, "ayna kapanmasi: kenar dikis " + s.id + " icinde kendi ayna kopyasiyla eslesiyor (cutCount=2, closure '" + s.closure.type + "', zincir eksende); kumasta iki parca", true, true);
                         } else {
                             topoRet("dikis_cifti", key, "kenar dikis " + s.id + " icinde iki kez geciyor; dikis cifti benzersizdir (_yasa 4)");
                             ++hataSayisi;

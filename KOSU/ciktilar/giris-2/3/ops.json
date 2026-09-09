@@ -1,0 +1,131 @@
+[
+ {
+  "op": "drop",
+  "args": {
+   "panel": "kol",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "merge",
+  "args": {
+   "seam": "bel",
+   "panelA": "on_beden",
+   "panelB": "on_etek",
+   "panel": "on_govde"
+  }
+ },
+ {
+  "op": "merge",
+  "args": {
+   "seam": "bel",
+   "panelA": "arka_beden",
+   "panelB": "arka_etek",
+   "panel": "arka_govde"
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_govde",
+   "edge": "neck_front",
+   "from": {
+    "landmark": "landmark.neckBase",
+    "xFactor": 1.6,
+    "yLandmark": "landmark.shoulderTip",
+    "yLandmark2": "landmark.neckBase",
+    "yLerp": 0.85
+   },
+   "to": {
+    "landmark": "landmark.waist",
+    "xFactor": 0,
+    "yLandmark": "landmark.neckFront",
+    "yLandmark2": "landmark.bustLine",
+    "yLerp": -0.12
+   },
+   "control": [
+    {
+     "landmark": "landmark.neckBase",
+     "xFactor": 1.2,
+     "yLandmark": "landmark.neckFront",
+     "yLandmark2": "landmark.bustLine",
+     "yLerp": -0.14
+    },
+    {
+     "landmark": "landmark.neckBase",
+     "xFactor": 0.6,
+     "yLandmark": "landmark.neckFront",
+     "yLandmark2": "landmark.bustLine",
+     "yLerp": -0.13
+    }
+   ]
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_govde",
+   "edge": "neck_back",
+   "from": {
+    "landmark": "landmark.neckBase",
+    "xFactor": 1.6,
+    "yLandmark": "landmark.shoulderTip",
+    "yLandmark2": "landmark.neckBase",
+    "yLerp": 0.85
+   },
+   "to": {
+    "landmark": "landmark.nape",
+    "xFactor": 0,
+    "yOffsetMM": 4
+   },
+   "control": [
+    {
+     "landmark": "landmark.neckBase",
+     "xFactor": 1.1199999999999999,
+     "yLandmark": "landmark.nape",
+     "yOffsetMM": 2.4
+    },
+    {
+     "landmark": "landmark.neckBase",
+     "xFactor": 0.48,
+     "yLandmark": "landmark.nape",
+     "yOffsetMM": 4
+    }
+   ]
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_govde",
+   "edge": "hem_front",
+   "yLandmark": "landmark.ankle",
+   "yOffsetMM": 20
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_govde",
+   "edge": "hem_back",
+   "yLandmark": "landmark.ankle",
+   "yOffsetMM": 20
+  }
+ },
+ {
+  "op": "flare",
+  "args": {
+   "panel": "on_govde",
+   "edge": "hem_front",
+   "factor": 1.08
+  }
+ },
+ {
+  "op": "flare",
+  "args": {
+   "panel": "arka_govde",
+   "edge": "hem_back",
+   "factor": 1.08
+  }
+ }
+]

@@ -1,7 +1,7 @@
 {
   "id": "foto-d7151490",
   "version": "graf-v1",
-  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b oyugu ve kapagi kaynakli kurar (KAPI 2, docs/GRAF-IR.md F2b kapilari; F3e devredilmez); croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).\ngrafuygula: taban taban-elbise + 16 emir (KOSU/ciktilar/giris-3/7/ops.json)",
+  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b oyugu ve kapagi kaynakli kurar (KAPI 2, docs/GRAF-IR.md F2b kapilari; F3e devredilmez); croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).\ngrafuygula: taban taban-elbise + 18 emir (KOSU/ciktilar/giris-3/7/ops.json)",
   "panels": [
     {
       "id": "on_govde_alt",
@@ -145,46 +145,13 @@
             "xOffsetMM": 0
           },
           "to": {
-            "combo": [
-              {
-                "w": 0.5240209064240229,
-                "landmark": "landmark.bustLine",
-                "xOf": "ringQuarter",
-                "ring": "girth.bust",
-                "xFactor": 1,
-                "xOffsetMM": 0
-              },
-              {
-                "w": 0.24468974957597706,
-                "landmark": "landmark.underarm",
-                "xOf": "widthHalf",
-                "width": "width.crossFront",
-                "xFactor": 1,
-                "xOffsetMM": 0
-              },
-              {
-                "w": 0.20091801599999998,
-                "landmark": "landmark.underarm",
-                "xOf": "widthHalf",
-                "width": "width.crossFront",
-                "xFactor": 1,
-                "xOffsetMM": 0,
-                "yLandmark": "landmark.underarm",
-                "yLandmark2": "landmark.shoulderTip",
-                "yLerp": 0.2761423749153968
-              },
-              {
-                "w": 0.030371328,
-                "landmark": "landmark.underarm",
-                "xOf": "widthHalf",
-                "width": "width.crossFront",
-                "xFactor": 1,
-                "xOffsetMM": 0,
-                "yLandmark": "landmark.underarm",
-                "yLandmark2": "landmark.shoulderTip",
-                "yLerp": 0.5
-              }
-            ]
+            "landmark": "landmark.bustLine",
+            "xOf": "ringQuarter",
+            "ring": "girth.bust",
+            "xFactor": 1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yOffsetMM": -13.3
           },
           "control": [
             {
@@ -245,46 +212,13 @@
           "id": "ust_on.a",
           "kind": "cut",
           "from": {
-            "combo": [
-              {
-                "w": 0.5240209064240229,
-                "landmark": "landmark.bustLine",
-                "xOf": "ringQuarter",
-                "ring": "girth.bust",
-                "xFactor": 1,
-                "xOffsetMM": 0
-              },
-              {
-                "w": 0.24468974957597706,
-                "landmark": "landmark.underarm",
-                "xOf": "widthHalf",
-                "width": "width.crossFront",
-                "xFactor": 1,
-                "xOffsetMM": 0
-              },
-              {
-                "w": 0.20091801599999998,
-                "landmark": "landmark.underarm",
-                "xOf": "widthHalf",
-                "width": "width.crossFront",
-                "xFactor": 1,
-                "xOffsetMM": 0,
-                "yLandmark": "landmark.underarm",
-                "yLandmark2": "landmark.shoulderTip",
-                "yLerp": 0.2761423749153968
-              },
-              {
-                "w": 0.030371328,
-                "landmark": "landmark.underarm",
-                "xOf": "widthHalf",
-                "width": "width.crossFront",
-                "xFactor": 1,
-                "xOffsetMM": 0,
-                "yLandmark": "landmark.underarm",
-                "yLandmark2": "landmark.shoulderTip",
-                "yLerp": 0.5
-              }
-            ]
+            "landmark": "landmark.bustLine",
+            "xOf": "ringQuarter",
+            "ring": "girth.bust",
+            "xFactor": 1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yOffsetMM": -13.3
           },
           "to": {
             "combo": [
@@ -527,46 +461,13 @@
             "xOffsetMM": 0
           },
           "to": {
-            "combo": [
-              {
-                "w": 0.5240209064240229,
-                "landmark": "landmark.bustLine",
-                "xOf": "ringQuarter",
-                "ring": "girth.bust",
-                "xFactor": 1,
-                "xOffsetMM": 0
-              },
-              {
-                "w": 0.24468974957597706,
-                "landmark": "landmark.underarm",
-                "xOf": "widthHalf",
-                "width": "width.crossBack",
-                "xFactor": 1,
-                "xOffsetMM": 0
-              },
-              {
-                "w": 0.20091801599999998,
-                "landmark": "landmark.underarm",
-                "xOf": "widthHalf",
-                "width": "width.crossBack",
-                "xFactor": 1,
-                "xOffsetMM": 0,
-                "yLandmark": "landmark.underarm",
-                "yLandmark2": "landmark.shoulderTip",
-                "yLerp": 0.2761423749153968
-              },
-              {
-                "w": 0.030371328,
-                "landmark": "landmark.underarm",
-                "xOf": "widthHalf",
-                "width": "width.crossBack",
-                "xFactor": 1,
-                "xOffsetMM": 0,
-                "yLandmark": "landmark.underarm",
-                "yLandmark2": "landmark.shoulderTip",
-                "yLerp": 0.5
-              }
-            ]
+            "landmark": "landmark.bustLine",
+            "xOf": "ringQuarter",
+            "ring": "girth.bust",
+            "xFactor": 1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yOffsetMM": -13.3
           },
           "control": [
             {
@@ -627,46 +528,13 @@
           "id": "ust_arka.a",
           "kind": "cut",
           "from": {
-            "combo": [
-              {
-                "w": 0.5240209064240229,
-                "landmark": "landmark.bustLine",
-                "xOf": "ringQuarter",
-                "ring": "girth.bust",
-                "xFactor": 1,
-                "xOffsetMM": 0
-              },
-              {
-                "w": 0.24468974957597706,
-                "landmark": "landmark.underarm",
-                "xOf": "widthHalf",
-                "width": "width.crossBack",
-                "xFactor": 1,
-                "xOffsetMM": 0
-              },
-              {
-                "w": 0.20091801599999998,
-                "landmark": "landmark.underarm",
-                "xOf": "widthHalf",
-                "width": "width.crossBack",
-                "xFactor": 1,
-                "xOffsetMM": 0,
-                "yLandmark": "landmark.underarm",
-                "yLandmark2": "landmark.shoulderTip",
-                "yLerp": 0.2761423749153968
-              },
-              {
-                "w": 0.030371328,
-                "landmark": "landmark.underarm",
-                "xOf": "widthHalf",
-                "width": "width.crossBack",
-                "xFactor": 1,
-                "xOffsetMM": 0,
-                "yLandmark": "landmark.underarm",
-                "yLandmark2": "landmark.shoulderTip",
-                "yLerp": 0.5
-              }
-            ]
+            "landmark": "landmark.bustLine",
+            "xOf": "ringQuarter",
+            "ring": "girth.bust",
+            "xFactor": 1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yOffsetMM": -13.3
           },
           "to": {
             "combo": [
@@ -779,7 +647,7 @@
             "xFactor": 0,
             "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
-            "yOffsetMM": -38
+            "yOffsetMM": -43
           },
           "to": {
             "landmark": "landmark.bustLine",
@@ -788,7 +656,7 @@
             "xFactor": 1,
             "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
-            "yOffsetMM": -38
+            "yOffsetMM": -43
           },
           "finish": "faced"
         },
@@ -803,7 +671,7 @@
             "xFactor": 1,
             "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
-            "yOffsetMM": -38
+            "yOffsetMM": -43
           },
           "to": {
             "landmark": "landmark.bustLine",
@@ -812,7 +680,7 @@
             "xFactor": 1,
             "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
-            "yOffsetMM": 8
+            "yOffsetMM": 2
           },
           "finish": "faced"
         },
@@ -827,14 +695,14 @@
             "xFactor": 1,
             "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
-            "yOffsetMM": 8
+            "yOffsetMM": 2
           },
           "to": {
             "landmark": "landmark.waist",
             "xFactor": 0,
             "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
-            "yOffsetMM": 8
+            "yOffsetMM": 2
           },
           "finish": "raw"
         },
@@ -847,14 +715,14 @@
             "xFactor": 0,
             "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
-            "yOffsetMM": 8
+            "yOffsetMM": 2
           },
           "to": {
             "landmark": "landmark.waist",
             "xFactor": 0,
             "xOffsetMM": 0,
             "yLandmark": "landmark.underarm",
-            "yOffsetMM": -38
+            "yOffsetMM": -43
           }
         }
       ],
@@ -1101,6 +969,21 @@
       }
     },
     {
+      "op": "moveVertex",
+      "args": {
+        "panel": "on_govde_alt",
+        "edge": "ust_on.a",
+        "to": {
+          "landmark": "landmark.bustLine",
+          "xOf": "ringQuarter",
+          "ring": "girth.bust",
+          "xFactor": 1,
+          "yLandmark": "landmark.underarm",
+          "yOffsetMM": -13.3
+        }
+      }
+    },
+    {
       "op": "subdivide",
       "args": {
         "panel": "arka_govde",
@@ -1133,6 +1016,21 @@
       "args": {
         "panel": "arka_govde_ust",
         "finish": "faced"
+      }
+    },
+    {
+      "op": "moveVertex",
+      "args": {
+        "panel": "arka_govde_alt",
+        "edge": "ust_arka.a",
+        "to": {
+          "landmark": "landmark.bustLine",
+          "xOf": "ringQuarter",
+          "ring": "girth.bust",
+          "xFactor": 1,
+          "yLandmark": "landmark.underarm",
+          "yOffsetMM": -13.3
+        }
       }
     },
     {
@@ -1179,7 +1077,7 @@
                 "landmark": "landmark.waist",
                 "xFactor": 0,
                 "yLandmark": "landmark.underarm",
-                "yOffsetMM": -38
+                "yOffsetMM": -43
               },
               "to": {
                 "landmark": "landmark.bustLine",
@@ -1187,7 +1085,7 @@
                 "ring": "girth.bust",
                 "xFactor": 1,
                 "yLandmark": "landmark.underarm",
-                "yOffsetMM": -38
+                "yOffsetMM": -43
               },
               "finish": "faced"
             },
@@ -1201,7 +1099,7 @@
                 "ring": "girth.bust",
                 "xFactor": 1,
                 "yLandmark": "landmark.underarm",
-                "yOffsetMM": -38
+                "yOffsetMM": -43
               },
               "to": {
                 "landmark": "landmark.bustLine",
@@ -1209,7 +1107,7 @@
                 "ring": "girth.bust",
                 "xFactor": 1,
                 "yLandmark": "landmark.underarm",
-                "yOffsetMM": 8
+                "yOffsetMM": 2
               },
               "finish": "faced"
             },
@@ -1223,13 +1121,13 @@
                 "ring": "girth.bust",
                 "xFactor": 1,
                 "yLandmark": "landmark.underarm",
-                "yOffsetMM": 8
+                "yOffsetMM": 2
               },
               "to": {
                 "landmark": "landmark.waist",
                 "xFactor": 0,
                 "yLandmark": "landmark.underarm",
-                "yOffsetMM": 8
+                "yOffsetMM": 2
               },
               "finish": "raw"
             },
@@ -1241,13 +1139,13 @@
                 "landmark": "landmark.waist",
                 "xFactor": 0,
                 "yLandmark": "landmark.underarm",
-                "yOffsetMM": 8
+                "yOffsetMM": 2
               },
               "to": {
                 "landmark": "landmark.waist",
                 "xFactor": 0,
                 "yLandmark": "landmark.underarm",
-                "yOffsetMM": -38
+                "yOffsetMM": -43
               }
             }
           ],

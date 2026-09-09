@@ -4,15 +4,20 @@
 // kosuyor ve import edilebilir bir png() disari vermiyor; ORADAKI dosyaya
 // dokunmak A3'un izin listesi disi.
 import { execFileSync, spawn } from 'node:child_process';
-import { existsSync, mkdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const bekle = (ms) => new Promise((r) => setTimeout(r, ms));
 
-export async function png(svgPath, pngPath, w = 900, h = 1200) {
+export async function png(svgPath, pngPath, w = 900, h = null) {
   if (!existsSync(CHROME)) return { ok: false, neden: 'Chrome yok: ' + CHROME };
+  // yukseklik viewBox oranindan (2026-09-09: sabit 1200 uzun giysiyi — pantolon, yere kadar elbise — kesiyordu)
+  if (!h) {
+    const m = /viewBox="([-\d.]+) ([-\d.]+) ([-\d.]+) ([-\d.]+)"/.exec(readFileSync(svgPath, 'utf8'));
+    h = m ? Math.max(200, Math.ceil(w * parseFloat(m[4]) / parseFloat(m[3]))) : 1200;
+  }
   const d = join(tmpdir(), `a3shot-${Math.random().toString(36).slice(2)}`);
   mkdirSync(d, { recursive: true });
   execFileSync('cp', [svgPath, join(d, 'a.svg')]);

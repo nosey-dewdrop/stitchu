@@ -1,0 +1,145 @@
+{
+ "girdiYolu": "GIRDI/hedef-fotograflar-2/dior-hc-fw26-pantolon.jpg",
+ "sha256": "7dcb3a0d7676c2f88bf3d1380bf2ed661e53fe3730e076cd0d7816f0cb06c572",
+ "semaSurumu": "vision-graf-v1",
+ "okuyan": "isci-A4-tur6",
+ "tarih": "2026-09-09",
+ "yontem": "Kosu iscisi defile fotografina DOGRUDAN bakti (Read). Dis LLM cagrisi YOK; llmCagri = 0.",
+ "gorunum": "on",
+ "ilan": "genis duz pacali pantolon (yuksek bel)",
+ "tabanGraf": "KOSU/ciktilar/graf-ilk/pantolon.json",
+ "gorunumDogrulamasi": "Defile fotografi onden; giysi = beyaz pantolon (ust ceket okunmadi).",
+ "paneller": [
+  {
+   "id": "on_bacak",
+   "gorulduMu": true,
+   "guven": 0.9,
+   "kanit": "on bacak: bol, duz, kirisiksiz; bel ceket altinda"
+  },
+  {
+   "id": "arka_bacak",
+   "gorulduMu": false,
+   "guven": 0.2,
+   "kanit": "arka gorunmuyor"
+  }
+ ],
+ "kenarlar": [
+  {
+   "panel": "on_bacak",
+   "kenar": "paca_front",
+   "landmarkUst": "landmark.hip",
+   "landmarkAlt": "landmark.ankle",
+   "oran": 1.05,
+   "bicim": "duz",
+   "guven": 0.85
+  },
+  {
+   "panel": "on_bacak",
+   "kenar": "side_front",
+   "landmarkUst": "landmark.hip",
+   "landmarkAlt": "landmark.ankle",
+   "oran": 1.15,
+   "bicim": "hafif-acik",
+   "guven": 0.7
+  }
+ ],
+ "dikisler": [
+  {
+   "id": "yan_bacak",
+   "a": "on_bacak/side",
+   "b": "arka_bacak/side",
+   "oranAralik": [
+    1.0,
+    1.0
+   ],
+   "gorunurMu": true,
+   "guven": 0.7
+  },
+  {
+   "id": "ic_bacak",
+   "a": "on_bacak/ic",
+   "b": "arka_bacak/ic",
+   "oranAralik": [
+    1.0,
+    1.0
+   ],
+   "gorunurMu": false,
+   "guven": 0.6
+  }
+ ],
+ "kapanma": {
+  "yer": "on_orta",
+  "tur": "fermuar",
+  "oranBas": 0.0,
+  "oranSon": 0.6,
+  "guven": 0.3,
+  "not": "bel ve kapanma ceket altinda: cikarim (taban on orta fermuar)"
+ },
+ "simetri": {
+  "cfAyna": true,
+  "cbAyna": true,
+  "guven": 0.9,
+  "kanit": "iki bacak ayni"
+ },
+ "katmanlar": [],
+ "arka": {
+  "koken": "turetildi",
+  "guven": 0.3,
+  "neden": "arka yok; taban arka bacak"
+ },
+ "hedefler": [],
+ "opDemeti": [
+  {
+   "op": "flare",
+   "args": {
+    "panel": "on_bacak",
+    "edge": "paca_front",
+    "factor": 1.15
+   },
+   "neden": "paca genis: bacak dizden asagi hafif acilir (fotografta bol duz paca)"
+  },
+  {
+   "op": "flare",
+   "args": {
+    "panel": "arka_bacak",
+    "edge": "paca_back",
+    "factor": 1.15
+   },
+   "neden": "arka paca ayni"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "on_bacak",
+    "edge": "paca_front",
+    "yLandmark": "landmark.ankle",
+    "yOffsetMM": 30
+   },
+   "neden": "paca yere kadar: bilek + 3 cm"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "arka_bacak",
+    "edge": "paca_back",
+    "yLandmark": "landmark.ankle",
+    "yOffsetMM": 30
+   },
+   "neden": "arka paca ayni"
+  }
+ ],
+ "celiskiTablosu": [],
+ "olculmedi": [
+  "siluet orani: defile fotografi (yuruyus pozu, aksesuar), poz landmark kosulmadi"
+ ],
+ "okunamayanlar": [
+  "bel/kusak (ceket altinda)",
+  "cep",
+  "arka"
+ ],
+ "_kullanim": "A4 tur 6 giris-2 hattinin girdisi.",
+ "eksikPrimitif": [
+  "PRIMITIF: kusak bandi (attach bel kenarina) bu turda yazilmadi"
+ ],
+ "primitifCeviri": "Okuma dogrudan graf-v1 primitifleriyle yazildi (ceviri yok)."
+}

@@ -11,10 +11,14 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync, spawnSync } from 'node:child_process';
 
-const TABAN = 'KOSU/ciktilar/graf-ilk/graf.json';
+const TABAN_VARSAYILAN = 'KOSU/ciktilar/graf-ilk/graf.json';
+// TABAN SECIMI (A4 tur 6, 2026-09-09, 0-K 3): okuma `tabanGraf` alaniyla tabani secer (elbise tabani graf.json, pantolon
+// tabani pantolon.json; ikisi de engine/tests/graf_ir_check.cpp --emit ile yazilir). Giysi adi dallanmaz: taban bir dosya yoludur.
+let TABAN = TABAN_VARSAYILAN;
 
 export function uret(sha, cikisDizin) {
   const okuma = JSON.parse(readFileSync(`KOSU/onbellek/${sha}.json`, 'utf8'));
+  TABAN = okuma.tabanGraf || TABAN_VARSAYILAN;
   mkdirSync(cikisDizin, { recursive: true });
   const ops = (okuma.opDemeti || []).map((o) => ({ op: o.op, args: o.args }));
   const opsYol = `${cikisDizin}/ops.json`;

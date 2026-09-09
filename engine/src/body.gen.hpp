@@ -83,8 +83,8 @@ inline constexpr BodyLandmarkRow kBodyLandmarks_croquis36[] = {
     {"landmark.crotch", 0, 703.7},
     {"landmark.knee", 0, 1028.9},
     {"landmark.ankle", 0, 1435.7},
-    {"landmark.elbow", 236.2, 393.3},
-    {"landmark.wrist", 273.6, 666.2},
+    {"landmark.elbow", 319.8, 371},
+    {"landmark.wrist", 423, 626.5},
 };
 inline constexpr BodyGirthRow kBodyGirths_croquis36[] = {
     {"girth.neckBase", 385.7, 0.5},
@@ -140,8 +140,8 @@ inline constexpr BodyLandmarkRow kBodyFark[] = {
     {"landmark.crotch", 0, 40.7},
     {"landmark.knee", 0, 58.9},
     {"landmark.ankle", 0, 85.7},
-    {"landmark.elbow", 58.7, 19},
-    {"landmark.wrist", 96.1, 31.9},
+    {"landmark.elbow", 142.3, -3.3},
+    {"landmark.wrist", 245.5, -7.8},
 };
 
 inline constexpr int kBodyGradeCount = 6;
@@ -206,7 +206,7 @@ inline constexpr BodyScalarRow kCroquisOran[] = {
     {"shoulderSlopeDeg", 20},
     {"crossOverShoulderToShoulder", 0.85},
     {"dikeyUzatma", 1},
-    {"kolAcisiDeg", 82.2},
+    {"kolAcisiDeg", 68},
 };
 inline constexpr BodyScalarRow kCroquisBolluk[] = {
     {"girth.waist", 0.0333},

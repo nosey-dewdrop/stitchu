@@ -242,6 +242,76 @@ static Garment tabanBase(const Ease& ez) {
     return g;
 }
 
+// ----------------------------------------------------------------- PANTOLON TABANI (A4 tur 6, 2026-09-09, 0-K 3: "tek giysi
+// tipine ayarli cizici GECMEZ; pantolon tabani yok, yazilacak"). Sozluk yok: ayni Edge/Panel/Seam primitifleri; giysi adi
+// yalniz dosya/panel id'sinde. Iki bacak paneli (on/arka, 2'ser kesim, kat yok): CF/CB dikisi (bel -> kalca hizasi), ag
+// kavisi (kalca hizasi -> ag noktasi, kubik: eksende dusey teget, ag noktasinda yatay), ic bacak (ag -> paca), paca (kesim,
+// hem), yan dikis (paca -> kalca -> bel), bel kenari (kesim, pervaz/kusak sonra) iki parcali + pens (etek pensiyle ayni taban:
+// kalca-bel supresyonu). UYDURULANLAR ADIYLA (DOGRULANMADI): ag uzantisi on 0.20 x kalca ceyregi, arka 0.45 x kalca ceyregi
+// (Aldrich klasik pantolon: on ~kalca/20, arka ~kalca/8 mertebesi); paca yarim genisligi 0.30 x kalca ceyregi (duz bacak; bacaklar flat'te ayrik); bacak ekseni (Q_kalca - ag)/2. Croquis (manken) izdusumunde ag uzantisi bacagin
+// ARKASINA duser: x < 0 noktalar flatsvg'de eksene (x=0) kirpilir (giysi dali degil, izdusum kurali).
+static Panel bacak(bool on, const Ease& ez) {
+    Panel p; p.id = on ? "on_bacak" : "arka_bacak";
+    p.onFold = false; p.cutCount = 2;
+    p.ease = {{"girth.waist", ez.waist}, {"girth.hip", ez.hip}};
+    p.reason = on ? "on bacak (2 kes, on orta ag dikisi + fermuar)" : "arka bacak (2 kes, arka orta ag dikisi)";
+    const std::string s = on ? "front" : "back";
+    const double fork = on ? 0.20 : 0.45, hemW = 0.30;   // paca yarimi 0.30: bacaklar flat'te AYRIK durur (ic paca x > 0; 0.49'da ic paca eksenin altina dusup tek blok gorunuyordu, 2026-09-09 gorulerek)
+    const double xc = (1.0 - fork) / 2.0;                                   // bacak ekseni (kalca ceyregi carpani)
+    const RefPoint vWaistC = P(L("landmark.waist", 0.0));
+    const RefPoint vHipC = P(Y(L("landmark.waist", 0.0), "landmark.hip"));
+    const RefPoint vFork = P(Y(Q("landmark.hip", -fork, "girth.hip"), "landmark.crotch"));
+    const RefPoint vHemIn = P(Y(Q("landmark.hip", xc - hemW, "girth.hip"), "landmark.ankle"));
+    const RefPoint vHemOut = P(Y(Q("landmark.hip", xc + hemW, "girth.hip"), "landmark.ankle"));
+    const RefPoint vHip = P(Q("landmark.hip", 1.0, "girth.hip"));
+    const RefPoint vWaistS = P(Q("landmark.waist", 1.0));
+    Edge cf = E(on ? "cf" : "cb", "seam", on ? "cf_seam" : "cb_seam", vWaistC, vHipC);
+    // ag kavisi: eksende dusey teget (CF'nin devami), ag noktasinda yatay teget
+    const RefPoint agc1 = P(Y(L("landmark.waist", 0.0), "landmark.hip", "landmark.crotch", 0.6));
+    const RefPoint agc2 = P(Y(Q("landmark.hip", -fork * 0.45, "girth.hip"), "landmark.crotch"));
+    Edge ag = C(E("ag_" + s, "seam", "crotch_" + s, vHipC, vFork), agc1, agc2);
+    // ic bacak: arka duz; ON KUBIK + fitLength kisiti ic_bacak dikisine (arka ag uzantisi buyuk oldugu icin arka ic bacak ondan
+    // ~3 mm uzun; bukme yalniz UZATIR, o yuzden kisit kisa olan on kenarda — 2026-09-09 olculdu: arkada kisit 3.2 mm'ye ulasamadi)
+    Edge icb = E("ic_bacak_" + s, "seam", "inseam_" + s, vFork, vHemIn); icb.notches = {0.5};
+    if (on) { const RefPoint c1 = affine({{0.67, vFork}, {0.33, vHemIn}}), c2 = affine({{0.33, vFork}, {0.67, vHemIn}}); icb = C(icb, c1, c2); }
+    Edge paca = E("paca_" + s, "cut", "hem_" + s, vHemIn, vHemOut); paca.finish = "hem";
+    Edge side1 = E("side_" + s + ".1", "seam", "side_" + s, vHemOut, vHip); side1.rolePart = 1; side1.roleCount = 2; side1.notches = {0.5};
+    Edge side2 = E("side_" + s + ".2", "seam", "side_" + s, vHip, vWaistS); side2.rolePart = 2; side2.roleCount = 2;
+    const double eksenE = 0.59, wE = 0.205;
+    const RefPoint vDartR = pensTabaniP(eksenE, +1.0, wE);
+    const RefPoint vDartL = pensTabaniP(eksenE, -1.0, wE);
+    Anchor apexE; apexE.landmark = "landmark.hip"; apexE.xOf = "ringQuarter"; apexE.ring = "girth.waist"; apexE.xFactor = eksenE;
+    const RefPoint vApexE = P(apexE);
+    Edge waist1 = E("waist_" + s + ".1", "cut", "waist_" + s, vWaistS, vDartR); waist1.rolePart = 1; waist1.roleCount = 2; waist1.finish = "faced";
+    Edge dartR = E("dart_" + p.id + ".1", "dartLeg", "waist_dart", vDartR, vApexE); dartR.rolePart = 1; dartR.roleCount = 2;
+    Edge dartL = E("dart_" + p.id + ".2", "dartLeg", "waist_dart", vApexE, vDartL); dartL.rolePart = 2; dartL.roleCount = 2;
+    Edge waist2 = E("waist_" + s + ".2", "cut", "waist_" + s, vDartL, vWaistC); waist2.rolePart = 2; waist2.roleCount = 2; waist2.finish = "faced";
+    p.edges = {cf, ag, icb, paca, side1, side2, waist1, dartR, dartL, waist2};
+    return p;
+}
+static Garment tabanPantolon(const Ease& ez) {
+    Garment g; g.id = "taban-pantolon";
+    g.notes = "PANTOLON TABANI (A4 tur 6, 2026-09-09). Iki bacak paneli, kat yok; on/arka orta ag dikisi; on orta fermuar. "
+              "Bolluk bel/kalca elbise tabaniyla ayni (garment-spec-v2 quantities). DOGRULANMADI: ag uzantisi on 0.20 / arka 0.45 x kalca ceyregi "
+              "(Aldrich mertebesi), paca yarim 0.30 x kalca ceyregi (duz bacak, bacaklar ayrik), ag kavisi kontrolleri 0.6 / 0.45. Bel kenari kesim (pervaz); kusak sonra op ile.";
+    g.panels = {bacak(true, ez), bacak(false, ez)};
+    Seam yan; yan.id = "yan_bacak"; yan.a = {{"on_bacak", "side_front.1"}, {"on_bacak", "side_front.2"}}; yan.b = {{"arka_bacak", "side_back.1"}, {"arka_bacak", "side_back.2"}}; yan.reverse = false; yan.notchFractions = {0.5}; yan.reason = "yan dikis: paca <-> paca, kalca <-> kalca, bel <-> bel";
+    Seam ic; ic.id = "ic_bacak"; ic.a = {{"on_bacak", "ic_bacak_front"}}; ic.b = {{"arka_bacak", "ic_bacak_back"}}; ic.reverse = false; ic.notchFractions = {0.5}; ic.reason = "ic bacak dikisi: ag <-> ag, paca <-> paca";
+    // ag dikisi: on orta + on ag kavisi (kendi aynasiyla, cutCount 2) ve arka orta + arka ag kavisi; on/arka ag noktasinda ic bacakla bulusur
+    Seam agOn; agOn.id = "on_orta_ag"; agOn.a = {{"on_bacak", "cf"}, {"on_bacak", "ag_front"}}; agOn.b = {{"on_bacak", "cf"}, {"on_bacak", "ag_front"}};
+    agOn.reverse = false; agOn.closure.type = "zipper"; agOn.closure.fromFraction = 0.0; agOn.closure.toFraction = 0.6; agOn.reason = "on orta + on ag: ayna kesimle dikilir; ustte fermuar (bel -> kalca hizasi)";
+    Seam agArka; agArka.id = "arka_orta_ag"; agArka.a = {{"arka_bacak", "cb"}, {"arka_bacak", "ag_back"}}; agArka.b = {{"arka_bacak", "cb"}, {"arka_bacak", "ag_back"}};
+    agArka.reverse = false; agArka.reason = "arka orta + arka ag: ayna kesimle dikilir";
+    g.seams = {yan, ic, agOn, agArka};
+    g.rings = {
+        // bel zinciri CB'den baslar, CF'de biter: kapanma aynasi CF'de (on orta fermuar), CB dikili
+        {"bel_halka", "waist_ring", {{"arka_bacak", "waist_back.2"}, {"arka_bacak", "waist_back.1"}, {"on_bacak", "waist_front.1"}, {"on_bacak", "waist_front.2"}}},
+        {"kalca_halka", "hip", {{"on_bacak", "side_front.1"}, {"on_bacak", "side_front.2"}, {"arka_bacak", "side_back.2"}, {"arka_bacak", "side_back.1"}}},
+        {"paca", "hem", {{"on_bacak", "paca_front"}, {"arka_bacak", "paca_back"}}},
+    };
+    return g;
+}
+
 // Kenari ADIYLA bul (2026-09-07): sabit indeks, panele kenar eklenince (pens) sessizce
 // baska kenari hedefliyordu. Negatif testler dogru alani bozmali.
 static JVal& kenarAdla(JVal& v, size_t panelIdx, const char* edgeId) {
@@ -433,6 +503,27 @@ int main(int argc, char** argv) {
         std::string disk; bool okRead = true;
         try { disk = readFile(outPath); } catch (...) { okRead = false; }
         ok(okRead && disk == t1, "KOSU/ciktilar/graf-ilk/graf.json bayt-ayni (degil ise: graf_ir_check ... --emit)");
+    }
+    // (g) PANTOLON TABANI (A4 tur 6): ayni sema, gidis-donus bayt-ayni, iki bedende degerlenir, dosya pin (graf.json'un yanina pantolon.json)
+    {
+        Garment pt = tabanPantolon(ez);
+        { OpResult rf = fitLength(pt, "on_bacak", "ic_bacak_front", "ic_bacak", 1.0, 0.0, octx);
+          ok(rf.ok, "pantolon tabani: fitLength on ic bacak -> ic_bacak (ratio 1): " + (rf.ok ? "kisit kaydedildi" : rf.hata)); if (rf.ok) pt = rf.g; }
+        const std::string pj = toJSONText(pt);
+        Garment pt2; std::string perr;
+        ok(fromJSONText(pj, pt2, perr) && toJSONText(pt2) == pj, "pantolon tabani: JSON gidis-donus bayt-ayni (" + std::to_string(pj.size()) + " bayt)" + (perr.empty() ? "" : " — " + perr));
+        { std::vector<std::string> hs; ok(semaKapsar(contract, pt, hs), "pantolon tabani: sema 0 hata" + (hs.empty() ? "" : " — " + hs[0])); }
+        for (const Panel& pp : pt.panels) { std::string why; ok(pp.closed(&why), "pantolon tabani: " + pp.id + " kapali " + why); }
+        for (const std::string& bid : {std::string("gercek36"), std::string("croquis36")}) {
+            const Body b = bid == "gercek36" ? gercek : croquis;
+            bool evalOk = true; std::string neden;
+            try { for (const Panel& pp : pt.panels) (void)pp.outline(pp.ctxFor(b, bid == "croquis36")); } catch (const std::exception& ex) { evalOk = false; neden = ex.what(); }
+            ok(evalOk, "pantolon tabani: " + bid + " bedeninde degerlendi" + (neden.empty() ? "" : " — " + neden));
+        }
+        const std::string ptPath = outPath.substr(0, outPath.find_last_of('/') + 1) + "pantolon.json";
+        if (emitMode) { std::ofstream f(ptPath); f << pj; f.close(); std::printf("  yazildi: %s (%zu bayt)\n", ptPath.c_str(), pj.size()); }
+        else { std::string disk; bool okRead = true; try { disk = readFile(ptPath); } catch (...) { okRead = false; }
+               ok(okRead && disk == pj, "KOSU/ciktilar/graf-ilk/pantolon.json bayt-ayni (degil ise: graf_ir_check ... --emit)"); }
     }
     std::printf("%s graf_ir_check — %d kirmizi\n", fails ? "FAIL" : "PASS", fails);
     return fails ? 1 : 0;

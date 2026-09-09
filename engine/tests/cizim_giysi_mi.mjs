@@ -714,8 +714,8 @@ console.log('\n--- (h) ayna: her gorunum x = 0 etrafinda simetrik');
 
 // ------------------------------------------------- (h2) AYNA KACIGI (hakem K2)
 // M6-vitrin, hakemin devrettigi kalem: "flat'te arka orta dikis TEK cizgi
-// olacak" (referans GIRDI/iyi-flat/adaylar/13-yuksek-bel-a-line.png; onbes
-// satici referansinin onbesinde de arka orta TEK yol ve tam ortadan geciyor).
+// olacak" (satici flat'lerinde arka orta TEK yol ve tam ortadan gecer; eski emsal seti
+// 2026-09-09'da silindi (0-K 1), kural olcuyle duruyor, referans dosyasi yok).
 //
 // KOKU BIR OLCU, BIR ZEVK TERCIHI DEGIL: kalibin arka govde paneli ayna
 // ekseninin DISINDA baslar (EU38'de 9.01 mm, bu dosyada asagida yeniden

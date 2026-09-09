@@ -94,7 +94,9 @@ struct HedefSatir { std::string ring, ratioTo, kaynak, uyari; double istenen = 0
 std::vector<HedefSatir> hedefUygula(Garment& g, const JVal& hedefler, const Body& body, const JVal& contract, std::string& hata);
 std::vector<HedefSatir> hedefOlc(const Garment& g, const JVal& hedefler, const Body& body, std::string& hata);
 // Cizim/olcum icin COZULMUS graf (cozumle + cozPens, dogrulayiciyla ayni sira). not_: cozulemeyen kalemler adiyla (bos = hepsi cozuldu).
-Garment cozulmusGraf(const Garment& g, const Body& body, bool onArkaEsit, const JVal& contract, const JVal& bodyContract, std::string& not_);
+// pensCoz=false: yalniz fitLength cozulur, pens agzi/yan tepe DOKUNULMAZ (croquis flat: giyilmis izdusumde bel dikisi yanda surekli;
+// yan tepe kaydirmasi kalip cozumudur — 2026-09-09 kor hakem tur 7: "bel bandi ile etek arasinda yan dikis kopuk")
+Garment cozulmusGraf(const Garment& g, const Body& body, bool onArkaEsit, const JVal& contract, const JVal& bodyContract, std::string& not_, bool pensCoz = true);
 
 } // namespace graf
 } // namespace stitchu

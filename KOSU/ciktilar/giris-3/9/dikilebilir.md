@@ -30,7 +30,7 @@ Yasa 5: celiskide **olcum kazanir**. Bos tablo "celiski yok" demek degildir.
 ## Motora ne gecti? (primitif emir listesi)
 
 Okuma dogrudan graf-v1 primitifleriyle yazilir (vision-graf-v1 yasa 9); ceviri katmani YOK.
-Motor (`grafuygula`) taban grafa bu 20 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
+Motor (`grafuygula`) taban grafa bu 22 emri sirayla uyguladi; cizici (`grafciz --ops`) ops SONRASI grafi cizdi.
 Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 
 | # | primitif | args | doguran okuma kalemi |
@@ -42,19 +42,21 @@ Bir emir reddedilseydi teslim duserdi (sessiz atlama yok).
 | 5 | `subdivide` | `{"panel":"on_beden","edge":"armhole_front.1","fractions":[0.092]}` | bustier ust kenar: kol oyugunda kesim noktasi (ust kenar yatay) |
 | 6 | `split` | `{"panel":"on_beden","vertexA":"cf.2","vertexB":"armhole_front.1.2","panelA":"on_beden_alt","panelB":"on_beden_ust","seam":"ust_on","seamRatio":1}` | bustier ust kenar: ust govde ayri panel |
 | 7 | `drop` | `{"panel":"on_beden_ust","finish":"faced"}` | bustier ust kenar: ust govde kalkar, ust kenar pervazli |
-| 8 | `subdivide` | `{"panel":"arka_beden","edge":"cb","fractions":[0.518]}` | bustier ust kenar: CB'de kesim noktasi |
-| 9 | `subdivide` | `{"panel":"arka_beden","edge":"armhole_back.1","fractions":[0.092]}` | bustier ust kenar: arka kol oyugunda kesim noktasi |
-| 10 | `split` | `{"panel":"arka_beden","vertexA":"cb.2","vertexB":"armhole_back.1.2","panelA":"arka_beden_alt","panelB":"arka_beden_ust","seam":"ust_arka","seamRatio":1}` | bustier ust kenar: arka ust govde ayri panel |
-| 11 | `drop` | `{"panel":"arka_beden_ust","finish":"faced"}` | bustier ust kenar: arka ust govde kalkar |
-| 12 | `sew` | `{"seam":"arka_orta_beden","a":[{"panel":"arka_beden_alt","edge":"cb.2"}],"b":[{"panel":"arka_beden_alt","edge":"cb.2"}],"reverse":true,"ratio":1}` | arka orta kapanma: drop ile dusen arka orta dikisi yeniden (cb.2 kendi aynasiyla) |
-| 13 | `closure` | `{"seam":"arka_orta_beden","type":"zipper","fromFraction":0,"toFraction":1}` | arka orta fermuar (fotografta arka gorunmuyor: cikarim) |
-| 14 | `reshapeEdge` | `{"panel":"on_beden_alt","edge":"ust_on.a","control":[{"landmark":"landmark.bustLine","xOf":"ringQuarter","ring":"girth.bust","xFactor":0.95,"yLandmark":"landmar…` | sweetheart: ust kenar CF'de alcak, kap ustunde yuksek (kubik) |
-| 15 | `addPanel` | `{"onto":"on_beden_alt","panel":{"id":"aski_on","edges":[{"id":"ic","kind":"cut","role":"strap","from":{"landmark":"landmark.bustLine","xOf":"ringQuarter","ring"…` | ince aski (10 mm), kap ustunden omuza (ucta fiyonk) |
-| 16 | `addPanel` | `{"onto":"arka_beden_alt","panel":{"id":"aski_arka","edges":[{"id":"ic","kind":"cut","role":"strap","from":{"landmark":"landmark.bustLine","xOf":"ringQuarter","r…` | ince aski (10 mm), kap ustunden omuza (ucta fiyonk) |
-| 17 | `extendTo` | `{"panel":"on_etek","edge":"hem_front","yLandmark":"landmark.hip","yOffsetMM":160}` | mini: kalca + ~16 cm |
-| 18 | `extendTo` | `{"panel":"arka_etek","edge":"hem_back","yLandmark":"landmark.hip","yOffsetMM":160}` | mini: kalca + ~16 cm (arka ayni) |
-| 19 | `flare` | `{"panel":"on_etek","edge":"hem_front","factor":1.08}` | hafif A |
-| 20 | `flare` | `{"panel":"arka_etek","edge":"hem_back","factor":1.08}` | hafif A (arka ayni) |
+| 8 | `moveVertex` | `{"panel":"on_beden_alt","edge":"ust_on.a","to":{"landmark":"landmark.bustLine","xOf":"ringQuarter","ring":"girth.bust","xFactor":1,"yLandmark":"landmark.underar…` | bustier ust kenar: ust kenar YATAY (yan tepe tam yTop hizasina; kol oyugu kesri yaklasikti, ortada chevron yapiyordu) |
+| 9 | `subdivide` | `{"panel":"arka_beden","edge":"cb","fractions":[0.518]}` | bustier ust kenar: CB'de kesim noktasi |
+| 10 | `subdivide` | `{"panel":"arka_beden","edge":"armhole_back.1","fractions":[0.092]}` | bustier ust kenar: arka kol oyugunda kesim noktasi |
+| 11 | `split` | `{"panel":"arka_beden","vertexA":"cb.2","vertexB":"armhole_back.1.2","panelA":"arka_beden_alt","panelB":"arka_beden_ust","seam":"ust_arka","seamRatio":1}` | bustier ust kenar: arka ust govde ayri panel |
+| 12 | `drop` | `{"panel":"arka_beden_ust","finish":"faced"}` | bustier ust kenar: arka ust govde kalkar |
+| 13 | `moveVertex` | `{"panel":"arka_beden_alt","edge":"ust_arka.a","to":{"landmark":"landmark.bustLine","xOf":"ringQuarter","ring":"girth.bust","xFactor":1,"yLandmark":"landmark.und…` | bustier ust kenar: arka ust kenar yatay |
+| 14 | `sew` | `{"seam":"arka_orta_beden","a":[{"panel":"arka_beden_alt","edge":"cb.2"}],"b":[{"panel":"arka_beden_alt","edge":"cb.2"}],"reverse":true,"ratio":1}` | arka orta kapanma: drop ile dusen arka orta dikisi yeniden (cb.2 kendi aynasiyla) |
+| 15 | `closure` | `{"seam":"arka_orta_beden","type":"zipper","fromFraction":0,"toFraction":1}` | arka orta fermuar (fotografta arka gorunmuyor: cikarim) |
+| 16 | `reshapeEdge` | `{"panel":"on_beden_alt","edge":"ust_on.a","control":[{"landmark":"landmark.bustLine","xOf":"ringQuarter","ring":"girth.bust","xFactor":0.95,"yLandmark":"landmar…` | sweetheart: ust kenar CF'de alcak, kap ustunde yuksek (kubik) |
+| 17 | `addPanel` | `{"onto":"on_beden_alt","panel":{"id":"aski_on","edges":[{"id":"ic","kind":"cut","role":"strap","from":{"landmark":"landmark.bustLine","xOf":"ringQuarter","ring"…` | ince aski (10 mm), kap ustunden omuza (ucta fiyonk) |
+| 18 | `addPanel` | `{"onto":"arka_beden_alt","panel":{"id":"aski_arka","edges":[{"id":"ic","kind":"cut","role":"strap","from":{"landmark":"landmark.bustLine","xOf":"ringQuarter","r…` | ince aski (10 mm), kap ustunden omuza (ucta fiyonk) |
+| 19 | `extendTo` | `{"panel":"on_etek","edge":"hem_front","yLandmark":"landmark.hip","yOffsetMM":160}` | mini: kalca + ~16 cm |
+| 20 | `extendTo` | `{"panel":"arka_etek","edge":"hem_back","yLandmark":"landmark.hip","yOffsetMM":160}` | mini: kalca + ~16 cm (arka ayni) |
+| 21 | `flare` | `{"panel":"on_etek","edge":"hem_front","factor":1.08}` | hafif A |
+| 22 | `flare` | `{"panel":"arka_etek","edge":"hem_back","factor":1.08}` | hafif A (arka ayni) |
 
 **Cozucu hedefi** (grafa oran YAZILMAZ, yasa 3; `grafuygula --hedef` halka bolluguna cevirir, contract cozucu.hedef sinirina kirpar): 0 adet.
 
@@ -66,10 +68,10 @@ Sapma buyukse bu OLCUMUN ilanidir: siluet "bel/enGenis" orani giysinin bel/gogus
 
 | cikti | durum | bayt |
 |---|---|---|
-| flat.svg | OK (data-ops=20) | 16348 |
-| flat.png | OK | 35809 |
-| kalip-36.svg | OK | 12490 |
-| kalip-36.png | OK | 35530 |
+| flat.svg | OK (data-ops=22) | 22210 |
+| flat.png | OK | 44163 |
+| kalip-36.svg | OK | 13256 |
+| kalip-36.png | OK | 30440 |
 
 **grafdogrula (gercek36):** KOSTU — kirmizi hukum: **0**
 

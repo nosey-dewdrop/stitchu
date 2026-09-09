@@ -1236,7 +1236,7 @@ CozumSonucu cozPens(const Garment& g, const Body& body, bool onArkaEsit,
 // COZULMUS GRAF (A4, 2026-09-09): cizici de dogrulayicinin olctugu grafi cizsin. Eskiden fitLength (cozumle) ve
 // pens agzi (cozPens) yalniz grafdogrula'nin kopyasinda cozuluyor, grafciz HAM grafi ciziyordu — kapi bir
 // geometriyi olcuyor, urun baska bir geometriyi gosteriyordu. Sira dogrulayiciyla ayni: cozumle, sonra cozPens.
-Garment cozulmusGraf(const Garment& g, const Body& body, bool onArkaEsit, const JVal& contract, const JVal& bodyContract, std::string& not_) {
+Garment cozulmusGraf(const Garment& g, const Body& body, bool onArkaEsit, const JVal& contract, const JVal& bodyContract, std::string& not_, bool pensCoz) {
     not_.clear();
     const OpCtx octx = OpCtx::fromContract(contract);
     CozumSonucu cz = cozumle(g, body, onArkaEsit, octx);
@@ -1248,7 +1248,7 @@ Garment cozulmusGraf(const Garment& g, const Body& body, bool onArkaEsit, const 
     for (const Panel& p : out.panels) { if (!p.darts.empty()) pensVar = true; for (const Edge& e : p.edges) if (e.kind == "dartLeg") pensVar = true; }
     if (pensVar) {
         if (!sctx.dolu) not_ += std::string(not_.empty() ? "" : " | ") + "pens: " + sHata;
-        else { CozumSonucu pc = cozPens(out, body, onArkaEsit, sctx, "bel"); if (pc.ok) out = pc.g; else not_ += std::string(not_.empty() ? "" : " | ") + "pens: " + pc.hata; }
+        else if (pensCoz) { CozumSonucu pc = cozPens(out, body, onArkaEsit, sctx, "bel"); if (pc.ok) out = pc.g; else not_ += std::string(not_.empty() ? "" : " | ") + "pens: " + pc.hata; }
     }
     return out;
 }

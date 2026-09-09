@@ -138,7 +138,9 @@ struct BedenSilueti {
 };
 BedenSilueti bedenSilueti(const Body& body) {
     BedenSilueti b;
-    for (const char* lm : { "landmark.underarm", "landmark.bustLine", "landmark.underbust", "landmark.waist", "landmark.highHip", "landmark.hip" })
+    // koltukalti -> bel -> ust kalca -> kalca. Gogus/gogus alti kesitleri ALINMAZ: yan dikiste gogus kabarigi S cizgisi
+    // yapiyordu (kor hakem tur 6 kusur: "yan dikis S/dalgali"); satici flat'inde yan dikis koltukaltindan bele tek icbukey yay.
+    for (const char* lm : { "landmark.underarm", "landmark.waist", "landmark.highHip", "landmark.hip" })
         if (body.hasLandmark(lm)) { BodyPoint p = body.landmark(lm); if (p.x > 0 && (b.lm.empty() || p.y > b.lm.back().y)) b.lm.push_back({ p.x, p.y }); }
     return b;
 }
@@ -151,11 +153,10 @@ std::vector<PathCommand> kubikler(const std::vector<Point>& pts, double tolMM) {
 }
 // Duz kenar -> bedeni izleyen kubik. Kosul: eksenli panel, kontrolsuz, iki ucu da x>0 (kat/eksen degil), dikey uzanim
 // esigin ustunde ve beden silueti bu y araliginda SABIT DEGIL (yoksa dogru dogru kalir).
-std::vector<PathCommand> bedeniIzle(const Edge& e, const EvalCtx& ctx, const BedenSilueti& bs, double minDyMM, double tolMM, bool& kavisli) {
+std::vector<PathCommand> bedeniIzle(const Edge& e, const Point& a, const Point& b, const BedenSilueti& bs, double minDyMM, double tolMM, bool& kavisli) {
     kavisli = false;
-    const std::vector<PathCommand> duz = e.path(ctx);
+    const std::vector<PathCommand> duz{ PathCommand::move(a), PathCommand::line(b) };
     if (!e.isLine() || bs.bos()) return duz;
-    const Point a = eval(e.from, ctx), b = eval(e.to, ctx);
     if (std::fabs(b.y - a.y) < minDyMM) return duz;
     const double xa = std::fabs(a.x), xb = std::fabs(b.x);
     if (xa < 1e-6 || xb < 1e-6) return duz;
@@ -164,12 +165,28 @@ std::vector<PathCommand> bedeniIzle(const Edge& e, const EvalCtx& ctx, const Bed
     const double ba = bs.x(a.y), bb = bs.x(b.y);
     if (ba <= 0 || bb <= 0) return duz;
     const double ka = xa / ba, kb = xb / bb;
+    // KALCA ALTI C1 GECIS (hakem tur 6: "etek kalcada kirilarak aciliyor"): kenarin ust ucu son kesit (kalca) hizasindaysa,
+    // kenar kalcadaki beden tegetiyle baslar ve D = %40 boyda dogruya yumusakca oturur: ofset(d) = (mB - mL) d (1 - d/D)^2.
+    const Point& ust = a.y < b.y ? a : b; const Point& alt = a.y < b.y ? b : a;
+    const double kUst = a.y < b.y ? ka : kb;
+    const bool kalcaAlti = std::fabs(ust.y - bs.lm.back().y) < 2.0 && alt.y > ust.y + minDyMM;
+    const double mB = kalcaAlti ? kUst * (bs.x(ust.y) - bs.x(ust.y - 5.0)) / 5.0 : 0.0;   // beden egimi dx/dy (mutlak x)
+    const double mL = kalcaAlti ? (std::fabs(alt.x) - std::fabs(ust.x)) / (alt.y - ust.y) : 0.0;
+    const double D = kalcaAlti ? 0.4 * (alt.y - ust.y) : 0.0;
     const int N = 32;
     std::vector<Point> pts; pts.reserve(N + 1);
     double sapma = 0;
     for (int i = 0; i <= N; ++i) {
         const double t = double(i) / N, y = a.y + t * (b.y - a.y);
-        const double x = sgn * ((1 - t) * ka + t * kb) * bs.x(y);
+        double x;
+        if (kalcaAlti) {
+            const double d = y - ust.y;
+            const double xd = std::fabs(ust.x) + mL * d;
+            const double of = d < D ? (mB - mL) * d * (1.0 - d / D) * (1.0 - d / D) : 0.0;
+            x = sgn * (xd + of);
+        } else {
+            x = sgn * ((1 - t) * ka + t * kb) * bs.x(y);
+        }
         const double xd = a.x + t * (b.x - a.x);
         sapma = std::max(sapma, std::fabs(x - xd));
         pts.push_back({ x, y });
@@ -180,19 +197,19 @@ std::vector<PathCommand> bedeniIzle(const Edge& e, const EvalCtx& ctx, const Bed
 }
 // Yatay etek ucu (cut, finish hem) -> hafif kavis: ortada (x=0) sagOverWidth x tam genislik kadar asagi sarkan parabol
 // (kubik esdegeri). Kosul: eksenli panel, kontrolsuz, |dy| kucuk, bir ucu x=0'da.
-std::vector<PathCommand> etekUcuKavis(const Edge& e, const EvalCtx& ctx, double sagOverWidth, bool& kavisli) {
+std::vector<PathCommand> etekUcuKavis(const Edge& e, const Point& a, const Point& b, double sagOverWidth, bool& kavisli) {
     kavisli = false;
-    const std::vector<PathCommand> duz = e.path(ctx);
+    const std::vector<PathCommand> duz{ PathCommand::move(a), PathCommand::line(b) };
     if (!e.isLine() || e.kind != "cut" || e.finish != "hem" || sagOverWidth <= 0) return duz;
-    const Point a = eval(e.from, ctx), b = eval(e.to, ctx);
     if (std::fabs(b.y - a.y) > 1.0) return duz;
     const bool aMerkez = std::fabs(a.x) < 1e-6, bMerkez = std::fabs(b.x) < 1e-6;
     if (aMerkez == bMerkez) return duz;
     const Point m = aMerkez ? a : b, u = aMerkez ? b : a;   // merkez, uc
     const double w = std::fabs(u.x), s = sagOverWidth * 2.0 * w;
     if (w < 1e-6 || s < 0.05) return duz;
-    // parabol y(x) = yUc + s (1 - (x/w)^2): merkezde yUc+s, ucta yUc. Kubik: P0=merkez(y+s), c1=(w/3, y+s), c2=(2w/3, y+2s/3), P3=uc
-    const Point P0{ m.x, u.y + s }, c1{ u.x / 3.0, u.y + s }, c2{ 2.0 * u.x / 3.0, u.y + 2.0 * s / 3.0 }, P3{ u.x, u.y };
+    // merkezde yatay teget (ayna surekliligi), KOSEDE DUSEY teget: etek ucu yan dikise dik girer (kor hakem tur 7: parabolun
+    // kosede egik tegeti klos etekte "disa kirilan sivri uc / kanat" yapiyordu). Kubik: P0=merkez(y+s), c1=(w/2, y+s), c2=(w, y+0.45 s), P3=uc.
+    const Point P0{ m.x, u.y + s }, c1{ u.x / 2.0, u.y + s }, c2{ u.x, u.y + 0.45 * s }, P3{ u.x, u.y };
     kavisli = true;
     if (aMerkez) return { PathCommand::move(P0), PathCommand::curve(P3, c1, c2) };
     return { PathCommand::move(P3), PathCommand::curve(P0, c2, c1) };
@@ -285,12 +302,22 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
     };
     // KAVIS (yalniz croquis): beden silueti + eksenli panel kenar yolu (duz -> bedeni izleyen kubik / etek ucu kavisi)
     const BedenSilueti bs = croquis && opts.kavis ? bedenSilueti(body) : BedenSilueti{};
+    // EKSEN KIRPMASI (A4 tur 6, pantolon tabani): eksenli panelin x<0'a gecen noktalari (ag uzantisi) on izdusumde bacagin
+    // ARKASINDA kalir; croquis'te eksene (x=0) kirpilir. Giysi dali degil, izdusum kurali; elbise panellerinde x<0 nokta yok.
+    auto eksenKirp = [&](std::vector<PathCommand> c) {
+        if (!croquis) return c;
+        for (PathCommand& k : c) { if (k.to.x < 0) k.to.x = 0; if (k.type == CmdType::Curve) { if (k.cp1.x < 0) k.cp1.x = 0; if (k.cp2.x < 0) k.cp2.x = 0; } }
+        return c;
+    };
     auto kenarYolu = [&](const Panel& p, const Edge& e) -> std::vector<PathCommand> {
-        if (!croquis || !opts.kavis) return buzguUygula(p, e, e.path(ctx_of(p)));
+        if (!croquis || !opts.kavis || !e.isLine()) return eksenKirp(buzguUygula(p, e, e.path(ctx_of(p))));
+        // duz kenar: uclar buzgu kaydirmasi UYGULANMIS halleriyle (kaydirilmis uc + beden orani; aksi halde buzgulu uc 1.25x'te
+        // hesaplanip sonra geri cekiliyordu, yan kenar disari bombeleniyordu — hakem tur 6 "bant yan tasmasi")
+        const Point a = kaydir(p, eval(e.from, ctx_of(p))), b = kaydir(p, eval(e.to, ctx_of(p)));
         bool k = false;
-        std::vector<PathCommand> c = etekUcuKavis(e, ctx_of(p), opts.etekUcuSagOverWidth, k);
-        if (!k) c = bedeniIzle(e, ctx_of(p), bs, opts.kavisMinDyMM, opts.kavisTolMM, k);
-        return buzguUygula(p, e, c);
+        std::vector<PathCommand> c = etekUcuKavis(e, a, b, opts.etekUcuSagOverWidth, k);
+        if (!k) c = bedeniIzle(e, a, b, bs, opts.kavisMinDyMM, opts.kavisTolMM, k);
+        return eksenKirp(c);
     };
 
     // ---- 2) eksensiz panel (kol): gorunum basina sarkma pozu
@@ -341,15 +368,16 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
         if (!(xcMax > xcMin)) continue;
         // croquis (manken): panel genisligi zaten izdusum (graf.cpp eval ringQuarter) -> tup capi = panel/2;
         // gercek beden: panel = duz serilmis cevre -> cap = cevre/pi
-        const double wB = (xcMax - xcMin) / (body.id().rfind("croquis", 0) == 0 ? 2.0 : kPi);
+        const double bol = body.id().rfind("croquis", 0) == 0 ? 2.0 : kPi;   // tup capi boleni; poz olcegi de AYNI bolen (hakem tur 6: agiz tupten uzundu, "L kancasi")
+        const double wB = (xcMax - xcMin) / bol;
         for (auto& kv : partnerPts) {
             Point S = kv.second.front(), U = kv.second.front();
             for (Point q : kv.second) { if (q.y < S.y) S = q; if (q.y > U.y) U = q; }
             Sarkma sk;
             // M(x,y) = U + (y - yBic) d + ((x - xcMin)/pi) n
-            sk.poz.a = nKol.x / kPi; sk.poz.b = dKol.x; sk.poz.c = nKol.y / kPi; sk.poz.d = dKol.y;
-            sk.poz.tx = U.x - xcMin * nKol.x / kPi - yBic * dKol.x;
-            sk.poz.ty = U.y - xcMin * nKol.y / kPi - yBic * dKol.y;
+            sk.poz.a = nKol.x / bol; sk.poz.b = dKol.x; sk.poz.c = nKol.y / bol; sk.poz.d = dKol.y;
+            sk.poz.tx = U.x - xcMin * nKol.x / bol - yBic * dKol.x;
+            sk.poz.ty = U.y - xcMin * nKol.y / bol - yBic * dKol.y;
             const Point O{ U.x + wB * nKol.x, U.y + wB * nKol.y };
             const double an = (O.x - S.x) * nKol.x + (O.y - S.y) * nKol.y;   // disa uzanim
             const double bd = (O.x - S.x) * dKol.x + (O.y - S.y) * dKol.y;   // asagi uzanim
@@ -493,8 +521,9 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
                     if (i + 1 < p.edges.size() && p.edges[i + 1].kind == "dartLeg") {
                         const Edge& e2 = p.edges[i + 1];
                         const Point a = kaydir(p, eval(e.from, ctx)), apex = eval(e.to, ctx), b = kaydir(p, eval(e2.to, ctx));
-                        const Point orta{ (a.x + b.x) / 2, (a.y + b.y) / 2 };
-                        yaz(pens, { PathCommand::move(orta), PathCommand::line(apex) }, e.id, "pens");
+                        // PENS = V (iki bacak, ince): satici flat'lerinde pens agizdan apekse iki bacakli okunur; tek cizgi "pili"
+                        // okunuyordu (kor hakem tur 6 + tur 7, ayni kusur iki kez).
+                        yaz(pens, { PathCommand::move(a), PathCommand::line(apex), PathCommand::line(b) }, e.id, "pens");
                         // kopru: komsu kenarin sinifinda
                         const KenarSinif ks = i > 0 ? sinifla(p, p.edges[i - 1], gv) : KenarSinif{};
                         yaz(ks.kalin ? kalin : ince, { PathCommand::move(a), PathCommand::line(b) }, e.id, "pens_agzi");
@@ -512,24 +541,100 @@ std::string flatSVG(const Garment& g, const Body& body, const std::string& bodyI
                     // kenar ortasindaki ic normal (panel merkezine dogru)
                     const std::vector<Point> pts = flatPts(cmds);
                     Point mrk{ 0, 0 }; { std::vector<Point> o = flatPts(p.outline(ctx)); for (Point q : o) { mrk.x += q.x; mrk.y += q.y; } if (!o.empty()) { mrk.x /= o.size(); mrk.y /= o.size(); } }
-                    Point A = e.at(ctx, 0.45), B = e.at(ctx, 0.55);
-                    Point t{ B.x - A.x, B.y - A.y }; double L = std::hypot(t.x, t.y);
-                    if (L > 1e-9) {
-                        Point n{ -t.y / L, t.x / L }; Point m = e.at(ctx, 0.5);
-                        if ((mrk.x - m.x) * n.x + (mrk.y - m.y) * n.y < 0) { n.x = -n.x; n.y = -n.y; }
-                        const double ofs = birim / 150.0;
-                        std::vector<PathCommand> oc = cmds;
-                        for (PathCommand& c : oc) { c.to.x += n.x * ofs; c.to.y += n.y * ofs; c.cp1.x += n.x * ofs; c.cp1.y += n.y * ofs; c.cp2.x += n.x * ofs; c.cp2.y += n.y * ofs; }
-                        yaz(ust, oc, e.id, "ustdikis");
+                    // Kenar yolu (kavisli olabilir) yay uzunluguyla orneklenir; her noktada yerel normal boyunca ic ofset; iki uc
+                    // %5 kirpilir ki iz kose disina tasmasin (kontrol noktasi otelemesi omuz ucunda/etek kosesinde disari cikiyordu).
+                    if (pts.size() >= 2) {
+                        std::vector<double> sArc(pts.size(), 0.0);
+                        for (std::size_t i2 = 1; i2 < pts.size(); ++i2) sArc[i2] = sArc[i2 - 1] + std::hypot(pts[i2].x - pts[i2 - 1].x, pts[i2].y - pts[i2 - 1].y);
+                        const double Ltop = sArc.back();
+                        if (Ltop > 1e-6) {
+                            auto at = [&](double sd) -> Point {
+                                std::size_t i2 = 1; while (i2 + 1 < pts.size() && sArc[i2] < sd) ++i2;
+                                const double seg = sArc[i2] - sArc[i2 - 1]; const double u = seg > 1e-12 ? (sd - sArc[i2 - 1]) / seg : 0.0;
+                                return { pts[i2 - 1].x + u * (pts[i2].x - pts[i2 - 1].x), pts[i2 - 1].y + u * (pts[i2].y - pts[i2 - 1].y) };
+                            };
+                            // ic yon: orta noktadaki normalin panel merkezine bakan tarafi
+                            const Point m0 = at(0.49 * Ltop), m1 = at(0.51 * Ltop);
+                            Point tm{ m1.x - m0.x, m1.y - m0.y }; const double Lm = std::hypot(tm.x, tm.y);
+                            if (Lm > 1e-9) {
+                                double yon = 1.0; { const Point nm{ -tm.y / Lm, tm.x / Lm }; const Point m = at(0.5 * Ltop); if ((mrk.x - m.x) * nm.x + (mrk.y - m.y) * nm.y < 0) yon = -1.0; }
+                                const double ofs = birim / 150.0;
+                                const int M = 24; std::vector<PathCommand> oc;
+                                for (int k2 = 0; k2 <= M; ++k2) {
+                                    const double sd = (0.05 + 0.90 * double(k2) / M) * Ltop;
+                                    const Point q0 = at(std::max(0.0, sd - 0.5)), q1 = at(std::min(Ltop, sd + 0.5)), q = at(sd);
+                                    Point tq{ q1.x - q0.x, q1.y - q0.y }; const double Lq = std::hypot(tq.x, tq.y);
+                                    if (Lq < 1e-9) continue;
+                                    const Point nq{ -tq.y / Lq * yon, tq.x / Lq * yon };
+                                    const Point o{ q.x + nq.x * ofs, q.y + nq.y * ofs };
+                                    oc.push_back(oc.empty() ? PathCommand::move(o) : PathCommand::line(o));
+                                }
+                                if (oc.size() >= 2) yaz(ust, oc, e.id, "ustdikis");
+                            }
+                        }
                     }
                 }
             }
             // ic halka pensler (balik): tek dikey cizgi apexUst -> apexAlt, agiz kopru
-            for (const IcPens& dd : p.darts) {
+            for (const IcPens& dd : p.darts) {   // balik pensi: ELMAS (ust apeks -> a -> alt apeks -> b), satici flat dili
                 const Point a = eval(dd.a, ctx), b = eval(dd.b, ctx), au = eval(dd.apexUst, ctx), aa = eval(dd.apexAlt, ctx);
-                yaz(pens, { PathCommand::move(au), PathCommand::line(aa) }, dd.id, "pens");
-                (void)a; (void)b;
+                yaz(pens, { PathCommand::move(au), PathCommand::line(a), PathCommand::line(aa), PathCommand::line(b), PathCommand::close() }, dd.id, "pens");
             }
+        }
+    }
+
+    // KAPAMA SEMBOLLERI (hakem tur 6: "hicbir arkada fermuar/kapama yok"): closure tasiyan dikisin a zinciri boyunca
+    // fromFraction..toFraction araliginda — fermuar: zincire paralel iki kesikli cizgi (+-4 mm, ayna ile) ve ustte cekecek karesi;
+    // dugme: esit aralikli daireler (r 3.5 mm, 60 mm'de bir, en az 2). Zincir eksenli panelde ciziliyorsa (eksen gorunumu).
+    for (const Seam& sm : g.seams) {
+        if (sm.closure.type != "zipper" && sm.closure.type != "buttons") continue;
+        struct Parca { const Panel* p; const Edge* e; double L; };
+        std::vector<Parca> zincir; double toplam = 0; std::string gv;
+        for (const EdgeRef& r : sm.a) {
+            const Panel* pp = g.panel(r.panel); const Edge* ee = pp ? pp->edge(r.edge) : nullptr;
+            if (!pp || !ee || !eksen.count(pp->id)) { zincir.clear(); break; }
+            if (gv.empty()) gv = eksen[pp->id];
+            const double L = ee->length(ctxs[pp->id]); zincir.push_back({ pp, ee, L }); toplam += L;
+        }
+        if (zincir.empty() || toplam < 1e-6) continue;
+        auto noktaVeNormal = [&](double f, Point& q, Point& n) {   // zincir kesri f (0..1) -> nokta + birim normal (yerel, panel koordinati)
+            double sd = f * toplam;
+            for (const Parca& pc : zincir) {
+                if (sd > pc.L && &pc != &zincir.back()) { sd -= pc.L; continue; }
+                const double t = pc.L > 1e-9 ? std::min(1.0, std::max(0.0, sd / pc.L)) : 0.0;
+                const EvalCtx& c = ctxs[pc.p->id];
+                q = pc.e->at(c, t);
+                const Point q0 = pc.e->at(c, std::max(0.0, t - 0.02)), q1 = pc.e->at(c, std::min(1.0, t + 0.02));
+                const double L2 = std::hypot(q1.x - q0.x, q1.y - q0.y);
+                n = L2 > 1e-9 ? Point{ -(q1.y - q0.y) / L2, (q1.x - q0.x) / L2 } : Point{ 1, 0 };
+                return;
+            }
+        };
+        const double f0 = std::min(sm.closure.fromFraction, sm.closure.toFraction), f1 = std::max(sm.closure.fromFraction, sm.closure.toFraction);
+        if (sm.closure.type == "buttons") {
+            const int nB = std::max(2, int(std::lround((f1 - f0) * toplam / 60.0)));
+            const double r = 3.5;
+            for (int i = 0; i < nB; ++i) {
+                Point q, n; noktaVeNormal(f0 + (f1 - f0) * (nB == 1 ? 0.5 : double(i) / (nB - 1)), q, n);
+                // daire: dort kubik yay (kappa)
+                const double k = 0.5523;
+                std::vector<PathCommand> c{ PathCommand::move({ q.x + r, q.y }),
+                    PathCommand::curve({ q.x, q.y + r }, { q.x + r, q.y + k * r }, { q.x + k * r, q.y + r }),
+                    PathCommand::curve({ q.x - r, q.y }, { q.x - k * r, q.y + r }, { q.x - r, q.y + k * r }),
+                    PathCommand::curve({ q.x, q.y - r }, { q.x - r, q.y - k * r }, { q.x - k * r, q.y - r }),
+                    PathCommand::curve({ q.x + r, q.y }, { q.x + k * r, q.y - r }, { q.x + r, q.y - k * r }) };
+                Poz z; pens[gv].push_back({ pathD(c, z), zincir.front().p->id, sm.id, "dugme" });
+            }
+        } else {
+            const double ofs = 4.0; const int M = 24;
+            std::vector<PathCommand> c;
+            for (int i = 0; i <= M; ++i) { Point q, n; noktaVeNormal(f0 + (f1 - f0) * double(i) / M, q, n); const Point o{ q.x + n.x * ofs, q.y + n.y * ofs }; c.push_back(c.empty() ? PathCommand::move(o) : PathCommand::line(o)); }
+            for (int yan = 0; yan < 2; ++yan) { Poz z; z.ayna = yan == 1; ust[gv].push_back({ pathD(c, z), zincir.front().p->id, sm.id, "fermuar" }); }
+            Point q, n; noktaVeNormal(f0, q, n);   // cekecek: 5 x 8 mm kare, zincirin ust ucunda
+            const Point t{ -n.y, n.x };
+            std::vector<PathCommand> ck{ PathCommand::move({ q.x - n.x * 2.5, q.y - n.y * 2.5 }), PathCommand::line({ q.x + n.x * 2.5, q.y + n.y * 2.5 }),
+                PathCommand::line({ q.x + n.x * 2.5 + t.x * 8, q.y + n.y * 2.5 + t.y * 8 }), PathCommand::line({ q.x - n.x * 2.5 + t.x * 8, q.y - n.y * 2.5 + t.y * 8 }), PathCommand::close() };
+            Poz z; pens[gv].push_back({ pathD(ck, z), zincir.front().p->id, sm.id, "fermuar_cekecek" });
         }
     }
 

@@ -48,7 +48,6 @@ LOG=KOSU/0509-kapi.log
 STATE=KOSU/0509-state.json
 METRIK=KOSU/0509-metrik.jsonl
 BUILD=engine/build
-EMSAL=engine/tests/0509-emsal-olcum.mjs        # A1b yazar
 WASM_SANITY=engine/tests/0509-wasm-sanity.mjs  # A1b yazar
 REGRESYON_DIZIN=KOSU/regresyon                 # A1b kurar
 TMPD=$(mktemp -d) || { echo '{"hata":"KAPI_BOZUK_JSON","neden":"mktemp"}'; exit 3; }
@@ -293,53 +292,7 @@ sinyal_gecit() {
   fi
 }
 
-# ---------------------------------------------------------------- emsal mm olcumu (A1b)
-emsal_olc() { # ana sapma mm basar; yoksa bos
-  [ -f "$EMSAL" ] || return 1
-  node "$EMSAL" --json 2>>"$LOG" \
-    | python3 -c "import json,sys
-try:
-  d=json.load(sys.stdin)
-  v=d.get('anaSapmaMM')
-  print('' if v is None else v)
-except Exception: print('')" 2>>"$LOG"
-}
-
-emsal_gecit() {
-  local bas sapma esik
-  bas=$(log_satir)
-  logla "emsal olcum"
-  if [ ! -f "$EMSAL" ]; then
-    gecit_yaz "emsal_mm_olcum" "HENUZ-YOK" null null "contract/flat-convention-v1.json + KOSU/ciktilar/flat-olcum.json" "$EMSAL yok (A1b yazar)" "$bas"
-    return
-  fi
-  sapma=$(emsal_olc)
-  # ESIK: ACIK YOL ile okunur, alt dize taramasiyla DEGIL.
-  # A1 gecit hakemi (6 Eyl) kusuru: eski okuyucu contract icinde adinda
-  # 'tolerans' gecen ILK sayisal anahtari aliyordu; o anahtar
-  # /sevkPoz/yakaParcasi/boyToleransOran = 0.05, yani BIRIMSIZ BIR ORAN.
-  # Gercek mm toleransi /croquis/toleranceMM = 2.0 ('toleranceMM' ingilizce
-  # yazildigi icin taramaya hic girmiyordu). Bir MILIMETRE sapmasi birimsiz bir
-  # orana vuruluyordu: esik gevsemiyor, 40 kat SIKILASIYORDU — yani gecit
-  # olmayan bir geometri kusuru icin YANLIS KIRMIZI yaniyordu.
-  # Olculdu (6 Eyl, A1b): anaSapmaMM 0.693 mm, eski okuyucuyla esik 0.05 ->
-  # KIRMIZI; acik yolla esik 2.0 -> YESIL. Esik GEVSETILMEDI, contract'ta
-  # yazili olan mm toleransi dogru anahtardan okundu.
-  esik=$(python3 -c "
-import json,sys
-c=json.load(open('contract/flat-convention-v1.json'))
-v=c.get('croquis',{}).get('toleranceMM')
-print('' if not isinstance(v,(int,float)) or isinstance(v,bool) else v)" 2>>"$LOG")
-  if [ -z "${sapma:-}" ]; then
-    gecit_yaz "emsal_mm_olcum" "CRASH" null "${esik:-null}" "contract/flat-convention-v1.json" "olcum JSON'unda anaSapmaMM yok" "$bas"
-    return
-  fi
-  local hukum
-  hukum=$(python3 -c "
-s=float('${sapma}'); e='${esik:-}'
-print('YESIL' if (e!='' and s<=float(e)) else ('KIRMIZI' if e!='' else 'HENUZ-YOK'))" 2>>"$LOG")
-  gecit_yaz "emsal_mm_olcum" "${hukum:-CRASH}" "$sapma" "${esik:-null}" "contract/flat-convention-v1.json /croquis/toleranceMM" "emsale ana sapma (medyan, mm); olcum engine/tests/0509-emsal-olcum.mjs" "$bas"
-}
+# ---------------------------------------------------------------- emsal mm olcumu: KALDIRILDI (0-K 1, 2026-09-09; emsal seti silindi)
 
 # ---------------------------------------------------------------- olcek gecidi (A1b)
 olcek_gecit() {
@@ -531,11 +484,9 @@ kisa() {
   commit=$(git rev-parse --short HEAD 2>>"$LOG")
   enum=$(enum_olc)
   sapma=""
-  [ -f "$EMSAL" ] && sapma=$(emsal_olc)
   # hizli kirmizi: ctest'siz — enum circiri + emsal esigi
   : > "$GECIT"
   enum_gecit
-  [ -f "$EMSAL" ] && emsal_gecit
   kirmizi=$(awk -F'\t' '$2=="KIRMIZI"||$2=="CRASH"' "$GECIT" 2>/dev/null | wc -l | tr -d ' ')
   kirmizi="${kirmizi:-0}"
   # cikti once degiskene alinir, sonra JSON'lugu dogrulanir: python3 patlarsa
@@ -1087,8 +1038,7 @@ ctest_gecit kapi_sozlesme_check    "kapi.sh cikti sozlesmesi: ${HUKUM_SAYISI:-?}
 # 2) enum dallanma circiri (--measure; taban yalniz duser)
 enum_gecit
 
-# 3) emsal mm olcumu (A1b)
-emsal_gecit
+# 3) emsal mm olcumu — KALDIRILDI (Damla 0-K 1, 2026-09-09): emsal flat seti ve 0509-emsal-olcum.mjs silindi; hicbir kapi emsal flat'e referans vermez.
 
 # 4) olcek gecidi (A1b: contract/body-v1.json olcekAraligi)
 olcek_gecit
