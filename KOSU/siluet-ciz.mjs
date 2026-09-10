@@ -165,8 +165,10 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
       return out;
     } else if (kol.tip === 'kapak') {
       kd += ` C ${f1(ou.x + (dis.x - ou.x) * 0.5)} ${f1(ou.y - 6)} ${f1(dis.x + (dis.x - ou.x) * 0.25)} ${f1(ou.y + (dis.y - ou.y) * 0.4)} ${P(dis)}`;
-      kd += ` C ${f1(dis.x - (dis.x - ic.x) * 0.2)} ${f1(dis.y + 14)} ${f1(ic.x + (dis.x - ic.x) * 0.25)} ${f1(ic.y + 12)} ${P(ic)} Z`;
-      return `<path d="${kd}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round"/>\n`;
+      kd += ` C ${f1(dis.x - (dis.x - ka.x) * 0.15)} ${f1(dis.y + 8)} ${f1(ka.x + (dis.x - ka.x) * 0.35)} ${f1(ka.y - 2)} ${P(ka)} Z`;
+      // kol evi dikisi kolun ustunde ince cizgi (omuz ucu -> koltukalti, icbukey)
+      const oyuk = `M ${P(ou)} C ${f1(ou.x - (ou.x - ka.x) * 0.35)} ${f1(ou.y + (ka.y - ou.y) * 0.35)} ${f1(ka.x)} ${f1(ka.y - (ka.y - ou.y) * 0.35)} ${P(ka)}`;
+      return `<path d="${kd}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round"/>\n<path d="${oyuk}" fill="none" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n`;
     } else {
       kd += ` L ${P(dis)}`;
     }
@@ -306,13 +308,13 @@ function ogeCiz(o, pts, s, K) {
       const alt = { x: s * w * 0.42, y: orta.y + w * 0.95 };            // CF lobunun alt ucu
       let d;
       if (o.arka) d = `M ${P(orta)} L ${f1(0)} ${f1(orta.y + w * 0.9)} C ${f1(s * w * 0.9)} ${f1(orta.y + w * 0.95)} ${f1(dis.x - s * w * 0.2)} ${f1(dis.y + w * 0.15)} ${P(dis)} C ${f1(omuz.x + s * w * 0.35)} ${f1(omuz.y + w * 0.2)} ${f1(omuz.x + s * 6)} ${f1(omuz.y)} ${P(omuz)}`;
-      else d = `M ${f1(s * 2)} ${f1(orta.y + 3)} L ${f1(s * 2)} ${f1(orta.y + w * 0.55)} C ${f1(s * 2)} ${f1(orta.y + w * 1.02)} ${f1(s * w * 0.42)} ${f1(orta.y + w * 1.08)} ${f1(s * w * 0.62)} ${f1(orta.y + w * 0.82)} C ${f1(s * w * 0.85)} ${f1(orta.y + w * 0.52)} ${f1(dis.x - s * w * 0.1)} ${f1(dis.y + w * 0.15)} ${P(dis)} C ${f1(omuz.x + s * w * 0.35)} ${f1(omuz.y + w * 0.15)} ${f1(omuz.x + s * 6)} ${f1(omuz.y)} ${P(omuz)}`;
+      else d = `M ${f1(s * 1.5)} ${f1(orta.y)} L ${f1(s * 1.5)} ${f1(orta.y + w * 0.55)} C ${f1(s * 2)} ${f1(orta.y + w * 1.02)} ${f1(s * w * 0.42)} ${f1(orta.y + w * 1.08)} ${f1(s * w * 0.62)} ${f1(orta.y + w * 0.82)} C ${f1(s * w * 0.85)} ${f1(orta.y + w * 0.52)} ${f1(dis.x - s * w * 0.1)} ${f1(dis.y + w * 0.15)} ${P(dis)} C ${f1(omuz.x + s * w * 0.35)} ${f1(omuz.y + w * 0.15)} ${f1(omuz.x + s * 6)} ${f1(omuz.y)} ${P(omuz)}`;
       let out = `<path d="${d}" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n`;
       if (o.firfir) out += ogeCiz({ tip: 'firfir', adim: 8, derinlik: 4 }, o.arka ? [{ x: 0, y: orta.y + w * 0.9 }, dis] : [{ x: s * w * 0.62, y: orta.y + w * 0.82 }, dis], s, K);
       return out;
     }
     case 'cepKapagi': { const [a, b] = pts; const h = o.yukseklik || 40, ph = o.cepBoyu || 120;
-      const cep = `<path d="M ${f1(a.x + s * 4)} ${f1(a.y + h * 0.5)} L ${f1(a.x + s * 4)} ${f1(a.y + ph)} Q ${f1((a.x + b.x) / 2)} ${f1(a.y + ph + 14)} ${f1(b.x - s * 4)} ${f1(b.y + ph)} L ${f1(b.x - s * 4)} ${f1(b.y + h * 0.5)}" fill="none" stroke="#000" stroke-width="${CIZ.kesikliMM}" stroke-dasharray="1.5,3"/>\n`;
+      const cep = `<path d="M ${f1(a.x + s * 3)} ${f1(a.y + h * 0.4)} L ${f1(a.x + s * 3)} ${f1(a.y + ph)} Q ${f1((a.x + b.x) / 2)} ${f1(a.y + ph + 12)} ${f1(b.x - s * 3)} ${f1(b.y + ph)} L ${f1(b.x - s * 3)} ${f1(b.y + h * 0.4)}" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n`;
       return cep + `<path d="M ${P(a)} L ${P(b)} L ${f1(b.x)} ${f1(b.y + h * 0.7)} Q ${f1((a.x + b.x) / 2)} ${f1(b.y + h * 1.15)} ${f1(a.x)} ${f1(a.y + h * 0.7)} Z" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n<path d="M ${f1(a.x + s * 3)} ${f1(a.y + 4)} L ${f1(b.x - s * 3)} ${f1(b.y + 4)}" ${kesik}/>\n`; }
     default: return `<!-- bilinmeyen oge ${o.tip} -->\n`;
   }

@@ -117,7 +117,7 @@
    },
    {
     "tip": "cepKapagi",
-    "yukseklik": 42,
+    "yukseklik": 40,
     "noktalar": [
      [
       "hip*0.30",
@@ -128,7 +128,7 @@
       "highHip+35"
      ]
     ],
-    "cepBoyu": 115
+    "cepBoyu": 105
    }
   ]
  },

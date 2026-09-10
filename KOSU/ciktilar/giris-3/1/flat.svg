@@ -8,11 +8,11 @@
 <path d="M -53.2 414.4 L -94.1 881.1" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 <path d="M -119.2 414.4 L 119.2 414.4" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 <path d="M -113.3 30.5 C -94.4 40.6 -37.8 91.2 0.0 91.2 C 37.8 91.2 94.4 40.6 113.3 30.5" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
-<path d="M 51.1 570.4 L 51.1 664.4 Q 100.4 678.4 149.8 664.4 L 149.8 570.4" fill="none" stroke="#000" stroke-width="0.9" stroke-dasharray="1.5,3"/>
-<path d="M 47.1 549.4 L 153.8 549.4 L 153.8 578.8 Q 100.4 597.7 47.1 578.8 Z" fill="#fff" stroke="#000" stroke-width="1"/>
+<path d="M 50.1 565.4 L 50.1 654.4 Q 100.4 666.4 150.8 654.4 L 150.8 565.4" fill="#fff" stroke="#000" stroke-width="1"/>
+<path d="M 47.1 549.4 L 153.8 549.4 L 153.8 577.4 Q 100.4 595.4 47.1 577.4 Z" fill="#fff" stroke="#000" stroke-width="1"/>
 <path d="M 50.1 553.4 L 150.8 553.4" fill="none" stroke="#000" stroke-width="0.9" stroke-dasharray="5,3"/>
-<path d="M -51.1 570.4 L -51.1 664.4 Q -100.4 678.4 -149.8 664.4 L -149.8 570.4" fill="none" stroke="#000" stroke-width="0.9" stroke-dasharray="1.5,3"/>
-<path d="M -47.1 549.4 L -153.8 549.4 L -153.8 578.8 Q -100.4 597.7 -47.1 578.8 Z" fill="#fff" stroke="#000" stroke-width="1"/>
+<path d="M -50.1 565.4 L -50.1 654.4 Q -100.4 666.4 -150.8 654.4 L -150.8 565.4" fill="#fff" stroke="#000" stroke-width="1"/>
+<path d="M -47.1 549.4 L -153.8 549.4 L -153.8 577.4 Q -100.4 595.4 -47.1 577.4 Z" fill="#fff" stroke="#000" stroke-width="1"/>
 <path d="M -50.1 553.4 L -150.8 553.4" fill="none" stroke="#000" stroke-width="0.9" stroke-dasharray="5,3"/>
 </g>
 <text x="289.7" y="980.6" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ON</text>

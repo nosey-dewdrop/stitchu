@@ -27,8 +27,8 @@
     "shoulderTip+100"
    ],
    "koltukalti": [
-    "bustLine*1.06",
-    "underarm+22"
+    "bustLine*1.05",
+    "underarm+40"
    ],
    "gogus": [
     "bustLine*1.04",
@@ -61,8 +61,8 @@
     "shoulderTip-4"
    ],
    "omuzUc": [
-    "shoulderTip*1.0",
-    "shoulderTip+22"
+    "shoulderTip*0.97",
+    "shoulderTip+16"
    ]
   },
   "ogeler": [
@@ -77,23 +77,6 @@
      [
       "bustLine*1.08",
       "shoulderTip+128"
-     ]
-    ]
-   },
-   {
-    "tip": "buzgu",
-    "ayna": false,
-    "yon": "yukari",
-    "boy": 10,
-    "aralik": 9,
-    "noktalar": [
-     [
-      "bustLine*1.04",
-      "bustLine+20"
-     ],
-     [
-      "waist*1.12",
-      "waist"
      ]
     ]
    },
@@ -157,8 +140,8 @@
     "shoulderTip+100"
    ],
    "koltukalti": [
-    "bustLine*1.06",
-    "underarm+22"
+    "bustLine*1.05",
+    "underarm+40"
    ],
    "gogus": [
     "bustLine*1.04",
@@ -191,8 +174,8 @@
     "shoulderTip-4"
    ],
    "omuzUc": [
-    "shoulderTip*1.0",
-    "shoulderTip+22"
+    "shoulderTip*0.97",
+    "shoulderTip+16"
    ]
   },
   "ogeler": [
@@ -214,6 +197,7 @@
   "aynala": true
  },
  "eksik": [
-  "arka gorunmuyor: onden turetildi (band aynali)"
+  "arka gorunmuyor: onden turetildi (band aynali)",
+  "yan dikis buzgu taramasi cizilmedi (hakem: centik okunuyor); drape cizgileri buzguyu tasir"
  ]
 }

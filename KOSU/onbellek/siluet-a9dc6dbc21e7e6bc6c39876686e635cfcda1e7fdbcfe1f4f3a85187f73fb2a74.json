@@ -42,7 +42,7 @@
     "highHip-15"
    ],
    "etekYan": [
-    "highHip*1.18",
+    "highHip*1.13",
     "highHip+33"
    ],
    "etekOrta": [
@@ -103,21 +103,8 @@
       "waist+30"
      ],
      [
-      "highHip*0.62",
-      "highHip+34"
-     ]
-    ]
-   },
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "waist*0.70",
-      "waist+30"
-     ],
-     [
-      "highHip*0.88",
-      "highHip+30"
+      "highHip*0.72",
+      "highHip+33"
      ]
     ]
    }
@@ -157,7 +144,7 @@
     "highHip-15"
    ],
    "etekYan": [
-    "highHip*1.18",
+    "highHip*1.13",
     "highHip+33"
    ],
    "etekOrta": [
@@ -187,25 +174,14 @@
       "waist+30"
      ],
      [
-      "highHip*0.62",
-      "highHip+34"
-     ]
-    ]
-   },
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "waist*0.70",
-      "waist+30"
-     ],
-     [
-      "highHip*0.88",
-      "highHip+30"
+      "highHip*0.72",
+      "highHip+33"
      ]
     ]
    }
   ]
  },
- "eksik": []
+ "eksik": [
+  "etek ucu pili ikinci bacagi cizilmedi (hakem: pens kenara aciliyor okunuyor); pili tek kat cizgisi"
+ ]
 }
