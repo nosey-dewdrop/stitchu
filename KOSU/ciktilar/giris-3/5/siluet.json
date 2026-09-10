@@ -57,7 +57,7 @@
     "catmull": true,
     "noktalar": [
      [
-      "bustLine*-1.05",
+      "bustLine*-0.98",
       "underbust"
      ],
      [
@@ -73,7 +73,7 @@
       "underbust-22"
      ],
      [
-      "bustLine*1.05",
+      "bustLine*0.98",
       "underbust"
      ]
     ]
@@ -194,7 +194,7 @@
     "catmull": true,
     "noktalar": [
      [
-      "bustLine*-1.05",
+      "bustLine*-0.98",
       "underbust"
      ],
      [
@@ -210,7 +210,7 @@
       "underbust-12"
      ],
      [
-      "bustLine*1.05",
+      "bustLine*0.98",
       "underbust"
      ]
     ]
@@ -229,6 +229,26 @@
      [
       "waist*0.49",
       "waist"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "yon": "yukari",
+    "boy": 24,
+    "aralik": 9,
+    "noktalar": [
+     [
+      "bustLine*0.15",
+      "underbust-14"
+     ],
+     [
+      "bustLine*0.5",
+      "underbust-11"
+     ],
+     [
+      "bustLine*0.90",
+      "underbust-3"
      ]
     ]
    }

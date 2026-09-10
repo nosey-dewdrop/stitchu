@@ -159,34 +159,6 @@
       "hip+60"
      ]
     ]
-   },
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "bustLine*0.66",
-      "underarm-57"
-     ],
-     [
-      "shoulderTip*0.74",
-      "shoulderTip..neckBase@0.5+4"
-     ]
-    ],
-    "bombe": 3
-   },
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "bustLine*0.78",
-      "underarm-58"
-     ],
-     [
-      "shoulderTip*0.86",
-      "shoulderTip..neckBase@0.5+4"
-     ]
-    ],
-    "bombe": -3
    }
   ]
  },
@@ -290,39 +262,11 @@
       "hip+110"
      ]
     ]
-   },
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "bustLine*0.66",
-      "underarm-57"
-     ],
-     [
-      "shoulderTip*0.74",
-      "shoulderTip..neckBase@0.5+4"
-     ]
-    ],
-    "bombe": 3
-   },
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "bustLine*0.78",
-      "underarm-58"
-     ],
-     [
-      "shoulderTip*0.86",
-      "shoulderTip..neckBase@0.5+4"
-     ]
-    ],
-    "bombe": -3
    }
   ]
  },
  "eksik": [
   "arka gorunmuyor: onden turetildi",
-  "aski buzgusu kisa cizgi yerine iki boyuna kirisik cizgisiyle verildi (hakem: iki tarafli tirnak satici dilinde yok)"
+  "aski buzgusu cizilmedi (iki hakem: gurultu)"
  ]
 }

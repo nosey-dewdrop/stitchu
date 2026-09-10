@@ -60,9 +60,11 @@ function kavis(a, b, bombe) {
 const ayna = (p) => ({ x: -p.x, y: p.y });
 
 // ---- yaka bicimleri: yakaOrta (x=0) -> yakaOmuz
-function yakaYolu(orta, omuz, bicim, sag = true) {
+function yakaYolu(orta, omuz, bicim, sag = true, kisalt = 0) {
   const s = sag ? 1 : -1;
-  const o = { x: s * Math.abs(orta.x), y: orta.y }, m = { x: s * Math.abs(omuz.x), y: omuz.y };
+  const o = { x: s * Math.abs(orta.x), y: orta.y }, m0 = { x: s * Math.abs(omuz.x), y: omuz.y };
+  // kisalt: kayik/yuvarlak yaka omuz noktasindan 'kisalt' mm once, yatay tegetle biter; kose gorunumCiz'de yayla yuvarlanir
+  const m = (kisalt && (bicim === 'kayik' || bicim === 'yuvarlak' || !bicim)) ? { x: m0.x - s * kisalt, y: m0.y + 0.5 } : m0;
   switch (bicim) {
     case 'V': return ` L ${P(m)}`;
     case 'kare': return ` L ${f1(m.x)} ${f1(o.y)} L ${P(m)}`;
@@ -71,9 +73,9 @@ function yakaYolu(orta, omuz, bicim, sag = true) {
       const tepe = { x: m.x * 0.5, y: o.y - (o.y - m.y) * 0.55 - 12 };
       return ` C ${f1(o.x + s * 10)} ${f1(o.y - 6)} ${f1(tepe.x - s * 14)} ${f1(tepe.y)} ${P(tepe)} C ${f1(tepe.x + s * 16)} ${f1(tepe.y)} ${f1(m.x - s * 4)} ${f1(m.y + 8)} ${P(m)}`;
     }
-    case 'kayik': return ` C ${f1(m.x * 0.55)} ${f1(o.y)} ${f1(m.x * 0.88)} ${f1(m.y + (o.y - m.y) * 0.30)} ${f1(m.x - s * 5)} ${f1(m.y + 1.5)} Q ${f1(m.x - s * 1)} ${f1(m.y)} ${P(m)}`;
+    case 'kayik': return ` C ${f1(m.x * 0.5)} ${f1(o.y)} ${f1(m.x * 0.86)} ${f1(m.y + 0.5)} ${P(m)}`;
     case 'yuvarlak': default:
-      return ` C ${f1(m.x * 0.6)} ${f1(o.y)} ${f1(m.x * 0.92)} ${f1(m.y + (o.y - m.y) * 0.36)} ${f1(m.x - s * 5)} ${f1(m.y + 1.5)} Q ${f1(m.x - s * 1)} ${f1(m.y)} ${P(m)}`;
+      return ` C ${f1(m.x * 0.55)} ${f1(o.y)} ${f1(m.x * 0.90)} ${f1(m.y + 0.5)} ${P(m)}`;
   }
 }
 
@@ -93,7 +95,9 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
   const gogusAyri = K.gogus && K.koltukalti ? Math.abs(K.gogus.y - K.koltukalti.y) >= 30 : true;
   const yanAdlar = ['koltukalti', ...(gogusAyri ? ['gogus'] : []), 'bel', 'kalca', 'etekYan'];
   const yanSag = yanAdlar.map(sag).filter(Boolean);
-  d += yakaYolu(yakaOrtaSag, sag('yakaOmuz'), yb, true);
+  const yuvarla = (!g.aski && (yb === 'kayik' || yb === 'yuvarlak')) ? 7 : 0;
+  d += yakaYolu(yakaOrtaSag, sag('yakaOmuz'), yb, true, yuvarla);
+  if (yuvarla) { const m = sag('yakaOmuz'), o2 = sag('omuzUc'), L2 = Math.hypot(o2.x - m.x, o2.y - m.y) || 1; d += ` Q ${P(m)} ${f1(m.x + (o2.x - m.x) / L2 * yuvarla)} ${f1(m.y + (o2.y - m.y) / L2 * yuvarla)}`; }
   if (g.aski && sag('askiUst')) {
     const a = sag('askiUst'), w = g.aski.genislik || 12, yo = sag('yakaOmuz'), ou = sag('omuzUc');
     // ic kenar: yakaOmuz -> aski ust ic; ust; dis kenar: aski ust dis -> omuzUc  (askilar omuza dogru hafif kavisli)
@@ -130,17 +134,18 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
   d += catmull(yanSol, 0.38);
   const ouS = sol('omuzUc'), kaS = sol('koltukalti');
   if (ouS && kaS) {
-    d += ` C ${f1(kaS.x + 6)} ${f1(kaS.y - (kaS.y - ouS.y) * 0.30)} ${f1(ouS.x - (ouS.x - kaS.x) * 0.60)} ${f1(ouS.y + (kaS.y - ouS.y) * 0.32)} ${P(ouS)}`;
+    d += ` C ${f1(kaS.x + 14)} ${f1(kaS.y - (kaS.y - ouS.y) * 0.16)} ${f1(ouS.x - (ouS.x - kaS.x) * 0.60)} ${f1(ouS.y + (kaS.y - ouS.y) * 0.32)} ${P(ouS)}`;
   }
   const askiSol = KS.askiUst !== undefined ? KS.askiUst : K.askiUst;
   if (g.aski && askiSol && g.askiSol !== null) {
     const a = ayna(askiSol), w = g.aski.genislik || 12, yo = sol('yakaOmuz');
     d += ` L ${f1(a.x - w / 2)} ${f1(a.y)} L ${f1(a.x + w / 2)} ${f1(a.y)} L ${P(yo)}`;
   } else if (sol('omuzUc')) {
-    d += ` L ${P(sol('yakaOmuz'))}`;
+    if (yuvarla) { const m = sol('yakaOmuz'), o2 = sol('omuzUc'), L2 = Math.hypot(o2.x - m.x, o2.y - m.y) || 1; d += ` L ${f1(m.x + (o2.x - m.x) / L2 * yuvarla)} ${f1(m.y + (o2.y - m.y) / L2 * yuvarla)} Q ${P(m)} ${f1(m.x + yuvarla)} ${f1(m.y + 0.5)}`; }
+    else d += ` L ${P(sol('yakaOmuz'))}`;
   }
   // sol yaka: yakaOmuz(sol) -> yakaOrta(sol): sag yolun aynasi, ters yonde -> yakaYolu'nu ters cizmek yerine simetrik yol kur
-  d += yakaTers(yakaOrtaSol, sol('yakaOmuz'), KS.yakaBicim || yb);
+  d += yakaTers(yakaOrtaSol, sol('yakaOmuz'), KS.yakaBicim || yb, true, yuvarla);
   if (Math.abs(yakaOrtaSol.x - yakaOrtaSag.x) > 0.01 || Math.abs(yakaOrtaSol.y - yakaOrtaSag.y) > 0.01) d += ` L ${P(yakaOrtaSag)}`;
   d += ' Z';
 
@@ -161,7 +166,7 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
       const S = Math.abs(kol.sisme || 40), bh = kol.bantMM || 14;
       // balon govdesi: omuz ucu -> dis bombe -> manset dis ucu -> manset ic ucu -> koltukalti
       kd += ` C ${f1(ou.x + px * S * 1.1 - ux * L * 0.05)} ${f1(ou.y + py * S * 1.1 - uy * L * 0.05)} ${f1(dis.x + px * S * 0.9 - ux * L * 0.3)} ${f1(dis.y + py * S * 0.9 - uy * L * 0.3)} ${P(dis)}`;
-      kd += ` L ${P(ic)} L ${P(ka)} Z`;
+      kd += ` L ${P(ic)} L ${P(ka)} C ${f1(ka.x - 6 * s)} ${f1(ka.y - (ka.y - ou.y) * 0.30)} ${f1(ou.x - (ou.x - ka.x) * 0.60)} ${f1(ou.y + (ka.y - ou.y) * 0.32)} ${P(ou)} Z`;
       let out = `<path d="${kd}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round"/>\n`;
       // manset bandi: agiz cizgisinin altinda kapali dikdortgen (beyaz), kalin dis kontur
       const b1 = { x: dis.x + ux * bh, y: dis.y + uy * bh }, b2 = { x: ic.x + ux * bh, y: ic.y + uy * bh };
@@ -169,9 +174,7 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
       out += `<path d="M ${P(dis)} L ${P(ic)}" fill="none" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n`;
       if (kol.buzgu) out += tikler([dis, ic], 12, 11, { x: -ux, y: -uy });
       if (kol.firfir) out += ogeCiz({ tip: 'firfir', adim: 9, derinlik: 5 }, [{ x: b1.x + ux * 5, y: b1.y + uy * 5 }, { x: b2.x + ux * 5, y: b2.y + uy * 5 }], s, {});
-      if (kol.buzgu) out += tikler([{ x: ou.x + px * 4, y: ou.y + py * 4 }, { x: ou.x + px * S * 0.7 + ux * L * 0.18, y: ou.y + py * S * 0.7 + uy * L * 0.18 }], 11, 10, { x: ux, y: uy });
-      // kol evi dikisi ince (omuz ucu -> koltukalti)
-      out += `<path d="M ${P(ou)} C ${f1(ou.x - (ou.x - ka.x) * 0.35)} ${f1(ou.y + (ka.y - ou.y) * 0.35)} ${f1(ka.x)} ${f1(ka.y - (ka.y - ou.y) * 0.35)} ${P(ka)}" fill="none" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n`;
+      if (kol.buzgu) out += tikler([{ x: ou.x + px * 10 + ux * 8, y: ou.y + py * 10 + uy * 8 }, { x: ou.x + px * S * 0.55 + ux * L * 0.22, y: ou.y + py * S * 0.55 + uy * L * 0.22 }], 18, 11, { x: ux, y: uy });
       return out;
     } else if (kol.tip === 'kapak') {
       kd += ` C ${f1(ou.x + (dis.x - ou.x) * 0.9)} ${f1(ou.y + (dis.y - ou.y) * 0.15)} ${f1(dis.x + (dis.x - ou.x) * 0.15)} ${f1(dis.y - (dis.y - ou.y) * 0.35)} ${P(dis)}`;
@@ -219,9 +222,9 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
   if (g.kol) { const dd = nokta(g.kol.dis); xs.push(Math.abs(dd.x) + (g.kol.sisme || 0)); ys.push(dd.y); }
   return { svg, imza, aynala: !!g.aynala, w: Math.max(...xs), y0: Math.min(...ys) - (g.kol && g.kol.tip === 'puf' ? (g.kol.kubbe || 22) : 0), y1: Math.max(...ys) + (g.etekSarkma ?? 6) };
 }
-function yakaTers(orta, omuz, bicim, mirror = true) {
+function yakaTers(orta, omuz, bicim, mirror = true, kisalt = 0) {
   // sol yarim: omuz(sol) -> orta(sol). yakaYolu'nun (orta->omuz) sag-el aynasi ters yonde: kontrol noktalarini ters sirala
-  const yol = yakaYolu(orta, { x: Math.abs(omuz.x), y: omuz.y }, bicim, true); // sag yol: orta -> omuz
+  const yol = yakaYolu(orta, { x: Math.abs(omuz.x), y: omuz.y }, bicim, true, kisalt); // sag yol: orta -> omuz
   // sag yolu segmentlere ayir, ters cevir ve x'i aynala
   const toks = yol.trim().split(/\s+(?=[A-Z])/);
   const segs = toks.map((t) => { const [c, ...n] = t.split(/\s+/); return { c, n: n.map(Number) }; });
@@ -244,10 +247,12 @@ function yakaTers(orta, omuz, bicim, mirror = true) {
 }
 
 // kisa cizgiler (buzgu): yol boyunca, normal yonunde uzunluk 'boy', aralik CIZ.buzguTikMM
-// pref: tiklerin gitmesi istenen MUTLAK yon (ör. {x:0,y:1} asagi); normalin isareti ona gore secilir -> sol/sag ayni fiziksel taraf
+// pref: cizgilerin gitmesi istenen MUTLAK yon (ör. {x:0,y:1} asagi); normalin isareti ona gore secilir.
+// SATICI BUZGUSU (tur 22 hakemi, 8 satici flat'i): dikisi delen tik YOK; cizgi dikisin 4 mm icinden baslar, kumasa dogru
+// uzar ve incelerek/solarak biter (iki parcali: yakin yari tam, uzak yari daha ince).
 function tikler(pts, boy, aralik = CIZ.buzguTikMM, pref = { x: 0, y: 1 }) {
   let out = '';
-  const J = (k, m) => ((Math.sin(k * 12.9898 + m * 78.233) * 43758.5453) % 1 + 1) % 1; // deterministik jitter
+  const J = (k, m) => ((Math.sin(k * 12.9898 + m * 78.233) * 43758.5453) % 1 + 1) % 1;
   for (let i = 0; i < pts.length - 1; i++) {
     const a = pts[i], b = pts[i + 1], L = Math.hypot(b.x - a.x, b.y - a.y);
     const n = Math.max(1, Math.floor(L / aralik));
@@ -256,10 +261,11 @@ function tikler(pts, boy, aralik = CIZ.buzguTikMM, pref = { x: 0, y: 1 }) {
     const tx = (b.x - a.x) / L, ty = (b.y - a.y) / L;
     for (let k = 0; k <= n; k++) {
       const t = (k + 0.5) / (n + 1);
-      const px = a.x + (b.x - a.x) * t, py = a.y + (b.y - a.y) * t;
-      const bb = Math.abs(boy) * (0.88 + 0.12 * J(k, 2)), egim = (J(k, 3) - 0.5) * 0.15;
-      // dikisten cikar, hafif egik ve kavisli, incelerek biter (satici buzgusu)
-      out += `<path d="M ${f1(px)} ${f1(py)} q ${f1(nx * bb * 0.45 + tx * bb * egim * 0.5)} ${f1(ny * bb * 0.45 + ty * bb * egim * 0.5)} ${f1(nx * bb + tx * bb * egim)} ${f1(ny * bb + ty * bb * egim)}" fill="none" stroke="#000" stroke-width="${CIZ.kesikliMM * 0.7}" stroke-linecap="round"/>\n`;
+      const bb = Math.abs(boy) * (0.75 + 0.25 * J(k, 2)), egim = (J(k, 3) - 0.5) * 0.3;
+      const x0 = a.x + (b.x - a.x) * t + nx * 4, y0 = a.y + (b.y - a.y) * t + ny * 4;   // dikisin 4 mm icinden
+      const dx = nx * bb + tx * bb * egim, dy = ny * bb + ty * bb * egim;
+      out += `<path d="M ${f1(x0)} ${f1(y0)} q ${f1(dx * 0.5 + ty * 1.5)} ${f1(dy * 0.5 - tx * 1.5)} ${f1(dx * 0.55)} ${f1(dy * 0.55)}" fill="none" stroke="#000" stroke-width="${CIZ.kesikliMM * 0.75}" stroke-linecap="round"/>\n`;
+      out += `<path d="M ${f1(x0 + dx * 0.55)} ${f1(y0 + dy * 0.55)} l ${f1(dx * 0.45)} ${f1(dy * 0.45)}" fill="none" stroke="#000" stroke-width="${CIZ.kesikliMM * 0.4}" stroke-linecap="round"/>\n`;
     }
   }
   return out;
@@ -282,7 +288,7 @@ function ogeCiz(o, pts, s, K) {
       return `<path d="M ${f1(a.x - 2)} ${f1(a.y)} L ${f1(b.x - 2)} ${f1(b.y)} M ${f1(a.x + 2)} ${f1(a.y)} L ${f1(b.x + 2)} ${f1(b.y)}" ${kesik}/>\n<rect x="${f1(a.x - 3)}" y="${f1(a.y + 2)}" width="6" height="9" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n`;
     }
     case 'buzgu': { const pref = o.yon === 'yukari' ? { x: 0, y: -1 } : o.yon === 'ic' ? { x: -s, y: 0 } : o.yon === 'dis' ? { x: s, y: 0 } : { x: 0, y: 1 };
-      return tikler(pts, o.boy || 12, (o.aralik || CIZ.buzguTikMM) * 1.6, pref); }
+      return tikler(pts, Math.max(24, (o.boy || 12) * 1.6), (o.aralik || CIZ.buzguTikMM) * 1.4, pref); }
     case 'pens': { const [uc, a, b, alt] = pts; return alt ? `<path d="M ${P(uc)} L ${P(a)} L ${P(alt)} L ${P(b)} Z" ${ince}/>\n` : `<path d="M ${P(a)} L ${P(uc)} L ${P(b)}" ${ince}/>\n`; }
     case 'dugme': {
       const [a, b] = pts, n = o.adet || 5, r = (o.cap || 12) / 2; let out = '';

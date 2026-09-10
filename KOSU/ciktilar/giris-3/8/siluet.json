@@ -43,7 +43,7 @@
    ],
    "etekYan": [
     "highHip*1.05",
-    "highHip+30"
+    "highHip+35"
    ],
    "etekOrta": [
     "hip*0",
@@ -104,7 +104,7 @@
     ]
    }
   ],
-  "etekSarkma": 4
+  "etekSarkma": 3
  },
  "arka": {
   "koken": "satici flat'i (arka)",
@@ -141,7 +141,7 @@
    ],
    "etekYan": [
     "highHip*1.05",
-    "highHip+30"
+    "highHip+35"
    ],
    "etekOrta": [
     "hip*0",
@@ -171,7 +171,7 @@
     ]
    }
   ],
-  "etekSarkma": 4
+  "etekSarkma": 3
  },
  "eksik": [
   "etek ucu pilisi cizilmedi: bel pensi balik pensi (elmas) olarak; pili acilimi eksik"
