@@ -118,6 +118,23 @@
       "highHip+50"
      ]
     ]
+   },
+   {
+    "tip": "buzgu",
+    "ayna": false,
+    "yon": "ic",
+    "boy": 9,
+    "aralik": 14,
+    "noktalar": [
+     [
+      "bustLine*1.04",
+      "bustLine+25"
+     ],
+     [
+      "waist*1.16",
+      "waist+55"
+     ]
+    ]
    }
   ]
  },

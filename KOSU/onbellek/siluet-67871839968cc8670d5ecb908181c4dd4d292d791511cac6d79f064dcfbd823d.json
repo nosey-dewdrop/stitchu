@@ -27,7 +27,7 @@
    ],
    "koltukalti": [
     "bustLine*1.10",
-    "underarm+25"
+    "underarm+24"
    ],
    "gogus": [
     "bustLine*1.12",
@@ -53,17 +53,17 @@
   "kol": {
    "tip": "puf",
    "dis": [
-    "shoulderTip*1.15",
-    "shoulderTip+118"
+    "shoulderTip*1.17",
+    "shoulderTip+122"
    ],
    "ic": [
-    "bustLine*1.11",
-    "underarm+8"
+    "bustLine*1.10",
+    "underarm+24"
    ],
    "bant": true,
-   "bantMM": 12,
+   "bantMM": 13,
    "buzgu": true,
-   "sisme": 56,
+   "sisme": 54,
    "kubbe": 46,
    "firfir": true
   },
@@ -150,7 +150,7 @@
    ],
    "koltukalti": [
     "bustLine*1.10",
-    "underarm+25"
+    "underarm+24"
    ],
    "gogus": [
     "bustLine*1.12",
@@ -176,17 +176,17 @@
   "kol": {
    "tip": "puf",
    "dis": [
-    "shoulderTip*1.15",
-    "shoulderTip+118"
+    "shoulderTip*1.17",
+    "shoulderTip+122"
    ],
    "ic": [
-    "bustLine*1.11",
-    "underarm+8"
+    "bustLine*1.10",
+    "underarm+24"
    ],
    "bant": true,
-   "bantMM": 12,
+   "bantMM": 13,
    "buzgu": true,
-   "sisme": 56,
+   "sisme": 54,
    "kubbe": 46,
    "firfir": true
   },

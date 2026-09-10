@@ -74,22 +74,6 @@
     ]
    },
    {
-    "tip": "buzgu",
-    "yon": "asagi",
-    "boy": 12,
-    "aralik": 8,
-    "noktalar": [
-     [
-      "bustLine*0.74",
-      "underarm-60"
-     ],
-     [
-      "shoulderTip*0.80",
-      "shoulderTip..neckBase@0.5+6"
-     ]
-    ]
-   },
-   {
     "tip": "dikis",
     "ayna": false,
     "catmull": true,
@@ -138,7 +122,7 @@
    {
     "tip": "bag",
     "ayna": false,
-    "boy": 170,
+    "boy": 85,
     "noktalar": [
      [
       "neckFront*0",
@@ -175,6 +159,34 @@
       "hip+60"
      ]
     ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "bustLine*0.66",
+      "underarm-57"
+     ],
+     [
+      "shoulderTip*0.74",
+      "shoulderTip..neckBase@0.5+4"
+     ]
+    ],
+    "bombe": 3
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "bustLine*0.78",
+      "underarm-58"
+     ],
+     [
+      "shoulderTip*0.86",
+      "shoulderTip..neckBase@0.5+4"
+     ]
+    ],
+    "bombe": -3
    }
   ]
  },
@@ -258,22 +270,6 @@
     ]
    },
    {
-    "tip": "buzgu",
-    "yon": "asagi",
-    "boy": 12,
-    "aralik": 8,
-    "noktalar": [
-     [
-      "bustLine*0.74",
-      "underarm-60"
-     ],
-     [
-      "shoulderTip*0.80",
-      "shoulderTip..neckBase@0.5+6"
-     ]
-    ]
-   },
-   {
     "tip": "drape",
     "bombe": 4,
     "noktalar": [
@@ -294,10 +290,39 @@
       "hip+110"
      ]
     ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "bustLine*0.66",
+      "underarm-57"
+     ],
+     [
+      "shoulderTip*0.74",
+      "shoulderTip..neckBase@0.5+4"
+     ]
+    ],
+    "bombe": 3
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "bustLine*0.78",
+      "underarm-58"
+     ],
+     [
+      "shoulderTip*0.86",
+      "shoulderTip..neckBase@0.5+4"
+     ]
+    ],
+    "bombe": -3
    }
   ]
  },
  "eksik": [
-  "arka gorunmuyor: onden turetildi"
+  "arka gorunmuyor: onden turetildi",
+  "aski buzgusu kisa cizgi yerine iki boyuna kirisik cizgisiyle verildi (hakem: iki tarafli tirnak satici dilinde yok)"
  ]
 }

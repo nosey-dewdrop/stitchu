@@ -144,19 +144,6 @@
     ]
    },
    {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "waist*0.45",
-      "waist"
-     ],
-     [
-      "hip*0.38",
-      "hip-70"
-     ]
-    ]
-   },
-   {
     "tip": "kesikli",
     "ayna": false,
     "noktalar": [
@@ -167,6 +154,23 @@
      [
       "hip*1.26",
       "hip..knee@0.55-12"
+     ]
+    ]
+   },
+   {
+    "tip": "pens",
+    "noktalar": [
+     [
+      "hip*0.38",
+      "hip-70"
+     ],
+     [
+      "waist*0.41",
+      "waist"
+     ],
+     [
+      "waist*0.49",
+      "waist"
      ]
     ]
    }
@@ -250,19 +254,6 @@
     ]
    },
    {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "waist*0.45",
-      "waist"
-     ],
-     [
-      "hip*0.38",
-      "hip-70"
-     ]
-    ]
-   },
-   {
     "tip": "kesikli",
     "ayna": false,
     "noktalar": [
@@ -273,6 +264,23 @@
      [
       "hip*1.26",
       "hip..knee@0.55-12"
+     ]
+    ]
+   },
+   {
+    "tip": "pens",
+    "noktalar": [
+     [
+      "hip*0.38",
+      "hip-70"
+     ],
+     [
+      "waist*0.41",
+      "waist"
+     ],
+     [
+      "waist*0.49",
+      "waist"
      ]
     ]
    }

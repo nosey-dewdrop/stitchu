@@ -93,19 +93,6 @@
     ]
    },
    {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "waist*0.45",
-      "waist"
-     ],
-     [
-      "hip*0.40",
-      "hip-30"
-     ]
-    ]
-   },
-   {
     "tip": "buzgu",
     "yon": "yukari",
     "boy": 24,
@@ -122,6 +109,23 @@
      [
       "bustLine*0.90",
       "underbust-6"
+     ]
+    ]
+   },
+   {
+    "tip": "pens",
+    "noktalar": [
+     [
+      "hip*0.40",
+      "hip-30"
+     ],
+     [
+      "waist*0.41",
+      "waist"
+     ],
+     [
+      "waist*0.49",
+      "waist"
      ]
     ]
    }
@@ -175,20 +179,6 @@
     "ayna": false,
     "noktalar": [
      [
-      "bustLine*-1.05",
-      "underbust"
-     ],
-     [
-      "bustLine*1.05",
-      "underbust"
-     ]
-    ]
-   },
-   {
-    "tip": "dikis",
-    "ayna": false,
-    "noktalar": [
-     [
       "waist*-1.12",
       "waist"
      ],
@@ -200,14 +190,45 @@
    },
    {
     "tip": "dikis",
+    "ayna": false,
+    "catmull": true,
     "noktalar": [
      [
-      "waist*0.45",
-      "waist"
+      "bustLine*-1.05",
+      "underbust"
      ],
+     [
+      "bustLine*-0.5",
+      "underbust-12"
+     ],
+     [
+      "neckFront*0",
+      "underbust-16"
+     ],
+     [
+      "bustLine*0.5",
+      "underbust-12"
+     ],
+     [
+      "bustLine*1.05",
+      "underbust"
+     ]
+    ]
+   },
+   {
+    "tip": "pens",
+    "noktalar": [
      [
       "hip*0.40",
       "hip-30"
+     ],
+     [
+      "waist*0.41",
+      "waist"
+     ],
+     [
+      "waist*0.49",
+      "waist"
      ]
     ]
    }

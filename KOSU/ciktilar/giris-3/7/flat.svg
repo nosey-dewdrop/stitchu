@@ -7,6 +7,17 @@
 <path d="M 140.1 298.3 Q 94.7 328.0 66.7 374.4" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 <path d="M 119.2 414.4 Q 82.2 424.4 58.5 454.4" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 <path d="M 117.0 474.4 Q 94.0 516.4 94.1 564.4" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
+<path d="M 138.0 248.8 q -2.8 -0.4 -6.3 -0.8" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 136.6 269.8 q -2.9 -0.3 -6.5 -0.6" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 135.3 290.8 q -3.3 -0.4 -7.2 -0.9" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 133.9 311.8 q -3.3 0.1 -7.2 0.2" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 132.5 332.8 q -4.0 -0.1 -8.8 -0.3" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 131.1 353.9 q -3.5 0.2 -7.8 0.3" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 129.7 374.9 q -3.5 0.0 -7.8 -0.2" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 128.3 395.9 q -3.5 -0.6 -7.8 -1.3" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 126.9 416.9 q -3.5 0.1 -7.9 0.2" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 125.5 437.9 q -3.5 -0.7 -7.8 -1.4" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 124.1 458.9 q -3.3 -0.4 -7.3 -0.9" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
 </g>
 <text x="253.1" y="920.3" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ON</text>
 <g transform="translate(689.4 27.1) scale(-1 1)" data-gorunum="arka">

@@ -38,11 +38,11 @@
     "waist"
    ],
    "kalca": [
-    "highHip*1.10",
-    "highHip-15"
+    "highHip*1.08",
+    "highHip-10"
    ],
    "etekYan": [
-    "highHip*1.13",
+    "highHip*1.10",
     "highHip+33"
    ],
    "etekOrta": [
@@ -54,11 +54,11 @@
    {
     "tip": "pat",
     "ayna": false,
-    "genislik": 20,
+    "genislik": 24,
     "noktalar": [
      [
       "neckFront*0",
-      "neckFront-10"
+      "neckFront+4"
      ],
      [
       "neckFront*0",
@@ -74,7 +74,7 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckFront+14"
+      "neckFront+22"
      ],
      [
       "neckFront*0",
@@ -86,25 +86,29 @@
     "tip": "dikis",
     "noktalar": [
      [
-      "bustLine*0.55",
-      "underbust-10"
+      "waist*0.70",
+      "waist+30"
      ],
      [
       "waist*0.70",
-      "waist+30"
+      "highHip+33"
      ]
     ]
    },
    {
-    "tip": "dikis",
+    "tip": "pens",
     "noktalar": [
      [
-      "waist*0.70",
+      "bustLine*0.55",
+      "underbust-10"
+     ],
+     [
+      "waist*0.66",
       "waist+30"
      ],
      [
-      "highHip*0.72",
-      "highHip+33"
+      "waist*0.74",
+      "waist+30"
      ]
     ]
    }
@@ -140,11 +144,11 @@
     "waist"
    ],
    "kalca": [
-    "highHip*1.10",
-    "highHip-15"
+    "highHip*1.08",
+    "highHip-10"
    ],
    "etekYan": [
-    "highHip*1.13",
+    "highHip*1.10",
     "highHip+33"
    ],
    "etekOrta": [
@@ -157,25 +161,29 @@
     "tip": "dikis",
     "noktalar": [
      [
-      "bustLine*0.55",
-      "underbust-10"
+      "waist*0.70",
+      "waist+30"
      ],
      [
       "waist*0.70",
-      "waist+30"
+      "highHip+33"
      ]
     ]
    },
    {
-    "tip": "dikis",
+    "tip": "pens",
     "noktalar": [
      [
-      "waist*0.70",
+      "bustLine*0.55",
+      "underbust-10"
+     ],
+     [
+      "waist*0.66",
       "waist+30"
      ],
      [
-      "highHip*0.72",
-      "highHip+33"
+      "waist*0.74",
+      "waist+30"
      ]
     ]
    }
