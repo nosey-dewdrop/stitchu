@@ -1,29 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1011.2 889.4" width="1011.2mm" height="889.4mm" data-siluet="v1" data-kaynak="26d8c73c016b28f2e187247bb587a717871264603b8345a78cee8ff8fbf1a983">
-<rect width="1011.2" height="889.4" fill="#fff"/>
-<g transform="translate(262.8 14.2)" data-gorunum="on">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1101.2 949.4" width="1101.2mm" height="949.4mm" data-siluet="v1" data-kaynak="26d8c73c016b28f2e187247bb587a717871264603b8345a78cee8ff8fbf1a983">
+<rect width="1101.2" height="949.4" fill="#fff"/>
+<g transform="translate(292.8 44.2)" data-gorunum="on">
 <path d="M 0.0 153.3 L 73.4 153.3 L 73.4 153.3 L 118.9 25.8 L 152.9 25.8 L 109.4 153.3 C 119.2 172.6 137.4 189.1 137.4 208.3 C 137.7 234.4 135.2 361.0 140.1 414.4 C 144.9 467.8 165.2 577.0 175.7 629.5 C 186.2 682.0 216.8 803.9 222.8 829.2 Q 111.4 835.2 0.0 829.2 Q -111.4 835.2 -222.8 829.2 C -216.8 803.9 -186.2 682.0 -175.7 629.5 C -165.2 577.0 -144.9 467.8 -140.1 414.4 C -135.2 361.0 -137.7 234.4 -137.4 208.3 C -137.4 189.1 -119.2 172.6 -109.4 153.3 L -152.9 25.8 L -118.9 25.8 L -73.4 153.3 L -73.4 153.3 L 0.0 153.3 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
 <path d="M 0.0 149.3 Q 4.6 153.3 9.2 149.3 Q 13.8 145.3 18.3 149.3 Q 22.9 153.3 27.5 149.3 Q 32.1 145.3 36.7 149.3 Q 41.3 153.3 45.9 149.3 Q 50.4 145.3 55.0 149.3 Q 59.6 153.3 64.2 149.3 Q 68.8 145.3 73.4 149.3 Q NaN NaN 73.4 149.3 Q NaN NaN 73.4 149.3 Q 77.4 145.0 73.5 140.6 Q 69.5 136.2 73.6 131.9 Q 77.6 127.6 73.7 123.3 Q 69.7 118.9 73.8 114.6 Q 77.8 110.3 73.8 105.9 Q 69.9 101.5 73.9 97.2 Q 78.0 92.9 74.0 88.5 Q 70.1 84.2 74.1 79.9 Q 78.2 75.6 74.2 71.2 Q 70.3 66.8 74.3 62.5 Q 78.4 58.2 74.4 53.8 Q 70.5 49.4 74.5 45.2 Q 78.6 40.9 74.6 36.5 Q 70.7 32.1 74.7 27.8" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 <path d="M 0.0 149.3 Q -4.6 145.3 -9.2 149.3 Q -13.8 153.3 -18.3 149.3 Q -22.9 145.3 -27.5 149.3 Q -32.1 153.3 -36.7 149.3 Q -41.3 145.3 -45.9 149.3 Q -50.4 153.3 -55.0 149.3 Q -59.6 145.3 -64.2 149.3 Q -68.8 153.3 -73.4 149.3 Q NaN NaN -73.4 149.3 Q NaN NaN -73.4 149.3 Q -69.4 144.9 -73.5 140.6 Q -77.5 136.3 -73.6 131.9 Q -69.6 127.6 -73.7 123.3 Q -77.7 119.0 -73.8 114.6 Q -69.8 110.2 -73.8 105.9 Q -77.9 101.6 -73.9 97.2 Q -70.0 92.8 -74.0 88.5 Q -78.1 84.3 -74.1 79.9 Q -70.2 75.5 -74.2 71.2 Q -78.3 66.9 -74.3 62.5 Q -70.4 58.1 -74.4 53.8 Q -78.5 49.5 -74.5 45.2 Q -70.6 40.8 -74.6 36.5 Q -78.7 32.2 -74.7 27.8" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 <path d="M -140.1 273.3 C -129.0 268.8 -96.7 247.8 -73.4 246.3 C -50.0 244.8 -24.5 264.3 0.0 264.3 C 24.5 264.3 50.0 244.8 73.4 246.3 C 96.7 247.8 129.0 268.8 140.1 273.3" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
-<path d="M 33.1 248.0 q -0.8 -4.1 -1.7 -9.2" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M 47.2 247.1 q -0.5 -4.4 -1.1 -9.8" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M 57.2 246.4 q -1.1 -5.8 -2.2 -12.9" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M 67.6 245.7 q 0.9 -5.8 1.7 -12.8" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M 77.1 246.6 q 0.8 -4.1 2.0 -9.1" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M 91.2 251.4 q 1.2 -4.2 2.8 -9.4" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M 101.2 254.8 q 1.3 -5.8 2.9 -12.7" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M 111.6 258.3 q 3.1 -5.0 6.5 -11.2" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M -33.1 248.0 q 0.8 -4.1 1.7 -9.2" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M -47.2 247.1 q 0.5 -4.4 1.1 -9.8" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M -57.2 246.4 q 1.1 -5.8 2.2 -12.9" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M -67.6 245.7 q -0.9 -5.8 -1.7 -12.8" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M -77.1 246.6 q -0.8 -4.1 -2.0 -9.1" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M -91.2 251.4 q -1.2 -4.2 -2.8 -9.4" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M -101.2 254.8 q -1.3 -5.8 -2.9 -12.7" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
-<path d="M -111.6 258.3 q -3.1 -5.0 -6.5 -11.2" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 30.7 253.6 q -1.4 -4.4 -2.9 -9.9" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 45.6 251.1 q -1.0 -4.8 -2.2 -10.6" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 56.2 249.2 q -1.8 -6.2 -3.9 -13.9" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 67.3 247.3 q 0.3 -6.4 0.4 -14.2" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 77.4 247.9 q 1.2 -4.5 2.8 -9.9" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 92.3 254.0 q 1.6 -4.6 3.7 -10.2" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 102.9 258.3 q 1.8 -6.2 4.0 -13.8" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M 114.0 262.8 q 3.7 -5.3 7.9 -11.9" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M -30.7 253.6 q 1.4 -4.4 2.9 -9.9" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M -45.6 251.1 q 1.0 -4.8 2.2 -10.6" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M -56.2 249.2 q 1.8 -6.2 3.9 -13.9" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M -67.3 247.3 q -0.3 -6.4 -0.4 -14.2" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M -77.4 247.9 q -1.2 -4.5 -2.8 -9.9" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M -92.3 254.0 q -1.6 -4.6 -3.7 -10.2" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M -102.9 258.3 q -1.8 -6.2 -4.0 -13.8" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
+<path d="M -114.0 262.8 q -3.7 -5.3 -7.9 -11.9" fill="none" stroke="#000" stroke-width="0.63" stroke-linecap="round"/>
 </g>
-<text x="262.8" y="877.4" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ON</text>
-<g transform="translate(748.4 14.2)" data-gorunum="arka">
+<text x="292.8" y="937.4" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ON</text>
+<g transform="translate(808.4 44.2)" data-gorunum="arka">
 <path d="M 0.0 173.3 L 73.4 173.3 L 73.4 153.3 L 118.9 25.8 L 152.9 25.8 L 109.4 153.3 C 119.2 172.6 137.4 189.1 137.4 208.3 C 137.7 234.4 135.2 361.0 140.1 414.4 C 144.9 467.8 165.2 577.0 175.7 629.5 C 186.2 682.0 216.8 803.9 222.8 829.2 Q 111.4 835.2 0.0 829.2 Q -111.4 835.2 -222.8 829.2 C -216.8 803.9 -186.2 682.0 -175.7 629.5 C -165.2 577.0 -144.9 467.8 -140.1 414.4 C -135.2 361.0 -137.7 234.4 -137.4 208.3 C -137.4 189.1 -119.2 172.6 -109.4 153.3 L -152.9 25.8 L -118.9 25.8 L -73.4 153.3 L -73.4 173.3 L 0.0 173.3 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
 <path d="M 0.0 169.3 Q 4.6 173.3 9.2 169.3 Q 13.8 165.3 18.3 169.3 Q 22.9 173.3 27.5 169.3 Q 32.1 165.3 36.7 169.3 Q 41.3 173.3 45.9 169.3 Q 50.4 165.3 55.0 169.3 Q 59.6 173.3 64.2 169.3 Q 68.8 165.3 73.4 169.3" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 <path d="M 0.0 169.3 Q -4.6 165.3 -9.2 169.3 Q -13.8 173.3 -18.3 169.3 Q -22.9 165.3 -27.5 169.3 Q -32.1 173.3 -36.7 169.3 Q -41.3 165.3 -45.9 169.3 Q -50.4 173.3 -55.0 169.3 Q -59.6 165.3 -64.2 169.3 Q -68.8 173.3 -73.4 169.3" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
@@ -31,5 +31,5 @@
 <rect x="-3.0" y="175.3" width="6" height="9" fill="#fff" stroke="#000" stroke-width="1"/>
 <path d="M -140.1 273.3 L 140.1 273.3" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 </g>
-<text x="748.4" y="877.4" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ARKA</text>
+<text x="808.4" y="937.4" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ARKA</text>
 </svg>

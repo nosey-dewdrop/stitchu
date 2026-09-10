@@ -110,20 +110,20 @@
    {
     "tip": "buzgu",
     "yon": "yukari",
-    "boy": 20,
+    "boy": 22,
     "aralik": 8,
     "noktalar": [
      [
-      "bustLine*0.22",
-      "underbust-30"
+      "bustLine*0.2",
+      "underbust-24"
      ],
      [
       "bustLine*0.55",
-      "underbust-33"
+      "underbust-32"
      ],
      [
-      "bustLine*0.88",
-      "underbust-18"
+      "bustLine*0.9",
+      "underbust-13"
      ]
     ]
    }

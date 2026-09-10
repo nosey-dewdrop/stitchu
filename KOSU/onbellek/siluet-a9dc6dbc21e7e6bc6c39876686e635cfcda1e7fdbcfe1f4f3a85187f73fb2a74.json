@@ -14,11 +14,11 @@
   "kontur": {
    "yakaOrta": [
     "neckFront*0",
-    "neckFront-10"
+    "neckFront+4"
    ],
    "yakaOmuz": [
-    "shoulderTip*0.75",
-    "shoulderTip..neckBase@0.6"
+    "shoulderTip*0.66",
+    "shoulderTip..neckBase@0.5"
    ],
    "askiUst": null,
    "omuzUc": [
@@ -27,7 +27,7 @@
    ],
    "koltukalti": [
     "bustLine*1.02",
-    "underarm+2"
+    "underarm+12"
    ],
    "gogus": [
     "bustLine*1.04",
@@ -129,11 +129,11 @@
   "kontur": {
    "yakaOrta": [
     "nape*0",
-    "nape+30"
+    "neckBase+36"
    ],
    "yakaOmuz": [
-    "shoulderTip*0.75",
-    "shoulderTip..neckBase@0.6"
+    "shoulderTip*0.66",
+    "shoulderTip..neckBase@0.5"
    ],
    "askiUst": null,
    "omuzUc": [
@@ -142,7 +142,7 @@
    ],
    "koltukalti": [
     "bustLine*1.02",
-    "underarm+2"
+    "underarm+12"
    ],
    "gogus": [
     "bustLine*1.04",

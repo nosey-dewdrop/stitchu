@@ -79,22 +79,6 @@
     ]
    },
    {
-    "tip": "buzgu",
-    "yon": "yukari",
-    "boy": 26,
-    "aralik": 11,
-    "noktalar": [
-     [
-      "bustLine*0.18",
-      "underbust-28"
-     ],
-     [
-      "bustLine*0.85",
-      "underbust-12"
-     ]
-    ]
-   },
-   {
     "tip": "dikis",
     "ayna": false,
     "noktalar": [
@@ -120,6 +104,26 @@
       "hip-30"
      ]
     ]
+   },
+   {
+    "tip": "buzgu",
+    "yon": "yukari",
+    "boy": 24,
+    "aralik": 9,
+    "noktalar": [
+     [
+      "bustLine*0.15",
+      "underbust-27"
+     ],
+     [
+      "bustLine*0.5",
+      "underbust-22"
+     ],
+     [
+      "bustLine*0.90",
+      "underbust-6"
+     ]
+    ]
    }
   ]
  },
@@ -129,7 +133,7 @@
   "kontur": {
    "yakaOrta": [
     "nape*0",
-    "nape+28"
+    "neckBase+30"
    ],
    "yakaOmuz": [
     "shoulderTip*0.62",

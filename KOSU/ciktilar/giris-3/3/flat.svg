@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1196.5 953.2" width="1196.5mm" height="953.2mm" data-siluet="v1" data-kaynak="67871839968cc8670d5ecb908181c4dd4d292d791511cac6d79f064dcfbd823d">
-<rect width="1196.5" height="953.2" fill="#fff"/>
-<g transform="translate(309.1 78.0)" data-gorunum="on">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1286.5 1013.2" width="1286.5mm" height="1013.2mm" data-siluet="v1" data-kaynak="67871839968cc8670d5ecb908181c4dd4d292d791511cac6d79f064dcfbd823d">
+<rect width="1286.5" height="1013.2" fill="#fff"/>
+<g transform="translate(339.1 108.0)" data-gorunum="on">
 <path d="M 0.0 46.9 C 44.5 46.9 69.8 16.9 74.2 4.0 L 185.0 46.9 L 146.7 223.3 C 147.9 247.5 150.8 362.9 156.1 414.4 C 161.3 465.9 180.2 577.0 188.3 629.5 C 196.3 682.0 215.7 803.9 219.7 829.2 Q 109.8 835.2 0.0 829.2 Q -109.8 835.2 -219.7 829.2 C -215.7 803.9 -196.3 682.0 -188.3 629.5 C -180.2 577.0 -161.3 465.9 -156.1 414.4 C -150.8 362.9 -147.9 247.5 -146.7 223.3 C -146.7 161.6 -171.6 108.6 -185.0 46.9 L -74.2 4.0 C -69.8 16.9 -44.5 46.9 0.0 46.9 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
 <path d="M 185.0 46.9 C 242.3 40.1 267.1 113.4 217.1 164.9 L 149.4 226.3 L 146.7 223.3 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
 <path d="M 217.3 152.9 L 149.6 214.3" fill="none" stroke="#000" stroke-width="1"/>
@@ -42,8 +42,8 @@
 <path d="M -8.0 88.9 L -8.0 158.9 M 8.0 88.9 L 8.0 158.9" fill="none" stroke="#000" stroke-width="0.9" stroke-dasharray="5,3"/>
 <circle cx="0.0" cy="90.9" r="5.0" fill="#fff" stroke="#000" stroke-width="1"/><circle cx="-1.5" cy="90.9" r="0.9" fill="#000"/><circle cx="1.5" cy="90.9" r="0.9" fill="#000"/>
 </g>
-<text x="309.1" y="941.2" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ON</text>
-<g transform="translate(887.4 78.0)" data-gorunum="arka">
+<text x="339.1" y="1001.2" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ON</text>
+<g transform="translate(947.4 108.0)" data-gorunum="arka">
 <path d="M 0.0 10.0 C 44.5 10.0 69.8 5.8 74.2 4.0 L 185.0 46.9 L 146.7 223.3 C 147.9 247.5 150.8 362.9 156.1 414.4 C 161.3 465.9 180.2 577.0 188.3 629.5 C 196.3 682.0 215.7 803.9 219.7 829.2 Q 109.8 835.2 0.0 829.2 Q -109.8 835.2 -219.7 829.2 C -215.7 803.9 -196.3 682.0 -188.3 629.5 C -180.2 577.0 -161.3 465.9 -156.1 414.4 C -150.8 362.9 -147.9 247.5 -146.7 223.3 C -146.7 161.6 -171.6 108.6 -185.0 46.9 L -74.2 4.0 C -69.8 5.8 -44.5 10.0 0.0 10.0 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
 <path d="M 185.0 46.9 C 242.3 40.1 267.1 113.4 217.1 164.9 L 149.4 226.3 L 146.7 223.3 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
 <path d="M 217.3 152.9 L 149.6 214.3" fill="none" stroke="#000" stroke-width="1"/>
@@ -81,5 +81,5 @@
 <path d="M 0.0 10.0 L 0.0 55.0 C 45.0 57.5 91.7 39.0 101.7 31.5 C 91.7 14.0 80.2 4.0 74.2 4.0" fill="#fff" stroke="#000" stroke-width="1"/>
 <path d="M 0.0 10.0 L 0.0 55.0 C -45.0 57.5 -91.7 39.0 -101.7 31.5 C -91.7 14.0 -80.2 4.0 -74.2 4.0" fill="#fff" stroke="#000" stroke-width="1"/>
 </g>
-<text x="887.4" y="941.2" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ARKA</text>
+<text x="947.4" y="1001.2" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ARKA</text>
 </svg>

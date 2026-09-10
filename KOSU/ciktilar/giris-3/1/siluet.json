@@ -127,7 +127,8 @@
       "hip*0.98",
       "highHip+35"
      ]
-    ]
+    ],
+    "cepBoyu": 115
    }
   ]
  },
@@ -137,7 +138,7 @@
   "kontur": {
    "yakaOrta": [
     "nape*0",
-    "nape+38"
+    "neckBase+46"
    ],
    "yakaOmuz": [
     "shoulderTip*0.60",

@@ -164,8 +164,8 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
       if (kol.buzgu) out += tikler([{ x: ou.x + px * 4, y: ou.y + py * 4 }, { x: ou.x + px * S * 0.7 + ux * L * 0.18, y: ou.y + py * S * 0.7 + uy * L * 0.18 }], 11, 10, { x: ux, y: uy });
       return out;
     } else if (kol.tip === 'kapak') {
-      kd += ` C ${f1(ou.x + (dis.x - ou.x) * 0.55)} ${f1(ou.y - 2)} ${f1(dis.x + (dis.x - ou.x) * 0.12)} ${f1(ou.y + (dis.y - ou.y) * 0.45)} ${P(dis)}`;
-      kd += ` Q ${f1((dis.x + ic.x) / 2 + (dis.x - ic.x) * 0.05)} ${f1(dis.y + 10)} ${P(ic)} Z`;
+      kd += ` C ${f1(ou.x + (dis.x - ou.x) * 0.5)} ${f1(ou.y - 6)} ${f1(dis.x + (dis.x - ou.x) * 0.25)} ${f1(ou.y + (dis.y - ou.y) * 0.4)} ${P(dis)}`;
+      kd += ` C ${f1(dis.x - (dis.x - ic.x) * 0.2)} ${f1(dis.y + 14)} ${f1(ic.x + (dis.x - ic.x) * 0.25)} ${f1(ic.y + 12)} ${P(ic)} Z`;
       return `<path d="${kd}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round"/>\n`;
     } else {
       kd += ` L ${P(dis)}`;
@@ -311,7 +311,9 @@ function ogeCiz(o, pts, s, K) {
       if (o.firfir) out += ogeCiz({ tip: 'firfir', adim: 8, derinlik: 4 }, o.arka ? [{ x: 0, y: orta.y + w * 0.9 }, dis] : [{ x: s * w * 0.62, y: orta.y + w * 0.82 }, dis], s, K);
       return out;
     }
-    case 'cepKapagi': { const [a, b] = pts; const h = o.yukseklik || 40; return `<path d="M ${P(a)} L ${P(b)} L ${f1(b.x)} ${f1(b.y + h * 0.7)} Q ${f1((a.x + b.x) / 2)} ${f1(b.y + h * 1.15)} ${f1(a.x)} ${f1(a.y + h * 0.7)} Z" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n<path d="M ${f1(a.x + s * 3)} ${f1(a.y + 4)} L ${f1(b.x - s * 3)} ${f1(b.y + 4)}" ${kesik}/>\n`; }
+    case 'cepKapagi': { const [a, b] = pts; const h = o.yukseklik || 40, ph = o.cepBoyu || 120;
+      const cep = `<path d="M ${f1(a.x + s * 4)} ${f1(a.y + h * 0.5)} L ${f1(a.x + s * 4)} ${f1(a.y + ph)} Q ${f1((a.x + b.x) / 2)} ${f1(a.y + ph + 14)} ${f1(b.x - s * 4)} ${f1(b.y + ph)} L ${f1(b.x - s * 4)} ${f1(b.y + h * 0.5)}" fill="none" stroke="#000" stroke-width="${CIZ.kesikliMM}" stroke-dasharray="1.5,3"/>\n`;
+      return cep + `<path d="M ${P(a)} L ${P(b)} L ${f1(b.x)} ${f1(b.y + h * 0.7)} Q ${f1((a.x + b.x) / 2)} ${f1(b.y + h * 1.15)} ${f1(a.x)} ${f1(a.y + h * 0.7)} Z" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n<path d="M ${f1(a.x + s * 3)} ${f1(a.y + 4)} L ${f1(b.x - s * 3)} ${f1(b.y + 4)}" ${kesik}/>\n`; }
     default: return `<!-- bilinmeyen oge ${o.tip} -->\n`;
   }
 }
@@ -320,7 +322,7 @@ export function ciz(okuma) {
   const kirmizi = [];
   const gorunumler = [['on', okuma.on], ['arka', okuma.arka]].filter(([, g]) => g);
   const parcalar = gorunumler.map(([ad, g]) => ({ ad, ...gorunumCiz(g, ad, kirmizi, okuma.oturma) }));
-  const M = 40, W = Math.max(...parcalar.map((p) => p.w)) * 2 + M;
+  const M = 70, W = Math.max(...parcalar.map((p) => p.w)) * 2 + M;
   const y0 = Math.min(...parcalar.map((p) => p.y0)) - M, y1 = Math.max(...parcalar.map((p) => p.y1)) + M;
   const H = y1 - y0, TW = W * parcalar.length + M;
   let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${f1(TW)} ${f1(H)}" width="${f1(TW)}mm" height="${f1(H)}mm" data-siluet="v1" data-kaynak="${okuma.sha256 || ''}">\n<rect width="${f1(TW)}" height="${f1(H)}" fill="#fff"/>\n`;

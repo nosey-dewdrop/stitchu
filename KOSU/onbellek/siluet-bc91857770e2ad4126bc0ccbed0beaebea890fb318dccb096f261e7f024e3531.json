@@ -90,32 +90,6 @@
     ]
    },
    {
-    "tip": "kesikli",
-    "noktalar": [
-     [
-      "hip*1.085",
-      "hip-40"
-     ],
-     [
-      "hip*1.01",
-      "hip-40"
-     ]
-    ]
-   },
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "hip*0.38",
-      "knee-60"
-     ],
-     [
-      "hip*0.42",
-      "knee..ankle@0.30+3"
-     ]
-    ]
-   },
-   {
     "tip": "firfir",
     "ayna": false,
     "adim": 12,
@@ -132,6 +106,19 @@
      [
       "hip*1.55",
       "knee..ankle@0.30+4"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "waist*0.50",
+      "waist"
+     ],
+     [
+      "hip*0.42",
+      "knee..ankle@0.30+3"
      ]
     ]
    }
@@ -219,19 +206,6 @@
     ]
    },
    {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "hip*0.38",
-      "knee-60"
-     ],
-     [
-      "hip*0.42",
-      "knee..ankle@0.30+3"
-     ]
-    ]
-   },
-   {
     "tip": "firfir",
     "ayna": false,
     "adim": 12,
@@ -252,21 +226,22 @@
     ]
    },
    {
-    "tip": "kesikli",
+    "tip": "dikis",
     "noktalar": [
      [
-      "hip*1.085",
-      "hip-40"
+      "waist*0.50",
+      "waist"
      ],
      [
-      "hip*1.01",
-      "hip-40"
+      "hip*0.42",
+      "knee..ankle@0.30+3"
      ]
     ]
    }
   ]
  },
  "eksik": [
-  "arka gorunmuyor: onden turetildi, kapama cizilmedi"
+  "arka gorunmuyor: onden turetildi, kapama cizilmedi",
+  "etek yan cep centikleri (satici flat'inde) cizilmedi: flat dilinde kalip centigi okunuyor"
  ]
 }
