@@ -53,8 +53,8 @@
   "kol": {
    "tip": "puf",
    "dis": [
-    "shoulderTip*1.17",
-    "shoulderTip+122"
+    "shoulderTip*1.24",
+    "shoulderTip+128"
    ],
    "ic": [
     "bustLine*1.10",
@@ -63,8 +63,8 @@
    "bant": true,
    "bantMM": 13,
    "buzgu": true,
-   "sisme": 54,
-   "kubbe": 46,
+   "sisme": 62,
+   "kubbe": 48,
    "firfir": true,
    "kapakBuzgu": false
   },
@@ -80,19 +80,6 @@
      [
       "bustLine*1.11",
       "underarm-12"
-     ]
-    ]
-   },
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "bustLine*0.62",
-      "underarm-12"
-     ],
-     [
-      "bustLine*0.68",
-      "underarm+45"
      ]
     ]
    },
@@ -127,6 +114,22 @@
      [
       "neckFront*0",
       "neckFront+66"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "yon": "asagi",
+    "boy": 26,
+    "aralik": 13,
+    "noktalar": [
+     [
+      "bustLine*0.12",
+      "underarm-12"
+     ],
+     [
+      "bustLine*0.95",
+      "underarm-12"
      ]
     ]
    }
@@ -177,8 +180,8 @@
   "kol": {
    "tip": "puf",
    "dis": [
-    "shoulderTip*1.17",
-    "shoulderTip+122"
+    "shoulderTip*1.24",
+    "shoulderTip+128"
    ],
    "ic": [
     "bustLine*1.10",
@@ -187,8 +190,8 @@
    "bant": true,
    "bantMM": 13,
    "buzgu": true,
-   "sisme": 54,
-   "kubbe": 46,
+   "sisme": 62,
+   "kubbe": 48,
    "firfir": true,
    "kapakBuzgu": false
   },
@@ -211,6 +214,22 @@
     "tip": "bebeYaka",
     "genislik": 56,
     "arka": true
+   },
+   {
+    "tip": "buzgu",
+    "yon": "asagi",
+    "boy": 26,
+    "aralik": 13,
+    "noktalar": [
+     [
+      "bustLine*0.12",
+      "underarm-12"
+     ],
+     [
+      "bustLine*0.95",
+      "underarm-12"
+     ]
+    ]
    }
   ]
  },

@@ -14,8 +14,8 @@
   "ayna": false,
   "kontur": {
    "yakaOrta": [
-    "neckFront*0",
-    "shoulderTip-20"
+    "bustLine*0.30",
+    "shoulderTip-6"
    ],
    "yakaOmuz": [
     "bustLine*1.02",
@@ -23,8 +23,8 @@
    ],
    "askiUst": null,
    "omuzUc": [
-    "bustLine*1.12",
-    "shoulderTip+100"
+    "bustLine*1.10",
+    "shoulderTip+86"
    ],
    "koltukalti": [
     "bustLine*1.05",
@@ -53,16 +53,16 @@
   },
   "konturSol": {
    "yakaOrta": [
-    "neckFront*0",
-    "shoulderTip-20"
+    "bustLine*0.30",
+    "shoulderTip-6"
    ],
    "yakaOmuz": [
-    "shoulderTip*0.55",
-    "shoulderTip-25"
+    "shoulderTip*0.60",
+    "shoulderTip-16"
    ],
    "omuzUc": [
     "shoulderTip*0.98",
-    "shoulderTip+40"
+    "shoulderTip+22"
    ]
   },
   "ogeler": [
@@ -144,8 +144,8 @@
   "ayna": false,
   "kontur": {
    "yakaOrta": [
-    "neckFront*0",
-    "shoulderTip-20"
+    "bustLine*0.30",
+    "shoulderTip-6"
    ],
    "yakaOmuz": [
     "bustLine*1.02",
@@ -153,8 +153,8 @@
    ],
    "askiUst": null,
    "omuzUc": [
-    "bustLine*1.12",
-    "shoulderTip+100"
+    "bustLine*1.10",
+    "shoulderTip+86"
    ],
    "koltukalti": [
     "bustLine*1.05",
@@ -183,16 +183,16 @@
   },
   "konturSol": {
    "yakaOrta": [
-    "neckFront*0",
-    "shoulderTip-20"
+    "bustLine*0.30",
+    "shoulderTip-6"
    ],
    "yakaOmuz": [
-    "shoulderTip*0.55",
-    "shoulderTip-25"
+    "shoulderTip*0.60",
+    "shoulderTip-16"
    ],
    "omuzUc": [
     "shoulderTip*0.98",
-    "shoulderTip+40"
+    "shoulderTip+22"
    ]
   },
   "ogeler": [
@@ -221,6 +221,23 @@
      [
       "bustLine*1.02",
       "shoulderTip+128"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "ayna": false,
+    "yon": "ic",
+    "boy": 12,
+    "aralik": 14,
+    "noktalar": [
+     [
+      "bustLine*1.05",
+      "underarm+40"
+     ],
+     [
+      "waist*1.18",
+      "waist"
      ]
     ]
    }
