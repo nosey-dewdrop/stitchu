@@ -38,12 +38,12 @@
     "waist"
    ],
    "kalca": [
-    "highHip*1.08",
+    "highHip*1.05",
     "highHip-10"
    ],
    "etekYan": [
-    "highHip*1.08",
-    "highHip+33"
+    "highHip*1.05",
+    "highHip+30"
    ],
    "etekOrta": [
     "hip*0",
@@ -90,43 +90,17 @@
       "underbust-10"
      ],
      [
-      "waist*0.66",
-      "waist+30"
+      "waist*0.63",
+      "highHip+30"
      ],
      [
-      "waist*0.74",
-      "waist+30"
-     ]
-    ]
-   },
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "waist*0.66",
-      "highHip+0"
-     ],
-     [
-      "waist*0.66",
-      "highHip+33"
-     ]
-    ]
-   },
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "waist*0.74",
-      "highHip+0"
-     ],
-     [
-      "waist*0.74",
-      "highHip+33"
+      "waist*0.77",
+      "highHip+30"
      ]
     ]
    }
   ],
-  "etekSarkma": 3
+  "etekSarkma": 7
  },
  "arka": {
   "koken": "satici flat'i (arka)",
@@ -158,12 +132,12 @@
     "waist"
    ],
    "kalca": [
-    "highHip*1.08",
+    "highHip*1.05",
     "highHip-10"
    ],
    "etekYan": [
-    "highHip*1.08",
-    "highHip+33"
+    "highHip*1.05",
+    "highHip+30"
    ],
    "etekOrta": [
     "hip*0",
@@ -179,45 +153,19 @@
       "underbust-10"
      ],
      [
-      "waist*0.66",
-      "waist+30"
+      "waist*0.63",
+      "highHip+30"
      ],
      [
-      "waist*0.74",
-      "waist+30"
-     ]
-    ]
-   },
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "waist*0.66",
-      "highHip+0"
-     ],
-     [
-      "waist*0.66",
-      "highHip+33"
-     ]
-    ]
-   },
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "waist*0.74",
-      "highHip+0"
-     ],
-     [
-      "waist*0.74",
-      "highHip+33"
+      "waist*0.77",
+      "highHip+30"
      ]
     ]
    }
   ],
-  "etekSarkma": 3
+  "etekSarkma": 7
  },
  "eksik": [
-  "etek ucu pili: kat cizgileri yalniz alt 33 mm'de (hakem: pens kuyrugu okunuyordu)"
+  "pili: etek ucundan acilan uzun pens olarak cizildi (fotografta pens bele kadar dikili, altinda pili acik)"
  ]
 }

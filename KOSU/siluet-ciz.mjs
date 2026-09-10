@@ -120,7 +120,7 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
   d += catmull(yanSol, 0.38);
   const ouS = sol('omuzUc'), kaS = sol('koltukalti');
   if (ouS && kaS) {
-    d += ` C ${f1(kaS.x + (ouS.x - kaS.x) * 0.30)} ${f1(kaS.y - 4)} ${f1(ouS.x - (ouS.x - kaS.x) * 0.30)} ${f1(ouS.y + (kaS.y - ouS.y) * 0.40)} ${P(ouS)}`;
+    d += ` C ${f1(kaS.x + (ouS.x - kaS.x) * 0.22)} ${f1(kaS.y - 10)} ${f1(ouS.x - (ouS.x - kaS.x) * 0.30)} ${f1(ouS.y + (kaS.y - ouS.y) * 0.40)} ${P(ouS)}`;
   }
   const askiSol = KS.askiUst !== undefined ? KS.askiUst : K.askiUst;
   if (g.aski && askiSol && g.askiSol !== null) {
@@ -164,8 +164,8 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
       out += `<path d="M ${P(ou)} C ${f1(ou.x - (ou.x - ka.x) * 0.35)} ${f1(ou.y + (ka.y - ou.y) * 0.35)} ${f1(ka.x)} ${f1(ka.y - (ka.y - ou.y) * 0.35)} ${P(ka)}" fill="none" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n`;
       return out;
     } else if (kol.tip === 'kapak') {
-      kd += ` C ${f1(ou.x + (dis.x - ou.x) * 0.5)} ${f1(ou.y - 6)} ${f1(dis.x + (dis.x - ou.x) * 0.25)} ${f1(ou.y + (dis.y - ou.y) * 0.4)} ${P(dis)}`;
-      kd += ` C ${f1(dis.x - (dis.x - ka.x) * 0.15)} ${f1(dis.y + 10)} ${f1(ka.x + (dis.x - ka.x) * 0.5)} ${f1(ka.y + 2)} ${P(ka)} Z`;
+      kd += ` C ${f1(ou.x + (dis.x - ou.x) * 0.55)} ${f1(ou.y + 3)} ${f1(dis.x + (dis.x - ou.x) * 0.2)} ${f1(ou.y + (dis.y - ou.y) * 0.45)} ${P(dis)}`;
+      kd += ` Q ${f1((dis.x + ic.x) / 2)} ${f1((dis.y + ic.y) / 2 + 5)} ${P(ic)} Z`;
       // kol evi dikisi kolun ustunde ince cizgi (omuz ucu -> koltukalti, icbukey)
       const oyuk = `M ${P(ou)} C ${f1(ou.x - (ou.x - ka.x) * 0.35)} ${f1(ou.y + (ka.y - ou.y) * 0.35)} ${f1(ka.x)} ${f1(ka.y - (ka.y - ou.y) * 0.35)} ${P(ka)}`;
       return `<path d="${kd}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round"/>\n<path d="${oyuk}" fill="none" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n`;

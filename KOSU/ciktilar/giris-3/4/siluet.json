@@ -53,37 +53,15 @@
   "kol": {
    "tip": "kapak",
    "dis": [
-    "shoulderTip*1.16",
-    "shoulderTip+92"
+    "shoulderTip*1.15",
+    "shoulderTip+90"
    ],
    "ic": [
-    "bustLine*1.03",
-    "underarm+15"
+    "shoulderTip*0.86",
+    "shoulderTip+102"
    ]
   },
   "ogeler": [
-   {
-    "tip": "dikis",
-    "catmull": true,
-    "noktalar": [
-     [
-      "shoulderTip*0.62",
-      "shoulderTip..neckBase@0.6"
-     ],
-     [
-      "bustApex*1.05",
-      "bustLine"
-     ],
-     [
-      "waist*0.60",
-      "waist"
-     ],
-     [
-      "hip*0.58",
-      "hip..knee@0.55+3"
-     ]
-    ]
-   },
    {
     "tip": "pat",
     "ayna": false,
@@ -112,6 +90,28 @@
      [
       "hip*0.25",
       "hip..knee@0.55-45"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "catmull": true,
+    "noktalar": [
+     [
+      "shoulderTip*0.62",
+      "shoulderTip..neckBase@0.55"
+     ],
+     [
+      "bustLine*0.78",
+      "bustLine"
+     ],
+     [
+      "waist*0.74",
+      "waist"
+     ],
+     [
+      "hip*0.60",
+      "hip..knee@0.55+3"
      ]
     ]
    }
@@ -162,12 +162,12 @@
   "kol": {
    "tip": "kapak",
    "dis": [
-    "shoulderTip*1.16",
-    "shoulderTip+92"
+    "shoulderTip*1.15",
+    "shoulderTip+90"
    ],
    "ic": [
-    "bustLine*1.03",
-    "underarm+15"
+    "shoulderTip*0.86",
+    "shoulderTip+102"
    ]
   },
   "ogeler": [
@@ -177,18 +177,18 @@
     "noktalar": [
      [
       "shoulderTip*0.62",
-      "shoulderTip..neckBase@0.6"
+      "shoulderTip..neckBase@0.55"
      ],
      [
-      "bustLine*0.65",
+      "bustLine*0.78",
       "bustLine"
      ],
      [
-      "waist*0.60",
+      "waist*0.74",
       "waist"
      ],
      [
-      "hip*0.58",
+      "hip*0.60",
       "hip..knee@0.55+3"
      ]
     ]
