@@ -239,6 +239,20 @@
      ]
     ],
     "catmull": true
+   },
+   {
+    "tip": "fermuar",
+    "ayna": false,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "underarm-44"
+     ],
+     [
+      "neckFront*0",
+      "hip"
+     ]
+    ]
    }
   ],
   "etekFisto": {
@@ -247,7 +261,7 @@
   }
  },
  "eksik": [
-  "arka gorunmuyor: onden turetildi, kapama cizilmedi",
-  "etek yan cep centikleri (satici flat'inde) cizilmedi: flat dilinde kalip centigi okunuyor"
+  "etek yan cep centikleri (satici flat'inde) cizilmedi: flat dilinde kalip centigi okunuyor",
+  "arka kapama: fotografta gorulmedi; oturan elbise, baska kapama yok -> turetilmis arkaya CB fermuar VARSAYIM olarak cizildi"
  ]
 }

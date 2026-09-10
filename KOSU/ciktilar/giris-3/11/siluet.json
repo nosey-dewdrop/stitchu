@@ -65,7 +65,8 @@
    "buzgu": true,
    "sisme": 54,
    "kubbe": 42,
-   "firfir": true
+   "firfir": true,
+   "kapakBuzgu": false
   },
   "ogeler": [
    {
@@ -184,7 +185,8 @@
    "buzgu": true,
    "sisme": 54,
    "kubbe": 42,
-   "firfir": true
+   "firfir": true,
+   "kapakBuzgu": false
   },
   "ogeler": [
    {

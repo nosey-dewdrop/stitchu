@@ -17,7 +17,7 @@
     "neckFront+4"
    ],
    "yakaOmuz": [
-    "shoulderTip*0.66",
+    "shoulderTip*0.60",
     "shoulderTip..neckBase@0.5"
    ],
    "askiUst": null,
@@ -115,7 +115,7 @@
     "neckBase+36"
    ],
    "yakaOmuz": [
-    "shoulderTip*0.66",
+    "shoulderTip*0.60",
     "shoulderTip..neckBase@0.5"
    ],
    "askiUst": null,

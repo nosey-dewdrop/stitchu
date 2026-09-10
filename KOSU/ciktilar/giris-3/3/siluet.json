@@ -65,7 +65,8 @@
    "buzgu": true,
    "sisme": 54,
    "kubbe": 46,
-   "firfir": true
+   "firfir": true,
+   "kapakBuzgu": false
   },
   "ogeler": [
    {
@@ -90,8 +91,8 @@
       "underarm-12"
      ],
      [
-      "bustLine*0.72",
-      "underarm+75"
+      "bustLine*0.68",
+      "underarm+45"
      ]
     ]
    },
@@ -188,7 +189,8 @@
    "buzgu": true,
    "sisme": 54,
    "kubbe": 46,
-   "firfir": true
+   "firfir": true,
+   "kapakBuzgu": false
   },
   "ogeler": [
    {

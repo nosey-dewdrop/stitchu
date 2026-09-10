@@ -34,7 +34,7 @@
     "bustLine"
    ],
    "bel": [
-    "waist*1.12",
+    "waist*1.16",
     "waist"
    ],
    "kalca": [
@@ -157,7 +157,7 @@
     "bustLine"
    ],
    "bel": [
-    "waist*1.12",
+    "waist*1.16",
     "waist"
    ],
    "kalca": [
@@ -218,10 +218,24 @@
       "waist"
      ]
     ]
+   },
+   {
+    "tip": "fermuar",
+    "ayna": false,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "neckBase+46"
+     ],
+     [
+      "neckFront*0",
+      "hip"
+     ]
+    ]
    }
   ]
  },
  "eksik": [
-  "arka gorunmuyor (ilan yalniz on): arka onden turetildi, kapama (fermuar) cizilmedi — uydurulmadi"
+  "arka kapama: fotografta gorulmedi; oturan elbise, baska kapama yok -> turetilmis arkaya CB fermuar VARSAYIM olarak cizildi"
  ]
 }

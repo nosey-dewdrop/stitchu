@@ -233,28 +233,22 @@
     ]
    },
    {
-    "tip": "buzgu",
-    "yon": "yukari",
-    "boy": 24,
-    "aralik": 9,
+    "tip": "fermuar",
+    "ayna": false,
     "noktalar": [
      [
-      "bustLine*0.15",
-      "underbust-14"
+      "neckFront*0",
+      "neckBase+30"
      ],
      [
-      "bustLine*0.5",
-      "underbust-11"
-     ],
-     [
-      "bustLine*0.90",
-      "underbust-3"
+      "neckFront*0",
+      "hip"
      ]
     ]
    }
   ]
  },
  "eksik": [
-  "arka gorunmuyor: onden turetildi, kapama cizilmedi"
+  "arka kapama: fotografta gorulmedi; oturan elbise, baska kapama yok -> turetilmis arkaya CB fermuar VARSAYIM olarak cizildi"
  ]
 }

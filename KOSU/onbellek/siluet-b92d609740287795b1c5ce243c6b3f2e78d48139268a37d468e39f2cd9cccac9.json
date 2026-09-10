@@ -319,11 +319,25 @@
       "waist"
      ]
     ]
+   },
+   {
+    "tip": "fermuar",
+    "ayna": false,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "underarm-38"
+     ],
+     [
+      "neckFront*0",
+      "hip"
+     ]
+    ]
    }
   ]
  },
  "eksik": [
   "fotograf yok: okuma satici flat'inden",
-  "arka gorunmuyor: onden turetildi"
+  "arka kapama: fotografta gorulmedi; oturan elbise, baska kapama yok -> turetilmis arkaya CB fermuar VARSAYIM olarak cizildi"
  ]
 }
