@@ -67,20 +67,6 @@
   },
   "ogeler": [
    {
-    "tip": "dikis",
-    "ayna": false,
-    "noktalar": [
-     [
-      "shoulderTip*-0.50",
-      "shoulderTip+2"
-     ],
-     [
-      "bustLine*1.05",
-      "shoulderTip+124"
-     ]
-    ]
-   },
-   {
     "tip": "drape",
     "ayna": false,
     "bombe": 6,
@@ -127,12 +113,12 @@
     "aralik": 14,
     "noktalar": [
      [
-      "bustLine*0.99",
-      "bustLine+25"
+      "bustLine*1.05",
+      "underarm+40"
      ],
      [
-      "waist*1.08",
-      "waist+55"
+      "waist*1.18",
+      "waist"
      ]
     ]
    },
@@ -142,11 +128,19 @@
     "noktalar": [
      [
       "shoulderTip*-0.96",
-      "shoulderTip-30"
+      "shoulderTip+2"
      ],
      [
       "shoulderTip*-0.50",
-      "shoulderTip+2"
+      "shoulderTip+4"
+     ],
+     [
+      "neckFront*0",
+      "shoulderTip+80"
+     ],
+     [
+      "bustLine*1.02",
+      "shoulderTip+128"
      ]
     ]
    }
@@ -215,12 +209,12 @@
     "ayna": false,
     "noktalar": [
      [
-      "shoulderTip*-0.50",
-      "shoulderTip+2"
+      "neckFront*0",
+      "shoulderTip+130"
      ],
      [
-      "bustLine*1.05",
-      "shoulderTip+124"
+      "neckFront*0",
+      "hip..knee@0.5-2"
      ]
     ]
    },
@@ -230,25 +224,19 @@
     "noktalar": [
      [
       "shoulderTip*-0.96",
-      "shoulderTip-30"
+      "shoulderTip+2"
      ],
      [
       "shoulderTip*-0.50",
-      "shoulderTip+2"
-     ]
-    ]
-   },
-   {
-    "tip": "dikis",
-    "ayna": false,
-    "noktalar": [
-     [
-      "neckFront*0",
-      "shoulderTip+130"
+      "shoulderTip+4"
      ],
      [
       "neckFront*0",
-      "hip..knee@0.5-2"
+      "shoulderTip+80"
+     ],
+     [
+      "bustLine*1.02",
+      "shoulderTip+128"
      ]
     ]
    }

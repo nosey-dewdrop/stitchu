@@ -112,15 +112,25 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
   d += catmull(yanSag, 0.38);
   // etek ucu: etekYan -> etekOrta -> etekYan(sol), sarkik kavis
   const eo = sag('etekOrta'), ey = sag('etekYan');
-  d += ` Q ${f1(ey.x * 0.5)} ${f1(eo.y + (g.etekSarkma ?? 6))} ${P(eo)}`;
   const eySol = sol('etekYan');
-  d += ` Q ${f1(eySol.x * 0.5)} ${f1(eo.y + (g.etekSarkma ?? 6))} ${P(eySol)}`;
+  if (g.etekFisto) { // fisto etek ucu: dis kontur dalgali (kalin), dis ustunde arc'lar asagi
+    const adim = g.etekFisto.adim || 22, der = g.etekFisto.derinlik || 6, sark = g.etekSarkma ?? 6;
+    const hemY = (x) => eo.y + sark * (1 - (x * x) / (ey.x * ey.x)); // sarkik taban egrisi
+    const n = Math.max(2, Math.round((2 * ey.x) / adim));
+    for (let k = 1; k <= n; k++) {
+      const x0 = ey.x - (2 * ey.x) * (k - 1) / n, x1 = ey.x - (2 * ey.x) * k / n, xm = (x0 + x1) / 2;
+      d += ` Q ${f1(xm)} ${f1(hemY(xm) + der * 2)} ${f1(x1)} ${f1(hemY(x1))}`;
+    }
+  } else {
+    d += ` Q ${f1(ey.x * 0.5)} ${f1(eo.y + (g.etekSarkma ?? 6))} ${P(eo)}`;
+    d += ` Q ${f1(eySol.x * 0.5)} ${f1(eo.y + (g.etekSarkma ?? 6))} ${P(eySol)}`;
+  }
   // SOL yarim ters sirayla
   const yanSol = [...yanAdlar].reverse().map(sol).filter(Boolean);
   d += catmull(yanSol, 0.38);
   const ouS = sol('omuzUc'), kaS = sol('koltukalti');
   if (ouS && kaS) {
-    d += ` C ${f1(kaS.x + (ouS.x - kaS.x) * 0.12)} ${f1(kaS.y - 14)} ${f1(ouS.x - (ouS.x - kaS.x) * 0.30)} ${f1(ouS.y + (kaS.y - ouS.y) * 0.40)} ${P(ouS)}`;
+    d += ` C ${f1(kaS.x + 6)} ${f1(kaS.y - (kaS.y - ouS.y) * 0.30)} ${f1(ouS.x - (ouS.x - kaS.x) * 0.60)} ${f1(ouS.y + (kaS.y - ouS.y) * 0.32)} ${P(ouS)}`;
   }
   const askiSol = KS.askiUst !== undefined ? KS.askiUst : K.askiUst;
   if (g.aski && askiSol && g.askiSol !== null) {
@@ -164,10 +174,9 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
       out += `<path d="M ${P(ou)} C ${f1(ou.x - (ou.x - ka.x) * 0.35)} ${f1(ou.y + (ka.y - ou.y) * 0.35)} ${f1(ka.x)} ${f1(ka.y - (ka.y - ou.y) * 0.35)} ${P(ka)}" fill="none" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n`;
       return out;
     } else if (kol.tip === 'kapak') {
-      kd += ` C ${f1(ou.x + (dis.x - ou.x) * 0.55)} ${f1(ou.y + 3)} ${f1(dis.x + (dis.x - ou.x) * 0.2)} ${f1(ou.y + (dis.y - ou.y) * 0.45)} ${P(dis)}`;
-      kd += ` Q ${f1((dis.x + ic.x) / 2 + (dis.x - ic.x) * 0.1)} ${f1((dis.y + ic.y) / 2 + 16)} ${P(ic)} Z`;
-      // kol evi dikisi kolun ustunde ince cizgi (omuz ucu -> koltukalti, icbukey)
-      const oyuk = `M ${P(ou)} C ${f1(ou.x - (ou.x - ka.x) * 0.35)} ${f1(ou.y + (ka.y - ou.y) * 0.35)} ${f1(ka.x)} ${f1(ka.y - (ka.y - ou.y) * 0.35)} ${P(ka)}`;
+      kd += ` C ${f1(ou.x + (dis.x - ou.x) * 0.9)} ${f1(ou.y + (dis.y - ou.y) * 0.15)} ${f1(dis.x + (dis.x - ou.x) * 0.15)} ${f1(dis.y - (dis.y - ou.y) * 0.35)} ${P(dis)}`;
+      kd += ` Q ${f1((dis.x + ka.x) / 2)} ${f1(Math.max(dis.y, ka.y) + 12)} ${P(ka)} Z`;
+      const oyuk = `M ${P(ou)} C ${f1(ou.x - (ou.x - ka.x) * 0.60)} ${f1(ou.y + (ka.y - ou.y) * 0.32)} ${f1(ka.x - 6)} ${f1(ka.y - (ka.y - ou.y) * 0.30)} ${P(ka)}`;
       return `<path d="${kd}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round"/>\n<path d="${oyuk}" fill="none" stroke="#000" stroke-width="${CIZ.icDikisMM}"/>\n`;
     } else {
       kd += ` L ${P(dis)}`;

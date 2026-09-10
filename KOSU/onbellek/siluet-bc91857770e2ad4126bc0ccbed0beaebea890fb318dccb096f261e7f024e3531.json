@@ -90,26 +90,6 @@
     ]
    },
    {
-    "tip": "firfir",
-    "ayna": false,
-    "adim": 12,
-    "derinlik": 5,
-    "noktalar": [
-     [
-      "hip*-1.55",
-      "knee..ankle@0.30+4"
-     ],
-     [
-      "hip*0",
-      "knee..ankle@0.30+10"
-     ],
-     [
-      "hip*1.55",
-      "knee..ankle@0.30+4"
-     ]
-    ]
-   },
-   {
     "tip": "dikis",
     "noktalar": [
      [
@@ -121,8 +101,31 @@
       "knee..ankle@0.30+3"
      ]
     ]
+   },
+   {
+    "tip": "kesikli",
+    "ayna": false,
+    "noktalar": [
+     [
+      "hip*-1.50",
+      "knee..ankle@0.30-12"
+     ],
+     [
+      "hip*0",
+      "knee..ankle@0.30-8"
+     ],
+     [
+      "hip*1.50",
+      "knee..ankle@0.30-12"
+     ]
+    ],
+    "catmull": true
    }
-  ]
+  ],
+  "etekFisto": {
+   "adim": 24,
+   "derinlik": 6
+  }
  },
  "arka": {
   "koken": "turetildi",
@@ -206,26 +209,6 @@
     ]
    },
    {
-    "tip": "firfir",
-    "ayna": false,
-    "adim": 12,
-    "derinlik": 5,
-    "noktalar": [
-     [
-      "hip*-1.55",
-      "knee..ankle@0.30+4"
-     ],
-     [
-      "hip*0",
-      "knee..ankle@0.30+10"
-     ],
-     [
-      "hip*1.55",
-      "knee..ankle@0.30+4"
-     ]
-    ]
-   },
-   {
     "tip": "dikis",
     "noktalar": [
      [
@@ -237,8 +220,31 @@
       "knee..ankle@0.30+3"
      ]
     ]
+   },
+   {
+    "tip": "kesikli",
+    "ayna": false,
+    "noktalar": [
+     [
+      "hip*-1.50",
+      "knee..ankle@0.30-12"
+     ],
+     [
+      "hip*0",
+      "knee..ankle@0.30-8"
+     ],
+     [
+      "hip*1.50",
+      "knee..ankle@0.30-12"
+     ]
+    ],
+    "catmull": true
    }
-  ]
+  ],
+  "etekFisto": {
+   "adim": 24,
+   "derinlik": 6
+  }
  },
  "eksik": [
   "arka gorunmuyor: onden turetildi, kapama cizilmedi",
