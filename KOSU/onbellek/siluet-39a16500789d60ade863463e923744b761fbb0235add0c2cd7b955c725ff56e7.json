@@ -97,25 +97,6 @@
     ]
    },
    {
-    "tip": "dikis",
-    "ayna": false,
-    "catmull": true,
-    "noktalar": [
-     [
-      "shoulderTip*-0.60",
-      "shoulderTip..neckBase@0.35"
-     ],
-     [
-      "neckFront*0",
-      "neckFront..bustLine@0.30"
-     ],
-     [
-      "shoulderTip*0.60",
-      "shoulderTip..neckBase@0.35"
-     ]
-    ]
-   },
-   {
     "tip": "cepKapagi",
     "yukseklik": 40,
     "noktalar": [
@@ -129,6 +110,24 @@
      ]
     ],
     "cepBoyu": 105
+   },
+   {
+    "tip": "kesikli",
+    "ayna": false,
+    "noktalar": [
+     [
+      "shoulderTip*0.52",
+      "shoulderTip..neckBase@0.35+18"
+     ],
+     [
+      "neckFront*0",
+      "neckFront..bustLine@0.88+28"
+     ],
+     [
+      "shoulderTip*-0.52",
+      "shoulderTip..neckBase@0.35+18"
+     ]
+    ]
    }
   ]
  },

@@ -120,11 +120,11 @@
     "tip": "dikis",
     "noktalar": [
      [
-      "bustLine*0.98",
-      "underarm+20"
+      "bustLine*0.86",
+      "underarm+22"
      ],
      [
-      "waist*1.02",
+      "waist*0.84",
       "waist"
      ]
     ]
@@ -281,6 +281,16 @@
      [
       "waist*0.49",
       "waist"
+     ]
+    ]
+   },
+   {
+    "tip": "fiyonk",
+    "boy": 30,
+    "noktalar": [
+     [
+      "shoulderTip*0.74",
+      "shoulderTip..neckBase@0.45-6"
      ]
     ]
    }

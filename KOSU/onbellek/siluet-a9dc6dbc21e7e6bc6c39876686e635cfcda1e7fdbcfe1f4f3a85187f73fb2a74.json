@@ -42,7 +42,7 @@
     "highHip-10"
    ],
    "etekYan": [
-    "highHip*1.10",
+    "highHip*1.08",
     "highHip+33"
    ],
    "etekOrta": [
@@ -83,19 +83,6 @@
     ]
    },
    {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "waist*0.70",
-      "waist+30"
-     ],
-     [
-      "waist*0.70",
-      "highHip+33"
-     ]
-    ]
-   },
-   {
     "tip": "pens",
     "noktalar": [
      [
@@ -111,8 +98,35 @@
       "waist+30"
      ]
     ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "waist*0.66",
+      "highHip+0"
+     ],
+     [
+      "waist*0.66",
+      "highHip+33"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "waist*0.74",
+      "highHip+0"
+     ],
+     [
+      "waist*0.74",
+      "highHip+33"
+     ]
+    ]
    }
-  ]
+  ],
+  "etekSarkma": 3
  },
  "arka": {
   "koken": "satici flat'i (arka)",
@@ -148,7 +162,7 @@
     "highHip-10"
    ],
    "etekYan": [
-    "highHip*1.10",
+    "highHip*1.08",
     "highHip+33"
    ],
    "etekOrta": [
@@ -157,19 +171,6 @@
    ]
   },
   "ogeler": [
-   {
-    "tip": "dikis",
-    "noktalar": [
-     [
-      "waist*0.70",
-      "waist+30"
-     ],
-     [
-      "waist*0.70",
-      "highHip+33"
-     ]
-    ]
-   },
    {
     "tip": "pens",
     "noktalar": [
@@ -186,10 +187,37 @@
       "waist+30"
      ]
     ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "waist*0.66",
+      "highHip+0"
+     ],
+     [
+      "waist*0.66",
+      "highHip+33"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "waist*0.74",
+      "highHip+0"
+     ],
+     [
+      "waist*0.74",
+      "highHip+33"
+     ]
+    ]
    }
-  ]
+  ],
+  "etekSarkma": 3
  },
  "eksik": [
-  "etek ucu pili ikinci bacagi cizilmedi (hakem: pens kenara aciliyor okunuyor); pili tek kat cizgisi"
+  "etek ucu pili: kat cizgileri yalniz alt 33 mm'de (hakem: pens kuyrugu okunuyordu)"
  ]
 }

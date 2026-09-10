@@ -15,7 +15,7 @@
   "kontur": {
    "yakaOrta": [
     "neckFront*0",
-    "shoulderTip+62"
+    "shoulderTip+47"
    ],
    "yakaOmuz": [
     "bustLine*1.02",
@@ -54,7 +54,7 @@
   "konturSol": {
    "yakaOrta": [
     "neckFront*0",
-    "shoulderTip+62"
+    "shoulderTip+47"
    ],
    "yakaOmuz": [
     "shoulderTip*0.72",
@@ -72,11 +72,11 @@
     "noktalar": [
      [
       "shoulderTip*-0.90",
-      "shoulderTip+34"
+      "shoulderTip+30"
      ],
      [
       "bustLine*1.08",
-      "shoulderTip+128"
+      "shoulderTip+130"
      ]
     ]
    },
@@ -110,8 +110,8 @@
       "waist+40"
      ],
      [
-      "waist*1.10",
-      "waist+60"
+      "waist*1.12",
+      "waist+50"
      ],
      [
       "hip*0.60",
@@ -145,7 +145,7 @@
   "kontur": {
    "yakaOrta": [
     "neckFront*0",
-    "shoulderTip+62"
+    "shoulderTip+47"
    ],
    "yakaOmuz": [
     "bustLine*1.02",
@@ -184,7 +184,7 @@
   "konturSol": {
    "yakaOrta": [
     "neckFront*0",
-    "shoulderTip+62"
+    "shoulderTip+47"
    ],
    "yakaOmuz": [
     "shoulderTip*0.72",
@@ -202,11 +202,11 @@
     "noktalar": [
      [
       "shoulderTip*-0.90",
-      "shoulderTip+34"
+      "shoulderTip+30"
      ],
      [
       "bustLine*1.08",
-      "shoulderTip+128"
+      "shoulderTip+130"
      ]
     ]
    }

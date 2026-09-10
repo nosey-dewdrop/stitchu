@@ -42,7 +42,7 @@
     "hip"
    ],
    "etekYan": [
-    "hip*1.12",
+    "hip*1.06",
     "hip..knee@0.55"
    ],
    "etekOrta": [
@@ -87,14 +87,14 @@
    {
     "tip": "pat",
     "ayna": false,
-    "genislik": 26,
+    "genislik": 28,
     "noktalar": [
      [
-      "bustLine*0.32",
+      "bustLine*0.29",
       "neckFront-6"
      ],
      [
-      "hip*0.28",
+      "hip*0.25",
       "hip..knee@0.55+3"
      ]
     ]
@@ -106,11 +106,11 @@
     "cap": 13,
     "noktalar": [
      [
-      "bustLine*0.32",
+      "bustLine*0.29",
       "neckFront+22"
      ],
      [
-      "hip*0.28",
+      "hip*0.25",
       "hip..knee@0.55-45"
      ]
     ]
@@ -151,7 +151,7 @@
     "hip"
    ],
    "etekYan": [
-    "hip*1.12",
+    "hip*1.06",
     "hip..knee@0.55"
    ],
    "etekOrta": [
