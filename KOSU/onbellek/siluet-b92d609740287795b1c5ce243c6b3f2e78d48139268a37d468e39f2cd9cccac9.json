@@ -107,8 +107,8 @@
     "tip": "dikis",
     "noktalar": [
      [
-      "bustLine*0.36",
-      "bustLine+38"
+      "bustLine*0.25",
+      "bustLine+35"
      ],
      [
       "waist*0.42",
@@ -120,8 +120,8 @@
     "tip": "dikis",
     "noktalar": [
      [
-      "bustLine*0.86",
-      "underarm+22"
+      "bustLine*0.84",
+      "underarm-38"
      ],
      [
       "waist*0.84",
@@ -291,6 +291,32 @@
      [
       "shoulderTip*0.74",
       "shoulderTip..neckBase@0.45-6"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "bustLine*0.42",
+      "underarm-30"
+     ],
+     [
+      "waist*0.42",
+      "waist"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "noktalar": [
+     [
+      "bustLine*0.84",
+      "underarm-30"
+     ],
+     [
+      "waist*0.84",
+      "waist"
      ]
     ]
    }

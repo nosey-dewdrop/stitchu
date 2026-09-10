@@ -90,17 +90,21 @@
       "underbust-10"
      ],
      [
-      "waist*0.63",
-      "highHip+30"
+      "waist*0.66",
+      "waist"
      ],
      [
-      "waist*0.77",
-      "highHip+30"
+      "waist*0.76",
+      "waist"
+     ],
+     [
+      "highHip*0.56",
+      "highHip-12"
      ]
     ]
    }
   ],
-  "etekSarkma": 7
+  "etekSarkma": 4
  },
  "arka": {
   "koken": "satici flat'i (arka)",
@@ -153,19 +157,23 @@
       "underbust-10"
      ],
      [
-      "waist*0.63",
-      "highHip+30"
+      "waist*0.66",
+      "waist"
      ],
      [
-      "waist*0.77",
-      "highHip+30"
+      "waist*0.76",
+      "waist"
+     ],
+     [
+      "highHip*0.56",
+      "highHip-12"
      ]
     ]
    }
   ],
-  "etekSarkma": 7
+  "etekSarkma": 4
  },
  "eksik": [
-  "pili: etek ucundan acilan uzun pens olarak cizildi (fotografta pens bele kadar dikili, altinda pili acik)"
+  "etek ucu pilisi cizilmedi: bel pensi balik pensi (elmas) olarak; pili acilimi eksik"
  ]
 }

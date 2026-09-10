@@ -101,11 +101,11 @@
     "yukseklik": 40,
     "noktalar": [
      [
-      "hip*0.30",
+      "hip*0.28",
       "highHip+35"
      ],
      [
-      "hip*0.98",
+      "hip*0.88",
       "highHip+35"
      ]
     ],

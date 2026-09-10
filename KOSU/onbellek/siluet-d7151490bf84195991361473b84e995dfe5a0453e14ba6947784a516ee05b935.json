@@ -57,12 +57,12 @@
     "shoulderTip+47"
    ],
    "yakaOmuz": [
-    "shoulderTip*0.55",
-    "shoulderTip-36"
+    "shoulderTip*0.52",
+    "shoulderTip-30"
    ],
    "omuzUc": [
-    "shoulderTip*0.95",
-    "shoulderTip-20"
+    "shoulderTip*0.96",
+    "shoulderTip-30"
    ]
   },
   "ogeler": [
@@ -75,8 +75,8 @@
       "shoulderTip+2"
      ],
      [
-      "bustLine*1.08",
-      "shoulderTip+130"
+      "bustLine*1.05",
+      "shoulderTip+124"
      ]
     ]
    },
@@ -141,8 +141,8 @@
     "ayna": false,
     "noktalar": [
      [
-      "shoulderTip*-0.95",
-      "shoulderTip-20"
+      "shoulderTip*-0.96",
+      "shoulderTip-30"
      ],
      [
       "shoulderTip*-0.50",
@@ -201,12 +201,12 @@
     "shoulderTip+47"
    ],
    "yakaOmuz": [
-    "shoulderTip*0.55",
-    "shoulderTip-36"
+    "shoulderTip*0.52",
+    "shoulderTip-30"
    ],
    "omuzUc": [
-    "shoulderTip*0.95",
-    "shoulderTip-20"
+    "shoulderTip*0.96",
+    "shoulderTip-30"
    ]
   },
   "ogeler": [
@@ -219,8 +219,8 @@
       "shoulderTip+2"
      ],
      [
-      "bustLine*1.08",
-      "shoulderTip+130"
+      "bustLine*1.05",
+      "shoulderTip+124"
      ]
     ]
    },
@@ -229,12 +229,26 @@
     "ayna": false,
     "noktalar": [
      [
-      "shoulderTip*-0.95",
-      "shoulderTip-20"
+      "shoulderTip*-0.96",
+      "shoulderTip-30"
      ],
      [
       "shoulderTip*-0.50",
       "shoulderTip+2"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "ayna": false,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "shoulderTip+130"
+     ],
+     [
+      "neckFront*0",
+      "hip..knee@0.5-2"
      ]
     ]
    }
@@ -243,6 +257,7 @@
  },
  "eksik": [
   "arka gorunmuyor: onden turetildi (band aynali)",
-  "yan dikis buzgu taramasi cizilmedi (hakem: centik okunuyor); drape cizgileri buzguyu tasir"
+  "yan dikis buzgu taramasi cizilmedi (hakem: centik okunuyor); drape cizgileri buzguyu tasir",
+  "arka orta dikisi: arka fotografta yok, turetilmis arkaya konstruksiyon geregi cizildi (kapama gorulmedi)"
  ]
 }
