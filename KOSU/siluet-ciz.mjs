@@ -68,7 +68,7 @@ function yakaYolu(orta, omuz, bicim, sag = true, kisalt = 0) {
   switch (bicim) {
     case 'V': return ` L ${P(m)}`;
     case 'kare': return ` L ${f1(m.x)} ${f1(o.y)} L ${P(m)}`;
-    case 'duz': case 'off-shoulder': return ` L ${P(m)}`;
+    case 'duz': case 'off-shoulder': return ` Q ${f1(o.x + (m.x - o.x) * 0.62)} ${f1(o.y + (m.y - o.y) * 0.45)} ${P(m)}`;
     case 'kalp': { // iki lob: orta cukurdan tepeye kubik
       const tepe = { x: m.x * 0.5, y: o.y - (o.y - m.y) * 0.55 - 12 };
       return ` C ${f1(o.x + s * 10)} ${f1(o.y - 6)} ${f1(tepe.x - s * 14)} ${f1(tepe.y)} ${P(tepe)} C ${f1(tepe.x + s * 16)} ${f1(tepe.y)} ${f1(m.x - s * 4)} ${f1(m.y + 8)} ${P(m)}`;
@@ -101,13 +101,15 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
   if (g.aski && sag('askiUst')) {
     const a = sag('askiUst'), w = g.aski.genislik || 12, yo = sag('yakaOmuz'), ou = sag('omuzUc');
     // ic kenar: yakaOmuz -> aski ust ic; ust; dis kenar: aski ust dis -> omuzUc  (askilar omuza dogru hafif kavisli)
-    d += ` L ${f1(a.x - w / 2)} ${f1(a.y)} L ${f1(a.x + w / 2)} ${f1(a.y)} L ${P(ou)}`;
+    // aski dis kenari: ust ucundan govde ust kenarina (askiDip) iner; omuz ucu bloğu cizilmez (tur 25 hakemi)
+    const dip = sag('askiDip') || ou;
+    d += ` L ${f1(a.x - w / 2)} ${f1(a.y)} L ${f1(a.x + w / 2)} ${f1(a.y)} L ${P(dip)}`;
     if (a.x + w / 2 > lm('shoulderTip').x + 0.5) kirmizi.push(`${ad}: aski ucu manken omuz noktasini asiyor (${f1(a.x + w / 2)} > ${f1(lm('shoulderTip').x)})`);
   } else if (sag('omuzUc')) {
     d += ` L ${P(sag('omuzUc'))}`;
   }
   // kol oyugu / kol: omuzUc -> koltukalti
-  const ou = sag('omuzUc'), ka = sag('koltukalti');
+  const ou = (g.aski && sag('askiDip')) ? sag('askiDip') : sag('omuzUc'), ka = sag('koltukalti');
   if (ou && ka) {
     if (g.kol) d += ` L ${P(ka)}`; // kol uste cizilir, oyuk cizgisi kolun altinda kalir
     // kol evi: omuzdan icbukey iner, koltukaltina DUSEY tegetle gelir (yan dikisle cusp yok)
@@ -133,14 +135,17 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
   // SOL yarim ters sirayla
   const yanSol = [...yanAdlar].reverse().map(sol).filter(Boolean);
   d += catmull(yanSol, 0.38);
-  const ouS = sol('omuzUc'), kaS = sol('koltukalti');
+  const ouS = (g.aski && sol('askiDip')) ? sol('askiDip') : sol('omuzUc'), kaS = sol('koltukalti');
   if (ouS && kaS) {
     d += ` C ${f1(kaS.x + 14)} ${f1(kaS.y - (kaS.y - ouS.y) * 0.16)} ${f1(ouS.x - (ouS.x - kaS.x) * 0.60)} ${f1(ouS.y + (kaS.y - ouS.y) * 0.32)} ${P(ouS)}`;
   }
   const askiSol = KS.askiUst !== undefined ? KS.askiUst : K.askiUst;
   if (g.aski && askiSol && g.askiSol !== null) {
     const a = ayna(askiSol), w = g.aski.genislik || 12, yo = sol('yakaOmuz');
+    void 0;
+    const dipS = sol('askiDip') || ouS;
     d += ` L ${f1(a.x - w / 2)} ${f1(a.y)} L ${f1(a.x + w / 2)} ${f1(a.y)} L ${P(yo)}`;
+    void dipS;
   } else if (sol('omuzUc')) {
     if (yuvarla) { const m = sol('yakaOmuz'), o2 = sol('omuzUc'), L2 = Math.hypot(o2.x - m.x, o2.y - m.y) || 1; d += ` L ${f1(m.x + (o2.x - m.x) / L2 * yuvarla)} ${f1(m.y + (o2.y - m.y) / L2 * yuvarla)} Q ${P(m)} ${f1(m.x + yuvarla)} ${f1(m.y + 0.5)}`; }
     else d += ` L ${P(sol('yakaOmuz'))}`;

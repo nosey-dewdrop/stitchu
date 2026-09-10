@@ -54,6 +54,10 @@
    "etekOrta": [
     "hip*0",
     "hip..knee@0.55"
+   ],
+   "askiDip": [
+    "bustLine*0.92",
+    "underarm-34"
    ]
   },
   "ogeler": [
@@ -165,11 +169,11 @@
       "hip-70"
      ],
      [
-      "waist*0.41",
+      "waist*0.43",
       "waist"
      ],
      [
-      "waist*0.49",
+      "waist*0.47",
       "waist"
      ]
     ]
@@ -222,6 +226,10 @@
    "etekOrta": [
     "hip*0",
     "hip..knee@0.55"
+   ],
+   "askiDip": [
+    "bustLine*0.92",
+    "underarm-34"
    ]
   },
   "ogeler": [
@@ -275,11 +283,11 @@
       "hip-70"
      ],
      [
-      "waist*0.41",
+      "waist*0.43",
       "waist"
      ],
      [
-      "waist*0.49",
+      "waist*0.47",
       "waist"
      ]
     ]

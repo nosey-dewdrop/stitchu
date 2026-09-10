@@ -54,6 +54,10 @@
    "etekOrta": [
     "hip*0",
     "hip..knee@0.45"
+   ],
+   "askiDip": [
+    "bustLine*0.95",
+    "underarm-50"
    ]
   },
   "ogeler": [
@@ -160,7 +164,8 @@
      ]
     ]
    }
-  ]
+  ],
+  "etekSarkma": 18
  },
  "arka": {
   "koken": "turetildi",
@@ -208,6 +213,10 @@
    "etekOrta": [
     "hip*0",
     "hip..knee@0.45"
+   ],
+   "askiDip": [
+    "bustLine*0.95",
+    "underarm-50"
    ]
   },
   "ogeler": [
@@ -263,7 +272,8 @@
      ]
     ]
    }
-  ]
+  ],
+  "etekSarkma": 18
  },
  "eksik": [
   "arka gorunmuyor: onden turetildi",

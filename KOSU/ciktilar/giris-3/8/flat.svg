@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 942.5 668.9" width="942.5mm" height="668.9mm" data-siluet="v1" data-kaynak="a9dc6dbc21e7e6bc6c39876686e635cfcda1e7fdbcfe1f4f3a85187f73fb2a74">
-<rect width="942.5" height="668.9" fill="#fff"/>
-<g transform="translate(253.1 46.6)" data-gorunum="on">
-<path d="M 0.0 42.9 C 53.1 42.9 91.4 24.5 106.3 24.0 Q 113.3 23.5 119.9 25.7 L 183.1 46.9 C 166.7 104.1 136.1 153.1 136.1 210.3 C 133.9 236.2 118.2 377.1 119.2 414.4 C 120.2 451.7 140.9 487.3 144.1 504.4 C 147.2 521.5 144.1 543.7 144.1 549.4 C 79.2 553.4 -79.2 553.4 -144.1 549.4 C -144.1 543.7 -147.2 521.5 -144.1 504.4 C -140.9 487.3 -120.2 451.7 -119.2 414.4 C -118.2 377.1 -133.9 236.2 -136.1 210.3 C -122.1 184.2 -154.9 99.2 -183.1 46.9 L -119.9 25.7 Q -113.3 23.5 -106.3 24.0 C -91.4 24.5 -53.1 42.9 0.0 42.9 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 904.8 668.9" width="904.8mm" height="668.9mm" data-siluet="v1" data-kaynak="a9dc6dbc21e7e6bc6c39876686e635cfcda1e7fdbcfe1f4f3a85187f73fb2a74">
+<rect width="904.8" height="668.9" fill="#fff"/>
+<g transform="translate(243.7 46.6)" data-gorunum="on">
+<path d="M 0.0 42.9 C 53.1 42.9 91.4 24.5 106.3 24.0 Q 113.3 23.5 119.7 26.3 L 173.7 50.9 C 159.6 108.8 133.4 158.4 133.4 216.3 C 131.6 241.4 117.8 377.9 119.2 414.4 C 120.5 450.9 140.9 487.3 144.1 504.4 C 147.2 521.5 144.1 543.7 144.1 549.4 C 79.2 553.4 -79.2 553.4 -144.1 549.4 C -144.1 543.7 -147.2 521.5 -144.1 504.4 C -140.9 487.3 -120.5 450.9 -119.2 414.4 C -117.8 377.9 -131.6 241.4 -133.4 216.3 C -119.4 189.8 -149.5 103.8 -173.7 50.9 L -119.7 26.3 Q -113.3 23.5 -106.3 24.0 C -91.4 24.5 -53.1 42.9 0.0 42.9 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
 <path d="M -12.0 42.9 L -12.0 549.4 M 12.0 42.9 L 12.0 549.4" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 <circle cx="0.0" cy="60.9" r="4.5" fill="#fff" stroke="#000" stroke-width="1"/><circle cx="-1.3" cy="60.9" r="0.9" fill="#000"/><circle cx="1.3" cy="60.9" r="0.9" fill="#000"/>
 <circle cx="0.0" cy="118.3" r="4.5" fill="#fff" stroke="#000" stroke-width="1"/><circle cx="-1.3" cy="118.3" r="0.9" fill="#000"/><circle cx="1.3" cy="118.3" r="0.9" fill="#000"/>
@@ -12,14 +12,14 @@
 <circle cx="0.0" cy="405.5" r="4.5" fill="#fff" stroke="#000" stroke-width="1"/><circle cx="-1.3" cy="405.5" r="0.9" fill="#000"/><circle cx="1.3" cy="405.5" r="0.9" fill="#000"/>
 <circle cx="0.0" cy="463.0" r="4.5" fill="#fff" stroke="#000" stroke-width="1"/><circle cx="-1.3" cy="463.0" r="0.9" fill="#000"/><circle cx="1.3" cy="463.0" r="0.9" fill="#000"/>
 <circle cx="0.0" cy="520.4" r="4.5" fill="#fff" stroke="#000" stroke-width="1"/><circle cx="-1.3" cy="520.4" r="0.9" fill="#000"/><circle cx="1.3" cy="520.4" r="0.9" fill="#000"/>
-<path d="M 73.4 268.3 L 70.2 414.4 L 76.8 502.4 L 80.9 414.4 Z" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
-<path d="M -73.4 268.3 L -70.2 414.4 L -76.8 502.4 L -80.9 414.4 Z" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
+<path d="M 73.4 268.3 L 72.4 414.4 L 76.8 502.4 L 78.7 414.4 Z" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
+<path d="M -73.4 268.3 L -72.4 414.4 L -76.8 502.4 L -78.7 414.4 Z" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 </g>
-<text x="253.1" y="656.9" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ON</text>
-<g transform="translate(689.4 46.6)" data-gorunum="arka">
-<path d="M 0.0 36.0 C 53.1 36.0 91.4 24.5 106.3 24.0 Q 113.3 23.5 119.9 25.7 L 183.1 46.9 C 166.7 104.1 136.1 153.1 136.1 210.3 C 133.9 236.2 118.2 377.1 119.2 414.4 C 120.2 451.7 140.9 487.3 144.1 504.4 C 147.2 521.5 144.1 543.7 144.1 549.4 C 79.2 553.4 -79.2 553.4 -144.1 549.4 C -144.1 543.7 -147.2 521.5 -144.1 504.4 C -140.9 487.3 -120.2 451.7 -119.2 414.4 C -118.2 377.1 -133.9 236.2 -136.1 210.3 C -122.1 184.2 -154.9 99.2 -183.1 46.9 L -119.9 25.7 Q -113.3 23.5 -106.3 24.0 C -91.4 24.5 -53.1 36.0 0.0 36.0 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
-<path d="M 73.4 268.3 L 70.2 414.4 L 76.8 502.4 L 80.9 414.4 Z" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
-<path d="M -73.4 268.3 L -70.2 414.4 L -76.8 502.4 L -80.9 414.4 Z" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
+<text x="243.7" y="656.9" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ON</text>
+<g transform="translate(661.1 46.6)" data-gorunum="arka">
+<path d="M 0.0 36.0 C 53.1 36.0 91.4 24.5 106.3 24.0 Q 113.3 23.5 119.7 26.3 L 173.7 50.9 C 159.6 108.8 133.4 158.4 133.4 216.3 C 131.6 241.4 117.8 377.9 119.2 414.4 C 120.5 450.9 140.9 487.3 144.1 504.4 C 147.2 521.5 144.1 543.7 144.1 549.4 C 79.2 553.4 -79.2 553.4 -144.1 549.4 C -144.1 543.7 -147.2 521.5 -144.1 504.4 C -140.9 487.3 -120.5 450.9 -119.2 414.4 C -117.8 377.9 -131.6 241.4 -133.4 216.3 C -119.4 189.8 -149.5 103.8 -173.7 50.9 L -119.7 26.3 Q -113.3 23.5 -106.3 24.0 C -91.4 24.5 -53.1 36.0 0.0 36.0 Z" fill="#fff" stroke="#000" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M 73.4 268.3 L 72.4 414.4 L 76.8 502.4 L 78.7 414.4 Z" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
+<path d="M -73.4 268.3 L -72.4 414.4 L -76.8 502.4 L -78.7 414.4 Z" fill="none" stroke="#000" stroke-width="1" stroke-linecap="round"/>
 </g>
-<text x="689.4" y="656.9" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ARKA</text>
+<text x="661.1" y="656.9" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ARKA</text>
 </svg>

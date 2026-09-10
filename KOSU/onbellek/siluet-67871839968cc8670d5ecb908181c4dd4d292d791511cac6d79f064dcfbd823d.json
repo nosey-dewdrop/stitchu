@@ -120,7 +120,7 @@
    {
     "tip": "buzgu",
     "yon": "asagi",
-    "boy": 26,
+    "boy": 34,
     "aralik": 13,
     "noktalar": [
      [
@@ -133,7 +133,8 @@
      ]
     ]
    }
-  ]
+  ],
+  "etekSarkma": 16
  },
  "arka": {
   "koken": "satici flat'i (arka)",
@@ -218,7 +219,7 @@
    {
     "tip": "buzgu",
     "yon": "asagi",
-    "boy": 26,
+    "boy": 34,
     "aralik": 13,
     "noktalar": [
      [
@@ -231,7 +232,8 @@
      ]
     ]
    }
-  ]
+  ],
+  "etekSarkma": 16
  },
  "eksik": []
 }
