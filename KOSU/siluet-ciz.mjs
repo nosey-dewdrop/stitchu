@@ -183,8 +183,13 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
       if (kol.buzgu && kol.kapakBuzgu !== false) out += tikler([{ x: ou.x + px * 10 + ux * 8, y: ou.y + py * 10 + uy * 8 }, { x: ou.x + px * S * 0.55 + ux * L * 0.22, y: ou.y + py * S * 0.55 + uy * L * 0.22 }], 18, 11, { x: ux, y: uy });
       return out;
     } else if (kol.tip === 'kapak') {
-      kd += ` C ${f1(ou.x + (dis.x - ou.x) * 0.5)} ${f1(ou.y + (dis.y - ou.y) * 0.12)} ${f1(dis.x + (dis.x - ou.x) * 0.1)} ${f1(dis.y - (dis.y - ou.y) * 0.35)} ${P(dis)}`;
-      kd += ` Q ${f1((dis.x + ka.x) / 2)} ${f1(Math.max(dis.y, ka.y) + 12)} ${P(ka)} Z`;
+      // KOL EVI ILE TEK EGRI (tur 27 hakemleri): kapak, kol evinin kendisinden dogar — ust kenar omuz ucundan disa,
+      // alt ucu koltukaltinin hemen ustunde biter ve kol evi kavisine teget kapanir. Kama/sarkma yok.
+      const dy = Math.min(dis.y, ka.y - 4);
+      const d2 = { x: dis.x, y: dy };
+      kd += ` C ${f1(ou.x + (d2.x - ou.x) * 0.55)} ${f1(ou.y + (d2.y - ou.y) * 0.12)} ${f1(d2.x + (d2.x - ou.x) * 0.12)} ${f1(d2.y - (d2.y - ou.y) * 0.32)} ${P(d2)}`;
+      kd += ` C ${f1(d2.x - (d2.x - ka.x) * 0.25)} ${f1(d2.y + 8)} ${f1(ka.x + (d2.x - ka.x) * 0.35)} ${f1(ka.y - 2)} ${P(ka)}`;
+      kd += ` C ${f1(ka.x - 12 * s)} ${f1(ka.y - (ka.y - ou.y) * 0.32)} ${f1(ou.x - (ou.x - ka.x) * 0.55)} ${f1(ou.y + (ka.y - ou.y) * 0.32)} ${P(ou)} Z`;
       return `<path d="${kd}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round"/>\n`;
     } else {
       kd += ` L ${P(dis)}`;
@@ -300,7 +305,8 @@ function ogeCiz(o, pts, s, K) {
       const [a, b] = pts, n = o.adet || 5, r = (o.cap || 12) / 2; let out = '';
       for (let i = 0; i < n; i++) {
         const t = n === 1 ? 0.5 : i / (n - 1), x = a.x + (b.x - a.x) * t, y = a.y + (b.y - a.y) * t;
-        out += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}"/><circle cx="${f1(x - r * 0.3)}" cy="${f1(y)}" r="0.9" fill="#000"/><circle cx="${f1(x + r * 0.3)}" cy="${f1(y)}" r="0.9" fill="#000"/>\n`;
+        out += `<path d="M ${f1(x - r * 1.1)} ${f1(y)} L ${f1(x + r * 1.1)} ${f1(y)}" fill="none" stroke="#000" stroke-width="${CIZ.kilcalMM}"/>` +
+          `<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(r)}" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}"/><circle cx="${f1(x - r * 0.3)}" cy="${f1(y)}" r="0.9" fill="#000"/><circle cx="${f1(x + r * 0.3)}" cy="${f1(y)}" r="0.9" fill="#000"/>\n`;
       }
       return out;
     }

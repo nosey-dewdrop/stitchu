@@ -26,8 +26,8 @@
     "shoulderTip"
    ],
    "koltukalti": [
-    "bustLine*1.03",
-    "underarm+15"
+    "bustLine*0.98",
+    "underarm+30"
    ],
    "gogus": [
     "bustLine*1.04",
@@ -53,12 +53,12 @@
   "kol": {
    "tip": "kapak",
    "dis": [
-    "shoulderTip*1.11",
-    "underarm+18"
+    "shoulderTip*1.12",
+    "underarm+14"
    ],
    "ic": [
-    "bustLine*1.03",
-    "underarm+15"
+    "bustLine*0.98",
+    "underarm+30"
    ]
   },
   "ogeler": [
@@ -135,8 +135,8 @@
     "shoulderTip"
    ],
    "koltukalti": [
-    "bustLine*1.03",
-    "underarm+15"
+    "bustLine*0.98",
+    "underarm+30"
    ],
    "gogus": [
     "bustLine*1.04",
@@ -162,12 +162,12 @@
   "kol": {
    "tip": "kapak",
    "dis": [
-    "shoulderTip*1.11",
-    "underarm+18"
+    "shoulderTip*1.12",
+    "underarm+14"
    ],
    "ic": [
-    "bustLine*1.03",
-    "underarm+15"
+    "bustLine*0.98",
+    "underarm+30"
    ]
   },
   "ogeler": [

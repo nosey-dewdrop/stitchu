@@ -18,13 +18,13 @@
     "shoulderTip-6"
    ],
    "yakaOmuz": [
-    "bustLine*1.02",
-    "shoulderTip+96"
+    "bustLine*1.00",
+    "shoulderTip+78"
    ],
    "askiUst": null,
    "omuzUc": [
-    "bustLine*1.10",
-    "shoulderTip+86"
+    "bustLine*1.05",
+    "shoulderTip+96"
    ],
    "koltukalti": [
     "bustLine*1.05",
@@ -72,36 +72,36 @@
     "bombe": 6,
     "noktalar": [
      [
-      "bustLine*1.04",
+      "bustLine*1.05",
       "bustLine+30"
      ],
      [
+      "bustLine*0.40",
+      "underarm+95"
+     ],
+     [
+      "bustLine*1.06",
+      "underbust+25"
+     ],
+     [
       "bustLine*0.45",
-      "underarm+90"
+      "waist-35"
      ],
      [
-      "bustLine*1.05",
-      "underbust+20"
+      "waist*1.16",
+      "waist+5"
      ],
      [
-      "bustLine*0.50",
-      "waist-40"
+      "waist*0.50",
+      "waist+45"
      ],
      [
-      "waist*1.12",
-      "waist"
+      "waist*1.14",
+      "waist+60"
      ],
      [
-      "waist*0.55",
-      "waist+40"
-     ],
-     [
-      "waist*1.12",
-      "waist+50"
-     ],
-     [
-      "hip*0.60",
-      "highHip+50"
+      "hip*0.55",
+      "highHip+55"
      ]
     ]
    },
@@ -131,8 +131,8 @@
       "shoulderTip+8"
      ],
      [
-      "bustLine*1.02",
-      "shoulderTip+128"
+      "bustLine*0.99",
+      "shoulderTip+92"
      ]
     ]
    }
@@ -148,13 +148,13 @@
     "shoulderTip-6"
    ],
    "yakaOmuz": [
-    "bustLine*1.02",
-    "shoulderTip+96"
+    "bustLine*1.00",
+    "shoulderTip+78"
    ],
    "askiUst": null,
    "omuzUc": [
-    "bustLine*1.10",
-    "shoulderTip+86"
+    "bustLine*1.05",
+    "shoulderTip+96"
    ],
    "koltukalti": [
     "bustLine*1.05",
@@ -219,8 +219,8 @@
       "shoulderTip+8"
      ],
      [
-      "bustLine*1.02",
-      "shoulderTip+128"
+      "bustLine*0.99",
+      "shoulderTip+92"
      ]
     ]
    },
