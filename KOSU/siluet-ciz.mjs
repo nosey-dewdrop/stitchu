@@ -269,8 +269,8 @@ function tikler(pts, boy, aralik = CIZ.buzguTikMM, pref = { x: 0, y: 1 }, ofset 
       const bb = Math.abs(boy) * (0.75 + 0.25 * J(k, 2)), egim = (J(k, 3) - 0.5) * 0.3;
       const x0 = a.x + (b.x - a.x) * t + nx * ofset, y0 = a.y + (b.y - a.y) * t + ny * ofset;   // dikisin 4 mm icinden
       const dx = nx * bb + tx * bb * egim, dy = ny * bb + ty * bb * egim;
-      out += `<path d="M ${f1(x0)} ${f1(y0)} q ${f1(dx * 0.5 + ty * 1.5)} ${f1(dy * 0.5 - tx * 1.5)} ${f1(dx * 0.55)} ${f1(dy * 0.55)}" fill="none" stroke="#000" stroke-width="${CIZ.kesikliMM * 0.75}" stroke-linecap="round"/>\n`;
-      out += `<path d="M ${f1(x0 + dx * 0.55)} ${f1(y0 + dy * 0.55)} l ${f1(dx * 0.45)} ${f1(dy * 0.45)}" fill="none" stroke="#000" stroke-width="${CIZ.kesikliMM * 0.4}" stroke-linecap="round"/>\n`;
+      out += `<path d="M ${f1(x0)} ${f1(y0)} q ${f1(dx * 0.5 + ty * 1.5)} ${f1(dy * 0.5 - tx * 1.5)} ${f1(dx * 0.55)} ${f1(dy * 0.55)}" fill="none" stroke="#000" stroke-width="${CIZ.kilcalMM}" stroke-linecap="round"/>\n`;
+      out += `<path d="M ${f1(x0 + dx * 0.55)} ${f1(y0 + dy * 0.55)} l ${f1(dx * 0.45)} ${f1(dy * 0.45)}" fill="none" stroke="#000" stroke-width="${CIZ.kilcalMM * 0.6}" stroke-linecap="round"/>\n`;
     }
   }
   return out;
@@ -313,7 +313,8 @@ function ogeCiz(o, pts, s, K) {
       const c = pts[0], b = o.boy || 120;
       return `<path d="M ${f1(c.x - 3)} ${f1(c.y)} c ${f1(-8)} ${f1(b * 0.4)} ${f1(6)} ${f1(b * 0.7)} ${f1(-4)} ${f1(b)} M ${f1(c.x + 3)} ${f1(c.y)} c ${f1(8)} ${f1(b * 0.4)} ${f1(-2)} ${f1(b * 0.7)} ${f1(6)} ${f1(b * 0.95)}" ${ince}/>\n`;
     }
-    case 'drape': { let out = ''; for (let i = 0; i + 1 < pts.length; i += 2) out += `<path d="${yol([pts[i], pts[i + 1]], false, (o.bombe || 6) * s)}" ${ince}/>\n`; return out; }
+    case 'drape': { const kil = `fill="none" stroke="#000" stroke-width="${CIZ.kilcalMM}" stroke-linecap="round"`;
+      let out = ''; for (let i = 0; i + 1 < pts.length; i += 2) out += `<path d="${yol([pts[i], pts[i + 1]], false, (o.bombe || 6) * s)}" ${kil}/>\n`; return out; }
     case 'firfir': { // dalgali kenar: kucuk yaylar
       let out = 'M ' + P(pts[0]);
       for (let i = 0; i < pts.length - 1; i++) {

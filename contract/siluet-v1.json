@@ -34,7 +34,8 @@
     "kesikliMM": 0.9,
     "kesikli": "5,3",
     "buzguTikMM": 9,
-    "_yasa": "dis kontur ic dikisin en az 2 kati; etek ucu ve yan dikis hafif kavisli; flat'te dikis payi / centik / kat cizgisi yok; dolgu beyaz, golge yok."
+    "_yasa": "dis kontur ic dikisin en az 2 kati; etek ucu ve yan dikis hafif kavisli; flat'te dikis payi / centik / kat cizgisi yok; dolgu beyaz, golge yok. UC AGIRLIK (tur 26, iki hakem): dis kontur (2.4) > ic dikis (1.0) > buzgu/drape kilcali (0.55). Her ic cizginin IKI ucu da ya bir dikiste ya bir kenarda biter; boslukta biten cizgi yasak.",
+    "kilcalMM": 0.55
   },
   "yanlislama": {
     "_kaynak": "0-K.10 YANLISLAMA; kosucu KOSU/siluet-yanlisla.mjs",
