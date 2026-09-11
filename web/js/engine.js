@@ -118,13 +118,19 @@ export async function seamPlanPattern(spec, body) {
   return JSON.parse(engine.planJSON(engineSpec(spec), body));
 }
 
-/** The FLAT reading — the 3D SURFACE line. Kept for research and cross-checking
- *  against the drawing; NOT what the shopper downloads any more (see
- *  flatDrawing below and the header of web/lib/flat-from-pattern.js). */
-export async function seamPlanFlat(spec, body) {
-  const engine = await loadEngine();
-  return JSON.parse(engine.flatJSON(engineSpec(spec), body));
-}
+// THE 3D SURFACE FLAT READING (engine.flatJSON) IS NOT WIRED TO THE WEB.
+//
+// 2026-09-11 (G2), instruction 5: take the C++ flat line off the shipping path
+// without deleting it. `seamPlanFlat(spec, body)` used to sit here as the web's
+// one call into engine.flatJSON. It was measured to have ZERO callers in web/
+// and engine/ — it had been research-only since 2026-09-01 — so the wire is cut
+// by removing the wire, not by leaving a dead export that invites a new caller.
+//
+// NOTHING C++ WAS DELETED. engine/src/flatsvg.cpp, the flatJSON binding and the
+// grafciz CLI are all still there and still built; flatsvg.cpp belongs to the
+// GRAF line, which is a different line and stays whole. What changed is only
+// that no browser module reaches engine.flatJSON any more. A future caller that
+// genuinely wants the surface reading should say so out loud and re-add it.
 
 /**
  * ⭐ THE OPERATOR PROGRAM — op.split / op.suppress / op.rotate ON THIS GARMENT.
@@ -361,13 +367,56 @@ export async function draft(spec, measurements) {
 }
 
 // ---------------------------------------------------------------------------
-// THE TECHNICAL DRAWING — FROM THE PATTERN, NOT FROM THE SURFACE
+// THE TECHNICAL DRAWING — FROM THE SILHOUETTE READING, OR NOT AT ALL
 // ---------------------------------------------------------------------------
-// The shipped flat is drawn from draftJSON's own 2D pieces. The reasoning, the
-// measurements behind it and what it replaced are in web/lib/flat-from-pattern.js
-// and are not restated here.
+// 2026-09-11 (G2). Until today two flat pens lived in this tree and the one the
+// USER saw was the wrong one: the deleted pattern-pen declared
+// KOL_ACI_MIN_DEG = 20 while contract/flat-convention-v1.json says
+// sevkPoz.kolAcisiDeg.min = 65 — the shipped code broke the contract, and
+// flat_mirror_check (3 violations) plus cizim_giysi_mi (arm angles 32-40 deg
+// against the band [65, 70]) had been measuring exactly that. Both pens are
+// deleted. The product now has ONE: web/lib/siluet-ciz.js, the very file
+// KOSU/siluet-ciz.mjs runs — moved, not copied.
+//
+// WHAT CHANGED FOR CALLERS. The one pen draws WHAT IT SAW: it needs a
+// silhouette READING of a photograph, not a spec. A spec is a handful of enum
+// words ('dress', 'straight sleeve'); a reading is where this garment's own
+// neckline, armhole, waist and hem actually sit. Drawing the first and calling
+// it the second is what the deleted line did.
+//
+// So the spec-only call is REFUSED BY NAME (ERR_OKUMA_YOK) rather than served a
+// silent default. See flatCizimi below.
 import { CONTRACT } from './contract.gen.js?v=152';
-import { renderFlatFromPattern } from '../lib/flat-from-pattern.js?v=152';
+import { ciz as cizSiluet, kanunuKur, kanunKurulduMu } from '../lib/siluet-ciz.js?v=152';
+
+// The pen carries no copy of the law's numbers (that is why flat_mirror_check
+// exists); whoever runs it hands it the contract files it cannot readFileSync.
+//
+// TWO HOSTS, ONE PEN. In the browser the contracts arrive over HTTP; under node
+// (the ctest gates, KOSU) there is no origin to fetch from, so the same gates
+// that stub `document` and `window` can hand the law in directly. Node is NOT
+// given a second code path into the drawing itself — only a second way for the
+// two JSON files to arrive.
+//   node: globalThis.__stitchuKanun = { body, siluet }  (or call kanunuKur)
+let kanunSozu = null;
+async function kanunHazir() {
+  if (kanunKurulduMu()) return;
+  if (!kanunSozu) {
+    kanunSozu = (async () => {
+      const elde = globalThis.__stitchuKanun;
+      if (elde && elde.body && elde.siluet) { kanunuKur(elde.body, elde.siluet); return; }
+      // Browser: resolved against this module's own URL so the page it is
+      // loaded from (create.html, studio.html, ...) cannot change the answer.
+      const u = (ad) => new URL('../../contract/' + ad, import.meta.url).href;
+      const [body, siluet] = await Promise.all([
+        fetch(u('body-v1.json')).then((r) => r.json()),
+        fetch(u('siluet-v1.json')).then((r) => r.json()),
+      ]);
+      kanunuKur(body, siluet);
+    })();
+  }
+  await kanunSozu;
+}
 
 /** The published EU chart body, from the SAME contract table the engine's own
  *  size chart is generated from. An unknown label is refused by name — a
@@ -404,33 +453,30 @@ export function patternDugum(patternJSONText) {
 }
 
 /**
- * THE TECHNICAL FLAT for one spec at one published size.
+ * THE TECHNICAL FLAT — drawn from a SILHOUETTE READING.
  *
- * `body` is either a measured body (bust/waist/... in cm) or `{ size: 'EU38' }`.
- * Returns { svg, dugum, beden, issues }. It REFUSES rather than draw a lie: a
- * validator-blocked draft comes back as a throw with the engine's own words, so
- * a blocked pattern can never leave as a picture that looks fine.
+ * `okuma` is a reading in the contract/siluet-v1.json shape: the garment's own
+ * outline expressed as points on the croquis36 mannequin's landmarks (front
+ * and/or back). It is produced by reading a PHOTOGRAPH, not by naming a spec.
+ *
+ * ⛔ NO READING, NO DRAWING. Passing a spec here throws ERR_OKUMA_YOK. That is
+ * the whole point of the 2026-09-11 change: the deleted line answered the spec
+ * with an invented silhouette, and an invented silhouette that looks like a
+ * drawing is worse than a refusal, because nobody can see it is invented.
+ *
+ * Returns { svg, imza, kirmizi[] }. `kirmizi` is the pen's OWN falsification
+ * list (a garment the photo shows hanging loose cannot be drawn nipped at the
+ * waist) and it is never swallowed.
  */
-export async function flatDrawing(spec, body, arka = null) {
-  const engine = await loadEngine();
-  const beden = body && body.size ? String(body.size) : null;
-  const m = beden ? bodyForSize(beden) : body;
-  const es = engineSpec(spec);
-  const text = engine.draftJSON(es, {
-    bust: m.bust, waist: m.waist, hip: m.hip, shoulder: m.shoulder,
-    backLength: m.backLength, armLength: m.armLength, neck: m.neck,
-    upperBust: m.upperBust || 0,
-  });
-  const drafted = JSON.parse(text);
-  if (drafted.error) throw new Error(drafted.error);
-  const dugum = patternDugum(text);
-  const svg = renderFlatFromPattern(drafted, {
-    beden: beden || '', dugum,
-    sinif: { garment: es.garment, shaping: es.shaping, fabric: es.fabric },
-    // F3-arka: 'gorulen' | 'uydurma' | 'soruldu' | 'cikarildi' | null.
-    // null = the caller carries no köken record; the drawing then claims
-    // nothing about the back either way (research/legacy paths stay byte-same).
-    arka,
-  });
-  return { svg, dugum, beden: beden || '', issues: drafted.issues || [] };
+export async function flatCizimi(okuma) {
+  await kanunHazir();
+  // A spec is not a reading. Named, not defaulted.
+  if (okuma && typeof okuma === 'object' && !okuma.on && !okuma.arka && okuma.garment) {
+    throw new Error(
+      'ERR_OKUMA_YOK: a flat is drawn from a silhouette READING of a photograph, ' +
+      'and this call carries only a spec (garment=' + String(okuma.garment) + '). ' +
+      'The words "dress / straight sleeve" do not say where THIS garment\'s neckline, ' +
+      'armhole, waist and hem sit; inventing them is what the deleted line did.');
+  }
+  return cizSiluet(okuma);   // throws ERR_OKUMA_YOK on anything that is not a reading
 }

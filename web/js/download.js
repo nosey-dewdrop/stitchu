@@ -16,12 +16,11 @@
 //        strings print.js and render-pages.mjs draw.
 //   PDF  pdf-core.js, the SAME builder engine/tools/gen-collection-pattern.mjs
 //        writes the published packs with, including the 3 cm calibration square.
-//   FLAT flat-from-pattern.js over engine.draftJSON — the drafted pattern's own
-//        2D panels, sewn up into the finished garment. It is drawn from the very
-//        geometry the other three exports cut, so the drawing and the pattern
-//        cannot be two objects that drift. (Until 2026-09-01 it was the 3D
-//        surface line's projection; that line has no sleeve, no collar and no
-//        dart in its types, and it cost 7.5-30.9 seconds a call.)
+//   FLAT web/lib/siluet-ciz.js over a SILHOUETTE READING of the user's photo —
+//        the one flat pen in the tree, the same file KOSU/siluet-ciz.mjs runs.
+//        Unlike the three above it does NOT come off the spec: it needs to have
+//        SEEN the garment. With no reading it refuses by name (ERR_OKUMA_YOK)
+//        instead of drawing a plausible-looking invention. See flatSVG below.
 //
 // WHY THE FLAT IS HERE AT ALL (F-İNDİR, 2nd round, 2026-08-26). The referee
 // measured the first round's own claim: all ten exports wrote a PATTERN, `grep
@@ -45,7 +44,7 @@ import * as koken from './provenance.js?v=152';
 import { pathD, bounds } from './sheet.js?v=152';
 import * as sheet from './sheet.js?v=152';
 import { makePdfCore } from '../lib/pdf-core.js?v=152';
-import { dxfRecipe, dxfSpec, flatDrawing } from './engine.js?v=152';
+import { dxfRecipe, dxfSpec, flatCizimi } from './engine.js?v=152';
 // F3-arka: the back view of the flat says where the back CAME FROM. An invented
 // back (front photo only) is stamped on the drawing itself — see arka-koken.js.
 import { arkaDurumu } from '../lib/arka-koken.js?v=152';
@@ -204,50 +203,43 @@ export async function patternDXF(source) {
 /**
  * ⭐ THE FLAT — ONE FUNCTION, ONE LINE, EVERY CLASS (H3).
  *
- * WHAT DIED HERE AND WHY IT HAD TO. Until H3 this file held TWO drawings of one
- * garment: a 74KB croquis pen that drew hand-authored curves off the spec's
- * WORDS, and this one, the orthographic
- * projection of the very GarmentSurf the pattern is cut from. Which one a
- * shopper got was decided by `planLineClass`, a three-word allow-list: top +
- * dart + woven took the projection, and a dress, a skirt or anything knitted
- * took the pen. So on three of the four classes the technical drawing and the
- * pattern were two different objects — they agreed until somebody edited one.
- * At EU38 the pen said the waist was 700.0mm and the pattern said 724.89mm.
+ * WHAT DIED HERE AND WHY IT HAD TO (three times now, same disease).
+ * Until H3 this file held TWO drawings of one garment: a 74KB croquis pen that
+ * drew hand-authored curves off the spec's WORDS, and the orthographic
+ * projection of the GarmentSurf the pattern is cut from. Which one a shopper got
+ * was decided by `planLineClass`, a three-word allow-list, so on three of the
+ * four classes the drawing and the pattern were two different objects. On
+ * 2026-09-01 both were replaced by a pen over the drafted 2D panels. On
+ * 2026-09-11 THAT one died too, and for the oldest reason on this list: it was
+ * still answering the spec's WORDS. It also broke the written law while doing it
+ * — KOL_ACI_MIN_DEG = 20 in the code against sevkPoz.kolAcisiDeg.min = 65 in
+ * contract/flat-convention-v1.json — and the code was the live one.
  *
- * There is no pen any more, there is no allow-list, and there is no fallback:
- * every class is drawn from its own seam plan. What the surface line CANNOT
- * carry for this spec is not drawn as something else and it is not swallowed —
- * it comes back in `desteklenmeyen_eksenler`, by axis name, and create.js puts
- * it on the screen.
+ * ONE PEN, AND IT HAS TO HAVE SEEN THE GARMENT. web/lib/siluet-ciz.js, the same
+ * file KOSU/siluet-ciz.mjs runs. It draws a silhouette READING and nothing else.
+ * There is no allow-list, no fallback and no spec branch left to drift.
  *
- * `body` is the wearer, and `body.size` is REQUIRED: the engine refuses a
- * missing size rather than defaulting to EU38 (RULES invariant 1), and this
- * function does not paper over that refusal.
- *
- * Returns { svg, desteklenmeyen_eksenler }. It THROWS rather than hand out a
- * lie: an engine error, a missing silhouette or a missing top boundary all
- * stop the export instead of writing a quietly-blank file.
+ * Returns { svg, desteklenmeyen_eksenler, imza, kirmizi }. It THROWS rather than
+ * hand out a lie: no reading is ERR_OKUMA_YOK, and the pen's own falsifications
+ * come back in `kirmizi` instead of being smoothed over.
  */
-export async function flatSVG(spec, body, kokenKaydi = null, specAlanlari = null) {
-  if (!spec || typeof spec !== 'object' || !spec.garment) {
-    throw new Error('flat export: the spec names no class to draw');
-  }
-  if (!body || typeof body !== 'object' || !body.size) {
-    throw new Error('flat export: no size — the flat is valued at a body, not at a default');
-  }
-  // ⭐ 2026-09-01 — THE DRAWING NOW COMES OFF THE PATTERN.
-  // It used to be the 3D surface line's projection, and that line has no sleeve,
-  // no collar and no dart in its types: 24 specs collapsed to 7 silhouettes and
-  // 4 paths at 7.5-30.9 SECONDS a call. The drafted pattern already carries the
-  // armhole, the cap, the darts and the collar as named mm geometry in 18 ms.
-  // The surface line is still in the tree and still gated; it is off THIS path.
-  // F3-arka: the BACK view carries its own origin. Derived from the same köken
-  // record the root stamp uses, so the caption and the attribute cannot drift
-  // from the declared list. No record (studio path) -> no claim either way.
-  const arka = kokenKaydi
-    ? arkaDurumu(kokenKaydi, specAlanlari || Object.keys(kokenKaydi))
-    : null;
-  const drawn = await flatDrawing(spec, body, arka);   // throws on an engine refusal
+export async function flatSVG(okuma, kokenKaydi = null, specAlanlari = null) {
+  // ⭐ 2026-09-11 (G2) — THIS TAKES A READING NOW, NOT A SPEC.
+  //
+  // The old signature was flatSVG(spec, body, ...) and it was the wrong shape
+  // for the job. A spec is a handful of enum words; the flat is supposed to be
+  // the picture of THIS garment. The line behind that signature answered the
+  // words with an invented silhouette and broke the contract while doing it
+  // (KOL_ACI_MIN_DEG = 20 against sevkPoz.kolAcisiDeg.min = 65). It is deleted.
+  //
+  // `okuma` is a silhouette reading (contract/siluet-v1.json shape): the
+  // garment's own outline as points on the croquis36 mannequin. Produced by
+  // READING a photograph.
+  //
+  // ⛔ NO READING, NO FILE. Callers with only a spec get ERR_OKUMA_YOK thrown at
+  // them, by name, with the reason. A silent default here is exactly the failure
+  // this change exists to end.
+  const drawn = await flatCizimi(okuma);   // throws ERR_OKUMA_YOK when there is no reading
   const svg = drawn.svg;
   return {
     // F0: the origin label rides in the FILE, on the root element, so it
@@ -257,12 +249,11 @@ export async function flatSVG(spec, body, kokenKaydi = null, specAlanlari = null
     svg: kokenKaydi
       ? koken.damgala(svg, kokenKaydi, specAlanlari || Object.keys(kokenKaydi))
       : svg,
-    // The pattern line carries every axis the shopper can pick — that is what
-    // it is FOR — so there is no list of axes the drawing had to drop. What it
-    // could not draw for a particular spec is named inside the file as a
-    // `cizilemeyen:` comment by the drawer itself, never swallowed.
+    // Kept for the callers that print it. The pen names what it could not draw
+    // in `kirmizi` instead — its own falsification list, never swallowed.
     desteklenmeyen_eksenler: [],
-    dugum: drawn.dugum,
+    imza: drawn.imza,
+    kirmizi: drawn.kirmizi || [],
   };
 }
 
@@ -289,16 +280,17 @@ export function saveSVG(pattern, filename) {
   saveBlob(filename, patternSVG(pattern), 'image/svg+xml');
 }
 
-export async function saveFlatSVG(spec, body, filename, kokenKaydi = null,
+export async function saveFlatSVG(okuma, filename, kokenKaydi = null,
                                   specAlanlari = null) {
-  // async because there is only one line left and it goes through the engine.
+  // Takes a silhouette READING (see flatSVG). With no reading nothing is saved
+  // and ERR_OKUMA_YOK propagates to the caller, which must print it.
   //
-  // Returns the axes the surface line REFUSED, so the caller can print them. The
-  // file is written FIRST — a refused axis is a footnote about a real file on
-  // the shopper's disk, not a reason to hand them nothing.
-  const { svg, desteklenmeyen_eksenler } = await flatSVG(spec, body, kokenKaydi, specAlanlari);
+  // Returns the pen's falsification list, so the caller can print it. The file
+  // is written FIRST — a falsification is a footnote about a real file on the
+  // shopper's disk, not a reason to hand them nothing.
+  const { svg, kirmizi } = await flatSVG(okuma, kokenKaydi, specAlanlari);
   saveBlob(filename, svg, 'image/svg+xml');
-  return desteklenmeyen_eksenler;
+  return kirmizi;
 }
 
 export function saveA4Pdf(pattern, title, filename, kokenKaydi = null, specAlanlari = null) {

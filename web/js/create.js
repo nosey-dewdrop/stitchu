@@ -1247,8 +1247,11 @@ function showResult(result) {
   // ise flat'i satin alma karari verirken hic gormuyordu.
   // Kok sebep: sonuc ekrani kalip merkezli kuruldu; flat, cikti listesine bir
   // DOSYA TURU olarak eklendi ama render hattina hic baglanmadi. Cizim ayni
-  // hattan (download.js flatSVG -> web/lib/flat-from-pattern.js) gelir, ikinci
-  // bir kalem yoktur; indirilen dosyayla ayni baytlardir.
+  // hattan (download.js flatSVG -> web/lib/siluet-ciz.js) gelir, ikinci bir
+  // kalem yoktur; indirilen dosyayla ayni baytlardir. 11 Eyl 2026'dan beri o
+  // kalem bir SILUET OKUMASI ister ve bu ekranda okuma yoktur: kart o zaman
+  // sebebi (ERR_OKUMA_YOK) EKRANA basar, sessizce kaybolmaz. Bkz.
+  // siluetOkumasi().
   if (!result.issues.length) screen.appendChild(flatKarti());
 
   const nav = el('div', 'step-nav');
@@ -1294,6 +1297,34 @@ function showResult(result) {
  * kendisidir (ayni flatSVG cagrisi); burada yalnizca sayfaya gomulur.
  * Cizim gecikirse/reddedilirse sebep ADIYLA basilir, kart sessizce kaybolmaz.
  */
+/**
+ * BU EKRANDA BIR SILUET OKUMASI VAR MI?
+ *
+ * ⛔ BUGUN: HAYIR, ve bu fonksiyon bunu ADIYLA SOYLER.
+ *
+ * 11 Eyl 2026 (G2). Urunun tek flat kalemi (web/lib/siluet-ciz.js) bir SILUET
+ * OKUMASI ister: giysinin KENDI dis hattinin, croquis36 manken landmark'larina
+ * gore verilmis noktalari (contract/siluet-v1.json). Boyle bir okuma bir
+ * FOTOGRAF OKUNARAK uretilir (KOSU/siluet-oku.mjs hatti).
+ *
+ * Bu ekranin elinde oyle bir sey YOK. Buradaki fotograf yolu (analyze.js ->
+ * vision-bridge.js) spec EKSENI ve ORAN uretir — "elbise", "duz kol", etek
+ * boyu / omuz orani — giysinin yaka, koltukalti, bel ve etek ucunun NEREDE
+ * oldugunu DEGIL. Ikisi ayni sey degil ve birini otekinin yerine koymak, 11
+ * Eyl'de silinen hattin yaptigi seyin ta kendisi: kelimelerden bir siluet
+ * uydurmak.
+ *
+ * Bu yuzden burada null donuyor ve cizici ERR_OKUMA_YOK atiyor. Iki cagiran da
+ * (flatKarti, flat indirme dugmesi) o sebebi EKRANA basar. Sessiz varsayilan,
+ * "yaklasik bir sey ciz" ya da kartin sessizce kaybolmasi YASAK — kullanicinin
+ * uydurma bir cizimi uydurma oldugunu anlamasinin hicbir yolu olmazdi.
+ *
+ * Bu hat okuyucuya baglandiginda burasi okumayi dondurur; ciziciye dokunulmaz.
+ */
+function siluetOkumasi() {
+  return null;
+}
+
 function flatKarti() {
   const panel = el('section', 'flat-panel');
   panel.appendChild(el('h2', 'dl-title', t('create.flatcard.title')));
@@ -1303,7 +1334,8 @@ function flatKarti() {
   panel.appendChild(kutu);
   (async () => {
     try {
-      const { svg } = await flatSVG(spec, { size: FLAT_BEDEN }, koken, KOKEN_ALANLARI);
+      const okuma = siluetOkumasi();
+      const { svg } = await flatSVG(okuma, koken, KOKEN_ALANLARI);
       kutu.innerHTML = svg;
       const s = kutu.querySelector('svg');
       if (s) {
@@ -1432,24 +1464,23 @@ function downloadPanel(result) {
 
   // THE FLAT. The other three buttons are the same drawing serialized three
   // ways — pieces to cut. This one is the other half of the target sentence:
-  // the finished-garment technical drawing, drawn from the spec by the same pen
-  // the flat gates judge. It is a separate file because it answers a separate
-  // question (what IS this), and it comes with the pen's own refusal: any axis
-  // the engine cannot cut is named on screen, not swallowed.
-  // ⭐ 2026-09-01: THIS BUTTON'S DRAWING NOW COMES OFF THE PATTERN.
-  // It used to be the 3D surface line's projection (engine.flatJSON ->
-  // web/lib/flat-from-plan.js). That line has no sleeve, no collar and no dart
-  // in its types, so what downloaded was a torso outline whatever the shopper
-  // picked — and it took 7.5 to 30.9 SECONDS. The drawing is now assembled from
-  // the drafted pattern's own 2D panels (engine.draftJSON ->
-  // web/lib/flat-from-pattern.js) in single-digit milliseconds, with the
-  // armhole, the cap, the darts and the collar all coming out of the very
-  // geometry the shopper is about to cut. The switch is SILENT: no counter, no
-  // badge, no "you are on the new line" — the shopper sees their garment.
+  // the finished-garment technical drawing. It is a separate file because it
+  // answers a separate question (what IS this), and it comes with the pen's own
+  // refusal rather than a plausible substitute.
+  // ⭐ 2026-09-11 (G2): ONE PEN, AND IT HAS TO HAVE SEEN THE GARMENT.
+  // Two pens used to live here and the live one broke the written law
+  // (KOL_ACI_MIN_DEG = 20 against sevkPoz.kolAcisiDeg.min = 65). Both are gone;
+  // what is left is web/lib/siluet-ciz.js, the same file KOSU/siluet-ciz.mjs
+  // runs, and it draws a SILHOUETTE READING — not the spec's words.
+  // This screen has no reading (see siluetOkumasi), so this button REFUSES with
+  // ERR_OKUMA_YOK and the reason goes on screen. The refusal is the honest
+  // answer: a spec says 'dress, straight sleeve', it does not say where THIS
+  // garment's neckline, armhole, waist and hem are, and drawing them anyway is
+  // exactly what got deleted today.
   const flatBtn = el('button', 'btn', t('create.dl.flat'));
   wire(flatBtn, async () => {
     // The flat leaves with the origin record on its root element.
-    const eksenler = await saveFlatSVG(spec, { size: FLAT_BEDEN }, `${base}-flat.svg`,
+    const eksenler = await saveFlatSVG(siluetOkumasi(), `${base}-flat.svg`,
                                        koken, KOKEN_ALANLARI);
     // REFUSALS, ON SCREEN — the wire is kept even though the list is empty
     // today. The pattern line carries every axis create.html offers, so there is
