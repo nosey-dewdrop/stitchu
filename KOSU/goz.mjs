@@ -76,15 +76,26 @@ SOLDA: bir Etsy kalip ilani — giysinin gercek fotografi ve cogu zaman saticini
 kendi teknik cizimi (flat). Ikisi de olcuttur.
 SAGDA: bizim urettigimiz teknik cizim (on + arka).
 
-ONCE KONTROL: soldaki gorselde giysi gercekten gorunuyor mu? Gorunmuyorsa tek satir
-yaz ve DUR:  OLCULEMEZ: giysi gorunmuyor
+ONCE: soldaki gorselde giysi gorunmuyorsa tek satir yaz ve DUR:
+OLCULEMEZ: giysi gorunmuyor
 
-SORU: sagdaki cizim soldaki giysiyi DOGRU anlatiyor mu? Bir musteri soldaki ilani
-gorup sagdaki cizimi alsa, AYNI giysiyi aldigini dusunur mu?
+SORU: sagdaki cizim soldaki giysinin YAPISINI dogru anlatiyor mu?
+
+YAPI nedir (bunlari deger):
+- silüetin bicimi (dar/bol, A-line/kalem/kloş, empire/normal bel)
+- panel ve dikis yerlesimi (bel dikisi var mi, prenses mi pens mi, roba var mi)
+- yaka BICIMI (kare/V/yuvarlak/kayik), kol BICIMI (kolsuz/kisa/puf/askili)
+- boy (mini/midi/maxi), kapanma yeri (on/arka/yan)
+
+YAPI DEGILDIR (bunlari DEGERLENDIRME, eksikse HAYIR deme):
+- suslemeler: fisto/tirtikli biye, dantel, nakis, baski, desen, renk
+- kumas dokusu, golge, govde/manken cizgisi
+- cizgi kalinligi, dugme sayisi gibi kucuk detaylar
+Bunlar eksikse yine EVET ver. Yalniz YAPI farkliysa HAYIR.
 
 Su dort bolge icin AYRI AYRI. Her satir tam su bicimde:
 <bolge>: EVET
-<bolge>: HAYIR — <ne farkli>
+<bolge>: HAYIR — <hangi YAPI farkli>
 
 Bolgeler (bu sirayla, bu adlarla):
 yaka/omuz
@@ -93,9 +104,10 @@ bel ve govde oturusu
 etek bicimi ve boyu
 
 Sonra bos satir, sonra TEK KELIME: SATILIR ya da SATILMAZ.
+(SATILIR = dort bolgenin dordu de EVET.)
 
-Kural: "guzel gorunuyor" cevap degildir. Her HAYIR somut bir fark tasir.
-Suphedeysen SATILMAZ. Suslemeden yaz.`;
+Kural: "guzel gorunuyor" cevap degildir. Her HAYIR somut bir YAPI farki tasir.
+Suslemeyi kusur sayma. Suslemeden yaz.`;
 
 async function gozeSor(bindirmeYol) {
   const kutu = resolve(bindirmeYol, '..');
@@ -127,7 +139,14 @@ function hukmuCoz(metin) {
   // Fotografsiz ilan (or. etsy-01: yalniz satici flat'i) olculemez.
   // 12 Eyl yanlislamasi bunu yakaladi: hakem "karsilastiracak fotograf yok" dedi,
   // arac ise bunu SATILMAZ sayiyordu. Yanlis hukum; ayri durum olarak isaretlenir.
-  if (/OLCULEMEZ|olculemez|giysi gorunmuyor|fotograf yok/i.test(metin)) {
+  // 12 Eyl hatasi: model "OLCULEMEZ degil - giysi net gorunuyor" yazinca
+  // icindeki kelimeye takilip olculemez saniliyordu. Artik YALNIZ satir basinda
+  // ve olumsuzlanmamis haliyle kabul edilir.
+  const olculemezSatiri = metin.split('\n').some((x) => {
+    const t = x.trim();
+    return /^OLCULEMEZ\b/i.test(t) && !/\bdegil\b|\bdeğil\b/i.test(t);
+  });
+  if (olculemezSatiri) {
     return { bolge: {}, satilir: null, olculemez: true, sebep: 'giysi gorunmuyor' };
   }
   const satirlar = metin.split('\n').map((s) => s.trim()).filter(Boolean);
@@ -142,12 +161,16 @@ function hukmuCoz(metin) {
     bolge[b] = { oturdu: evet, not: s.replace(/\*/g, '') };
   }
   const sonSatir = /\bSATILIR\b/i.test(metin) && !/\bSATILMAZ\b/i.test(metin);
-  // Sert kural: bir bolge bile oturmuyorsa ya da cevapsizsa SATILMAZ.
-  // Model "SATILIR" dese bile bolge hukmu kazanir; sessiz gecis yok.
-  const hepsiOturdu = BOLGELER.every((b) => bolge[b]?.oturdu === true);
-  const satilir = sonSatir && hepsiOturdu;
+  const oturan = BOLGELER.filter((b) => bolge[b]?.oturdu === true).length;
   const eksik = BOLGELER.filter((b) => bolge[b]?.oturdu === null);
-  return { bolge, satilir, eksikBolgeler: eksik, modelSonSatiri: sonSatir };
+  // SKOR asil olcudur (0-4). "satilir" yalniz 4/4 + modelin kendi hukmu.
+  //
+  // NEDEN DERECELI (12 Eyl ayrim testi): once "bir bolge bile kalirsa SATILMAZ"
+  // idi. O kuralla hem insan eliyle yazilmis IYI cizim (3/4) hem de BOZUK cizim
+  // (0/4) ayni hukmu aldi -> hakem ayirt etmis olsa bile kapi ayirt etmiyordu.
+  // Skor ikisini ayirir: 3/4 vs 0/4. Ilerleme olculebilir hale gelir.
+  const satilir = sonSatir && oturan === BOLGELER.length;
+  return { bolge, satilir, hamMetin: metin, skor: oturan, tavan: BOLGELER.length, eksikBolgeler: eksik, modelSonSatiri: sonSatir };
 }
 
 // --- ana
@@ -171,8 +194,24 @@ try {
     if (!existsSync(flatPng)) throw new Error('ERR_PNG: svg png yapilamadi ' + (r.err || '').slice(0, 150));
   }
   yanYanaYap(resolve(fotoArg), flatPng, cikis);
-  const metin = await gozeSor(cikis);
-  const h = hukmuCoz(metin);
+  // UC KOSU + ORTANCA. Tek kosu guvenilmez: 12 Eyl'de AYNI goruntuye ayni hakem
+  // bir kez 3/4, bir kez 1/4 verdi. Bu, G1 okuyucusunda olculen varyansin aynisi.
+  // Ortanca, tek bir sapmali kosunun hukmu belirlemesini engeller.
+  const KOSU_SAYISI = Number(process.env.GOZ_KOSU || 3);
+  const hepsi = [];
+  for (let i = 0; i < KOSU_SAYISI; i++) {
+    const m = await gozeSor(cikis);
+    const c = hukmuCoz(m);
+    if (!c.olculemez) hepsi.push(c);
+    else if (i === KOSU_SAYISI - 1 && hepsi.length === 0) hepsi.push(c);
+  }
+  hepsi.sort((a, b) => (a.skor ?? -1) - (b.skor ?? -1));
+  const h = hepsi[Math.floor(hepsi.length / 2)];
+  if (h && !h.olculemez) {
+    h.kosular = hepsi.map((x) => x.skor);
+    h.yayilim = (hepsi.at(-1).skor ?? 0) - (hepsi[0].skor ?? 0);
+  }
+  const metin = h?.hamMetin || '';
   if (h.olculemez) {
     if (jsonMu) console.log(JSON.stringify({ yanyana: cikis, olculemez: true, sebep: h.sebep, ham: metin }, null, 1));
     else console.log('yanyana: ' + cikis + '\n\nHUKUM: OLCULEMEZ (' + h.sebep + ')');
@@ -183,9 +222,9 @@ try {
   } else {
     console.log('yanyana: ' + cikis);
     for (const b of BOLGELER) console.log('  ' + (h.bolge[b]?.not || b + ': ?'));
-    console.log('\nHUKUM: ' + (h.satilir ? 'SATILIR' : 'SATILMAZ'));
+    console.log('\nSKOR: ' + h.skor + '/' + h.tavan + ' (kosular: ' + (h.kosular || []).join(',') + ', yayilim ' + (h.yayilim ?? '?') + ')   HUKUM: ' + (h.satilir ? 'SATILIR' : 'SATILMAZ'));
   }
-  process.exit(h.satilir ? 0 : 1);
+  process.exit(h.satilir ? 0 : 1);   // skor JSON'da; kapi esigi kapi.sh'ta
 } catch (e) {
   console.error(String(e.message || e));
   process.exit(2);

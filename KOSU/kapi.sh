@@ -179,6 +179,39 @@ G2) # tek flat hatti
   done
   ;;
 
+N3) # goz hakemi: 11 ilan, yan yana, skor 0-4
+  # Kapi: 11 ilanin hepsi URETILEBILMELI ve ortalama skor >= 3.0 olmali.
+  # "satilir" (4/4) tek basina esik DEGIL: 12 Eyl ayrim testinde insan eliyle
+  # yazilmis IYI cizim bile 3/4 aldi (arka buzgu cizilmemis). 4/4 istemek
+  # ulasilamaz esik olur; ulasilamaz esik 24 turun hatasidir.
+  TOP=0; TOPLAM_SKOR=0; URETILEN=0
+  for n in $(seq 1 11); do
+    D="KOSU/ciktilar/giris-3/$n"
+    [ -f "$D/flat.png" ] || { say "   ilan $n" "flat YOK"; TOP=$((TOP+1)); continue; }
+    FOTO="$(head -1 "$D/kaynak-yolu.txt" 2>/dev/null)"
+    [ -f "$FOTO" ] || { say "   ilan $n" "ilan gorseli yok"; TOP=$((TOP+1)); continue; }
+    TOP=$((TOP+1)); URETILEN=$((URETILEN+1))
+    J="$(node KOSU/goz.mjs "$FOTO" "$D/flat.png" --json 2>/dev/null)"
+    SK="$(printf '%s' "$J" | python3 -c "import json,sys
+try:
+  d=json.load(sys.stdin)
+  print('OLCULEMEZ' if d.get('olculemez') else d.get('skor','?'))
+except Exception: print('HATA')" 2>/dev/null)"
+    say "   ilan $n" "goz skoru: $SK/4"
+    case "$SK" in ''|*[!0-9]*) ;; *) TOPLAM_SKOR=$((TOPLAM_SKOR+SK));; esac
+  done
+  say "N3 uretilen" "$URETILEN/$TOP ilan"
+  if [ "$URETILEN" -gt 0 ]; then
+    ORT="$(python3 -c "print(round($TOPLAM_SKOR/$URETILEN,2))")"
+    say "N3 ortalama goz skoru" "$ORT / 4.0"
+    python3 -c "import sys; sys.exit(0 if $TOPLAM_SKOR/$URETILEN >= 3.0 else 1)" \
+      && gec "N3 kapi (ort >= 3.0)" || kir "N3 kapi" "ortalama $ORT < 3.0"
+  else
+    kir "N3 kapi" "hic ilan uretilemedi"
+  fi
+  [ "$URETILEN" -eq 11 ] && gec "N3 11/11 uretildi" || kir "N3 uretim" "$URETILEN/11"
+  ;;
+
 G3) # uctan uca
   [ -f engine/dist/stitchu-engine.js ] && gec "G3 wasm paketi var" || kir "G3 wasm paketi" "engine/dist/stitchu-engine.js yok"
   if ctest --test-dir engine/build -R '^uctan_uca_check$' -j1 >/dev/null 2>&1; then gec "G3 uctan_uca_check"; else kir "G3 uctan_uca_check" "kirmizi"; fi
