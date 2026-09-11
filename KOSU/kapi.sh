@@ -60,8 +60,12 @@ if [ -n "$ESIK" ]; then
   DEGISEN_SAYI=0
   while IFS= read -r f; do
     [ -z "$f" ] && continue
-    n="$(git diff "$TABAN" -- "$f" 2>/dev/null | grep -E '^[-+].*[0-9]' | grep -vE '^[-+]{3}' | wc -l | tr -d ' ')"
-    [ "${n:-0}" -gt 0 ] && { DEGISEN_SAYI=1; echo "    esik/sozlesme sayisi degismis: $f ($n satir)"; }
+    # ALAN EKLEME != ESIK DUSURME (12 Eyl, N1 bildirdi).
+    # Eski hali contract/ altinda rakam iceren her +/- satirini kirmizi sayiyordu;
+    # izinli yeni alan eklemek de kapiyi kiriyordu. Artik yalniz SILINEN ya da
+    # DEGISEN satirlar (eksi taraf) sayilir; saf ekleme (yalniz arti) serbest.
+    silinen="$(git diff "$TABAN" -- "$f" 2>/dev/null | grep -E '^-' | grep -vE '^-{3}' | grep -E '[0-9]' | wc -l | tr -d ' ')"
+    [ "${silinen:-0}" -gt 0 ] && { DEGISEN_SAYI=1; echo "    esik/sozlesme sayisi DEGISMIS/SILINMIS: $f ($silinen satir)"; }
   done <<< "$ESIK"
   if [ "$DEGISEN_SAYI" = "1" ]; then kir "E2 beklenti dusurme" "contract/test esigi degismis"
   else gec "E2 beklenti dusurme"; fi
