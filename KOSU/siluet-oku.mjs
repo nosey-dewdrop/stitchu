@@ -75,6 +75,14 @@ function noktaDogrula(p, nerede, hatalar) {
 const TEK_NOKTALI = new Set(['fiyonk', 'bag']);
 const NOKTASIZ = new Set(['bebeYaka']);
 
+// EN AZ kac nokta gerekir (cizici bu kadarini indisler; eksigi CIZERKEN cokerdi).
+// 12 Eyl: okuyucu tek noktali 'cepKapagi' uretti, sema gecti, ciz() TypeError verdi.
+// Sema burada durdurur: eksik noktali okuma onbellege YAZILMAZ.
+const EN_AZ_NOKTA = {
+  cepKapagi: 2, pili: 2, pat: 2, fermuar: 2, dikis: 2, kesikli: 2,
+  roba: 2, buzgu: 2, firfir: 2, drape: 2, dugme: 2, pens: 3,
+};
+
 const ZORUNLU_KONTUR = ['yakaOrta', 'yakaOmuz', 'omuzUc', 'koltukalti', 'gogus', 'bel', 'etekYan', 'etekOrta'];
 
 function semaDogrula(o) {
@@ -120,6 +128,11 @@ function semaDogrula(o) {
         }
         if (NOKTASIZ.has(o2.tip) && o2.noktalar == null) return;
         if (!Array.isArray(o2.noktalar)) { h.push(`${gorunum}.ogeler[${i}] (${o2.tip}) noktalar dizi degil`); return; }
+        const enAz = EN_AZ_NOKTA[o2.tip];
+        if (enAz && o2.noktalar.length < enAz) {
+          h.push(`${gorunum}.ogeler[${i}] (${o2.tip}) ${enAz} nokta ister, ${o2.noktalar.length} geldi`);
+          return;
+        }
         o2.noktalar.forEach((p, j) => noktaDogrula(p, `${gorunum}.ogeler[${i}](${o2.tip}).noktalar[${j}]`, h));
       });
     }

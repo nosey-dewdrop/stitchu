@@ -279,6 +279,12 @@ ${OGE_TIPLERI.map((t) => '  ' + t).join('\n')}
 Tiplerin anlamlari (sozlesmeden):
 ${g.ogeler}
 
+NOKTA SAYISI (eksik nokta cikti REDDEDILIR): pens TAM 3 nokta (uc, a, b).
+fiyonk ve bag TEK nokta. bebeYaka nokta almaz, yalniz genislik. GERI KALAN
+HER TIP (dikis, kesikli, roba, fermuar, buzgu, dugme, pat, drape, firfir,
+cepKapagi, pili) EN AZ 2 NOKTA ister — bir bas, bir son. Tek noktali bir
+cepKapagi ya da pat yazma; nereden nereye gittigini ver.
+
 Ek alanlar: buzgu -> yon:"asagi"|"yukari"|"ic"|"dis", boy:<mm>, aralik:<mm>
             dugme -> adet:<n>, cap:<mm>;  pat -> genislik:<mm>
             firfir -> adim:<mm>, derinlik:<mm>;  pens -> noktalar [uc, a, b]
