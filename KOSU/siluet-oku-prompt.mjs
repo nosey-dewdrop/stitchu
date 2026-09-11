@@ -91,10 +91,9 @@ YASA: Gorselde satici flat'i VARSA olculeri ONDAN al. Insan/manken uzerindeki
 fotograf yalnizca DOGRULAMA icindir (bu detay gercekten var mi, hangi renk,
 kumas nasil dusuyor). Satici flat'i yoksa fotograftan oku.
 
-Sebep geometriktir, tercih degil: insan uzerindeki giysi vucuda sarilir, kol
-ve gogus giysiyi one dogru buker, kamera acisi genislikleri kisaltir. Satici
-flat'i ise ZATEN DUZ IZDUSUMDUR — bizim uretecegimiz seyle ayni uzayda durur.
-Fotograftan okursan bir izdusum hatasini oranlara gecirmis olursun.
+Sebep geometriktir: insan uzerindeki giysi vucuda sarilir, kamera acisi
+genislikleri kisaltir. Satici flat'i ise ZATEN DUZ IZDUSUMDUR — bizim
+uretecegimiz seyle ayni uzayda durur.
 
 Ayrica cikti JSON'una sunu yaz:
   "kaynakGorunum": "satici-flat" | "fotograf" | "ikisi"
@@ -174,11 +173,17 @@ Her nokta icin taban SECIMI:
                     sor; fark 0.15'ten kucukse kesiri DUSUR.
                 Hangisini sectiysen iki gorunumde (on/arka) AYNI tabani kullan.
 
-  askiUst    -> shoulderTip. OLCULDU: gercek askili giysilerde bu kesir 0.70-0.75
-                bandindadir (satici flat'i piksel olcumu 0.732; elle olcum 0.72).
-                Varsayilan 0.72 yaz; aski gorunur sekilde omuz ucuna tasiyorsa
-                en fazla 0.80, boyna cok yakin ince ipse en az 0.62.
-                YASA: 1.00'i ASAMAZ.
+  askiUst    -> shoulderTip. Bu nokta askinin ORTA CIZGISIDIR, kenari degil.
+                OLCULDU: gercek askili giysilerde kesir 0.70-0.75 bandindadir
+                (satici flat'i piksel olcumu 0.732; elle olcum 0.72).
+                Varsayilan 0.72 yaz; boyna cok yakin ince ipse en az 0.62.
+                YASA (cizici bunu denetler, asan okuma KIRMIZI olur):
+                  askiUst.x + aski.genislik/2  <=  122.5 mm
+                Yani orta cizgi + askinin YARI GENISLIGI omuz ucunu asamaz.
+                Genis aski yaziyorsan kesiri DUSURMEK zorundasin. Ornek:
+                genislik 55 mm ise yari genislik 27.5; 122.5-27.5 = 95.0 mm,
+                yani kesir en fazla 95.0/122.5 = 0.77 olabilir.
+                Kesiri yazdiktan sonra bu toplami HESAPLA ve kontrol et.
 
   askiDip    -> bustLine. Askili giyside ZORUNLUDUR (asagiya bak).
 
@@ -354,26 +359,17 @@ verir — gormedigini yazma ama GORDUGUNU de atlama.
   8. Etek ucu         : firfir, pili, ust dikis (kesikli)
 Her bolgeyi gozden gecirdikten sonra listeyi yaz.
 
---- 6b. ARKA GORUNUMUN OGELERI ---
-Arka gorunumu "turetildi" olarak birakiyorsan bile arkada mutlaka bulunan
-seyleri YAZ. Cunku giysi giyilebilir olmali:
-  - Govdeyi saran, esnek olmayan bir giysinin arkasinda KAPAMA vardir:
-    on-ortada kapama yoksa arkada CB fermuar ("fermuar", ayna:false,
-    noktalar [ust, alt]) ya da dugme sirasi vardir.
-  - Onde gordugun yatay/dikey yapi dikisleri (bel dikisi, roba, pano dikisi)
-    arkada da devam eder — arkaya da yaz.
-  - Onde pens varsa arkada da bel pensi vardir.
-Yazdigin arka ogesi fotografta GORUNMUYORSA, eksik[] listesine hangisini
-cikarim ile koydugunu yaz. Gormedigini gordum deme; ama giysiyi de yarim
-birakma: kapamasiz bir giysi giyilemez.
-
-BOS ARKA YASAK. arka.ogeler BOS BIR LISTE olarak birakilamaz. Bir giysinin
-arkasi her zaman en az sunlari tasir:
-  - kapama (fermuar ya da dugme) — on-ortada kapama yoksa arkadadir;
-  - onde gordugun yapi dikislerinin arkadaki karsiligi;
-  - govde oturuyorsa arka bel pensi.
-Once "bu giysiyi insan nasil giyip cikariyor?" diye sor. Cevabi arkadaysa o
-kapamayi yaz. Arkasi bos bir okuma, dikilemez bir giysi demektir.
+--- 6b. ARKA GORUNUMUN OGELERI: BOS ARKA YASAK ---
+Arkayi "turetildi" birakiyorsan bile arka.ogeler BOS BIR LISTE olamaz — arkasi
+bos bir okuma, dikilemez bir giysi demektir. Once "bu giysiyi insan nasil giyip
+cikariyor?" diye sor. Arkada her zaman en az sunlar vardir:
+  - KAPAMA: on-ortada kapama yoksa arkadadir (CB fermuar, ayna:false,
+    noktalar [ust, alt]; ya da dugme sirasi + pat).
+  - Onde gordugun yapi dikislerinin (bel dikisi, roba, pano dikisi) arkadaki
+    karsiligi.
+  - Govde oturuyorsa arka bel pensi (onde bel pensi varsa arkada da vardir).
+Bunlar fotografta GORUNMUYORSA, hangisini cikarimla koydugunu eksik[] listesine
+yaz. Gormedigini gordum deme; ama giysiyi de yarim birakma.
 
 --- 6c. UST DIKIS (kesikli) UNUTULUYOR ---
 Satici flat'lerinde bircok kenar ve dikis boyunca INCE KESIKLI bir cizgi
@@ -422,6 +418,8 @@ biri, daha once olculmus gercek bir hatadir.
   [ ] koltukalti kesiri 0.95-1.15 araliginda mi? (0.90'in altindaysa yanlis)
   [ ] omuzUc ve askiUst kesiri 1.00'i gecmiyor mu?
   [ ] askiUst yazdiysan 0.70-0.75 civarinda mi? (olculen deger 0.72)
+  [ ] aski varsa: (askiUst kesiri x 122.5) + (aski.genislik / 2) <= 122.5 mi?
+      HESAPLA. Asiyorsa kesiri dusur ya da askiyi darlastir.
   [ ] yakaOmuz tabani: yaka boyun dibinde mi (neckBase) yoksa belirgin
       acilmis mi (shoulderTip)? Sectigin taban on ve arkada AYNI mi?
   [ ] shoulderTip tabanli yakaOmuz 0.70'in altinda mi? (varsayilan 0.60)
