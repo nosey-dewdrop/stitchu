@@ -160,6 +160,49 @@ add_test(NAME bundle_fresh_check
 # ağırlıklarını KENDİ İÇİNE yazıyor. Boşluk bırakılmadı: aşağıdaki flat_mirror_check
 # aynı hükmü YÜZEY HATTININ ayna sabitlerine uyguluyor (ve pdf-core.js'te beyansız
 # duran bir #1f3a5f'i ilk koşusunda yakaladı).
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 2026-09-11 (G2) — ALTI OLU KAPI KAYITTAN DUSTU. NESNELERI SILINDI.
+# ═══════════════════════════════════════════════════════════════════════════
+# Bugun urunde TEK flat hatti birakildi. Silinen iki dosya:
+#   web/lib/flat-from-pattern.js  (sevk edilen kalem)
+#   web/lib/flat-from-plan.js     (3B yuzey hattinin kalemi, arastirma)
+#
+# NEDEN SILINDILER — OLCULDU, KANAAT DEGIL. flat-from-pattern.js
+# `KOL_ACI_MIN_DEG = 20` yaziyordu; contract/flat-convention-v1.json
+# `sevkPoz.kolAcisiDeg.min = 65` diyor. Kod sozlesmeyi ihlal ediyordu ve CANLI
+# olan koddu: flat_mirror_check 3 ihlal sayiyordu, cizim_giysi_mi ise cizilen 40
+# kol acisini [65, 70] bandinin disinda (32.36 ... 39.59) olcuyordu. Ikisi de
+# KIRMIZIYDI. Esik dusurulmedi; sozlesmeye uymayan kod atildi.
+#
+# YERINE GECEN: web/lib/siluet-ciz.js — KOSU/siluet-ciz.mjs'in TASINMIS govdesi
+# (kopyasi degil; CLI artik onu import eder). Bir SILUET OKUMASINDAN cizer,
+# spec kelimelerinden DEGIL, ve okuma yoksa ERR_OKUMA_YOK ile reddeder.
+#
+# ASAGIDAKI KAPILAR "ESIGI DUSTU" DIYE DEGIL, OLCTUKLERI NESNE ARTIK VAR
+# OLMADIGI ICIN kayittan dusuyor. Hicbirinin sayisina dokunulmadi; dosyalari
+# engine/tests/ altinda DURUYOR, silinmediler. Hangisi hangi olu dosyayi
+# olcuyordu ve kaldirilmadan onceki son hali:
+#
+#   cizim_giysi_mi                 flat-from-pattern.js   KIRMIZIYDI (kol acisi)
+#   flat_convention_check          flat-from-plan.js      yesildi, arastirma hatti
+#   flat_expresses_spec_check      flat-from-plan.js      yesildi, arastirma hatti
+#   flat_geometry_sellable_check   flat-from-plan.js      KIRMIZIYDI
+#   flat_sellable_check            flat-from-plan.js      KIRMIZIYDI
+#   flat_pattern_agree_check       flat-from-plan.js      yesildi, arastirma hatti
+#
+# ⛔ HUKUMLER OLMEDI, KAPISIZ KALDI. Silinen kalemi olcen bir hukum (cizilen
+# giysi mi · satilir mi · konvansiyon · kalip mutabakati) YENI kaleme
+# BAGLANMADI, cunku yeni kalemin girdisi baska bir sey: spec degil, bir
+# fotograf okumasi. Yeni kalemin kendi yanlislamasi bugun KOSU/siluet-yanlisla
+# ve kor hakem turlarinda kosuyor. BU BIR ACIKTIR ve burada aciga yazilmistir:
+# bu hukumleri siluet hattina baglayan ctest kapilari HENUZ YOK.
+#
+# YASAYAN KAPI KALDI: flat_mirror_check kaydini KORUYOR. O kapi bir dosyaya
+# degil, web/lib/*.js'in TAMAMINA bakar (beyanli ayna sabiti = kanunun sayisi)
+# ve bugun silinen ihlallerden sonra YESILE dondu (0 ihlal, 23 beyanli sabit).
+# Yeni kalem hicbir ayna sabiti TASIMAZ — kanunu kanunuKur() ile disaridan alir.
+
 add_test(NAME flat_mirror_check COMMAND node
          ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_mirror_check.mjs)
 #
@@ -174,8 +217,9 @@ add_test(NAME flat_mirror_check COMMAND node
 # sınıfları + ISO 128-2 oranları · gradient/gölge/tint 0 · ön+arka x (siluet+üst
 # sınır) · dört sınıfın hepsi TEK manken çizelgesini ilan ediyor. Croquis çapası
 # hükmü (§1d/H6) flat_pattern_agree_check --all'a taşındı, kaybolmadı.
-add_test(NAME flat_convention_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_convention_check.mjs)
-set_tests_properties(flat_convention_check PROPERTIES LABELS "ARASTIRMA_HATTI_SEVK_DISI")
+# (kayittan dustu 2026-09-11 — olctugu web/lib/flat-from-plan.js silindi)
+# add_test(NAME flat_convention_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_convention_check.mjs)
+# set_tests_properties(flat_convention_check PROPERTIES LABELS "ARASTIRMA_HATTI_SEVK_DISI")
 
 # cizim_giysi_mi (2026-09-01): "BUTONA BASIYORUM, KOL-YAKA-PENSLI BIR CIZIM
 # INIYOR." Sevk edilen teknik cizim artik 3B YUZEY hattinin projeksiyonu degil,
@@ -187,7 +231,8 @@ set_tests_properties(flat_convention_check PROPERTIES LABELS "ARASTIRMA_HATTI_SE
 # eskisi 7500-30900 ms (f) · cizilen genislik == kalibin genisligi 0.1 mm'de (g)
 # · ayna ozdesligi 1e-6 (h). (g) ve (h), kaynak degistigi icin eski kapilarin
 # olcemez oldugu iki hukmun yeni kaynaga BAGLANMIS halidir — silinmediler.
-add_test(NAME cizim_giysi_mi COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/cizim_giysi_mi.mjs)
+# (kayittan dustu 2026-09-11 — bkz. G2 notu: olctugu web/lib/flat-from-pattern.js silindi)
+# add_test(NAME cizim_giysi_mi COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/cizim_giysi_mi.mjs)
 
 # buzgu_katman_check (M1-puf 2026-09-02): BUZGULU KENAR OPERATORU. Motorun
 # bilinen tek gercek eksigiydi — KOSU/ciktilar/kusur-listesi.md A1 ("balon kol
@@ -223,7 +268,8 @@ add_test(NAME manken_insan_ayrim_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/
 # özdeş". Sol taraf sağsız = sessiz çökertme (eski kusur); sağ taraf solsuz =
 # YALAN REDDİ, ki eski kapı onu HİÇ göremezdi. Değer alanı beş kaynaktan
 # TÜRETİLİR, elle yazılmaz. UNEXPRESSED sayıları eksen başına CIRCIRLI.
-add_test(NAME flat_expresses_spec_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_expresses_spec_check.mjs)
+# (kayittan dustu 2026-09-11 — olctugu web/lib/flat-from-plan.js silindi)
+# add_test(NAME flat_expresses_spec_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_expresses_spec_check.mjs)
 
 # flat_geometry_sellable_check (F-E 2026-08-23 · H3'te yüzey hattına bağlandı):
 # çizilenin bir GİYSİ gibi davranıp davranmadığı. Yüzey hattı bugün STRAPLESS
@@ -235,7 +281,8 @@ add_test(NAME flat_expresses_spec_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}
 # daralıyor (yön KAYNAKLI çizelgeden okunur, eşik yok) · siluet belden aşağı
 # daralmaz · beyan edilen kloş (aLine/straight) gerçekten çizilmiş · üst sınır
 # siluetin İÇİNDE (croquis kaleminin hiç yargılanmayan körlüğü).
-add_test(NAME flat_geometry_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_geometry_sellable_check.mjs)
+# (kayittan dustu 2026-09-11 — olctugu web/lib/flat-from-plan.js silindi)
+# add_test(NAME flat_geometry_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_geometry_sellable_check.mjs)
 
 # flat_sellable_check (F-E 2026-08-23 · H3'te yüzey hattına bağlandı ve İLK KEZ
 # ctest'e KAYDEDİLDİ): "flatlerin testi SATILIR MI, ETSY'LİK Mİ" (Damla, SSB-10).
@@ -245,7 +292,8 @@ add_test(NAME flat_geometry_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_D
 # ETİKETİYLE aynı olduğunu, kaynaksız hiçbir beden sütununun basılmadığını (K10)
 # ölçer. Kayıtsız bir kapı kapı değildir; H3'e kadar yeşil koşuyordu ama kimse
 # koşmuyordu — kaydetmek bir SIKILAŞTIRMADIR.
-add_test(NAME flat_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_sellable_check.mjs)
+# (kayittan dustu 2026-09-11 — olctugu web/lib/flat-from-plan.js silindi)
+# add_test(NAME flat_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_sellable_check.mjs)
 
 # flat_pattern_agree_check — ARASTIRMA HATTI (sevk disi): shell-flat ile
 # surface-pattern'ü, yani 3B yüzey hattını ölçer; sevk edilen çizim hattının
@@ -260,8 +308,9 @@ add_test(NAME flat_sellable_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests
 # --all (H3): dört sınıfın (elbise · etek · top · örme) hepsinde flat'in ÇİZİLMİŞ
 # siluetini kalıbın kendi bel/göğüs/kalça çizgisine 0.1mm'de tutar, kalemin her
 # izini repoda arar ve manken çizelgesi beyanını (H6) doğrular.
-add_test(NAME flat_pattern_agree_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_pattern_agree_check.mjs --all)
-set_tests_properties(flat_pattern_agree_check PROPERTIES LABELS "ARASTIRMA_HATTI_SEVK_DISI")
+# (kayittan dustu 2026-09-11 — olctugu web/lib/flat-from-plan.js silindi)
+# add_test(NAME flat_pattern_agree_check COMMAND node ${CMAKE_CURRENT_SOURCE_DIR}/tests/flat_pattern_agree_check.mjs --all)
+# set_tests_properties(flat_pattern_agree_check PROPERTIES LABELS "ARASTIRMA_HATTI_SEVK_DISI")
 
 # tek_nesne_check (GECE7 / F3, 2026-08-26): flat ile kalıp AYNI DİKİŞ PLANINDAN
 # mı çıkıyor. ⚠ Bu kapı flat_pattern_agree_check'in EŞİTLİK sorusunu SORMAZ ve
