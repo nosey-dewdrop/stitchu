@@ -1,0 +1,14 @@
+# KOSU/muhur-foto.txt — G1 okuyucu sinavinin MUHURLU FOTOGRAF SETI (11 Eyl 2026)
+#
+# NOT: KOSU/muhur.txt BASKA BIR SEY (projenin kod butunlugu muhru, sinyal.sh kullanir).
+# 11 Eyl'de yanlislikla uzerine yazildi ve geri alindi. Fotograf muhru BURADA yasar.
+#
+# Neden bu 5: Damla'nin gercek girdisi Etsy ilan gorseli (duz onden, net siluet).
+# Muze/podyum fotograflari denendi ve elendi (3/4 aci, desen, kalabalik arkaplan).
+# KACAK KAPATMA: bu 5'in ELLE yazilmis okumasi KOSU/altin/ altinda; okuyucu onu GORMEZ.
+
+39a16500789d60ade863463e923744b761fbb0235add0c2cd7b955c725ff56e7  GIRDI/hedef-fotograflar-3/etsy-01.png
+67871839968cc8670d5ecb908181c4dd4d292d791511cac6d79f064dcfbd823d  GIRDI/hedef-fotograflar-3/etsy-03.png
+d7e45930ff2f2da60fb6733eaa86b7898bbb40680ee863c799f214f71c164c81  GIRDI/hedef-fotograflar-3/etsy-05.png
+a9dc6dbc21e7e6bc6c39876686e635cfcda1e7fdbcfe1f4f3a85187f73fb2a74  GIRDI/hedef-fotograflar-3/etsy-08.png
+26d8c73c016b28f2e187247bb587a717871264603b8345a78cee8ff8fbf1a983  GIRDI/hedef-fotograflar-3/etsy-10.png

@@ -70,14 +70,14 @@ else
 fi
 
 # --- E3. MUHUR BOZULMAMIS ----------------------------------------------------
-if [ -f KOSU/muhur.txt ]; then
-  if grep -v '^#' KOSU/muhur.txt | grep -v '^$' | shasum -a 256 -c --status 2>/dev/null; then
+if [ -f KOSU/muhur-foto.txt ]; then
+  if grep -v '^#' KOSU/muhur-foto.txt | grep -v '^$' | shasum -a 256 -c --status 2>/dev/null; then
     gec "E3 muhurlu 5 fotograf degismemis"
   else
     kir "E3 muhur" "muhurlu fotograf seti degismis/eksik"
   fi
 else
-  kir "E3 muhur" "KOSU/muhur.txt yok"
+  kir "E3 muhur" "KOSU/muhur-foto.txt yok"
 fi
 
 # --- E4. SOZLUK BUYUMEDI (HEDEF madde 9) -------------------------------------
@@ -148,16 +148,13 @@ G1) # okuyucu: muhurlu 5 fotograf; cikti ALTIN KOPYA ile karsilastirilir
       if node KOSU/siluet-oku.mjs "$f" > "/tmp/kapi-$ad.json" 2>"/tmp/kapi-$ad.err"; then
         # 1) sema + 2) flat uretilebiliyor mu + 3) altina ne kadar yakin
         SKOR="$(node KOSU/altin-kiyas.mjs "/tmp/kapi-$ad.json" "KOSU/altin/$ad.json" 2>/dev/null || echo "HATA")"
-        if node KOSU/siluet-uret.mjs --okuma "/tmp/kapi-$ad.json" >/dev/null 2>&1; then
-          say "   $ad" "okundu, flat uretildi | altin kiyas: $SKOR"
-          case "$SKOR" in GECTI*) OK=$((OK+1));; esac
-        else
-          say "   $ad" "okundu ama FLAT URETILEMEDI | altin kiyas: $SKOR"
-        fi
+        CIZ="$(node KOSU/flat-denemesi.mjs "/tmp/kapi-$ad.json" "/tmp/kapi-$ad.svg" 2>/dev/null | tail -1)"
+        say "   $ad" "$CIZ | altin kiyas: $SKOR"
+        case "$CIZ" in CIZILDI\ kirmizi=0*) case "$SKOR" in GECTI*) OK=$((OK+1));; esac;; esac
       else
         say "   $ad" "okuma HATA ($(head -c 60 "/tmp/kapi-$ad.err" 2>/dev/null))"
       fi
-    done < KOSU/muhur.txt
+    done < KOSU/muhur-foto.txt
     say "G1 sonuc" "$OK/$TOP fotograf altin kiyasi gecti"
     [ "$TOP" -gt 0 ] && [ "$OK" -ge 4 ] && gec "G1 kapi (>=4/5)" || kir "G1 kapi" "$OK/$TOP (en az 4 gerekli)"
   fi
