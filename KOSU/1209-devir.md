@@ -58,22 +58,56 @@ göz hakemine BAĞLANMAZ, geometrik ölçüme bağlanır.
 ilan metni "etek ucunda pili" diyor, insan kaçırmış). Kapının tavanını altın değil
 GERÇEK GİYSİ belirliyor.
 
-## Nerede kaldık — ölçülmüş sayı
+## Nerede kaldık — ÖLÇÜLDÜ (5 fotoğrafın 5'i de taze prompt'la okundu)
 
 ```
-etsy-01  18/18  oge 4/5  sapma 5.8%   GECTI   (yeni prompt)
-etsy-03  18/18  oge 6/8  sapma 2.8%   GECTI   (yeni prompt)  <- 14/18, 5.4% idi
-etsy-05  16/18  oge 4/6  sapma 9.1%   kaldi   (yeni prompt)
-etsy-08  14/18  oge 2/4  sapma 9.1%   kaldi   (ESKI prompt — taze okuma sürüyordu)
-etsy-10  18/22  oge 6/6  sapma 10.1%  kaldi   (ESKI prompt — taze okuma sürüyordu)
+etsy-01  kontur 18/18  oge 4/5  sapma 5.8%   GECTI
+etsy-03  kontur 18/18  oge 6/8  sapma 2.8%   GECTI    <- 14/18, 5.4% idi
+etsy-05  kontur 18/18  oge 3/6  sapma 4.6%   kaldi    <- sapma 8.6% idi
+etsy-08  kontur 16/18  oge 2/4  sapma 5.7%   kaldi    <- 14/18, 9.1% idi
+etsy-10  kontur 16/22  oge 6/6  sapma 4.8%   kaldi    <- sapma 10.1% idi
 ```
-Başlangıç 1/5 → şu an **2/5**. Kapı 4/5 istiyor.
-`KOSU/kapi.sh G1` HENÜZ TEMİZ KOŞULMADI — iddia yok.
+**Başlangıç 1/5 → şu an 2/5.** Kapı 4/5 istiyor. VARILMADI, iddia yok.
+
+### Ama sayıların içi: SAPMA ÇÖZÜLDÜ
+Geceye 8.6–10.1% ile başlandı, şimdi **beşi de 2.8–5.8%** (eşik 8%). Yani konum ve
+oran doğruluğu artık sorun değil. Kontur da iyileşti (üçünde 18/18).
+
+### Kalan üç kaybın TEK sebebi: `pens` kaçıyor
+```
+etsy-05  on: okuyucu=[roba, buzgu, dikis]        altin=[dikis, dikis, buzgu, PENS]
+         arka: okuyucu=[fermuar]                 altin=[dikis, dikis, PENS, fermuar]
+etsy-08  on: okuyucu=[pat, dugme, dikis, pili]   altin=[pat, dugme, PENS]
+         arka: okuyucu=[dikis, pili]             altin=[PENS]
+etsy-10  oge 6/6 TAM — yalnız kontur 16/22'den kaldı
+```
+Okuyucu pensi görüyor ama `dikis` diye etiketliyor.
+
+### ⚠ PROMPT'A KURAL EKLEMEK ÇÖZÜM DEĞİL — ölçüldü
+`KOSU/siluet-oku-prompt.mjs` pens'i zaten üç yerde anlatıyor: tanım (satır 317-331,
+"UCLARIN BIRLESMESI pens yapar"), nerede aranacağı (6a-2), ve son kontrol listesinde
+ÜÇ ayrı madde. Buna rağmen kaçıyor. N3 de 11 denemede aynı duvara çarptı ve prompt
+24k'yı geçince sonucun 0/5'e çöktüğünü ölçtü (şu an 23.9k).
+→ Sıradaki işçi prompt'a YAZMASIN. Farklı MEKANİZMA gerekiyor (öneriler aşağıda).
+
+### etsy-08'de okuyucu insandan İYİ gördü (kıyasın sınırı)
+Okuyucu `pili` yazdı, altın yazmadı. Ama ilan metninin kendisi "etek ucunda pili"
+diyor — okuyucu haklı, İNSAN kaçırmış. Kıyas altını temel aldığı için bu DOĞRU gözlem
+ceza sayılıyor. Göz hakemi aynı şeyi ters yönden gösterdi (altının peplum eksiğini
+yakaladı). → Kıyasın tavanı altın, göz hakeminin tavanı gerçek giysi. İkisi BİRLİKTE.
 
 ## Sıradaki işin ilk üç maddesi
 
-1. **etsy-08 ve etsy-10'u yeni prompt'la okut**, sonra `bash KOSU/kapi.sh G1`.
-   (`node KOSU/siluet-oku.mjs GIRDI/hedef-fotograflar-3/etsy-08.png --yenile`)
+1. **`pens` kaçağını mekanizmayla çöz — prompt'a YAZMA.** Üç aday:
+   (a) İKİ AŞAMALI OKUMA: birinci çağrı konturu+ögeleri versin; ikinci çağrı YALNIZ
+       "bu giysi göğse/bele oturuyor mu, oturuyorsa onu sağlayan pens/dikiş nerede"
+       sorusunu sorsun. Tek soruya odaklanan çağrı, 24k'lık listenin içindeki bir
+       maddeden daha güvenilir.
+   (b) ÜÇ KOŞU + UZLAŞMA: aynı fotoğraf 3 kez okunsun, ögelerde çoğunluk alınsın
+       (`KOSU/goz.mjs` içindeki ortanca desenine bak — göz hakeminde yayılımı 3'ten
+       0'a indirdi).
+   (c) KOD KAPISI: `oturma.gogus||oturma.bel` true ve baştan başa dikiş yoksa, okuma
+       `ERR_PENS_YOK` ile REDDEDİLSİN. Sessiz geçiş yerine adıyla ret — repo yasası.
 2. **VARYANSI ÖLÇ.** Hiç ölçülmedi. Aynı fotoğraf 3 kez okunsun; `oge` 2/5↔4/5
    salınıyorsa bu gecenin düzeltmeleri tutmuş sayılmaz. Okuyucuya da 3-koşu-ortancası
    gerekebilir (`KOSU/goz.mjs` içindeki `GOZ_KOSU` desenine bak).
