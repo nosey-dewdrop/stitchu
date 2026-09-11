@@ -167,8 +167,11 @@ Her nokta icin taban SECIMI:
                     -> taban neckBase, kesir 0.90-1.15.
                 (b) Yaka boyundan BELIRGIN UZAKTA acilmissa (genis kayik, derin
                     V, genis kare, omuz acik) -> taban shoulderTip, kesir
-                    0.50-0.85. Boynun dibiyle omuz ucu arasinda yolun kacta
-                    kacini yedigine bak.
+                    0.55-0.70 — COGU GIYSI BURADADIR, varsayilan 0.60 yaz.
+                    0.70'in USTU nadirdir: ancak omuz dikisi neredeyse hic
+                    kalmamissa (bant gibi) 0.70-0.85 olur. Once "omuzUc ile
+                    yakaOmuz arasinda omuz dikisi kadar bosluk var mi?" diye
+                    sor; fark 0.15'ten kucukse kesiri DUSUR.
                 Hangisini sectiysen iki gorunumde (on/arka) AYNI tabani kullan.
 
   askiUst    -> shoulderTip. OLCULDU: gercek askili giysilerde bu kesir 0.70-0.75
@@ -219,27 +222,22 @@ yakaOmuz de govde uzerindedir: taban bustLine, kesir 0.30-0.60.
 y ifadesi bu taban seciminden BAGIMSIZDIR: yukseklik icin en dogru landmark'i
 sec (underarm, bustLine, waist, hip, hip..knee@t ...).
 
---- 3b. KESIR SECERKEN YAPILAN UC SISTEMATIK HATA ---
+--- 3b. KESIR SECERKEN YAPILAN SISTEMATIK HATALAR ---
 Bunlar olculmus hatalardir; kesiri yazmadan once uctagini da kontrol et.
 
-(1) KOLTUKALTI'NI ICERI ALMA. Kol oyugunun tabani, gogus yarim genisliginin
-    ICINDE olamaz — giysi o zaman gogsun uzerinde kapanmaz. koltukalti kesiri
-    normalde 0.95-1.05 arasindadir, yani gogus yariminin tam ustunde ya da
-    cok az disinda. 0.90'in altina INMEZ. Flat'te kol oyugu iceri kivrik
-    gorunur ama bu KAVISTIR; taban genisligi degismez.
+(1) KOLTUKALTI'NI ICERI ALMA. Flat'te kol oyugu iceri kivrik gorunur ama bu
+    KAVISTIR; taban genisligi degismez. Kesiri 0.90'in altina INDIRME.
 
-(2) ETEK UCUNU SISIRME. Flat'te etek duz serilir ve yelpaze gibi acilir; goz
-    onu oldugundan GENIS gorur. Etek ucunu yazmadan once sunu sor: bu etek
-    kalcanin kac katina cikiyor? Hafif genisleyen etek 1.10-1.25, belirgin
-    A-form 1.25-1.45, gercekten cok genis/kloş 1.5+. Cogu giysi ILK IKI
-    banttadir. Tereddutte DAHA DAR yaz: bir flat'i genis cizmek, dar cizmekten
-    daha cok bozar.
+(2) KALCA VE ETEK UCUNU SISIRME. Flat'te etek duz serilir ve yelpaze gibi
+    acilir; goz onu oldugundan GENIS gorur. Ikisini de DAR yaz:
+      - kalca: govdenin dogal devami, tipik 1.02-1.10. 1.15'in ustu ancak
+        gercekten bollasan bir giyside olur.
+      - etekYan: hafif genisleyen 1.10-1.25, belirgin A-form 1.25-1.45,
+        cok genis/kloş 1.5+. COGU GIYSI ILK BANTTADIR.
+    Tereddutte DAHA DAR yaz: bir flat'i genis cizmek, dar cizmekten daha cok
+    bozar.
 
-(3) OMUZ MANKENI ASAMAZ. omuzUc kesiri 1.00'i GECEMEZ (askiUst icin de ayni
-    yasa). Omuz noktasi mankenin omzunun uzerinde ya da icindedir; dusuk omuzlu
-    / omuzu acik giysilerde bu deger 1.00'in belirgin ALTINDADIR.
-
-(4) YAKA-OMUZ'U OMUZ UCUYLA KARISTIRMA. yakaOmuz, yakanin BASLADIGI IC
+(3) YAKA-OMUZ'U OMUZ UCUYLA KARISTIRMA. yakaOmuz, yakanin BASLADIGI IC
     noktadir (boyun tarafi); omuz dikisinin DIS ucu zaten omuzUc'tur. Ikisi
     ayni yer DEGILDIR; aralarinda omuz dikisinin TAMAMI durur.
     Tabanini 3a'daki iki secenekten sec (boyun dibinde duruyorsa neckBase,
@@ -247,7 +245,7 @@ Bunlar olculmus hatalardir; kesiri yazmadan once uctagini da kontrol et.
     atma: yakanin, boyun dibinden omuz ucuna giden yolun kacta kacini
     yedigine bak.
 
-(5) BEL, BEDENIN BELI DEGILDIR. Flat, DUZ SERILMIS GIYSIDIR ve icinde bolluk
+(4) BEL, BEDENIN BELI DEGILDIR. Flat, DUZ SERILMIS GIYSIDIR ve icinde bolluk
     (ease) vardir; ayrica bel hizasinda kumas dikis paylarıyla birlikte durur.
     Bu yuzden bele OTURAN bir giysinin flat'inde bile bel kesiri 1.00'in
     ALTINA nadiren iner. Oturan giysi 1.08-1.20, hafif bollu 1.20-1.35,
@@ -420,6 +418,8 @@ biri, daha once olculmus gercek bir hatadir.
   [ ] askiUst yazdiysan 0.70-0.75 civarinda mi? (olculen deger 0.72)
   [ ] yakaOmuz tabani: yaka boyun dibinde mi (neckBase) yoksa belirgin
       acilmis mi (shoulderTip)? Sectigin taban on ve arkada AYNI mi?
+  [ ] shoulderTip tabanli yakaOmuz 0.70'in altinda mi? (varsayilan 0.60)
+      omuzUc - yakaOmuz farki 0.15'ten buyuk mu? (omuz dikisi kadar bosluk)
   [ ] bel tabani: oturma.bel=true ise waist, false ise bustLine mi?
   [ ] kalca/etekYan/etekOrta tabani AYNI mi, ve giysi kalcada bitiyorsa
       highHip, kalcayi geciyorsa hip mi?
