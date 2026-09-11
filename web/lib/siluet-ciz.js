@@ -33,6 +33,8 @@
 let BODY = null;   // contract/body-v1.json
 let CIZ = null;    // contract/siluet-v1.json .cizgi
 let LM = null;     // croquis36 landmarklari
+let KOLEVI = null; // contract/siluet-v1.json .gorunum.kolevi  (kol evi = KENAR)
+let ETEKUCU = null;// contract/siluet-v1.json .gorunum.etekUcu (etek ucu kavisi)
 
 /** Kanunu yukle. Cizim oncesi bir kez cagrilir; sayilar bu dosyada TUTULMAZ. */
 export function kanunuKur(bodyV1, siluetV1) {
@@ -44,6 +46,9 @@ export function kanunuKur(bodyV1, siluetV1) {
   }
   BODY = bodyV1;
   CIZ = siluetV1.cizgi;
+  // KOL EVI ve ETEK UCU: sayilar burada DEGIL, contract/siluet-v1.json'da yasar (bkz. AYNA SABITI YOK).
+  KOLEVI = (siluetV1.gorunum && siluetV1.gorunum.kolevi) || null;
+  ETEKUCU = (siluetV1.gorunum && siluetV1.gorunum.etekUcu) || null;
   LM = BODY.bedenler.croquis36.landmarklar;
 }
 export function kanunKurulduMu() { return !!(BODY && CIZ && LM); }
@@ -102,6 +107,45 @@ function kavis(a, b, bombe) {
 }
 const ayna = (p) => ({ x: -p.x, y: p.y });
 
+// ---- KOL EVI: bir KENAR (nokta degil). omuzUc -> koltukalti, GOVDEYE dogru icbukey.
+// Kolsuz giyside bu oyuk yoksa dis hat kesintisiz kapanir ve kol deligi kaybolur
+// (11-12 Eyl olcumu: hata altin kopyalarda da vardi = sema eksikligi).
+// Derinlik contract'tan gelir: gorunum.kolevi.oyukluk (sapma/kiris), OLCULDU 8 bedende.
+// s = +1 sag yarim, -1 sol yarim. Yon: kiris normali, govde tarafina (x=0'a dogru).
+// OYUK YATAY OLCULUR, kirise dik DEGIL. Sebep (12 Eyl olcumu): okuma omuzUc'u govdeden
+// disari tasirdiginda (etsy-08: omuzUc 173.7 vs gogus 138.7) kiris egik olur; kirise dik
+// bir sapma o egimi TAKIP eder ve oyuk gorunmez. Satici flat'inde (etsy-08 on) omuz ucu ile
+// koltukalti AYNI yari genislikte (162.9 = 162.9), yani kol evi kenari DIKEYE yakindir ve
+// oyuk govdeye dogru YATAY isirir. Kenari boyle cizeriz.
+function kolEviYolu(ou, ka, s, oyuk) {
+  const dy = ka.y - ou.y;
+  const sag = Math.abs(dy) * oyuk;          // isirik = dikey dusus x oyukluk
+  // iki kontrol noktasi: omuzdan hemen sonra ice gir, koltukaltina dikey tegetle gel.
+  // Boylece omuz ucunda KOSE olusur (kol deligi orada baslar) ve yan dikise cusp'siz baglanir.
+  const icX = Math.min(Math.abs(ou.x), Math.abs(ka.x)) - sag;
+  const c1 = { x: s * Math.max(0, icX), y: ou.y + dy * 0.42 };
+  const c2 = { x: s * Math.max(0, icX), y: ou.y + dy * 0.78 };
+  return ` C ${P(c1)} ${P(c2)} ${P(ka)}`;
+}
+const kolEviOyuk = (g) => (g && typeof g.koleviOyuk === 'number')
+  ? g.koleviOyuk
+  : ((KOLEVI && KOLEVI.oyukluk && KOLEVI.oyukluk.varsayilan) || 0);
+
+// Kol evinin OMUZ UCU: konturun omuzUc'u bandin DIS ucu; kol evi bunun biraz icinden baslar.
+// Oran contract'tan (Aldrich s.28 ' 1 cm in from shoulder edge' -> 10/118.1 = 0.0847).
+// Boylece omuz uzerinde dar bir bant kalir ve omuz govdeyi assa bile kol deligi GORUNUR.
+function kolEviBas(yo, ou) {
+  const oran = (KOLEVI && KOLEVI.omuzIceriOran && KOLEVI.omuzIceriOran.varsayilan) || 0;
+  if (!yo || !oran) return ou;
+  return { x: ou.x + (yo.x - ou.x) * oran, y: ou.y + (yo.y - ou.y) * oran };
+}
+
+// ---- ETEK UCU: kavis merkezde asagi sarkar. Sarkma = oran x etek yari genisligi (contract, OLCULDU).
+function etekSarkmaHesap(ey) {
+  const oran = (ETEKUCU && ETEKUCU.sarkmaOran && ETEKUCU.sarkmaOran.varsayilan) || 0;
+  return Math.abs(ey.x) * oran;
+}
+
 // ---- yaka bicimleri: yakaOrta (x=0) -> yakaOmuz
 function yakaYolu(orta, omuz, bicim, sag = true, kisalt = 0) {
   const s = sag ? 1 : -1;
@@ -155,8 +199,8 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
   const ou = (g.aski && sag('askiDip')) ? sag('askiDip') : sag('omuzUc'), ka = sag('koltukalti');
   if (ou && ka) {
     if (g.kol) d += ` L ${P(ka)}`; // kol uste cizilir, oyuk cizgisi kolun altinda kalir
-    // kol evi: omuzdan icbukey iner, koltukaltina DUSEY tegetle gelir (yan dikisle cusp yok)
-    else d += ` C ${f1(ou.x - (ou.x - ka.x) * 0.35)} ${f1(ou.y + (ka.y - ou.y) * 0.35)} ${f1(ka.x)} ${f1(ka.y - (ka.y - ou.y) * 0.35)} ${P(ka)}`;
+    // kol evi KENARI: govdeye dogru icbukey; derinlik contract'tan (olculmus oyukluk)
+    else { const kb = kolEviBas(sag('yakaOmuz'), ou); d += ` L ${P(kb)}` + kolEviYolu(kb, ka, 1, kolEviOyuk(g)); }
   }
   d += catmull(yanSag, 0.38);
   // etek ucu: etekYan -> etekOrta -> etekYan(sol), sarkik kavis
@@ -172,7 +216,9 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
     }
   } else {
     // tek yay: CF'de kose yok (tur 23 hakemleri); orta noktada yatay teget, sarkma etekOrta'nin altinda
-    const sark = g.etekSarkma ?? 11;
+    // SARKMA ORANI contract'tan: gorunum.etekUcu.sarkmaOran x etek yari genisligi (OLCULDU 8 bedende).
+    // Etek genisledikce kavis de buyur — A-line/klos etekte duz yatay cizgi kalmaz.
+    const sark = g.etekSarkma ?? etekSarkmaHesap(ey);
     d += ` C ${f1(ey.x * 0.55)} ${f1(eo.y + sark * 1.35)} ${f1(eySol.x * 0.55)} ${f1(eo.y + sark * 1.35)} ${P(eySol)}`;
   }
   // SOL yarim ters sirayla
@@ -180,7 +226,9 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
   d += catmull(yanSol, 0.38);
   const ouS = (g.aski && sol('askiDip')) ? sol('askiDip') : sol('omuzUc'), kaS = sol('koltukalti');
   if (ouS && kaS) {
-    d += ` C ${f1(kaS.x + 14)} ${f1(kaS.y - (kaS.y - ouS.y) * 0.16)} ${f1(ouS.x - (ouS.x - kaS.x) * 0.60)} ${f1(ouS.y + (kaS.y - ouS.y) * 0.32)} ${P(ouS)}`;
+    // sol yarim ters yonde yurur (koltukalti -> omuzUc): ayni kenar, ters cizilir
+    if (g.kol) d += ` L ${P(ouS)}`;
+    else { const kbS = kolEviBas(sol('yakaOmuz'), ouS); d += kolEviYolu(kaS, kbS, -1, kolEviOyuk(g)) + ` L ${P(ouS)}`; }
   }
   const askiSol = KS.askiUst !== undefined ? KS.askiUst : K.askiUst;
   if (g.aski && askiSol && g.askiSol !== null) {

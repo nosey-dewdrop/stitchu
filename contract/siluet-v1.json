@@ -25,7 +25,60 @@
     "kol": "null | {tip: 'kapak'|'puf'|'duz', dis: pt (kolun dis-alt ucu), ic: pt (kol agzinin govdeye yakin ucu), bant: bool, buzgu: bool, sisme: mm (puf: dis kenarin disari bombesi)}",
     "ogeler": "gorunen her ic cizgi transkribe edilir: {tip, noktalar:[pt...], ...}. tip: dikis (ince duz), kesikli (ust dikis/pervaz izi), buzgu (kisa cizgiler; noktalar bir yol, yon: 'asagi'|'yukari'), pens (uc, a, b), dugme (noktalar [bas, son], adet, cap), pat (noktalar [bas, son], genislik), fiyonk (nokta, boy), bag (nokta, boy), drape (noktalar cift cift), bebeYaka (genislik), firfir (noktalar), fermuar (noktalar [bas, son]), roba (=dikis). ayna:true ise sol yarima da cizilir (x isareti cevrilir).",
     "oturma": "{bel: bool, gogus: bool} — fotografta giysi oraya OTURUYOR mu. YASA: bel=false ise flat'te bel genisligi gogus genisliginin altina inemez (kirmizi).",
-    "eksik": "atlanan/gorulemeyen oge adiyla (bos liste = hepsi transkribe edildi)."
+    "eksik": "atlanan/gorulemeyen oge adiyla (bos liste = hepsi transkribe edildi).",
+    "kolevi": {
+      "_tanim": "KOL EVI BIR KENARDIR, NOKTA DEGIL. Kontur omuzUc'tan koltukalti'na bu kenarla iner. Kolsuz giyside bu kenar ICBUKEY olmak ZORUNDA: govdeye dogru oyulur, yoksa dis hat kesintisiz kapanir ve KOL DELIGI KAYBOLUR (11-12 Eyl olcumu: hata altin kopyalarda DA vardi, yani okuma kalitesi degil SEMA eksikligiydi). Sabit tip menusu YOK (HEDEF md.9): kolevi = baslangic + bitis + kavis.",
+      "baslangic": "KOL EVI OMUZ UCU. Konturun omuzUc'u omuz bandinin DIS ucudur; kol evi kenari bunun biraz ICINDEN baslar (omuzIceriOran). Boylece omuz uzerinde dar bir bant kalir ve kol deligi cizilir. Ayri nokta OKUNMAZ — yakaOmuz ile omuzUc'tan TURETILIR.",
+      "bitis": "koltukalti. Ayri nokta verilmez — konturdan gelir.",
+      "oyukluk": {
+        "_tanim": "Kenarin kirisinden en buyuk sapmasi / kiris uzunlugu. Isaret her zaman GOVDEYE dogru (icbukey). Tek sayi; kol tipi listesi degil. Okuma bu sayiyi verebilir; vermezse varsayilan kullanilir.",
+        "varsayilan": 0.055,
+        "_kaynak": "OLCULDU + KAYNAK, IKI BAGIMSIZ HAT 0.005 icinde birlesiyor. (1) CIZILI FLAT OLCUMU: GIRDI/hedef-fotograflar-3/etsy-08.png satici flat'i (on gorunum) piksel olarak izlendi; omuz ucu (y=503) -> koltukalti (y=636), kiris 133.0 px, kirisinden en buyuk sapma 7.0 px -> sapma/kiris = 0.0526. (2) ALDRICH INSAAT KURALI: Metric Pattern Cutting for Women's Wear 5. baski s.28, kolsuz blok, 'Mark points 5 and 6 1 cm in and 1 cm up' — pitch noktalari kirisin 10 mm icinden gecer; bizim croquis kirislerimizde (etsy-08 183.9 mm, etsy-05 174.7 mm) bu 0.0544 ve 0.0572 eder. Secilen: 0.055. NOT — DUZELTILDI: ilk turda patterns_real/geometry/geometry-full.json KALIP PARCASINDAN olculen 0.31 kullanildi ve YANLISTI: kalip parcasinin kol evi kirisi ile CIZILI FLAT'in kol evi kirisi ayni buyukluk degil (parca duz serili, kenarlari egik). 0.31 cizildiginde oyuk govde yari genisliginin %41'ini yiyor ve giysi yelek gibi gorunuyordu (PNG ile gorulerek yakalandi). Kalip parcasi olcumu bilgi olarak kalir: ayni kenarin yay/kiris orani 1.2294 olculdu ve knowledge/armscye-on-arka-2026-08-17.md'nin bagimsiz 1.2292'siyle 0.0002 icinde uyustu.",
+        "bant": [
+          0.0526,
+          0.0572
+        ],
+        "kollu": "Kol varsa kolevi kolun altinda kalir; oyukluk kolun ic kenarini konumlar.",
+        "_kalipParcasiBilgi": {
+          "sapmaKirisOrani8Beden": [
+            0.296,
+            0.2971,
+            0.2975,
+            0.324,
+            0.3219,
+            0.3191,
+            0.3171,
+            0.3123
+          ],
+          "_not": "patterns_real/geometry-full.json locket_top Front Body, EU34-48. KALIP PARCASI olcusudur; cizili flat'e DOGRUDAN uygulanmaz (yukaridaki DUZELTILDI notu). Burada kayitli ki bir daha olculmesin."
+        }
+      },
+      "kolsuz": {
+        "_tanim": "Kolsuz blok kolevi, kollu bloktan TUREYEN bir daraltmadir; ayri bir 'tip' degil.",
+        "omuzIceriMM": 10,
+        "koltukaltiYukariMM": 10,
+        "_kaynak": "Aldrich, Metric Pattern Cutting for Women's Wear, 5. baski s.28, '3 The close fitting sleeveless block' verbatim: 'Mark points 3 and 4 1 cm in from shoulder edge' ve 'Draw new armscye depth line 1 cm above original line'. Ayni sayfa kendini dogruluyor (s.29 'has already been reduced by 3 cm' = 1.5 x 2 yan dikis). Not: knowledge/yaka-kolsuz-armhole-2026-08-16.md'de zaten cekilmis kaynak, yeniden aranmadi."
+      },
+      "yasa": "Kolsuz okumada (kol == null) kol evi kenari ICBUKEY cizilir ve omuz BANDININ ic ucundan baslar. Omuz tasmasi (omuzUc.x > gogus.x) bir okuma hatasi SAYILMAZ — cizici omuz bandini kullanarak kol deligini yine de cizer. Duz ya da disbukey kol evi KIRMIZI: giysi giyilemez gorunur. Olcum dayanagi: satici flat'inde (etsy-08 on) omuz ucu 162.9 / koltukalti 162.9 / gogus 173.9 — kol evi kenari dikeye yakin ve omuz uzerinde dar bir bant birakir.",
+      "omuzIceriOran": {
+        "_tanim": "Kol evinin baslangici, omuz kenari uzerinde omuzUc'tan yakaOmuz'a dogru bu kesir kadar iceridedir. Tek sayi, tip listesi degil.",
+        "varsayilan": 0.0847,
+        "_kaynak": "Aldrich, Metric Pattern Cutting for Women's Wear, 5. baski s.28, kolsuz blok, verbatim: 'Mark points 3 and 4 1 cm in from shoulder edge'. Yani kol evi omuz kenarindan 10 mm iceriden baslar. croquis36'da omuzun yatay uzunlugu shoulderTip.x - neckBase.x = 188.8 - 70.7 = 118.1 mm; 10 / 118.1 = 0.0847. Sayi Aldrich'in mm'sinden TURETILDI, uydurulmadi. (Ayni sayfa kendini dogruluyor: s.29 'has already been reduced by 3 cm'.)"
+      }
+    },
+    "etekUcu": {
+      "_tanim": "Etek ucu KAVISLI olmak zorunda; duz yatay cizgi ve yan dikiste kose YASAK. Kavis merkezde (CF/CB) ASAGI sarkar, yanlar yukari kalkar.",
+      "sarkmaOran": {
+        "_tanim": "Merkezdeki sarkma / etek yari genisligi. TEK sayi. mm degil oran: her genislikte calisir.",
+        "varsayilan": 0.11,
+        "_kaynak": "OLCULDU, IKI BAGIMSIZ HAT (ikisi de ayni YONU veriyor: merkez asagi sarkar). (1) CIZILI FLAT: GIRDI/hedef-fotograflar-3/etsy-08.png satici flat'i (on) piksel izlendi; yanlar y=918, merkez y=935, yari genislik 167.0 px -> sarkma/yariGenislik = 0.1018. (Alt kenardaki yirtmac/pat centikleri 12 px'lik pencere maksimumuyla atlandi.) (2) KALIP PARCASI: patterns_real/geometry/geometry-full.json locket_top Front Body etek ucu kenari, EU34-48 8 beden -> 0.1370 0.1370 0.1370 0.1328 0.1307 0.1289 0.1289 0.1289, ort 0.1327. Secilen: 0.11 (iki hattin arasi, cizili flat'e yakin cunku cizdigimiz sey bir cizili flat'tir). YON ayrica design_patterns/flats-clean/flat-03.png ile gozle dogrulandi: etek ucu merkezde asagi kavisli, yanlar yukari.",
+        "bant": [
+          0.1018,
+          0.137
+        ]
+      },
+      "not": "Okuma etekSarkma (mm) verirse o kullanilir; vermezse sarkmaOran x etek yari genisligi."
+    }
   },
   "cizgi": {
     "_kaynak": "0-K.10.f",
@@ -42,6 +95,7 @@
     "1": "ayni fotograf iki kez -> ayni flat (sha ayni -> svg bayt-ayni)",
     "2": "iki farkli fotograf -> farkli siluet (kontur imzasi farkli)",
     "3": "fotografta bol duran giysi (oturma.bel=false) flat'te oturamaz (bel < gogus*0.97 kirmizi)",
-    "4": "aski ucu manken omuz noktasini asamaz (askiUst.x <= shoulderTip.x)"
+    "4": "aski ucu manken omuz noktasini asamaz (askiUst.x <= shoulderTip.x)",
+    "5": "kolsuz giyside kol evi kenari cizilmis ve ICBUKEY olmali (omuz bandinin ic ucu -> koltukalti). Duz/disbukey kenar = kol deligi yok = giysi giyilemez gorunur. Kaynak: gorunum.kolevi.yasa"
   }
 }
