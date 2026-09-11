@@ -13,6 +13,7 @@
       "yakaOrta": "yaka cukuru (x=0)",
       "yakaOmuz": "yakanin omuzla / askinin ic kenariyla bulustugu nokta",
       "askiUst": "aski ucu (omuz uzerinde); yoksa null. YASA: askiUst.x <= shoulderTip.x (manken omuz noktasini asamaz)",
+  "askiDip": "askinin govdeye, ust kenara indigi nokta; aski varsa ZORUNLU, yoksa null. Cizici bunu omuzUc yerine kullanir (web/lib/siluet-ciz.js).",
       "omuzUc": "omuz noktasi / aski dis kenarinin ust kenara indigi nokta / off-shoulder'da bandin dis ucu",
       "koltukalti": "kol oyugu tabani",
       "gogus": "en genis ust yer (gogus hatti)",

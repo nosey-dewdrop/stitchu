@@ -48,9 +48,10 @@ export const ORNEK_CIKTI = {
     aski: { genislik: 18 },
     kontur: {
       yakaOrta: ['neckFront*0', 'neckBase+30'],
-      yakaOmuz: ['bustLine*0.40', 'neckBase+12'],
-      askiUst: ['shoulderTip*0.55', 'neckBase+8'],
-      omuzUc: ['bustLine*0.62', 'neckBase+18'],
+      yakaOmuz: ['bustLine*0.42', 'neckBase+12'],
+      askiUst: ['shoulderTip*0.72', 'neckBase+8'],
+      askiDip: ['bustLine*0.78', 'underarm-30'],
+      omuzUc: ['shoulderTip*0.80', 'neckBase+18'],
       koltukalti: ['bustLine*0.98', 'underarm'],
       gogus: ['bustLine*1.00', 'bustLine'],
       bel: ['waist*1.02', 'waist'],
@@ -140,54 +141,82 @@ ${Object.entries(g.kontur).filter(([k]) => !k.startsWith('_')).map(([k, v]) => `
 Sol yarim aynadir. askiUst yoksa null yaz. YASA: askiUst.x <= shoulderTip.x.
 etekOrta HER ZAMAN x=0 olmali ("<landmark>*0"); giysinin boyu buradan okunur.
 
---- 3a. HANGI NOKTA HANGI LANDMARK'A DAYANIR (zorunlu konvansiyon) ---
+--- 3a. TABAN SECIMI: EN YAKIN LANDMARK KAZANIR ---
 x ifadesindeki landmark bir GENISLIK TABANIDIR: "o bolgenin yarim genisligi".
-Her kontur noktasi asagidaki tabana dayanir; baska taban SECME, cunku ayni
-giysi iki farkli tabanla yazilirsa iki farkli giysi gibi okunur.
+Taban SABIT DEGILDIR; giysinin o noktada nereye dayandigina gore secilir.
 
-  on.yakaOrta    -> neckFront      (x zaten 0; "neckFront*0")
-  arka.yakaOrta  -> nape           (arkada yaka cukuru ENSEDIR; "nape*0")
-                   ISTISNASIZ: arka yaka orta noktasinin tabani HER ZAMAN
-                   nape'dir. Onde neckFront, arkada nape. Arkayi onden
-                   turetsen bile bu tek nokta nape'e cevrilir.
-  yakaOmuz       -> shoulderTip    (yaka omuzla omuz cizgisinde bulusur)
-  askiUst        -> shoulderTip
-  omuzUc         -> shoulderTip
-  koltukalti     -> bustLine       (DIKKAT: underarm DEGIL. underarm kol
-                                    oyugunun YERIDIR; genislik tabani gogus
-                                    yarimidir. Koltukalti yuksekligini
-                                    y ifadesinde "underarm" ile ver, x'i
-                                    bustLine'a daya.)
-  gogus          -> bustLine
-  bel            -> waist         (HER ZAMAN waist; taban degismez)
-                   Giysi belde bol/duz iniyorsa (oturma.bel=false) bunu
-                   TABANI degistirerek degil, KESIRI buyuterek anlat: bel
-                   kesiri o zaman gogus genisligine denk gelecek kadar buyur
-                   (tipik 1.25-1.45). "Bol giysi flat'te incelemez" yasasi
-                   boyle tutulur; taban yine waist kalir.
-  kalca          -> hip
-  etekYan        -> hip
-  etekOrta       -> hip           ("hip*0")
+TEK KURAL: o noktanin gercek genisligine EN YAKIN mankenin landmark'ini taban
+sec, sonra kesiri 1.00'e yakin tut. Kesir 0.85-1.30 disina tasiyorsa YANLIS
+TABAN sectin demektir; tabani degistir, kesiri zorlama.
 
-ASKILI GIYSI ISTISNASI (cok onemli): Giysinin omuzu YOKSA, yani govde ince/
-genis ASKILARLA tasiniyorsa (straplı elbise, askili bluz, bustiyer + aski),
-omuz bolgesinin genislik tabani artik omuz degil GOVDEDIR:
-  yakaOmuz -> bustLine,  omuzUc -> bustLine,  askiUst -> shoulderTip
-Sebep: askili giysinin ust kenari mankenin omuz cizgisine degmez; o kenar
-govdenin (gogus kafesinin) uzerinde durur, dolayisiyla gogus yarimiyla
-olculur. Boyle bir giyside askiUst (askinin omuz uzerindeki ucu) ve askiDip
-(askinin govdeye, ust kenara indigi nokta) MUTLAKA doldurulur — aski bir
-seritir, bir ucu ve bir dibi vardir. Ikisini de null birakma.
-  askiUst tabani shoulderTip'tir ve aski omuzun UZERINDEN gectigi icin bu
-  kesir omuz ucuna YAKINDIR: normalde 0.60-0.85. Ince askilar boyna dogru
-  kayar (0.60-0.70), genis askilar omuzu orter (0.75-0.90). 0.50'nin altina
-  INMEZ — o kadar iceride bir aski boynu bogar. askiDip ise govdededir,
-  tabani bustLine'dir ve ust kenarin uzerindedir.
+Mankenin yarim genislikleri (mm) ve birbirine oranlari — EZBERLE, hesaplarken kullan:
+  neckBase    70.7        shoulderTip 122.5      underarm 123.0
+  bustApex    91.1        bustLine    133.4      underbust 126.5
+  waist      106.4        highHip     137.2      hip      156.9
+  neckBase/shoulderTip = 0.577    shoulderTip/bustLine = 0.918
+  waist/bustLine       = 0.798    highHip/hip          = 0.874
 
-Omuzlu giysilerde (normal omuz dikisi, kol, omuzu orten kumas) taban
-shoulderTip'tir, yukaridaki tablo gecerlidir.
+Her nokta icin taban SECIMI:
 
-y ifadesi bu konvansiyondan BAGIMSIZDIR: yukseklik icin en dogru landmark'i
+  yakaOrta   -> onde neckFront ("neckFront*0"), arkada nape ("nape*0").
+                ISTISNASIZ. Arkayi onden turetsen bile bu nokta nape'e cevrilir.
+
+  yakaOmuz   -> IKI SECENEK, giysiye bak:
+                (a) Yaka BOYUN TABANINDA duruyorsa (bisiklet, biye, bebe yaka,
+                    normal omuz dikisli giysi: yaka boynun dibinden basliyor)
+                    -> taban neckBase, kesir 0.90-1.15.
+                (b) Yaka boyundan BELIRGIN UZAKTA acilmissa (genis kayik, derin
+                    V, genis kare, omuz acik) -> taban shoulderTip, kesir
+                    0.50-0.85. Boynun dibiyle omuz ucu arasinda yolun kacta
+                    kacini yedigine bak.
+                Hangisini sectiysen iki gorunumde (on/arka) AYNI tabani kullan.
+
+  askiUst    -> shoulderTip. OLCULDU: gercek askili giysilerde bu kesir 0.70-0.75
+                bandindadir (satici flat'i piksel olcumu 0.732; elle olcum 0.72).
+                Varsayilan 0.72 yaz; aski gorunur sekilde omuz ucuna tasiyorsa
+                en fazla 0.80, boyna cok yakin ince ipse en az 0.62.
+                YASA: 1.00'i ASAMAZ.
+
+  askiDip    -> bustLine. Askili giyside ZORUNLUDUR (asagiya bak).
+
+  omuzUc     -> Omuzlu giyside shoulderTip, kesir 0.85-1.00 (1.00'i gecemez).
+                Askili/omuzsuz giyside govdenin ust kenaridir: taban yine
+                shoulderTip, kesir 0.75-0.90.
+
+  koltukalti -> bustLine, kesir 0.95-1.15. 0.90'in altina INMEZ: kol oyugunun
+                tabani gogus yariminin icinde olamaz, giysi kapanmaz.
+
+  gogus      -> bustLine, kesir giysinin bolluguna gore 0.98-1.20.
+
+  bel        -> IKI SECENEK, oturma.bel'e bak:
+                (a) Giysi bele OTURUYORSA (oturma.bel=true: bel kesimi/dikisi/
+                    pensi var, silueti icerı giriyor) -> taban waist,
+                    kesir 1.05-1.25 (flat'te bolluk vardir, 1.00'in altina inme).
+                (b) Giysi belde OTURMUYORSA (oturma.bel=false: gogusten duz ya da
+                    genisleyerek iniyor, bel cizgisi yok) -> taban bustLine,
+                    kesir 1.00-1.25. Belde daralmayan bir giysiyi waist tabanina
+                    yazarsan kesiri 1.30'un uzerine zorlamak zorunda kalirsin;
+                    bu YANLIS TABAN isaretidir.
+
+  kalca      -> Giysinin boyuna bak:
+                (a) Giysi kalcayi geciyorsa (elbise, uzun tunik) -> hip.
+                (b) Giysi kalcada BITIYOR ya da daha kisaysa (bluz, gomlek,
+                    kisa ust; etek ucu hip hizasinda ya da yukarisinda)
+                    -> highHip. Kisa bir giysinin en alt genisligi mankenin
+                    kalcasina degil UST KALCASINA denk gelir.
+
+  etekYan    -> kalca ile AYNI tabani kullan (hip ya da highHip). Ikisi farkli
+                taban olursa siluet kirilir.
+
+  etekOrta   -> kalca ile ayni taban, kesir SIFIR ("hip*0" ya da "highHip*0").
+
+ASKILI GIYSI (omuz dikisi yok, govde askilarla tasiniyor): askiUst VE askiDip
+MUTLAKA doldurulur — aski bir seritir, omuz uzerinde bir UCU (askiUst,
+shoulderTip tabanli, ~0.72) ve govdeye indigi bir DIBI (askiDip, bustLine
+tabanli, ust kenarin hizasi) vardir. Ikisini de null birakma. Boyle bir giyside
+yakaOmuz de govde uzerindedir: taban bustLine, kesir 0.30-0.60.
+
+y ifadesi bu taban seciminden BAGIMSIZDIR: yukseklik icin en dogru landmark'i
 sec (underarm, bustLine, waist, hip, hip..knee@t ...).
 
 --- 3b. KESIR SECERKEN YAPILAN UC SISTEMATIK HATA ---
@@ -210,23 +239,13 @@ Bunlar olculmus hatalardir; kesiri yazmadan once uctagini da kontrol et.
     yasa). Omuz noktasi mankenin omzunun uzerinde ya da icindedir; dusuk omuzlu
     / omuzu acik giysilerde bu deger 1.00'in belirgin ALTINDADIR.
 
-(4) YAKA-OMUZ KAVSAGI SABIT BIR YERDEN BASLAR. yakaOmuz, boyun tabaninin
-    omuza degdigi yerdir. Mankende boyun tabani, omuz ucunun 0.37 katidir
-    (neckBase.x 70.7 / shoulderTip.x 188.8). Yani:
-      - Boyuna yapisan bir yaka (biye, bisiklet): 0.37-0.45
-      - Normal yaka / kare / V / bebe yaka: 0.50-0.70   <- COGU GIYSI BURADA
-      - Genis kayik yaka:                   0.70-0.85
-      - Omuzu tamamen acan (off-shoulder) bant: omuzUc'a yakin
-    DIKKAT — en sik yapilan hata: yakaOmuz'u omuz dikisinin DIS ucuyla
-    karistirmak. yakaOmuz, yakanin BASLADIGI ic noktadir (boyun tarafi);
-    omuz dikisinin dis ucu zaten omuzUc'tur. Ikisi ayni yer DEGILDIR;
-    aralarinda omuz dikisinin TAMAMI durur.
-
-    yakaOmuz > 0.80 yazmadan once "gercekten omuz dikisi neredeyse yok mu?"
-    diye sor — genelde vardir ve dogru deger 0.55-0.70 civaridir. omuzUc ile
-    yakaOmuz arasinda omuz dikisi kadar bir BOSLUK olmalidir (fark > 0.15).
-    Bu degeri GOZ KARARI ATMA; yakanin boyun tabanindan omuz ucuna dogru
-    yolun kacta kacini yedigine bak ve yukaridaki bantla karsilastir.
+(4) YAKA-OMUZ'U OMUZ UCUYLA KARISTIRMA. yakaOmuz, yakanin BASLADIGI IC
+    noktadir (boyun tarafi); omuz dikisinin DIS ucu zaten omuzUc'tur. Ikisi
+    ayni yer DEGILDIR; aralarinda omuz dikisinin TAMAMI durur.
+    Tabanini 3a'daki iki secenekten sec (boyun dibinde duruyorsa neckBase,
+    belirgin acilmissa shoulderTip) ve o secenegin bandina uy. Goz karari
+    atma: yakanin, boyun dibinden omuz ucuna giden yolun kacta kacini
+    yedigine bak.
 
 (5) BEL, BEDENIN BELI DEGILDIR. Flat, DUZ SERILMIS GIYSIDIR ve icinde bolluk
     (ease) vardir; ayrica bel hizasinda kumas dikis paylarıyla birlikte durur.
@@ -282,13 +301,21 @@ dayadigindan emin ol.
             yazmak, dikisi hic yazmamakla ayni zarari verir.
   kesikli : ust dikis / pervaz izi — KESIKLI cizgi olarak gorunur. Duz surekli
             bir cizgi gordugunde "roba" deme, "dikis" ya da "kesikli" de.
-  pens    : bir UCU sivri, gogus/bel bolluğunu alan UCGEN. Uc + iki bacak
-            (3 nokta). YASA: duz bir kumas ancak PENSLE ya da bir DIKISLE
-            bedenin uzerine oturur. Giysi gogse/bele oturuyorsa
-            (oturma.gogus=true ya da oturma.bel=true) ve o bolgede oturmayi
-            saglayan yatay/dikey bir dikis de YOKSA, orada PENS vardir —
-            flat cizimde ince bir V/ucgen olarak gorunur, bazen cok soluktur.
-            Once "bu giysi nasil oturuyor?" diye sor, sonra pensi yaz.
+  pens    : KAPALI BIR V. Uc noktayla yazilir: sivri UC + tabanin iki yani
+            (a, b). Iki bacagi o sivri ucta BIRLESIR ve cizgi orada BITER;
+            govdenin ortasinda, havada sonlanir.
+            AYIRT EDICI TEK SORU: cizginin uclari nerede?
+              - Iki ucu da giysinin kenarina / baska bir dikise variyor,
+                parcayi bastan basa boluyor    -> dikis (bir HAT).
+              - Bir ucu govdenin ortasinda sivrilip bitiyor, geri donuyor
+                -> pens (kapali bir V).
+            Uc nokta yazdin diye pens olmaz; UCLARIN BIRLESMESI pens yapar.
+            Bir hattin uzerinde uc nokta varsa o hala "dikis"tir.
+            YASA: duz kumas, kadin bedeninin egrisine ancak bir DIKISLE ya da
+            bir PENSLE oturur. Giysi gogse/bele oturuyorsa (oturma.gogus ya da
+            oturma.bel = true) ve orada bastan basa gecen bir dikis YOKSA,
+            orada PENS vardir. Flat'te ince, soluk bir V'dir; kumas kivrimi
+            sanip gecme.
   buzgu   : kumasin toplandigi yer; kisa paralel kilcal cizgiler olarak
             gorunur. Bir dikisin altinda kumas kabariyorsa orada buzgu vardir.
   firfir  : kenarda dalgali/fistolu serit.
@@ -296,44 +323,19 @@ dayadigindan emin ol.
 Buzgu ile firfir ayrimi: buzgu bir DIKISE baglidir ve kumasi toplar; firfir
 serbest bir KENARDIR ve dalgalanir.
 
---- 6a-2. IKI AYIRT EDICI SORU (her ic cizgide sor) ---
-SORU A — "bu cizgi nerede BITIYOR?"
-  Iki ucu da giysinin KENARINA ya da baska bir dikise varan cizgi = dikis.
-  Bir ya da iki ucu govdenin ORTASINDA, havada sonlanan (sivrilen) cizgi
-  = PENS. Cunku bir dikis parcayi bastan basa boler; pens ise kumasin
-  icinde biter, orada bollugu alip biter. Govdeyi saran giysilerde gogus
-  altindan bele ya da belden yukari uzanan bu kisa sivri cizgiler penstir.
-  Bunlari "dikis" yazmak en sik yapilan hatadir.
+--- 6a-2. PENS NEREDE ARANIR + DUGME KURALI ---
+Olculdu: en sik KACIRILAN tip penstir; sebebi satici flat'lerinde pensin cok
+ince ve soluk cizilmesi. Tanimi 6a'da; burasi NEREYE bakacagini soyler:
+  - gogus altindan asagi inen kisa sivri V (gogus pensi),
+  - belden yukari ya da asagi uzanan ince V (bel pensi),
+  - arka belde omurgaya paralel iki ince V (arka bel pensi — onde bel pensi
+    olan giyside arkada da neredeyse her zaman vardir).
+Yazimi: { tip:"pens", ayna:true, noktalar:[<uc>, <a>, <b>] }.
 
-SORU B — "burada dugme var mi?"
-  Dugme sirasi gordugun her yerde ALTINDA BIR PAT (placket) vardir: dugme
-  tek kat kumasa dikilmez, ciftlenmis bir bant uzerine dikilir. Yani
-  on-ortada dugme yaziyorsan, ayrica
-    { tip: "pat", ayna: false, noktalar: [<ust>, <alt>], genislik: <mm> }
-  da yaz. Pat'i "dikis" diye yazma; pat ayri bir tiptir ve dugmeyle birlikte
-  gelir.
-
---- 6a-4. PENS: EN COK ATLANAN OGE ---
-Olculdu: en sik kacirilan tip PENS. Sebebi, satici flat'lerinde pensin cok
-ince ve soluk bir cizgi olmasi; goz onu kumas kivrimi sanip geciyor.
-
-Su MANTIKLA bul, goze guvenme:
-  Duz bir kumas parcasi, kadin bedeninin gogus ve bel egrisinin uzerine
-  KENDILIGINDEN oturmaz. Oturmasi icin kumastan bir parca ALINMALIDIR.
-  Bunu yapmanin yalnizca iki yolu vardir: (a) bir DIKIS (parcayi bastan basa
-  bolup egri kesmek), (b) bir PENS (kumasin icinde sivri bir ucgen alip
-  kapatmak).
-  Demek ki: giysi gogse ya da bele OTURUYORSA (oturma.gogus/bel = true) ve o
-  bolgede bastan basa gecen bir dikis YOKSA, orada MUTLAKA pens vardir.
-  Bu bir tahmin degil, kalibin zorunlulugudur.
-
-Nerede aranir: gogus altindan asagi inen kisa sivri cizgi (gogus pensi),
-belden yukari/asagi uzanan ince ucgen (bel pensi), arka belde omurgaya
-paralel iki ince ucgen (arka bel pensi — on bel pensi olan giyside arkada da
-neredeyse her zaman vardir).
-Yazimi: { tip:"pens", ayna:true, noktalar:[<uc>, <a>, <b>] } — uc sivri nokta,
-a ve b tabanin iki yani.
-
+DUGME KURALI: dugme sirasi gordugun her yerde ALTINDA BIR PAT (placket)
+vardir — dugme tek kat kumasa dikilmez. On-ortada dugme yaziyorsan ayrica
+  { tip: "pat", ayna: false, noktalar: [<ust>, <alt>], genislik: <mm> }
+yaz. Pat'i "dikis" diye yazma; ayri bir tiptir ve dugmeyle birlikte gelir.
 --- 6a-3. OGE TARAMASI (atlamamak icin sirayla gec) ---
 Ogeleri aklina gelene gore yazma; giysiyi YUKARIDAN ASAGI tara ve her bolgede
 "burada bir cizgi var mi?" diye sor. Eksik oge, fazla ogeden daha cok zarar
@@ -411,17 +413,22 @@ JSON'u yazdiktan SONRA, teslim etmeden once kendi ciktini bu listeyle dene ve
 tutmayan ne varsa DUZELT. Bu bir formalite degil: asagidaki maddelerin her
 biri, daha once olculmus gercek bir hatadir.
 
-  [ ] koltukalti kesiri 0.95-1.05 araliginda mi? (0.90'in altindaysa yanlis)
+  [ ] HER kesir 0.85-1.30 icinde mi? Disina tasan varsa 3a'ya don ve o
+      noktanin TABANINI degistir (kesiri zorlamak yanlis taban isaretidir).
+  [ ] koltukalti kesiri 0.95-1.15 araliginda mi? (0.90'in altindaysa yanlis)
   [ ] omuzUc ve askiUst kesiri 1.00'i gecmiyor mu?
-  [ ] yakaOmuz kesiri 0.50-0.70 civarinda mi? 0.80'i asiyorsa, gercekten
-      omuz dikisi yok olan bir giysi mi bakiyorsun?
-  [ ] omuzUc - yakaOmuz farki 0.15'ten buyuk mu? (omuz dikisi kadar bosluk)
-  [ ] bel tabani waist mi? (bol giyside bile taban waist, kesir buyur)
+  [ ] askiUst yazdiysan 0.70-0.75 civarinda mi? (olculen deger 0.72)
+  [ ] yakaOmuz tabani: yaka boyun dibinde mi (neckBase) yoksa belirgin
+      acilmis mi (shoulderTip)? Sectigin taban on ve arkada AYNI mi?
+  [ ] bel tabani: oturma.bel=true ise waist, false ise bustLine mi?
+  [ ] kalca/etekYan/etekOrta tabani AYNI mi, ve giysi kalcada bitiyorsa
+      highHip, kalcayi geciyorsa hip mi?
   [ ] oturma.gogus ya da oturma.bel true ise ve o bolgeyi bastan basa gecen
       bir dikis yoksa, listende PENS var mi? Yoksa giysi oturamaz.
-  [ ] Giysi omuzsuz/askiliysa: yakaOmuz ve omuzUc tabani bustLine mi,
-      askiUst VE askiDip dolu mu?
+  [ ] Giysi omuzsuz/askiliysa askiUst VE askiDip DOLU mu? (ikisi de zorunlu)
   [ ] bel kesiri, bele oturan bir giyside 1.00'in ustunde mi?
+  [ ] "pens" yazdigin her ogenin iki bacagi sivri ucta BIRLESIYOR mu?
+      Birlesmiyorsa o bir "dikis"tir, tipini duzelt.
   [ ] etekYan kesiri giysinin gercek genisligiyle uyusuyor mu; sisirdin mi?
   [ ] arka.yakaOrta tabani nape mi?
   [ ] Govde oturuyorsa PENS yazdin mi (ya da oturmayi saglayan dikisi)?
