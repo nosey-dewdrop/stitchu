@@ -184,6 +184,10 @@ Her nokta icin taban SECIMI:
                 genislik 55 mm ise yari genislik 27.5; 122.5-27.5 = 95.0 mm,
                 yani kesir en fazla 95.0/122.5 = 0.77 olabilir.
                 Kesiri yazdiktan sonra bu toplami HESAPLA ve kontrol et.
+                ASKI GENISLIGI de olculdu ve okuyucu bunu SISIRIYOR: gercek
+                aski 30-40 mm'dir (altin olcum 34). Ince ip aski 12-20, genis
+                bant aski en fazla 55. Flat'te aski oldugundan genis gorunur;
+                60'in uzerine YAZMA.
 
   askiDip    -> bustLine. Askili giyside ZORUNLUDUR (asagiya bak).
 
