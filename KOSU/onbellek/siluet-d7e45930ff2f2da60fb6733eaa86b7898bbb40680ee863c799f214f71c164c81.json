@@ -2,9 +2,11 @@
  "semaSurumu": "siluet-v1",
  "girdiYolu": "GIRDI/hedef-fotograflar-3/etsy-05.png",
  "sha256": "d7e45930ff2f2da60fb6733eaa86b7898bbb40680ee863c799f214f71c164c81",
- "okuyan": "Claude, 10 Eyl 2026 (Read ile ekran goruntusune bakildi; dis LLM cagrisi 0)",
- "ilan": "kolsuz yuvarlak yakali mini: gogus alti buzgulu kavisli dikis, bel bandi, bel dikisi, etekte iki pens cizgisi",
- "gorulen": "fotograf (insan ustunde, on) + satici flat'i (on)",
+ "okuyan": "claude-sonnet-5 via 'claude -p' alt sureci (arkaUc=claude-p), 2026-09-11",
+ "uretenScript": "KOSU/siluet-oku.mjs",
+ "ilan": "yuvarlak yakali, kolsuz, govdeyi saran, gogus altindan enine dikisli ve hafif buzgulu, kalcadan asagi hafif genisleyen kisa bir elbise",
+ "gorulen": "satici-flat (on) ve fotograf (on)",
+ "kaynakGorunum": "ikisi",
  "oturma": {
   "gogus": true,
   "bel": true
@@ -14,118 +16,99 @@
   "kontur": {
    "yakaOrta": [
     "neckFront*0",
-    "neckFront+4"
+    "neckBase+28"
    ],
    "yakaOmuz": [
-    "shoulderTip*0.62",
-    "shoulderTip..neckBase@0.5"
+    "shoulderTip*0.55",
+    "neckBase+8"
    ],
    "askiUst": null,
    "omuzUc": [
-    "shoulderTip*0.90",
-    "shoulderTip"
+    "shoulderTip*0.95",
+    "neckBase+15"
    ],
    "koltukalti": [
-    "bustLine*1.02",
-    "underarm+20"
+    "bustLine*0.94",
+    "underarm"
    ],
    "gogus": [
-    "bustLine*1.04",
+    "bustLine*1.00",
     "bustLine"
    ],
    "bel": [
-    "waist*1.12",
+    "waist*1.05",
     "waist"
    ],
    "kalca": [
-    "hip*1.06",
+    "hip*1.20",
     "hip"
    ],
    "etekYan": [
-    "hip*1.20",
-    "hip..knee@0.50"
+    "hip*1.35",
+    "hip..knee@0.35"
    ],
    "etekOrta": [
     "hip*0",
-    "hip..knee@0.50"
+    "hip..knee@0.35"
    ]
   },
+  "kol": null,
   "ogeler": [
    {
     "tip": "dikis",
-    "ayna": false,
-    "catmull": true,
+    "ayna": true,
     "noktalar": [
-     [
-      "bustLine*-0.98",
-      "underbust"
-     ],
-     [
-      "bustLine*-0.5",
-      "underbust-22"
-     ],
      [
       "neckFront*0",
-      "underbust-30"
-     ],
-     [
-      "bustLine*0.5",
-      "underbust-22"
-     ],
-     [
-      "bustLine*0.98",
       "underbust"
-     ]
-    ]
-   },
-   {
-    "tip": "dikis",
-    "ayna": false,
-    "noktalar": [
-     [
-      "waist*-1.12",
-      "waist"
      ],
      [
-      "waist*1.12",
-      "waist"
+      "bustLine*0.94",
+      "underbust"
      ]
     ]
    },
    {
     "tip": "buzgu",
-    "yon": "yukari",
-    "boy": 24,
-    "aralik": 9,
+    "ayna": true,
+    "yon": "asagi",
+    "boy": 25,
+    "aralik": 8,
     "noktalar": [
      [
-      "bustLine*0.15",
-      "underbust-27"
+      "bustApex*0.40",
+      "bustApex+15"
      ],
      [
-      "bustLine*0.5",
-      "underbust-22"
-     ],
-     [
-      "bustLine*0.90",
-      "underbust-6"
+      "bustLine*0.30",
+      "underbust"
      ]
     ]
    },
    {
-    "tip": "pens",
+    "tip": "dikis",
+    "ayna": true,
+    "catmull": true,
     "noktalar": [
      [
-      "hip*0.40",
-      "hip-30"
+      "bustLine*0.94",
+      "underarm"
      ],
      [
-      "waist*0.43",
+      "bustLine*0.75",
+      "underbust"
+     ],
+     [
+      "waist*0.80",
       "waist"
      ],
      [
-      "waist*0.47",
-      "waist"
+      "hip*0.85",
+      "hip"
+     ],
+     [
+      "hip*1.05",
+      "hip..knee@0.35"
      ]
     ]
    }
@@ -133,122 +116,105 @@
  },
  "arka": {
   "koken": "turetildi",
-  "yakaBicim": "yuvarlak",
   "kontur": {
    "yakaOrta": [
     "nape*0",
-    "neckBase+30"
+    "nape"
    ],
    "yakaOmuz": [
-    "shoulderTip*0.62",
-    "shoulderTip..neckBase@0.5"
+    "shoulderTip*0.55",
+    "neckBase+5"
    ],
    "askiUst": null,
    "omuzUc": [
-    "shoulderTip*0.90",
-    "shoulderTip"
+    "shoulderTip*0.95",
+    "neckBase+15"
    ],
    "koltukalti": [
-    "bustLine*1.02",
-    "underarm+20"
+    "bustLine*0.94",
+    "underarm"
    ],
    "gogus": [
-    "bustLine*1.04",
+    "bustLine*1.00",
     "bustLine"
    ],
    "bel": [
-    "waist*1.12",
+    "waist*1.05",
     "waist"
    ],
    "kalca": [
-    "hip*1.06",
+    "hip*1.20",
     "hip"
    ],
    "etekYan": [
-    "hip*1.20",
-    "hip..knee@0.50"
+    "hip*1.35",
+    "hip..knee@0.35"
    ],
    "etekOrta": [
     "hip*0",
-    "hip..knee@0.50"
+    "hip..knee@0.35"
    ]
   },
+  "kol": null,
   "ogeler": [
-   {
-    "tip": "dikis",
-    "ayna": false,
-    "noktalar": [
-     [
-      "waist*-1.12",
-      "waist"
-     ],
-     [
-      "waist*1.12",
-      "waist"
-     ]
-    ]
-   },
-   {
-    "tip": "dikis",
-    "ayna": false,
-    "catmull": true,
-    "noktalar": [
-     [
-      "bustLine*-0.98",
-      "underbust"
-     ],
-     [
-      "bustLine*-0.5",
-      "underbust-12"
-     ],
-     [
-      "neckFront*0",
-      "underbust-16"
-     ],
-     [
-      "bustLine*0.5",
-      "underbust-12"
-     ],
-     [
-      "bustLine*0.98",
-      "underbust"
-     ]
-    ]
-   },
-   {
-    "tip": "pens",
-    "noktalar": [
-     [
-      "hip*0.40",
-      "hip-30"
-     ],
-     [
-      "waist*0.43",
-      "waist"
-     ],
-     [
-      "waist*0.47",
-      "waist"
-     ]
-    ]
-   },
    {
     "tip": "fermuar",
     "ayna": false,
     "noktalar": [
      [
-      "neckFront*0",
-      "neckBase+30"
+      "nape*0",
+      "nape+20"
      ],
      [
-      "neckFront*0",
+      "nape*0",
+      "waist"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "ayna": true,
+    "noktalar": [
+     [
+      "nape*0",
+      "underbust"
+     ],
+     [
+      "bustLine*0.94",
+      "underbust"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "ayna": true,
+    "catmull": true,
+    "noktalar": [
+     [
+      "bustLine*0.94",
+      "underarm"
+     ],
+     [
+      "bustLine*0.75",
+      "underbust"
+     ],
+     [
+      "waist*0.80",
+      "waist"
+     ],
+     [
+      "hip*0.85",
       "hip"
+     ],
+     [
+      "hip*1.05",
+      "hip..knee@0.35"
      ]
     ]
    }
   ]
  },
  "eksik": [
-  "arka kapama: fotografta gorulmedi; oturan elbise, baska kapama yok -> turetilmis arkaya CB fermuar VARSAYIM olarak cizildi"
+  "arka gorunmuyor; kapama (CB fermuar) ve arka ic dikisler onden turetildi"
  ]
 }
