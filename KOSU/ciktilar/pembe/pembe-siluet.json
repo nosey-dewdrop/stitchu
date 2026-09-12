@@ -147,6 +147,66 @@
     "boy": 168,
     "en": 6,
     "ayrilma": 0.08
+   },
+   {
+    "tip": "kesikli",
+    "ayna": true,
+    "catmull": true,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "neckBase+206"
+     ],
+     [
+      "bustLine*0.40",
+      "neckBase+186"
+     ],
+     [
+      "bustLine*0.53",
+      "neckBase+96"
+     ],
+     [
+      "bustLine*0.53",
+      "neckBase+30"
+     ]
+    ]
+   },
+   {
+    "tip": "kesikli",
+    "ayna": true,
+    "catmull": true,
+    "noktalar": [
+     [
+      "hip*0",
+      "hip-52"
+     ],
+     [
+      "hip*0.50",
+      "hip-55"
+     ],
+     [
+      "hip*0.92",
+      "hip-60"
+     ]
+    ]
+   },
+   {
+    "tip": "pens",
+    "ayna": true,
+    "noktalar": [
+     [
+      "bustLine*0.46",
+      "bustLine+8"
+     ],
+     [
+      "bustLine*1.14",
+      "underarm+26"
+     ],
+     [
+      "bustLine*1.14",
+      "underarm+42"
+     ]
+    ]
    }
   ],
   "etekSarkma": 9
@@ -239,6 +299,25 @@
      [
       "hip*0.62",
       "hip-38"
+     ]
+    ]
+   },
+   {
+    "tip": "kesikli",
+    "ayna": true,
+    "catmull": true,
+    "noktalar": [
+     [
+      "hip*0",
+      "hip-52"
+     ],
+     [
+      "hip*0.50",
+      "hip-55"
+     ],
+     [
+      "hip*0.92",
+      "hip-60"
      ]
     ]
    }

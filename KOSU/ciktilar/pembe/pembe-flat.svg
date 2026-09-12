@@ -28,6 +28,12 @@
 <path d="M -7.4 25.9 C -12.0 34.0 -7.4 42.1 -6.0 43.1 L 6.0 43.1 C 11.0 34.0 7.4 25.9 7.4 25.9 Z" fill="#f6dde0" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M -0.3 42.0 C -17.1 105.8 -3.7 163.0 -13.7 210.0 L -19.7 207.0 C -9.7 163.0 -23.1 105.8 -6.3 42.0 Z" fill="#f6dde0" stroke="#000" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M 0.3 42.0 C 17.1 105.8 3.7 163.0 13.7 210.0 L 19.7 207.0 C 9.7 163.0 23.1 105.8 6.3 42.0 Z" fill="#f6dde0" stroke="#000" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 0.0 206.0 C 8.9 202.7 41.6 204.3 53.4 186.0 C 65.1 167.7 67.8 122.0 70.7 96.0 C 73.6 70.0 70.7 41.0 70.7 30.0" fill="none" stroke="#000" stroke-width="1.7" stroke-dasharray="5,3"/>
+<path d="M 0.0 206.0 C -8.9 202.7 -41.6 204.3 -53.4 186.0 C -65.1 167.7 -67.8 122.0 -70.7 96.0 C -73.6 70.0 -70.7 41.0 -70.7 30.0" fill="none" stroke="#000" stroke-width="1.7" stroke-dasharray="5,3"/>
+<path d="M 0.0 577.5 C 13.1 577.0 54.4 575.8 78.5 574.5 C 102.5 573.2 133.4 570.3 144.3 569.5" fill="none" stroke="#000" stroke-width="1.7" stroke-dasharray="5,3"/>
+<path d="M 0.0 577.5 C -13.1 577.0 -54.4 575.8 -78.4 574.5 C -102.5 573.2 -133.4 570.3 -144.3 569.5" fill="none" stroke="#000" stroke-width="1.7" stroke-dasharray="5,3"/>
+<path d="M 152.1 224.3 L 61.4 221.3 L 152.1 240.3" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
+<path d="M -152.1 224.3 L -61.4 221.3 L -152.1 240.3" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
 </g>
 <text x="246.4" y="742.5" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ON</text>
 <g transform="translate(669.2 84.0)" data-gorunum="arka">
@@ -53,6 +59,8 @@
 <rect x="-3.0" y="-8.0" width="6" height="9" fill="#fff" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M 69.4 202.3 C 65.6 237.7 42.2 349.5 46.8 414.4 C 51.5 479.3 88.9 562.0 97.3 591.5" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
 <path d="M -69.4 202.3 C -65.6 237.7 -42.2 349.5 -46.8 414.4 C -51.5 479.3 -88.9 562.0 -97.3 591.5" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
+<path d="M 0.0 577.5 C 13.1 577.0 54.4 575.8 78.5 574.5 C 102.5 573.2 133.4 570.3 144.3 569.5" fill="none" stroke="#000" stroke-width="1.7" stroke-dasharray="5,3"/>
+<path d="M 0.0 577.5 C -13.1 577.0 -54.4 575.8 -78.4 574.5 C -102.5 573.2 -133.4 570.3 -144.3 569.5" fill="none" stroke="#000" stroke-width="1.7" stroke-dasharray="5,3"/>
 </g>
 <text x="669.2" y="742.5" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ARKA</text>
 </svg>
