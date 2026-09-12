@@ -291,7 +291,19 @@ Sıra bağlayıcı. Her faz **taze ajan**; işi bitince ölür. Her fazın çık
 
 ---
 
-#### A1 — Site fotoğrafı gerçekten okusun
+#### A1 — Site fotoğrafı gerçekten okusun — ✅ KAPANDI (12 Eyl 2026)
+
+> **Ölçülmüş sonuç:** gerçek Chrome'da `http://localhost:7311/site/create.html`
+> → `GIRDI/hedef-fotograflar/biba-O120579-dress.jpg` yüklendi (önbelleksiz),
+> okuma **181 sn** (ilerleme çubuğu servisin kendi `adim/yuzde/not` alanlarıyla
+> döndü), ekranda flat çizildi; üretilen dosya
+> `KOSU/ciktilar/yerel/45836/flat.svg` (22 643 B, + `flat.png`, `kalip-36.svg`).
+> İndirme düğmesi de gerçek dosya verdi (`stitchu-dress-flat.svg`, 23 097 B).
+> Kanıt: `KOSU/ciktilar/yerel/A1-kanit.png` (fotoğraf + flat aynı karede) ve
+> servis kapalıyken `KOSU/ciktilar/yerel/A1-kanit-servis-yok.png`
+> (`ERR_SERVIS_YOK: yerel servis çalışmıyor — terminalde "node KOSU/servis.mjs"`).
+> Değişen dosyalar: `web/js/yerel-kopru.js` (yeni), `web/js/create.js`,
+> `KOSU/servis.mjs` (`/site/` mount + CORS). Geometriye dokunulmadı.
 
 **Madde:** md.1 (fotoğraf+prompt = kalıp+flat) · md.11 (kök neden mimaride olabilir)
 
@@ -970,7 +982,7 @@ BİTİNCE GÖSTER: simülatörde fotoğraf -> flat, ekran kaydı.
 
 | madde | ne diyor | durum (12 Eyl, ölçüldü) | kapanacağı faz |
 |---|---|---|---|
-| **md.1** | fotoğraf+prompt = kalıp+flat | **YARI AÇIK** — terminalde çalışıyor (`yerel/31090`), sitede `return null` | **A1, A2** |
+| **md.1** | fotoğraf+prompt = kalıp+flat | **A1 KAPANDI (12 Eyl)** — sitede fotoğraf yüklendi, `yerel/45836/flat.svg` (22 643 B) ekranda çizildi, 181 sn okuma; indirme A2'de | ~~A1~~, **A2** |
 | **md.2** | Midjourney tarzı bölgesel edit | **AÇIK** — 15 op + replay var (`docs/GRAF-IR.md`), doğal dil yok | A9 |
 | **md.3** | CS hesap ve matematik işi | **AÇIK/sürekli** — croquis düzeltmesi ölçümle yapıldı (0.918, iki kaynak 0.0008 içinde); yöntem doğru | sürekli |
 | **md.4** | flat 36 = croquis, kalıp 36 = dikilebilir | **KISMEN** — ayrım kodda var (`croquis36` / `gercek36`); dikilebilirlik prova edilmedi (Damla hiç dikmedi) | A5 (seri), A8 (prova) |

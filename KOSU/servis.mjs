@@ -16,6 +16,7 @@
 //   POST /oku              gövde: { adi, veri(base64) } -> { is: "<id>" } (hemen doner)
 //   GET  /durum?is=<id>    ilerleme + bitince okuma/flat/kalip yollari
 //   GET  /dosya?yol=...    uretilen dosyayi indir (yalniz is klasoru altindan)
+//   GET  /site/...         SITENIN KENDISI (web/) — /site/create.html
 //   GET  /contract/...     kanun dosyalari (tarayicidaki cizici fetch eder)
 //   GET  /lib/...          web/lib (siluet-ciz.js tarayicida kosar)
 //
@@ -40,7 +41,7 @@ const SET_KOK = `${KOK}/KOSU/ciktilar/${SET}`;
 const TABAN_TOPOLOJI = `${KOK}/KOSU/ciktilar/giris-3/1/ops-topoloji.json`;
 
 const IZINLI_UZANTI = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.gif': 'image/gif' };
-const TIP = { '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.html': 'text/html; charset=utf-8', '.txt': 'text/plain; charset=utf-8' };
+const TIP = { '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.html': 'text/html; charset=utf-8', '.txt': 'text/plain; charset=utf-8', '.css': 'text/css; charset=utf-8', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.ico': 'image/x-icon', '.md': 'text/plain; charset=utf-8' };
 
 // ------------------------------------------------------------------ is defteri
 /** id -> { durum, adim, yuzde, hata, klasor, no, sonuc } */
@@ -169,7 +170,23 @@ function govde(req, sinirBayt = 24 * 1024 * 1024) {
 const sunucu = createServer(async (req, res) => {
   const u = new URL(req.url, 'http://localhost');
   const yol = decodeURIComponent(u.pathname);
+  // A1: site baska bir portta sunulabiliyor (web/ statik sunucu) ve oradan
+  // /oku + /durum cagirir. Bu YEREL bir test aracidir, 127.0.0.1'e baglidir;
+  // acik CORS'un burada bir sirri yok.
+  res.setHeader('access-control-allow-origin', '*');
+  res.setHeader('access-control-allow-headers', 'content-type');
+  if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
   try {
+    // A1: SITENIN KENDISI. create.html'in ayni kokenden acilabilmesi icin
+    // web/ agaci buradan da sunulur; boylece fotograf yuklemesi tarayicida
+    // gercek sitede denenir, ayri bir demo sayfasinda degil.
+    if (yol === '/site' || yol === '/site/') { res.writeHead(302, { location: '/site/create.html' }); res.end(); return; }
+    if (yol.startsWith('/site/')) {
+      const mutlak = resolve(`${KOK}/web`, '.' + yol.slice('/site'.length));
+      if (!mutlak.startsWith(`${KOK}/web/`)) { res.writeHead(403, { 'content-type': 'text/plain' }); res.end('ERR_YOL: web disi'); return; }
+      gonderDosya(res, mutlak);
+      return;
+    }
     if (yol === '/' || yol === '/index.html') {
       gonderDosya(res, `${KOK}/KOSU/servis-sayfa.html`); return;
     }

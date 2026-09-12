@@ -34,6 +34,8 @@ import { parsePrompt, parseEditPrompt, birlestir, konaksizEksenler } from './pro
 import { arkaDamgala, arkaOkumasi } from '../lib/arka-koken.js?v=152';
 // F-BASLIK: sonuç başlığı alıcının kendi cümlesinden kurulur (T4-hakem k5).
 import { giysiBasligi } from '../lib/baslik.js?v=152';
+// A1 (12 Eyl 2026): fotograf -> KOSU/servis.mjs -> siluet okumasi. Bkz. siluetOkumasi().
+import { fotograftanOkuma, kopruAyaktaMi, SERVIS_YOK_MESAJ, KOPRU_KOMUT, dosyaAdresi } from './yerel-kopru.js?v=152';
 
 const screen = document.getElementById('screen');
 const saved = loadMeasurements();
@@ -186,6 +188,13 @@ let promptText = '';
 // sebepten: sonradan analiz edilen bir ön fotoğraf, okunmuş arkayı sessizce
 // "uydurma"ya düşürmemeli. Yeni arka fotoğraf her zaman tazeler.
 let arkaFotoVar = false;
+
+// ⭐ A1 — BU EKRANIN SILUET OKUMASI. `null` = henuz fotograf okunmadi.
+// Doldugu tek yer yerelKopruBlogu() icindeki yukleme; okuyan taraf
+// KOSU/servis.mjs -> KOSU/siluet-oku.mjs. Buraya spec'ten, orandan, tahminden
+// hicbir sey yazilmaz (bkz. siluetOkumasi()).
+let siluetOkuma = null;
+let siluetIsi = null;      // servisin tam durum nesnesi: uretilen dosya yollari
 
 /** Apply the stored prompt onto the spec + origin record. Priority rule F1/3. */
 function uygulaPrompt() {
@@ -978,6 +987,18 @@ function showSpec() {
     screen.appendChild(promptBlock);
   }
 
+  // ⭐ A1 (12 Eyl 2026) — FOTOGRAFTAN FLAT, YEREL KOPRU UZERINDEN.
+  //
+  // Asagidaki Worker yolu (photoAvailable) SPEC eksenleri okur: "elbise, duz
+  // kol, midi". Flat kalemi ise bir SILUET OKUMASI ister — giysinin kendi dis
+  // hattinin croquis36 landmark'larina gore noktalari. Ikisi ayni sey degil.
+  // Bu blok o ikinci okumayi getirir: fotograf -> KOSU/servis.mjs -> claude -p.
+  //
+  // photoAvailable()'a BAGLI DEGIL, cunku ayri bir arka uctur (Worker + Turnstile
+  // degil, Damla'nin kendi makinesindeki yerel servis). Servis kapaliysa blok
+  // gizlenmez; ADIYLA "yerel servis calismiyor" der (sessiz default yasak).
+  screen.appendChild(yerelKopruBlogu());
+
   // Photo path: upload -> AI reads the garment -> picks below get prefilled,
   // user confirms or fixes. Hidden entirely until the Worker is live.
   if (photoAvailable()) {
@@ -1314,15 +1335,131 @@ function showResult(result) {
  * Eyl'de silinen hattin yaptigi seyin ta kendisi: kelimelerden bir siluet
  * uydurmak.
  *
- * Bu yuzden burada null donuyor ve cizici ERR_OKUMA_YOK atiyor. Iki cagiran da
- * (flatKarti, flat indirme dugmesi) o sebebi EKRANA basar. Sessiz varsayilan,
- * "yaklasik bir sey ciz" ya da kartin sessizce kaybolmasi YASAK — kullanicinin
- * uydurma bir cizimi uydurma oldugunu anlamasinin hicbir yolu olmazdi.
+ * ✅ 12 Eyl 2026 (A1) — ARTIK BIR OKUMA VAR, VE NEREDEN GELDIGI BELLI.
  *
- * Bu hat okuyucuya baglandiginda burasi okumayi dondurur; ciziciye dokunulmaz.
+ * Okuma tek bir yerden gelir: kullanicinin spec ekraninda yukledigi fotograf
+ * KOSU/servis.mjs'e (POST /oku) gider, orada KOSU/siluet-oku.mjs `claude -p`
+ * alt surecinde fotografi OKUR ve contract/siluet-v1.json bicimindeki okumayi
+ * dondurur. Site o okumayi `siluetOkuma`ya koyar; bu fonksiyon onu verir.
+ *
+ * ⛔ DEGISMEYEN SEY: okuma yoksa hala null doner ve cizici ERR_OKUMA_YOK atar.
+ * Spec kelimelerinden, orandan ya da "makul" bir siluetten okuma URETILMEZ.
+ * Iki cagiran da (flatKarti, flat indirme dugmesi) sebebi EKRANA basar; servis
+ * kapaliysa yazan cumle servisin ADINI ve komutunu tasir (SERVIS_YOK_MESAJ).
+ * Sessiz varsayilan / uydurma cizim YASAK.
  */
 function siluetOkumasi() {
-  return null;
+  return siluetOkuma;
+}
+
+/**
+ * Okuma yoksa EKRANA yazilacak cumle. Servis kapaliysa ADIYLA soyler; ayakta
+ * ama fotograf yuklenmediyse bunu soyler. Uydurma yok, sessizlik yok.
+ */
+async function okumaYokSebebi() {
+  if (siluetOkuma) return null;
+  const ayakta = await kopruAyaktaMi();
+  if (!ayakta) return SERVIS_YOK_MESAJ;
+  return 'ERR_OKUMA_YOK: bu ekranda okunmuş bir fotoğraf yok — önceki adımda '
+       + '"Fotoğraftan oku (yerel köprü)" ile bir fotoğraf yükle.';
+}
+
+/**
+ * A1: fotograf yukleme + GERCEK ilerleme + okuma. Servis dakikalarca kosar;
+ * gosterilen yuzde/adim/not servisin KENDI alanlaridir (GET /durum), burada
+ * uydurulan bir animasyon degil. Bitince `siluetOkuma` dolar ve sonuc ekranindaki
+ * flat karti ile flat indirme dugmesi gercek bir cizim uretir.
+ */
+function yerelKopruBlogu() {
+  const blok = el('div', 'spec-group');
+  blok.style.marginTop = '30px';
+  blok.appendChild(el('div', 'group-label', 'Fotoğraftan teknik çizim (yerel köprü)'));
+  const not = el('div', '',
+    `Fotoğraf ${KOPRU_KOMUT} servisine gider, orada okunur (claude -p). Okuma dakikalar sürebilir.`);
+  not.style.cssText = 'font-size:12px;color:var(--gray,#5b7089);margin:4px 0 8px;max-width:60ch';
+  blok.appendChild(not);
+
+  const row = el('div', 'choice-row');
+  const pick = el('button', 'choice', 'Fotoğraf seç ve oku');
+  const durum = el('div', 'field-error', '');
+  durum.style.color = 'var(--gray)';
+  const cubuk = el('div', 'yk-cubuk');
+  cubuk.style.cssText = 'height:6px;background:#e7e2d8;border-radius:4px;overflow:hidden;margin:10px 0 6px;display:none';
+  const dolgu = el('i');
+  dolgu.style.cssText = 'display:block;height:100%;width:0;background:#16150f;transition:width .4s';
+  cubuk.appendChild(dolgu);
+  const satir = el('div', '', '');
+  satir.style.cssText = 'font-size:12.5px;color:#57523f';
+
+  const file = document.createElement('input');
+  file.type = 'file';
+  file.accept = 'image/png,image/jpeg,image/webp,image/gif';
+  file.style.display = 'none';
+  pick.addEventListener('click', () => file.click());
+
+  file.addEventListener('change', async () => {
+    const f = file.files[0];
+    if (!f) return;
+    pick.disabled = true;
+    durum.textContent = '';
+    durum.style.color = 'var(--gray)';
+    cubuk.style.display = 'block';
+    dolgu.style.width = '2%';
+    satir.textContent = 'fotoğraf yollanıyor…';
+    // Onizleme: yuklenen fotograf ekranda kalsin (kanit karesinde ikisi bir arada).
+    let onizleme = blok.querySelector('img.yk-onizleme');
+    if (!onizleme) {
+      onizleme = document.createElement('img');
+      onizleme.className = 'yk-onizleme';
+      onizleme.style.cssText = 'max-width:220px;height:auto;display:block;margin:10px 0;border:1px solid #e6e2d8;border-radius:8px';
+      blok.appendChild(onizleme);
+    }
+    onizleme.src = URL.createObjectURL(f);
+
+    try {
+      const { okuma, is } = await fotograftanOkuma(f, (d) => {
+        dolgu.style.width = Math.max(2, d.yuzde) + '%';
+        satir.textContent = `${d.adim} — ${d.not} · ${d.saniye} sn`;
+      });
+      siluetOkuma = okuma;
+      siluetIsi = is;
+      dolgu.style.width = '100%';
+      satir.textContent = `okundu · ${is.okumaSn || '?'} sn · ${is.klasor || ''}`;
+      durum.style.color = 'var(--gray)';
+      durum.textContent = okuma.ilan
+        ? `Okuma hazır: ${okuma.ilan}`
+        : 'Okuma hazır. Aşağıdan devam et; teknik çizim sonuç ekranında.';
+      // NOT: koken kaydina yeni bir alan EKLENMEZ — dogrula() koken alanlariyla
+      // spec alanlarini birebir esler (provenance.js:107) ve uydurma bir 'flat'
+      // alani her flat damgasini patlatirdi. Okumanin kaynagi ekranda yazili.
+    } catch (err) {
+      siluetOkuma = null;
+      siluetIsi = null;
+      cubuk.style.display = 'none';
+      satir.textContent = '';
+      durum.style.color = '#8f2038';
+      durum.textContent = String((err && err.message) || err);
+    }
+    pick.disabled = false;
+  });
+
+  row.appendChild(pick);
+  blok.appendChild(row);
+  blok.appendChild(file);
+  blok.appendChild(cubuk);
+  blok.appendChild(satir);
+  blok.appendChild(durum);
+
+  // Servis kapaliysa bunu BASTAN, adiyla soyle — kullanici fotograf secip
+  // bekledikten sonra ogrenmesin.
+  kopruAyaktaMi().then((ayakta) => {
+    if (!ayakta) {
+      durum.style.color = '#8f2038';
+      durum.textContent = SERVIS_YOK_MESAJ;
+    }
+  });
+
+  return blok;
 }
 
 function flatKarti() {
@@ -1335,6 +1472,12 @@ function flatKarti() {
   (async () => {
     try {
       const okuma = siluetOkumasi();
+      // A1: okuma yoksa ciziciye hic gitmeyiz; sebebi ADIYLA ekrana yazariz
+      // (servis kapaliysa "yerel servis calismiyor: node KOSU/servis.mjs").
+      if (!okuma) {
+        kutu.textContent = t('create.flatcard.error', { why: await okumaYokSebebi() });
+        return;
+      }
       const { svg } = await flatSVG(okuma, koken, KOKEN_ALANLARI);
       kutu.innerHTML = svg;
       const s = kutu.querySelector('svg');
@@ -1479,6 +1622,9 @@ function downloadPanel(result) {
   // exactly what got deleted today.
   const flatBtn = el('button', 'btn', t('create.dl.flat'));
   wire(flatBtn, async () => {
+    // A1: okuma yoksa dosya yazilmaz ve sebep ADIYLA ekrana doner (wire() bunu
+    // 'create.dl.refused' cumlesine koyar). Uydurma bir flat inmez.
+    if (!siluetOkumasi()) return await okumaYokSebebi();
     // The flat leaves with the origin record on its root element.
     const eksenler = await saveFlatSVG(siluetOkumasi(), `${base}-flat.svg`,
                                        koken, KOKEN_ALANLARI);
