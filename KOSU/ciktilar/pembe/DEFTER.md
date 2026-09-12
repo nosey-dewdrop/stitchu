@@ -255,3 +255,29 @@ trapez; fotoğrafta dar yarık + kare dekolte var.
 bel nip'i, açıklık genişliği, omuz bandı, şimdi trapez. Oranlar tek başına
 şekli tanımlamıyor — **hangi noktanın nerede olduğu** ayrı bir bilgi ve onu
 oran testi yakalamıyor.
+
+## Tur 64-66 — KADEME ÇIKTI: motorda köşe noktası
+
+Görsel: `defter-66.png`
+
+**BEŞ TUR JSON OYNATTIM, ŞEKİL DEĞİŞMEDİ.** Kök motordaydı.
+
+**KÖK TEŞHİS (`yakaYolu`, 3n zinciri):**
+6 kontrol noktası verildiğinde kod iki kübik kurup sonda ` L m` çekiyordu.
+Yani **son kontrol noktası hiç kullanılmıyordu** ve yaka omuza DÜZ çizgiyle
+gidiyordu. Kademe (dar yarık → geniş dekolte) bu yüzden çizilemiyordu:
+her kübik kendi içinde yumuşak, aralarında kırılma yok.
+
+**KESİM:** Köşe tespiti eklendi — ard arda iki kontrol noktası **aynı y'de**
+(fark < gövde yüksekliğinin %6'sı) ve **x farkı büyükse** (> omuz x'inin %40'ı)
+orada bir KÖŞE vardır; zincir kesilir, ` L ` ile keskin dönüş yapılır.
+
+Bu, HEDEF md.9'un gereği: sabit "kare yaka / V yaka" menüsü yok, köşe
+**geometriden** doğuyor. Aynı mekanizma her yaka biçiminde çalışır.
+
+**Sonuç:** üstte dar dikey yarık, altta geniş kare dekolte, aralarında keskin
+köşe — fotoğraftaki yapı.
+
+**AÇIK:**
+- açıklık fotoğraftakinden biraz geniş
+- gölge sol üstte sert bant halinde
