@@ -81,12 +81,12 @@
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.18",
-    "underarm-58"
+    "shoulderTip*1.08",
+    "underarm-52"
    ],
    "ic": [
-    "underarm*0.99",
-    "underarm-30"
+    "bustLine*0.93",
+    "underarm-14"
    ],
    "bant": false,
    "buzgu": false,
@@ -202,12 +202,12 @@
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.18",
-    "underarm-58"
+    "shoulderTip*1.08",
+    "underarm-52"
    ],
    "ic": [
-    "underarm*0.99",
-    "underarm-30"
+    "bustLine*0.93",
+    "underarm-14"
    ],
    "bant": false,
    "buzgu": false,
@@ -252,5 +252,6 @@
  "eksik": [
   "arka gorunmuyor",
   "arka kapama ve dikisler tahmin edildi"
- ]
+ ],
+ "renk": "#f6dde0"
 }

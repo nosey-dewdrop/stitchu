@@ -194,7 +194,7 @@ function yakaYolu(orta, omuz, bicim, sag = true, kisalt = 0) {
 }
 
 // ---- bir gorunumun dis konturu (kapali yol) + aski / kol / ic ogeler
-function gorunumCiz(g, ad, kirmizi, oturma) {
+function gorunumCiz(g, ad, kirmizi, oturma, okumaRenk) {
   const K = {}; for (const k of Object.keys(g.kontur)) K[k] = g.kontur[k] ? nokta(g.kontur[k]) : null;
   const KS = {}; if (g.konturSol) for (const k of Object.keys(g.konturSol)) KS[k] = g.konturSol[k] ? nokta(g.konturSol[k]) : null;
   const sag = (k) => K[k], sol = (k) => (KS[k] !== undefined ? KS[k] : K[k]) && ayna(KS[k] !== undefined ? KS[k] : K[k]);
@@ -294,7 +294,12 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
       svg += `<path d="${ao}" fill="${CIZ.tenDolgu ?? '#e9e3da'}" stroke="none" clip-path="url(#${kid})"/>\n`;
     }
   }
-  svg += `<path d="${d}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
+  // KUMAS RENGI (12 Eyl, kok duzeltme): govde dolgusu SABIT BEYAZ'di; elbise pembe
+  // olsa da flat beyaz cikiyordu. Satici flat'leri renklidir: etsy-01 krem #fdf4e6,
+  // etsy-08 soluk pembe, Bugra "Locket Top" ayni flat'i ALTI kumasta basiyor.
+  // Renk okumadan gelir (g.renk ya da okuma.renk); yoksa beyaz.
+  const KUMAS = g.renk || (okumaRenk ?? null) || '#fff';
+  svg += `<path d="${d}" fill="${KUMAS}" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
 
   // KOL (kapak / puf / duz) — govdenin ustune, beyaz dolgu
   const kolCiz = (kol, ou, ka, s) => {
@@ -316,10 +321,10 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
       // balon govdesi: omuz ucu -> dis bombe -> manset dis ucu -> manset ic ucu -> koltukalti
       kd += ` C ${f1(ou.x + px * S * 1.1 - ux * L * 0.05)} ${f1(ou.y + py * S * 1.1 - uy * L * 0.05)} ${f1(dis.x + px * S * 0.9 - ux * L * 0.3)} ${f1(dis.y + py * S * 0.9 - uy * L * 0.3)} ${P(dis)}`;
       kd += ` L ${P(ic)} L ${P(ka)} C ${f1(ka.x - 6 * s)} ${f1(ka.y - (ka.y - ou.y) * 0.30)} ${f1(ou.x - (ou.x - ka.x) * 0.60)} ${f1(ou.y + (ka.y - ou.y) * 0.32)} ${P(ou)} Z`;
-      let out = `<path d="${kd}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
+      let out = `<path d="${kd}" fill="${KUMAS}" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
       // manset bandi: agiz cizgisinin altinda kapali dikdortgen (beyaz), kalin dis kontur
       const b1 = { x: dis.x + ux * bh, y: dis.y + uy * bh }, b2 = { x: ic.x + ux * bh, y: ic.y + uy * bh };
-      out += `<path d="M ${P(dis)} L ${P(ic)} L ${P(b2)} L ${P(b1)} Z" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
+      out += `<path d="M ${P(dis)} L ${P(ic)} L ${P(b2)} L ${P(b1)} Z" fill="${KUMAS}" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
       out += `<path d="M ${P(dis)} L ${P(ic)}" fill="none" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"/>\n`;
       if (kol.buzgu) out += tikler([dis, ic], 12, 11, { x: -ux, y: -uy });
       if (kol.firfir) out += ogeCiz({ tip: 'firfir', adim: 9, derinlik: 5 }, [{ x: b1.x + ux * 5, y: b1.y + uy * 5 }, { x: b2.x + ux * 5, y: b2.y + uy * 5 }], s, {});
@@ -333,12 +338,12 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
       kd += ` C ${f1(ou.x + (d2.x - ou.x) * 0.55)} ${f1(ou.y + (d2.y - ou.y) * 0.12)} ${f1(d2.x + (d2.x - ou.x) * 0.12)} ${f1(d2.y - (d2.y - ou.y) * 0.32)} ${P(d2)}`;
       kd += ` C ${f1(d2.x - (d2.x - ka.x) * 0.25)} ${f1(d2.y + 8)} ${f1(ka.x + (d2.x - ka.x) * 0.35)} ${f1(ka.y - 2)} ${P(ka)}`;
       kd += ` C ${f1(ka.x - 12 * s)} ${f1(ka.y - (ka.y - ou.y) * 0.32)} ${f1(ou.x - (ou.x - ka.x) * 0.55)} ${f1(ou.y + (ka.y - ou.y) * 0.32)} ${P(ou)} Z`;
-      return `<path d="${kd}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
+      return `<path d="${kd}" fill="${KUMAS}" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
     } else {
       kd += ` L ${P(dis)}`;
     }
     kd += ` L ${P(ic)} L ${P(ka)} Z`;
-    let out = `<path d="${kd}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
+    let out = `<path d="${kd}" fill="${KUMAS}" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
     if (kol.bant) { // agiz bandi: agiz cizgisine paralel ic cizgi
       const bh = kol.bantMM || 14, ux = ic.x - dis.x, uy = ic.y - dis.y, L = Math.hypot(ux, uy) || 1;
       const nx = uy / L * -bh * s, ny = -ux / L * -bh * s; // bant yukari (agizdan govde-ust yonune)
@@ -613,7 +618,7 @@ export function ciz(okuma) {
   }
   const kirmizi = [];
   const gorunumler = [['on', okuma.on], ['arka', okuma.arka]].filter(([, g]) => g);
-  const parcalar = gorunumler.map(([ad, g]) => ({ ad, ...gorunumCiz(g, ad, kirmizi, okuma.oturma) }));
+  const parcalar = gorunumler.map(([ad, g]) => ({ ad, ...gorunumCiz(g, ad, kirmizi, okuma.oturma, okuma.renk) }));
   const M = 70, W = Math.max(...parcalar.map((p) => p.w)) * 2 + M;
   const y0 = Math.min(...parcalar.map((p) => p.y0)) - M, y1 = Math.max(...parcalar.map((p) => p.y1)) + M;
   const H = y1 - y0, TW = W * parcalar.length + M;
