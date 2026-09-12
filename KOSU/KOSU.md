@@ -1,5 +1,27 @@
 # KOŞU — stitchu (12 Eylül 2026)
 
+> ## ⛔ OTURUMUN TEK YETKİSİ (Damla, 12 Eyl — bu satırlar her şeyin üstünde)
+>
+> Bu dosyadaki **A1-A13 listesi tek listedir.** Yeni düzen, yeni faz, yeni
+> numaralama, yeni kapı, yeni ritüel **kurulmaz**. Üç ayrı düzen kuruldu
+> (G1-G4, altı iş, A1-A13); her biri bir öncekini geçersiz kıldı ve on gün
+> boşa gitti. Sebep fazların sırası değildi, **her oturumun sıfırdan plan
+> yapmasıydı.**
+>
+> Oturumun yapacağı tek şey:
+> 1. §1.4 durum tablosundaki **ilk AÇIK maddeyi** al.
+> 2. Sadece onu yap. Brief'i yeniden yorumlama.
+> 3. Bitince tabloda **KAPANDI** yap, yanına tek satır ölçülmüş sonuç yaz,
+>    commit + push.
+> 4. **Durma — sıradaki açık maddeye geç.** İş akacak; Damla router değildir,
+>    faz arası soru ona sorulmaz, tarafsız ajana sorulur.
+>
+> Takılırsan: madde AÇIK kalır, altına tek satır neye takıldığın yazılır,
+> commit atılır. Uydurma çözüm, "yaklaşık çalışıyor", sessiz varsayılan yasak.
+>
+> Yasak: plan yazmak, koşu düzeni kurmak, sıralama önermek, repo inceleme
+> raporu çıkarmak, yeni faz tanımlamak, kapanmamış maddeyi atlamak.
+
 > Otorite: `HEDEF.md` > bu belge. Bu belgede geçen her faz satırının yanında
 > **hangi maddeden geldiği** yazılıdır (md.1, md.9 …). Madde numarası yoksa o
 > satır bu plana giremez.
@@ -38,18 +60,18 @@ kullanıcının göreceği yere takılması.
 
 Bu yüzden sıra şudur:
 
-1. **F1–F3: zinciri kullanıcıya ulaştır** (md.1). Çirkin olsun, ama bir insan
+1. **A1–A3: zinciri kullanıcıya ulaştır** (md.1). Çirkin olsun, ama bir insan
    fotoğraf yükleyip flat + kalıp + rehber indirebilsin. Bu, `CLAUDE.md`'nin
    tek testinin ("bir insanın satın alabileceği bir nesne") ilk kez gerçekten
    sağlandığı andır.
-2. **F4–F5: satılabilir hale getir** (md.10, platform maddesi). Paket, rehber,
+2. **A4–A5: satılabilir hale getir** (md.10, platform maddesi). Paket, rehber,
    üyelik, ödeme. Çirkin flat de satılır; indirilemeyen flat satılmaz.
-3. **F6–F8: güzelleştir** (md.4, md.5, md.12). Prenses X çaprazlaması, croquis
+3. **A6–A8: güzelleştir** (md.4, md.5, md.12). Prenses X çaprazlaması, croquis
    konvansiyonu, Buğra kıyası. Bunlar **ürünü daha iyi** yapar; ürünü **var**
-   etmezler. Var etme işi F1–F5'te bitmiştir.
-4. **F9–F11: genişlet** (md.2, md.6, md.9). Bölgesel edit, kumaş, primitifler.
+   etmezler. Var etme işi A1–A5'te bitmiştir.
+4. **A9–A11: genişlet** (md.2, md.6, md.9). Bölgesel edit, kumaş, primitifler.
    Bunlar yeni yetenek; MVP'nin şartı değil.
-5. **F12–F13: çoğalt** (pazarlama, iOS).
+5. **A12–A13: çoğalt** (pazarlama, iOS).
 
 **Neden güzelleştirme sonda?** Çünkü bugün elde olan flat zaten satılabilir
 ayarda. `KOSU/ciktilar/yerel/31090/flat.png` gözle incelendi: prenses dikişli,
@@ -57,9 +79,9 @@ bel kesimli, klos etekli, fisto kenarlı, ön+arka, temiz kontur, sıfır kırm�
 Etsy'deki bir kalıp satıcısının ilanına konsa yadırganmaz. Bunu %10 daha iyi
 yapmak için harcanan hafta, **sıfır satışlı bir hafta**dır.
 
-**Neden repo temizliği (md.13) en sonda değil?** Çünkü o F1'i engellemiyor.
-Ama F4'ten (ödeme/deploy) önce yapılmalı: 110 MB `KOSU/ciktilar` + 116 MB
-`engine/build` ile deploy edilmez. Bu yüzden F4'ün içine konuldu, ayrı faz
+**Neden repo temizliği (md.13) en sonda değil?** Çünkü o A1'i engellemiyor.
+Ama A4'ten (ödeme/deploy) önce yapılmalı: 110 MB `KOSU/ciktilar` + 116 MB
+`engine/build` ile deploy edilmez. Bu yüzden A4'ün içine konuldu, ayrı faz
 olarak değil — md.13 bir iş değil, bir bakım.
 
 ---
@@ -95,7 +117,7 @@ fotoğraf yolu (`analyze.js` → `vision-bridge.js`) spec ekseni üretir ("elbis
 değil. Kelimeden silüet uydurmak yerine adıyla reddediyor — dürüst davranış.
 
 Ama sonuç şu: **sitede flat indirme düğmesi hiç çalışmadı, çalışmıyor.**
-Terminalde çalışan zincir siteye bağlı değil. F1'in tek işi budur.
+Terminalde çalışan zincir siteye bağlı değil. A1'in tek işi budur.
 
 ### 1.3 Ölçülen çıktı — `KOSU/ciktilar/yerel/31090/`
 
@@ -172,7 +194,7 @@ backDetail 4 · bardotStyle 3 · cupSeam 3 • locketTop 2 · yoke 3 · boxPleat
   ile reddediliyor (§1.2).
 
 → **md.9 kısmen kapalı:** yeni hat (siluet) açık, eski hat (vocab) hâlâ duruyor
-ama ürüne bağlı değil. F3'te eski hat sökülünce md.9 tam kapanır.
+ama ürüne bağlı değil. A3'te eski hat sökülünce md.9 tam kapanır.
 
 ### 1.6 `KOSU/ciktilar/paket-02/` içinde ne var?
 
@@ -199,8 +221,8 @@ kurulmadan (3 Eyl), eski motor/spec hattından üretildi. `yerel/31090`'ın
 çıktılar silinsin" dedi (md.14) ve "hiç dikmedi" (A9 satırı).
 
 → `paket-02` **ürün değil, ŞABLON**dur. Değerli olan tek şey, bir paketin
-hangi dosyalardan oluşacağını göstermesi. F3 aynı 21 dosyayı **yeni zincirden**
-üretecek; `paket-02`'nin kendisi F4'te silinecek.
+hangi dosyalardan oluşacağını göstermesi. A3 aynı 21 dosyayı **yeni zincirden**
+üretecek; `paket-02`'nin kendisi A4'te silinecek.
 
 ### 1.7 Repo durumu (md.13)
 
@@ -217,11 +239,11 @@ hangi dosyalardan oluşacağını göstermesi. F3 aynı 21 dosyayı **yeni zinci
 
 Kökte üç ayrı koşu belgesi var: `0509-kosu.md` (91 KB), `KOSU/1209-kosu.md`
 (35 KB), `KOSU/1209-devir.md`, `KOSU/0911-kapanis.md`, `KOSU/0509-devir-notu.md`,
-`KOSU/0509-ilerleme.md`. Bu plan onların yerine geçer; F4'te birleştirilir.
+`KOSU/0509-ilerleme.md`. Bu plan onların yerine geçer; A4'te birleştirilir.
 
 ### 1.8 Para kısıtı — ölçüldü
 
-- `.env.local` var ama **F1–F13 boyunca hiçbir faz API anahtarı okumaz.**
+- `.env.local` var ama **A1–A13 boyunca hiçbir faz API anahtarı okumaz.**
 - Tek arka uç: `claude -p` alt süreci (`KOSU/siluet-oku.mjs` `ARKA_UCLAR`).
 - Bir okuma **5–8 dakika** sürer (`ZAMAN_TAVANI_MS = 8 dk`). Tam çevrim 30–40 dk.
 - Okumalar `KOSU/onbellek/` içinde sha256 ile önbelleklenir → aynı fotoğraf
@@ -229,7 +251,7 @@ Kökte üç ayrı koşu belgesi var: `0509-kosu.md` (91 KB), `KOSU/1209-kosu.md`
 
 **Plana etkisi:** `siluet-oku.mjs` içindeki `ARKA_UCLAR` tablosu tek değişim
 noktasıdır. Para gelince oraya `'api'` arka ucu eklenir, üstündeki hiçbir
-dosya değişmez. F2 bu tabloyu **korur**, genişletmez.
+dosya değişmez. A2 bu tabloyu **korur**, genişletmez.
 
 ### 1.9 DOĞRULANMADI / göremediklerim
 
@@ -269,7 +291,7 @@ Sıra bağlayıcı. Her faz **taze ajan**; işi bitince ölür. Her fazın çık
 
 ---
 
-#### F1 — Site fotoğrafı gerçekten okusun
+#### A1 — Site fotoğrafı gerçekten okusun
 
 **Madde:** md.1 (fotoğraf+prompt = kalıp+flat) · md.11 (kök neden mimaride olabilir)
 
@@ -296,11 +318,11 @@ Bu oldu mu bitti mi? Satılsa alır mıydım?*
 
 ---
 
-#### F2 — İndirme düğmesi: flat + kalıp + rehber
+#### A2 — İndirme düğmesi: flat + kalıp + rehber
 
 **Madde:** md.1 · md.10 (sadece kalıp+flat verilip geçilmeyecek: rehber, püf noktaları)
 
-**Ne yapılacak.** F1'in ürettiği okumadan **indirilebilir dosyalar** çıksın:
+**Ne yapılacak.** A1'in ürettiği okumadan **indirilebilir dosyalar** çıksın:
 
 1. `flat.svg` + `flat.pdf` — teknik çizim (ön + arka).
 2. `kalip-A4.pdf` — 1:1 kalıp, A4 sayfalarda, 100 mm kalibrasyon karesiyle.
@@ -315,7 +337,7 @@ zincirinden yapılır. `web/lib/pdf-core.js` (27 865 B) ve `web/lib/rehber-tr.js
 (27 903 B) zaten var; yeniden yazılmaz, bağlanır.
 
 **Beden serisi bu fazda YOK.** Tek beden (EU36) yeter — md.4 flat'in 36'sı ile
-kalıbın 36'sını ayırıyor, seri değil. Seri F5'te.
+kalıbın 36'sını ayırıyor, seri değil. Seri A5'te.
 
 **Bitince NE GÖRÜLECEK.**
 Damla indirme düğmesine basar, `stitchu-<tarih>.zip` iner, açar; içinde
@@ -326,7 +348,7 @@ tutuyor, yoksa bir sürü dosya mı? Satılsa alır mıydım?*
 
 ---
 
-#### F3 — Arka uydurma dürüstlüğü + eski hattı sök
+#### A3 — Arka uydurma dürüstlüğü + eski hattı sök
 
 **Madde:** edge case (sadece ön varsa arkayı UYDUR ama uydurduğunu SÖYLE) ·
 md.9 (sabit sözlük yok) · md.14 (eski onaysız çıktılar silinsin)
@@ -360,7 +382,7 @@ görünür. `grep -rn "vocab\|neckline" web/js/` çıktısı ürün hattında bo
 
 ---
 
-#### F4 — Deploy + repo temizliği
+#### A4 — Deploy + repo temizliği
 
 **Madde:** md.13 (repo düzenlenecek, gereksiz silinecek) · md.14 (eski çıktılar silinsin)
 
@@ -378,11 +400,11 @@ görünür. `grep -rn "vocab\|neckline" web/js/` çıktısı ürün hattında bo
    - Koşu belgeleri (`0509-kosu.md` 91 KB, `1209-kosu.md`, `1209-devir.md`,
      `0911-kapanis.md`, `0509-devir-notu.md`, `0509-ilerleme.md`) → ölçüm
      tabloları bu dosyaya taşınır, gerisi arşive.
-   - `paket-02` silinir (§1.6 — şablonu F2'ye geçti).
+   - `paket-02` silinir (§1.6 — şablonu A2'ye geçti).
    - `engine/CMakeLists.txt` 102 KB ve `golden-reference.csv` 2.5 MB
      incelenir (§1.9).
 3. G2'nin kırmızıya düşürdüğü dört kapı (`vitrin_gercek`, `indir`,
-   `uctan_uca`, `manken_insan_ayrim`) F1–F3'ten sonra yeniden koşturulur.
+   `uctan_uca`, `manken_insan_ayrim`) A1–A3'ten sonra yeniden koşturulur.
 
 **Bitince NE GÖRÜLECEK.**
 Canlı URL'de fotoğraf → flat + kalıp. `du -sh .git` ve kök dosya sayısı
@@ -393,7 +415,7 @@ mi? Repo bir başkasının açıp anlayabileceği halde mi?*
 
 ---
 
-#### F5 — Platform: üyelik, kredi, gardırop, ödeme
+#### A5 — Platform: üyelik, kredi, gardırop, ödeme
 
 **Madde:** md.10 (ileride üyelik, forum) · platform maddesi (üyelik, 2 ücretsiz
 hak, kredi/abonelik, gardırop, ödeme, agresif SEO)
@@ -406,7 +428,7 @@ hak, kredi/abonelik, gardırop, ödeme, agresif SEO)
 4. **Gardırop** — kullanıcının ürettiği paketler hesabında durur, yeniden
    indirilir. (`web/closet.html` var, 3 321 B — bağlanacak iskelet.)
 5. **Ödeme** — sağlayıcı seçilir, bir satın alma uçtan uca çalışır.
-6. **Beden serisi** — F2'de tek bedendi; burada EU34–44 açılır
+6. **Beden serisi** — A2'de tek bedendi; burada EU34–44 açılır
    (`paket-02/beden-serisi.json` şablonu).
 7. **Agresif SEO** — `sitemap.xml`, `robots.txt` var; giysi tipi başına
    sayfa üretimi.
@@ -423,11 +445,11 @@ Bu bir ürün mü, bir demo mu?*
 ### ▸ BÖLÜM C — GÜZELLEŞTİRME (ürün satıldıktan sonra)
 
 > Buradan sonrası **ürünü daha iyi** yapar. Hiçbiri ürünün var olma şartı
-> değil. F5 bitmeden bu bölüme geçilmez.
+> değil. A5 bitmeden bu bölüme geçilmez.
 
 ---
 
-#### F6 — Okuma doğruluğu (eski A3) + prenses X çaprazlaması (eski A4)
+#### A6 — Okuma doğruluğu (eski A3) + prenses X çaprazlaması (eski A4)
 
 **Madde:** md.11 (kök neden her yerde olabilir) · md.5 (flat konvansiyonu)
 
@@ -451,7 +473,7 @@ tablosu değil, ÇİZİMLER gösterildi mi?*
 
 ---
 
-#### F7 — Croquis konvansiyonu: hepsi aynı insana çizilmiş gibi
+#### A7 — Croquis konvansiyonu: hepsi aynı insana çizilmiş gibi
 
 **Madde:** md.5 · md.4 (flat 36 = croquis, kalıp 36 = dikilebilir)
 
@@ -470,7 +492,7 @@ doğru yöntem buydu. Kalan croquis oranları aynı yöntemle denetlenir:
 
 ---
 
-#### F8 — Buğra kıyası (eski A8)
+#### A8 — Buğra kıyası (eski A8)
 
 **Madde:** md.12 (Buğra'nın kalıbına yaklaşıyor mu — kör kontrol, ayar hedefi değil)
 
@@ -494,7 +516,7 @@ kalıbı eğip bükmedi mi?*
 
 ---
 
-#### F9 — Bölgesel edit (eski A5)
+#### A9 — Bölgesel edit (eski A5)
 
 **Madde:** md.2 (Midjourney tarzı bölgesel edit — anchor+ratio, JSON spec)
 
@@ -514,7 +536,7 @@ bozuldu mu?*
 
 ---
 
-#### F10 — Kumaş ve parça bölme (eski A7)
+#### A10 — Kumaş ve parça bölme (eski A7)
 
 **Madde:** md.6 (kumaş davranışı, parça bölme, aynı elbise iki kumaş iki kalıp,
 negatif pay) · md.7 (en az parça, gereksiz bölme yok)
@@ -547,7 +569,7 @@ kopyası mı? Parça sayısı gereksiz mi büyümüş?*
 
 ---
 
-#### F11 — Her giysi (eski A6)
+#### A11 — Her giysi (eski A6)
 
 **Madde:** md.9 (sınırsız kalıp ve flat) · md.1
 
@@ -566,7 +588,7 @@ Dört farklı giysi tipi, dördünün flat + kalıbı. Tek sayfada.
 
 ---
 
-#### F12 — Pazarlama
+#### A12 — Pazarlama
 
 **Madde:** pazarlama maddesi (Instagram/LinkedIn, iki iş modeli: flat satışı +
 giysi satışı)
@@ -585,7 +607,7 @@ Pazarlama dili buradan kurulur.
 
 ---
 
-#### F13 — iOS uygulaması
+#### A13 — iOS uygulaması
 
 **Madde:** md.10 (ileride iOS) · iOS maddesi (Swift, aynı arkaplan/fontlar)
 
@@ -645,7 +667,7 @@ Her fazın sonunda **tarafsız hakem ajanı** koşar. İşi yapan ajan kendini
 
 ---
 
-### F1 brief
+### A1 brief
 
 ```
 GÖREV: stitchu sitesinde fotoğraf yüklemesi gerçekten flat üretsin.
@@ -673,17 +695,17 @@ ve üretilen SVG dosyasının yolu.
 
 ---
 
-### F2 brief
+### A2 brief
 
 ```
 GÖREV: indirme düğmesi flat + kalıp + rehber versin.
 
-DURUM: F1 bitti, ekranda flat var. İndirilecek dosya yok.
+DURUM: A1 bitti, ekranda flat var. İndirilecek dosya yok.
 KOSU/ciktilar/paket-02/ bir ŞABLONDUR (3 Eyl, ESKİ hattan üretildi,
 içeriği kullanılmaz) — ondan alınacak tek şey DOSYA LİSTESİ.
 web/lib/pdf-core.js ve web/lib/rehber-tr.js zaten var; yeniden yazma, bağla.
 
-YAP: F1'in okumasından şu dosyalar üretilsin ve tek zip inisin:
+YAP: A1'in okumasından şu dosyalar üretilsin ve tek zip inisin:
   flat.svg + flat.pdf        teknik çizim, ön + arka
   kalip-A4.pdf               1:1, A4, 100mm kalibrasyon karesiyle
   kalip-A0.pdf               tek sayfa matbaa
@@ -698,7 +720,7 @@ BİTİNCE GÖSTER: inen zip'in içeriği + kalip-A4.pdf'in kalibrasyon karesi
 
 ---
 
-### F3 brief
+### A3 brief
 
 ```
 GÖREV: arka uydurma dürüstlüğü + eski sabit-sözlük hattını sök.
@@ -724,7 +746,7 @@ BİTİNCE GÖSTER: sadece ön fotoğrafla üretilmiş çıktının ekran görün
 
 ---
 
-### F4 brief
+### A4 brief
 
 ```
 GÖREV: canlı deploy + repo temizliği (HEDEF.md md.13, md.14).
@@ -738,7 +760,7 @@ yerel köprü talimatı mı, kuyruk mu, başka bir şey mi. Kararı ölçümle v
   KOSU/ciktilar/       110 MB  -> gitignore + eski setler sil (md.14)
   engine/build/        116 MB  -> gitignore
   KOSU/0509-kapi.log   1.2 MB  -> sil
-  KOSU/ciktilar/paket-02/       -> sil (şablonu F2'ye geçti)
+  KOSU/ciktilar/paket-02/       -> sil (şablonu A2'ye geçti)
   koşu belgeleri (0509-kosu.md 91KB, 1209-kosu.md, 1209-devir.md,
     0911-kapanis.md, 0509-devir-notu.md, 0509-ilerleme.md)
     -> ölçüm tabloları KOSU/KOSU.md'ye taşı, gerisi arşive
@@ -754,7 +776,7 @@ BİTİNCE GÖSTER: canlı URL'de fotoğraf→flat ekran görüntüsü + du -sh
 
 ---
 
-### F5 brief
+### A5 brief
 
 ```
 GÖREV: platform — üyelik, 2 ücretsiz hak, kredi/abonelik, gardırop, ödeme, SEO.
@@ -778,7 +800,7 @@ almanın ekran görüntüsü + inen paket.
 
 ---
 
-### F6 brief
+### A6 brief
 
 ```
 GÖREV: okuma doğruluğu + prenses X çaprazlaması.
@@ -806,7 +828,7 @@ koşu koşu skor tablosu (yayılım dahil).
 
 ---
 
-### F7 brief
+### A7 brief
 
 ```
 GÖREV: flat konvansiyonu — hepsi aynı insana çizilmiş gibi (HEDEF.md md.5).
@@ -827,7 +849,7 @@ göğüs/bel/kalça hatları çakışıyor mu?
 
 ---
 
-### F8 brief
+### A8 brief
 
 ```
 GÖREV: Buğra kıyası (HEDEF.md md.12).
@@ -845,7 +867,7 @@ mm cinsinden fark tablosu.
 
 ---
 
-### F9 brief
+### A9 brief
 
 ```
 GÖREV: bölgesel edit — "şuraya fiyonk ekle" (HEDEF.md md.2).
@@ -863,7 +885,7 @@ BİTİNCE GÖSTER: aynı elbisenin dört hali yan yana (temel, +fiyonk,
 
 ---
 
-### F10 brief
+### A10 brief
 
 ```
 GÖREV: kumaş davranışı ve parça bölme (HEDEF.md md.6, md.7).
@@ -893,7 +915,7 @@ farklar mm cinsinden işaretli.
 
 ---
 
-### F11 brief
+### A11 brief
 
 ```
 GÖREV: elbise dışındaki giysiler (HEDEF.md md.9 "modanın sınırı yok", md.1).
@@ -911,7 +933,7 @@ BİTİNCE GÖSTER: dört farklı giysi tipinin flat + kalıbı, tek sayfada.
 
 ---
 
-### F12 brief
+### A12 brief
 
 ```
 GÖREV: pazarlama — Instagram/LinkedIn, iki iş modeli.
@@ -929,13 +951,13 @@ BİTİNCE GÖSTER: yayınlanmış gönderiler + siteye gelen ziyaretçi sayısı
 
 ---
 
-### F13 brief
+### A13 brief
 
 ```
 GÖREV: iOS uygulaması (HEDEF.md md.10 + Damla'nın iOS maddesi).
 
 Swift. Siteyle AYNI arkaplan ve fontlar. App/ klasörü var.
-Fotoğraf çek/seç -> flat + kalıp. Arka uç F4'te kurulan uçtur.
+Fotoğraf çek/seç -> flat + kalıp. Arka uç A4'te kurulan uçtur.
 
 BİTİNCE GÖSTER: simülatörde fotoğraf -> flat, ekran kaydı.
 ```
@@ -948,24 +970,24 @@ BİTİNCE GÖSTER: simülatörde fotoğraf -> flat, ekran kaydı.
 
 | madde | ne diyor | durum (12 Eyl, ölçüldü) | kapanacağı faz |
 |---|---|---|---|
-| **md.1** | fotoğraf+prompt = kalıp+flat | **YARI AÇIK** — terminalde çalışıyor (`yerel/31090`), sitede `return null` | **F1, F2** |
-| **md.2** | Midjourney tarzı bölgesel edit | **AÇIK** — 15 op + replay var (`docs/GRAF-IR.md`), doğal dil yok | F9 |
+| **md.1** | fotoğraf+prompt = kalıp+flat | **YARI AÇIK** — terminalde çalışıyor (`yerel/31090`), sitede `return null` | **A1, A2** |
+| **md.2** | Midjourney tarzı bölgesel edit | **AÇIK** — 15 op + replay var (`docs/GRAF-IR.md`), doğal dil yok | A9 |
 | **md.3** | CS hesap ve matematik işi | **AÇIK/sürekli** — croquis düzeltmesi ölçümle yapıldı (0.918, iki kaynak 0.0008 içinde); yöntem doğru | sürekli |
-| **md.4** | flat 36 = croquis, kalıp 36 = dikilebilir | **KISMEN** — ayrım kodda var (`croquis36` / `gercek36`); dikilebilirlik prova edilmedi (Damla hiç dikmedi) | F5 (seri), F8 (prova) |
-| **md.5** | flat konvansiyonu, hepsi aynı insana | **AÇIK** — croquis oranları ölçülmüş değil, konmuş (araştırma uyarısı §5) | F7 |
-| **md.6** | kumaş, parça bölme, iki kumaş iki kalıp | **AÇIK** — 5 kumaş rehberi `paket-02`'de var ama ESKİ hattan; negatif pay tuzağı ölçülmüş, uygulanmamış | F10 |
-| **md.7** | en az parça, gereksiz bölme yok | **AÇIK** — `yerel/31090` 9 op; dart=Gaussian curvature bulgusu uygulanmadı | F10 |
+| **md.4** | flat 36 = croquis, kalıp 36 = dikilebilir | **KISMEN** — ayrım kodda var (`croquis36` / `gercek36`); dikilebilirlik prova edilmedi (Damla hiç dikmedi) | A5 (seri), A8 (prova) |
+| **md.5** | flat konvansiyonu, hepsi aynı insana | **AÇIK** — croquis oranları ölçülmüş değil, konmuş (araştırma uyarısı §5) | A7 |
+| **md.6** | kumaş, parça bölme, iki kumaş iki kalıp | **AÇIK** — 5 kumaş rehberi `paket-02`'de var ama ESKİ hattan; negatif pay tuzağı ölçülmüş, uygulanmamış | A10 |
+| **md.7** | en az parça, gereksiz bölme yok | **AÇIK** — `yerel/31090` 9 op; dart=Gaussian curvature bulgusu uygulanmadı | A10 |
 | **md.8** | tech stack sınırsız zorlanabilir | **AÇIK/serbest** — bugün kısıt para, teknoloji değil | — |
-| **md.9** | sabit sözlük YOK, Edge/Panel/Stitch | **YARI KAPALI** — silüet hattı sözlüksüz (oran tabanlı); `vocab.json` 37 alan/132 değer duruyor ama ürüne bağlı değil | **F3** |
-| **md.10** | rehber, püf noktaları, üyelik, forum, iOS | **AÇIK** — rehber kodu var (`rehber-tr.js`), yeni zincire bağlı değil | F2, F5, F13 |
+| **md.9** | sabit sözlük YOK, Edge/Panel/Stitch | **YARI KAPALI** — silüet hattı sözlüksüz (oran tabanlı); `vocab.json` 37 alan/132 değer duruyor ama ürüne bağlı değil | **A3** |
+| **md.10** | rehber, püf noktaları, üyelik, forum, iOS | **AÇIK** — rehber kodu var (`rehber-tr.js`), yeni zincire bağlı değil | A2, A5, A13 |
 | **md.11** | kök neden her yerde, think out of the box | **ÇALIŞIYOR** — 12 Eyl'de kök neden `engine/src/body.cpp:174`'te bulundu (croquis omuz, göğsün 55.4 mm dışında); doğru refleks | sürekli |
-| **md.12** | Buğra'ya yaklaşıyor mu | **AÇIK** — son ölçüm 4 Eyl, croquis 12 Eyl'de değişti → **o sayı geçersiz** | F8 |
-| **md.13** | repo düzenlenecek | **AÇIK** — kök 25 dosya, `KOSU/` 47, `ciktilar` 110 MB, `build` 116 MB, tek log 1.2 MB | F4 |
-| **md.14** | eski onaysız çıktılar silinsin | **AÇIK** — `paket-02` (3 Eyl, eski hat) duruyor; `ciktilar/` altında 40+ eski set | F4 |
-| **edge** | ön varsa arkayı uydur, **söyle** | **YARI** — `kaynak-yolu.txt`'de "arka.koken turetildi" yazıyor ama kullanıcı görmüyor | **F3** |
-| **platform** | üyelik, 2 hak, kredi, gardırop, ödeme, SEO | **AÇIK** — `closet.html` iskeleti var (3 321 B), bağlı değil | F5 |
-| **pazarlama** | Instagram/LinkedIn, iki iş modeli | **AÇIK** — hangisinin güçlü olduğu ölçüldü (flat satışı) | F12 |
-| **iOS** | Swift, aynı arkaplan/fontlar | **AÇIK** — `App/` klasörü var | F13 |
+| **md.12** | Buğra'ya yaklaşıyor mu | **AÇIK** — son ölçüm 4 Eyl, croquis 12 Eyl'de değişti → **o sayı geçersiz** | A8 |
+| **md.13** | repo düzenlenecek | **AÇIK** — kök 25 dosya, `KOSU/` 47, `ciktilar` 110 MB, `build` 116 MB, tek log 1.2 MB | A4 |
+| **md.14** | eski onaysız çıktılar silinsin | **AÇIK** — `paket-02` (3 Eyl, eski hat) duruyor; `ciktilar/` altında 40+ eski set | A4 |
+| **edge** | ön varsa arkayı uydur, **söyle** | **YARI** — `kaynak-yolu.txt`'de "arka.koken turetildi" yazıyor ama kullanıcı görmüyor | **A3** |
+| **platform** | üyelik, 2 hak, kredi, gardırop, ödeme, SEO | **AÇIK** — `closet.html` iskeleti var (3 321 B), bağlı değil | A5 |
+| **pazarlama** | Instagram/LinkedIn, iki iş modeli | **AÇIK** — hangisinin güçlü olduğu ölçüldü (flat satışı) | A12 |
+| **iOS** | Swift, aynı arkaplan/fontlar | **AÇIK** — `App/` klasörü var | A13 |
 
 ### Eski A defterinden bu plana eşleme
 
@@ -973,25 +995,25 @@ BİTİNCE GÖSTER: simülatörde fotoğraf -> flat, ekran kaydı.
 |---|---|---|
 | A1 geçit altyapısı | — | KAPANDI, taşınmadı |
 | A2 ilk uçtan uca | — | KAPANDI (terminalde) |
-| A3 fotoğraf okunsun | **F6** | **öne değil, SONA** — güzelleştirme |
-| A4 çizim güzelleşsin | **F6, F7** | sona |
-| A5 edit | F9 | — |
-| A6 her giysi | F11 | — |
-| A7 kumaş | F10 | — |
-| A8 Buğra | F8 | eski sayı geçersiz ilan edildi |
-| A9 paket | **F2** | **sondan ÖNE** — MVP'nin parçası |
-| A10 deploy/landing | **F4** | **sondan ÖNE** |
-| A11 tur | F12 | — |
+| A3 fotoğraf okunsun | **A6** | **öne değil, SONA** — güzelleştirme |
+| A4 çizim güzelleşsin | **A6, A7** | sona |
+| A5 edit | A9 | — |
+| A6 her giysi | A11 | — |
+| A7 kumaş | A10 | — |
+| A8 Buğra | A8 | eski sayı geçersiz ilan edildi |
+| A9 paket | **A2** | **sondan ÖNE** — MVP'nin parçası |
+| A10 deploy/landing | **A4** | **sondan ÖNE** |
+| A11 tur | A12 | — |
 | A12 tavan denemesi | — | çıkarıldı; `CLAUDE.md` "tavan yok" diyor |
-| — | **F1** | **YENİ ve İLK** — siteyi zincire bağla |
-| — | **F5** | **YENİ** — üyelik/ödeme (Damla'nın platform maddesi) |
+| — | **A1** | **YENİ ve İLK** — siteyi zincire bağla |
+| — | **A5** | **YENİ** — üyelik/ödeme (Damla'nın platform maddesi) |
 
 ---
 
 ## 6. Bu planın kendisine dair
 
 Bu belge `KOSU/1209-kosu.md`'nin yerine geçmez; onun **ölçülmüş bulgularını**
-(§2.5–§2.8, §4, §5) kaynak olarak kullanır ve F4'te o belge arşive taşınır.
+(§2.5–§2.8, §4, §5) kaynak olarak kullanır ve A4'te o belge arşive taşınır.
 
 Bu belge bir **sıra**dır. İçinde yeni eşik, yeni yasak, yeni ritüel yoktur.
 Ölçme araçları (`kapi.sh`, `goz.mjs`, `altin-kiyas.mjs`) zaten repoda ve
