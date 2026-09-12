@@ -41,11 +41,11 @@
     "waist"
    ],
    "kalca": [
-    "hip*0.90",
-    "waist..hip@0.62"
+    "hip*0.97",
+    "waist..hip@0.58"
    ],
    "etekYan": [
-    "hip*0.98",
+    "hip*1.06",
     "hip+1"
    ],
    "etekOrta": [
@@ -74,14 +74,14 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckBase+16"
+      "neckBase+18"
      ],
      [
       "neckFront*0",
-      "neckBase+168"
+      "neckBase+176"
      ]
     ],
-    "genislik": 148,
+    "genislik": 126,
     "bicim": "kademe",
     "bogazOran": 0.3,
     "kademeOran": 0.4,
@@ -144,9 +144,9 @@
       "neckBase+42"
      ]
     ],
-    "boy": 180,
-    "en": 7,
-    "ayrilma": 0.26
+    "boy": 175,
+    "en": 8,
+    "ayrilma": 0.12
    }
   ],
   "etekSarkma": 2
@@ -182,11 +182,11 @@
     "waist"
    ],
    "kalca": [
-    "hip*0.90",
-    "waist..hip@0.62"
+    "hip*0.97",
+    "waist..hip@0.58"
    ],
    "etekYan": [
-    "hip*0.98",
+    "hip*1.06",
     "hip+1"
    ],
    "etekOrta": [
