@@ -505,7 +505,12 @@ function gorunumCiz(g, ad, kirmizi, oturma, okumaRenk) {
     // SARKMA ORANI contract'tan: gorunum.etekUcu.sarkmaOran x etek yari genisligi (OLCULDU 8 bedende).
     // Etek genisledikce kavis de buyur — A-line/klos etekte duz yatay cizgi kalmaz.
     const sark = g.etekSarkma ?? etekSarkmaHesap(ey);
-    d += ` C ${f1(ey.x * 0.55)} ${f1(eo.y + sark * 1.35)} ${f1(eySol.x * 0.55)} ${f1(eo.y + sark * 1.35)} ${P(eySol)}`;
+    // KOSE YUMUSATMA (12 Eyl): kontroller ey.x*0.55'teydi; yan dikisten etek ucuna
+    // gecis teget uyumsuzdu ve iki alt kosede KIRIK olusuyordu (regresyon ornegi
+    // giris-3/5'te gorunur). Kontroller kenara yaklastirilinca (0.80) teget
+    // yan dikisin yonune yaklasir ve gecis yumusar.
+    d += ` C ${f1(ey.x * 0.80)} ${f1(ey.y + sark * 0.30)} ${f1(ey.x * 0.42)} ${f1(eo.y + sark * 1.45)} ${f1(eo.x)} ${f1(eo.y + sark)}`;
+    d += ` C ${f1(eySol.x * 0.42)} ${f1(eo.y + sark * 1.45)} ${f1(eySol.x * 0.80)} ${f1(eySol.y + sark * 0.30)} ${P(eySol)}`;
   }
   // SOL yarim ters sirayla
   // sol yarim: AYNI noktalarin aynasi, ters sirada (yanAdlar listesi kaldirildi;

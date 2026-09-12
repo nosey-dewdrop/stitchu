@@ -401,3 +401,40 @@ Görseller: `defter-98.png`, `defter-99.png`, `defter-104.png`,
 - bant uçlarındaki **sivri boynuz**: üst kenar y=0'da, alt kenar altY'de,
   omuzda birleşince sivri uç oluşuyordu → `ucDusme` ile üst uç aşağı çekildi
 - kol omuz ucunu 28mm aşıyordu → `shoulderTip*1.00`
+
+## Tur 107-110 — hakem 2. tur: "silüet sınıfı geçti, kalan işçilik"
+
+Görseller: `defter-107.png`, `defter-110.png`, `kiyas-bugra2.png`
+
+**HAKEM VERDİKTİ (2. tur):** *"Artık klipart değil, yarım kalmış teknik pafta.
+Buğra'nın yanına konsa silüet artık utandırmıyor. Hata sınıfı 'oransızlık'tan
+'işçilik'e düştü."*
+
+**ÖLÇÜM — tur 1 → tur 2:**
+| oran | hedef | tur 1 | tur 2 | durum |
+|---|---|---|---|---|
+| kalça/bel | 1.392 | 1.244 | **1.426** | HEDEFTE |
+| etek/göğüs | 1.113 | 1.099 | **1.192** | HEDEFTE |
+| gövde/göğüs | 2.235 | 2.067 | 2.582 | hedefi aştı |
+| bel/göğüs | 0.945 | 0.883 | 0.836 | fazla dar |
+| kol/gövde | 0.195 | 0.344 | 0.264 | düzeldi, yetmedi |
+
+**HAKEMİN EN DEĞERLİ BULGUSU — bağımlılık:**
+*"Üç oran aynı anda hedefi aştı, bu tesadüf değil. Etek `hip+124`'e çekilirken
+gövde boyu paydası büyüdü, bu da açıklık derinliği ve kol oranını birlikte bozdu.
+**Tek parametre (etek ucu Y) üç oranı birden hareket ettiriyor.** Önce gövde
+boyunu oturtun, diğerleri kendiliğinden düzelir."*
+
+Bu, defterin başındaki değişken haritasını doğruluyor: `etekYan.y` en kırılgan bağ.
+
+**Kesimler:** gövde boyu `hip+124`→`hip+31` (−93mm), bel `waist*1.13`→`*1.22`,
+kalça noktası eteğin içine alındı, açıklık genişliği 118→132, köşe yarıçapı
+0.07→0.03 (kare gerçekten kare), pens yan dikişe mıklandı ve kola taşması kesildi,
+kol ağzına üst dikiş eklendi.
+
+**Motor:** etek ucu köşe geçişi yumuşatıldı — kontroller `ey.x*0.55`→`*0.80`,
+yan dikişten etek ucuna teğet uyumsuzdu, iki alt köşede kırık oluşuyordu
+(regresyon örneği `giris-3/5`'te görüldü).
+
+**REGRESYON:** `giris-3/5` (kolsuz, roba, pili) yeniden koşuldu — sıfır kırmızı,
+gölge ve doku orada da doğru çalışıyor. Motor düzeltmeleri diğer okumaları bozmadı.
