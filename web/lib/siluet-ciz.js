@@ -91,7 +91,7 @@ const P = (p) => `${f1(p.x)} ${f1(p.y)}`;
 let _kpSayac = 0;
 function kumasParcasi(d, kumas, ad, genislik) {
   const id = 'kp-' + ad.replace(/[^a-zA-Z0-9]/g, '') + '-' + (_kpSayac++);
-  const koyu = koyult(kumas, 0.13);
+  const koyu = koyult(kumas, 0.19);
   return `<clipPath id="${id}"><path d="${d}"/></clipPath>\n`
     + `<path d="${d}" fill="${kumas}" stroke="none"/>\n`
     // GOLGE TEK YONDEN GELIR (12 Eyl duzeltme). Once kenarin TAMAMINA esit
@@ -106,9 +106,9 @@ function kumasParcasi(d, kumas, ad, genislik) {
     + `<mask id="${id}-m"><rect x="-9999" y="-9999" width="19998" height="19998" fill="url(#${id}-g)"/></mask>\n`
     + `<g clip-path="url(#${id})" mask="url(#${id}-m)">`
     + `<path d="${d}" fill="none" stroke="${koyu}" stroke-width="${genislik}"`
-    + ` stroke-linejoin="round" stroke-linecap="round" opacity="0.50"/>`
+    + ` stroke-linejoin="round" stroke-linecap="round" opacity="0.72"/>`
     + `<path d="${d}" fill="none" stroke="${koyu}" stroke-width="${genislik * 0.42}"`
-    + ` stroke-linejoin="round" stroke-linecap="round" opacity="0.40"/>`
+    + ` stroke-linejoin="round" stroke-linecap="round" opacity="0.58"/>`
     + `</g>\n`
     + `<path d="${d}" fill="none" stroke="#000" stroke-width="${CIZ.disKonturMM}"`
     + ` stroke-linejoin="round" stroke-linecap="round"/>\n`;
