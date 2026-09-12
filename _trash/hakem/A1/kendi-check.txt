@@ -1,0 +1,17 @@
+OK   H1 kisa-tek-satir
+OK   H2 kisa-json
+OK   H3 kisa-alanlar
+OK   H4 bilinmeyen-mod-ret
+OK   H5 ivme-bool
+OK   H6 kilit-diff-tagsiz
+OK   H7 kilit-kurulu (izin disi yazilabilir: 0)
+OK   H8 state-semasi
+OK   H9 karar1-flat-ayni-insan
+OK   H10 karar1-tavan (sayi=34 <= 34)
+OK   H11 karar2-sinyal-kume
+OK   H12 karar2-kisa-sinyalsiz
+OK   H13 karar3-cmake-izlenir
+OK   H14 karar3-cmake-yazilabilir
+OK   H15 karar3-satir-yonu
+OK   H16 kabul-komutu-var
+OZET 16 hukum gecti, 0 kirmizi

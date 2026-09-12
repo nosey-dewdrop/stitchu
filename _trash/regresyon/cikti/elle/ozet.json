@@ -1,0 +1,48 @@
+{
+  "adim": "elle",
+  "tabanMod": false,
+  "tarih": "2026-09-09T09:59:29.467Z",
+  "kosan": 6,
+  "kosmayan": 3,
+  "farkli": 0,
+  "girdiSayisi": 9,
+  "girdiler": [
+    {
+      "ad": "P1-keskin-koseli-yaka",
+      "durum": "AYNI",
+      "topoloji": "yatik yaka parcasi, KOSELERI SIVRI (yuvarlak degil)"
+    },
+    {
+      "ad": "P2-ayrik-panelli-buzgulu-kol",
+      "durum": "AYNI",
+      "topoloji": "ayrik panelli govde + kol bolgesinde buzgu"
+    },
+    {
+      "ad": "K2-prenses-roba",
+      "durum": "KOSMADI",
+      "neden": "flatSVG firlatti: flat: hicbir gorunum cizilemedi — on: kalipta beden parcasi var ama cizim tablosuna oturmadi (Front Yoke Center, Front Body Center, Front Yoke Side, Front Body Side, Back Yoke Center, Back Body Center, Back Yoke Side, Back Body Side) — etek tek basina cizilseydi giysi yanlis gorunurdu; sonraki adim: bu parca adlarini web/lib/flat-from-pattern.js gather() tablosuna bagla; arka: kalipta beden parcasi var ama cizim tablosuna oturmadi (Front Yoke Center, Front Body Center, Front Yoke Side, Front Body Side, Back Yoke Center, Back Body Center, Back Yoke Side, Back Body Side) — etek tek basina cizilseydi giysi yanlis gorunurdu; sonraki adim: bu parca adlarini web/lib/flat-from-pattern.js gather() tablosuna bagla",
+      "beklenen": "DUSER (armhole rolu tasinmiyor) — A2/A4'te kalkacak",
+      "topoloji": "prenses dikis + yatay roba (yoke)"
+    },
+    {
+      "ad": "K5-kup-korse",
+      "durum": "AYNI",
+      "topoloji": "yatay kup dikisi + korse bagcikli sirt"
+    },
+    {
+      "ad": "P3-etek-tek-topoloji",
+      "durum": "AYNI",
+      "topoloji": "govdesiz: yalniz etek (omuz/kol/yaka YOK)"
+    },
+    {
+      "ad": "P4-kolsuz-dik-yaka-mini",
+      "durum": "AYNI",
+      "topoloji": "kolsuz + dik (stand) yaka + mini"
+    },
+    {
+      "ad": "P5-ust-gomlek-yaka-buzgu",
+      "durum": "AYNI",
+      "topoloji": "ust (etek yok) + gomlek yakasi + yaka bolgesinde buzgu"
+    }
+  ]
+}

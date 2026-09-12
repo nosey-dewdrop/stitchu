@@ -1,0 +1,45 @@
+{
+  "_rol": "GIZLILIK SICILI — telifli/parali girdilerin AGACTA takipli olup olmadigini makinenin okuyabilecegi tek yer. 17 Agu (TUR 9) kuruldu. Sebep: `validate-contract.mjs` 5. kontrolu ('58-set manifest leak scan') girdisi diskte olmadigi icin BU MAKINEDE HIC KOSMUYORDU — 9 kontrolun 1'i oluydu, durustce ilan edilmisti ama yine de hicbir seyi tutmuyordu. O kontrol geri getirilemez (girdisi telifli 58-set, diskte yok ve olmayacak) — ama korudugu SEYIN yerine gecen, manifest GEREKTIRMEYEN bir kapi kurulabilir ve bu odur. Yasa CLAUDE.md'de duz yaziyla duruyordu; CLAUDE.md gitignore'da, yani makine onu okuyamiyordu ve yasa ile agac 2026-08-16'da uyusmuyordu (olculdu). Yasa artik burada, ve kapi onu her ctest kosusunda okuyor.",
+  "_kapi": "engine/tools/validate-contract.mjs kontrol 5b (ctest: contract_check)",
+
+  "korunan_yollar": [
+    {
+      "yol": "patterns_real/",
+      "neden": "SATIN ALINMIS BugraPatterns kaliplari (A0/A4/US Letter PDF'leri, talimat PDF'i, urun fotograflari). Baskasinin urunu; parayla alindi, dagitim hakki alinmadi.",
+      "ilan_edilmis_karar": "ILAN EDILMIS KARAR (Damla, 17.08): patterns_real BILEREK takipli ve repo BILEREK public. Damla'nin sozu: 'pdfleri silmicem, satin aldim.' 9B bu kirmiziyi 17 Agu sabahi 'gizlilik IHLALI' diye kurmustu; ayni gun Damla karari verdi ve TUR 10'da etiket duzeltildi. Bu bir kaza, bir sizinti ya da bir ajan hatasi DEGIL — bilinen bedeli bilerek odenen bir karar. Kapi KALDIRILMADI: sayilan sey hala 'takipli telifli dosya' (bugun 49) ve hedefi hala 0, yani kapi KIRMIZI kaliyor ve bedeli gorunur tutuyor. Yesile donmesi olcumun degil Damla'nin karari degismesinin isi (K1).",
+      "izinli": []
+    },
+    {
+      "yol": "dataset/",
+      "neden": "kazinmis fotograf korpusu — telifli goruntuler.",
+      "izinli": [
+        "dataset/eval/README.md",
+        "dataset/eval/label-tool.mjs",
+        "dataset/eval/select-candidates.mjs",
+        "dataset/taste-pool/index.json",
+        "dataset/taste-pool/label.html",
+        "dataset/taste-pool/labels.json",
+        "dataset/vocab-canonical.json"
+      ],
+      "izinli_neden": "ARAC ve ETIKET dosyalari — goruntu tasimazlar, .gitignore negasyonlariyla birebir ayni liste. Raster hicbir zaman girmez."
+    },
+    {
+      "yol": "new_flats/",
+      "neden": "telifli flat gorseller.",
+      "izinli": []
+    },
+    {
+      "yol": "benchmark-58/",
+      "neden": "58 telifli emsal fotograf + manifest. Diskte yok; kapi yine de kosar, cunku 'diskte yok' bir gun 'diskte var ve commit'lendi'ye doner.",
+      "izinli": []
+    },
+    {
+      "yol": "engine/dist/",
+      "neden": "dagitim ciktisi — kaynaktan uretilir, agaca girmez.",
+      "izinli": []
+    }
+  ],
+
+  "_bugunku_durum": "17 Agu, TUR 10 — ETIKET DUZELTILDI, KAPI DURUYOR. `patterns_real/` 49 dosyayla HEAD'de TAKIPLI (8 satin alinmis PDF + 25 jpg, ~65.5 MB) ve repo PUBLIC. TUR 9'da bu 'gizlilik IHLALI' diye yazilmisti; ayni gun Damla karar verdi: PDF'ler KALIYOR ('pdfleri silmicem, satin aldim'), repo public KALIYOR. Dolayisiyla bu kirmizi bir kaza degil, bir KARARIN bedelidir ve oyle adlandirilir (kapinin cumlesi 'DECLARED DECISION', 'BREACHED' degil). Kapi kaldirilmadi, esik konmadi, tolerans verilmedi — sayi 49, hedef 0, hukum FAIL. Yeni bir telifli dizin sessizce eklenirse (ilan_edilmis_karar alani olmadan) eskisi gibi BREACHED der.",
+  "_bitis_sarti": "Damla'nin K1 karari degisip `patterns_real/` agactan cikinca (ve/veya gecmis filter-repo ile kazininca) kapi kendiliginden yesile doner. Esik yok, tolerans yok, pin yok — sayilacak sey 'takipli telifli dosya sayisi' ve hedefi 0. Bu bir OLCUM isi degil, bir KARAR isi."
+}

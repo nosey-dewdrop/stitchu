@@ -1,0 +1,18 @@
+  [ok] (a) taban graf topolojisi temiz (kirmizi topoloji hukmu: 0)
+  [ok] (a) taban grafta YESIL topoloji satiri var
+  [ok] (b) taban grafta bozulacak bir dikis kenari bulundu: on_beden/shoulder
+  [ok] (b) kenar_rolu ihlali ADIYLA reddedildi
+  [ok] (b) hata kodu ERR_IMPOSSIBLE_TOPOLOGY: ERR_IMPOSSIBLE_TOPOLOGY: kenar_rolu — dikis omuz tarafi a 'cut' kenari tasiyor; dikise yalniz kind=seam kenar girer (_yasa 3)
+  [ok] (b) hangi KURAL soylendi (kenar_rolu)
+  [ok] (b) hangi KENAR soylendi (on_beden/shoulder)
+  [ok] (c) ikinci dikise eklenecek kenar bulundu: on_beden/shoulder
+  [ok] (c) dikis_cifti ihlali ADIYLA reddedildi
+  [ok] (c) kod + kural metinde: ERR_IMPOSSIBLE_TOPOLOGY: dikis_cifti — kenar 2 ayri dikiste (omuz, yan_beden); bir kenar tek bir dikise aittir (_yasa 4)
+  [ok] (d) kaldirilacak dikis bulundu
+  [ok] (d) kapanmayan seam kenari ADIYLA reddedildi
+  [ok] (d) kod + kural metinde: ERR_IMPOSSIBLE_TOPOLOGY: kapanma — kind=seam kenar hicbir dikiste degil; giysi bu kenardan KAPANMIYOR (_yasa 3)
+  [ok] (d) acik kalan KENAR adiyla: arka_beden/shoulder
+  [ok] (e) dikissiz graf reddedildi
+  [ok] (e) kopuk bilesen ADIYLA: ERR_IMPOSSIBLE_TOPOLOGY: komsuluk_bagli — 5 kopuk panel bileseni; dikisler butun panelleri TEK giysiye baglamiyor (_yasa 7)
+OK (0 hata)
+| topoloji | taban-elbise | kenar_rolu · dikis_cifti · kapanma · komsuluk_bagli: dort kural da gecti (5 panel, 6 dikis) | gecti |

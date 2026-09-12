@@ -1,0 +1,37 @@
+{
+  "bayt": 53945,
+  "sha": "41a9d361dc66c42c",
+  "width": "1773.5040mm",
+  "height": "1205.0000mm",
+  "dataScale": "1:1",
+  "dataUnitMM": "1",
+  "dataSinif": "dress/dart/woven",
+  "dataSize": "EU38",
+  "dataDugum": "4dff7efba59bee16",
+  "yolSayisi": 36,
+  "rolSayisi": {
+    "siluet": 2,
+    "bel-dikisi": 4,
+    "pens": 12,
+    "dikis-izi": 8,
+    "kol": 4,
+    "yaka": 4,
+    "orta-dikis": 2
+  },
+  "_specKaynak": "KOSU/onbellek/f35565a6e4e46410....json enYakinSpec",
+  "_spec": {
+    "garment": "dress",
+    "shaping": "dart",
+    "fabric": "woven",
+    "neckline": "crew",
+    "sleeveStyle": "straight",
+    "sleeveLength": "short",
+    "skirtStyle": "aLine",
+    "skirtLength": "midi",
+    "collarType": "flat"
+  },
+  "_eksik": [
+    "kalip.svg: graftan cizim hatti yok (A2)",
+    "dikilebilir.json: graf degerleme hatti yok (A2)"
+  ]
+}

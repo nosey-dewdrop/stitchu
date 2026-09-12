@@ -1,0 +1,266 @@
+[
+ {
+  "no": 1,
+  "ilan": "pinafore (V yaka, kolsuz, bel dikisli klos mini, kapakli cep)",
+  "op": 9,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 0,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "yaka": 262.3869619835883,
+    "kol_oyugu_halka": 357.62106568075177,
+    "bel_halka": 221.62500000000009,
+    "etek_ucu": 447.20775000000003,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "yaka": 245.84053048705192,
+    "kol_oyugu_halka": 376.61409485737136,
+    "bel_halka": 342.5,
+    "etek_ucu": 641.25,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ },
+ {
+  "no": 2,
+  "ilan": "ince askili elbise (duz ust kenar, bel dikisi, diz alti A-line)",
+  "op": 19,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 0,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "bel_halka": 221.62500000000009,
+    "etek_ucu": 480.33424999999994,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "bel_halka": 342.5,
+    "etek_ucu": 688.75,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ },
+ {
+  "no": 3,
+  "ilan": "babydoll mini (bebe yaka, roba, puf kisa kol, bel dikissiz)",
+  "op": 21,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 2,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "yaka": 164.81210503886223,
+    "kol_oyugu_halka": 444.9225412163087,
+    "etek_ucu": 430.6445,
+    "kol_agzi": 182.0732548971283,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "yaka": 154.51024924172958,
+    "kol_oyugu_halka": 388.00475115101455,
+    "etek_ucu": 617.5,
+    "kol_agzi": 310.5,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ },
+ {
+  "no": 4,
+  "ilan": "kayik yakali kapak kollu mini (asimetrik dugme, bel dikissiz)",
+  "op": 11,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 0,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "yaka": 276.7592475494299,
+    "kol_oyugu_halka": 357.62106568075177,
+    "etek_ucu": 331.265,
+    "kol_agzi": 182.0732548971283,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "yaka": 258.6465349505788,
+    "kol_oyugu_halka": 376.61409485737136,
+    "etek_ucu": 475,
+    "kol_agzi": 310.5,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ },
+ {
+  "no": 5,
+  "ilan": "kolsuz kayik yakali mini (gogus alti buzgulu dikis)",
+  "op": 17,
+  "kirmiziGercek": 1,
+  "kirmiziCroquis": 0,
+  "fail": [
+   "supresyon:foto-d7e45930"
+  ],
+  "halka": {
+   "croquis36": {
+    "yaka": 225.5917355509941,
+    "kol_oyugu_halka": 357.62106568075177,
+    "bel_halka": 222.15156547230012,
+    "etek_ucu": 380.95474999999993,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "yaka": 210.9741333153902,
+    "kol_oyugu_halka": 376.61409485737136,
+    "bel_halka": 344.2488332575686,
+    "etek_ucu": 546.25,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ },
+ {
+  "no": 6,
+  "ilan": "babydoll (genis buzgulu aski, gogus buzgusu, gogus alti dikis, buzgulu etek)",
+  "op": 26,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 0,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "bel_halka": 221.69502825807203,
+    "etek_ucu": 430.6445,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "bel_halka": 342.73109779847204,
+    "etek_ucu": 617.5,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ },
+ {
+  "no": 7,
+  "ilan": "omuz acik mini (asimetrik band; simetrik karikatur)",
+  "op": 16,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 0,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "etek_ucu": 331.265,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "etek_ucu": 475,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ },
+ {
+  "no": 8,
+  "ilan": "kolsuz kayik yakali dugmeli ust (kalca boyu)",
+  "op": 11,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 0,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "yaka": 268.74420470130667,
+    "kol_oyugu_halka": 357.62106568075177,
+    "etek_ucu": 371.01680000000005,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "yaka": 251.22581009188326,
+    "kol_oyugu_halka": 376.61409485737136,
+    "etek_ucu": 532,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ },
+ {
+  "no": 9,
+  "ilan": "bustier mini (sweetheart ust kenar, kap dikisleri, fiyonk aski, bel dikisi)",
+  "op": 20,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 0,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "bel_halka": 221.62500000000009,
+    "etek_ucu": 357.7662,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "bel_halka": 342.5,
+    "etek_ucu": 513,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ },
+ {
+  "no": 10,
+  "ilan": "kare yakali genis askili A-line mini (gogus alti buzgulu dikis)",
+  "op": 26,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 0,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "bel_halka": 221.69502825807203,
+    "etek_ucu": 463.77099999999996,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "bel_halka": 342.73109779847204,
+    "etek_ucu": 665,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ },
+ {
+  "no": 11,
+  "ilan": "bol ust (firfirli bebe yaka, roba, buzgu, puf kol)",
+  "op": 20,
+  "kirmiziGercek": 0,
+  "kirmiziCroquis": 2,
+  "fail": [],
+  "halka": {
+   "croquis36": {
+    "yaka": 164.81210503886223,
+    "kol_oyugu_halka": 511.5834922587154,
+    "etek_ucu": 414.08124999999995,
+    "kol_agzi": 182.0732548971283,
+    "gogus_halka": 284.544,
+    "kalca_halka": 331.265
+   },
+   "gercek36": {
+    "yaka": 154.51024924172958,
+    "kol_oyugu_halka": 430.4776843347035,
+    "etek_ucu": 593.75,
+    "kol_agzi": 310.5,
+    "gogus_halka": 450,
+    "kalca_halka": 475
+   }
+  }
+ }
+]

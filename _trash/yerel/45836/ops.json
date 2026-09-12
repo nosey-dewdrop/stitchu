@@ -1,0 +1,235 @@
+[
+ {
+  "op": "drop",
+  "args": {
+   "panel": "kol",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_beden",
+   "edge": "neck_front",
+   "from": {
+    "landmark": "landmark.neckBase",
+    "xFactor": 1.15,
+    "yLandmark": "landmark.shoulderTip",
+    "yLandmark2": "landmark.neckBase",
+    "yLerp": 0.85
+   },
+   "to": {
+    "landmark": "landmark.waist",
+    "xFactor": 0,
+    "yLandmark": "landmark.neckFront",
+    "yLandmark2": "landmark.bustLine",
+    "yLerp": 0.72
+   },
+   "control": [
+    {
+     "landmark": "landmark.neckBase",
+     "xFactor": 0.8,
+     "yLandmark": "landmark.neckFront",
+     "yLandmark2": "landmark.bustLine",
+     "yLerp": 0.22
+    },
+    {
+     "landmark": "landmark.neckBase",
+     "xFactor": 0.3,
+     "yLandmark": "landmark.neckFront",
+     "yLandmark2": "landmark.bustLine",
+     "yLerp": 0.55
+    }
+   ]
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "neck_back",
+   "from": {
+    "landmark": "landmark.neckBase",
+    "xFactor": 1.15,
+    "yLandmark": "landmark.shoulderTip",
+    "yLandmark2": "landmark.neckBase",
+    "yLerp": 0.85
+   },
+   "to": {
+    "landmark": "landmark.nape",
+    "xFactor": 0,
+    "yOffsetMM": 12
+   },
+   "control": [
+    {
+     "landmark": "landmark.neckBase",
+     "xFactor": 0.8049999999999999,
+     "yLandmark": "landmark.nape",
+     "yOffsetMM": 7.199999999999999
+    },
+    {
+     "landmark": "landmark.neckBase",
+     "xFactor": 0.345,
+     "yLandmark": "landmark.nape",
+     "yOffsetMM": 12
+    }
+   ]
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_etek",
+   "edge": "hem_front",
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 427
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_etek",
+   "edge": "hem_back",
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 427
+  }
+ },
+ {
+  "op": "flare",
+  "args": {
+   "panel": "on_etek",
+   "edge": "hem_front",
+   "factor": 1.232
+  }
+ },
+ {
+  "op": "flare",
+  "args": {
+   "panel": "arka_etek",
+   "edge": "hem_back",
+   "factor": 1.232
+  }
+ },
+ {
+  "op": "addPanel",
+  "args": {
+   "onto": "on_etek",
+   "panel": {
+    "id": "cep_kapagi_on",
+    "edges": [
+     {
+      "id": "ust",
+      "kind": "cut",
+      "role": "pocket_flap",
+      "from": {
+       "landmark": "landmark.hip",
+       "xOf": "ringQuarter",
+       "ring": "girth.hip",
+       "xFactor": 0.35,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 0.85
+      },
+      "to": {
+       "landmark": "landmark.hip",
+       "xOf": "ringQuarter",
+       "ring": "girth.hip",
+       "xFactor": 1,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 0.85
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "dis",
+      "kind": "cut",
+      "role": "pocket_flap",
+      "from": {
+       "landmark": "landmark.hip",
+       "xOf": "ringQuarter",
+       "ring": "girth.hip",
+       "xFactor": 1,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 0.85
+      },
+      "to": {
+       "landmark": "landmark.hip",
+       "xOf": "ringQuarter",
+       "ring": "girth.hip",
+       "xFactor": 1,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 1.05
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "alt",
+      "kind": "cut",
+      "role": "pocket_flap",
+      "from": {
+       "landmark": "landmark.hip",
+       "xOf": "ringQuarter",
+       "ring": "girth.hip",
+       "xFactor": 1,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 1.05
+      },
+      "to": {
+       "landmark": "landmark.hip",
+       "xOf": "ringQuarter",
+       "ring": "girth.hip",
+       "xFactor": 0.35,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 1.05
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "ic",
+      "kind": "cut",
+      "role": "pocket_flap",
+      "from": {
+       "landmark": "landmark.hip",
+       "xOf": "ringQuarter",
+       "ring": "girth.hip",
+       "xFactor": 0.35,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 1.05
+      },
+      "to": {
+       "landmark": "landmark.hip",
+       "xOf": "ringQuarter",
+       "ring": "girth.hip",
+       "xFactor": 0.35,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 0.85
+      },
+      "finish": "faced"
+     }
+    ],
+    "grainDeg": 0,
+    "onFold": false,
+    "cutCount": 2,
+    "seamAllowanceMM": 0,
+    "ease": [],
+    "reason": "cep kapagi: etek yuzune dikili dikdortgen (kalca hizasi, yanda)"
+   }
+  }
+ },
+ {
+  "op": "closure",
+  "args": {
+   "seam": "arka_orta_beden",
+   "type": "zipper",
+   "fromFraction": 0,
+   "toFraction": 1
+  }
+ }
+]

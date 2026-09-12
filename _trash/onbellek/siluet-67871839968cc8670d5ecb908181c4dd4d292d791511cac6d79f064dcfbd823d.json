@@ -1,0 +1,390 @@
+{
+ "semaSurumu": "siluet-v1",
+ "girdiYolu": "GIRDI/hedef-fotograflar-3/etsy-03.png",
+ "sha256": "67871839968cc8670d5ecb908181c4dd4d292d791511cac6d79f064dcfbd823d",
+ "okuyan": "claude-sonnet-5 via 'claude -p' alt sureci (arkaUc=claude-p), 2026-09-11",
+ "uretenScript": "KOSU/siluet-oku.mjs",
+ "ilan": "yuvarlak yakali, on ortada kisa dugmeli acikligi olan, gogus altinda enine bir yoke dikisiyle ayrilan, altta genis salinimli duz kesim govde tasiyan, kisa puf kollu ve kol agzi buzgulu bir mini elbise",
+ "gorulen": "fotograf (on) + satici-flat (on ve arka)",
+ "kaynakGorunum": "ikisi",
+ "oturma": {
+  "gogus": true,
+  "bel": false
+ },
+ "on": {
+  "yakaBicim": "yuvarlak",
+  "kontur": {
+   "yakaOrta": [
+    "neckFront*0",
+    "neckBase+22"
+   ],
+   "yakaOmuz": [
+    "shoulderTip*0.58",
+    "neckBase+15"
+   ],
+   "askiUst": null,
+   "omuzUc": [
+    "shoulderTip*0.98",
+    "neckBase+3"
+   ],
+   "koltukalti": [
+    "bustLine*1.00",
+    "underarm"
+   ],
+   "gogus": [
+    "bustLine*1.03",
+    "bustLine+45"
+   ],
+   "bel": [
+    "waist*1.32",
+    "waist"
+   ],
+   "kalca": [
+    "hip*1.15",
+    "hip"
+   ],
+   "etekYan": [
+    "hip*1.32",
+    "hip..knee@0.32"
+   ],
+   "etekOrta": [
+    "hip*0",
+    "hip..knee@0.32"
+   ]
+  },
+  "kol": {
+   "tip": "puf",
+   "dis": [
+    "elbow*0.62",
+    "underarm+95"
+   ],
+   "ic": [
+    "bustLine*1.00",
+    "underarm+15"
+   ],
+   "bant": false,
+   "buzgu": true,
+   "sisme": 30
+  },
+  "ogeler": [
+   {
+    "tip": "kesikli",
+    "ayna": true,
+    "catmull": true,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "neckBase+22"
+     ],
+     [
+      "shoulderTip*0.30",
+      "neckBase+5"
+     ],
+     [
+      "shoulderTip*0.58",
+      "neckBase+15"
+     ]
+    ]
+   },
+   {
+    "tip": "pat",
+    "ayna": false,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "neckBase+5"
+     ],
+     [
+      "neckFront*0",
+      "neckBase+38"
+     ]
+    ],
+    "genislik": 12
+   },
+   {
+    "tip": "dugme",
+    "ayna": false,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "neckBase+10"
+     ],
+     [
+      "neckFront*0",
+      "neckBase+10"
+     ]
+    ],
+    "adet": 1,
+    "cap": 8
+   },
+   {
+    "tip": "roba",
+    "ayna": true,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "bustLine+45"
+     ],
+     [
+      "bustLine*1.03",
+      "bustLine+45"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "ayna": true,
+    "yon": "asagi",
+    "boy": 25,
+    "aralik": 15,
+    "noktalar": [
+     [
+      "bustLine*0.55",
+      "bustLine+48"
+     ],
+     [
+      "bustLine*0.55",
+      "bustLine+80"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "ayna": true,
+    "catmull": true,
+    "noktalar": [
+     [
+      "bustLine*1.00",
+      "underarm"
+     ],
+     [
+      "hip*1.15",
+      "hip"
+     ],
+     [
+      "hip*1.32",
+      "hip..knee@0.32"
+     ]
+    ]
+   },
+   {
+    "tip": "kesikli",
+    "ayna": true,
+    "noktalar": [
+     [
+      "hip*0",
+      "hip..knee@0.32"
+     ],
+     [
+      "hip*1.32",
+      "hip..knee@0.32"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "ayna": true,
+    "yon": "yukari",
+    "boy": 20,
+    "aralik": 12,
+    "noktalar": [
+     [
+      "shoulderTip*0.98",
+      "neckBase+3"
+     ],
+     [
+      "bustLine*1.00",
+      "underarm+15"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "ayna": true,
+    "yon": "asagi",
+    "boy": 15,
+    "aralik": 10,
+    "noktalar": [
+     [
+      "bustLine*0.75",
+      "underarm+92"
+     ],
+     [
+      "elbow*0.62",
+      "underarm+95"
+     ]
+    ]
+   },
+   {
+    "tip": "firfir",
+    "ayna": true,
+    "adim": 15,
+    "derinlik": 12,
+    "noktalar": [
+     [
+      "bustLine*0.75",
+      "underarm+92"
+     ],
+     [
+      "elbow*0.62",
+      "underarm+95"
+     ]
+    ]
+   }
+  ]
+ },
+ "arka": {
+  "koken": "fotograf (arka)",
+  "yakaBicim": "yuvarlak",
+  "kontur": {
+   "yakaOrta": [
+    "nape*0",
+    "nape+18"
+   ],
+   "yakaOmuz": [
+    "shoulderTip*0.58",
+    "nape+10"
+   ],
+   "askiUst": null,
+   "omuzUc": [
+    "shoulderTip*0.98",
+    "neckBase+3"
+   ],
+   "koltukalti": [
+    "bustLine*1.00",
+    "underarm"
+   ],
+   "gogus": [
+    "bustLine*1.03",
+    "bustLine+35"
+   ],
+   "bel": [
+    "waist*1.32",
+    "waist"
+   ],
+   "kalca": [
+    "hip*1.15",
+    "hip"
+   ],
+   "etekYan": [
+    "hip*1.32",
+    "hip..knee@0.32"
+   ],
+   "etekOrta": [
+    "hip*0",
+    "hip..knee@0.32"
+   ]
+  },
+  "kol": {
+   "tip": "puf",
+   "dis": [
+    "elbow*0.62",
+    "underarm+95"
+   ],
+   "ic": [
+    "bustLine*1.00",
+    "underarm+15"
+   ],
+   "bant": false,
+   "buzgu": true,
+   "sisme": 30
+  },
+  "ogeler": [
+   {
+    "tip": "kesikli",
+    "ayna": true,
+    "noktalar": [
+     [
+      "nape*0",
+      "nape+18"
+     ],
+     [
+      "shoulderTip*0.58",
+      "nape+10"
+     ]
+    ]
+   },
+   {
+    "tip": "roba",
+    "ayna": true,
+    "noktalar": [
+     [
+      "nape*0",
+      "bustLine+35"
+     ],
+     [
+      "bustLine*1.03",
+      "bustLine+35"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "ayna": true,
+    "catmull": true,
+    "noktalar": [
+     [
+      "bustLine*1.00",
+      "underarm"
+     ],
+     [
+      "hip*1.15",
+      "hip"
+     ],
+     [
+      "hip*1.32",
+      "hip..knee@0.32"
+     ]
+    ]
+   },
+   {
+    "tip": "kesikli",
+    "ayna": true,
+    "noktalar": [
+     [
+      "hip*0",
+      "hip..knee@0.32"
+     ],
+     [
+      "hip*1.32",
+      "hip..knee@0.32"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "ayna": true,
+    "yon": "asagi",
+    "boy": 15,
+    "aralik": 10,
+    "noktalar": [
+     [
+      "bustLine*0.75",
+      "underarm+92"
+     ],
+     [
+      "elbow*0.62",
+      "underarm+95"
+     ]
+    ]
+   },
+   {
+    "tip": "firfir",
+    "ayna": true,
+    "adim": 15,
+    "derinlik": 12,
+    "noktalar": [
+     [
+      "bustLine*0.75",
+      "underarm+92"
+     ],
+     [
+      "elbow*0.62",
+      "underarm+95"
+     ]
+    ]
+   }
+  ]
+ },
+ "eksik": []
+}

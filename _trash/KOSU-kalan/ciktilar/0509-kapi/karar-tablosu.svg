@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="450" viewBox="0 0 1000 450">
+<rect width="1000" height="450" fill="#faf8f5"/>
+<text x="36" y="56" font-family="Helvetica,Arial" font-size="26" font-weight="700" fill="#1b1b1b">0509 kosusu — A1a karar tablosu</text>
+<text x="36" y="86" font-family="Helvetica,Arial" font-size="15" fill="#666">kaynak: KOSU/0509-state.json · adim A1 · A1a GECTI, A1b ACIK · devredilen ilanli kirmizi 2</text>
+<text x="36" y="130" font-family="Helvetica,Arial" font-size="14" font-weight="700" fill="#444">gecit</text>
+<text x="430" y="130" font-family="Helvetica,Arial" font-size="14" font-weight="700" fill="#444">sayi</text>
+<text x="520" y="130" font-family="Helvetica,Arial" font-size="14" font-weight="700" fill="#444">durum</text>
+<text x="690" y="130" font-family="Helvetica,Arial" font-size="14" font-weight="700" fill="#444">kapanacak</text>
+<line x1="36" y1="142" x2="964" y2="142" stroke="#ccc"/>
+<rect x="30" y="150" width="940" height="58" fill="#fdeceb" rx="4"/>
+<text x="36" y="176" font-family="Helvetica,Arial" font-size="14" font-weight="700" fill="#222">flat_ayni_insan_check</text>
+<text x="430" y="176" font-family="Helvetica,Arial" font-size="14" font-weight="400" fill="#222">34</text>
+<text x="520" y="176" font-family="Helvetica,Arial" font-size="14" font-weight="400" fill="#b3261e">ILANLI KIRMIZI</text>
+<text x="690" y="176" font-family="Helvetica,Arial" font-size="14" font-weight="400" fill="#222">A4</text>
+<text x="36" y="196" font-family="Helvetica,Arial" font-size="12.5" fill="#7a4a46">tavan 34</text>
+<rect x="30" y="220" width="940" height="58" fill="#fdeceb" rx="4"/>
+<text x="36" y="246" font-family="Helvetica,Arial" font-size="14" font-weight="700" fill="#222">sinyal_tam/bundle_fresh_check</text>
+<text x="430" y="246" font-family="Helvetica,Arial" font-size="14" font-weight="400" fill="#222">1</text>
+<text x="520" y="246" font-family="Helvetica,Arial" font-size="14" font-weight="400" fill="#b3261e">ILANLI KIRMIZI</text>
+<text x="690" y="246" font-family="Helvetica,Arial" font-size="14" font-weight="400" fill="#222">A9</text>
+<text x="36" y="266" font-family="Helvetica,Arial" font-size="12.5" fill="#7a4a46">alt kume dondu: bundle_fresh_check</text>
+<text x="36" y="334" font-family="Helvetica,Arial" font-size="14" fill="#333">KARAR 3: engine/CMakeLists.txt kilide ALINMAZ, IZLEMEYE alinir (--kilit-diff alani + satir yonu).</text>
+<text x="36" y="358" font-family="Helvetica,Arial" font-size="14" fill="#333">silinen &#x27;-&#x27; add_test( / add_executable( satiri = KILIT_IHLALI (izin listesinde olsa bile); ekleme &#x27;+&#x27; temiz.</text>
+<text x="36" y="382" font-family="Helvetica,Arial" font-size="14" fill="#333">uygulama A1b teslimi: KOSU/0509-kosu.js A1 tarifi madde 11.</text>
+</svg>

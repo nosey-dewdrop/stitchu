@@ -1,0 +1,35 @@
+{
+  "bayt": 50098,
+  "sha": "849f90003b41933a",
+  "width": "1368.8000mm",
+  "height": "1028.8696mm",
+  "dataScale": "1:1",
+  "dataUnitMM": "1",
+  "dataSinif": "dress/dart/woven",
+  "dataSize": "EU38",
+  "dataDugum": "f385a51dd45d7cbc",
+  "yolSayisi": 28,
+  "rolSayisi": {
+    "siluet": 2,
+    "bel-dikisi": 4,
+    "pens": 12,
+    "dikis-izi": 4,
+    "yaka": 4,
+    "orta-dikis": 2
+  },
+  "_specKaynak": "girdiler.json spec",
+  "_spec": {
+    "garment": "dress",
+    "shaping": "dart",
+    "fabric": "woven",
+    "neckline": "crew",
+    "sleeveStyle": "none",
+    "skirtStyle": "aLine",
+    "skirtLength": "mini",
+    "collarType": "stand"
+  },
+  "_eksik": [
+    "kalip.svg: graftan cizim hatti yok (A2)",
+    "dikilebilir.json: graf degerleme hatti yok (A2)"
+  ]
+}

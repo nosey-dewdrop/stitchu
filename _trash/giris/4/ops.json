@@ -1,0 +1,343 @@
+[
+ {
+  "op": "merge",
+  "args": {
+   "seam": "bel",
+   "panelA": "on_beden",
+   "panelB": "on_etek",
+   "panel": "on_govde"
+  }
+ },
+ {
+  "op": "merge",
+  "args": {
+   "seam": "bel",
+   "panelA": "arka_beden",
+   "panelB": "arka_etek",
+   "panel": "arka_govde"
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_govde",
+   "edge": "neck_front",
+   "to": {
+    "landmark": "landmark.waist",
+    "xFactor": 0,
+    "yLandmark": "landmark.neckFront",
+    "yLandmark2": "landmark.bustLine",
+    "yLerp": 0.1
+   }
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "on_orta",
+   "a": [
+    {
+     "panel": "on_govde",
+     "edge": "cf.1"
+    },
+    {
+     "panel": "on_govde",
+     "edge": "cf.2"
+    }
+   ],
+   "b": [
+    {
+     "panel": "on_govde",
+     "edge": "cf.1"
+    },
+    {
+     "panel": "on_govde",
+     "edge": "cf.2"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1
+  }
+ },
+ {
+  "op": "closure",
+  "args": {
+   "seam": "on_orta",
+   "type": "buttons",
+   "fromFraction": 0.02,
+   "toFraction": 0.78
+  }
+ },
+ {
+  "op": "addPanel",
+  "args": {
+   "panel": {
+    "id": "boyun_bandi",
+    "edges": [
+     {
+      "id": "ic",
+      "kind": "seam",
+      "role": "neck_front",
+      "from": {
+       "landmark": "landmark.waist",
+       "xFactor": 0,
+       "yLandmark": "landmark.neckFront",
+       "yLandmark2": "landmark.bustLine",
+       "yLerp": 0.1
+      },
+      "to": {
+       "landmark": "landmark.neckBase",
+       "xFactor": 1
+      },
+      "control": [
+       {
+        "landmark": "landmark.neckBase",
+        "xFactor": 0.35,
+        "yLandmark": "landmark.neckFront"
+       },
+       {
+        "landmark": "landmark.neckBase",
+        "xFactor": 0.85,
+        "yLandmark": "landmark.neckFront",
+        "yLandmark2": "landmark.neckBase",
+        "yLerp": 0.6
+       }
+      ]
+     },
+     {
+      "id": "omuz_ustu",
+      "kind": "cut",
+      "from": {
+       "landmark": "landmark.neckBase",
+       "xFactor": 1
+      },
+      "to": {
+       "combo": [
+        {
+         "w": 0.38,
+         "landmark": "landmark.neckBase",
+         "xFactor": 1
+        },
+        {
+         "w": 0.62,
+         "landmark": "landmark.shoulderTip",
+         "xFactor": 1
+        }
+       ]
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "dis",
+      "kind": "cut",
+      "from": {
+       "combo": [
+        {
+         "w": 0.38,
+         "landmark": "landmark.neckBase",
+         "xFactor": 1
+        },
+        {
+         "w": 0.62,
+         "landmark": "landmark.shoulderTip",
+         "xFactor": 1
+        }
+       ]
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xFactor": 0,
+       "yLandmark": "landmark.neckFront",
+       "yLandmark2": "landmark.bustLine",
+       "yLerp": 0.62
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "cf",
+      "kind": "fold",
+      "role": "cf",
+      "from": {
+       "landmark": "landmark.waist",
+       "xFactor": 0,
+       "yLandmark": "landmark.neckFront",
+       "yLandmark2": "landmark.bustLine",
+       "yLerp": 0.62
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xFactor": 0,
+       "yLandmark": "landmark.neckFront",
+       "yLandmark2": "landmark.bustLine",
+       "yLerp": 0.1
+      }
+     }
+    ],
+    "grainDeg": 0,
+    "onFold": true,
+    "cutCount": 1,
+    "seamAllowanceMM": 0,
+    "reason": "boyun hattina dikili yatik genis parca; omuz ustunde 0.62, CF'de 0.62 (neck..bustLine) iner"
+   }
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "boyun_dikisi",
+   "a": [
+    {
+     "panel": "boyun_bandi",
+     "edge": "ic"
+    }
+   ],
+   "b": [
+    {
+     "panel": "on_govde",
+     "edge": "neck_front"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1
+  }
+ },
+ {
+  "op": "fitLength",
+  "args": {
+   "panel": "boyun_bandi",
+   "edge": "ic",
+   "target": {
+    "seam": "boyun_dikisi",
+    "ratio": 1,
+    "easeMM": 0
+   }
+  }
+ },
+ {
+  "op": "addPanel",
+  "args": {
+   "onto": "on_govde",
+   "panel": {
+    "id": "on_yama",
+    "edges": [
+     {
+      "id": "ust",
+      "kind": "cut",
+      "from": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.35,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 0.26
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.9,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 0.26
+      },
+      "finish": "hem"
+     },
+     {
+      "id": "dis",
+      "kind": "cut",
+      "from": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.9,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 0.26
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.9,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 1
+      },
+      "finish": "hem"
+     },
+     {
+      "id": "alt",
+      "kind": "cut",
+      "from": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.9,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 1
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.35,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 1
+      },
+      "finish": "hem"
+     },
+     {
+      "id": "ic",
+      "kind": "cut",
+      "from": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.35,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 1
+      },
+      "to": {
+       "landmark": "landmark.waist",
+       "xOf": "ringQuarter",
+       "xFactor": 0.35,
+       "yLandmark": "landmark.waist",
+       "yLandmark2": "landmark.hip",
+       "yLerp": 0.26
+      },
+      "finish": "hem"
+     }
+    ],
+    "grainDeg": 0,
+    "onFold": false,
+    "cutCount": 2,
+    "seamAllowanceMM": 0,
+    "reason": "on_govde yuzune dikili dikdortgen parca, adet 2 (ayna); dusey yeri okumadan (giysi boyu 0.44-0.60 -> bel..kalca 0.26-1.0), yatay yeri DOGRULANMADI (bel ceyregi 0.35-0.90 secildi, fotograftan oran cikarilmadi)"
+   }
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_govde",
+   "edge": "hem_front",
+   "yLandmark": "landmark.knee",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_govde",
+   "edge": "hem_back",
+   "yLandmark": "landmark.knee",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "kol",
+   "edge": "hem",
+   "yLandmark": "landmark.elbow",
+   "yOffsetMM": 0
+  }
+ }
+]

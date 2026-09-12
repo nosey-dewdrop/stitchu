@@ -1,0 +1,255 @@
+{
+  "_contract": "pattern-sheet-v1 — KALIP SAYFASI KONVANSIYONU (F1, 2026-09-05). Damla: 'kaliplar da cirkin'. Kalip sayfasi (parca etiketi, grain oku, notch, kat cizgisi, kesim/dikis cizgisi stilleri, sayfa dizimi, lejant, tipografi) BURADAN cizilir: F2b kalip SVG'si ve F6a PDF'i bu dosyadan okur, sayi koda gomulmez. Uc kaynak katmani: (A) OLCULDU — satin alinmis Bugra Locket Top A0/A4 PDF (patterns_real/, okunur, kopyalanmaz; pdftotext + icerik akisi 'w'/'d'/'Tf' operatorleri, 2026-09-05); (B) STANDART — ASTM D6673-10 katman tablosu (geri cekildi 2019, hala CAD degisim referansi); (C) INDIE KONVANSIYON — Tilly and the Buttons isaret rehberi, Closet Core PDF yazdirma rehberi. Kaynagi olmayan sayi 'DOGRULANMADI' tasir ve en kisitlayici secildi.",
+  "version": 1,
+  "id": "stitchu-pattern-sheet-v1",
+  "birim": "mm",
+  "kaynaklar": {
+    "bugra": "patterns_real/Locket Top/PDF's/A0.pdf + A4.pdf (Adobe Illustrator 28.2, MediaBox A0 821x1169 mm; kalibrasyon '4cm bar' 113.386 pt = 40.00 mm, patterns_real/BUGRA-DEFTER.md)",
+    "astm": "ASTM D6673-10 'Standard Practice for Sewn Products Pattern Data Interchange—Data Format' §4.3 katman listesi (https://www.normsplash.com/Samples/ASTM/191361149/ASTM-D6673-10-en.pdf ornek sayfalari) + DH Patterns and Fit 'ePattern ASTM Standard' (https://dorthehansen.com/wp-content/uploads/2014/10/ePattern-ASTM-Standard.pdf) 23 katman tablosu",
+    "tilly": "https://tillyandthebuttons.com/blogs/sewing/understanding-sewing-pattern-markings",
+    "closetcore": "https://closetcorepatterns.com/pages/how-to-print-and-assemble-pdf-patterns (test karesi 4 in / 10.2 cm; A4/Letter tiling; A0 copyshop 46x48 in)",
+    "draftingMath": "knowledge/drafting-math-eu38.md (centik: tek=on, cift=arka; kol kapagi walk)",
+    "bugraOlcum": "F1 duzeltme turu 2026-09-05, pypdf ContentStream (q/Q + cm matrisi, w, d, m/l/S, Tf x Tm x ctm): A0.pdf 1 sayfa MediaBox 821x1169 mm; A4.pdf 12 sayfa MediaBox 200x287 mm (A4 210x297 eksi 5 mm kenar), sayfalar 1..12 numarali, harf/sayi karo kimligi ve hizalama ucgeni METIN olarak yok (vektor ucgen ayristirilmadi: OLCULMEDI). Tek-segment yollar: 7.0 mm x184 (A0) / x202 (A4) = centikler (8 beden x 6 parca), 5.5 mm x7 (cetvel), 2.0 mm x2. Kalinlik yalniz 0.35 ve 1.0 mm; dash yalniz [11.999] ve [12.06 12.06] pt."
+  },
+  "katmanlar": {
+    "_tanim": "ASTM D6673 katman numaralari; SVG'de data-astm-layer niteligi olarak basilir, DXF cikisinda katman adi olur. Numara, metin degil (ASTM: 'Layers must be numbered').",
+    "1": {
+      "ad": "piece boundary (kesim cizgisi)",
+      "zorunlu": true,
+      "kaynak": "astm"
+    },
+    "2": {
+      "ad": "turn points",
+      "kaynak": "astm"
+    },
+    "3": {
+      "ad": "curve points",
+      "kaynak": "astm"
+    },
+    "4": {
+      "ad": "V-notch ve slit notch",
+      "kaynak": "astm"
+    },
+    "5": {
+      "ad": "grade reference",
+      "kaynak": "astm"
+    },
+    "6": {
+      "ad": "mirror line (kat cizgisi)",
+      "kaynak": "astm"
+    },
+    "7": {
+      "ad": "grainline",
+      "kaynak": "astm"
+    },
+    "8": {
+      "ad": "internal lines (kesilmez; pens, cep yeri)",
+      "kaynak": "astm"
+    },
+    "11": {
+      "ad": "internal cutouts",
+      "kaynak": "astm"
+    },
+    "13": {
+      "ad": "drill holes (pens ucu delgi)",
+      "kaynak": "astm"
+    },
+    "14": {
+      "ad": "sew line (dikis cizgisi)",
+      "kaynak": "astm"
+    },
+    "15": {
+      "ad": "annotation text (parca etiketi)",
+      "kaynak": "astm"
+    },
+    "80": {
+      "ad": "T-notch",
+      "kaynak": "astm"
+    },
+    "81": {
+      "ad": "castle notch (U, dikdortgen uc)",
+      "kaynak": "astm"
+    },
+    "82": {
+      "ad": "check notch (V ucu, tek tarafi kenara dik)",
+      "kaynak": "astm"
+    },
+    "83": {
+      "ad": "U-notch (yarim daire uc)",
+      "kaynak": "astm"
+    }
+  },
+  "cizgiStilleri": {
+    "_tanim": "Cizgi kalinliklari mm; kaynak Bugra A0 icerik akisi: yalniz IKI kalinlik kullaniliyor (0.353 mm = 1 pt ve 1.000 mm) ve tek dash dizisi (12 pt = 4.233 mm on/off). Hiyerarsi 1.0 : 0.35 ≈ 3:1 (flat-convention lineClasses 4:2:1 ile ayni aile).",
+    "kesim": {
+      "katman": 1,
+      "kalinlikMM": 1.0,
+      "dash": null,
+      "kaynak": "bugra (1.000125 mm 'w')"
+    },
+    "dikis": {
+      "katman": 14,
+      "kalinlikMM": 0.35,
+      "dash": [
+        4.233,
+        4.233
+      ],
+      "kaynak": "bugra (0.353 mm 'w', '[11.999] 0 d' = 4.233 mm esit on/off); tilly: 'dotted line indicates stitching line'"
+    },
+    "icCizgi": {
+      "katman": 8,
+      "kalinlikMM": 0.35,
+      "dash": null,
+      "kaynak": "bugra 0.353 mm"
+    },
+    "katCizgisi": {
+      "katman": 6,
+      "kalinlikMM": 0.35,
+      "dash": [
+        4.233,
+        4.233
+      ],
+      "kaynak": "bugra ayni dash; tilly: 'double-pointed arrow with the ends bent at 90 deg towards a pattern outline' = place on fold isareti kat kenarina paralel"
+    },
+    "grainOku": {
+      "katman": 7,
+      "kalinlikMM": 0.35,
+      "ucOkBasiMM": 6.0,
+      "uzunlukOran": 0.5,
+      "kaynak": "tilly: 'long, double-pointed arrow running down the length of your pattern piece'. Ok basi 6 mm ve uzunluk = parca boyunun 0.5'i DOGRULANMADI (Bugra'da ok vektor olarak ayristirilamadi); F1 duzeltme turu: A0 icerik akisinda 7.0 mm disinda kisa segment sinifi yok, ok basi ayri vektor olarak ayristirilamadi (OLCULMEDI)"
+    },
+    "bedenSerisi": {
+      "_tanim": "Nested bedenler: her beden AYRI RENK (Bugra: 8 beden 8 renk, RG operatorleri) ya da ayri dash stili (tilly: 'multiple nested lines ... in different dot-and-dash styles'). stitchu: tek beden basar (musteri bedeni), seri PDF'inde renk + lejant.",
+      "renklerRGB_bugra": [
+        "1 0 0",
+        "0.886 0.592 0",
+        "0.294 1 0",
+        "0 0.608 0.608",
+        "0 0 1",
+        "0.357 0 0.737",
+        "0.976 0 0.976",
+        "1 0 0.384"
+      ],
+      "kaynak": "bugra"
+    }
+  },
+  "centik": {
+    "_tanim": "Notch tipi ve olcusu. ASTM tipler: slit (4), V (4), T (80), castle (81), check (82), U (83). Indie: 'short lines at a right angle to the cutting line – or sometimes triangles' (tilly).",
+    "varsayilanTip": "slitNotch",
+    "tipler": { "slitNotch": 4, "vNotch": 4, "tNotch": 80, "castleNotch": 81, "checkNotch": 82, "uNotch": 83 },
+    "_tipler": "ASTM D6673 centik tip kumesi -> DXF-AAMA katman numarasi (deger). Adlar vocab enum kelimeleriyle ciplak carpismaz (karar ajani 5: 'slit' backSlit ile carpisiyordu -> slitNotch; kural genel). F2b kalip SVG'si varsayilanTip'i ve katman'i BURADAN okur, koda ad/sayi gommez. Bekci: engine/tools/gen-contract.mjs --check — varsayilanTip kume icinde ve katman == tipler[varsayilanTip] degilse exit 1 (gen_contract_check).",
+    "katman": 4,
+    "uzunlukMM": 7.0,
+    "_uzunlukNot": "bugra: A0/A4 icerik akisinda 184/202 tek-segment yol tam 7.0 mm (0.5 mm kovada), baska kisa segment sinifi yok -> centik 7 mm (eski 5.0 DOGRULANMADI degeri kalkti). Dikis payi 10 mm: centik dikis cizgisine 3 mm kala biter",
+    "genislikMM": 0.35,
+    "onArka": {
+      "on": 1,
+      "arka": 2,
+      "kaynak": "tilly: 'Two notches together usually indicates the back of a pattern piece, such as on a sleeve'; knowledge/drafting-math-eu38.md: tek centik=on, cift=arka"
+    },
+    "ciftAralikMM": 6.0,
+    "_ciftAralikNot": "DOGRULANMADI: Bugra'da cift centik cifti (iki 7 mm segmentin merkez araligi) bu turda ayristirilmadi; 6.0 mm indie pratigi",
+    "kaynak_uzunluk": "bugra (olculdu)",
+    "_varsayilanTipNot": "ASTM D6673 katman 4 'slit notch' (duz kisa cizgi, kesim cizgisine dik); adi vocab backSlit degeriyle carpismasin diye slitNotch"
+  },
+  "dikisPayi": {
+    "govdeMM": 10.0,
+    "etekUcuMM": 30.0,
+    "kaynak": "bugra etiketi 'Seam Allowence 1cm - 3/8''' ve 'For Hem 3 cm - 1 1/8\"' (Locket Top, dahil); indie yaygin 1 cm (3/8 in) ya da 1.2 cm (1/2 in) (arama ozeti, DOGRULANMADI)",
+    "yazim": "etikette 'DP 1 cm — 3/8 in · etek ucu 3 cm' cift birim (bugra iki birim basiyor)"
+  },
+  "parcaEtiketi": {
+    "_tanim": "Katman 15 annotation. Icerik ve sira Bugra etiketinden OLCULDU (pdftotext A4.pdf).",
+    "satirlar": [
+      "parca adi (or. 'Front Body')",
+      "kesim talimati: 'CUT 2X MIRRORED' | 'CUT 1X ON FOLD MAIN' | 'CUT 1X ON FOLD INTERFACING'",
+      "beden: 'EU 36' (seri PDF'inde 'EU: 34 - 44')",
+      "dikis payi: 'Seam Allowance 1 cm - 3/8 in'",
+      "etek ucu payi (varsa): 'For Hem 3 cm'",
+      "kat kenari yazisi kat cizgisi boyunca: 'CENTER BACK ON FOLD'",
+      "islem notu (varsa): 'GATHERING', 'BUTTON PLACKET FOLD INSIDE 3 CM'",
+      "parca numarasi (Bugra 1..7)"
+    ],
+    "kaynak": "bugra",
+    "yeri": "parcanin ic bolgesinde, grain okuna paralel, kesim cizgisinden >= 10 mm iceride (DOGRULANMADI: yer kurali yayinsiz)",
+    "tipografi": {
+      "aileTercih": "sans (Bugra: Illustrator varsayilan TT/T1 gomulu font)",
+      "parcaAdiMM": 6.3,
+      "govdeMM": 4.4,
+      "minimumMM": 2.4,
+      "_not": "bugra OLCULDU (Tf x Tm x ctm, A0 = A4 ayni boyutlar): parca adi ve numarasi 6.3 mm (Front/Back Body), 5.5 (Sleeve), 4.1 (Collar/Lining) — buyuk parcada buyuk yazi; kesim/dikis payi satirlari 4.4-5.5 mm; beden araligi 'EU: 34 - 48' 2.4-3.7 mm (en kucuk); kat kenari yazisi 'CENTER FRONT / CENTER BACK ON FOLD' 9.4 mm, 'ON FOLD' 7.3 mm; islem notu 'GATHERING' 8.0, 'BUTTON PLACKET...' 5.7 mm; cetvel 3.5/4.2 mm. stitchu: parca adi 6.3, govde 4.4, minimum 2.4, kat kenari 9.4 (Bugra'nin en cok kullandigi degerler)",
+      "katKenariYazisiMM": 9.4
+    }
+  },
+  "sayfa": {
+    "A4": {
+      "genislikMM": 210,
+      "yukseklikMM": 297,
+      "kenarBoslukMM": 5,
+      "kaynak": "ISO 216 210x297; bugra A4.pdf MediaBox 200x287 mm = her kenardan 5 mm bosluk (OLCULDU); ev yazicisi yazdirilamaz alan 5 mm icinde kalir",
+      "karoSayisi_bugra": 12,
+      "_karoNot": "bugra Locket Top A4: 12 karo, sayfa numarasi 1-12 (pdftotext), harf+sayi kimligi YOK; A0'in dogrudan karolanmasi degil (821/200 = 4.1 sutun tutmaz), parcalar A4'e ayri yerlesmis. Hizalama isareti OLCULMEDI (vektor)"
+    },
+    "Letter": {
+      "genislikMM": 215.9,
+      "yukseklikMM": 279.4,
+      "kenarBoslukMM": 10
+    },
+    "A0": {
+      "genislikMM": 841,
+      "yukseklikMM": 1189,
+      "kaynak": "closetcore copyshop A0; bugra A0 MediaBox 821x1169 (kenar boslugu 10 mm dusulmus)"
+    },
+    "dizim": {
+      "kural": "sayfa karolari sag ve alt kenari kesilir, sonrakine yapistirilir; her karoda kose hizalama ucgenleri + harf/sayi kimligi (satir harf, sutun sayi)",
+      "binisMM": 0,
+      "kaynak": "closetcore: 'cutting off only the right and bottom edges of each sheet'; 'line up small triangles on the tile edges marked with letters and numbers'",
+      "_bugra": "bugra 12 karo, birlestirme isareti metin olarak yok; kural closetcore'dan"
+    },
+    "testKaresi": {
+      "kenarMM": 100.0,
+      "cizgiMM": 0.35,
+      "yazi": "10 cm / 4 in — yazdirdiktan sonra olc",
+      "kaynak": "closetcore 4 in / 10.2 cm; arama: 'test square should measure 10cm x 10cm' (iki kaynak: 100 mm secildi, metrik). Bugra: 1-4 cm cetvel + 1-3 inch cetvel (4 cm bar = 40.00 mm kalibrasyon)"
+    },
+    "cetvel": {
+      "metrikMM": [
+        10,
+        20,
+        30,
+        40
+      ],
+      "inch": [
+        1,
+        2,
+        3
+      ],
+      "kaynak": "bugra"
+    }
+  },
+  "lejant": {
+    "satirlar": [
+      "kesim cizgisi (1.0 mm duz)",
+      "dikis cizgisi (0.35 mm kesik 4.2/4.2)",
+      "kat cizgisi",
+      "grain oku",
+      "centik: 1 on / 2 arka",
+      "delgi: pens ucu",
+      "dikis payi dahil: 1 cm, etek ucu 3 cm",
+      "test karesi 10 cm"
+    ],
+    "yeri": "ilk sayfa (kapak/lejant), bugra 'READ' sayfasi karsiligi",
+    "kaynak": "bugra + tilly (icerik), yer DOGRULANMADI"
+  },
+  "kapak": {
+    "satirlar": [
+      "giysi adi + kaynak (prompt/fotograf YOLU, fotografin kendisi degil)",
+      "beden + kumas",
+      "parca listesi ve adet",
+      "kesim plani (kumas eni)",
+      "dikis sirasi rehberi baglantisi"
+    ],
+    "kaynak": "HEDEF §4 paket (A4 PDF, test karesi, rehber); bugra '6 READ.jpg' + 'PLEASE READ BEFORE SEW!!.txt' karsiligi"
+  },
+  "_durum": "F1 duzeltme turu (2026-09-05): Bugra'dan OLCULEN sayilar eklendi — centik 7.0 mm, tipografi 4 kademe, A4 kenar boslugu 5 mm, 12 karo. Kalan DOGRULANMADI: cift centik araligi, grain oku basi/uzunlugu, hizalama ucgeni, etiket yeri, lejant yeri."
+}

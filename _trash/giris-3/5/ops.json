@@ -1,0 +1,226 @@
+[
+ {
+  "op": "drop",
+  "args": {
+   "panel": "kol",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_beden",
+   "edge": "neck_front",
+   "from": {
+    "landmark": "landmark.neckBase",
+    "xFactor": 1.5,
+    "yLandmark": "landmark.shoulderTip",
+    "yLandmark2": "landmark.neckBase",
+    "yLerp": 0.8
+   },
+   "to": {
+    "landmark": "landmark.waist",
+    "xFactor": 0,
+    "yLandmark": "landmark.neckFront",
+    "yLandmark2": "landmark.bustLine",
+    "yLerp": 0.02
+   },
+   "control": [
+    {
+     "landmark": "landmark.neckBase",
+     "xFactor": 1.1,
+     "yLandmark": "landmark.neckFront",
+     "yLandmark2": "landmark.bustLine",
+     "yLerp": 0
+    },
+    {
+     "landmark": "landmark.neckBase",
+     "xFactor": 0.5,
+     "yLandmark": "landmark.neckFront",
+     "yLandmark2": "landmark.bustLine",
+     "yLerp": 0.03
+    }
+   ]
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "neck_back",
+   "from": {
+    "landmark": "landmark.neckBase",
+    "xFactor": 1.5,
+    "yLandmark": "landmark.shoulderTip",
+    "yLandmark2": "landmark.neckBase",
+    "yLerp": 0.8
+   },
+   "to": {
+    "landmark": "landmark.nape",
+    "xFactor": 0,
+    "yOffsetMM": 6
+   },
+   "control": [
+    {
+     "landmark": "landmark.neckBase",
+     "xFactor": 1.0499999999999998,
+     "yLandmark": "landmark.nape",
+     "yOffsetMM": 3.5999999999999996
+    },
+    {
+     "landmark": "landmark.neckBase",
+     "xFactor": 0.44999999999999996,
+     "yLandmark": "landmark.nape",
+     "yOffsetMM": 6
+    }
+   ]
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_beden",
+   "edge": "dart_on_beden.1",
+   "to": {
+    "landmark": "landmark.underarm",
+    "xOf": "ringQuarter",
+    "ring": "girth.waist",
+    "xFactor": 0.35,
+    "yLandmark": "landmark.bustLine",
+    "yLandmark2": "landmark.waist",
+    "yLerp": 0.4
+   }
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "dart_arka_beden.1",
+   "to": {
+    "landmark": "landmark.underarm",
+    "xOf": "ringQuarter",
+    "ring": "girth.waist",
+    "xFactor": 0.35,
+    "yLandmark": "landmark.bustLine",
+    "yLandmark2": "landmark.waist",
+    "yLerp": 0.4
+   }
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_beden",
+   "edge": "cf",
+   "fractions": [
+    0.6375
+   ]
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_beden",
+   "edge": "side_front",
+   "fractions": [
+    0.6768
+   ]
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "on_beden",
+   "vertexA": "cf.2",
+   "vertexB": "side_front.2",
+   "panelA": "on_beden_alt",
+   "panelB": "on_beden_ust",
+   "seam": "gogus_alti_on",
+   "seamRatio": 1
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "cb",
+   "fractions": [
+    0.6867
+   ]
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "side_back",
+   "fractions": [
+    0.6768
+   ]
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "arka_beden",
+   "vertexA": "cb.2",
+   "vertexB": "side_back.2",
+   "panelA": "arka_beden_alt",
+   "panelB": "arka_beden_ust",
+   "seam": "gogus_alti_arka",
+   "seamRatio": 1
+  }
+ },
+ {
+  "op": "gather",
+  "args": {
+   "panel": "on_beden_ust",
+   "edge": "gogus_alti_on.b",
+   "ratio": 1.35
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_etek",
+   "edge": "hem_front",
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 189
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_etek",
+   "edge": "hem_back",
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 189
+  }
+ },
+ {
+  "op": "flare",
+  "args": {
+   "panel": "on_etek",
+   "edge": "hem_front",
+   "factor": 1.132
+  }
+ },
+ {
+  "op": "flare",
+  "args": {
+   "panel": "arka_etek",
+   "edge": "hem_back",
+   "factor": 1.132
+  }
+ },
+ {
+  "op": "closure",
+  "args": {
+   "seam": "arka_orta_beden",
+   "type": "zipper",
+   "fromFraction": 0,
+   "toFraction": 1
+  }
+ }
+]

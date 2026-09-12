@@ -1,0 +1,164 @@
+{
+  "recipeVersion": 1,
+  "id": "skirt.aline.dart",
+  "title": "A-line skirt (dart shaping, woven, waistband)",
+  "units": "mm",
+  "kernel": { "garment": "skirt", "skirtStyle": "aLine",
+              "shaping": "dart", "fabric": "woven" },
+  "measurements": ["waistMM", "hipMM"],
+  "params": {
+    "lengthMM": { "min": 250, "max": 1200, "table": "draft.skirtLengthMM" }
+  },
+  "consts": {
+    "waistEase": 0.02,
+    "hipEase": 0.02,
+    "hipDepthMM": 200,
+    "maxSideTake": 25,
+    "minDartWidth": 8,
+    "maxSingleDart": 30,
+    "sideWaistRise": 12,
+    "flareOut": 60,
+    "hemSideRise": 18
+  },
+  "scalars": [
+    { "id": "fullWaist",      "f": "waistMM * (1 + waistEase)" },
+    { "id": "waistQuarter",   "f": "fullWaist / 4" },
+    { "id": "hipQuarter",     "f": "max(hipMM * (1 + hipEase) / 4, waistQuarter)" },
+    { "id": "length",         "f": "clamp(lengthMM, 250, 1200)" },
+    { "id": "suppression",    "f": "max(0, hipQuarter - waistQuarter)" },
+    { "id": "sideTake",       "f": "min(suppression * 0.6, maxSideTake)" },
+    { "id": "dartWidth",      "f": "gate(suppression - sideTake, minDartWidth)" },
+    { "id": "waistlineWidth", "f": "waistQuarter + dartWidth" },
+    { "id": "hemX",           "f": "hipQuarter + flareOut" }
+  ],
+  "pieces": [
+    {
+      "name": "Front",
+      "cut": "cut 1 on fold",
+      "seamAllowanceMM": 15,
+      "scalars": [ { "id": "dartLength", "f": "90" } ],
+      "points": [
+        { "id": "centerWaist", "x": "0",              "y": "0" },
+        { "id": "sideWaist",   "x": "waistlineWidth", "y": "-sideWaistRise" },
+        { "id": "hipPoint",    "x": "hipQuarter",     "y": "hipDepthMM" },
+        { "id": "hemSide",     "x": "hemX",           "y": "length - hemSideRise" },
+        { "id": "hemCenter",   "x": "0",              "y": "length" }
+      ],
+      "outline": [
+        { "op": "move",  "to": "centerWaist" },
+        { "op": "curve", "to": "sideWaist",
+          "cp1": ["waistlineWidth * 0.45", "0"],
+          "cp2": ["waistlineWidth * 0.8", "-sideWaistRise * 0.8"] },
+        { "op": "curve", "to": "hipPoint",
+          "cp1": ["waistlineWidth + (hipQuarter - waistlineWidth) * 0.6",
+                  "hipDepthMM * 0.3 - sideWaistRise"],
+          "cp2": ["hipQuarter", "hipDepthMM * 0.65"] },
+        { "op": "line",  "to": "hemSide" },
+        { "op": "curve", "to": "hemCenter",
+          "cp1": ["hemX * 0.6", "length"],
+          "cp2": ["hemX * 0.3", "length"] },
+        { "op": "line",  "to": "centerWaist" },
+        { "op": "close" }
+      ],
+      "markings": [
+        { "op": "dart",
+          "when": ["dartWidth > 0", "dartWidth <= maxSingleDart"],
+          "centerX": "waistlineWidth / 2",
+          "width":   "dartWidth",
+          "depth":   "dartLength",
+          "legY":    "-sideWaistRise * ((waistlineWidth / 2) / waistlineWidth) * 0.5" },
+        { "op": "dart",
+          "when": ["dartWidth > maxSingleDart"],
+          "centerX": "waistlineWidth / 3",
+          "width":   "dartWidth / 2",
+          "depth":   "dartLength",
+          "legY":    "-sideWaistRise * ((waistlineWidth / 3) / waistlineWidth) * 0.5" },
+        { "op": "dart",
+          "when": ["dartWidth > maxSingleDart"],
+          "centerX": "waistlineWidth * 2 / 3",
+          "width":   "dartWidth / 2",
+          "depth":   "dartLength * 0.82",
+          "legY":    "-sideWaistRise * ((waistlineWidth * 2 / 3) / waistlineWidth) * 0.5" }
+      ],
+      "grainline": { "from": ["40", "hipDepthMM"], "to": ["40", "length - 60"] }
+    },
+    {
+      "name": "Back",
+      "cut": "cut 1 on fold",
+      "seamAllowanceMM": 15,
+      "scalars": [ { "id": "dartLength", "f": "130" } ],
+      "points": [
+        { "id": "centerWaist", "x": "0",              "y": "0" },
+        { "id": "sideWaist",   "x": "waistlineWidth", "y": "-sideWaistRise" },
+        { "id": "hipPoint",    "x": "hipQuarter",     "y": "hipDepthMM" },
+        { "id": "hemSide",     "x": "hemX",           "y": "length - hemSideRise" },
+        { "id": "hemCenter",   "x": "0",              "y": "length" }
+      ],
+      "outline": [
+        { "op": "move",  "to": "centerWaist" },
+        { "op": "curve", "to": "sideWaist",
+          "cp1": ["waistlineWidth * 0.45", "0"],
+          "cp2": ["waistlineWidth * 0.8", "-sideWaistRise * 0.8"] },
+        { "op": "curve", "to": "hipPoint",
+          "cp1": ["waistlineWidth + (hipQuarter - waistlineWidth) * 0.6",
+                  "hipDepthMM * 0.3 - sideWaistRise"],
+          "cp2": ["hipQuarter", "hipDepthMM * 0.65"] },
+        { "op": "line",  "to": "hemSide" },
+        { "op": "curve", "to": "hemCenter",
+          "cp1": ["hemX * 0.6", "length"],
+          "cp2": ["hemX * 0.3", "length"] },
+        { "op": "line",  "to": "centerWaist" },
+        { "op": "close" }
+      ],
+      "markings": [
+        { "op": "dart",
+          "when": ["dartWidth > 0", "dartWidth <= maxSingleDart"],
+          "centerX": "waistlineWidth / 2",
+          "width":   "dartWidth",
+          "depth":   "dartLength",
+          "legY":    "-sideWaistRise * ((waistlineWidth / 2) / waistlineWidth) * 0.5" },
+        { "op": "dart",
+          "when": ["dartWidth > maxSingleDart"],
+          "centerX": "waistlineWidth / 3",
+          "width":   "dartWidth / 2",
+          "depth":   "dartLength",
+          "legY":    "-sideWaistRise * ((waistlineWidth / 3) / waistlineWidth) * 0.5" },
+        { "op": "dart",
+          "when": ["dartWidth > maxSingleDart"],
+          "centerX": "waistlineWidth * 2 / 3",
+          "width":   "dartWidth / 2",
+          "depth":   "dartLength * 0.82",
+          "legY":    "-sideWaistRise * ((waistlineWidth * 2 / 3) / waistlineWidth) * 0.5" }
+      ],
+      "grainline": { "from": ["40", "hipDepthMM"], "to": ["40", "length - 60"] }
+    },
+    {
+      "name": "Waistband",
+      "cut": "cut 2, interface 1",
+      "seamAllowanceMM": 10,
+      "scalars": [
+        { "id": "bandLength", "f": "waistMM * (1 + waistEase) / 2 + 30" },
+        { "id": "bandHeight", "f": "80" }
+      ],
+      "points": [
+        { "id": "o",  "x": "0",          "y": "0" },
+        { "id": "tr", "x": "bandLength", "y": "0" },
+        { "id": "br", "x": "bandLength", "y": "bandHeight" },
+        { "id": "bl", "x": "0",          "y": "bandHeight" }
+      ],
+      "outline": [
+        { "op": "move", "to": "o" },
+        { "op": "line", "to": "tr" },
+        { "op": "line", "to": "br" },
+        { "op": "line", "to": "bl" },
+        { "op": "close" }
+      ],
+      "markings": [
+        { "op": "move", "to": ["0", "bandHeight / 2"] },
+        { "op": "line", "to": ["bandLength", "bandHeight / 2"] }
+      ],
+      "grainline": { "from": ["30", "bandHeight / 2"],
+                     "to":   ["bandLength - 30", "bandHeight / 2"] }
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "$comment": "stitchu design tokens — THE single source. web/css/tokens.css and App/Stitchu/Tokens.swift are both GENERATED from this file by scripts/gen-design-tokens.mjs. Do not hand-edit either output; edit here and regenerate. Gate: engine/tests/ios_zemin_check.mjs.",
+  "version": 1,
+  "css": {
+    "target": "web/css/tokens.css",
+    "header": [
+      "/* stitchu design tokens — the single source for the visual language.",
+      "   RESKIN 2026-07-16 (Damla, patch 2.1): baby-blue world replaces vişne. Layout",
+      "   and Didot structure unchanged; only the color world turns. Text is navy for",
+      "   WCAG-AA contrast on white/pale-blue. Flat Helvetica on pattern paper. */"
+    ],
+    "commentColumn": 26,
+    "groups": [
+      {
+        "label": "color",
+        "tokens": [
+          { "name": "ink", "value": "#1f3a5f", "comment": "navy body ink (AA on white)", "swift": "color" },
+          { "name": "paper", "value": "#ffffff", "swift": "color" },
+          { "name": "accent", "value": "#2f6f7e", "comment": "teal/navy accent (was vişne #8f2038)", "swift": "color" },
+          { "name": "gray", "value": "#5b7089", "swift": "color" },
+          { "name": "faint", "value": "#cfe0ef", "swift": "color" }
+        ]
+      },
+      {
+        "label": "baby-blue reskin palette (single source)",
+        "tokens": [
+          { "name": "bb", "value": "#8fbfe8", "swift": "color" },
+          { "name": "bb-deep", "value": "#3f74a8", "comment": "AA-readable baby blue for labels/links", "swift": "color" },
+          { "name": "bb-pale", "value": "#dceaf7", "swift": "color" },
+          { "name": "bb-line", "value": "#bcd7ee", "swift": "color" },
+          { "name": "navy", "value": "#1f3a5f", "swift": "color" },
+          { "name": "teal", "value": "#2f6f7e", "swift": "color" }
+        ]
+      },
+      {
+        "label": "thread palette (muted, never loud) — mirrors the Worker's WALL_COLORS",
+        "tokens": [
+          { "name": "thread-rose", "value": "#C4767B", "swift": "color" },
+          { "name": "thread-ochre", "value": "#B8963E", "swift": "color" },
+          { "name": "thread-olive", "value": "#7A8450", "swift": "color" },
+          { "name": "thread-navy", "value": "#3E5C76", "swift": "color" },
+          { "name": "thread-plum", "value": "#7E5A75", "swift": "color" }
+        ]
+      },
+      {
+        "label": "type — Helvetica only, weight 400 only (bold is banned)",
+        "tokens": [
+          { "name": "font", "value": "\"Helvetica Neue\", Helvetica, Arial, sans-serif", "swift": "fontStack" },
+          { "name": "size-hero", "value": "46px", "swift": "size" },
+          { "name": "size-h2", "value": "26px", "swift": "size" },
+          { "name": "size-body", "value": "16px", "swift": "size" },
+          { "name": "size-small", "value": "14px", "swift": "size" },
+          { "name": "size-fine", "value": "13px", "swift": "size" }
+        ]
+      },
+      {
+        "label": "shape — sharp corners: 2px is the house maximum",
+        "tokens": [
+          { "name": "radius", "value": "2px", "swift": "size" },
+          { "name": "hairline", "value": "1px solid var(--ink)" },
+          { "name": "seam", "value": "1px dashed var(--ink)" }
+        ]
+      },
+      {
+        "label": "space",
+        "tokens": [
+          { "name": "space-1", "value": "8px", "swift": "size" },
+          { "name": "space-2", "value": "16px", "swift": "size" },
+          { "name": "space-3", "value": "24px", "swift": "size" },
+          { "name": "space-4", "value": "40px", "swift": "size" },
+          { "name": "space-5", "value": "72px", "swift": "size" },
+          { "name": "measure", "value": "1060px", "swift": "size" }
+        ]
+      }
+    ],
+    "tail": [
+      "",
+      "* { margin: 0; padding: 0; box-sizing: border-box; }",
+      "html, body { background: var(--paper); color: var(--ink); }",
+      "body {",
+      "  font-family: var(--font);",
+      "  font-weight: 400;",
+      "  font-size: var(--size-body);",
+      "  line-height: 1.5;",
+      "}",
+      "::selection { background: var(--accent); color: var(--paper); }",
+      "b, strong { font-weight: 400; } /* bold is banned; neutralize accidents */",
+      ".wrap { max-width: var(--measure); margin: 0 auto; padding: 0 var(--space-3); }"
+    ]
+  },
+
+  "swift": {
+    "target": "App/Stitchu/Tokens.swift",
+    "enumName": "StitchuTokens",
+    "$comment": "Emitted for the iOS app so the Swift surface reads the SAME hex values as the web. Namespaced under StitchuTokens so it cannot collide with the hand-written Palette/Quicksand in App/Stitchu/Theme.swift (that file is untouched)."
+  },
+
+  "fontStacks": {
+    "$comment": "The ONLY literal font-family stacks allowed anywhere in web/css. Anything else must become a token first. Comparison is whitespace/quote/case-insensitive.",
+    "ui": "\"Helvetica Neue\", Helvetica, Arial, sans-serif",
+    "uiCompact": "Helvetica, Arial, sans-serif",
+    "display": "'Didot', 'Bodoni 72', Georgia, serif"
+  },
+
+  "legacy": {
+    "$comment": "DECLARED EXCEPTIONS (ratchet, never a licence). Every literal colour still hand-written in web/css outside the generated tokens.css is listed here with the reason it has not been tokenised yet. ios_zemin_check.mjs fails on any literal NOT in this list, and on any file whose literal count rises above maxLiteralsPerFile. The numbers may only go DOWN.",
+    "maxLiteralsPerFile": {
+      "app.css": 49,
+      "couture.css": 6,
+      "shared-button.css": 6,
+      "shared-header.css": 8,
+      "studio.css": 2,
+      "landing.css": 0,
+      "theme-transitions.css": 0
+    },
+    "colors": [
+      { "value": "#fff", "reason": "shorthand of --paper; kept literal so the generated tokens.css stays byte-identical to the shipped file" },
+      { "value": "#1f3a5f", "reason": "= --ink / --navy, inlined before the token existed" },
+      { "value": "#3f74a8", "reason": "= --bb-deep, inlined in shared-header/shared-button :root shims" },
+      { "value": "#2b4f7a", "reason": "navy hover state, no token yet (candidate --navy-hover)" },
+      { "value": "#9db8d6", "reason": "dashed input/border blue in app.css, no token yet (candidate --line-input)" },
+      { "value": "#fbfaf6", "reason": "warm off-white used as text ON navy fills, no token yet (candidate --paper-warm)" },
+      { "value": "#d8c3c7", "reason": "disabled choice text, pre-reskin leftover" },
+      { "value": "#ecdfe1", "reason": "disabled choice border, pre-reskin leftover" },
+      { "value": "#8f2038", "reason": "VİŞNE LEFTOVER — the reskin missed .print-cuttable td:first-child; print-only surface" },
+      { "value": "#444", "reason": "print sub-text grey, print stylesheet only" },
+      { "value": "#999", "reason": "print table rule grey, print stylesheet only" },
+      { "value": "#e6eef7", "reason": "print size-chart header fill" },
+      { "value": "#f3ecec", "reason": "print cut-table header fill, pre-reskin warm tint" },
+      { "value": "#ffffff", "reason": "= --paper, inlined in couture.css gradient stops" },
+      { "value": "rgba(255,255,255,.8)", "reason": "sticky bar veil over paper" },
+      { "value": "rgba(255,255,255,.85)", "reason": "sticky bar veil over paper" },
+      { "value": "rgba(0,0,0,.025)", "reason": "hairline tint, alpha over paper" },
+      { "value": "rgba(0,0,0,.07)", "reason": "hairline tint, alpha over paper" },
+      { "value": "rgba(0,0,0,.1)", "reason": "hairline tint, alpha over paper" },
+      { "value": "rgba(0,0,0,.12)", "reason": "hairline tint, alpha over paper" },
+      { "value": "rgba(0,0,0,.2)", "reason": "select border, alpha over paper" },
+      { "value": "rgba(143,32,56,.03)", "reason": "VİŞNE LEFTOVER with alpha (#8f2038)" },
+      { "value": "rgba(143,32,56,.05)", "reason": "VİŞNE LEFTOVER with alpha (#8f2038)" },
+      { "value": "rgba(143,191,232,.30)", "reason": "= --bb with alpha, couture wash" },
+      { "value": "rgba(63, 116, 168, .22)", "reason": "= --bb-deep with alpha, couture rule" },
+      { "value": "rgba(63, 116, 168, .3)", "reason": "= --bb-deep with alpha, couture rule" }
+    ]
+  },
+
+  "api": {
+    "$comment": "Endpoints backend/API.md is allowed to document. ios_zemin_check.mjs cross-checks this list against backend/worker.js routing AND against the headings in API.md — a doc heading with no route, or a route documented under a name the worker does not serve, fails.",
+    "documented": ["/api/draft", "/api/grade", "/api/analyze"],
+    "undocumented": {
+      "$comment": "Real routes that API.md deliberately does not publish (internal / not part of the app+API contract).",
+      "paths": ["/api/wall", "/api/wall/stitch", "/api/wall/note", "/api/waitlist"]
+    }
+  }
+}

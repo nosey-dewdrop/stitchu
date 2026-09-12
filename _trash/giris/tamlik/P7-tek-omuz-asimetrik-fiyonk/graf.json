@@ -1,0 +1,3528 @@
+{
+  "id": "P7-tek-omuz-asimetrik-fiyonk",
+  "version": "graf-v1",
+  "notes": "TABAN GRAF (F2a fixture). Bolluk: contract/garment-spec-v2.json quantities easeBustMM/easeWaistMM/easeHipMM (Threads/RTW + Aldrich); kol bollugu engine/src/sleeve.hpp bicepsEase 0.15 x girth.biceps (Brian default). Yan dikis ve bel iki tarafta cevre/4 (ringQuarter): on/arka yan dikisler insadan esit. Egri kontrol noktalari kubik ceyrek-daire katsayisi kappa=4(sqrt2-1)/3 ile (turetilmis). UYDURULANLAR ADIYLA: (1) kol kapagi yuksekligi koltukalti->omuz ucu dususunun 0.6'si — DOGRULANMADI; Aldrich EU38 kapak bandi 130-150 mm'nin altinda kalir, cunku taban kol oyugu (scye depth bollugu yok) Aldrich 40-44 cm bandinin altinda; oyugun icbukey noktasi width.crossFront/2 (body-v1), y'si dususun ortasi (0.5, DOGRULANMADI); F2b oyugu ve kapagi kaynakli kurar (KAPI 2, docs/GRAF-IR.md F2b kapilari; F3e devredilmez); croquis36'da width.crossFront'un kendisi 0.85 x width.shoulderToShoulder (body-v1 croquisOranlar.crossOverShoulderToShoulder, DOGRULANMADI — body-v1 borcu, grafin degil). (2) etek duz (kalca genisligi dize kadar). (3) yaka pervazli (faced), etek ucu kivrilir (hem). Kapak KISIT: fitLength cap_front/cap_back -> kol_oyugu (ratio 1.04 = sleeve.hpp capEase); mm grafa yazilmaz, her bedende degerleme aninda cozulur (karar 6).\ngrafuygula: taban taban-elbise + 17 emir (KOSU/ciktilar/giris/tamlik/P7-tek-omuz-asimetrik-fiyonk/ops.json)",
+  "panels": [
+    {
+      "id": "on_tam",
+      "edges": [
+        {
+          "id": "waist_front.1.1",
+          "kind": "seam",
+          "role": "waist_front",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.waist",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": 0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "dart_on_beden.1.1",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": 0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": 0.35,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "dart_on_beden.2.1",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": 0.35,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": -0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "waist_front.2.1",
+          "kind": "seam",
+          "role": "waist_front",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": -0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "notches": [0.47]
+        },
+        {
+          "id": "side_front.1",
+          "kind": "seam",
+          "role": "side_front",
+          "from": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.bustLine",
+            "xOf": "ringQuarter",
+            "ring": "girth.bust",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "notches": [0.5]
+        },
+        {
+          "id": "armhole_front.1.1",
+          "kind": "seam",
+          "role": "armhole_front",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.bustLine",
+            "xOf": "ringQuarter",
+            "ring": "girth.bust",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "widthHalf",
+            "width": "width.crossFront",
+            "xFactor": 1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yLandmark2": "landmark.shoulderTip",
+            "yLerp": 0.5
+          },
+          "control": [
+            {
+              "combo": [
+                {
+                  "w": 0.44771525016920644,
+                  "landmark": "landmark.bustLine",
+                  "xOf": "ringQuarter",
+                  "ring": "girth.bust",
+                  "xFactor": 1,
+                  "xOffsetMM": 0
+                },
+                {
+                  "w": 0.5522847498307936,
+                  "landmark": "landmark.underarm",
+                  "xOf": "widthHalf",
+                  "width": "width.crossFront",
+                  "xFactor": 1,
+                  "xOffsetMM": 0
+                }
+              ]
+            },
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "widthHalf",
+              "width": "width.crossFront",
+              "xFactor": 1,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.2761423749153968
+            }
+          ]
+        },
+        {
+          "id": "armhole_front.2.1",
+          "kind": "seam",
+          "role": "armhole_front",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "widthHalf",
+            "width": "width.crossFront",
+            "xFactor": 1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yLandmark2": "landmark.shoulderTip",
+            "yLerp": 0.5
+          },
+          "to": {
+            "landmark": "landmark.shoulderTip",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "control": [
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "widthHalf",
+              "width": "width.crossFront",
+              "xFactor": 1,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.7761423749153968
+            },
+            {
+              "combo": [
+                {
+                  "w": 0.44771525016920644,
+                  "landmark": "landmark.shoulderTip",
+                  "xFactor": 1,
+                  "xOffsetMM": 0
+                },
+                {
+                  "w": 0.5522847498307936,
+                  "landmark": "landmark.underarm",
+                  "xOf": "widthHalf",
+                  "width": "width.crossFront",
+                  "xFactor": 1,
+                  "xOffsetMM": 0,
+                  "yLandmark": "landmark.shoulderTip"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shoulder.1",
+          "kind": "seam",
+          "role": "shoulder",
+          "from": {
+            "landmark": "landmark.shoulderTip",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.neckBase",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "neck_front.1",
+          "kind": "cut",
+          "role": "neck_front",
+          "from": {
+            "landmark": "landmark.neckBase",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.neckFront",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "control": [
+            {
+              "landmark": "landmark.neckBase",
+              "xFactor": 1,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.neckBase",
+              "yLandmark2": "landmark.neckFront",
+              "yLerp": 0.5522847498307936
+            },
+            {
+              "landmark": "landmark.neckBase",
+              "xFactor": 0.5522847498307936,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.neckFront"
+            }
+          ],
+          "finish": "faced"
+        },
+        {
+          "id": "neck_front.2",
+          "kind": "cut",
+          "role": "neck_front",
+          "from": {
+            "landmark": "landmark.neckFront",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.neckBase",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "control": [
+            {
+              "landmark": "landmark.neckBase",
+              "xFactor": -0.5522847498307936,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.neckFront"
+            },
+            {
+              "landmark": "landmark.neckBase",
+              "xFactor": -1,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.neckBase",
+              "yLandmark2": "landmark.neckFront",
+              "yLerp": 0.5522847498307936
+            }
+          ],
+          "finish": "faced"
+        },
+        {
+          "id": "shoulder.2",
+          "kind": "cut",
+          "role": "shoulder",
+          "from": {
+            "landmark": "landmark.neckBase",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.shoulderTip",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "finish": "faced"
+        },
+        {
+          "id": "armhole_front.2.2",
+          "kind": "seam",
+          "role": "armhole_front",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.shoulderTip",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "widthHalf",
+            "width": "width.crossFront",
+            "xFactor": -1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yLandmark2": "landmark.shoulderTip",
+            "yLerp": 0.5
+          },
+          "control": [
+            {
+              "combo": [
+                {
+                  "w": 0.44771525016920644,
+                  "landmark": "landmark.shoulderTip",
+                  "xFactor": -1,
+                  "xOffsetMM": 0
+                },
+                {
+                  "w": 0.5522847498307936,
+                  "landmark": "landmark.underarm",
+                  "xOf": "widthHalf",
+                  "width": "width.crossFront",
+                  "xFactor": -1,
+                  "xOffsetMM": 0,
+                  "yLandmark": "landmark.shoulderTip"
+                }
+              ]
+            },
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "widthHalf",
+              "width": "width.crossFront",
+              "xFactor": -1,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.7761423749153968
+            }
+          ]
+        },
+        {
+          "id": "armhole_front.1.2",
+          "kind": "seam",
+          "role": "armhole_front",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "widthHalf",
+            "width": "width.crossFront",
+            "xFactor": -1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yLandmark2": "landmark.shoulderTip",
+            "yLerp": 0.5
+          },
+          "to": {
+            "landmark": "landmark.bustLine",
+            "xOf": "ringQuarter",
+            "ring": "girth.bust",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "control": [
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "widthHalf",
+              "width": "width.crossFront",
+              "xFactor": -1,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.2761423749153968
+            },
+            {
+              "combo": [
+                {
+                  "w": 0.44771525016920644,
+                  "landmark": "landmark.bustLine",
+                  "xOf": "ringQuarter",
+                  "ring": "girth.bust",
+                  "xFactor": -1,
+                  "xOffsetMM": 0
+                },
+                {
+                  "w": 0.5522847498307936,
+                  "landmark": "landmark.underarm",
+                  "xOf": "widthHalf",
+                  "width": "width.crossFront",
+                  "xFactor": -1,
+                  "xOffsetMM": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "side_front.2",
+          "kind": "seam",
+          "role": "side_front",
+          "from": {
+            "landmark": "landmark.bustLine",
+            "xOf": "ringQuarter",
+            "ring": "girth.bust",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "notches": [0.5]
+        },
+        {
+          "id": "waist_front.2.2",
+          "kind": "seam",
+          "role": "waist_front",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": -0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "notches": [0.53]
+        },
+        {
+          "id": "dart_on_beden.2.2",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": -0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": -0.35,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "dart_on_beden.1.2",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": -0.35,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": 0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "waist_front.1.2",
+          "kind": "seam",
+          "role": "waist_front",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": 0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          }
+        }
+      ],
+      "grainDeg": 0,
+      "onFold": false,
+      "cutCount": 2,
+      "seamAllowanceMM": 0,
+      "ease": [
+        {
+          "ring": "girth.bust",
+          "mm": 6e+01
+        },
+        {
+          "ring": "girth.waist",
+          "mm": 25
+        }
+      ],
+      "reason": "on govde (kat) | merge on_beden+on_ayna along on_orta_kat"
+    },
+    {
+      "id": "arka_beden",
+      "edges": [
+        {
+          "id": "cb",
+          "kind": "seam",
+          "role": "cb_seam",
+          "from": {
+            "landmark": "landmark.nape",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "waist_back.1",
+          "kind": "seam",
+          "role": "waist_back",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.waist",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": 0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "dart_arka_beden.1",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": 0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": 0.35,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "dart_arka_beden.2",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": 0.35,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": -0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "waist_back.2",
+          "kind": "seam",
+          "role": "waist_back",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": -0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "notches": [0.47]
+        },
+        {
+          "id": "side_back",
+          "kind": "seam",
+          "role": "side_back",
+          "from": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.bustLine",
+            "xOf": "ringQuarter",
+            "ring": "girth.bust",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "notches": [0.5]
+        },
+        {
+          "id": "armhole_back.1",
+          "kind": "seam",
+          "role": "armhole_back",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.bustLine",
+            "xOf": "ringQuarter",
+            "ring": "girth.bust",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "widthHalf",
+            "width": "width.crossBack",
+            "xFactor": 1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yLandmark2": "landmark.shoulderTip",
+            "yLerp": 0.5
+          },
+          "control": [
+            {
+              "combo": [
+                {
+                  "w": 0.44771525016920644,
+                  "landmark": "landmark.bustLine",
+                  "xOf": "ringQuarter",
+                  "ring": "girth.bust",
+                  "xFactor": 1,
+                  "xOffsetMM": 0
+                },
+                {
+                  "w": 0.5522847498307936,
+                  "landmark": "landmark.underarm",
+                  "xOf": "widthHalf",
+                  "width": "width.crossBack",
+                  "xFactor": 1,
+                  "xOffsetMM": 0
+                }
+              ]
+            },
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "widthHalf",
+              "width": "width.crossBack",
+              "xFactor": 1,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.2761423749153968
+            }
+          ]
+        },
+        {
+          "id": "armhole_back.2",
+          "kind": "seam",
+          "role": "armhole_back",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "widthHalf",
+            "width": "width.crossBack",
+            "xFactor": 1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yLandmark2": "landmark.shoulderTip",
+            "yLerp": 0.5
+          },
+          "to": {
+            "landmark": "landmark.shoulderTip",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "control": [
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "widthHalf",
+              "width": "width.crossBack",
+              "xFactor": 1,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.7761423749153968
+            },
+            {
+              "combo": [
+                {
+                  "w": 0.44771525016920644,
+                  "landmark": "landmark.shoulderTip",
+                  "xFactor": 1,
+                  "xOffsetMM": 0
+                },
+                {
+                  "w": 0.5522847498307936,
+                  "landmark": "landmark.underarm",
+                  "xOf": "widthHalf",
+                  "width": "width.crossBack",
+                  "xFactor": 1,
+                  "xOffsetMM": 0,
+                  "yLandmark": "landmark.shoulderTip"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shoulder",
+          "kind": "seam",
+          "role": "shoulder",
+          "from": {
+            "landmark": "landmark.shoulderTip",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.neckBase",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "neck_back",
+          "kind": "cut",
+          "role": "neck_back",
+          "from": {
+            "landmark": "landmark.neckBase",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.nape",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "control": [
+            {
+              "landmark": "landmark.neckBase",
+              "xFactor": 1,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.neckBase",
+              "yLandmark2": "landmark.nape",
+              "yLerp": 0.5522847498307936
+            },
+            {
+              "landmark": "landmark.neckBase",
+              "xFactor": 0.5522847498307936,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.nape"
+            }
+          ],
+          "finish": "faced"
+        }
+      ],
+      "grainDeg": 0,
+      "onFold": false,
+      "cutCount": 2,
+      "seamAllowanceMM": 0,
+      "ease": [
+        {
+          "ring": "girth.bust",
+          "mm": 6e+01
+        },
+        {
+          "ring": "girth.waist",
+          "mm": 25
+        }
+      ],
+      "reason": "arka govde (iki parca, arka orta fermuar)"
+    },
+    {
+      "id": "on_etek_tam",
+      "edges": [
+        {
+          "id": "hem_front.1",
+          "kind": "cut",
+          "role": "hem_front",
+          "from": {
+            "landmark": "landmark.knee",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.knee"
+          },
+          "finish": "hem"
+        },
+        {
+          "id": "side_front.1.1",
+          "kind": "seam",
+          "role": "side_front",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.knee"
+          },
+          "to": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "side_front.2.1",
+          "kind": "seam",
+          "role": "side_front",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "waist_front.1.1",
+          "kind": "seam",
+          "role": "waist_front",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": -0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "notches": [0.82]
+        },
+        {
+          "id": "dart_on_etek.1.1",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": -0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": 0.59,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "dart_on_etek.2.1",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": 0.59,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": 0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.795,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "waist_front.2.1",
+          "kind": "seam",
+          "role": "waist_front",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": 0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.795,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "waist_front.2.2",
+          "kind": "seam",
+          "role": "waist_front",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.waist",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": 0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.795,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "dart_on_etek.2.2",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": 0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.795,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": -0.59,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "dart_on_etek.1.2",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": -0.59,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": -0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "waist_front.1.2",
+          "kind": "seam",
+          "role": "waist_front",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": -0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "notches": [0.18000000000000005]
+        },
+        {
+          "id": "side_front.2.2",
+          "kind": "seam",
+          "role": "side_front",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "side_front.1.2",
+          "kind": "seam",
+          "role": "side_front",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.knee"
+          }
+        },
+        {
+          "id": "hem_front.2",
+          "kind": "cut",
+          "role": "hem_front",
+          "from": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.knee"
+          },
+          "to": {
+            "landmark": "landmark.knee",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "finish": "hem"
+        }
+      ],
+      "grainDeg": 0,
+      "onFold": false,
+      "cutCount": 2,
+      "seamAllowanceMM": 0,
+      "ease": [
+        {
+          "ring": "girth.waist",
+          "mm": 25
+        },
+        {
+          "ring": "girth.hip",
+          "mm": 5e+01
+        }
+      ],
+      "reason": "on etek (kat) | merge on_etek+on_etek_ayna along on_etek_kat"
+    },
+    {
+      "id": "arka_etek",
+      "edges": [
+        {
+          "id": "cb",
+          "kind": "seam",
+          "role": "cb_seam",
+          "from": {
+            "landmark": "landmark.waist",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.knee",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "hem_back",
+          "kind": "cut",
+          "role": "hem_back",
+          "from": {
+            "landmark": "landmark.knee",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.knee"
+          },
+          "finish": "hem"
+        },
+        {
+          "id": "side_back.1",
+          "kind": "seam",
+          "role": "side_back",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.knee"
+          },
+          "to": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "side_back.2",
+          "kind": "seam",
+          "role": "side_back",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "waist_back.1",
+          "kind": "seam",
+          "role": "waist_back",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": -0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "notches": [0.82]
+        },
+        {
+          "id": "dart_arka_etek.1",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": -0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": 0.59,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "dart_arka_etek.2",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": 0.59,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": 0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.795,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "waist_back.2",
+          "kind": "seam",
+          "role": "waist_back",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": 0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.795,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": 0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          }
+        }
+      ],
+      "grainDeg": 0,
+      "onFold": false,
+      "cutCount": 2,
+      "seamAllowanceMM": 0,
+      "ease": [
+        {
+          "ring": "girth.waist",
+          "mm": 25
+        },
+        {
+          "ring": "girth.hip",
+          "mm": 5e+01
+        }
+      ],
+      "reason": "arka etek (iki parca, arka orta fermuar)"
+    },
+    {
+      "id": "kol",
+      "edges": [
+        {
+          "id": "cap_front",
+          "kind": "seam",
+          "role": "sleeve_cap",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": 0,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yLandmark2": "landmark.shoulderTip",
+            "yLerp": 0.6
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": 2,
+            "xOffsetMM": 0
+          },
+          "control": [
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "ringQuarter",
+              "ring": "girth.biceps",
+              "xFactor": 1.1045694996615871,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.6
+            },
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "ringQuarter",
+              "ring": "girth.biceps",
+              "xFactor": 2,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.33137084989847615
+            }
+          ],
+          "fitSeam": "kol_oyugu"
+        },
+        {
+          "id": "underarm_front",
+          "kind": "seam",
+          "role": "sleeve_underarm",
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": 2,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": 2,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.elbow"
+          }
+        },
+        {
+          "id": "hem",
+          "kind": "cut",
+          "role": "sleeve_hem",
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": 2,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.elbow"
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": -2,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.elbow"
+          },
+          "finish": "hem"
+        },
+        {
+          "id": "underarm_back",
+          "kind": "seam",
+          "role": "sleeve_underarm",
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": -2,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.elbow"
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": -2,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "cap_back",
+          "kind": "seam",
+          "role": "sleeve_cap",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": -2,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": 0,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yLandmark2": "landmark.shoulderTip",
+            "yLerp": 0.6
+          },
+          "control": [
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "ringQuarter",
+              "ring": "girth.biceps",
+              "xFactor": -2,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.33137084989847615
+            },
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "ringQuarter",
+              "ring": "girth.biceps",
+              "xFactor": -1.1045694996615871,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.6
+            }
+          ],
+          "fitSeam": "kol_oyugu"
+        }
+      ],
+      "grainDeg": 0,
+      "onFold": false,
+      "cutCount": 2,
+      "seamAllowanceMM": 0,
+      "ease": [
+        {
+          "ring": "girth.biceps",
+          "mm": 40.5
+        }
+      ],
+      "reason": "kol (2 kes)"
+    },
+    {
+      "id": "arka_ayna",
+      "edges": [
+        {
+          "id": "neck_back",
+          "kind": "cut",
+          "role": "neck_back",
+          "from": {
+            "landmark": "landmark.nape",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.neckBase",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "control": [
+            {
+              "landmark": "landmark.neckBase",
+              "xFactor": -0.5522847498307936,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.nape"
+            },
+            {
+              "landmark": "landmark.neckBase",
+              "xFactor": -1,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.neckBase",
+              "yLandmark2": "landmark.nape",
+              "yLerp": 0.5522847498307936
+            }
+          ],
+          "finish": "faced"
+        },
+        {
+          "id": "shoulder",
+          "kind": "seam",
+          "role": "shoulder",
+          "from": {
+            "landmark": "landmark.neckBase",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.shoulderTip",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "armhole_back.2",
+          "kind": "seam",
+          "role": "armhole_back",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.shoulderTip",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "widthHalf",
+            "width": "width.crossBack",
+            "xFactor": -1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yLandmark2": "landmark.shoulderTip",
+            "yLerp": 0.5
+          },
+          "control": [
+            {
+              "combo": [
+                {
+                  "w": 0.44771525016920644,
+                  "landmark": "landmark.shoulderTip",
+                  "xFactor": -1,
+                  "xOffsetMM": 0
+                },
+                {
+                  "w": 0.5522847498307936,
+                  "landmark": "landmark.underarm",
+                  "xOf": "widthHalf",
+                  "width": "width.crossBack",
+                  "xFactor": -1,
+                  "xOffsetMM": 0,
+                  "yLandmark": "landmark.shoulderTip"
+                }
+              ]
+            },
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "widthHalf",
+              "width": "width.crossBack",
+              "xFactor": -1,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.7761423749153968
+            }
+          ]
+        },
+        {
+          "id": "armhole_back.1",
+          "kind": "seam",
+          "role": "armhole_back",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "widthHalf",
+            "width": "width.crossBack",
+            "xFactor": -1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yLandmark2": "landmark.shoulderTip",
+            "yLerp": 0.5
+          },
+          "to": {
+            "landmark": "landmark.bustLine",
+            "xOf": "ringQuarter",
+            "ring": "girth.bust",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "control": [
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "widthHalf",
+              "width": "width.crossBack",
+              "xFactor": -1,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.2761423749153968
+            },
+            {
+              "combo": [
+                {
+                  "w": 0.44771525016920644,
+                  "landmark": "landmark.bustLine",
+                  "xOf": "ringQuarter",
+                  "ring": "girth.bust",
+                  "xFactor": -1,
+                  "xOffsetMM": 0
+                },
+                {
+                  "w": 0.5522847498307936,
+                  "landmark": "landmark.underarm",
+                  "xOf": "widthHalf",
+                  "width": "width.crossBack",
+                  "xFactor": -1,
+                  "xOffsetMM": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "side_back",
+          "kind": "seam",
+          "role": "side_back",
+          "from": {
+            "landmark": "landmark.bustLine",
+            "xOf": "ringQuarter",
+            "ring": "girth.bust",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "notches": [0.5]
+        },
+        {
+          "id": "waist_back.2",
+          "kind": "seam",
+          "role": "waist_back",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": -0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "notches": [0.53]
+        },
+        {
+          "id": "dart_arka_beden.2",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": -0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": -0.35,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "dart_arka_beden.1",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": -0.35,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": 0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "waist_back.1",
+          "kind": "seam",
+          "role": "waist_back",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": 0.25,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.75,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.35,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "cb",
+          "kind": "seam",
+          "role": "cb_seam",
+          "from": {
+            "landmark": "landmark.waist",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.nape",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          }
+        }
+      ],
+      "grainDeg": 0,
+      "onFold": false,
+      "cutCount": 2,
+      "seamAllowanceMM": 0,
+      "ease": [
+        {
+          "ring": "girth.bust",
+          "mm": 6e+01
+        },
+        {
+          "ring": "girth.waist",
+          "mm": 25
+        }
+      ],
+      "reason": "mirror of arka_beden"
+    },
+    {
+      "id": "arka_etek_ayna",
+      "edges": [
+        {
+          "id": "waist_back.2",
+          "kind": "seam",
+          "role": "waist_back",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.waist",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": 0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.795,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "dart_arka_etek.2",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": 0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 0.795,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": -0.59,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "dart_arka_etek.1",
+          "kind": "dartLeg",
+          "role": "waist_dart",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "ring": "girth.waist",
+            "xFactor": -0.59,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "combo": [
+              {
+                "w": -0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "waist_back.1",
+          "kind": "seam",
+          "role": "waist_back",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "combo": [
+              {
+                "w": -0.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.bust",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              },
+              {
+                "w": 1.205,
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "ring": "girth.waist",
+                "xFactor": -0.59,
+                "xOffsetMM": 0
+              }
+            ]
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "notches": [0.18000000000000005]
+        },
+        {
+          "id": "side_back.2",
+          "kind": "seam",
+          "role": "side_back",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "side_back.1",
+          "kind": "seam",
+          "role": "side_back",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.knee"
+          }
+        },
+        {
+          "id": "hem_back",
+          "kind": "cut",
+          "role": "hem_back",
+          "from": {
+            "landmark": "landmark.hip",
+            "xOf": "ringQuarter",
+            "xFactor": -1,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.knee"
+          },
+          "to": {
+            "landmark": "landmark.knee",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "finish": "hem"
+        },
+        {
+          "id": "cb",
+          "kind": "seam",
+          "role": "cb_seam",
+          "from": {
+            "landmark": "landmark.knee",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xFactor": 0,
+            "xOffsetMM": 0
+          }
+        }
+      ],
+      "grainDeg": 0,
+      "onFold": false,
+      "cutCount": 2,
+      "seamAllowanceMM": 0,
+      "ease": [
+        {
+          "ring": "girth.waist",
+          "mm": 25
+        },
+        {
+          "ring": "girth.hip",
+          "mm": 5e+01
+        }
+      ],
+      "reason": "mirror of arka_etek"
+    },
+    {
+      "id": "kol_ayna",
+      "edges": [
+        {
+          "id": "cap_back",
+          "kind": "seam",
+          "role": "sleeve_cap",
+          "rolePart": 2,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": 0,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yLandmark2": "landmark.shoulderTip",
+            "yLerp": 0.6
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": 2,
+            "xOffsetMM": 0
+          },
+          "control": [
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "ringQuarter",
+              "ring": "girth.biceps",
+              "xFactor": 1.1045694996615871,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.6
+            },
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "ringQuarter",
+              "ring": "girth.biceps",
+              "xFactor": 2,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.33137084989847615
+            }
+          ],
+          "fitSeam": "kol_oyugu"
+        },
+        {
+          "id": "underarm_back",
+          "kind": "seam",
+          "role": "sleeve_underarm",
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": 2,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": 2,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.elbow"
+          }
+        },
+        {
+          "id": "hem",
+          "kind": "cut",
+          "role": "sleeve_hem",
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": 2,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.elbow"
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": -2,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.elbow"
+          },
+          "finish": "hem"
+        },
+        {
+          "id": "underarm_front",
+          "kind": "seam",
+          "role": "sleeve_underarm",
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": -2,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.elbow"
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": -2,
+            "xOffsetMM": 0
+          }
+        },
+        {
+          "id": "cap_front",
+          "kind": "seam",
+          "role": "sleeve_cap",
+          "rolePart": 1,
+          "roleCount": 2,
+          "from": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": -2,
+            "xOffsetMM": 0
+          },
+          "to": {
+            "landmark": "landmark.underarm",
+            "xOf": "ringQuarter",
+            "ring": "girth.biceps",
+            "xFactor": 0,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.underarm",
+            "yLandmark2": "landmark.shoulderTip",
+            "yLerp": 0.6
+          },
+          "control": [
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "ringQuarter",
+              "ring": "girth.biceps",
+              "xFactor": -2,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.33137084989847615
+            },
+            {
+              "landmark": "landmark.underarm",
+              "xOf": "ringQuarter",
+              "ring": "girth.biceps",
+              "xFactor": -1.1045694996615871,
+              "xOffsetMM": 0,
+              "yLandmark": "landmark.underarm",
+              "yLandmark2": "landmark.shoulderTip",
+              "yLerp": 0.6
+            }
+          ],
+          "fitSeam": "kol_oyugu"
+        }
+      ],
+      "grainDeg": 0,
+      "onFold": false,
+      "cutCount": 2,
+      "seamAllowanceMM": 0,
+      "ease": [
+        {
+          "ring": "girth.biceps",
+          "mm": 40.5
+        }
+      ],
+      "reason": "mirror of kol"
+    },
+    {
+      "id": "bel_fiyonk",
+      "edges": [
+        {
+          "id": "ust",
+          "kind": "cut",
+          "from": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 0.55,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.underbust",
+            "yLerp": 0.15
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 0.95,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.underbust",
+            "yLerp": 0.15
+          },
+          "finish": "hem"
+        },
+        {
+          "id": "dis",
+          "kind": "cut",
+          "from": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 0.95,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.underbust",
+            "yLerp": 0.15
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 0.95,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.highHip",
+            "yLerp": 0.15
+          },
+          "finish": "hem"
+        },
+        {
+          "id": "alt",
+          "kind": "cut",
+          "from": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 0.95,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.highHip",
+            "yLerp": 0.15
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 0.55,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.highHip",
+            "yLerp": 0.15
+          },
+          "finish": "hem"
+        },
+        {
+          "id": "ic",
+          "kind": "cut",
+          "from": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 0.55,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.highHip",
+            "yLerp": 0.15
+          },
+          "to": {
+            "landmark": "landmark.waist",
+            "xOf": "ringQuarter",
+            "xFactor": 0.55,
+            "xOffsetMM": 0,
+            "yLandmark": "landmark.waist",
+            "yLandmark2": "landmark.underbust",
+            "yLerp": 0.15
+          },
+          "finish": "hem"
+        }
+      ],
+      "grainDeg": 0,
+      "onFold": false,
+      "cutCount": 1,
+      "seamAllowanceMM": 0,
+      "reason": "bel hizasinda yuze dikili serit (fiyonk govdesi)",
+      "onto": "on_tam"
+    }
+  ],
+  "seams": [
+    {
+      "id": "omuz",
+      "a": [
+        {
+          "panel": "on_tam",
+          "edge": "shoulder.1"
+        }
+      ],
+      "b": [
+        {
+          "panel": "arka_beden",
+          "edge": "shoulder"
+        }
+      ],
+      "reverse": false,
+      "ratio": 1,
+      "easeMM": 0,
+      "reason": "omuz dikisi: omuz ucu <-> omuz ucu, boyun <-> boyun"
+    },
+    {
+      "id": "yan_beden",
+      "a": [
+        {
+          "panel": "on_tam",
+          "edge": "side_front.1"
+        }
+      ],
+      "b": [
+        {
+          "panel": "arka_beden",
+          "edge": "side_back"
+        }
+      ],
+      "reverse": false,
+      "ratio": 1,
+      "easeMM": 0,
+      "notchFractions": [0.5],
+      "reason": "govde yan dikisi: bel <-> bel, koltukalti <-> koltukalti"
+    },
+    {
+      "id": "kol_oyugu",
+      "a": [
+        {
+          "panel": "kol",
+          "edge": "cap_back"
+        },
+        {
+          "panel": "kol",
+          "edge": "cap_front"
+        }
+      ],
+      "b": [
+        {
+          "panel": "arka_beden",
+          "edge": "armhole_back.1"
+        },
+        {
+          "panel": "arka_beden",
+          "edge": "armhole_back.2"
+        },
+        {
+          "panel": "on_tam",
+          "edge": "armhole_front.2.1"
+        },
+        {
+          "panel": "on_tam",
+          "edge": "armhole_front.1.1"
+        }
+      ],
+      "reverse": false,
+      "ratio": 1.04,
+      "easeMM": 0,
+      "notchFractions": [0.25, 0.5, 0.75],
+      "reason": "kol kapagi -> kol oyugu; arka kose <-> arka koltukalti; ratio 1.04 = cap ease (engine/src/sleeve.hpp capEase 0.04, dokuma 3-5%)"
+    },
+    {
+      "id": "bel",
+      "a": [
+        {
+          "panel": "on_tam",
+          "edge": "waist_front.1.1"
+        },
+        {
+          "panel": "on_tam",
+          "edge": "waist_front.2.1"
+        },
+        {
+          "panel": "arka_beden",
+          "edge": "waist_back.2"
+        },
+        {
+          "panel": "arka_beden",
+          "edge": "waist_back.1"
+        }
+      ],
+      "b": [
+        {
+          "panel": "on_etek_tam",
+          "edge": "waist_front.2.1"
+        },
+        {
+          "panel": "on_etek_tam",
+          "edge": "waist_front.1.1"
+        },
+        {
+          "panel": "arka_etek",
+          "edge": "waist_back.1"
+        },
+        {
+          "panel": "arka_etek",
+          "edge": "waist_back.2"
+        }
+      ],
+      "reverse": false,
+      "ratio": 1,
+      "easeMM": 0,
+      "notchFractions": [0.33],
+      "reason": "bel dikisi (govde -> etek): CF <-> CF, yan <-> yan, CB <-> CB; pens bolunmesi yuzunden centik tek kesirde (0.33)"
+    },
+    {
+      "id": "yan_etek",
+      "a": [
+        {
+          "panel": "on_etek_tam",
+          "edge": "side_front.1.1"
+        },
+        {
+          "panel": "on_etek_tam",
+          "edge": "side_front.2.1"
+        }
+      ],
+      "b": [
+        {
+          "panel": "arka_etek",
+          "edge": "side_back.1"
+        },
+        {
+          "panel": "arka_etek",
+          "edge": "side_back.2"
+        }
+      ],
+      "reverse": false,
+      "ratio": 1,
+      "easeMM": 0,
+      "reason": "etek yan dikisi: etek ucu <-> etek ucu, bel <-> bel"
+    },
+    {
+      "id": "kol_alti",
+      "a": [
+        {
+          "panel": "kol",
+          "edge": "underarm_front"
+        }
+      ],
+      "b": [
+        {
+          "panel": "kol",
+          "edge": "underarm_back"
+        }
+      ],
+      "reverse": true,
+      "ratio": 1,
+      "easeMM": 0,
+      "reason": "kol alti dikisi: kose <-> kose, agiz <-> agiz (reverse)"
+    },
+    {
+      "id": "arka_orta_beden",
+      "a": [
+        {
+          "panel": "arka_beden",
+          "edge": "cb"
+        }
+      ],
+      "b": [
+        {
+          "panel": "arka_beden",
+          "edge": "cb"
+        }
+      ],
+      "reverse": true,
+      "ratio": 1,
+      "easeMM": 0,
+      "closure": {
+        "type": "zipper",
+        "fromFraction": 0,
+        "toFraction": 1
+      },
+      "reason": "arka orta fermuar (govde): giysi buradan acilir, bel 685 mm'den gecer"
+    },
+    {
+      "id": "arka_orta_etek",
+      "a": [
+        {
+          "panel": "arka_etek",
+          "edge": "cb"
+        }
+      ],
+      "b": [
+        {
+          "panel": "arka_etek",
+          "edge": "cb"
+        }
+      ],
+      "reverse": true,
+      "ratio": 1,
+      "easeMM": 0,
+      "closure": {
+        "type": "zipper",
+        "fromFraction": 0,
+        "toFraction": 1
+      },
+      "reason": "arka orta fermuar (etek)"
+    },
+    {
+      "id": "omuz_2",
+      "a": [
+        {
+          "panel": "on_tam",
+          "edge": "shoulder.2"
+        }
+      ],
+      "b": [
+        {
+          "panel": "arka_ayna",
+          "edge": "shoulder"
+        }
+      ],
+      "reverse": false,
+      "ratio": 1,
+      "easeMM": 0,
+      "reason": "sew"
+    },
+    {
+      "id": "yan_beden_2",
+      "a": [
+        {
+          "panel": "on_tam",
+          "edge": "side_front.2"
+        }
+      ],
+      "b": [
+        {
+          "panel": "arka_ayna",
+          "edge": "side_back"
+        }
+      ],
+      "reverse": false,
+      "ratio": 1,
+      "easeMM": 0,
+      "reason": "sew"
+    },
+    {
+      "id": "yan_etek_2",
+      "a": [
+        {
+          "panel": "on_etek_tam",
+          "edge": "side_front.1.2"
+        },
+        {
+          "panel": "on_etek_tam",
+          "edge": "side_front.2.2"
+        }
+      ],
+      "b": [
+        {
+          "panel": "arka_etek_ayna",
+          "edge": "side_back.1"
+        },
+        {
+          "panel": "arka_etek_ayna",
+          "edge": "side_back.2"
+        }
+      ],
+      "reverse": false,
+      "ratio": 1,
+      "easeMM": 0,
+      "reason": "sew"
+    },
+    {
+      "id": "bel_2",
+      "a": [
+        {
+          "panel": "on_tam",
+          "edge": "waist_front.1.2"
+        },
+        {
+          "panel": "on_tam",
+          "edge": "waist_front.2.2"
+        },
+        {
+          "panel": "arka_ayna",
+          "edge": "waist_back.2"
+        },
+        {
+          "panel": "arka_ayna",
+          "edge": "waist_back.1"
+        }
+      ],
+      "b": [
+        {
+          "panel": "on_etek_tam",
+          "edge": "waist_front.2.2"
+        },
+        {
+          "panel": "on_etek_tam",
+          "edge": "waist_front.1.2"
+        },
+        {
+          "panel": "arka_etek_ayna",
+          "edge": "waist_back.1"
+        },
+        {
+          "panel": "arka_etek_ayna",
+          "edge": "waist_back.2"
+        }
+      ],
+      "reverse": false,
+      "ratio": 1,
+      "easeMM": 0,
+      "reason": "sew"
+    },
+    {
+      "id": "kol_oyugu_2",
+      "a": [
+        {
+          "panel": "kol_ayna",
+          "edge": "cap_back"
+        },
+        {
+          "panel": "kol_ayna",
+          "edge": "cap_front"
+        }
+      ],
+      "b": [
+        {
+          "panel": "arka_ayna",
+          "edge": "armhole_back.1"
+        },
+        {
+          "panel": "arka_ayna",
+          "edge": "armhole_back.2"
+        },
+        {
+          "panel": "on_tam",
+          "edge": "armhole_front.2.2"
+        },
+        {
+          "panel": "on_tam",
+          "edge": "armhole_front.1.2"
+        }
+      ],
+      "reverse": false,
+      "ratio": 1.04,
+      "easeMM": 0,
+      "reason": "sew"
+    },
+    {
+      "id": "kol_alti_2",
+      "a": [
+        {
+          "panel": "kol_ayna",
+          "edge": "underarm_front"
+        }
+      ],
+      "b": [
+        {
+          "panel": "kol_ayna",
+          "edge": "underarm_back"
+        }
+      ],
+      "reverse": true,
+      "ratio": 1,
+      "easeMM": 0,
+      "reason": "sew"
+    }
+  ],
+  "rings": [
+    {
+      "id": "yaka",
+      "role": "neck",
+      "edges": [
+        {
+          "panel": "arka_beden",
+          "edge": "neck_back"
+        },
+        {
+          "panel": "on_tam",
+          "edge": "neck_front.1"
+        }
+      ]
+    },
+    {
+      "id": "kol_oyugu_halka",
+      "role": "armhole",
+      "edges": [
+        {
+          "panel": "on_tam",
+          "edge": "armhole_front.1.1"
+        },
+        {
+          "panel": "on_tam",
+          "edge": "armhole_front.2.1"
+        },
+        {
+          "panel": "arka_beden",
+          "edge": "armhole_back.2"
+        },
+        {
+          "panel": "arka_beden",
+          "edge": "armhole_back.1"
+        }
+      ]
+    },
+    {
+      "id": "bel_halka",
+      "role": "waist_ring",
+      "edges": [
+        {
+          "panel": "on_tam",
+          "edge": "waist_front.1.1"
+        },
+        {
+          "panel": "on_tam",
+          "edge": "waist_front.2.1"
+        },
+        {
+          "panel": "arka_beden",
+          "edge": "waist_back.2"
+        },
+        {
+          "panel": "arka_beden",
+          "edge": "waist_back.1"
+        }
+      ]
+    },
+    {
+      "id": "etek_ucu",
+      "role": "hem",
+      "edges": [
+        {
+          "panel": "on_etek_tam",
+          "edge": "hem_front.1"
+        },
+        {
+          "panel": "arka_etek",
+          "edge": "hem_back"
+        }
+      ]
+    },
+    {
+      "id": "kol_agzi",
+      "role": "sleeve_hem",
+      "edges": [
+        {
+          "panel": "kol",
+          "edge": "hem"
+        }
+      ]
+    },
+    {
+      "id": "gogus_halka",
+      "role": "bust",
+      "edges": [
+        {
+          "panel": "on_tam",
+          "edge": "side_front.1"
+        },
+        {
+          "panel": "arka_beden",
+          "edge": "side_back"
+        }
+      ]
+    },
+    {
+      "id": "kalca_halka",
+      "role": "hip",
+      "edges": [
+        {
+          "panel": "on_etek_tam",
+          "edge": "side_front.1.1"
+        },
+        {
+          "panel": "on_etek_tam",
+          "edge": "side_front.2.1"
+        },
+        {
+          "panel": "arka_etek",
+          "edge": "side_back.2"
+        },
+        {
+          "panel": "arka_etek",
+          "edge": "side_back.1"
+        }
+      ]
+    }
+  ],
+  "ops": [
+    {
+      "op": "fitLength",
+      "args": {
+        "panel": "kol",
+        "edge": "cap_front",
+        "target": {
+          "seam": "kol_oyugu",
+          "ratio": 1.04,
+          "easeMM": 0
+        }
+      }
+    },
+    {
+      "op": "fitLength",
+      "args": {
+        "panel": "kol",
+        "edge": "cap_back",
+        "target": {
+          "seam": "kol_oyugu",
+          "ratio": 1.04,
+          "easeMM": 0
+        }
+      }
+    },
+    {
+      "op": "mirror",
+      "args": {
+        "panel": "on_beden",
+        "newId": "on_ayna"
+      }
+    },
+    {
+      "op": "mirror",
+      "args": {
+        "panel": "arka_beden",
+        "newId": "arka_ayna"
+      }
+    },
+    {
+      "op": "mirror",
+      "args": {
+        "panel": "on_etek",
+        "newId": "on_etek_ayna"
+      }
+    },
+    {
+      "op": "mirror",
+      "args": {
+        "panel": "arka_etek",
+        "newId": "arka_etek_ayna"
+      }
+    },
+    {
+      "op": "mirror",
+      "args": {
+        "panel": "kol",
+        "newId": "kol_ayna"
+      }
+    },
+    {
+      "op": "sew",
+      "args": {
+        "seam": "omuz_2",
+        "a": [
+          {
+            "panel": "on_ayna",
+            "edge": "shoulder"
+          }
+        ],
+        "b": [
+          {
+            "panel": "arka_ayna",
+            "edge": "shoulder"
+          }
+        ],
+        "reverse": false,
+        "ratio": 1
+      }
+    },
+    {
+      "op": "sew",
+      "args": {
+        "seam": "yan_beden_2",
+        "a": [
+          {
+            "panel": "on_ayna",
+            "edge": "side_front"
+          }
+        ],
+        "b": [
+          {
+            "panel": "arka_ayna",
+            "edge": "side_back"
+          }
+        ],
+        "reverse": false,
+        "ratio": 1
+      }
+    },
+    {
+      "op": "sew",
+      "args": {
+        "seam": "yan_etek_2",
+        "a": [
+          {
+            "panel": "on_etek_ayna",
+            "edge": "side_front.1"
+          },
+          {
+            "panel": "on_etek_ayna",
+            "edge": "side_front.2"
+          }
+        ],
+        "b": [
+          {
+            "panel": "arka_etek_ayna",
+            "edge": "side_back.1"
+          },
+          {
+            "panel": "arka_etek_ayna",
+            "edge": "side_back.2"
+          }
+        ],
+        "reverse": false,
+        "ratio": 1
+      }
+    },
+    {
+      "op": "sew",
+      "args": {
+        "seam": "bel_2",
+        "a": [
+          {
+            "panel": "on_ayna",
+            "edge": "waist_front.1"
+          },
+          {
+            "panel": "on_ayna",
+            "edge": "waist_front.2"
+          },
+          {
+            "panel": "arka_ayna",
+            "edge": "waist_back.2"
+          },
+          {
+            "panel": "arka_ayna",
+            "edge": "waist_back.1"
+          }
+        ],
+        "b": [
+          {
+            "panel": "on_etek_ayna",
+            "edge": "waist_front.2"
+          },
+          {
+            "panel": "on_etek_ayna",
+            "edge": "waist_front.1"
+          },
+          {
+            "panel": "arka_etek_ayna",
+            "edge": "waist_back.1"
+          },
+          {
+            "panel": "arka_etek_ayna",
+            "edge": "waist_back.2"
+          }
+        ],
+        "reverse": false,
+        "ratio": 1
+      }
+    },
+    {
+      "op": "sew",
+      "args": {
+        "seam": "kol_oyugu_2",
+        "a": [
+          {
+            "panel": "kol_ayna",
+            "edge": "cap_back"
+          },
+          {
+            "panel": "kol_ayna",
+            "edge": "cap_front"
+          }
+        ],
+        "b": [
+          {
+            "panel": "arka_ayna",
+            "edge": "armhole_back.1"
+          },
+          {
+            "panel": "arka_ayna",
+            "edge": "armhole_back.2"
+          },
+          {
+            "panel": "on_ayna",
+            "edge": "armhole_front.2"
+          },
+          {
+            "panel": "on_ayna",
+            "edge": "armhole_front.1"
+          }
+        ],
+        "reverse": false,
+        "ratio": 1.04
+      }
+    },
+    {
+      "op": "sew",
+      "args": {
+        "seam": "kol_alti_2",
+        "a": [
+          {
+            "panel": "kol_ayna",
+            "edge": "underarm_front"
+          }
+        ],
+        "b": [
+          {
+            "panel": "kol_ayna",
+            "edge": "underarm_back"
+          }
+        ],
+        "reverse": true,
+        "ratio": 1
+      }
+    },
+    {
+      "op": "sew",
+      "args": {
+        "seam": "on_orta_kat",
+        "a": [
+          {
+            "panel": "on_beden",
+            "edge": "cf"
+          }
+        ],
+        "b": [
+          {
+            "panel": "on_ayna",
+            "edge": "cf"
+          }
+        ],
+        "reverse": true,
+        "ratio": 1
+      }
+    },
+    {
+      "op": "merge",
+      "args": {
+        "seam": "on_orta_kat",
+        "panelA": "on_beden",
+        "panelB": "on_ayna",
+        "panel": "on_tam"
+      }
+    },
+    {
+      "op": "sew",
+      "args": {
+        "seam": "on_etek_kat",
+        "a": [
+          {
+            "panel": "on_etek",
+            "edge": "cf"
+          }
+        ],
+        "b": [
+          {
+            "panel": "on_etek_ayna",
+            "edge": "cf"
+          }
+        ],
+        "reverse": true,
+        "ratio": 1
+      }
+    },
+    {
+      "op": "merge",
+      "args": {
+        "seam": "on_etek_kat",
+        "panelA": "on_etek",
+        "panelB": "on_etek_ayna",
+        "panel": "on_etek_tam"
+      }
+    },
+    {
+      "op": "reshapeEdge",
+      "args": {
+        "panel": "on_tam",
+        "edge": "shoulder.2",
+        "kind": "cut",
+        "finish": "faced"
+      }
+    },
+    {
+      "op": "addPanel",
+      "args": {
+        "onto": "on_tam",
+        "panel": {
+          "id": "bel_fiyonk",
+          "edges": [
+            {
+              "id": "ust",
+              "kind": "cut",
+              "from": {
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "xFactor": 0.55,
+                "yLandmark": "landmark.waist",
+                "yLandmark2": "landmark.underbust",
+                "yLerp": 0.15
+              },
+              "to": {
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "xFactor": 0.95,
+                "yLandmark": "landmark.waist",
+                "yLandmark2": "landmark.underbust",
+                "yLerp": 0.15
+              },
+              "finish": "hem"
+            },
+            {
+              "id": "dis",
+              "kind": "cut",
+              "from": {
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "xFactor": 0.95,
+                "yLandmark": "landmark.waist",
+                "yLandmark2": "landmark.underbust",
+                "yLerp": 0.15
+              },
+              "to": {
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "xFactor": 0.95,
+                "yLandmark": "landmark.waist",
+                "yLandmark2": "landmark.highHip",
+                "yLerp": 0.15
+              },
+              "finish": "hem"
+            },
+            {
+              "id": "alt",
+              "kind": "cut",
+              "from": {
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "xFactor": 0.95,
+                "yLandmark": "landmark.waist",
+                "yLandmark2": "landmark.highHip",
+                "yLerp": 0.15
+              },
+              "to": {
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "xFactor": 0.55,
+                "yLandmark": "landmark.waist",
+                "yLandmark2": "landmark.highHip",
+                "yLerp": 0.15
+              },
+              "finish": "hem"
+            },
+            {
+              "id": "ic",
+              "kind": "cut",
+              "from": {
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "xFactor": 0.55,
+                "yLandmark": "landmark.waist",
+                "yLandmark2": "landmark.highHip",
+                "yLerp": 0.15
+              },
+              "to": {
+                "landmark": "landmark.waist",
+                "xOf": "ringQuarter",
+                "xFactor": 0.55,
+                "yLandmark": "landmark.waist",
+                "yLandmark2": "landmark.underbust",
+                "yLerp": 0.15
+              },
+              "finish": "hem"
+            }
+          ],
+          "grainDeg": 0,
+          "onFold": false,
+          "cutCount": 1,
+          "seamAllowanceMM": 0,
+          "reason": "bel hizasinda yuze dikili serit (fiyonk govdesi)"
+        }
+      }
+    }
+  ]
+}

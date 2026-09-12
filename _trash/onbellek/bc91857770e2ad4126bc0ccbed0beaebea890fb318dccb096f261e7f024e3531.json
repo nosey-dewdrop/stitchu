@@ -1,0 +1,609 @@
+{
+ "girdiYolu": "GIRDI/hedef-fotograflar-3/etsy-02.png",
+ "sha256": "bc91857770e2ad4126bc0ccbed0beaebea890fb318dccb096f261e7f024e3531",
+ "semaSurumu": "vision-graf-v1",
+ "okuyan": "isci-A4-tur6",
+ "tarih": "2026-09-09",
+ "yontem": "Kosu iscisi ekran goruntusune DOGRUDAN bakti (Read araci): fotograf + saticinin flat'i. Dis LLM cagrisi YOK; llmCagri = 0. Hedef: saticinin flat'inin karikaturu (0-K 3a).",
+ "gorunum": "on",
+ "ilan": "ince askili elbise (duz ust kenar, bel dikisi, diz alti A-line)",
+ "tabanGraf": "KOSU/ciktilar/graf-ilk/graf.json",
+ "gorunumDogrulamasi": "Ekran goruntusu; giysi insan/manken ustunde ONDEN + satici flat'i onden (bazilarinda arka da var, arka.koken'de yazili).",
+ "paneller": [
+  {
+   "id": "on_beden",
+   "gorulduMu": true,
+   "guven": 0.95,
+   "kanit": "duz ust kenar, prenses/pens hatlari, bel dikisi"
+  },
+  {
+   "id": "on_etek",
+   "gorulduMu": true,
+   "guven": 0.95,
+   "kanit": "bel dikisinden acilan A-line, diz alti"
+  },
+  {
+   "id": "aski_on",
+   "gorulduMu": true,
+   "guven": 0.95,
+   "kanit": "ince aski, gogus ucu hizasindan"
+  },
+  {
+   "id": "arka_beden",
+   "gorulduMu": false,
+   "guven": 0.2,
+   "kanit": "arka gorunmuyor"
+  },
+  {
+   "id": "kol",
+   "gorulduMu": false,
+   "guven": 0.98,
+   "kanit": "kol YOK"
+  }
+ ],
+ "kenarlar": [
+  {
+   "panel": "on_beden",
+   "kenar": "ust_kenar",
+   "landmarkUst": "landmark.underarm",
+   "landmarkAlt": "landmark.bustLine",
+   "oran": 0.1,
+   "bicim": "duz",
+   "guven": 0.85
+  },
+  {
+   "panel": "on_etek",
+   "kenar": "hem_front",
+   "landmarkUst": "landmark.waist",
+   "landmarkAlt": "landmark.ankle",
+   "oran": 0.62,
+   "bicim": "hafif-kavis",
+   "guven": 0.8
+  },
+  {
+   "panel": "on_etek",
+   "kenar": "side_front",
+   "landmarkUst": "landmark.hip",
+   "landmarkAlt": "landmark.knee",
+   "oran": 1.45,
+   "bicim": "klos",
+   "guven": 0.8
+  }
+ ],
+ "dikisler": [
+  {
+   "id": "bel",
+   "a": "on_beden_alt/waist_front",
+   "b": "on_etek/waist_front",
+   "oranAralik": [
+    1.0,
+    1.0
+   ],
+   "gorunurMu": true,
+   "guven": 0.9
+  },
+  {
+   "id": "prenses_on",
+   "a": "on_beden/orta",
+   "b": "on_beden/yan",
+   "oranAralik": [
+    1.0,
+    1.0
+   ],
+   "gorunurMu": true,
+   "guven": 0.8
+  }
+ ],
+ "kapanma": {
+  "yer": "arka_orta",
+  "tur": "fermuar",
+  "oranBas": 0.0,
+  "oranSon": 1.0,
+  "guven": 0.4,
+  "not": "cikarim"
+ },
+ "simetri": {
+  "cfAyna": true,
+  "cbAyna": true,
+  "guven": 0.95,
+  "kanit": "askilar ve prenses hatlari CF'de aynali"
+ },
+ "katmanlar": [],
+ "arka": {
+  "koken": "turetildi",
+  "guven": 0.3,
+  "neden": "arka yok; duz arka + fermuar"
+ },
+ "hedefler": [],
+ "opDemeti": [
+  {
+   "op": "drop",
+   "args": {
+    "panel": "kol",
+    "finish": "faced"
+   },
+   "neden": "fotografta kol yok: kol paneli kalkar, kol oyugu pervazli serbest kenar"
+  },
+  {
+   "op": "reshapeEdge",
+   "args": {
+    "panel": "on_beden",
+    "edge": "dart_on_beden.1",
+    "to": {
+     "landmark": "landmark.underarm",
+     "xOf": "ringQuarter",
+     "ring": "girth.waist",
+     "xFactor": 0.35,
+     "yLandmark": "landmark.bustLine",
+     "yLandmark2": "landmark.waist",
+     "yLerp": 0.3
+    }
+   },
+   "neden": "pens apeksi ust kenarin altina (askili ust: ust kenar gogus hattinin hemen ustunde)"
+  },
+  {
+   "op": "reshapeEdge",
+   "args": {
+    "panel": "arka_beden",
+    "edge": "dart_arka_beden.1",
+    "to": {
+     "landmark": "landmark.underarm",
+     "xOf": "ringQuarter",
+     "ring": "girth.waist",
+     "xFactor": 0.35,
+     "yLandmark": "landmark.bustLine",
+     "yLandmark2": "landmark.waist",
+     "yLerp": 0.3
+    }
+   },
+   "neden": "pens apeksi ust kenarin altina (askili ust: ust kenar gogus hattinin hemen ustunde) (arka)"
+  },
+  {
+   "op": "subdivide",
+   "args": {
+    "panel": "on_beden",
+    "edge": "cf",
+    "fractions": [
+     0.429
+    ]
+   },
+   "neden": "askili ust: govde koltukalti hizasinda kesilir: CF'de kesim noktasi"
+  },
+  {
+   "op": "subdivide",
+   "args": {
+    "panel": "on_beden",
+    "edge": "armhole_front.1",
+    "fractions": [
+     0.147
+    ]
+   },
+   "neden": "askili ust: govde koltukalti hizasinda kesilir: kol oyugunda kesim noktasi (ust kenar yatay)"
+  },
+  {
+   "op": "split",
+   "args": {
+    "panel": "on_beden",
+    "vertexA": "cf.2",
+    "vertexB": "armhole_front.1.2",
+    "panelA": "on_beden_alt",
+    "panelB": "on_beden_ust",
+    "seam": "ust_on",
+    "seamRatio": 1
+   },
+   "neden": "askili ust: govde koltukalti hizasinda kesilir: ust govde ayri panel"
+  },
+  {
+   "op": "drop",
+   "args": {
+    "panel": "on_beden_ust",
+    "finish": "faced"
+   },
+   "neden": "askili ust: govde koltukalti hizasinda kesilir: ust govde kalkar, ust kenar pervazli"
+  },
+  {
+   "op": "moveVertex",
+   "args": {
+    "panel": "on_beden_alt",
+    "edge": "ust_on.a",
+    "to": {
+     "landmark": "landmark.bustLine",
+     "xOf": "ringQuarter",
+     "ring": "girth.bust",
+     "xFactor": 1.0,
+     "yLandmark": "landmark.underarm",
+     "yOffsetMM": 1.7
+    }
+   },
+   "neden": "askili ust: govde koltukalti hizasinda kesilir: ust kenar YATAY (yan tepe tam yTop hizasina; kol oyugu kesri yaklasikti, ortada chevron yapiyordu)"
+  },
+  {
+   "op": "reshapeEdge",
+   "args": {
+    "panel": "on_beden_alt",
+    "edge": "armhole_front.1.1",
+    "control": []
+   },
+   "neden": "askili ust: govde koltukalti hizasinda kesilir: yan ust parca DUZ (kol oyugu kubiginin kalan kontrolleri kosede kulak yapiyordu)"
+  },
+  {
+   "op": "subdivide",
+   "args": {
+    "panel": "arka_beden",
+    "edge": "cb",
+    "fractions": [
+     0.5064
+    ]
+   },
+   "neden": "askili ust: govde koltukalti hizasinda kesilir: CB'de kesim noktasi"
+  },
+  {
+   "op": "subdivide",
+   "args": {
+    "panel": "arka_beden",
+    "edge": "armhole_back.1",
+    "fractions": [
+     0.147
+    ]
+   },
+   "neden": "askili ust: govde koltukalti hizasinda kesilir: arka kol oyugunda kesim noktasi"
+  },
+  {
+   "op": "split",
+   "args": {
+    "panel": "arka_beden",
+    "vertexA": "cb.2",
+    "vertexB": "armhole_back.1.2",
+    "panelA": "arka_beden_alt",
+    "panelB": "arka_beden_ust",
+    "seam": "ust_arka",
+    "seamRatio": 1
+   },
+   "neden": "askili ust: govde koltukalti hizasinda kesilir: arka ust govde ayri panel"
+  },
+  {
+   "op": "drop",
+   "args": {
+    "panel": "arka_beden_ust",
+    "finish": "faced"
+   },
+   "neden": "askili ust: govde koltukalti hizasinda kesilir: arka ust govde kalkar"
+  },
+  {
+   "op": "moveVertex",
+   "args": {
+    "panel": "arka_beden_alt",
+    "edge": "ust_arka.a",
+    "to": {
+     "landmark": "landmark.bustLine",
+     "xOf": "ringQuarter",
+     "ring": "girth.bust",
+     "xFactor": 1.0,
+     "yLandmark": "landmark.underarm",
+     "yOffsetMM": 1.7
+    }
+   },
+   "neden": "askili ust: govde koltukalti hizasinda kesilir: arka ust kenar yatay"
+  },
+  {
+   "op": "reshapeEdge",
+   "args": {
+    "panel": "arka_beden_alt",
+    "edge": "armhole_back.1.1",
+    "control": []
+   },
+   "neden": "askili ust: govde koltukalti hizasinda kesilir: arka yan ust parca duz"
+  },
+  {
+   "op": "sew",
+   "args": {
+    "seam": "arka_orta_beden",
+    "a": [
+     {
+      "panel": "arka_beden_alt",
+      "edge": "cb.2"
+     }
+    ],
+    "b": [
+     {
+      "panel": "arka_beden_alt",
+      "edge": "cb.2"
+     }
+    ],
+    "reverse": true,
+    "ratio": 1
+   },
+   "neden": "arka orta kapanma: drop ile dusen arka orta dikisi yeniden (cb.2 kendi aynasiyla)"
+  },
+  {
+   "op": "closure",
+   "args": {
+    "seam": "arka_orta_beden",
+    "type": "zipper",
+    "fromFraction": 0.0,
+    "toFraction": 1.0
+   },
+   "neden": "arka orta fermuar (fotografta arka gorunmuyor: cikarim)"
+  },
+  {
+   "op": "addPanel",
+   "args": {
+    "onto": "on_beden_alt",
+    "panel": {
+     "id": "aski_on",
+     "edges": [
+      {
+       "id": "ic",
+       "kind": "cut",
+       "role": "strap",
+       "from": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.62,
+        "xOffsetMM": 0,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": 1.6999999999999886
+       },
+       "to": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.527,
+        "xOffsetMM": 0,
+        "yLandmark": "landmark.neckBase",
+        "yOffsetMM": 0.0
+       },
+       "finish": "bound"
+      },
+      {
+       "id": "ust",
+       "kind": "cut",
+       "role": "strap",
+       "from": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.527,
+        "xOffsetMM": 0,
+        "yLandmark": "landmark.neckBase",
+        "yOffsetMM": 0.0
+       },
+       "to": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.527,
+        "xOffsetMM": 7.8,
+        "yLandmark": "landmark.neckBase",
+        "yOffsetMM": 4.0
+       },
+       "finish": "raw"
+      },
+      {
+       "id": "dis",
+       "kind": "cut",
+       "role": "strap",
+       "from": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.527,
+        "xOffsetMM": 7.8,
+        "yLandmark": "landmark.neckBase",
+        "yOffsetMM": 4.0
+       },
+       "to": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.62,
+        "xOffsetMM": 12,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": 1.6999999999999886
+       },
+       "finish": "bound"
+      },
+      {
+       "id": "alt",
+       "kind": "cut",
+       "role": "strap",
+       "from": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.62,
+        "xOffsetMM": 12,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": 1.6999999999999886
+       },
+       "to": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.62,
+        "xOffsetMM": 0,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": 1.6999999999999886
+       },
+       "finish": "raw"
+      }
+     ],
+     "grainDeg": 0,
+     "onFold": false,
+     "cutCount": 2,
+     "seamAllowanceMM": 0,
+     "ease": [],
+     "reason": "aski (12 mm altta, 7.8 mm omuzda), ust kenardan omuz cizgisine daralarak; alt kenar raw = ust kenar dikisine yakalanir"
+    }
+   },
+   "neden": "ince aski (12 mm), gogus ucu hizasindan omuza"
+  },
+  {
+   "op": "addPanel",
+   "args": {
+    "onto": "arka_beden_alt",
+    "panel": {
+     "id": "aski_arka",
+     "edges": [
+      {
+       "id": "ic",
+       "kind": "cut",
+       "role": "strap",
+       "from": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.62,
+        "xOffsetMM": 0,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": 1.6999999999999886
+       },
+       "to": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.527,
+        "xOffsetMM": 0,
+        "yLandmark": "landmark.neckBase",
+        "yOffsetMM": 0.0
+       },
+       "finish": "bound"
+      },
+      {
+       "id": "ust",
+       "kind": "cut",
+       "role": "strap",
+       "from": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.527,
+        "xOffsetMM": 0,
+        "yLandmark": "landmark.neckBase",
+        "yOffsetMM": 0.0
+       },
+       "to": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.527,
+        "xOffsetMM": 7.8,
+        "yLandmark": "landmark.neckBase",
+        "yOffsetMM": 4.0
+       },
+       "finish": "raw"
+      },
+      {
+       "id": "dis",
+       "kind": "cut",
+       "role": "strap",
+       "from": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.527,
+        "xOffsetMM": 7.8,
+        "yLandmark": "landmark.neckBase",
+        "yOffsetMM": 4.0
+       },
+       "to": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.62,
+        "xOffsetMM": 12,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": 1.6999999999999886
+       },
+       "finish": "bound"
+      },
+      {
+       "id": "alt",
+       "kind": "cut",
+       "role": "strap",
+       "from": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.62,
+        "xOffsetMM": 12,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": 1.6999999999999886
+       },
+       "to": {
+        "landmark": "landmark.bustLine",
+        "xOf": "ringQuarter",
+        "ring": "girth.bust",
+        "xFactor": 0.62,
+        "xOffsetMM": 0,
+        "yLandmark": "landmark.underarm",
+        "yOffsetMM": 1.6999999999999886
+       },
+       "finish": "raw"
+      }
+     ],
+     "grainDeg": 0,
+     "onFold": false,
+     "cutCount": 2,
+     "seamAllowanceMM": 0,
+     "ease": [],
+     "reason": "aski (12 mm altta, 7.8 mm omuzda), ust kenardan omuz cizgisine daralarak; alt kenar raw = ust kenar dikisine yakalanir"
+    }
+   },
+   "neden": "ince aski (12 mm), gogus ucu hizasindan omuza"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "on_etek",
+    "edge": "hem_front",
+    "yLandmark": "landmark.knee",
+    "yOffsetMM": 60
+   },
+   "neden": "etek ucu diz alti (~6 cm)"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "arka_etek",
+    "edge": "hem_back",
+    "yLandmark": "landmark.knee",
+    "yOffsetMM": 60
+   },
+   "neden": "etek ucu diz alti (~6 cm) (arka ayni)"
+  },
+  {
+   "op": "flare",
+   "args": {
+    "panel": "on_etek",
+    "edge": "hem_front",
+    "factor": 1.45
+   },
+   "neden": "A-line etek: etek ucu belirgin acik"
+  },
+  {
+   "op": "flare",
+   "args": {
+    "panel": "arka_etek",
+    "edge": "hem_back",
+    "factor": 1.45
+   },
+   "neden": "A-line etek: etek ucu belirgin acik (arka ayni)"
+  }
+ ],
+ "celiskiTablosu": [],
+ "olculmedi": [
+  "siluet orani: ekran goruntusu (fotograf + flat + yazi), poz landmark kosulmadi"
+ ],
+ "okunamayanlar": [
+  "prenses dikisi (pens olarak birakildi)",
+  "yan dikis cebi (ilan flat'inde centik)",
+  "arka"
+ ],
+ "_kullanim": "A4 tur 6 giris-3 hattinin girdisi; ayni sha ikinci kez okunmaz.",
+ "eksikPrimitif": [
+  "PRIMITIF: askinin ucunun ust kenara/arka ust kenara dikilmesi (attach kismi kenara) — aski yuze dikili (onto) yazildi, konstruksiyon farkli"
+ ],
+ "primitifCeviri": "Okuma dogrudan graf-v1 primitifleriyle yazildi (ceviri yok)."
+}

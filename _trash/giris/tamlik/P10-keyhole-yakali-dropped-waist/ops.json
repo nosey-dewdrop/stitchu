@@ -1,0 +1,120 @@
+[
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_beden",
+   "edge": "cf",
+   "fractions": [
+    0.35
+   ]
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_beden",
+   "edge": "cf.1",
+   "to": {
+    "landmark": "landmark.waist",
+    "xFactor": 0.0,
+    "yLandmark": "landmark.neckFront",
+    "yLandmark2": "landmark.bustLine",
+    "yLerp": 0.55
+   },
+   "kind": "cut",
+   "finish": "faced",
+   "control": [
+    {
+     "landmark": "landmark.neckFront",
+     "xOf": "ringQuarter",
+     "ring": "girth.neckBase",
+     "xFactor": 0.15,
+     "yLandmark": "landmark.neckFront",
+     "yLandmark2": "landmark.bustLine",
+     "yLerp": 0.15
+    },
+    {
+     "landmark": "landmark.neckFront",
+     "xOf": "ringQuarter",
+     "ring": "girth.neckBase",
+     "xFactor": 0.15,
+     "yLandmark": "landmark.neckFront",
+     "yLandmark2": "landmark.bustLine",
+     "yLerp": 0.45
+    }
+   ]
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_beden",
+   "edge": "waist_front.1",
+   "yLandmark": "landmark.highHip",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_beden",
+   "edge": "waist_front.2",
+   "yLandmark": "landmark.highHip",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_etek",
+   "edge": "waist_front.1",
+   "yLandmark": "landmark.highHip",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_etek",
+   "edge": "waist_front.2",
+   "yLandmark": "landmark.highHip",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "waist_back.1",
+   "yLandmark": "landmark.highHip",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "waist_back.2",
+   "yLandmark": "landmark.highHip",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_etek",
+   "edge": "waist_back.1",
+   "yLandmark": "landmark.highHip",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_etek",
+   "edge": "waist_back.2",
+   "yLandmark": "landmark.highHip",
+   "yOffsetMM": 0
+  }
+ }
+]

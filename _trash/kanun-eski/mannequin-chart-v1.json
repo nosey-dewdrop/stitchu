@@ -1,0 +1,115 @@
+{
+  "_contract": "STITCHU MANKEN CIZELGESI v1 (GECE7 / F4, IS 2). KOSU-v7 §2 iki bedeni ayirir: kalip INSAN bedenine (gercek, payli, dikilebilir) degerlenir, teknik cizim MANKEN bedenine (ideal, sifir pay). Iki okuma AYNI dikis planindan cikar; ayrilan sey beden ve paydir. Bu dosya o ikinci bedenin TEK kaynagidir. Kapi: engine/tests/flat_pattern_agree_check.mjs --all (H6). H3 (2026-08-30) oncesi kapi flat_convention_check bolum 1d idi ve hukmu CROQUIS CAPALARI uzerinden veriyordu; croquis kalemi silindi, hukum silinmedi — ayni sayi (H6) artik yuzey hattinin kendi `bedenlendirme` blogu uzerinden dort giysi sinifinda olculuyor. Tuketici: engine/src/seamplan.cpp flatJSON bedenlendirme blogu.",
+  "version": 1,
+  "id": "stitchu-manken-v1",
+  "_karar": {
+    "kim": "BIZIM KARARIMIZ — uydurma DEGIL, ve bir yayina da atfedilmiyor. KOSU-v7 §F4 iki yol birakti: ya yayinlanmis bir manken cizelgesi kunyesiyle baglanir, ya da 'stitchu manken cizelgesi v1' acikca kendi kararimiz olarak ilan edilir. Ikincisi secildi, cunku birincisi denendi ve asagidaki satir cikti.",
+    "arastirma_sonucu": "YAYIN BULUNAMADI. Manken/croquis govdesinin gogus-bel-kalca cevrelerinin insan beden cizelgesinden KAC MM ince oldugunu veren otoriter bir yayin bulunamadi. KOSU-v7 §F4 bunu kendi metninde zaten yaziyor: 'Sayisal bel/gogus/kalca fark tablosu icin otoriter yayin BULUNAMADI'.",
+    "kunyesiz_zemin": "KOSU-v7 §F4 ayrica sunu tasiyor: moda illustrasyonu croquis'i 9 kafa, teknik cizim icin 7-8 kafaya cekilir. Bu bir ORAN iddiasi ve KUNYESI YOK (yazar/yayin/yil/sayfa/URL verilemedi), o yuzden BU DOSYADA HICBIR SAYIYI BESLEMIYOR (§3.10: kunyesi olmayan sayi koda giremez). Kayda gecmesinin tek sebebi, sonraki bir turda kunyesi bulunursa nereye baglanacaginin belli olmasi.",
+    "secilen_deger": "EN KISITLAYICI: fark SIFIR. Manken cevreleri insan cizelgesinin AYNISI. Gerekcesi tek cumlede: sifirdan baska her deger UYDURULMUS bir sayidir, cunku onu soyleyen bir yayin yok. Sifir hicbir sey eklemez — ve §0B md.3'un 'belirsizlikte en kisitlayici yorum' kurali burada 'incelme uydurma' demektir.",
+    "kime_gitti": "HAKEME, Damla'ya DEGIL (§3.4). Soru 'manken beli kalip belinden kac mm ince olsun' bir ZEVK karari ve KOSU-v7 F4 bolumu onu Damla'ya yaziyordu; K51 emsali bu cumlenin hakeme gittigini soyluyor. Ajan en kisitlayiciyi secti, gerekcesini GECE7/DAMLA.md'ye yazdi, kosu durmadi.",
+    "nasil_degisir": "Kunyeli bir yayin bulunursa ya da hakem baska bir sayi koyarsa: bu dosyanin farkGirthMM alanlari degisir, croquis capalari ayni aritmetikten YENIDEN turer, ve H6 kapisi farki kendi olcer. Tuketicilerde elle duzeltilecek hicbir sayi yok."
+  },
+  "insanCizelgesi": {
+    "_law": "MANKEN INSANDAN TUREYEN bir bedendir, ayri bir tablo DEGIL. Iki tablo tutmak iki kaynak demektir; burada tutulan sey tek bir DONUSUM. Insan tarafi contract/tables.json draft.euSizeChart, kaynagi burda style Damen Masstabellen (Koergroesse 168), status=verified.",
+    "yol": "contract/tables.json -> draft.euSizeChart",
+    "beden": "EU38"
+  },
+  "donusum": {
+    "_law": "ILAN EDILMIS TEK DONUSUM (KOSU-v7 §2). manken := insan cizelgesi + asagidaki farklar, dikis payi 0. Farklarin hepsi bugun 0.0 mm ve bu bir OLCUM degil bir KARAR; kaynagi _karar.secilen_deger.",
+    "birim": "mm, cevre farki (negatif = manken daha ince)",
+    "farkGirthMM": {
+      "bustCM": 0.0,
+      "waistCM": 0.0,
+      "hipCM": 0.0
+    },
+    "dikisPayiMM": 0.0,
+    "cizgi": "dikis cizgisi (pay yok) — kalip tarafi kesim cizgisi cizer, manken tarafi cizmez"
+  },
+  "v2": {
+    "_law": "F6-KONVANSIYON (2026-09-02). v1'in 'fark SIFIR' karari OLCUMLE degisti: 5 referans flat secildi (GIRDI/iyi-flat/adaylar, secim gerekceleri KOSU/ciktilar/flat-secim.md), bel/gogus yari-genislik orani dogrudan pikselden olculdu (uretici KOSU/flat-olcum.py, cikti KOSU/ciktilar/flat-olcum.json; asagidaki olcum blogu o dosyanin kayit kopyasidir). Damla'nin 4. maddesi: kalip DIKILEBILIR gercek beden, flat daha IDEAL kadin bedeni. Olculen gercek sasirtti: referans flatlerin beli bizim pens-kapali cizimimizden DAHA YUMUSAK (oran 0.858, bizimki 0.806) — ideal beden burada 'daha dar' degil 'daha az kum saati' demek. Donusum TEK YERDE uygulanir: web/lib/flat-from-pattern.js manken donusumu; kalip tarafina DOKUNULMAZ. Kapi: engine/tests/manken_insan_ayrim_check.mjs. Bu blok v1'in yanina EKLENDI, v1 alanlari yerinde duruyor cunku tuketicileri (seamplan.cpp bedenlendirme + H6) ayri bir hat.",
+    "olcum": {
+      "uretici": "KOSU/flat-olcum.py (esik 160, siluet = penceredeki en dis murekkep cifti)",
+      "belGogusOrani": {
+        "13-yuksek-bel-a-line.png": 0.893048,
+        "14-uzun-kol-maxi.png": 0.823232
+      },
+      "belPX": {
+        "13": 334,
+        "14": 163,
+        "06": 145,
+        "07": 142,
+        "09": 166
+      },
+      "gogusPX": {
+        "13": 374,
+        "14": 198,
+        "06": null,
+        "07": null,
+        "09": null
+      },
+      "_sinir": "gogus yalnizca kolsuz iki capada olculebildi (kollu flatte kol govdeyi orter); kalca 5/5'te OLCULMEDI (bel alti her adayda etek klosu — olculen sey manken kalcasi olmazdi). Gogus ve kalca icin en kisitlayici deger: fark 0."
+    },
+    "oran": {
+      "belGogus": 0.85814,
+      "_kaynak": "iki capanin ortalamasi (0.893048 + 0.823232) / 2 — KOSU/ciktilar/flat-olcum.json oranlar.ortalama. n=2 SINIRI ADIYLA: kollu uc referansta gogus olculemedi; Damla baska referans isaretlerse olcum yeniden kosulur, bu sayi degisir."
+    },
+    "capa": {
+      "_law": "Donusum sabiti EU38'de, motorun KENDI capa sinifindan turetildi ve o turetme kapida her kosuda yeniden yapilir (elle duzeltilecek sayi yok).",
+      "spec": {
+        "garment": "dress",
+        "shaping": "dart",
+        "fabric": "woven",
+        "neckline": "crew",
+        "sleeveStyle": "none",
+        "skirtStyle": "aLine",
+        "skirtLength": "midi"
+      },
+      "beden": "EU38",
+      "kalipGogusYarimMM": 245.0965,
+      "kalipBelKapaliYarimMM": 197.5854,
+      "_turetme": "farkCeyrekMM = kalipGogusYarimMM * oran.belGogus - kalipBelKapaliYarimMM = 245.0965 * 0.85814 - 197.5854 = 12.7417 (bel kapali = pens-kapali, cizim_giysi_mi g2 aritmetigi)"
+    },
+    "donusum": {
+      "_durum": "ESKI (2026-09-05, F0 hakem kusuru 2) — data-manken-bel-yarim-mm anlami icin contract/body-v1.json ayniInsan.svgNitelikleri GECER: nitelik cizimden olculen yari-genisligi tasimak ZORUNDA (hakem cizimdir), donusum-oncesi ara deger degil. Bu blok ve web/lib/flat-from-pattern.js carpani F2'de croquis36 degerlemesi gelince silinir; o zamana dek sayilar okunabilir, _law'in nitelik cumlesi gecersiz.",
+      "farkCeyrekMM": 12.7417,
+      "kalcaDerinlikMM": 200,
+      "_law": "ILAN EDILMIS TEK DONUSUM. Flat, bel hattinda yari-genisligini farkCeyrekMM kadar ACAR (cevre farki 4x = 50.97 mm): carpan m(y) = 1 + d(y)/Wbel, d(y) gogus hattinda 0'dan bele dogru dogrusal buyur, belde farkCeyrekMM, belden kalcaDerinlikMM asagida tekrar 0 (kalca ve gogus insan cizelgesinde: olcum blogundaki en-kisitlayici karar). Wbel = o cizimin KENDI donusum-oncesi bel yari-genisligi ve SVG'ye data-manken-bel-yarim-mm olarak basilir — kapi donusumu tersine cevirip kalipla OZDESLIGI olcer. kalcaDerinlikMM kaynagi: engine/src/bodice.cpp:708 hipBlendDepth = 200 (bel-kalca cizim derinligi, etek blogu ile ayni).",
+      "yon": "POZITIF = flat beli kaliptan genis. Isaret olcumden geldi, zevkten degil; hakem baska deger koyarsa yalniz bu blok degisir."
+    }
+  },
+  "croquisCapalari": {
+    "_law": "Croquis'in her capasi ya bu dosyadaki bir cevreden ARITMETIKLE turer, ya da kaynaksiz oldugu ACIKCA yazilir. contract/flat-convention-v1.json bu degerleri KOPYALAMAZ, buradan okur; kapi ikisinin ayni sayi oldugunu her kosuda dogrular (H6).",
+    "unitMM": 3.0,
+    "toleranceMM": 2.0,
+    "turetilen": {
+      "chestX": {
+        "formul": "manken bustCM * 10 / 4 / unitMM",
+        "_neden": "duz serilmis kapali bir tup: gorunen genislik = cevre/2, yari-genislik = cevre/4. Geometri zorunlulugu, katsayi degil."
+      },
+      "waistX": {
+        "formul": "manken waistCM * 10 / 4 / unitMM"
+      },
+      "hipX": {
+        "formul": "manken hipCM * 10 / 4 / unitMM"
+      },
+      "shoulderTipX": {
+        "formul": "chestX * omuzGogusOrani",
+        "omuzGogusOrani": 0.957,
+        "kaynak": "OLCULDU — satin alinmis Bugra Locket EU38 'Back Body' parcasi, omuz/gogus yari-genislik orani 196.13/204.94. Olcum: GECE/log/F-E.bugra-olcum.txt. Bu oran BUYUKLUGU besler; sartin kendisi geometrik yasadir (set-in kollu giyside omuz ucu gogus hattinin disinda olamaz)."
+      },
+      "shoulderTipY": {
+        "formul": "neckDrop + (shoulderTipX - neckBase) * shoulderSlope"
+      }
+    },
+    "kaynaksiz": {
+      "_law": "Bunlarin altinda bir yayin YOK ve oyle yazildi. Stiller arasi AYNILIKLARI zorunlu (H6 onu olcer); disaridan bir sayiya esitlikleri iddia EDILMIYOR.",
+      "chestY": 92.0,
+      "waistY": 150.0,
+      "neckBase": 30.0,
+      "neckDrop": 4.0,
+      "shoulderSlope": 0.32
+    }
+  },
+  "_karar_2026_09_09": "Damla: emsal flat / Mica / K5 SILINDI; flat'in bedeni manken 90-60-90 / 178 cm / 55 kg (contract/body-v1.json croquis36.manken). Bu dosyanin v2 olcum blogu (deer-and-doe flat piksel olcumu) TARIHTIR, hicbir kod artik ondan sayi almaz; croquisCapalari ve donusum bilgi olarak duruyor."
+}

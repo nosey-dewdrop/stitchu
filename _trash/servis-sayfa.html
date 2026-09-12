@@ -1,0 +1,266 @@
+<!doctype html>
+<!-- KOSU/servis-sayfa.html — yerel kopru sayfasi. KOSU/servis.mjs sunar.
+     Flat, TARAYICIDA cizilir: web/lib/siluet-ciz.js + contract fetch (kanunuKur).
+     Sessiz default yasak: her hata KODUYLA ekranda. -->
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>stitchu — fotograf → flat + kalip</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #faf9f7; color: #16150f;
+         font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+  .sar { max-width: 1080px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1 { font-size: 22px; font-weight: 620; letter-spacing: -.01em; margin: 0 0 4px; }
+  .alt { color: #6e6a5e; font-size: 13px; margin: 0 0 28px; }
+  .kutu { background: #fff; border: 1px solid #e6e2d8; border-radius: 12px; padding: 20px; margin-bottom: 18px; }
+  /* label varsayilan inline'dir: padding kutu acmaz, alan cokerdi (12 Eyl olculdu) */
+  .birak { display: block; border: 2px dashed #cfc9bb; border-radius: 12px; padding: 40px 20px; text-align: center;
+           cursor: pointer; transition: border-color .15s, background .15s; background: #fffdf9; }
+  .birak:hover, .birak.uzerinde { border-color: #8a8266; background: #f6f3ea; }
+  .birak b { display: block; font-size: 16px; margin-bottom: 6px; }
+  .birak span { color: #807a6b; font-size: 13px; }
+  input[type=file] { display: none; }
+  button { font: inherit; font-weight: 560; padding: 9px 18px; border-radius: 8px; border: 1px solid #16150f;
+           background: #16150f; color: #fff; cursor: pointer; }
+  button:disabled { opacity: .45; cursor: default; }
+  button.ikincil { background: #fff; color: #16150f; }
+  .satir { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+  .cubuk { height: 6px; background: #ece8dd; border-radius: 4px; overflow: hidden; margin: 12px 0 8px; }
+  .cubuk i { display: block; height: 100%; background: #16150f; width: 0; transition: width .4s; }
+  .durum { font-size: 13px; color: #57523f; }
+  .sayac { font-variant-numeric: tabular-nums; color: #8a8266; }
+  .hata { background: #fff4f2; border: 1px solid #f0c6bb; border-radius: 10px; padding: 14px 16px; margin-top: 14px; }
+  .hata code { display: block; font: 12.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+               color: #a32c14; white-space: pre-wrap; word-break: break-word; }
+  .hata b { font-size: 13px; display: block; margin-bottom: 5px; }
+  .uyari { background: #fffbe9; border: 1px solid #e8ddb0; border-radius: 10px; padding: 12px 14px; margin-top: 12px; font-size: 13px; }
+  .iki { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .iki { grid-template-columns: 1fr; } }
+  .kart h2 { font-size: 13px; font-weight: 620; text-transform: uppercase; letter-spacing: .07em;
+             color: #807a6b; margin: 0 0 10px; }
+  .tuval { background: #fff; border: 1px solid #e6e2d8; border-radius: 10px; padding: 10px; overflow: auto; }
+  .tuval svg, .tuval img { width: 100%; height: auto; display: block; }
+  .ilan { font-size: 13.5px; color: #3f3b2e; margin: 14px 0 0; }
+  .kucuk { font-size: 12px; color: #8a8266; margin-top: 6px; }
+  pre.json { font: 11.5px/1.45 ui-monospace, Menlo, monospace; background: #f6f4ee; border: 1px solid #e6e2d8;
+             border-radius: 8px; padding: 10px; max-height: 240px; overflow: auto; margin: 10px 0 0; }
+  details summary { cursor: pointer; font-size: 12.5px; color: #6e6a5e; }
+</style>
+</head>
+<body>
+<div class="sar">
+  <h1>Fotograftan flat + kalip</h1>
+  <p class="alt">Yerel kopru. Okuma <code>claude -p</code> alt surecinde kosar (abonelik; API anahtari yok).
+     Flat tarayicida <code>web/lib/siluet-ciz.js</code> ile cizilir.</p>
+
+  <div class="kutu">
+    <label class="birak" id="birak">
+      <b>Fotograf sec ya da buraya birak</b>
+      <span>png · jpg · webp · gif — en fazla 24 MB</span>
+      <input type="file" id="dosya" accept="image/png,image/jpeg,image/webp,image/gif">
+    </label>
+    <div class="satir">
+      <button id="basla" disabled>Oku ve uret</button>
+      <span class="durum" id="secili"></span>
+    </div>
+    <div id="ilerleme" hidden>
+      <div class="cubuk"><i id="dolgu"></i></div>
+      <div class="durum"><span id="adim">…</span> <span class="sayac" id="sayac"></span></div>
+    </div>
+    <div id="hataKutu" hidden class="hata"><b>Patladi</b><code id="hataMetin"></code></div>
+  </div>
+
+  <div class="iki" id="sonuc" hidden>
+    <div class="kutu kart">
+      <h2>Fotograf</h2>
+      <div class="tuval"><img id="onizleme" alt="yuklenen fotograf"></div>
+      <p class="ilan" id="ilan"></p>
+      <div id="kirmiziKutu" hidden class="uyari"></div>
+      <details style="margin-top:12px"><summary>Okuma JSON</summary><pre class="json" id="okumaJson"></pre></details>
+    </div>
+    <div class="kutu kart">
+      <h2>Flat (tarayicida cizildi)</h2>
+      <div class="tuval" id="flatTuval"></div>
+      <div class="satir">
+        <button class="ikincil" id="indirSvg">Flat SVG indir</button>
+        <button class="ikincil" id="indirPng">Flat PNG indir</button>
+      </div>
+      <h2 style="margin-top:24px">Kalip</h2>
+      <div class="tuval" id="kalipTuval"></div>
+      <div class="satir">
+        <button class="ikincil" id="indirKalipSvg">Kalip SVG indir</button>
+        <button class="ikincil" id="indirKalipPng">Kalip PNG indir</button>
+      </div>
+      <div id="kalipHataKutu" hidden class="hata"><b>Kalip patladi (flat duruyor)</b><code id="kalipHataMetin"></code></div>
+      <p class="kucuk" id="kalipOzet"></p>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { kanunuKur, ciz } from '/lib/siluet-ciz.js';
+
+const $ = (id) => document.getElementById(id);
+let secilenDosya = null, kanunHazir = false, sonSvg = null, sonIs = null;
+
+function hataGoster(metin) {
+  $('hataMetin').textContent = metin;
+  $('hataKutu').hidden = false;
+}
+function hatayiTemizle() { $('hataKutu').hidden = true; }
+
+// KANUN: sayilar cizicide degil contract'ta. Once onu yukle, yoksa ciz() zaten reddeder.
+(async () => {
+  try {
+    const [body, siluet] = await Promise.all([
+      fetch('/contract/body-v1.json').then((r) => { if (!r.ok) throw new Error('body-v1.json ' + r.status); return r.json(); }),
+      fetch('/contract/siluet-v1.json').then((r) => { if (!r.ok) throw new Error('siluet-v1.json ' + r.status); return r.json(); }),
+    ]);
+    kanunuKur(body, siluet);
+    kanunHazir = true;
+  } catch (e) {
+    hataGoster('ERR_KANUN_YOK: contract yuklenemedi — ' + (e && e.message));
+  }
+})();
+
+// ------------------------------------------------------------------ dosya secimi
+const birak = $('birak');
+birak.addEventListener('dragover', (e) => { e.preventDefault(); birak.classList.add('uzerinde'); });
+birak.addEventListener('dragleave', () => birak.classList.remove('uzerinde'));
+birak.addEventListener('drop', (e) => {
+  e.preventDefault(); birak.classList.remove('uzerinde');
+  if (e.dataTransfer.files[0]) dosyaSecildi(e.dataTransfer.files[0]);
+});
+$('dosya').addEventListener('change', (e) => { if (e.target.files[0]) dosyaSecildi(e.target.files[0]); });
+
+function dosyaSecildi(f) {
+  secilenDosya = f;
+  $('secili').textContent = `${f.name} · ${(f.size / 1024).toFixed(0)} KB`;
+  $('basla').disabled = false;
+  hatayiTemizle();
+  const fr = new FileReader();
+  fr.onload = () => { $('onizleme').src = fr.result; $('sonuc').hidden = false; };
+  fr.readAsDataURL(f);
+}
+
+// ------------------------------------------------------------------ kosu
+$('basla').addEventListener('click', async () => {
+  if (!secilenDosya) return;
+  if (!kanunHazir) { hataGoster('ERR_KANUN_YOK: contract yuklenmeden cizim yapilmaz'); return; }
+  hatayiTemizle();
+  $('basla').disabled = true;
+  $('ilerleme').hidden = false;
+  $('flatTuval').innerHTML = ''; $('kalipTuval').innerHTML = '';
+  $('kalipHataKutu').hidden = true; $('kirmiziKutu').hidden = true;
+  ilerle(2, 'fotograf yollaniyor');
+
+  const veri = await new Promise((coz) => {
+    const fr = new FileReader(); fr.onload = () => coz(fr.result); fr.readAsDataURL(secilenDosya);
+  });
+
+  let is;
+  try {
+    const r = await fetch('/oku', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ adi: secilenDosya.name, veri }),
+    });
+    const j = await r.json();
+    if (!r.ok || j.hata) throw new Error(j.hata || ('HTTP ' + r.status));
+    is = j.is;
+  } catch (e) {
+    hataGoster('ERR_SERVIS: ' + (e && e.message) + '\n(servis kosuyor mu? node KOSU/servis.mjs)');
+    $('basla').disabled = false; return;
+  }
+
+  const t0 = Date.now();
+  const sayac = setInterval(() => {
+    $('sayac').textContent = `${Math.round((Date.now() - t0) / 1000)} sn`;
+  }, 1000);
+
+  while (true) {
+    await new Promise((r) => setTimeout(r, 1500));
+    let d;
+    try { d = await (await fetch('/durum?is=' + is)).json(); }
+    catch (e) { clearInterval(sayac); hataGoster('ERR_SERVIS: durum alinamadi — ' + e.message); $('basla').disabled = false; return; }
+    if (d.hata && d.durum === 'hata') {
+      clearInterval(sayac);
+      hataGoster(`[${d.adim || 'kosu'}] ${d.hata}`);
+      $('basla').disabled = false; $('dolgu').style.width = '100%';
+      return;
+    }
+    ilerle(d.yuzde || 5, d.not || d.adim || '…');
+    if (d.durum === 'bitti') { clearInterval(sayac); sonIs = d; bittiGoster(d); $('basla').disabled = false; return; }
+  }
+});
+
+function ilerle(yuzde, metin) {
+  $('dolgu').style.width = yuzde + '%';
+  $('adim').textContent = metin;
+}
+
+function bittiGoster(d) {
+  $('sonuc').hidden = false;
+  $('ilan').textContent = d.ilan || '';
+  $('okumaJson').textContent = JSON.stringify(d.okuma, null, 1);
+
+  // FLAT: tarayicida ciz. Servisin urettigi flat.svg'yi GOSTERMIYORUZ — sayfanin
+  // isi cizmek; sessizce dosyaya dusmek "tarayicida ciziliyor" yalanini orterdi.
+  try {
+    const r = ciz(d.okuma);
+    sonSvg = r.svg;
+    $('flatTuval').innerHTML = r.svg;
+    if (r.kirmizi && r.kirmizi.length) {
+      $('kirmiziKutu').hidden = false;
+      $('kirmiziKutu').textContent = 'kirmizi bayrak: ' + r.kirmizi.join(' | ');
+    }
+  } catch (e) {
+    sonSvg = null;
+    $('flatTuval').innerHTML = '';
+    hataGoster('cizim: ' + (e && e.message));
+  }
+
+  if (d.kalipSvg) {
+    const img = new Image();
+    img.src = '/dosya?yol=' + encodeURIComponent(d.kalipPng || d.kalipSvg);
+    img.alt = 'kalip';
+    $('kalipTuval').appendChild(img);
+  }
+  if (d.kalipHata) {
+    $('kalipHataKutu').hidden = false;
+    $('kalipHataMetin').textContent = d.kalipHata;
+  }
+  const o = d.kalipOzet;
+  $('kalipOzet').textContent = o
+    ? `etek ucu ${o.hemOffsetMM} mm · klos ${o.klos} · hedef ${(o.hedefler || []).join(', ')}${o.hemKirpma ? ' · ' + o.hemKirpma : ''}`
+    : '';
+}
+
+// ------------------------------------------------------------------ indirme
+function indir(adi, icerik, tip) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([icerik], { type: tip }));
+  a.download = adi; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+$('indirSvg').addEventListener('click', () => {
+  if (!sonSvg) { hataGoster('indirilecek flat yok'); return; }
+  indir('flat.svg', sonSvg, 'image/svg+xml');
+});
+$('indirPng').addEventListener('click', () => {
+  if (!sonIs || !sonIs.flatPng) { hataGoster('flat.png uretilmedi (Chrome yok olabilir)'); return; }
+  window.location = '/dosya?yol=' + encodeURIComponent(sonIs.flatPng);
+});
+$('indirKalipSvg').addEventListener('click', () => {
+  if (!sonIs || !sonIs.kalipSvg) { hataGoster('kalip SVG yok'); return; }
+  window.location = '/dosya?yol=' + encodeURIComponent(sonIs.kalipSvg);
+});
+$('indirKalipPng').addEventListener('click', () => {
+  if (!sonIs || !sonIs.kalipPng) { hataGoster('kalip PNG yok'); return; }
+  window.location = '/dosya?yol=' + encodeURIComponent(sonIs.kalipPng);
+});
+</script>
+</body>
+</html>

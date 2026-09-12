@@ -1,0 +1,37 @@
+{
+  "_role": "PARÇA GEREKÇESİ KANUNU v1 (F5-parca, 2026-09-02). İki karar bu dosyadan okunur: (1) bir giysi ne zaman açıklık/fermuar İSTER (geçiş kuralı), (2) tek bir pens ağzı ne zaman FAZLADIR (pens eskalasyonu). Motor bu değerleri contract.gen.hpp üzerinden okur (gen-contract.mjs üretir); koda gömülü kopya YOKTUR. Kaynağı zayıf olan her sayı kendi satırında 'kaynak_zayif' etiketi taşır; kaynağı hiç olmayan sayı EN KISITLAYICI değerde + 'kaynak_yok' etiketiyle durur.",
+  "gecis_kurali": {
+    "_kural": "Giysinin en dar GEÇİŞ çevresi (yaka açıklığı; örmede streç ile uzamış hâli; elbisede bel geçişi de bir geçiştir) baş çevresinden darsa giysi baştan giyilemez → açıklık/fermuar gerekir. Geçişlerin hepsi baş çevresini aşıyorsa koşulsuz fermuar YOKTUR.",
+    "headCircumferenceMM": 510,
+    "head_kaynak": {
+      "url": "https://www.theknitwit.org/blog/2020/2/5/how-to-size-and-shape-necklines",
+      "alinti": "minimum neck opening = head circumference / stretch ratio",
+      "not": "~51 cm (20 in) yetişkin baş çevresi pratik referansı. Vücut ölçüsü setinde baş çevresi alanı YOK; bu referans o alan gelene kadar geçerlidir."
+    },
+    "stretch_ratio_formul": "StretchRatio = 1 + streç%/100 — contract/fabric-catalog-v1.json negative_ease_rule.formul ile AYNI kaynak (mislope.com). Streç İLAN EDİLMEMİŞSE kumaş kelimesinin kendi bandı kullanılır (fabricease.hpp: woven 0%, knit 12.5%) — uydurma streç yok.",
+    "bel_gecisi_notu": "Elbisede bitmiş bel çevresi de baş çevresiyle kıyaslanır (görev kuralı, 2026-09-02). Bu kural omuz/göğüs geçişini ÖLÇMEZ — dar belli dokuma elbisenin omuzdan geçip geçmediği bu kanunun dışında kalır ve bu sınır burada adıyla yazılıdır."
+  },
+  "pens_eskalasyonu": {
+    "_kural": "Tek pens agzi maxSingleDartMouthMM'i asarsa tek pens FAZLADIR -> intake IKI pense bolunur (1/3 ve 2/3 hizasi, etek blogu emsali skirt.cpp draftQuarter; outline degismez, yalniz pens cizimi bolunur). Kaynak 'iki pens YA DA prenses' der; motor IKI PENS kolunu uygular. PRENSESE OTOMATIK GECIS TELE BAGLI DEGIL: recipe hatti (RECETE-SPEC §6) ayni govdeyi bagimsiz yorumlayiciyla cizer ve recipe_dress_golden_check byte paritesi ister — motor tek basina prensese kacarsa parite kirilir. Prenses kolunu baglamak recipe yorumlayicisiyla birlikte ayri faz isidir (F5 KARAR GEREKEN). Esikler buradan okunur, koda gomulmez.",
+    "maxSingleDartMouthMM": 30,
+    "maxSingleDartMouthMM_kaynak": {
+      "url": "https://anicka.design/2025/03/06/darts-in-sewing-patterns-how-many-where-and-why/",
+      "kaynak_zayif": true,
+      "not": "Blog seviyesi kaynak, ders kitabı değil. ~3 cm üstü tek pens ağzı bol; iki pens ya da prenses."
+    },
+    "supresyon_dagilimi": {
+      "yanShare": 0.6,
+      "pensShare": 0.4,
+      "kaynak": "https://anicka.design/2025/03/06/darts-in-sewing-patterns-how-many-where-and-why/",
+      "kaynak_zayif": true,
+      "_uygulama": "KAYIT — TELE BAĞLI DEĞİL. Bant, bodice.cpp'nin Aldrich kaynaklı pens derinliği kararıyla (bodice.cpp 'Bust dart 2026-07-18, Aldrich pass': supresyonun ÇOĞU penste kalır, yan ~15mm) çelişiyor. Zayıf bir blog bandı için Aldrich'e dayanan mevcut dağılımı bozmak ölçmeden geometri oynatmak olurdu; bant veri olarak burada durur, karar hakeme bırakıldı (F5 raporu KARAR GEREKEN)."
+    },
+    "fbaPrenses": {
+      "minMM": 25,
+      "maxMM": 50,
+      "kaynak": "https://curvysewingcollective.com/large-fba-issues-dealing-with-the-big-honkin-dart/",
+      "kaynak_zayif": true,
+      "not": "FBA ~2.5-5 cm'i aşan pens büyümesi prenses dikişe taşınır. Motorda ayrı bir 'FBA miktarı' ekseni yok; prenses eskalasyonu bugün 2 x maxSingleDartMouthMM = 60mm toplam intake eşiğinden tetiklenir (yeni sayı uydurulmadı, mevcut eşikten türetildi); bu FBA bandı kayıt olarak durur."
+    }
+  }
+}

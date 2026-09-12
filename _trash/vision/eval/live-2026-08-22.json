@@ -1,0 +1,234 @@
+{
+ "01-a-line-cocktail-dress-mannequin.jpg": {
+  "garment": "dress",
+  "neckline": "vNeck",
+  "sleeveStyle": "straight",
+  "sleeveLength": "long",
+  "skirtStyle": "straight",
+  "length": "midi",
+  "topLength": null,
+  "shaping": "princess",
+  "waistline": "natural",
+  "fabric": "woven",
+  "hemRuffle": "none",
+  "keyhole": false,
+  "fabricName": "wool",
+  "closure": {
+   "type": "zipper",
+   "location": "centerBack"
+  },
+  "collar": {
+   "type": "none",
+   "name": "none"
+  },
+  "straps": null,
+  "cupSeams": false,
+  "sleeveHead": "plain",
+  "yoke": {
+   "type": "none",
+   "location": null
+  },
+  "backDetail": "none",
+  "ratios": {
+   "hemToWaistWidth": 1.05,
+   "lengthToWidth": 2.15,
+   "neckDepthToLength": 0.14,
+   "neckWidthToShoulder": 0.42,
+   "sleeveLenToGarment": 0.52,
+   "waistYToLength": 0.34,
+   "strapWidthToShoulder": null
+  },
+  "outOfVocab": [
+   "asymmetric draped pleated overlay at hip",
+   "diagonal cascading pleated flounce",
+   "waistband seam"
+  ],
+  "details": "Fitted long-sleeve wool dress with natural waist seam over a straight underskirt; a dramatic diagonally-draped, finely knife-pleated flounce overlay cascades asymmetrically across the hip from waist to below the knee."
+ },
+ "02-ball-gown-exhibit.jpg": {
+  "garment": "dress",
+  "neckline": "boat",
+  "sleeveStyle": "straight",
+  "sleeveLength": "short",
+  "skirtStyle": "straight",
+  "length": "maxi",
+  "topLength": null,
+  "shaping": "princess",
+  "waistline": "empire",
+  "fabric": "woven",
+  "hemRuffle": "none",
+  "keyhole": false,
+  "fabricName": "lace",
+  "closure": {
+   "type": "hookEye",
+   "location": "centerBack"
+  },
+  "collar": {
+   "type": "none",
+   "name": "none"
+  },
+  "straps": null,
+  "cupSeams": false,
+  "sleeveHead": "plain",
+  "yoke": {
+   "type": "none",
+   "location": null
+  },
+  "backDetail": "none",
+  "ratios": {
+   "hemToWaistWidth": 1.15,
+   "lengthToWidth": 2.7,
+   "neckDepthToLength": 0.06,
+   "neckWidthToShoulder": 0.62,
+   "sleeveLenToGarment": 0.12,
+   "waistYToLength": 0.24,
+   "strapWidthToShoulder": null
+  },
+  "outOfVocab": [
+   "beaded empire waist sash",
+   "metallic floral embroidery appliqué",
+   "beaded tassel drops",
+   "lace overlay bodice and sleeves",
+   "sequin/crystal shoulder embellishment"
+  ],
+  "details": "Edwardian-style evening gown with lace overlay bodice, high beaded empire waistband, short lace sleeves, and heavy silver metallic floral embroidery running vertically down a cream satin column skirt."
+ },
+ "03-wedding-dress-mannequin.jpg": {
+  "garment": "dress",
+  "neckline": "crew",
+  "sleeveStyle": "straight",
+  "sleeveLength": "long",
+  "skirtStyle": "straight",
+  "length": "maxi",
+  "topLength": null,
+  "shaping": "princess",
+  "waistline": "empire",
+  "fabric": "woven",
+  "hemRuffle": "none",
+  "keyhole": false,
+  "fabricName": "satin",
+  "closure": {
+   "type": "zipper",
+   "location": "centerBack"
+  },
+  "collar": {
+   "type": "none",
+   "name": "none"
+  },
+  "straps": null,
+  "cupSeams": false,
+  "sleeveHead": "plain",
+  "yoke": {
+   "type": "none",
+   "location": null
+  },
+  "backDetail": "none",
+  "ratios": {
+   "hemToWaistWidth": 1.35,
+   "lengthToWidth": 2.9,
+   "neckDepthToLength": 0.04,
+   "neckWidthToShoulder": 0.36,
+   "sleeveLenToGarment": 0.55,
+   "waistYToLength": 0.22,
+   "strapWidthToShoulder": null
+  },
+  "outOfVocab": [
+   "lace applique bodice overlay",
+   "empire seam lace trim band",
+   "flared bell lace cuffs",
+   "lace-bordered bib panel"
+  ],
+  "details": "Empire-waist bridal column gown in satin with a lace-appliqued bodice, a scalloped lace trim marking the high empire seam, and long straight sleeves ending in flared lace cuffs; veil, pillbox cap and floor train are styling and excluded."
+ },
+ "04-babydoll-dress.jpg": {
+  "garment": "dress",
+  "neckline": "crew",
+  "sleeveStyle": "straight",
+  "sleeveLength": "long",
+  "skirtStyle": "pleated",
+  "length": "mini",
+  "topLength": null,
+  "shaping": "dart",
+  "waistline": "natural",
+  "fabric": "woven",
+  "hemRuffle": "none",
+  "keyhole": false,
+  "fabricName": "wool",
+  "closure": null,
+  "collar": {
+   "type": "peterPan",
+   "name": "scalloped peter pan collar"
+  },
+  "straps": null,
+  "cupSeams": false,
+  "sleeveHead": "plain",
+  "yoke": null,
+  "backDetail": null,
+  "ratios": {
+   "hemToWaistWidth": 1.9,
+   "lengthToWidth": 1.7,
+   "neckDepthToLength": 0.05,
+   "neckWidthToShoulder": 0.4,
+   "sleeveLenToGarment": 0.55,
+   "waistYToLength": 0.45,
+   "strapWidthToShoulder": null
+  },
+  "outOfVocab": [
+   "dropped waist",
+   "scalloped collar edge",
+   "white contrast cuffs",
+   "front hip welt pockets",
+   "knife pleated skirt",
+   "neck ribbon tie"
+  ],
+  "details": "Grey wool drop-waist dress with a white scalloped peter pan collar and matching turn-back cuffs, a small dark neck ribbon at center front, two welt pockets at the dropped waistline, and a full knife-pleated mini skirt."
+ },
+ "05-empire-waist-gown.jpg": {
+  "garment": "dress",
+  "neckline": "square",
+  "sleeveStyle": "straight",
+  "sleeveLength": "elbow",
+  "skirtStyle": "gathered",
+  "length": "maxi",
+  "topLength": null,
+  "shaping": "princess",
+  "waistline": "natural",
+  "fabric": "woven",
+  "hemRuffle": "none",
+  "keyhole": false,
+  "fabricName": "satin",
+  "closure": {
+   "type": "none",
+   "location": null
+  },
+  "collar": {
+   "type": "none",
+   "name": "none"
+  },
+  "straps": null,
+  "cupSeams": false,
+  "sleeveHead": "plain",
+  "yoke": null,
+  "backDetail": null,
+  "ratios": {
+   "hemToWaistWidth": 2.6,
+   "lengthToWidth": 2.7,
+   "neckDepthToLength": 0.05,
+   "neckWidthToShoulder": 0.55,
+   "sleeveLenToGarment": 0.28,
+   "waistYToLength": 0.33,
+   "strapWidthToShoulder": null
+  },
+  "outOfVocab": [
+   "robe à la française open front over petticoat",
+   "pointed bodice front (stomacher)",
+   "peplum at waist",
+   "engageantes / tiered ruffled elbow cuffs",
+   "self-fabric ruched robings trimming front opening",
+   "applied floral trim garlands",
+   "open-front overskirt revealing matching underskirt",
+   "vertical pinstripe woven pattern"
+  ],
+  "details": "18th-century sacque/robe à la française approximated as a princess-seamed natural-waist gown; ivory striped silk with open robe front over a satin petticoat, pointed stomacher bodice, ruched robings and passementerie floral garlands, and tiered ruffled elbow sleeves."
+ }
+}

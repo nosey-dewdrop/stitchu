@@ -1,0 +1,39 @@
+{
+  "bayt": 53747,
+  "sha": "d3b5d8620809c7b5",
+  "width": "2694.4647mm",
+  "height": "1455.0001mm",
+  "dataScale": "1:1",
+  "dataUnitMM": "1",
+  "dataSinif": "dress/princess/woven",
+  "dataSize": "EU38",
+  "dataDugum": "7a07fb396d065577",
+  "yolSayisi": 80,
+  "rolSayisi": {
+    "siluet": 2,
+    "bel-dikisi": 4,
+    "prenses": 8,
+    "dikis-izi": 8,
+    "manset": 4,
+    "kol": 4,
+    "buzgu": 48,
+    "orta-dikis": 2
+  },
+  "_specKaynak": "girdiler.json spec",
+  "_spec": {
+    "garment": "dress",
+    "shaping": "princess",
+    "fabric": "woven",
+    "neckline": "crew",
+    "sleeveStyle": "balloon",
+    "sleeveLength": "long",
+    "skirtStyle": "straight",
+    "skirtLength": "maxi",
+    "gatherType": "shirred",
+    "gatherZone": "sleeve"
+  },
+  "_eksik": [
+    "kalip.svg: graftan cizim hatti yok (A2)",
+    "dikilebilir.json: graf degerleme hatti yok (A2)"
+  ]
+}

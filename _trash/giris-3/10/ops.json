@@ -1,0 +1,526 @@
+[
+ {
+  "op": "drop",
+  "args": {
+   "panel": "kol",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_beden",
+   "edge": "dart_on_beden.1",
+   "to": {
+    "landmark": "landmark.underarm",
+    "xOf": "ringQuarter",
+    "ring": "girth.waist",
+    "xFactor": 0.35,
+    "yLandmark": "landmark.bustLine",
+    "yLandmark2": "landmark.waist",
+    "yLerp": 0.45
+   }
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "dart_arka_beden.1",
+   "to": {
+    "landmark": "landmark.underarm",
+    "xOf": "ringQuarter",
+    "ring": "girth.waist",
+    "xFactor": 0.35,
+    "yLandmark": "landmark.bustLine",
+    "yLandmark2": "landmark.waist",
+    "yLerp": 0.45
+   }
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_beden",
+   "edge": "cf",
+   "fractions": [
+    0.4157
+   ]
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_beden",
+   "edge": "armhole_front.1",
+   "fractions": [
+    0.202
+   ]
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "on_beden",
+   "vertexA": "cf.2",
+   "vertexB": "armhole_front.1.2",
+   "panelA": "on_beden_alt",
+   "panelB": "on_beden_ust",
+   "seam": "ust_on",
+   "seamRatio": 1
+  }
+ },
+ {
+  "op": "drop",
+  "args": {
+   "panel": "on_beden_ust",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "moveVertex",
+  "args": {
+   "panel": "on_beden_alt",
+   "edge": "ust_on.a",
+   "to": {
+    "landmark": "landmark.bustLine",
+    "xOf": "ringQuarter",
+    "ring": "girth.bust",
+    "xFactor": 1,
+    "yLandmark": "landmark.underarm",
+    "yOffsetMM": -3.3
+   }
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_beden_alt",
+   "edge": "armhole_front.1.1",
+   "control": []
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "cb",
+   "fractions": [
+    0.4949
+   ]
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "armhole_back.1",
+   "fractions": [
+    0.202
+   ]
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "arka_beden",
+   "vertexA": "cb.2",
+   "vertexB": "armhole_back.1.2",
+   "panelA": "arka_beden_alt",
+   "panelB": "arka_beden_ust",
+   "seam": "ust_arka",
+   "seamRatio": 1
+  }
+ },
+ {
+  "op": "drop",
+  "args": {
+   "panel": "arka_beden_ust",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "moveVertex",
+  "args": {
+   "panel": "arka_beden_alt",
+   "edge": "ust_arka.a",
+   "to": {
+    "landmark": "landmark.bustLine",
+    "xOf": "ringQuarter",
+    "ring": "girth.bust",
+    "xFactor": 1,
+    "yLandmark": "landmark.underarm",
+    "yOffsetMM": -3.3
+   }
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_beden_alt",
+   "edge": "armhole_back.1.1",
+   "control": []
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "arka_orta_beden",
+   "a": [
+    {
+     "panel": "arka_beden_alt",
+     "edge": "cb.2"
+    }
+   ],
+   "b": [
+    {
+     "panel": "arka_beden_alt",
+     "edge": "cb.2"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1
+  }
+ },
+ {
+  "op": "closure",
+  "args": {
+   "seam": "arka_orta_beden",
+   "type": "zipper",
+   "fromFraction": 0,
+   "toFraction": 1
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_beden_alt",
+   "edge": "cf.2",
+   "fractions": [
+    0.3797
+   ]
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "on_beden_alt",
+   "edge": "side_front",
+   "fractions": [
+    0.6768
+   ]
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "on_beden_alt",
+   "vertexA": "cf.2.2",
+   "vertexB": "side_front.2",
+   "panelA": "on_beden_alt2",
+   "panelB": "on_beden_ust2",
+   "seam": "gogus_alti_on",
+   "seamRatio": 1
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "arka_beden_alt",
+   "edge": "cb.2",
+   "fractions": [
+    0.3797
+   ]
+  }
+ },
+ {
+  "op": "subdivide",
+  "args": {
+   "panel": "arka_beden_alt",
+   "edge": "side_back",
+   "fractions": [
+    0.6768
+   ]
+  }
+ },
+ {
+  "op": "split",
+  "args": {
+   "panel": "arka_beden_alt",
+   "vertexA": "cb.2.2",
+   "vertexB": "side_back.2",
+   "panelA": "arka_beden_alt2",
+   "panelB": "arka_beden_ust2",
+   "seam": "gogus_alti_arka",
+   "seamRatio": 1
+  }
+ },
+ {
+  "op": "gather",
+  "args": {
+   "panel": "on_beden_ust2",
+   "edge": "gogus_alti_on.b",
+   "ratio": 1.25
+  }
+ },
+ {
+  "op": "addPanel",
+  "args": {
+   "onto": "on_beden_ust2",
+   "panel": {
+    "id": "aski_on",
+    "edges": [
+     {
+      "id": "ic",
+      "kind": "cut",
+      "role": "strap",
+      "from": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.55,
+       "xOffsetMM": 0,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -3.3000000000000114
+      },
+      "to": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.468,
+       "xOffsetMM": 0,
+       "yLandmark": "landmark.neckBase",
+       "yOffsetMM": 0
+      },
+      "finish": "bound"
+     },
+     {
+      "id": "ust",
+      "kind": "cut",
+      "role": "strap",
+      "from": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.468,
+       "xOffsetMM": 0,
+       "yLandmark": "landmark.neckBase",
+       "yOffsetMM": 0
+      },
+      "to": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.468,
+       "xOffsetMM": 26,
+       "yLandmark": "landmark.neckBase",
+       "yOffsetMM": 4
+      },
+      "finish": "raw"
+     },
+     {
+      "id": "dis",
+      "kind": "cut",
+      "role": "strap",
+      "from": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.468,
+       "xOffsetMM": 26,
+       "yLandmark": "landmark.neckBase",
+       "yOffsetMM": 4
+      },
+      "to": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.55,
+       "xOffsetMM": 40,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -3.3000000000000114
+      },
+      "finish": "bound"
+     },
+     {
+      "id": "alt",
+      "kind": "cut",
+      "role": "strap",
+      "from": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.55,
+       "xOffsetMM": 40,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -3.3000000000000114
+      },
+      "to": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.55,
+       "xOffsetMM": 0,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -3.3000000000000114
+      },
+      "finish": "raw"
+     }
+    ],
+    "grainDeg": 0,
+    "onFold": false,
+    "cutCount": 2,
+    "seamAllowanceMM": 0,
+    "ease": [],
+    "reason": "aski (40 mm altta, 26.0 mm omuzda), ust kenardan omuz cizgisine daralarak; alt kenar raw = ust kenar dikisine yakalanir"
+   }
+  }
+ },
+ {
+  "op": "addPanel",
+  "args": {
+   "onto": "arka_beden_ust2",
+   "panel": {
+    "id": "aski_arka",
+    "edges": [
+     {
+      "id": "ic",
+      "kind": "cut",
+      "role": "strap",
+      "from": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.55,
+       "xOffsetMM": 0,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -3.3000000000000114
+      },
+      "to": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.468,
+       "xOffsetMM": 0,
+       "yLandmark": "landmark.neckBase",
+       "yOffsetMM": 0
+      },
+      "finish": "bound"
+     },
+     {
+      "id": "ust",
+      "kind": "cut",
+      "role": "strap",
+      "from": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.468,
+       "xOffsetMM": 0,
+       "yLandmark": "landmark.neckBase",
+       "yOffsetMM": 0
+      },
+      "to": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.468,
+       "xOffsetMM": 26,
+       "yLandmark": "landmark.neckBase",
+       "yOffsetMM": 4
+      },
+      "finish": "raw"
+     },
+     {
+      "id": "dis",
+      "kind": "cut",
+      "role": "strap",
+      "from": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.468,
+       "xOffsetMM": 26,
+       "yLandmark": "landmark.neckBase",
+       "yOffsetMM": 4
+      },
+      "to": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.55,
+       "xOffsetMM": 40,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -3.3000000000000114
+      },
+      "finish": "bound"
+     },
+     {
+      "id": "alt",
+      "kind": "cut",
+      "role": "strap",
+      "from": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.55,
+       "xOffsetMM": 40,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -3.3000000000000114
+      },
+      "to": {
+       "landmark": "landmark.bustLine",
+       "xOf": "ringQuarter",
+       "ring": "girth.bust",
+       "xFactor": 0.55,
+       "xOffsetMM": 0,
+       "yLandmark": "landmark.underarm",
+       "yOffsetMM": -3.3000000000000114
+      },
+      "finish": "raw"
+     }
+    ],
+    "grainDeg": 0,
+    "onFold": false,
+    "cutCount": 2,
+    "seamAllowanceMM": 0,
+    "ease": [],
+    "reason": "aski (40 mm altta, 26.0 mm omuzda), ust kenardan omuz cizgisine daralarak; alt kenar raw = ust kenar dikisine yakalanir"
+   }
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_etek",
+   "edge": "hem_front",
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 189
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_etek",
+   "edge": "hem_back",
+   "yLandmark": "landmark.hip",
+   "yOffsetMM": 189
+  }
+ },
+ {
+  "op": "flare",
+  "args": {
+   "panel": "on_etek",
+   "edge": "hem_front",
+   "factor": 1.268
+  }
+ },
+ {
+  "op": "flare",
+  "args": {
+   "panel": "arka_etek",
+   "edge": "hem_back",
+   "factor": 1.268
+  }
+ }
+]

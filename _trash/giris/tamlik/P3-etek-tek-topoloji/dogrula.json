@@ -1,0 +1,9 @@
+{
+ "kirmizi": 4,
+ "fails": [
+  "dikis_uzunluk:arka_bel_dikisi",
+  "dikis_uzunluk:on_bel_dikisi",
+  "kendini_kesme:arka_bel_bandi",
+  "kendini_kesme:on_bel_bandi"
+ ]
+}

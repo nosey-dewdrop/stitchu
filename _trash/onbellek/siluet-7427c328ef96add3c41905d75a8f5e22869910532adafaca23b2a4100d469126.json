@@ -1,0 +1,236 @@
+{
+ "semaSurumu": "siluet-v1",
+ "girdiYolu": "GIRDI/hedef-fotograflar-3/etsy-11.png",
+ "sha256": "7427c328ef96add3c41905d75a8f5e22869910532adafaca23b2a4100d469126",
+ "okuyan": "Claude, 10 Eyl 2026 (Read ile ekran goruntusune bakildi; dis LLM cagrisi 0)",
+ "ilan": "bol ust (kalca boyu): firfirli bebe yaka, roba + buzgu, puf kol (bantli firfirli agiz), drape",
+ "gorulen": "fotograf (insan ustunde, on) + satici flat'i (on; ust + elbise)",
+ "oturma": {
+  "gogus": false,
+  "bel": false
+ },
+ "on": {
+  "yakaBicim": "yuvarlak",
+  "kontur": {
+   "yakaOrta": [
+    "neckFront*0",
+    "neckFront+5"
+   ],
+   "yakaOmuz": [
+    "neckBase*1.08",
+    "neckBase+5"
+   ],
+   "askiUst": null,
+   "omuzUc": [
+    "shoulderTip*0.95",
+    "shoulderTip"
+   ],
+   "koltukalti": [
+    "bustLine*1.10",
+    "underarm+24"
+   ],
+   "gogus": [
+    "bustLine*1.18",
+    "bustLine"
+   ],
+   "bel": [
+    "bustLine*1.28",
+    "waist"
+   ],
+   "kalca": [
+    "hip*1.20",
+    "highHip+30"
+   ],
+   "etekYan": [
+    "hip*1.25",
+    "highHip+60"
+   ],
+   "etekOrta": [
+    "hip*0",
+    "highHip+70"
+   ]
+  },
+  "kol": {
+   "tip": "puf",
+   "dis": [
+    "shoulderTip*1.24",
+    "shoulderTip+128"
+   ],
+   "ic": [
+    "bustLine*1.10",
+    "underarm+24"
+   ],
+   "bant": true,
+   "bantMM": 13,
+   "buzgu": true,
+   "sisme": 62,
+   "kubbe": 48,
+   "firfir": true,
+   "kapakBuzgu": false
+  },
+  "ogeler": [
+   {
+    "tip": "roba",
+    "ayna": false,
+    "noktalar": [
+     [
+      "bustLine*-1.13",
+      "underarm-8"
+     ],
+     [
+      "bustLine*1.13",
+      "underarm-8"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "yon": "asagi",
+    "boy": 22,
+    "aralik": 10,
+    "noktalar": [
+     [
+      "bustLine*0.06",
+      "underarm-6"
+     ],
+     [
+      "bustLine*1.0",
+      "underarm-6"
+     ]
+    ]
+   },
+   {
+    "tip": "bebeYaka",
+    "genislik": 48,
+    "firfir": true,
+    "keyhole": false
+   },
+   {
+    "tip": "drape",
+    "bombe": 5,
+    "noktalar": [
+     [
+      "bustLine*0.40",
+      "underarm-8"
+     ],
+     [
+      "bustLine*0.50",
+      "waist+70"
+     ],
+     [
+      "bustLine*0.85",
+      "underarm-8"
+     ],
+     [
+      "waist*1.15",
+      "waist+50"
+     ]
+    ]
+   }
+  ]
+ },
+ "arka": {
+  "koken": "turetildi",
+  "yakaBicim": "yuvarlak",
+  "kontur": {
+   "yakaOrta": [
+    "nape*0",
+    "nape+26"
+   ],
+   "yakaOmuz": [
+    "neckBase*1.08",
+    "neckBase+5"
+   ],
+   "askiUst": null,
+   "omuzUc": [
+    "shoulderTip*0.95",
+    "shoulderTip"
+   ],
+   "koltukalti": [
+    "bustLine*1.10",
+    "underarm+24"
+   ],
+   "gogus": [
+    "bustLine*1.18",
+    "bustLine"
+   ],
+   "bel": [
+    "bustLine*1.28",
+    "waist"
+   ],
+   "kalca": [
+    "hip*1.20",
+    "highHip+30"
+   ],
+   "etekYan": [
+    "hip*1.25",
+    "highHip+60"
+   ],
+   "etekOrta": [
+    "hip*0",
+    "highHip+70"
+   ]
+  },
+  "kol": {
+   "tip": "puf",
+   "dis": [
+    "shoulderTip*1.24",
+    "shoulderTip+128"
+   ],
+   "ic": [
+    "bustLine*1.10",
+    "underarm+24"
+   ],
+   "bant": true,
+   "bantMM": 13,
+   "buzgu": true,
+   "sisme": 62,
+   "kubbe": 48,
+   "firfir": true,
+   "kapakBuzgu": false
+  },
+  "ogeler": [
+   {
+    "tip": "roba",
+    "ayna": false,
+    "noktalar": [
+     [
+      "bustLine*-1.13",
+      "underarm-8"
+     ],
+     [
+      "bustLine*1.13",
+      "underarm-8"
+     ]
+    ]
+   },
+   {
+    "tip": "buzgu",
+    "yon": "asagi",
+    "boy": 22,
+    "aralik": 10,
+    "noktalar": [
+     [
+      "bustLine*0.06",
+      "underarm-6"
+     ],
+     [
+      "bustLine*1.0",
+      "underarm-6"
+     ]
+    ]
+   },
+   {
+    "tip": "bebeYaka",
+    "genislik": 48,
+    "firfir": true,
+    "arka": true,
+    "keyhole": false
+   }
+  ]
+ },
+ "eksik": [
+  "arka gorunmuyor: onden turetildi",
+  "elbise varyanti okunmadi (ilan ust)"
+ ]
+}

@@ -1,0 +1,239 @@
+{
+ "girdiYolu": "GIRDI/hedef-fotograflar-2/dior-hc-fw26-elbise.jpg",
+ "sha256": "3f2043b8432dab515752ada521c120595e64c7c9e238fc532ad2ac01a6031567",
+ "semaSurumu": "vision-graf-v1",
+ "okuyan": "isci-A4-tur6",
+ "tarih": "2026-09-09",
+ "yontem": "Kosu iscisi defile fotografina DOGRUDAN bakti (Read). Dis LLM cagrisi YOK; llmCagri = 0.",
+ "gorunum": "on",
+ "ilan": "kolsuz sutun elbise (yuksek kayik yaka, yere kadar, yanda drape)",
+ "tabanGraf": "KOSU/ciktilar/graf-ilk/graf.json",
+ "gorunumDogrulamasi": "Defile fotografi onden; giysi = elbise.",
+ "paneller": [
+  {
+   "id": "on_govde",
+   "gorulduMu": true,
+   "guven": 0.9,
+   "kanit": "tek parca sutun, sol yanda dikey buzgu/drape"
+  },
+  {
+   "id": "arka_govde",
+   "gorulduMu": false,
+   "guven": 0.2,
+   "kanit": "arka yok"
+  },
+  {
+   "id": "kol",
+   "gorulduMu": false,
+   "guven": 0.98,
+   "kanit": "kol YOK"
+  }
+ ],
+ "kenarlar": [
+  {
+   "panel": "on_govde",
+   "kenar": "neck_front",
+   "landmarkUst": "landmark.neckFront",
+   "landmarkAlt": "landmark.bustLine",
+   "oran": -0.12,
+   "bicim": "kayik-yuksek",
+   "guven": 0.8
+  },
+  {
+   "panel": "on_govde",
+   "kenar": "hem_front",
+   "landmarkUst": "landmark.waist",
+   "landmarkAlt": "landmark.ankle",
+   "oran": 1.02,
+   "bicim": "duz",
+   "guven": 0.85
+  }
+ ],
+ "dikisler": [
+  {
+   "id": "yan",
+   "a": "on_govde/side",
+   "b": "arka_govde/side",
+   "oranAralik": [
+    1.0,
+    1.4
+   ],
+   "gorunurMu": false,
+   "guven": 0.5
+  }
+ ],
+ "kapanma": {
+  "yer": "arka_orta",
+  "tur": "fermuar",
+  "oranBas": 0.0,
+  "oranSon": 1.0,
+  "guven": 0.3,
+  "not": "cikarim"
+ },
+ "simetri": {
+  "cfAyna": false,
+  "cbAyna": true,
+  "guven": 0.8,
+  "kanit": "drape ve buzgu SOL yanda: on yuz aynali DEGIL (ayna kisiti: simetrik karikatur)"
+ },
+ "katmanlar": [],
+ "arka": {
+  "koken": "turetildi",
+  "guven": 0.3,
+  "neden": "arka yok"
+ },
+ "hedefler": [],
+ "opDemeti": [
+  {
+   "op": "drop",
+   "args": {
+    "panel": "kol",
+    "finish": "faced"
+   },
+   "neden": "fotografta kol yok: kol paneli kalkar, kol oyugu pervazli serbest kenar"
+  },
+  {
+   "op": "merge",
+   "args": {
+    "seam": "bel",
+    "panelA": "on_beden",
+    "panelB": "on_etek",
+    "panel": "on_govde"
+   },
+   "neden": "fotografta bel dikisi yok: on beden + on etek tek panel (bel pensi ic halka pense doner)"
+  },
+  {
+   "op": "merge",
+   "args": {
+    "seam": "bel",
+    "panelA": "arka_beden",
+    "panelB": "arka_etek",
+    "panel": "arka_govde"
+   },
+   "neden": "ayni: arka"
+  },
+  {
+   "op": "reshapeEdge",
+   "args": {
+    "panel": "on_govde",
+    "edge": "neck_front",
+    "from": {
+     "landmark": "landmark.neckBase",
+     "xFactor": 1.6,
+     "yLandmark": "landmark.shoulderTip",
+     "yLandmark2": "landmark.neckBase",
+     "yLerp": 0.85
+    },
+    "to": {
+     "landmark": "landmark.waist",
+     "xFactor": 0,
+     "yLandmark": "landmark.neckFront",
+     "yLandmark2": "landmark.bustLine",
+     "yLerp": -0.05
+    },
+    "control": [
+     {
+      "landmark": "landmark.neckBase",
+      "xFactor": 1.25,
+      "yLandmark": "landmark.neckFront",
+      "yLandmark2": "landmark.bustLine",
+      "yLerp": -0.06
+     },
+     {
+      "landmark": "landmark.neckBase",
+      "xFactor": 0.6,
+      "yLandmark": "landmark.neckFront",
+      "yLandmark2": "landmark.bustLine",
+      "yLerp": -0.05
+     }
+    ]
+   },
+   "neden": "yuksek kayik yaka (drape, boyna yakin; CF'de hafif yukari, tepe yok)"
+  },
+  {
+   "op": "reshapeEdge",
+   "args": {
+    "panel": "arka_govde",
+    "edge": "neck_back",
+    "from": {
+     "landmark": "landmark.neckBase",
+     "xFactor": 1.6,
+     "yLandmark": "landmark.shoulderTip",
+     "yLandmark2": "landmark.neckBase",
+     "yLerp": 0.85
+    },
+    "to": {
+     "landmark": "landmark.nape",
+     "xFactor": 0,
+     "yOffsetMM": 4
+    },
+    "control": [
+     {
+      "landmark": "landmark.neckBase",
+      "xFactor": 1.1199999999999999,
+      "yLandmark": "landmark.nape",
+      "yOffsetMM": 2.4
+     },
+     {
+      "landmark": "landmark.neckBase",
+      "xFactor": 0.48,
+      "yLandmark": "landmark.nape",
+      "yOffsetMM": 4
+     }
+    ]
+   },
+   "neden": "arka yaka yuksek"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "on_govde",
+    "edge": "hem_front",
+    "yLandmark": "landmark.ankle",
+    "yOffsetMM": 20
+   },
+   "neden": "yere kadar: bilek + 2 cm"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "arka_govde",
+    "edge": "hem_back",
+    "yLandmark": "landmark.ankle",
+    "yOffsetMM": 20
+   },
+   "neden": "yere kadar: bilek + 2 cm (arka ayni)"
+  },
+  {
+   "op": "flare",
+   "args": {
+    "panel": "on_govde",
+    "edge": "hem_front",
+    "factor": 1.08
+   },
+   "neden": "sutun: etek ucu hemen hemen duz"
+  },
+  {
+   "op": "flare",
+   "args": {
+    "panel": "arka_govde",
+    "edge": "hem_back",
+    "factor": 1.08
+   },
+   "neden": "sutun: etek ucu hemen hemen duz (arka ayni)"
+  }
+ ],
+ "celiskiTablosu": [],
+ "olculmedi": [
+  "siluet orani: defile fotografi (yuruyus pozu, aksesuar), poz landmark kosulmadi"
+ ],
+ "okunamayanlar": [
+  "yan drape/buzgu (asimetrik)",
+  "arka"
+ ],
+ "_kullanim": "A4 tur 6 giris-2 hattinin girdisi.",
+ "eksikPrimitif": [
+  "PRIMITIF: asimetri (kat eksenli cizim); drape cizgileri"
+ ],
+ "primitifCeviri": "Okuma dogrudan graf-v1 primitifleriyle yazildi (ceviri yok)."
+}

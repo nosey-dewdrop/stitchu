@@ -1,0 +1,8 @@
+GIRDI/hedef-fotograflar-3/etsy-06.png
+sha256 751443d17724400f7b8d7775c32867a982607cd8044c9991e1ad26cbe0135116
+gorunum on
+arka.koken turetildi
+kalip = ops-topoloji.json (30 op) + siluetten etek ucu/klos -> ops.json (30 op) + hedefler.json (2) -> grafuygula/grafciz gercek36
+okuyan siluet-v1: Claude, 10 Eyl 2026 (Read ile ekran goruntusune bakildi; dis LLM cagrisi 0)
+cizim flat = KOSU/siluet-ciz.mjs (okuma KOSU/onbellek/siluet-751443d17724….json; motor flat'e girmez)
+kalip = ops-topoloji.json (30 op) + siluetten etek ucu/klos -> ops.json (30 op) + hedefler.json (2) -> grafuygula/grafciz gercek36

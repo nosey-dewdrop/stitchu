@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taste labeler — teach Damla's eye</title>
+<!--
+  PRIVATE local tool. Not deployed. Run it from this folder:
+     cd dataset/taste-pool && python3 -m http.server
+     open http://localhost:8000/label.html
+  It shows ONE drafted garment at a time (on-figure croquis + technical flat)
+  and you label it: Wear It (1) / Not for Me (2) / If Fixed (3).
+  Labels accumulate in localStorage; "Export labels" downloads labels.json.
+  After ~150 labels we train a small classifier (illustration -> wear/not) to
+  be the free aesthetic judge. Function over polish on purpose.
+-->
+<style>
+  :root{ --navy:#1f3a5f; --cream:#f7f3ea; --line:#dfd7c6; --seam:#5c7aa0;
+         --wear:#2f7d5b; --no:#a34637; --fix:#b7852a; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; }
+  body{ font-family:-apple-system,Helvetica,Arial,sans-serif; color:var(--navy);
+        background:var(--cream); display:flex; flex-direction:column; min-height:100%; }
+  header{ display:flex; align-items:baseline; gap:16px; padding:14px 22px;
+          border-bottom:1px solid var(--line); }
+  header h1{ font-size:16px; letter-spacing:2px; font-weight:700; margin:0; text-transform:uppercase; }
+  .prog{ font-variant-numeric:tabular-nums; font-size:15px; color:var(--seam); }
+  .bar{ flex:1; height:6px; background:#e9e2d3; border-radius:3px; overflow:hidden; max-width:320px; }
+  .bar > i{ display:block; height:100%; width:0; background:var(--navy); transition:width .2s; }
+  .tally{ font-size:13px; color:var(--seam); font-variant-numeric:tabular-nums; }
+  main{ flex:1; display:flex; flex-direction:column; align-items:center;
+        justify-content:center; padding:18px; gap:14px; }
+  .name{ font-size:20px; font-weight:600; text-align:center; max-width:640px; }
+  .chips{ display:flex; flex-wrap:wrap; gap:6px; justify-content:center; max-width:640px; }
+  .chip{ font-size:12px; padding:3px 9px; border:1px solid var(--line);
+         border-radius:11px; background:#fff; color:var(--seam); }
+  .views{ display:flex; gap:20px; align-items:stretch; }
+  .view{ background:#fff; border:1px solid var(--line); border-radius:6px; padding:10px;
+         display:flex; flex-direction:column; align-items:center; }
+  .view span{ font-size:11px; letter-spacing:2px; color:var(--seam); margin-bottom:6px; text-transform:uppercase; }
+  .view img{ height:46vh; max-height:440px; width:auto; }
+  .flatimg{ height:34vh !important; }
+  .btns{ display:flex; gap:14px; }
+  button.act{ font-size:16px; font-weight:600; padding:13px 26px; border:1px solid var(--line);
+              border-radius:8px; background:#fff; color:var(--navy); cursor:pointer;
+              display:flex; flex-direction:column; align-items:center; gap:2px; min-width:150px; }
+  button.act small{ font-weight:400; font-size:11px; color:var(--seam); }
+  button.act:hover{ transform:translateY(-1px); }
+  button.wear{ border-color:var(--wear); color:var(--wear); }
+  button.no{ border-color:var(--no); color:var(--no); }
+  button.fix{ border-color:var(--fix); color:var(--fix); }
+  .fixnote{ display:none; gap:8px; align-items:center; }
+  .fixnote.on{ display:flex; }
+  .fixnote input{ font-size:14px; padding:9px 12px; border:1px solid var(--line);
+                  border-radius:7px; width:340px; }
+  .foot{ display:flex; gap:18px; padding:12px 22px; border-top:1px solid var(--line);
+         align-items:center; justify-content:center; }
+  .foot button{ font-size:13px; padding:8px 16px; border:1px solid var(--line);
+                border-radius:7px; background:#fff; color:var(--navy); cursor:pointer; }
+  .hint{ font-size:12px; color:var(--seam); }
+  .done{ text-align:center; font-size:18px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Taste labeler</h1>
+  <span class="prog" id="prog">0 / 0</span>
+  <div class="bar"><i id="barfill"></i></div>
+  <span class="tally" id="tally"></span>
+</header>
+
+<main id="stage">
+  <div class="name" id="name">loading…</div>
+  <div class="chips" id="chips"></div>
+  <div class="views">
+    <div class="view"><span>On the figure</span><img id="figimg" alt="on-figure croquis"></div>
+    <div class="view"><span>Flat</span><img id="flatimg" class="flatimg" alt="technical flat"></div>
+  </div>
+  <div class="btns">
+    <button class="act wear" data-v="wear">Wear It<small>1</small></button>
+    <button class="act no" data-v="no">Not for Me<small>2</small></button>
+    <button class="act fix" data-v="fix">If Fixed<small>3</small></button>
+  </div>
+  <div class="fixnote" id="fixnote">
+    <input id="fixinput" placeholder="what would fix it? (optional) — Enter to save">
+    <button class="foot-save" id="fixsave" style="padding:9px 16px;border:1px solid var(--fix);border-radius:7px;background:#fff;color:var(--fix);cursor:pointer;">Save note</button>
+    <span class="hint">or press Enter</span>
+  </div>
+</main>
+
+<div class="foot">
+  <button id="undo">Undo last (U)</button>
+  <button id="export">Export labels.json</button>
+  <span class="hint">Keys: 1 wear · 2 not for me · 3 if fixed · U undo. Auto-advances.</span>
+</div>
+
+<script>
+const LS_KEY = 'stitchu-taste-labels-v1';
+let items = [], cur = 0, labels = {};
+
+function loadLabels(){
+  try { labels = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); }
+  catch { labels = {}; }
+}
+function saveLabels(){ localStorage.setItem(LS_KEY, JSON.stringify(labels)); }
+
+function firstUnlabeled(){
+  for (let i = 0; i < items.length; i++) if (!labels[items[i].id]) return i;
+  return items.length; // all done
+}
+
+function render(){
+  const stage = document.getElementById('stage');
+  updateHeader();
+  if (cur >= items.length){
+    stage.innerHTML = '<div class="done">All ' + items.length +
+      ' labeled. <br><br>Press <b>Export labels.json</b> below, drop it in this folder as <b>labels.json</b>.<br><br>' +
+      '<span class="hint">Undo (U) if you want to revisit the last one.</span></div>';
+    return;
+  }
+  const it = items[cur];
+  document.getElementById('name').textContent = it.name;
+  const chips = document.getElementById('chips');
+  chips.innerHTML = '';
+  (it.features || []).forEach(f => {
+    const c = document.createElement('span'); c.className = 'chip'; c.textContent = f; chips.appendChild(c);
+  });
+  document.getElementById('figimg').src = it.figure + '?v=1';
+  document.getElementById('flatimg').src = it.flat + '?v=1';
+  const fn = document.getElementById('fixnote'); fn.classList.remove('on');
+  document.getElementById('fixinput').value = '';
+}
+
+function updateHeader(){
+  const done = Object.keys(labels).length;
+  document.getElementById('prog').textContent = Math.min(cur, items.length) + ' / ' + items.length;
+  document.getElementById('barfill').style.width = (100 * done / (items.length || 1)) + '%';
+  const w = Object.values(labels).filter(l => l.v === 'wear').length;
+  const n = Object.values(labels).filter(l => l.v === 'no').length;
+  const f = Object.values(labels).filter(l => l.v === 'fix').length;
+  document.getElementById('tally').textContent = done + ' labeled · ' + w + ' wear · ' + n + ' no · ' + f + ' fix';
+}
+
+function label(v, note){
+  if (cur >= items.length) return;
+  const it = items[cur];
+  labels[it.id] = { v, note: note || '', spec: it.spec, name: it.name, at: Date.now() };
+  saveLabels();
+  cur++;
+  render();
+}
+
+function choose(v){
+  if (v === 'fix'){
+    // reveal the optional note; Save/Enter commits, or a second "3" commits blank.
+    const fn = document.getElementById('fixnote');
+    if (!fn.classList.contains('on')){ fn.classList.add('on'); document.getElementById('fixinput').focus(); return; }
+    commitFix();
+    return;
+  }
+  label(v);
+}
+function commitFix(){ label('fix', document.getElementById('fixinput').value.trim()); }
+
+function undo(){
+  // step back to the most recent labeled item and clear it.
+  let target = Math.min(cur, items.length) - 1;
+  while (target >= 0 && !labels[items[target].id]) target--;
+  if (target < 0) return;
+  delete labels[items[target].id];
+  saveLabels();
+  cur = target;
+  render();
+}
+
+document.querySelectorAll('button.act').forEach(b =>
+  b.addEventListener('click', () => choose(b.dataset.v)));
+document.getElementById('fixsave').addEventListener('click', commitFix);
+document.getElementById('fixinput').addEventListener('keydown', e => {
+  if (e.key === 'Enter'){ e.preventDefault(); commitFix(); }
+});
+document.getElementById('undo').addEventListener('click', undo);
+document.getElementById('export').addEventListener('click', () => {
+  const out = { exported: new Date().toISOString(), total: items.length,
+    labeledCount: Object.keys(labels).length, labels };
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'labels.json'; a.click();
+});
+
+document.addEventListener('keydown', e => {
+  if (document.activeElement === document.getElementById('fixinput')) return;
+  if (e.key === '1') choose('wear');
+  else if (e.key === '2') choose('no');
+  else if (e.key === '3') choose('fix');
+  else if (e.key.toLowerCase() === 'u') undo();
+});
+
+fetch('index.json').then(r => r.json()).then(d => {
+  items = d.items || [];
+  loadLabels();
+  cur = firstUnlabeled();
+  render();
+}).catch(err => {
+  document.getElementById('name').textContent =
+    'Could not load index.json — run `python3 -m http.server` in this folder and open via http://localhost:8000/label.html (not file://).';
+  console.error(err);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,576 @@
+{
+ "dials": {
+  "collar.b_bezier_x": {
+   "moves": {},
+   "range": [
+    0.05,
+    0.95
+   ],
+   "type": "float"
+  },
+  "collar.b_bezier_y": {
+   "moves": {},
+   "range": [
+    0.05,
+    0.95
+   ],
+   "type": "float"
+  },
+  "collar.bc_angle": {
+   "moves": {},
+   "range": [
+    70,
+    110
+   ],
+   "type": "int"
+  },
+  "collar.bc_depth": {
+   "moves": {},
+   "range": [
+    0,
+    2
+   ],
+   "type": "float"
+  },
+  "collar.component.depth": {
+   "moves": {},
+   "range": [
+    2,
+    8
+   ],
+   "type": "int"
+  },
+  "collar.component.hood_depth": {
+   "moves": {},
+   "range": [
+    1,
+    2
+   ],
+   "type": "float"
+  },
+  "collar.component.hood_length": {
+   "moves": {},
+   "range": [
+    1,
+    1.5
+   ],
+   "type": "float"
+  },
+  "collar.f_bezier_x": {
+   "moves": {},
+   "range": [
+    0.05,
+    0.95
+   ],
+   "type": "float"
+  },
+  "collar.f_bezier_y": {
+   "moves": {},
+   "range": [
+    0.05,
+    0.95
+   ],
+   "type": "float"
+  },
+  "collar.fc_angle": {
+   "moves": {},
+   "range": [
+    70,
+    110
+   ],
+   "type": "int"
+  },
+  "collar.fc_depth": {
+   "moves": {},
+   "range": [
+    0.3,
+    2
+   ],
+   "type": "float"
+  },
+  "collar.width": {
+   "moves": {},
+   "range": [
+    -0.5,
+    1
+   ],
+   "type": "float"
+  },
+  "flare-skirt.asymm.front_length": {
+   "moves": {},
+   "range": [
+    0.1,
+    0.9
+   ],
+   "type": "float"
+  },
+  "flare-skirt.cut.depth": {
+   "moves": {},
+   "range": [
+    0.05,
+    0.95
+   ],
+   "type": "float"
+  },
+  "flare-skirt.cut.place": {
+   "moves": {},
+   "range": [
+    -1,
+    1
+   ],
+   "type": "float"
+  },
+  "flare-skirt.cut.width": {
+   "moves": {},
+   "range": [
+    0.05,
+    0.4
+   ],
+   "type": "float"
+  },
+  "flare-skirt.length": {
+   "moves": {},
+   "range": [
+    -0.2,
+    0.95
+   ],
+   "type": "float"
+  },
+  "flare-skirt.rise": {
+   "moves": {},
+   "range": [
+    0.5,
+    1
+   ],
+   "type": "float"
+  },
+  "flare-skirt.skirt-many-panels.n_panels": {
+   "moves": {},
+   "range": [
+    4,
+    15
+   ],
+   "type": "int"
+  },
+  "flare-skirt.suns": {
+   "moves": {},
+   "range": [
+    0.1,
+    1.95
+   ],
+   "type": "float"
+  },
+  "godet-skirt.cuts_distance": {
+   "moves": {},
+   "range": [
+    0,
+    10
+   ],
+   "type": "int"
+  },
+  "godet-skirt.insert_depth": {
+   "moves": {},
+   "range": [
+    10,
+    50
+   ],
+   "type": "int"
+  },
+  "godet-skirt.insert_w": {
+   "moves": {},
+   "range": [
+    10,
+    50
+   ],
+   "type": "int"
+  },
+  "levels-skirt.base_length_frac": {
+   "moves": {},
+   "range": [
+    0.2,
+    0.8
+   ],
+   "type": "float"
+  },
+  "levels-skirt.length": {
+   "moves": {},
+   "range": [
+    0.2,
+    0.95
+   ],
+   "type": "float"
+  },
+  "levels-skirt.level_ruffle": {
+   "moves": {},
+   "range": [
+    1,
+    1.7
+   ],
+   "type": "float"
+  },
+  "levels-skirt.num_levels": {
+   "moves": {},
+   "range": [
+    1,
+    5
+   ],
+   "type": "int"
+  },
+  "levels-skirt.rise": {
+   "moves": {},
+   "range": [
+    0.5,
+    1
+   ],
+   "type": "float"
+  },
+  "pants.cuff.cuff_len": {
+   "moves": {},
+   "range": [
+    0.05,
+    0.9
+   ],
+   "type": "float"
+  },
+  "pants.cuff.skirt_flare": {
+   "moves": {},
+   "range": [
+    1,
+    2
+   ],
+   "type": "float"
+  },
+  "pants.cuff.skirt_fraction": {
+   "moves": {},
+   "range": [
+    0.1,
+    0.9
+   ],
+   "type": "float"
+  },
+  "pants.cuff.skirt_ruffle": {
+   "moves": {},
+   "range": [
+    1,
+    1.5
+   ],
+   "type": "float"
+  },
+  "pants.cuff.top_ruffle": {
+   "moves": {},
+   "range": [
+    1,
+    2
+   ],
+   "type": "float"
+  },
+  "pants.flare": {
+   "moves": {},
+   "range": [
+    0.5,
+    1.2
+   ],
+   "type": "float"
+  },
+  "pants.length": {
+   "moves": {},
+   "range": [
+    0.2,
+    0.9
+   ],
+   "type": "float"
+  },
+  "pants.rise": {
+   "moves": {},
+   "range": [
+    0.5,
+    1
+   ],
+   "type": "float"
+  },
+  "pants.width": {
+   "moves": {},
+   "range": [
+    1.0,
+    1.5
+   ],
+   "type": "float"
+  },
+  "pencil-skirt.back_slit": {
+   "moves": {},
+   "range": [
+    0,
+    0.9
+   ],
+   "type": "float"
+  },
+  "pencil-skirt.flare": {
+   "moves": {},
+   "range": [
+    0.6,
+    1.5
+   ],
+   "type": "float"
+  },
+  "pencil-skirt.front_slit": {
+   "moves": {},
+   "range": [
+    0,
+    0.9
+   ],
+   "type": "float"
+  },
+  "pencil-skirt.left_slit": {
+   "moves": {},
+   "range": [
+    0,
+    0.9
+   ],
+   "type": "float"
+  },
+  "pencil-skirt.length": {
+   "moves": {},
+   "range": [
+    0.2,
+    0.95
+   ],
+   "type": "float"
+  },
+  "pencil-skirt.low_angle": {
+   "moves": {
+    "skirt-seam": 17.4769
+   },
+   "range": [
+    -30,
+    30
+   ],
+   "type": "int"
+  },
+  "pencil-skirt.right_slit": {
+   "moves": {},
+   "range": [
+    0,
+    0.9
+   ],
+   "type": "float"
+  },
+  "pencil-skirt.rise": {
+   "moves": {},
+   "range": [
+    0.5,
+    1
+   ],
+   "type": "float"
+  },
+  "shirt.flare": {
+   "moves": {},
+   "range": [
+    0.7,
+    1.6
+   ],
+   "type": "float"
+  },
+  "shirt.length": {
+   "moves": {},
+   "range": [
+    0.5,
+    3.5
+   ],
+   "type": "float"
+  },
+  "shirt.width": {
+   "moves": {},
+   "range": [
+    1.0,
+    1.3
+   ],
+   "type": "float"
+  },
+  "skirt.bottom_cut": {
+   "moves": {},
+   "range": [
+    0,
+    0.9
+   ],
+   "type": "float"
+  },
+  "skirt.flare": {
+   "moves": {},
+   "range": [
+    0,
+    20
+   ],
+   "type": "int"
+  },
+  "skirt.length": {
+   "moves": {},
+   "range": [
+    -0.2,
+    0.95
+   ],
+   "type": "float"
+  },
+  "skirt.rise": {
+   "moves": {},
+   "range": [
+    0.5,
+    1
+   ],
+   "type": "float"
+  },
+  "skirt.ruffle": {
+   "moves": {},
+   "range": [
+    1,
+    2
+   ],
+   "type": "float"
+  },
+  "sleeve.connect_ruffle": {
+   "moves": {
+    "armhole-cap": 3.8806
+   },
+   "range": [
+    1,
+    2
+   ],
+   "type": "float"
+  },
+  "sleeve.connecting_width": {
+   "moves": {
+    "armhole-cap": 3.8163,
+    "side-seam": 3.3421
+   },
+   "range": [
+    0,
+    2
+   ],
+   "type": "float"
+  },
+  "sleeve.cuff.cuff_len": {
+   "moves": {},
+   "range": [
+    0.05,
+    0.9
+   ],
+   "type": "float"
+  },
+  "sleeve.cuff.skirt_flare": {
+   "moves": {},
+   "range": [
+    1,
+    2
+   ],
+   "type": "float"
+  },
+  "sleeve.cuff.skirt_fraction": {
+   "moves": {},
+   "range": [
+    0.1,
+    0.9
+   ],
+   "type": "float"
+  },
+  "sleeve.cuff.skirt_ruffle": {
+   "moves": {},
+   "range": [
+    1,
+    1.5
+   ],
+   "type": "float"
+  },
+  "sleeve.cuff.top_ruffle": {
+   "moves": {},
+   "range": [
+    1,
+    3
+   ],
+   "type": "float"
+  },
+  "sleeve.end_width": {
+   "moves": {},
+   "range": [
+    0.2,
+    2
+   ],
+   "type": "float"
+  },
+  "sleeve.length": {
+   "moves": {},
+   "range": [
+    0.1,
+    1.15
+   ],
+   "type": "float"
+  },
+  "sleeve.opening_dir_mix": {
+   "moves": {
+    "armhole-cap": 0.5123
+   },
+   "range": [
+    -0.9,
+    0.8
+   ],
+   "type": "float"
+  },
+  "sleeve.sleeve_angle": {
+   "moves": {
+    "armhole-cap": 3.8651
+   },
+   "range": [
+    10,
+    50
+   ],
+   "type": "int"
+  },
+  "sleeve.smoothing_coeff": {
+   "moves": {},
+   "range": [
+    0.1,
+    0.4
+   ],
+   "type": "float"
+  },
+  "sleeve.standing_shoulder_len": {
+   "moves": {},
+   "range": [
+    4,
+    10
+   ],
+   "type": "float"
+  },
+  "waistband.waist": {
+   "moves": {
+    "waist-attach": 0.4819
+   },
+   "range": [
+    1.0,
+    2
+   ],
+   "type": "float"
+  },
+  "waistband.width": {
+   "moves": {},
+   "range": [
+    0.1,
+    1.0
+   ],
+   "type": "float"
+  }
+ },
+ "never_drew": [],
+ "notice_mm": 0.05,
+ "reference": {
+  "fails": {},
+  "worst": {
+   "armhole-cap": 3.8806,
+   "centre-seam": 0.0,
+   "dart": 0.0,
+   "shoulder": 0.0,
+   "side-seam": 0.7199,
+   "skirt-seam": 0.3326,
+   "sleeve-seam": 0.0,
+   "waist-attach": 0.4818
+  }
+ }
+}

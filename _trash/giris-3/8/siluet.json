@@ -1,0 +1,179 @@
+{
+ "semaSurumu": "siluet-v1",
+ "girdiYolu": "GIRDI/hedef-fotograflar-3/etsy-08.png",
+ "sha256": "a9dc6dbc21e7e6bc6c39876686e635cfcda1e7fdbcfe1f4f3a85187f73fb2a74",
+ "okuyan": "Claude, 10 Eyl 2026 (Read ile ekran goruntusune bakildi; dis LLM cagrisi 0)",
+ "ilan": "kolsuz kayik yakali dugmeli ust (kalca boyu): CF pat + 9 dugme, bel pens cizgisi, etek ucunda pili",
+ "gorulen": "fotograf (insan ustunde, on) + satici flat'i (on + arka)",
+ "oturma": {
+  "gogus": true,
+  "bel": true
+ },
+ "on": {
+  "yakaBicim": "kayik",
+  "kontur": {
+   "yakaOrta": [
+    "neckFront*0",
+    "neckFront+4"
+   ],
+   "yakaOmuz": [
+    "shoulderTip*0.60",
+    "shoulderTip..neckBase@0.5"
+   ],
+   "askiUst": null,
+   "omuzUc": [
+    "shoulderTip*0.92",
+    "shoulderTip+4"
+   ],
+   "koltukalti": [
+    "bustLine*0.94",
+    "underarm+30"
+   ],
+   "gogus": [
+    "bustLine*1.04",
+    "bustLine"
+   ],
+   "bel": [
+    "waist*1.12",
+    "waist"
+   ],
+   "kalca": [
+    "highHip*1.05",
+    "highHip-10"
+   ],
+   "etekYan": [
+    "highHip*1.05",
+    "highHip+35"
+   ],
+   "etekOrta": [
+    "hip*0",
+    "highHip+35"
+   ]
+  },
+  "ogeler": [
+   {
+    "tip": "pat",
+    "ayna": false,
+    "genislik": 24,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "neckFront+4"
+     ],
+     [
+      "neckFront*0",
+      "highHip+35"
+     ]
+    ]
+   },
+   {
+    "tip": "dugme",
+    "ayna": false,
+    "adet": 9,
+    "cap": 9,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "neckFront+22"
+     ],
+     [
+      "neckFront*0",
+      "highHip+6"
+     ]
+    ]
+   },
+   {
+    "tip": "pens",
+    "noktalar": [
+     [
+      "bustLine*0.55",
+      "underbust-10"
+     ],
+     [
+      "waist*0.68",
+      "waist"
+     ],
+     [
+      "waist*0.74",
+      "waist"
+     ],
+     [
+      "highHip*0.56",
+      "highHip-12"
+     ]
+    ]
+   }
+  ],
+  "etekSarkma": 3
+ },
+ "arka": {
+  "koken": "satici flat'i (arka)",
+  "yakaBicim": "kayik",
+  "kontur": {
+   "yakaOrta": [
+    "nape*0",
+    "neckBase+36"
+   ],
+   "yakaOmuz": [
+    "shoulderTip*0.60",
+    "shoulderTip..neckBase@0.5"
+   ],
+   "askiUst": null,
+   "omuzUc": [
+    "shoulderTip*0.92",
+    "shoulderTip+4"
+   ],
+   "koltukalti": [
+    "bustLine*0.94",
+    "underarm+30"
+   ],
+   "gogus": [
+    "bustLine*1.04",
+    "bustLine"
+   ],
+   "bel": [
+    "waist*1.12",
+    "waist"
+   ],
+   "kalca": [
+    "highHip*1.05",
+    "highHip-10"
+   ],
+   "etekYan": [
+    "highHip*1.05",
+    "highHip+35"
+   ],
+   "etekOrta": [
+    "hip*0",
+    "highHip+35"
+   ]
+  },
+  "ogeler": [
+   {
+    "tip": "pens",
+    "noktalar": [
+     [
+      "bustLine*0.55",
+      "underbust-10"
+     ],
+     [
+      "waist*0.68",
+      "waist"
+     ],
+     [
+      "waist*0.74",
+      "waist"
+     ],
+     [
+      "highHip*0.56",
+      "highHip-12"
+     ]
+    ]
+   }
+  ],
+  "etekSarkma": 3
+ },
+ "eksik": [
+  "etek ucu pilisi cizilmedi: bel pensi balik pensi (elmas) olarak; pili acilimi eksik"
+ ]
+}

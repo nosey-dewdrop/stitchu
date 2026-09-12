@@ -1,0 +1,268 @@
+{
+  "corset_bustier": {
+    "page_bbox_mm": {
+      "w": 821.0,
+      "h": 1169.0
+    },
+    "calibration": {
+      "source": "ruler 4cm bar",
+      "pt": 113.386,
+      "mm": 40.0
+    },
+    "piece_count": 7,
+    "pieces": [
+      {
+        "approx_position": "M-C",
+        "closed_ring_ratio": 0.93,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          312.7,
+          692.8
+        ],
+        "bbox_w_mm": 520.8,
+        "bbox_h_mm": 177.9,
+        "outer_perimeter_mm": 1302.6,
+        "inner_bbox_w_mm": 474.5,
+        "inner_bbox_h_mm": 117.4,
+        "inner_perimeter_mm": 1117.1,
+        "ring_count": 8,
+        "total_color_groups": 8
+      },
+      {
+        "approx_position": "T-L",
+        "closed_ring_ratio": 0.88,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          183.9,
+          977.6
+        ],
+        "bbox_w_mm": 278.3,
+        "bbox_h_mm": 290.8,
+        "outer_perimeter_mm": 997.8,
+        "inner_bbox_w_mm": 219.2,
+        "inner_bbox_h_mm": 245.7,
+        "inner_perimeter_mm": 827.4,
+        "ring_count": 8,
+        "total_color_groups": 8
+      },
+      {
+        "approx_position": "T-R",
+        "closed_ring_ratio": 0.67,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          556.5,
+          834.6
+        ],
+        "bbox_w_mm": 168.6,
+        "bbox_h_mm": 294.3,
+        "outer_perimeter_mm": 622.3,
+        "inner_bbox_w_mm": 85.1,
+        "inner_bbox_h_mm": 247.0,
+        "inner_perimeter_mm": 620.8,
+        "ring_count": 8,
+        "total_color_groups": 8
+      },
+      {
+        "approx_position": "T-C",
+        "closed_ring_ratio": 0.95,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          347.8,
+          930.3
+        ],
+        "bbox_w_mm": 210.9,
+        "bbox_h_mm": 231.8,
+        "outer_perimeter_mm": 842.3,
+        "inner_bbox_w_mm": 155.9,
+        "inner_bbox_h_mm": 220.3,
+        "inner_perimeter_mm": 715.4,
+        "ring_count": 8,
+        "total_color_groups": 8
+      },
+      {
+        "approx_position": "T-R",
+        "closed_ring_ratio": 0.65,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          704.5,
+          786.8
+        ],
+        "bbox_w_mm": 113.5,
+        "bbox_h_mm": 357.3,
+        "outer_perimeter_mm": 614.9,
+        "inner_bbox_w_mm": 105.2,
+        "inner_bbox_h_mm": 296.4,
+        "inner_perimeter_mm": 426.1,
+        "ring_count": 8,
+        "total_color_groups": 8
+      },
+      {
+        "approx_position": "T-R",
+        "closed_ring_ratio": 0.81,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          627.0,
+          1049.6
+        ],
+        "bbox_w_mm": 281.2,
+        "bbox_h_mm": 119.5,
+        "outer_perimeter_mm": 647.2,
+        "inner_bbox_w_mm": 222.7,
+        "inner_bbox_h_mm": 93.0,
+        "inner_perimeter_mm": 512.6,
+        "ring_count": 8,
+        "total_color_groups": 8
+      },
+      {
+        "approx_position": "M-C",
+        "closed_ring_ratio": 0.43,
+        "ambiguous_fragment": true,
+        "centroid_mm": [
+          439.8,
+          722.1
+        ],
+        "bbox_w_mm": 226.0,
+        "bbox_h_mm": 117.7,
+        "outer_perimeter_mm": 298.0,
+        "inner_bbox_w_mm": 204.4,
+        "inner_bbox_h_mm": 79.5,
+        "inner_perimeter_mm": 255.5,
+        "ring_count": 8,
+        "total_color_groups": 8
+      }
+    ]
+  },
+  "locket_top": {
+    "page_bbox_mm": {
+      "w": 821.0,
+      "h": 1169.0
+    },
+    "calibration": {
+      "source": "ruler 4cm bar",
+      "pt": 113.386,
+      "mm": 40.0
+    },
+    "piece_count": 7,
+    "pieces": [
+      {
+        "approx_position": "M-L",
+        "closed_ring_ratio": 1.06,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          204.2,
+          547.9
+        ],
+        "bbox_w_mm": 366.2,
+        "bbox_h_mm": 542.9,
+        "outer_perimeter_mm": 1922.4,
+        "inner_bbox_w_mm": 280.3,
+        "inner_bbox_h_mm": 505.7,
+        "inner_perimeter_mm": 1614.7,
+        "ring_count": 8,
+        "total_color_groups": 8
+      },
+      {
+        "approx_position": "M-R",
+        "closed_ring_ratio": 0.94,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          665.4,
+          516.6
+        ],
+        "bbox_w_mm": 272.4,
+        "bbox_h_mm": 480.3,
+        "outer_perimeter_mm": 1418.1,
+        "inner_bbox_w_mm": 192.9,
+        "inner_bbox_h_mm": 447.7,
+        "inner_perimeter_mm": 1242.9,
+        "ring_count": 8,
+        "total_color_groups": 8
+      },
+      {
+        "approx_position": "T-C",
+        "closed_ring_ratio": 0.83,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          495.9,
+          1016.4
+        ],
+        "bbox_w_mm": 536.9,
+        "bbox_h_mm": 220.6,
+        "outer_perimeter_mm": 1254.5,
+        "inner_bbox_w_mm": 499.7,
+        "inner_bbox_h_mm": 205.4,
+        "inner_perimeter_mm": 1167.6,
+        "ring_count": 8,
+        "total_color_groups": 8
+      },
+      {
+        "approx_position": "T-C",
+        "closed_ring_ratio": 0.85,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          488.4,
+          876.9
+        ],
+        "bbox_w_mm": 398.5,
+        "bbox_h_mm": 180.5,
+        "outer_perimeter_mm": 979.7,
+        "inner_bbox_w_mm": 322.6,
+        "inner_bbox_h_mm": 170.9,
+        "inner_perimeter_mm": 830.6,
+        "ring_count": 8,
+        "total_color_groups": 8
+      },
+      {
+        "approx_position": "T-L",
+        "closed_ring_ratio": 0.96,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          120.2,
+          955.7
+        ],
+        "bbox_w_mm": 203.4,
+        "bbox_h_mm": 300.9,
+        "outer_perimeter_mm": 970.4,
+        "inner_bbox_w_mm": 173.5,
+        "inner_bbox_h_mm": 261.8,
+        "inner_perimeter_mm": 824.2,
+        "ring_count": 8,
+        "total_color_groups": 8
+      },
+      {
+        "approx_position": "M-C",
+        "closed_ring_ratio": 0.81,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          473.7,
+          579.0
+        ],
+        "bbox_w_mm": 212.8,
+        "bbox_h_mm": 169.3,
+        "outer_perimeter_mm": 621.8,
+        "inner_bbox_w_mm": 182.4,
+        "inner_bbox_h_mm": 163.1,
+        "inner_perimeter_mm": 565.0,
+        "ring_count": 8,
+        "total_color_groups": 8
+      },
+      {
+        "approx_position": "M-C",
+        "closed_ring_ratio": 0.76,
+        "ambiguous_fragment": false,
+        "centroid_mm": [
+          491.3,
+          734.2
+        ],
+        "bbox_w_mm": 158.4,
+        "bbox_h_mm": 171.0,
+        "outer_perimeter_mm": 501.1,
+        "inner_bbox_w_mm": 99.0,
+        "inner_bbox_h_mm": 157.9,
+        "inner_perimeter_mm": 382.8,
+        "ring_count": 8,
+        "total_color_groups": 8
+      }
+    ]
+  }
+}

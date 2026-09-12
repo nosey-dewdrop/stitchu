@@ -1,0 +1,121 @@
+[
+ {
+  "op": "drop",
+  "args": {
+   "panel": "kol",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "moveVertex",
+  "args": {
+   "panel": "on_beden",
+   "edge": "shoulder",
+   "to": {
+    "landmark": "landmark.shoulderTip",
+    "xFactor": 2.2,
+    "yLandmark": "landmark.shoulderTip",
+    "yLandmark2": "landmark.elbow",
+    "yLerp": 0.3
+   }
+  }
+ },
+ {
+  "op": "moveVertex",
+  "args": {
+   "panel": "on_beden",
+   "edge": "armhole_front.2",
+   "to": {
+    "landmark": "landmark.shoulderTip",
+    "xFactor": 2.2,
+    "yLandmark": "landmark.underarm",
+    "yLandmark2": "landmark.elbow",
+    "yLerp": 0.3
+   }
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_beden",
+   "edge": "armhole_front.2",
+   "kind": "cut",
+   "finish": "hem",
+   "control": []
+  }
+ },
+ {
+  "op": "moveVertex",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "shoulder",
+   "to": {
+    "landmark": "landmark.shoulderTip",
+    "xFactor": 2.2,
+    "yLandmark": "landmark.shoulderTip",
+    "yLandmark2": "landmark.elbow",
+    "yLerp": 0.3
+   }
+  }
+ },
+ {
+  "op": "moveVertex",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "armhole_back.2",
+   "to": {
+    "landmark": "landmark.shoulderTip",
+    "xFactor": 2.2,
+    "yLandmark": "landmark.underarm",
+    "yLandmark2": "landmark.elbow",
+    "yLerp": 0.3
+   }
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "armhole_back.2",
+   "kind": "cut",
+   "finish": "hem",
+   "control": []
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "on_beden",
+   "edge": "armhole_front.1",
+   "control": []
+  }
+ },
+ {
+  "op": "reshapeEdge",
+  "args": {
+   "panel": "arka_beden",
+   "edge": "armhole_back.1",
+   "control": []
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "kol_alti_kimono",
+   "a": [
+    {
+     "panel": "on_beden",
+     "edge": "armhole_front.1"
+    }
+   ],
+   "b": [
+    {
+     "panel": "arka_beden",
+     "edge": "armhole_back.1"
+    }
+   ],
+   "reverse": false,
+   "ratio": 1.0
+  }
+ }
+]

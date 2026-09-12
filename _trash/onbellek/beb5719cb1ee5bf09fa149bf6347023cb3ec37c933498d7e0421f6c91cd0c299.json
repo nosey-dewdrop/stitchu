@@ -1,0 +1,362 @@
+{
+ "girdiYolu": "GIRDI/hedef-fotograflar-2/dior-hc-fw26-bluz.jpg",
+ "sha256": "beb5719cb1ee5bf09fa149bf6347023cb3ec37c933498d7e0421f6c91cd0c299",
+ "semaSurumu": "vision-graf-v1",
+ "okuyan": "isci-A4-tur6",
+ "tarih": "2026-09-09",
+ "yontem": "Kosu iscisi defile fotografina DOGRUDAN bakti (Read). Dis LLM cagrisi YOK; llmCagri = 0.",
+ "gorunum": "on",
+ "ilan": "gomlek (yakali, uzun kol, mansetli; sal altinda) — dosya adi 'bluz', gorunen gomlek",
+ "tabanGraf": "KOSU/ciktilar/graf-ilk/graf.json",
+ "gorunumDogrulamasi": "Defile fotografi onden; gorunen: sal (okunmadi) + altinda gomlek.",
+ "paneller": [
+  {
+   "id": "on_govde",
+   "gorulduMu": true,
+   "guven": 0.6,
+   "kanit": "gomlek govdesi salin altindan: yaka ve on paca kismen"
+  },
+  {
+   "id": "kol",
+   "gorulduMu": true,
+   "guven": 0.8,
+   "kanit": "uzun kol, manset"
+  },
+  {
+   "id": "arka_govde",
+   "gorulduMu": false,
+   "guven": 0.2,
+   "kanit": "arka yok"
+  }
+ ],
+ "kenarlar": [
+  {
+   "panel": "kol",
+   "kenar": "hem",
+   "landmarkUst": "landmark.shoulderTip",
+   "landmarkAlt": "landmark.wrist",
+   "oran": 1.0,
+   "bicim": "manset",
+   "guven": 0.8
+  },
+  {
+   "panel": "on_govde",
+   "kenar": "neck_front",
+   "landmarkUst": "landmark.neckFront",
+   "landmarkAlt": "landmark.bustLine",
+   "oran": 0.1,
+   "bicim": "gomlek-yaka",
+   "guven": 0.6
+  }
+ ],
+ "dikisler": [
+  {
+   "id": "kol_oyugu",
+   "a": "kol/cap",
+   "b": "on_govde/armhole",
+   "oranAralik": [
+    1.0,
+    1.1
+   ],
+   "gorunurMu": false,
+   "guven": 0.5
+  }
+ ],
+ "kapanma": {
+  "yer": "on_orta",
+  "tur": "dugme",
+  "oranBas": 0.02,
+  "oranSon": 0.9,
+  "guven": 0.5,
+  "not": "sal altinda; gomlek cikarimi"
+ },
+ "simetri": {
+  "cfAyna": true,
+  "cbAyna": true,
+  "guven": 0.6,
+  "kanit": "sal asimetrik, gomlek simetrik varsayildi"
+ },
+ "katmanlar": [],
+ "arka": {
+  "koken": "turetildi",
+  "guven": 0.2,
+  "neden": "arka yok"
+ },
+ "hedefler": [],
+ "opDemeti": [
+  {
+   "op": "merge",
+   "args": {
+    "seam": "bel",
+    "panelA": "on_beden",
+    "panelB": "on_etek",
+    "panel": "on_govde"
+   },
+   "neden": "fotografta bel dikisi yok: on beden + on etek tek panel (bel pensi ic halka pense doner)"
+  },
+  {
+   "op": "merge",
+   "args": {
+    "seam": "bel",
+    "panelA": "arka_beden",
+    "panelB": "arka_etek",
+    "panel": "arka_govde"
+   },
+   "neden": "ayni: arka"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "on_govde",
+    "edge": "hem_front",
+    "yLandmark": "landmark.hip",
+    "yOffsetMM": 80
+   },
+   "neden": "gomlek boyu: kalca + 8 cm"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "arka_govde",
+    "edge": "hem_back",
+    "yLandmark": "landmark.hip",
+    "yOffsetMM": 80
+   },
+   "neden": "gomlek boyu: kalca + 8 cm (arka ayni)"
+  },
+  {
+   "op": "flare",
+   "args": {
+    "panel": "on_govde",
+    "edge": "hem_front",
+    "factor": 1.1
+   },
+   "neden": "hafif bol"
+  },
+  {
+   "op": "flare",
+   "args": {
+    "panel": "arka_govde",
+    "edge": "hem_back",
+    "factor": 1.1
+   },
+   "neden": "hafif bol (arka ayni)"
+  },
+  {
+   "op": "extendTo",
+   "args": {
+    "panel": "kol",
+    "edge": "hem",
+    "yLandmark": "landmark.wrist",
+    "yOffsetMM": 0
+   },
+   "neden": "uzun kol: bilek"
+  },
+  {
+   "op": "attach",
+   "args": {
+    "hostPanel": "kol",
+    "hostEdge": "hem",
+    "edge": "ust",
+    "ratio": 0.8696,
+    "seam": "kol_agzi",
+    "panel": {
+     "id": "kol_bandi",
+     "edges": [
+      {
+       "id": "ust",
+       "kind": "seam",
+       "role": "cuff_top",
+       "from": {
+        "landmark": "landmark.underarm",
+        "xOf": "ringQuarter",
+        "ring": "girth.biceps",
+        "xFactor": 1.739,
+        "yLandmark": "landmark.elbow",
+        "yOffsetMM": -120
+       },
+       "to": {
+        "landmark": "landmark.underarm",
+        "xOf": "ringQuarter",
+        "ring": "girth.biceps",
+        "xFactor": -1.739,
+        "yLandmark": "landmark.elbow",
+        "yOffsetMM": -120
+       }
+      },
+      {
+       "id": "yan1",
+       "kind": "seam",
+       "role": "cuff_side",
+       "from": {
+        "landmark": "landmark.underarm",
+        "xOf": "ringQuarter",
+        "ring": "girth.biceps",
+        "xFactor": -1.739,
+        "yLandmark": "landmark.elbow",
+        "yOffsetMM": -120
+       },
+       "to": {
+        "landmark": "landmark.underarm",
+        "xOf": "ringQuarter",
+        "ring": "girth.biceps",
+        "xFactor": -1.739,
+        "yLandmark": "landmark.elbow",
+        "yOffsetMM": -100
+       }
+      },
+      {
+       "id": "alt",
+       "kind": "cut",
+       "role": "cuff_hem",
+       "from": {
+        "landmark": "landmark.underarm",
+        "xOf": "ringQuarter",
+        "ring": "girth.biceps",
+        "xFactor": -1.739,
+        "yLandmark": "landmark.elbow",
+        "yOffsetMM": -100
+       },
+       "to": {
+        "landmark": "landmark.underarm",
+        "xOf": "ringQuarter",
+        "ring": "girth.biceps",
+        "xFactor": 1.739,
+        "yLandmark": "landmark.elbow",
+        "yOffsetMM": -100
+       },
+       "finish": "hem"
+      },
+      {
+       "id": "yan2",
+       "kind": "seam",
+       "role": "cuff_side",
+       "from": {
+        "landmark": "landmark.underarm",
+        "xOf": "ringQuarter",
+        "ring": "girth.biceps",
+        "xFactor": 1.739,
+        "yLandmark": "landmark.elbow",
+        "yOffsetMM": -100
+       },
+       "to": {
+        "landmark": "landmark.underarm",
+        "xOf": "ringQuarter",
+        "ring": "girth.biceps",
+        "xFactor": 1.739,
+        "yLandmark": "landmark.elbow",
+        "yOffsetMM": -120
+       }
+      }
+     ],
+     "grainDeg": 0,
+     "onFold": false,
+     "cutCount": 2,
+     "seamAllowanceMM": 0,
+     "ease": [
+      {
+       "ring": "girth.biceps",
+       "mm": 40.5
+      }
+     ],
+     "reason": "kol agzi bandi (20 mm): puf kol buzgulu banda dikilir; biceps bollugu kol paneliyle ayni (agiz = 4 x ceyrek x (1+bolluk/cevre))"
+    }
+   },
+   "neden": "manset bandi"
+  },
+  {
+   "op": "sew",
+   "args": {
+    "seam": "kol_bandi_yan",
+    "a": [
+     {
+      "panel": "kol_bandi",
+      "edge": "yan1"
+     }
+    ],
+    "b": [
+     {
+      "panel": "kol_bandi",
+      "edge": "yan2"
+     }
+    ],
+    "reverse": true,
+    "ratio": 1
+   },
+   "neden": "band halka olur: iki yan kenari birbirine"
+  },
+  {
+   "op": "sew",
+   "args": {
+    "seam": "on_orta",
+    "a": [
+     {
+      "panel": "on_govde",
+      "edge": "cf.1"
+     },
+     {
+      "panel": "on_govde",
+      "edge": "cf.2"
+     }
+    ],
+    "b": [
+     {
+      "panel": "on_govde",
+      "edge": "cf.1"
+     },
+     {
+      "panel": "on_govde",
+      "edge": "cf.2"
+     }
+    ],
+    "reverse": true,
+    "ratio": 1
+   },
+   "neden": "on orta dugme pacasi (gomlek; sal altinda cikarim)"
+  },
+  {
+   "op": "closure",
+   "args": {
+    "seam": "on_orta",
+    "type": "buttons",
+    "fromFraction": 0.02,
+    "toFraction": 0.9
+   },
+   "neden": "on orta dugme pacasi (gomlek; sal altinda cikarim): dugme"
+  },
+  {
+   "op": "closure",
+   "args": {
+    "seam": "arka_orta_beden",
+    "type": "zipper",
+    "fromFraction": 0.0,
+    "toFraction": 0.01
+   },
+   "neden": "onden dugmeli giyside arka orta fermuar YOK: tabanin CB fermuari sifira yakin (0..0.01, 20 mm alti sembol yok) (cift kapama: hakem tur 10)"
+  },
+  {
+   "op": "closure",
+   "args": {
+    "seam": "arka_orta_etek",
+    "type": "zipper",
+    "fromFraction": 0.0,
+    "toFraction": 0.01
+   },
+   "neden": "ayni: etek CB fermuari (merge sonrasi arka_orta_etek duruyor; hakem tur 11 'kalcadan etek ucuna fermuar')"
+  }
+ ],
+ "celiskiTablosu": [],
+ "olculmedi": [
+  "siluet orani: defile fotografi (yuruyus pozu, aksesuar), poz landmark kosulmadi"
+ ],
+ "okunamayanlar": [
+  "gomlek yakasi (boyun bandi + yaka parcasi)",
+  "govdenin buyuk bolumu (sal ortuyor)",
+  "KAYNAKLAR.md 'bej drapeli bluz + siyah pantolon' diyor; fotografta gri sal + beyaz gomlek + siyah plise etek var — dosya/tarif eslesmesi DOGRULANMADI"
+ ],
+ "_kullanim": "A4 tur 6 giris-2 hattinin girdisi.",
+ "eksikPrimitif": [
+  "OKUMA: gomlek yakasi (boyun bandi + yaka) giris/3-4'teki boyun bandi op'uyla yazilabilir; bu turda yazilmadi (sal ortuyor, guven dusuk)"
+ ],
+ "primitifCeviri": "Okuma dogrudan graf-v1 primitifleriyle yazildi (ceviri yok)."
+}

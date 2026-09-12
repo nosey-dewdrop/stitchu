@@ -1,0 +1,7 @@
+GIRDI/hedef-fotograflar/biba-O120579-dress.jpg
+sha256 97bd652fde359dc40339852e8da7cb9acf1fd8ac4cfabbe69da556e87d9da1fb
+gorunum on
+okuyan isci-A3 (llmCagri 0)
+arka.koken turetildi
+cizim taban+ops (14 primitif emir; KOSU/ciktilar/graf-ilk/graf.json + ops.json -> grafuygula/grafciz --ops)
+hedef 1 siluet orani -> grafuygula/grafciz --hedef hedefler.json (bolluk mm, sinir kirpmasi notes'ta)

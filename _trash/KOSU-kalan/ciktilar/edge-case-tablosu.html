@@ -1,0 +1,87 @@
+<!doctype html><meta charset="utf-8"><title>edge case süpürme — M4-edge</title>
+<style>
+ body{font:14px/1.5 -apple-system,Inter,Helvetica,sans-serif;margin:0;padding:34px 40px;
+      background:#faf8f5;color:#1d2430}
+ h1{font-size:26px;margin:0 0 4px;letter-spacing:-.02em}
+ .yasa{max-width:96ch;color:#4a5666;margin:0 0 18px}
+ .sayac{display:flex;gap:26px;margin:0 0 22px;align-items:baseline}
+ .sayac b{font-size:34px;letter-spacing:-.03em}
+ .sayac span{color:#5b7089}
+ table{border-collapse:collapse;width:100%;background:#fff;
+       box-shadow:0 1px 0 #e6e0d8,0 8px 26px rgba(29,36,48,.06)}
+ th{text-align:left;font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+    color:#8193a6;padding:11px 14px;border-bottom:1px solid #ece6de;background:#fdfcfa}
+ td{padding:11px 14px;border-bottom:1px solid #f2ede6;vertical-align:top}
+ tr:last-child td{border-bottom:none}
+ .bolum{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8193a6;white-space:nowrap}
+ .vaka{font-weight:600;max-width:34ch}
+ .sonuc{white-space:nowrap;font-weight:600}
+ .ok .sonuc{color:#1f7a4d} .red .sonuc{color:#a8422c} .kara .sonuc{color:#101418}
+ .kanit{color:#41505f;max-width:78ch}
+ .ok td{background:#fbfdfc} .red td{background:#fefaf8}
+ footer{margin-top:16px;color:#8193a6;font-size:12px}
+</style>
+<h1>edge case süpürme — M4-edge</h1>
+<p class="yasa">Yasa: her vaka ya <b>geçerli bir çıktı</b> verir ya <b>adıyla reddedilir</b> ve reddin
+yanında kullanıcının yapabileceği <b>sonraki adım</b> durur. Sessiz çöküş 0, sessiz default 0,
+çıkmaz sokak 0. Kırmızı satır bir kusur değil — motorun doğru davranışıdır.
+Sıfır canlı LLM çağrısı: fotoğraf tarafı sentetik piksel fikstürleri, kalıp tarafı sevk edilen wasm baytı.</p>
+<div class="sayac"><div><b>1325</b> <span>yargı</span></div>
+<div><b>2</b> <span>FAIL</span></div>
+<div><b>52</b> <span>vaka satırı</span></div>
+<div><span>2026-09-12 · <code>node engine/tests/edge_case_supurme_check.mjs</code></span></div></div>
+<table><tr><th>bölüm</th><th>vaka</th><th>sonuç</th><th>kullanıcının gördüğü / kanıt</th></tr>
+<tr class="ok"><td class="bolum">foto</td><td class="vaka">mankensiz düz serilmiş giysi (SAĞLIKLI HAT)</td><td class="sonuc">ÖLÇÜLDÜ (measured, güven 1)</td><td class="kanit">L/W 2.982 · hem/bel 2.143</td></tr>
+<tr class="red"><td class="bolum">foto</td><td class="vaka">giysi olmayan fotoğraf — manzara</td><td class="sonuc">ADIYLA RED: background_not_separable</td><td class="kanit">arka plan giysiden ayrılamadı (kalabalık ya da çok karanlık kare). Sonraki adım: giysiyi düz ve açık renkli bir zemine serip tek başına çek.</td></tr>
+<tr class="red"><td class="bolum">foto</td><td class="vaka">giysi olmayan fotoğraf — boş duvar</td><td class="sonuc">ADIYLA RED: no_garment_found</td><td class="kanit">karede zeminden ayrışan bir giysi şekli bulunamadı — ya giysi kadrajda çok küçük kalmış ya da ışık/kontrast onu zeminden ayırmaya yetmiyor (çok karanlık, çok parlak ya da bulanık kare). Sonraki adım: iyi ışıkta, zeminle zıt renkli ve giysinin kareyi dolduracağı net bir kare çek; ya da aşağıdan giysiyi kendin seç.</td></tr>
+<tr class="red"><td class="bolum">foto</td><td class="vaka">birden fazla giysi tek karede</td><td class="sonuc">ADIYLA RED: ambiguous_foreground</td><td class="kanit">karede tek bir giysi ayırt edilemedi (birden fazla parça ya da giysiyle aynı tonda zemin). Sonraki adım: tek parça bırak ve zıt renkli bir zemin kullan.</td></tr>
+<tr class="red"><td class="bolum">foto</td><td class="vaka">giysi bir insanın üstünde (baş + bacaklar)</td><td class="sonuc">ADIYLA RED: worn_on_model_legs</td><td class="kanit">giysi bir insanın üstünde görünüyor (etek ucunun altında bacaklar var). Sonraki adım: giysiyi çıkarıp düz sererek ya da askıda çek — oranlar ancak o zaman giysinin kendi oranları olur.</td></tr>
+<tr class="red"><td class="bolum">foto</td><td class="vaka">aşırı karanlık kare</td><td class="sonuc">ADIYLA RED: no_garment_found</td><td class="kanit">karede zeminden ayrışan bir giysi şekli bulunamadı — ya giysi kadrajda çok küçük kalmış ya da ışık/kontrast onu zeminden ayırmaya yetmiyor (çok karanlık, çok parlak ya da bulanık kare). Sonraki adım: iyi ışıkta, zeminle zıt renkli ve giysinin kareyi dolduracağı net bir kare çek; ya da aşağıdan giysiyi kendin seç.</td></tr>
+<tr class="red"><td class="bolum">foto</td><td class="vaka">aşırı parlak / kontrastsız kare</td><td class="sonuc">ADIYLA RED: no_garment_found</td><td class="kanit">karede zeminden ayrışan bir giysi şekli bulunamadı — ya giysi kadrajda çok küçük kalmış ya da ışık/kontrast onu zeminden ayırmaya yetmiyor (çok karanlık, çok parlak ya da bulanık kare). Sonraki adım: iyi ışıkta, zeminle zıt renkli ve giysinin kareyi dolduracağı net bir kare çek; ya da aşağıdan giysiyi kendin seç.</td></tr>
+<tr class="red"><td class="bolum">foto</td><td class="vaka">bulanık + gürültülü kare</td><td class="sonuc">ADIYLA RED: no_garment_found</td><td class="kanit">karede zeminden ayrışan bir giysi şekli bulunamadı — ya giysi kadrajda çok küçük kalmış ya da ışık/kontrast onu zeminden ayırmaya yetmiyor (çok karanlık, çok parlak ya da bulanık kare). Sonraki adım: iyi ışıkta, zeminle zıt renkli ve giysinin kareyi dolduracağı net bir kare çek; ya da aşağıdan giysiyi kendin seç.</td></tr>
+<tr class="red"><td class="bolum">foto</td><td class="vaka">karede nokta kadar leke (giysi yok sayılır)</td><td class="sonuc">ADIYLA RED: no_garment_found</td><td class="kanit">karede zeminden ayrışan bir giysi şekli bulunamadı — ya giysi kadrajda çok küçük kalmış ya da ışık/kontrast onu zeminden ayırmaya yetmiyor (çok karanlık, çok parlak ya da bulanık kare). Sonraki adım: iyi ışıkta, zeminle zıt renkli ve giysinin kareyi dolduracağı net bir kare çek; ya da aşağıdan giysiyi kendin seç.</td></tr>
+<tr class="red"><td class="bolum">foto</td><td class="vaka">uzaktan çekilmiş dar giysi (ayrışıyor ama ölçülemeyecek kadar ince)</td><td class="sonuc">ADIYLA RED: garment_too_small</td><td class="kanit">giysi karede çok küçük kaldı. Sonraki adım: daha yakın bir kadrajla, daha yüksek çözünürlükte çek.</td></tr>
+<tr class="red"><td class="bolum">foto</td><td class="vaka">düşük kontrast: lekeli zemin + yanda rakip gölge</td><td class="sonuc">ADIYLA RED: low_confidence</td><td class="kanit">fotoğraf ölçüm için fazla belirsiz (bulanık, düşük çözünürlüklü ya da düşük kontrastlı). Sonraki adım: net ve iyi ışıklı bir kare çek.</td></tr>
+<tr class="red"><td class="bolum">foto</td><td class="vaka">bozuk / boş görüntü nesnesi</td><td class="sonuc">ADIYLA RED: bad_input</td><td class="kanit">fotoğraf okunamadı (bozuk/boş dosya). Sonraki adım: fotoğrafı JPG/PNG olarak yeniden kaydedip tekrar yükle, ya da aşağıdan giysiyi kendin seç.</td></tr>
+<tr class="ok"><td class="bolum">foto</td><td class="vaka">measure.js'in 11 ret sebebi</td><td class="sonuc">HEPSİ CÜMLELİ + ADIMLI</td><td class="kanit">ambiguous_foreground, background_not_separable, bad_input, foreground_fills_frame, garment_too_small, hem_tapers_like_legs, low_confidence, no_garment_found, profile_incomplete, worn_on_model_head, worn_on_model_legs</td></tr>
+<tr class="ok"><td class="bolum">foto</td><td class="vaka">koşarak ateşlenen 7 ret sebebi</td><td class="sonuc">FİKSTÜRLE KANITLI</td><td class="kanit">ambiguous_foreground, background_not_separable, bad_input, garment_too_small, low_confidence, no_garment_found, worn_on_model_legs</td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">boş prompt</td><td class="sonuc">BOŞ İLAN EDİLDİ</td><td class="kanit"></td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">sadece boşluk</td><td class="sonuc">BOŞ İLAN EDİLDİ</td><td class="kanit"></td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">sadece emoji</td><td class="sonuc">BOŞ İLAN EDİLDİ</td><td class="kanit"></td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">sadece noktalama</td><td class="sonuc">BOŞ İLAN EDİLDİ</td><td class="kanit"></td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">anlamsız prompt</td><td class="sonuc">okunan 0 eksen</td><td class="kanit">ANLAŞILMADI: asdfgh → bunu tek bir detay olarak çizemiyorum; en yakın çizebildiğim şey 'edge' ekseni | qwerty → bunu tek bir detay olarak çizemiyorum; en yakın çizebildiğim şey 'overlay' ekseni | zxcvb → bunu tek bir detay olarak çizemiyorum; en yakın çizebildiğim şey 'edge' ekseni</td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">çelişkili prompt (kolsuz + uzun kollu)</td><td class="sonuc">okunan 3 eksen</td><td class="kanit">sleeveLength=long garment=dress sleeveStyle=none · KONAKSIZ: 'kolsuz' okundu, kolsuz seçildi; kol ekseni yok — kol istiyorsan 'kolsuz' kelimesini çıkar; 'uzun kollu' uygulanmadı</td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">çelişkili prompt EN (sleeveless + long sleeve)</td><td class="sonuc">okunan 3 eksen</td><td class="kanit">sleeveLength=long garment=dress sleeveStyle=none · KONAKSIZ: 'sleeveless' okundu, kolsuz seçildi; kol ekseni yok — kol istiyorsan 'kolsuz' kelimesini çıkar; 'long sleeve' uygulanmadı</td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">çelişkili prompt (etek + yaka)</td><td class="sonuc">okunan 3 eksen</td><td class="kanit">neckline=square garment=skirt skirtLength=midi · KONAKSIZ: 'etek' okundu, etek seçildi; üst gövde ekseni yok — bu kelimeyi kullanmak için 'elbise' ya da 'bluz' yaz; 'kare yakali' uygulanmadı</td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">aynı eksene iki kelime (mini + maksi)</td><td class="sonuc">okunan 2 eksen</td><td class="kanit">garment=dress skirtLength=mini · ANLAŞILMADI: maksi → 'skirtLength' ekseni bu metinde zaten 'mini' -&gt; 'mini' okundu; 'maksi' uygulanmadı</td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">çok uzun prompt (280 token)</td><td class="sonuc">okunan 5 eksen</td><td class="kanit">neckline=square sleeveLength=long garment=dress skirtStyle=pleated skirtLength=midi</td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">Türkçe ek: "kare yakalı puf kollu elbise"</td><td class="sonuc">okunan 3 eksen</td><td class="kanit">neckline=square sleeveCap=puffed garment=dress</td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">Türkçe+İngilizce karışık</td><td class="sonuc">okunan 4 eksen</td><td class="kanit">sleeveCap=puffed garment=dress skirtLength=mini pocketStyle=sideSeam · ANLAŞILMADI: square → 'square' bilinen bir kelime ama tek başına bir eksen belirtmiyor; şöyle yaz: square neckline / square neck | yakali → 'yakali' bilinen bir kelime ama tek başına bir eksen belirtmiyor; şöyle yaz: bisiklet yaka / oval yaka / v yaka</td></tr>
+<tr class="ok"><td class="bolum">prompt</td><td class="vaka">sayılı edit ("yakayı 2cm derinleştir")</td><td class="sonuc">EDIT OKUNDU (1 alan)</td><td class="kanit">EDIT: editNeckDeepenMM=20mm</td></tr>
+<tr class="ok"><td class="bolum">foto+prompt</td><td class="vaka">fotoğraf kollu, prompt "kolsuz"</td><td class="sonuc">PROMPT KAZANDI</td><td class="kanit">sleeveStyle straight → none · rapor ["sleeveStyle","straight","none"]</td></tr>
+<tr class="ok"><td class="bolum">foto+prompt</td><td class="vaka">sadece arka fotoğraf / arka fotoğraf yok</td><td class="sonuc">UYDURMA İLAN EDİLDİ</td><td class="kanit">uydurulan alanlar: backDetail, backOpening, backSlit, laceUpBack</td></tr>
+<tr class="ok"><td class="bolum">beden</td><td class="vaka">EU34</td><td class="sonuc">KALIP 6 parça</td><td class="kanit">issues 0</td></tr>
+<tr class="ok"><td class="bolum">beden</td><td class="vaka">EU36</td><td class="sonuc">KALIP 6 parça</td><td class="kanit">issues 0</td></tr>
+<tr class="ok"><td class="bolum">beden</td><td class="vaka">EU38</td><td class="sonuc">KALIP 6 parça</td><td class="kanit">issues 0</td></tr>
+<tr class="ok"><td class="bolum">beden</td><td class="vaka">EU40</td><td class="sonuc">KALIP 6 parça</td><td class="kanit">issues 0</td></tr>
+<tr class="ok"><td class="bolum">beden</td><td class="vaka">EU42</td><td class="sonuc">KALIP 6 parça</td><td class="kanit">issues 0</td></tr>
+<tr class="ok"><td class="bolum">beden</td><td class="vaka">EU44</td><td class="sonuc">KALIP 6 parça</td><td class="kanit">issues 0</td></tr>
+<tr class="ok"><td class="bolum">beden</td><td class="vaka">EU46</td><td class="sonuc">KALIP 6 parça</td><td class="kanit">issues 0</td></tr>
+<tr class="ok"><td class="bolum">beden</td><td class="vaka">EU48</td><td class="sonuc">KALIP 6 parça</td><td class="kanit">issues 0</td></tr>
+<tr class="ok"><td class="bolum">beden</td><td class="vaka">EU50</td><td class="sonuc">KALIP 6 parça</td><td class="kanit">issues 0</td></tr>
+<tr class="ok"><td class="bolum">beden</td><td class="vaka">EU52</td><td class="sonuc">KALIP 6 parça</td><td class="kanit">issues 0</td></tr>
+<tr class="red"><td class="bolum">beden</td><td class="vaka">flat EU34</td><td class="sonuc">ADIYLA RED</td><td class="kanit">E.flatDrawing is not a function</td></tr>
+<tr class="red"><td class="bolum">beden</td><td class="vaka">flat EU52</td><td class="sonuc">ADIYLA RED</td><td class="kanit">E.flatDrawing is not a function</td></tr>
+<tr class="red"><td class="bolum">beden</td><td class="vaka">EU99 (tabloda yok)</td><td class="sonuc">ADIYLA RED</td><td class="kanit">unknown size 'EU99' (valid: EU34, EU36, EU38, EU40, EU42, EU44, EU46, EU48, EU50, EU52)</td></tr>
+<tr class="red"><td class="bolum">motor</td><td class="vaka">neckline='uydurma-yaka'</td><td class="sonuc">ADIYLA RED</td><td class="kanit">invalid neckline 'uydurma-yaka' (valid: crew, scoop, vNeck, square, boat, sweetheart, halter, cowl, pussyBow)</td></tr>
+<tr class="red"><td class="bolum">kumaş</td><td class="vaka">360 kombinasyon (5 kumaş × 4 beden × 6 etek × 3 boy)</td><td class="sonuc">323 SIĞDI · 37 ADIYLA RED</td><td class="kanit">taşan hiçbirinde metraj sayısı basılmadı</td></tr>
+<tr class="red"><td class="bolum">kumaş</td><td class="vaka">kadife 106.7cm + EU48 pileli etek</td><td class="sonuc">ADIYLA RED</td><td class="kanit">I cannot give you a metre count for this bolt: the widest piece (Skirt Front) is 1492 mm across the grain and your fabric is only 1067 mm wide, so that piece does not fit on it at any length. Next step: use a bolt at least 149 cm wide, or pick a narrower skirt/bodice style — the pattern itself is sewable, only this fabric is too narrow for it.</td></tr>
+<tr class="ok"><td class="bolum">kumaş</td><td class="vaka">örme, crosswise streç %0</td><td class="sonuc">KALIP TEMİZ</td><td class="kanit">6 parça</td></tr>
+<tr class="ok"><td class="bolum">kumaş</td><td class="vaka">örme, crosswise streç %5</td><td class="sonuc">KALIP TEMİZ</td><td class="kanit">6 parça</td></tr>
+<tr class="ok"><td class="bolum">kumaş</td><td class="vaka">örme, crosswise streç %20</td><td class="sonuc">KALIP TEMİZ</td><td class="kanit">6 parça</td></tr>
+<tr class="ok"><td class="bolum">kumaş</td><td class="vaka">örme, crosswise streç %50</td><td class="sonuc">KALIP TEMİZ</td><td class="kanit">5 parça</td></tr>
+<tr class="ok"><td class="bolum">kumaş</td><td class="vaka">örme, crosswise streç %95</td><td class="sonuc">KALIP TEMİZ</td><td class="kanit">5 parça</td></tr>
+<tr class="ok"><td class="bolum">motor</td><td class="vaka">asimetrik pat + ön ortası görünür fermuar</td><td class="sonuc">KALIP 5 parça</td><td class="kanit">issues 0</td></tr>
+<tr class="red"><td class="bolum">motor</td><td class="vaka">editExtendMM = -50 (negatif uzatma)</td><td class="sonuc">ADIYLA RED (2 adım · uygulanan 0)</td><td class="kanit">UZATILMADI: istenen -50.0000 mm. uzatma mm'si pozitif degil; bir kalibi negatif uzatmak KISALTMAKTIR ve bu operator kisaltmaz — ayri bir islemdir, sessizce yapilmaz</td></tr>
+</table>
+<footer>kaynak: engine/tests/edge_case_supurme_check.mjs · ctest: edge_case_supurme_check</footer>

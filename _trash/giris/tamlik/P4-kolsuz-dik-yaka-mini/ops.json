@@ -1,0 +1,216 @@
+[
+ {
+  "op": "drop",
+  "args": {
+   "panel": "kol",
+   "finish": "faced"
+  }
+ },
+ {
+  "op": "addPanel",
+  "args": {
+   "panel": {
+    "id": "boyun_bandi",
+    "edges": [
+     {
+      "id": "alt",
+      "kind": "seam",
+      "role": "neck_front",
+      "from": {
+       "landmark": "landmark.neckFront",
+       "xFactor": 0.0
+      },
+      "to": {
+       "landmark": "landmark.neckBase",
+       "xFactor": 1.0
+      },
+      "control": [
+       {
+        "landmark": "landmark.neckBase",
+        "xFactor": 0.35,
+        "yLandmark": "landmark.neckFront"
+       },
+       {
+        "landmark": "landmark.neckBase",
+        "xFactor": 0.85,
+        "yLandmark": "landmark.neckFront",
+        "yLandmark2": "landmark.neckBase",
+        "yLerp": 0.6
+       }
+      ]
+     },
+     {
+      "id": "dis",
+      "kind": "cut",
+      "from": {
+       "landmark": "landmark.neckBase",
+       "xFactor": 1.0
+      },
+      "to": {
+       "combo": [
+        {
+         "w": 1.0,
+         "landmark": "landmark.neckBase",
+         "xFactor": 1.0
+        },
+        {
+         "w": 1.5,
+         "landmark": "landmark.nape",
+         "xFactor": 0.0
+        },
+        {
+         "w": -1.5,
+         "landmark": "landmark.neckBase",
+         "xFactor": 0.0
+        }
+       ]
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "ust",
+      "kind": "cut",
+      "from": {
+       "combo": [
+        {
+         "w": 1.0,
+         "landmark": "landmark.neckBase",
+         "xFactor": 1.0
+        },
+        {
+         "w": 1.5,
+         "landmark": "landmark.nape",
+         "xFactor": 0.0
+        },
+        {
+         "w": -1.5,
+         "landmark": "landmark.neckBase",
+         "xFactor": 0.0
+        }
+       ]
+      },
+      "to": {
+       "combo": [
+        {
+         "w": 1.0,
+         "landmark": "landmark.neckFront",
+         "xFactor": 0.0
+        },
+        {
+         "w": 1.5,
+         "landmark": "landmark.nape",
+         "xFactor": 0.0
+        },
+        {
+         "w": -1.5,
+         "landmark": "landmark.neckBase",
+         "xFactor": 0.0
+        }
+       ]
+      },
+      "finish": "faced"
+     },
+     {
+      "id": "cf",
+      "kind": "fold",
+      "role": "cf",
+      "from": {
+       "combo": [
+        {
+         "w": 1.0,
+         "landmark": "landmark.neckFront",
+         "xFactor": 0.0
+        },
+        {
+         "w": 1.5,
+         "landmark": "landmark.nape",
+         "xFactor": 0.0
+        },
+        {
+         "w": -1.5,
+         "landmark": "landmark.neckBase",
+         "xFactor": 0.0
+        }
+       ]
+      },
+      "to": {
+       "landmark": "landmark.neckFront",
+       "xFactor": 0.0
+      }
+     }
+    ],
+    "grainDeg": 0,
+    "onFold": true,
+    "cutCount": 1,
+    "seamAllowanceMM": 0,
+    "reason": "boyun hattinda dik bant; yukseklik 1.5 x ense dususu"
+   }
+  }
+ },
+ {
+  "op": "sew",
+  "args": {
+   "seam": "boyun_dikisi",
+   "a": [
+    {
+     "panel": "boyun_bandi",
+     "edge": "alt"
+    }
+   ],
+   "b": [
+    {
+     "panel": "on_beden",
+     "edge": "neck_front"
+    }
+   ],
+   "reverse": true,
+   "ratio": 1.0
+  }
+ },
+ {
+  "op": "fitLength",
+  "args": {
+   "panel": "boyun_bandi",
+   "edge": "alt",
+   "target": {
+    "seam": "boyun_dikisi",
+    "ratio": 1.0,
+    "easeMM": 0
+   }
+  }
+ },
+ {
+  "op": "flare",
+  "args": {
+   "panel": "on_etek",
+   "edge": "hem_front",
+   "factor": 1.3
+  }
+ },
+ {
+  "op": "flare",
+  "args": {
+   "panel": "arka_etek",
+   "edge": "hem_back",
+   "factor": 1.3
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "on_etek",
+   "edge": "hem_front",
+   "yLandmark": "landmark.crotch",
+   "yOffsetMM": 0
+  }
+ },
+ {
+  "op": "extendTo",
+  "args": {
+   "panel": "arka_etek",
+   "edge": "hem_back",
+   "yLandmark": "landmark.crotch",
+   "yOffsetMM": 0
+  }
+ }
+]

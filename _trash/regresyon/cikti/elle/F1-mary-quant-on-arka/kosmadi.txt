@@ -1,0 +1,1 @@
+spec yok (girdiler.json spec vermiyor ve onbellekte tarif bulunamadi)
