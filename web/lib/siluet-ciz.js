@@ -94,11 +94,21 @@ function kumasParcasi(d, kumas, ad, genislik) {
   const koyu = koyult(kumas, 0.13);
   return `<clipPath id="${id}"><path d="${d}"/></clipPath>\n`
     + `<path d="${d}" fill="${kumas}" stroke="none"/>\n`
-    + `<g clip-path="url(#${id})">`
+    // GOLGE TEK YONDEN GELIR (12 Eyl duzeltme). Once kenarin TAMAMINA esit
+    // kalinlikta iki cizgi cekiliyordu; bu, giysiyi cevreleyen SERT bir bant
+    // uretiyordu ("golgeler kotu"). Gercek flat'te golge tek yonlu ve yumusaktir:
+    // isik sol ustten gelir, koyuluk sag ve alt kenarda toplanir, yukarida solar.
+    // Linear gradient ile maskelenir: ust %0, alt %100.
+    + `<linearGradient id="${id}-g" x1="0" y1="0" x2="0.35" y2="1">`
+    + `<stop offset="0" stop-color="#fff" stop-opacity="0"/>`
+    + `<stop offset="0.45" stop-color="#fff" stop-opacity="0.35"/>`
+    + `<stop offset="1" stop-color="#fff" stop-opacity="1"/></linearGradient>\n`
+    + `<mask id="${id}-m"><rect x="-9999" y="-9999" width="19998" height="19998" fill="url(#${id}-g)"/></mask>\n`
+    + `<g clip-path="url(#${id})" mask="url(#${id}-m)">`
     + `<path d="${d}" fill="none" stroke="${koyu}" stroke-width="${genislik}"`
-    + ` stroke-linejoin="round" stroke-linecap="round" opacity="0.55"/>`
-    + `<path d="${d}" fill="none" stroke="${koyu}" stroke-width="${genislik * 0.45}"`
-    + ` stroke-linejoin="round" stroke-linecap="round" opacity="0.45"/>`
+    + ` stroke-linejoin="round" stroke-linecap="round" opacity="0.50"/>`
+    + `<path d="${d}" fill="none" stroke="${koyu}" stroke-width="${genislik * 0.42}"`
+    + ` stroke-linejoin="round" stroke-linecap="round" opacity="0.40"/>`
     + `</g>\n`
     + `<path d="${d}" fill="none" stroke="#000" stroke-width="${CIZ.disKonturMM}"`
     + ` stroke-linejoin="round" stroke-linecap="round"/>\n`;

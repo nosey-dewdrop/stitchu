@@ -281,3 +281,13 @@ köşe — fotoğraftaki yapı.
 **AÇIK:**
 - açıklık fotoğraftakinden biraz geniş
 - gölge sol üstte sert bant halinde
+
+## Tur 67 — gölge tek yönlü oldu
+
+Görsel: `defter-67.png`, `defter-67-kiyas.png`
+
+**KÖK:** `kumasParcasi()` gölgeyi kenarın TAMAMINA eşit kalınlıkta çekiyordu →
+giysiyi çevreleyen sert bant. Gerçek flat'te gölge tek yönlüdür.
+
+**KESİM:** linearGradient maskesi (üst %0 → alt %100), ışık sol üstten gelir,
+koyuluk sağ ve alt kenarda toplanır.
