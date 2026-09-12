@@ -14,27 +14,27 @@
  "on": {
   "yakaBicim": [
    [
-    2.85,
+    2.01,
     0.0
    ],
    [
-    2.85,
+    2.01,
     0.03
    ],
    [
-    2.85,
+    2.01,
     0.26
    ],
    [
-    1.0,
+    0.9,
     0.26
    ],
    [
-    0.95,
+    0.85,
     0.6
    ],
    [
-    0.95,
+    0.85,
     0.95
    ]
   ],
@@ -54,15 +54,15 @@
     "neckBase+62"
    ],
    "koltukalti": [
-    "bustLine*0.93",
+    "bustLine*0.97",
     "underarm"
    ],
    "gogus": [
-    "bustLine*1.07",
+    "bustLine*1.12",
     "bustLine"
    ],
    "bel": [
-    "waist*1.12",
+    "waist*1.18",
     "waist"
    ],
    "kalca": [
@@ -135,7 +135,7 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckFront-2"
+      "neckBase+20"
      ]
     ],
     "boy": 46,
@@ -147,7 +147,7 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckFront+4"
+      "neckBase+26"
      ]
     ],
     "boy": 225,
@@ -176,15 +176,15 @@
     "neckBase+62"
    ],
    "koltukalti": [
-    "bustLine*0.93",
+    "bustLine*0.97",
     "underarm"
    ],
    "gogus": [
-    "bustLine*1.07",
+    "bustLine*1.12",
     "bustLine"
    ],
    "bel": [
-    "waist*1.12",
+    "waist*1.18",
     "waist"
    ],
    "kalca": [
