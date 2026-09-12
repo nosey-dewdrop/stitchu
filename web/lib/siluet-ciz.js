@@ -790,10 +790,15 @@ function ogeCiz(o, pts, s, K, KUMAS) {
         const k2 = { x: x1 - sg * b * 0.06, y: c.y + b * 0.72 };
         const kenarYolu = (d) =>
           `M ${f1(x0 + sg * d)} ${f1(c.y)} C ${f1(k1.x + sg * d)} ${f1(k1.y)} ${f1(k2.x + sg * d)} ${f1(k2.y)} ${f1(x1 + sg * d)} ${f1(c.y + b)}`;
-        return kenarYolu(-en / 2) + ' ' + kenarYolu(en / 2) +
-          ` M ${f1(x1 - sg * en / 2)} ${f1(c.y + b)} L ${f1(x1 + sg * en / 2)} ${f1(c.y + b - en * 0.5)}`;
+        // KAPALI serit: iki kenar + ucta duz kesim -> icini kumas rengi doldurur.
+        // `fill="none"` birakilinca serit ICI zemin rengi kaliyordu (pembe elbisenin
+        // uzerinde beyaz kurdele). Kurdele giysiden kesilir, giysinin rengindedir.
+        const solK = kenarYolu(-en / 2), sagK = kenarYolu(en / 2);
+        return solK + ' ' + sagK.replace(/^M/, 'L').replace(/ C /, ' C ') +
+          ` L ${f1(x1 - sg * en / 2)} ${f1(c.y + b - en * 0.5)} Z`;
       };
-      return `<path d="${serit(-1)} ${serit(1)}" fill="none" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"/>\n`;
+      return `<path d="${serit(-1)}" fill="${KM}" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"/>\n` +
+             `<path d="${serit(1)}" fill="${KM}" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"/>\n`;
     }
     case 'drape': { const kil = `fill="none" stroke="#000" stroke-width="${CIZ.kilcalMM}" stroke-linecap="round"`;
       let out = ''; for (let i = 0; i + 1 < pts.length; i += 2) out += `<path d="${yol([pts[i], pts[i + 1]], false, ((o.bombe ?? 6)) * s)}" ${kil}/>\n`; return out; }

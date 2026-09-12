@@ -111,3 +111,27 @@ düşürmek gerek. `shoulderTip*1.14` → `*1.08`.
 - S19 kurdele uçları (`bag`) hâlâ beyaz
 - S20 yaka dibi hâlâ fotoğraftakinden yukarıda
 - S21 kol/gövde birleşimi omuzda sivri
+
+## Tur 54 — kurdele kapandı, yaka derinleşti
+
+Görsel: `defter-54.png`
+
+**BAĞIMLI/BAĞIMSIZ ANALİZİ (kesimden önce):**
+
+*Yaka derinliği +15mm* → taranan bağımlılar:
+- ten dolgusu eşiği 45mm: aşılı ✓ · prenses dikişi `bustLine*0.58`'den başlar,
+  `yakaOrta`'ya bağlı değil ✓ → **güvenli**
+
+*Kol/gövde birleşimi sivri* → ölçüm: `kol.dis.y`=168.3, `omuzUc.y`=62.
+Aralık 106mm, kol dik iniyor. `dis.y`'yi `underarm-52`'ye çektim.
+
+**Kesilen:**
+| sorun | kök | kesim |
+|---|---|---|
+| kurdele beyaz | `bag` case `fill="none"` — şerit içi boş, zemin görünüyordu | şerit KAPALI yola çevrildi (iki kenar + uç kesimi + `Z`), `fill=${KM}` |
+| yaka sığ | derinlik oranı | `neckFront+152` |
+
+**AÇIK — sıradaki tur:**
+- S22 kurdele 4 çizgi gibi duruyor, kapanış yolu hatalı (`replace` ile kurulan yol bozuk)
+- S23 kol tekrar kısaldı (dis.y `underarm-52` fazla yukarı)
+- S24 yaka dibi köşeleri sivri
