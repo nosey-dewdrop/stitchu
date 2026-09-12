@@ -70,21 +70,32 @@ for (const [ad, h] of Object.entries(HEDEF)) {
   satir.push(`${ok ? 'OK ' : '   '} ${ad.padEnd(26)} ${v.toFixed(3)}  hedef ${h}  ${(sap * 100).toFixed(1)}%`);
 }
 
-// NESNE KONTROLU (hakem: "band var mi / pens kenarda mi / koltukalti acik mi")
+// NESNE KONTROLU — GENEL (12 Eyl kok duzeltme): kapi once pembe elbiseye ozeldi
+// ("bant var mi", "pens var mi", "kol var mi") ve bantsiz/kolsuz bir elbisede
+// yanlis yeri olcuyordu. Artik SADECE VAR OLAN nesneler denetlenir: bir oge yoksa
+// o kontrol ATLANIR, hata sayilmaz. Kapi her giysiye kosulabilir.
 const nesne = [];
-const bant = (on.ogeler || []).find((x) => x.tip === 'yakaBandi');
-nesne.push([!!bant, 'bant nesnesi var']);
-const pens = (on.ogeler || []).find((x) => x.tip === 'pens');
-if (pens) {
-  const bacak = nokta(pens.noktalar[1]);
-  const fark = Math.abs(koltuk.x) - Math.abs(bacak.x);
-  nesne.push([fark >= -2 && fark <= 24, `pens bacagi yan dikise yakin (${fark.toFixed(0)} mm)`]);
-} else nesne.push([false, 'pens yok']);
+for (const oge of (on.ogeler || [])) {
+  if (oge.tip === 'pens' && oge.noktalar && oge.noktalar[1]) {
+    const bacak = nokta(oge.noktalar[1]);
+    const fark = Math.abs(koltuk.x) - Math.abs(bacak.x);
+    nesne.push([fark >= -2 && fark <= 24, `pens bacagi yan dikise yakin (${fark.toFixed(0)} mm)`]);
+  }
+  if (oge.tip === 'pat' && oge.noktalar && oge.noktalar[1]) {
+    const ucu = nokta(oge.noktalar[1]);
+    nesne.push([Math.abs(ucu.x) <= Math.abs(etek.x) && ucu.y <= etek.y + 2,
+      `pat govde icinde bitiyor (${Math.abs(ucu.x).toFixed(0)} <= ${Math.abs(etek.x).toFixed(0)})`]);
+  }
+  if (oge.tip === 'yakaBandi') nesne.push([true, 'bant nesnesi var']);
+}
 const kolIc = on.kol ? nokta(on.kol.ic) : null;
 if (kolIc) {
   const oyuk = Math.abs(koltuk.x) - Math.abs(kolIc.x);
   nesne.push([oyuk >= 6, `koltukalti oyugu acik (${oyuk.toFixed(0)} mm)`]);
-} else nesne.push([false, 'kol yok']);
+}
+// KOLSUZ giyside kol evi kenari icbukey olmali (contract yanlislama 5)
+if (!on.kol) nesne.push([Math.abs(koltuk.x) < Math.abs(gogus.x),
+  `kolsuz: kol evi govdeye oyuk (${Math.abs(koltuk.x).toFixed(0)} < ${Math.abs(gogus.x).toFixed(0)})`]);
 
 // BICIM KONTROLU (12 Eyl): kapi 7/7 gecti ama flat CIRKINDI — kalca balon gibi
 // sisti, etek ucu ICE daraldi. Oran hedefte olmasi bicimin dogru oldugunu
