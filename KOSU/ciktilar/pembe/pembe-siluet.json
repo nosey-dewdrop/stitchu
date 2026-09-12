@@ -37,31 +37,31 @@
     "bustLine"
    ],
    "bel": [
-    "waist*1.18",
+    "waist*1.13",
     "waist"
    ],
    "kalca": [
-    "hip*0.95",
-    "waist..hip@0.52"
+    "hip*1.02",
+    "waist..hip@0.70"
    ],
    "etekYan": [
-    "hip*1.00",
-    "hip-38"
+    "hip*1.098",
+    "hip+124"
    ],
    "etekOrta": [
     "hip*0",
-    "hip-38"
+    "hip+124"
    ]
   },
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.12",
-    "underarm-8"
+    "shoulderTip*1.10",
+    "underarm-2"
    ],
    "ic": [
     "bustLine*0.94",
-    "underarm+20"
+    "underarm+26"
    ],
    "bant": false,
    "buzgu": false,
@@ -101,8 +101,8 @@
       "waist"
      ],
      [
-      "hip*0.62",
-      "hip-38"
+      "hip*0.72",
+      "hip+124"
      ]
     ]
    },
@@ -178,15 +178,15 @@
     "noktalar": [
      [
       "hip*0",
-      "hip-52"
+      "hip+110"
      ],
      [
-      "hip*0.50",
-      "hip-55"
+      "hip*0.55",
+      "hip+107"
      ],
      [
-      "hip*0.92",
-      "hip-60"
+      "hip*1.02",
+      "hip+102"
      ]
     ]
    },
@@ -238,31 +238,31 @@
     "bustLine"
    ],
    "bel": [
-    "waist*1.18",
+    "waist*1.13",
     "waist"
    ],
    "kalca": [
-    "hip*0.95",
-    "waist..hip@0.52"
+    "hip*1.02",
+    "waist..hip@0.70"
    ],
    "etekYan": [
-    "hip*1.00",
-    "hip-38"
+    "hip*1.098",
+    "hip+124"
    ],
    "etekOrta": [
     "hip*0",
-    "hip-38"
+    "hip+124"
    ]
   },
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.12",
-    "underarm-8"
+    "shoulderTip*1.10",
+    "underarm-2"
    ],
    "ic": [
     "bustLine*0.94",
-    "underarm+20"
+    "underarm+26"
    ],
    "bant": false,
    "buzgu": false,
@@ -297,8 +297,8 @@
       "waist"
      ],
      [
-      "hip*0.62",
-      "hip-38"
+      "hip*0.72",
+      "hip+124"
      ]
     ]
    },
@@ -309,15 +309,15 @@
     "noktalar": [
      [
       "hip*0",
-      "hip-52"
+      "hip+110"
      ],
      [
-      "hip*0.50",
-      "hip-55"
+      "hip*0.55",
+      "hip+107"
      ],
      [
-      "hip*0.92",
-      "hip-60"
+      "hip*1.02",
+      "hip+102"
      ]
     ]
    }
