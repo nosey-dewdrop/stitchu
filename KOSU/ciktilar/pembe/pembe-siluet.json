@@ -62,15 +62,15 @@
     "bustLine"
    ],
    "bel": [
-    "waist*1.02",
+    "waist*1.232",
     "waist"
    ],
    "kalca": [
-    "hip*0.78",
+    "hip*0.95",
     "hip"
    ],
    "etekYan": [
-    "hip*0.80",
+    "hip*0.984",
     "hip+42"
    ],
    "etekOrta": [
@@ -103,11 +103,11 @@
       "underarm+12"
      ],
      [
-      "waist*0.72",
+      "waist*0.86",
       "waist"
      ],
      [
-      "hip*0.70",
+      "hip*0.84",
       "hip+42"
      ]
     ]
@@ -187,11 +187,11 @@
       "hip+29"
      ],
      [
-      "hip*0.42",
+      "hip*0.52",
       "hip+26"
      ],
      [
-      "hip*0.76",
+      "hip*0.93",
       "hip+20"
      ]
     ]
@@ -225,15 +225,15 @@
     "bustLine"
    ],
    "bel": [
-    "waist*1.02",
+    "waist*1.232",
     "waist"
    ],
    "kalca": [
-    "hip*0.78",
+    "hip*0.95",
     "hip"
    ],
    "etekYan": [
-    "hip*0.80",
+    "hip*0.984",
     "hip+42"
    ],
    "etekOrta": [
@@ -280,11 +280,11 @@
       "underarm+12"
      ],
      [
-      "waist*0.72",
+      "waist*0.86",
       "waist"
      ],
      [
-      "hip*0.78",
+      "hip*0.84",
       "hip+42"
      ]
     ]
@@ -299,11 +299,11 @@
       "hip+29"
      ],
      [
-      "hip*0.42",
+      "hip*0.52",
       "hip+26"
      ],
      [
-      "hip*0.76",
+      "hip*0.93",
       "hip+20"
      ]
     ]
