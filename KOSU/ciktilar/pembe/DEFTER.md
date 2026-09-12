@@ -135,3 +135,30 @@ Aralık 106mm, kol dik iniyor. `dis.y`'yi `underarm-52`'ye çektim.
 - S22 kurdele 4 çizgi gibi duruyor, kapanış yolu hatalı (`replace` ile kurulan yol bozuk)
 - S23 kol tekrar kısaldı (dis.y `underarm-52` fazla yukarı)
 - S24 yaka dibi köşeleri sivri
+
+## Tur 55-56 — kıyas turu
+
+Görseller: `defter-55.png`, `defter-55-kiyas.png` (fotoğrafla yan yana), `defter-56.png`
+
+**ÖLÇÜM — kıyastan sonra:**
+| oran | hedef | tur 55 | fark |
+|---|---|---|---|
+| açıklık/göğüs | 0.496 | 0.484 | %−2 ✓ |
+| açıklık derinliği/gövde | 0.267 | 0.227 | %−15 ✗ |
+
+**TEŞHİS — sayı ile görüntü çelişti:**
+Genişlik oranı hedefteydi ama yaka **görsel olarak çok geniş** duruyordu.
+Kök: `yakaOmuz.y = 16` → açıklık omuz çizgisine çok yakın başlıyor, **omuz bandını
+yiyor**. Oran doğru olsa da açıklığın *nereden başladığı* görüntüyü belirliyor.
+→ Bu, "oran testi geçiyor ama flat yanlış" durumunun ikinci örneği.
+
+**BAĞIMLI/BAĞIMSIZ:**
+`yakaOmuz.x` ↓ (46.7→31.1) → açıklık dip genişliği de düşerdi
+→ telafi: `yakaBicim` dip oranı 1.48 → 2.22 (31.1 × 2.22 = 69.1, genişlik korundu)
+**Ders:** `yakaOmuz` ve `yakaBicim` oranları ters yönde birlikte hareket etmeli.
+
+**Kesilen:** yaka başlangıcı içe/yukarı (omuz bandı korundu), derinlik +25mm,
+etek ucu sarkması 11→2 (fotoğrafta düz kesim), kol koltukaltının dışına.
+
+**AÇIK:**
+- S29 yaka dibi armut/damla oldu (dip kontrol noktaları ölçek değişince yuvarlandı)

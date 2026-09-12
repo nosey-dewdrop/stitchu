@@ -14,24 +14,24 @@
  "on": {
   "yakaBicim": [
    [
-    0.62,
+    0.9,
     0.015
    ],
    [
-    1.26,
+    1.86,
     0.035
    ],
    [
-    1.48,
+    2.22,
     0.13
    ],
    [
-    1.48,
+    2.2,
     0.54
    ],
    [
-    1.1,
-    0.7
+    1.22,
+    0.72
    ],
    [
     1.0,
@@ -41,11 +41,11 @@
   "kontur": {
    "yakaOrta": [
     "neckFront*0",
-    "neckFront+152"
+    "neckFront+177"
    ],
    "yakaOmuz": [
-    "neckBase*0.66",
-    "neckBase+16"
+    "neckBase*0.44",
+    "neckBase+10"
    ],
    "askiUst": null,
    "askiDip": null,
@@ -81,12 +81,12 @@
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.10",
-    "underarm-26"
+    "shoulderTip*1.12",
+    "underarm-24"
    ],
    "ic": [
-    "bustLine*0.90",
-    "underarm+14"
+    "bustLine*0.99",
+    "underarm+8"
    ],
    "bant": false,
    "buzgu": false,
@@ -124,8 +124,8 @@
     "yukseklik": 14,
     "acik": true,
     "aralik": 0,
-    "omuzDusme": 16,
-    "omuzOran": 0.66,
+    "omuzDusme": 10,
+    "omuzOran": 0.44,
     "daralma": 0.93,
     "omuzYukseklik": 0.4
    },
@@ -154,7 +154,8 @@
     "en": 9,
     "ayrilma": 0.1
    }
-  ]
+  ],
+  "etekSarkma": 2
  },
  "arka": {
   "koken": "turetildi",
@@ -202,12 +203,12 @@
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.10",
-    "underarm-26"
+    "shoulderTip*1.12",
+    "underarm-24"
    ],
    "ic": [
-    "bustLine*0.90",
-    "underarm+14"
+    "bustLine*0.99",
+    "underarm+8"
    ],
    "bant": false,
    "buzgu": false,
@@ -247,7 +248,8 @@
      ]
     ]
    }
-  ]
+  ],
+  "etekSarkma": 2
  },
  "eksik": [
   "arka gorunmuyor",
