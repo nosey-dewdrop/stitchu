@@ -90,10 +90,17 @@ const P = (p) => `${f1(p.x)} ${f1(p.y)}`;
 // genislik = ic golge bandinin mm karsiligi (govde genis, kol dar).
 let _kpSayac = 0;
 function kumasParcasi(d, kumas, ad, genislik) {
+  // KUMAS DOKUSU (12 Eyl): Bugra'nin satilan flat'i keten dokusunu gosterir,
+  // bizimki duz renkti. Doku, dolgunun uzerine cok soluk bir dokuma izi olarak
+  // gelir — flat'i "boyanmis" degil "kumastan" gosteren sey budur.
   const id = 'kp-' + ad.replace(/[^a-zA-Z0-9]/g, '') + '-' + (_kpSayac++);
   const koyu = koyult(kumas, 0.19);
   return `<clipPath id="${id}"><path d="${d}"/></clipPath>\n`
     + `<path d="${d}" fill="${kumas}" stroke="none"/>\n`
+    + `<pattern id="${id}-d" width="7" height="7" patternUnits="userSpaceOnUse">`
+    + `<path d="M0 7 L7 0 M-1 1 L1 -1 M6 8 L8 6" stroke="${koyult(kumas, 0.10)}" stroke-width="0.5" fill="none"/>`
+    + `</pattern>\n`
+    + `<g clip-path="url(#${id})"><path d="${d}" fill="url(#${id}-d)" stroke="none" opacity="0.55"/></g>\n`
     // GOLGE TEK YONDEN GELIR (12 Eyl duzeltme). Once kenarin TAMAMINA esit
     // kalinlikta iki cizgi cekiliyordu; bu, giysiyi cevreleyen SERT bir bant
     // uretiyordu ("golgeler kotu"). Gercek flat'te golge tek yonlu ve yumusaktir:
