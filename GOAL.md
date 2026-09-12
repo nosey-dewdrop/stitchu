@@ -174,3 +174,18 @@ gibi konumlandırma. harcadığımız saatlere değsin. hayallerini büyük tut.
 **Bıkkınlık — en önemlisi.** *"sürekli a deniyoruz. a-b-c-d sonra diyo aa bunu
 yapalım tekrar a deniyor. böyle 2 ay geçti. her session yüzeyde kalıyor kökten
 derin çözümler yapılmıyor. ben bitsin istiyorum."*
+
+## 8. RENK, DOKU, GÖLGE — KARAR VERİLDİ (13 Eyl, Damla)
+
+Araştırma "teknik flat siyah-beyaz olur, chic=netlik" diyor. **Bu bizim kararımız
+değil.** Damla'nın cümlesi:
+
+*"bizde böyle kanka marka değeri işte tamam mı? klipartını isterim. istiyorum."*
+
+**Renkli + dokulu + gölgeli kalır. Marka değeri bu.** RESEARCH.md bir referanstır,
+emir değil. Endüstri konvansiyonu "herkesin yaptığı" demektir; biz farklı
+yapacağız — GOAL §6 zaten bunu söylüyor: *"onlar yapıyorsa biz de yaparız, farklı
+yaparız iyisini yaparız."*
+
+Bu madde bir daha tartışmaya açılmaz. Gölge/doku/renk **anahtara bağlanmaz,
+varsayılan budur.**
