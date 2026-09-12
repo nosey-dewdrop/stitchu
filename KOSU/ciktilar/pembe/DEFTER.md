@@ -162,3 +162,26 @@ etek ucu sarkması 11→2 (fotoğrafta düz kesim), kol koltukaltının dışın
 
 **AÇIK:**
 - S29 yaka dibi armut/damla oldu (dip kontrol noktaları ölçek değişince yuvarlandı)
+
+## Tur 57-58 — yaka dibi kare oldu
+
+Görsel: `defter-58.png`
+
+**TEŞHİS — üç kademeli:**
+1. Tur 57'de dip noktalarını değiştirdim, şekil **değişmedi**. Demek ki sorun
+   oranlarda değil.
+2. Motoru izledim: yelpaze kuralı devreye girmiyor (dip noktalarının hepsi >0.45),
+   `OMUZ_ASMA_SINIRI` 4.05 (kırpma yok). Yani **sayılar motora olduğu gibi geçiyor**.
+3. Kök: **Bezier'in doğası.** Dip CF'de (x=0), ilk kontrol 1.55'te → aradaki geçiş
+   yumuşak, damla çıkıyor. Kare dip için ilk kontrol CF'ye yakın (0.50) ve
+   **y=0'da yatay** olmalı; ikinci kontrol hemen köşede (2.10, y=0).
+
+**Kesim:** `[0.50,0.000],[2.10,0.000],[2.22,0.055]` — yatay dip, keskin köşe.
+
+**Ders (deftere geçsin):** Şekil sorunu üç yerden gelebilir — (a) JSON oranları,
+(b) motordaki kurallar (yelpaze/kırpma), (c) Bezier'in kendi geometrisi.
+Üçünü sırayla elemeden "sayıyı değiştir, bak" yapmak tur yakıyor.
+
+**AÇIK:**
+- yaka fotoğraftakinden hâlâ dar; fotoğrafta omuzlara doğru daha geniş kare
+- gölge çok hafif
