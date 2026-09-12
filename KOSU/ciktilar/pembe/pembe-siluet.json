@@ -71,11 +71,11 @@
    ],
    "etekYan": [
     "hip*0.96",
-    "hip..knee@0.08"
+    "hip+42"
    ],
    "etekOrta": [
     "hip*0",
-    "hip..knee@0.08"
+    "hip+42"
    ]
   },
   "kol": {
@@ -108,7 +108,7 @@
      ],
      [
       "hip*0.80",
-      "hip..knee@0.08"
+      "hip+42"
      ]
     ]
    },
@@ -135,7 +135,7 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckFront+6"
+      "neckFront-2"
      ]
     ],
     "boy": 46,
@@ -147,7 +147,7 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckFront+16"
+      "neckFront+4"
      ]
     ],
     "boy": 225,
@@ -184,15 +184,15 @@
     "noktalar": [
      [
       "hip*0",
-      "hip..knee@0.08-13"
+      "hip+29"
      ],
      [
       "hip*0.50",
-      "hip..knee@0.08-16"
+      "hip+26"
      ],
      [
       "hip*0.93",
-      "hip..knee@0.08-22"
+      "hip+20"
      ]
     ]
    }
