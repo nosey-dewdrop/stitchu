@@ -319,3 +319,30 @@ gövdenin dışında kalıyor çünkü `yakaOmuz.y = 26`, `neckBase.y = 0` — a
 
 **Sıradaki turun kökü:** gövde konturu boyun dibinden mi başlamalı, yoksa
 bant ayrı bir parça olarak boyun halkasını mı çizmeli? İkisi ayrı karar.
+
+## Tur 75-81 — BANT ÇÖZÜLDÜ, açıklık oranları hedefte
+
+Görseller: `defter-76.png`, `defter-79.png`, `defter-79-kiyas.png`, `defter-81.png`
+
+**BANT — dört turluk kovalamanın kökü:**
+Ölçüm: bant y[0,46.9], gövde konturu y=26'dan başlıyor → bandın **üst yarısı
+(y 0-26) boşlukta**, orada kumaş yok. Pembe şerit pembe zemin üstünde görünmez.
+
+**KÖK:** gövde konturu `yakaOmuz`'dan (y=26) başlıyordu, boyun dibinden değil.
+**KESİM:** gövde artık `neckBase`'ten (y=2) başlıyor; açıklık ayrı bir DELİK
+olarak `keyhole` primitifiyle gövdenin üstüne çiziliyor. Bant artık gerçek
+kumaşın üzerinde duruyor ve görünüyor.
+
+**KADEME BİÇİMİ motora eklendi** (`bicim: 'kademe'`):
+üstte dar dikey yarık → keskin köşe → geniş kare dekolte → düz taban.
+Parametreler: `bogazOran` (yarık genişliği), `kademeOran` (köşe yüksekliği),
+`koseYaricap` (köşe yumuşatma). Sabit menü değil — üç sayı, sınırsız biçim.
+
+**ÖLÇÜM (tur 81):**
+| oran | hedef | şu an |
+|---|---|---|
+| açıklık derinliği/gövde | 0.267 | **0.267** ✓ |
+| açıklık genişliği/göğüs | 0.496 | **0.495** ✓ |
+
+**AÇIK:** yarık kısa (yuvarlak köşe yuttu), gölge hafif, çizgiler ince —
+"chic ve comic" değil.

@@ -74,18 +74,18 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckBase+14"
+      "neckBase+16"
      ],
      [
       "neckFront*0",
-      "neckBase+190"
+      "neckBase+168"
      ]
     ],
     "genislik": 148,
     "bicim": "kademe",
     "bogazOran": 0.18,
-    "kademeOran": 0.52,
-    "koseYaricap": 0.1
+    "kademeOran": 0.26,
+    "koseYaricap": 0.34
    },
    {
     "tip": "dikis",
