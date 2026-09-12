@@ -232,3 +232,26 @@ ama nip yanlış yerdeydi.
 **DERS (üçüncü kez):** Oran hedefte olması flat'in doğru olduğunu göstermiyor.
 Oran *ne kadar* olduğunu söyler, *nerede* olduğunu söylemez. Kirli piksel
 ölçümüne dayanıp landmark taşımak, üç turluk regresyon üretti.
+
+## Tur 62-63 — omuz bandı hedefe oturdu, ama açıklık trapez oldu
+
+Görsel: `defter-60.png` (tur 60)
+
+**ÖLÇÜM HATASI BENDEYDİ:** SVG'yi regex ile ölçerken iç içe `<g>` blokları
+yüzünden sadece 4 path görüyordum (hepsi kol). Gerçekte 24 path var.
+İki tur boyunca eksik veriyle çalıştım.
+
+**Doğru ölçüm:** açıklık x ±80.2, gövde x ±153.8 → omuz bandı **73.6mm**
+(fotoğraf hedefi ~48). Ve açıklık **y=6'dan** başlıyordu — omuz çizgisinin
+üstünden, o yüzden bandı yiyor görünüyordu.
+
+**Kesim:** `yakaOmuz.y` 6 → 26 (omuz hattının altına), `yakaOmuz.x` 21.2 → 36.8,
+dip oranı 3.78 → 2.85. Sonuç: omuz bandı **49.0mm** (hedef 48) ✓
+
+**AMA:** sayı tuttu, görüntü tutmadı — **dördüncü kez.** Açıklık artık geniş bir
+trapez; fotoğrafta dar yarık + kare dekolte var.
+
+**BİRİKEN DERS:** Bu koşuda dört kez "oran hedefte, flat yanlış" oldu:
+bel nip'i, açıklık genişliği, omuz bandı, şimdi trapez. Oranlar tek başına
+şekli tanımlamıyor — **hangi noktanın nerede olduğu** ayrı bir bilgi ve onu
+oran testi yakalamıyor.
