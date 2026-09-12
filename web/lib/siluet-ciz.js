@@ -97,10 +97,11 @@ function kumasParcasi(d, kumas, ad, genislik) {
   const koyu = koyult(kumas, 0.19);
   return `<clipPath id="${id}"><path d="${d}"/></clipPath>\n`
     + `<path d="${d}" fill="${kumas}" stroke="none"/>\n`
-    + `<pattern id="${id}-d" width="7" height="7" patternUnits="userSpaceOnUse">`
-    + `<path d="M0 7 L7 0 M-1 1 L1 -1 M6 8 L8 6" stroke="${koyult(kumas, 0.10)}" stroke-width="0.5" fill="none"/>`
+    + `<pattern id="${id}-d" width="5" height="5" patternUnits="userSpaceOnUse">`
+    + `<path d="M0 5 L5 0" stroke="${koyult(kumas, 0.22)}" stroke-width="0.35" fill="none"/>`
+    + `<path d="M0 0 L5 5" stroke="${koyult(kumas, 0.22)}" stroke-width="0.35" fill="none"/>`
     + `</pattern>\n`
-    + `<g clip-path="url(#${id})"><path d="${d}" fill="url(#${id}-d)" stroke="none" opacity="0.55"/></g>\n`
+    + `<g clip-path="url(#${id})"><path d="${d}" fill="url(#${id}-d)" stroke="none" opacity="0.60"/></g>\n`
     // GOLGE TEK YONDEN GELIR (12 Eyl duzeltme). Once kenarin TAMAMINA esit
     // kalinlikta iki cizgi cekiliyordu; bu, giysiyi cevreleyen SERT bir bant
     // uretiyordu ("golgeler kotu"). Gercek flat'te golge tek yonlu ve yumusaktir:
@@ -887,7 +888,7 @@ function ogeCiz(o, pts, s, K, KUMAS) {
       // BOYNUZ DUZELTMESI (12 Eyl): ust kenar boyun dibinde (y=0), alt kenar altY'de;
       // ikisi omuzda birlesince SIVRI UC olusuyordu. Ust kenarin dis ucu alta dogru
       // cekilir ki serit omuzda duz kessin.
-      const ustO = { x: s * Math.abs(nb.x) * (o.boyunOran ?? 1.0), y: nb.y + (o.ucDusme ?? 10) };
+      const ustO = { x: s * Math.abs(nb.x) * (o.boyunOran ?? 1.0) * (o.genisOran ?? 1.0), y: nb.y + (o.ucDusme ?? 10) };
       const ustC = { x: s * (o.aralik ?? 0), y: nf.y };
       // ALT kenar: acikligin ust kenari (h kadar asagi, ama en fazla acikligin ustu)
       const h = o.yukseklik ?? 18;
@@ -895,7 +896,9 @@ function ogeCiz(o, pts, s, K, KUMAS) {
       // y=52.5'te bitiyor, aciklik y=63'te basliyor -> 10 mm bosluk, band havada).
       // `altY` dogrudan verilebilir; verilmezse yukseklikten turer.
       const altY = (o.altY != null) ? o.altY : null;
-      const altO = { x: s * Math.abs(yo.x) * (o.genisOran ?? 1.0), y: altY ?? Math.max(ustO.y + h * 0.5, yo.y) };
+      // Bandin yan kenari DIK olmali (hakem: 'trapez kutu'). Ust ve alt dis uc
+      // ayni x'te -> paralel kenarli serit, boyna oturan band gibi okunur.
+      const altO = { x: s * Math.abs(nb.x) * (o.boyunOran ?? 1.0) * (o.genisOran ?? 1.0), y: altY ?? Math.max(ustO.y + h * 0.5, yo.y) };
       const altC = { x: s * (o.aralik ?? 0), y: altY ?? Math.max(ustC.y + h * 0.4, yo.y) };
       const kav = (a, b, ic) => ` C ${f1(a.x + (b.x - a.x) * 0.46)} ${f1(a.y - (a.y - b.y) * (ic ? 0.10 : 0.04))} ${f1(a.x + (b.x - a.x) * 0.84)} ${f1(b.y + (a.y - b.y) * 0.30)} ${P(b)}`;
       const d = `M ${P(ustC)}` + kav(ustC, ustO, false) +

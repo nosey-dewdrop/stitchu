@@ -57,11 +57,11 @@
    "tip": "duz",
    "dis": [
     "shoulderTip*1.00",
-    "underarm-2"
+    "underarm-34"
    ],
    "ic": [
     "bustLine*0.94",
-    "underarm+26"
+    "underarm-4"
    ],
    "bant": false,
    "buzgu": false,
@@ -208,11 +208,11 @@
     "noktalar": [
      [
       "shoulderTip*0.97",
-      "underarm-10"
+      "underarm-42"
      ],
      [
       "bustLine*0.91",
-      "underarm+18"
+      "underarm-12"
      ]
     ]
    }
@@ -266,11 +266,11 @@
    "tip": "duz",
    "dis": [
     "shoulderTip*1.00",
-    "underarm-2"
+    "underarm-34"
    ],
    "ic": [
     "bustLine*0.94",
-    "underarm+26"
+    "underarm-4"
    ],
    "bant": false,
    "buzgu": false,
@@ -336,11 +336,11 @@
     "noktalar": [
      [
       "shoulderTip*0.97",
-      "underarm-10"
+      "underarm-42"
      ],
      [
       "bustLine*0.91",
-      "underarm+18"
+      "underarm-12"
      ]
     ]
    }
