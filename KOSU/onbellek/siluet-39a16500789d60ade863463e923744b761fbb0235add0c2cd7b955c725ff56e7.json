@@ -19,13 +19,13 @@
     "neckBase..underarm@0.55"
    ],
    "yakaOmuz": [
-    "shoulderTip*0.55",
-    "neckBase+10"
+    "shoulderTip*0.62",
+    "shoulderTip..neckBase@0.25"
    ],
    "askiUst": null,
    "omuzUc": [
-    "shoulderTip*0.97",
-    "shoulderTip"
+    "shoulderTip*0.78",
+    "shoulderTip+4"
    ],
    "koltukalti": [
     "bustLine*0.97",
@@ -71,33 +71,32 @@
    },
    {
     "tip": "dikis",
-    "ayna": false,
+    "ayna": true,
     "noktalar": [
      [
-      "neckFront*0",
-      "neckBase..underarm@0.55"
+      "shoulderTip*0.62",
+      "shoulderTip..neckBase@0.25"
      ],
      [
-      "hip*0",
-      "hip..knee@0.42"
+      "bustApex*1.00",
+      "bustApex"
+     ],
+     [
+      "waist*0.52",
+      "waist"
      ]
     ]
    },
    {
     "tip": "dikis",
     "ayna": true,
-    "catmull": true,
     "noktalar": [
      [
-      "bustLine*0.97",
-      "underarm"
-     ],
-     [
-      "waist*0.75",
+      "waist*0.52",
       "waist"
      ],
      [
-      "hip*0.85",
+      "hip*0.62",
       "hip..knee@0.42"
      ]
     ]
@@ -122,19 +121,19 @@
     "genislik": 48,
     "noktalar": [
      [
-      "waist*0.40",
-      "waist+50"
+      "waist*0.68",
+      "waist+55"
      ],
      [
-      "waist*0.85",
-      "waist+50"
+      "waist*1.02",
+      "waist+55"
      ],
      [
-      "waist*0.78",
+      "waist*0.96",
       "waist+150"
      ],
      [
-      "waist*0.47",
+      "waist*0.72",
       "waist+150"
      ]
     ]
@@ -150,13 +149,13 @@
     "nape+40"
    ],
    "yakaOmuz": [
-    "shoulderTip*0.55",
-    "neckBase+10"
+    "shoulderTip*0.62",
+    "shoulderTip..neckBase@0.25"
    ],
    "askiUst": null,
    "omuzUc": [
-    "shoulderTip*0.97",
-    "shoulderTip"
+    "shoulderTip*0.78",
+    "shoulderTip+4"
    ],
    "koltukalti": [
     "bustLine*0.97",

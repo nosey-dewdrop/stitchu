@@ -11,7 +11,7 @@ her turda güncellenir; uyanınca buradan okursun.
 2. TEŞHİS   bağımlı/bağımsız değişken analizi — hangi sayı neyi bozuyor
 3. KÖK      motorda ne eksik? JSON ayarı DEĞİL, kod. Yoksa tur atlanır.
 4. KES      motoru değiştir (primitif ekle / kural düzelt / kanun ölç)
-5. KAPI     node KOSU/pembe-kapi.mjs <json>   -> 7 oran + nesne/biçim
+5. KAPI     node KOSU/1209-kapi.mjs <json>   -> 7 oran + nesne/biçim
 6. GÖZ      PNG'yi Read ile aç. Kapı yeşil ama çirkinse kapıya yeni kontrol ekle.
 7. REGRESYON  önceki elbiseleri yeniden koştur — biri bozulduysa geri al
 8. YAZ      bu dosyaya: ne gördüm, ne kestim, ne ölçtüm, görsel adı
@@ -27,7 +27,7 @@ yeni ölçüt eklenir.
 
 ---
 
-## SIRA (17 elbise, `00-HEDEF-ELBISELER.md`)
+## SIRA (17 elbise, `1209-hedef-elbiseler.md`)
 
 **A — silüet hazır, detay ekleniyor**
 1. pembe fiyonklu mini · **BİTTİ** (kapı 7/7 + 6/6)

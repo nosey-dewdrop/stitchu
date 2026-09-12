@@ -1,7 +1,7 @@
 # HEDEF ELBİSELER — 17 adet (12 Eyl 2026, Damla)
 
 Her biri motora yeni bir yetenek öğretiyor. Sıra: motorun en az değişmesi
-gerekenden en çoğuna. Her turdan sonra `node KOSU/pembe-kapi.mjs <json>` koşulur.
+gerekenden en çoğuna. Her turdan sonra `node KOSU/1209-kapi.mjs <json>` koşulur.
 
 ## A grubu — silüet altyapısı hazır, detay ekleniyor
 
