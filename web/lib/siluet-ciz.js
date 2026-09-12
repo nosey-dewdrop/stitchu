@@ -883,13 +883,25 @@ function ogeCiz(o, pts, s, K, KUMAS) {
       const ustC = { x: s * (o.aralik ?? 0), y: nf.y };
       // ALT kenar: acikligin ust kenari (h kadar asagi, ama en fazla acikligin ustu)
       const h = o.yukseklik ?? 18;
-      const altO = { x: s * Math.abs(yo.x) * (o.genisOran ?? 1.0), y: Math.max(ustO.y + h * 0.5, yo.y) };
-      const altC = { x: s * (o.aralik ?? 0), y: Math.max(ustC.y + h * 0.4, yo.y) };
+      // Bandin ALT kenari acikligin ust kenarina DEGMELI (12 Eyl, olculdu: bant
+      // y=52.5'te bitiyor, aciklik y=63'te basliyor -> 10 mm bosluk, band havada).
+      // `altY` dogrudan verilebilir; verilmezse yukseklikten turer.
+      const altY = (o.altY != null) ? o.altY : null;
+      const altO = { x: s * Math.abs(yo.x) * (o.genisOran ?? 1.0), y: altY ?? Math.max(ustO.y + h * 0.5, yo.y) };
+      const altC = { x: s * (o.aralik ?? 0), y: altY ?? Math.max(ustC.y + h * 0.4, yo.y) };
       const kav = (a, b, ic) => ` C ${f1(a.x + (b.x - a.x) * 0.46)} ${f1(a.y - (a.y - b.y) * (ic ? 0.10 : 0.04))} ${f1(a.x + (b.x - a.x) * 0.84)} ${f1(b.y + (a.y - b.y) * 0.30)} ${P(b)}`;
       const d = `M ${P(ustC)}` + kav(ustC, ustO, false) +
                 ` L ${P(altO)}` +
                 ` C ${f1(altO.x * 0.84)} ${f1(altC.y + (altO.y - altC.y) * 0.30)} ${f1(altO.x * 0.46)} ${f1(altC.y - (altC.y - altO.y) * 0.04)} ${P(altC)} Z`;
-      return `<path d="${d}" fill="${KM}" stroke="#000" stroke-width="${CIZ.disKonturMM * 0.62}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
+      // BANDIN KENDI DIKIS CIZGISI (12 Eyl, hakem): "band YOK" denmesinin sebebi,
+      // bandin govdeyle ayni renkte olmasi ve kendi dikisinin cizilmemesiydi.
+      // Satici flat'inde (Bugra, etsy-01) her ayri parcanin kendi dikis izi vardir.
+      // Alt kenara paralel bir UST DIKIS cizilir -> band gorunur parca olur.
+      const dikisY = (a) => ({ x: a.x * 0.94, y: a.y - h * 0.22 });
+      const dk1 = dikisY(altC), dk2 = dikisY(altO);
+      const ustDikis = `M ${P(dk1)} C ${f1(dk1.x + (dk2.x - dk1.x) * 0.52)} ${f1(dk1.y - (dk1.y - dk2.y) * 0.04)} ${f1(dk1.x + (dk2.x - dk1.x) * 0.88)} ${f1(dk2.y + (dk1.y - dk2.y) * 0.30)} ${P(dk2)}`;
+      return `<path d="${d}" fill="${KM}" stroke="#000" stroke-width="${CIZ.disKonturMM * 0.62}" stroke-linejoin="round" stroke-linecap="round"/>\n`
+        + `<path d="${ustDikis}" fill="none" stroke="#000" stroke-width="${CIZ.kesikliMM}" stroke-dasharray="${CIZ.kesikli}" stroke-linecap="round"/>\n`;
     }
     case 'keyhole': { // ACIKLIK (keyhole / damla / kama) — OLCULMUS KONVANSIYON
       // KAYNAK 1 (dolgu): etsy-01 sag figur V acikligi. Aciklik KAPALI bir sekildir ve

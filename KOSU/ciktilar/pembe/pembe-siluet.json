@@ -109,19 +109,12 @@
    {
     "tip": "yakaBandi",
     "ayna": true,
-    "noktalar": [
-     [
-      "neckFront*0",
-      "neckBase+30"
-     ]
-    ],
-    "yukseklik": 22,
-    "acik": true,
+    "noktalar": [],
+    "yukseklik": 30,
     "aralik": 0,
-    "omuzDusme": 30,
-    "omuzOran": 1.02,
-    "daralma": 0.93,
-    "omuzYukseklik": 0.4
+    "boyunOran": 0.6,
+    "genisOran": 0.5,
+    "altY": 84
    },
    {
     "tip": "fiyonk",
@@ -129,10 +122,10 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckBase+34"
+      "neckBase+30"
      ]
     ],
-    "boy": 46,
+    "boy": 44,
     "kuyruk": 0
    },
    {
@@ -141,10 +134,10 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckBase+42"
+      "neckBase+40"
      ]
     ],
-    "boy": 210,
+    "boy": 200,
     "en": 6,
     "ayrilma": 0.08
    },
