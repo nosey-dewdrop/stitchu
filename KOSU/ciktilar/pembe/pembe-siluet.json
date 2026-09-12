@@ -14,16 +14,16 @@
  "on": {
   "yakaBicim": [
    [
-    1.05,
-    0.02
+    0.62,
+    0.015
    ],
    [
-    1.42,
-    0.05
+    1.26,
+    0.035
    ],
    [
-    1.5,
-    0.14
+    1.48,
+    0.13
    ],
    [
     1.48,
@@ -81,8 +81,8 @@
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.08",
-    "underarm-52"
+    "shoulderTip*1.10",
+    "underarm-26"
    ],
    "ic": [
     "bustLine*0.90",
@@ -202,8 +202,8 @@
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.08",
-    "underarm-52"
+    "shoulderTip*1.10",
+    "underarm-26"
    ],
    "ic": [
     "bustLine*0.90",

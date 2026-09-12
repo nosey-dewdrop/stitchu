@@ -780,25 +780,26 @@ function ogeCiz(o, pts, s, K, KUMAS) {
       const st = `fill="${KM}" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"`;
       return `<path d="${kulak(-1)} ${kulak(1)}" ${st}/>\n<path d="${dugum}" ${st}/>\n` + (ky ? `<path d="${kuyruk}" fill="none" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round"/>\n` : '');
     }
-    case 'bag': { // SARKAN BAGCIK (tie uclari): dugumden cikan iki ince serit, hafif dalgali,
-      // asagi dogru AYRILARAK iner (foto: uclar birbirinden uzaklasir, paralel DEGIL).
-      // Her seridin KENDI iki kenari cizilir (serit genisligi o.en), ucu duz kesilir.
+    case 'bag': { // SARKAN BAGCIK: dugumden cikan iki KAPALI serit, asagi ayrilarak iner.
+      // Serit giysiden kesilir -> kumas renginde. Kapali yol: sol kenar asagi,
+      // uc kesimi, sag kenar YUKARI geri, Z. (Once `replace` ile kurulmustu, yol
+      // bozuluyor ve dort ayri cizgi gibi gorunuyordu.)
       const c = pts[0], b = (o.boy ?? 120), en = o.en ?? 7, ayr = o.ayrilma ?? 0.22;
       const serit = (sg) => {
         const x0 = c.x + sg * en * 0.55, x1 = c.x + sg * (en * 0.55 + b * ayr);
-        const k1 = { x: x0 + sg * b * 0.10, y: c.y + b * 0.38 };
-        const k2 = { x: x1 - sg * b * 0.06, y: c.y + b * 0.72 };
-        const kenarYolu = (d) =>
-          `M ${f1(x0 + sg * d)} ${f1(c.y)} C ${f1(k1.x + sg * d)} ${f1(k1.y)} ${f1(k2.x + sg * d)} ${f1(k2.y)} ${f1(x1 + sg * d)} ${f1(c.y + b)}`;
-        // KAPALI serit: iki kenar + ucta duz kesim -> icini kumas rengi doldurur.
-        // `fill="none"` birakilinca serit ICI zemin rengi kaliyordu (pembe elbisenin
-        // uzerinde beyaz kurdele). Kurdele giysiden kesilir, giysinin rengindedir.
-        const solK = kenarYolu(-en / 2), sagK = kenarYolu(en / 2);
-        return solK + ' ' + sagK.replace(/^M/, 'L').replace(/ C /, ' C ') +
-          ` L ${f1(x1 - sg * en / 2)} ${f1(c.y + b - en * 0.5)} Z`;
+        const k1x = x0 + sg * b * 0.10, k1y = c.y + b * 0.38;
+        const k2x = x1 - sg * b * 0.06, k2y = c.y + b * 0.72;
+        const h = en / 2, ucY = c.y + b, ucEgim = en * 0.5;
+        // sol kenar: ust -> alt
+        let d = `M ${f1(x0 - sg * h)} ${f1(c.y)} C ${f1(k1x - sg * h)} ${f1(k1y)} ${f1(k2x - sg * h)} ${f1(k2y)} ${f1(x1 - sg * h)} ${f1(ucY)}`;
+        // uc: egik kesim
+        d += ` L ${f1(x1 + sg * h)} ${f1(ucY - ucEgim)}`;
+        // sag kenar: alt -> ust (kontrol noktalari ters sirada)
+        d += ` C ${f1(k2x + sg * h)} ${f1(k2y)} ${f1(k1x + sg * h)} ${f1(k1y)} ${f1(x0 + sg * h)} ${f1(c.y)} Z`;
+        return d;
       };
-      return `<path d="${serit(-1)}" fill="${KM}" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"/>\n` +
-             `<path d="${serit(1)}" fill="${KM}" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"/>\n`;
+      return `<path d="${serit(-1)}" fill="${KM}" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linejoin="round" stroke-linecap="round"/>\n` +
+             `<path d="${serit(1)}" fill="${KM}" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
     }
     case 'drape': { const kil = `fill="none" stroke="#000" stroke-width="${CIZ.kilcalMM}" stroke-linecap="round"`;
       let out = ''; for (let i = 0; i + 1 < pts.length; i += 2) out += `<path d="${yol([pts[i], pts[i + 1]], false, ((o.bombe ?? 6)) * s)}" ${kil}/>\n`; return out; }
