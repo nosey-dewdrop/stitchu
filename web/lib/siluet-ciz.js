@@ -493,69 +493,82 @@ function ogeCiz(o, pts, s, K) {
     case 'cepKapagi': { const [a, b] = pts; const h = o.yukseklik || 40, ph = o.cepBoyu || 120;
       const cep = `<path d="M ${f1(a.x + s * 3)} ${f1(a.y + h * 0.4)} L ${f1(a.x + s * 3)} ${f1(a.y + ph)} Q ${f1((a.x + b.x) / 2)} ${f1(a.y + ph + 12)} ${f1(b.x - s * 3)} ${f1(b.y + ph)} L ${f1(b.x - s * 3)} ${f1(b.y + h * 0.4)}" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"/>\n`;
       return cep + `<path d="M ${P(a)} L ${P(b)} L ${f1(b.x)} ${f1(b.y + h * 0.7)} Q ${f1((a.x + b.x) / 2)} ${f1(b.y + h * 1.15)} ${f1(a.x)} ${f1(a.y + h * 0.7)} Z" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"/>\n<path d="M ${f1(a.x + s * 3)} ${f1(a.y + 4)} L ${f1(b.x - s * 3)} ${f1(b.y + 4)}" ${kesik}/>\n`; }
-    case 'yakaBandi': { // BANT / DIK YAKA: boyun dibini saran serit (stand / tie collar).
-      // OLCUM (croquis36): omuz cizgisi y=0 (neckBase x=70.7), boyun cukuru y=38.9 (neckFront).
-      // Bir stand/tie bant FLAT'te boyun dibi halkasinin USTUNE oturur ve halkayla birlikte
-      // YUKARI yukselir; omuz hizasinda y=0'in bir miktar ustune cikar (gercek bant yaka boyle
-      // gorunur). YASAK olan sey bandin DISA firlamasidir: ust kenarin |x|'i neckBase'i ASAMAZ.
-      // (d7'de ust kenar y>=1.5'e kirpiliyordu -> bant ince bir cizgiye eziliyordu = hata.)
-      //   alt kenar = govdenin yaka cizgisi: CF'de pts[0].y, omuzda neckBase+omuzDusme.
-      //   ust kenar = ayni halka, h kadar YUKARI, x'te ~0.86 daralmis (bant ust cevresi kisadir).
+    case 'yakaBandi': { // BANT YAKA (stand / tie collar) — OLCULMUS KONVANSIYON
+      // KAYNAK: flat-01 (flats-clean) on figur, bant seridi.
+      //   ust kenar tepe y=35, alt dikis y=58  -> serit kalinligi h = 23 px
+      //   serit tam genislik 225-104 = 121 px  -> h/W = 0.19 ; h/(W/2) = 0.38
+      // KURAL: bant SABIT KALINLIKLI bir serittir. Alt kenar govdenin boyun halkasi,
+      // ust kenar ayni egrinin NORMAL yonunde h kadar otelenmisi. (Iki kenari ayri ayri
+      // egri olarak kurmak, CF'de ikisini birlestirip yanlarda ayirinca 'boynuz' uretiyordu.)
       const nb = lm('neckBase'), nf = lm('neckFront');
-      const h = o.yukseklik || 26;
       const cfAlt = pts[0] ? pts[0].y : nf.y;
-      const omuzOran = o.omuzOran || 0.96;
-      const daralma = o.daralma || 0.86;            // ust kenarin x daralmasi
-      const omuzYuk = o.omuzYukseklik ?? 0.80;      // omuzda bandin yukselme orani (h x bu)
-      const altO = { x: s * Math.abs(nb.x) * omuzOran, y: nb.y + (o.omuzDusme || 4) };
-      const ustO = { x: altO.x * daralma, y: altO.y - h * omuzYuk };
-      const ay = o.acik ? (o.aralik || 4) : 0;      // CF'de bant acik (uclar fiyonkta bagli)
-      const aC = { x: s * ay, y: cfAlt }, uC = { x: s * (ay + 2), y: cfAlt - h };
-      // halka kavisi: CF'de yatay tegete yakin, omuzda dikey tegete yakin (boyun dibi egrisi)
-      // Halka egrisi: boyun dibi. CF'de YATAY tegetle baslar, omuzda DIKEYE yakin biter.
-      // Ust kenar, alt kenarin AYNI egrisinin h kadar yukari otelenmisidir (paralel bant);
-      // boylece bant her yerde ayni kalinlikta gorunur, ortada "boynuz" olusmaz.
-      const kav = (a, b) => ` C ${f1(a.x + (b.x - a.x) * 0.62)} ${f1(a.y)} ${f1(b.x)} ${f1(b.y + (a.y - b.y) * 0.52)} ${P(b)}`;
-      const kavT = (a, b) => ` C ${f1(a.x)} ${f1(a.y + (b.y - a.y) * 0.52)} ${f1(b.x + (a.x - b.x) * 0.62)} ${f1(b.y)} ${P(b)}`;
-      return `<path d="M ${P(aC)}${kav(aC, altO)} L ${P(ustO)}${kavT(ustO, uC)} Z" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
+      const yariGen = Math.abs(nb.x) * (o.omuzOran || 0.50);
+      const h = o.yukseklik != null ? o.yukseklik : yariGen * 0.38;
+      const omuzAlt = nb.y + (o.omuzDusme || 2);
+      const ay = o.acik ? (o.aralik || 3) : 0;
+      // alt kenari orneklenmis nokta dizisi olarak kur (kuadratik yay), sonra normal boyunca otele
+      const A = { x: ay, y: cfAlt }, B = { x: yariGen, y: omuzAlt };
+      const C = { x: ay + (yariGen - ay) * 0.62, y: cfAlt - (cfAlt - omuzAlt) * 0.18 }; // kontrol: asagi kabarik
+      const N = 14, alt = [], ust = [];
+      for (let i = 0; i <= N; i++) {
+        const t = i / N, u = 1 - t;
+        const x = u * u * A.x + 2 * u * t * C.x + t * t * B.x;
+        const y = u * u * A.y + 2 * u * t * C.y + t * t * B.y;
+        // teget -> normal (yukari bakan)
+        let dx = 2 * u * (C.x - A.x) + 2 * t * (B.x - C.x);
+        let dy = 2 * u * (C.y - A.y) + 2 * t * (B.y - C.y);
+        const L = Math.hypot(dx, dy) || 1;
+        let nx = dy / L, ny = -dx / L;            // sol normal
+        if (ny > 0) { nx = -nx; ny = -ny; }        // her zaman YUKARI (-y) baksin
+        alt.push({ x: s * x, y });
+        ust.push({ x: s * (x + nx * h), y: y + ny * h });
+      }
+      let dpath = 'M ' + P(alt[0]);
+      for (let i = 1; i < alt.length; i++) dpath += ' L ' + P(alt[i]);
+      dpath += ' L ' + P(ust[ust.length - 1]);
+      for (let i = ust.length - 2; i >= 0; i--) dpath += ' L ' + P(ust[i]);
+      dpath += ' Z';
+      return `<path d="${dpath}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM * 0.62}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
     }
-    case 'keyhole': { // DAMLA / ANAHTAR DELIGI ACIKLIK: tek parca kapali delik, govde uzerinde.
-      // pts[0] = acikligin UST ucu (bandin alt kenarina DEGER), pts[1] = ALT ucu.
-      // OLCUM (GIRDI/pembe-fiyonk-mini.png, 12 Eyl): aciklik TEK parcadir ve uc bolumlu:
-      //   (1) ustte dar KAMA — bandin uclarinin arasindan cikar,
-      //   (2) kamadan en genis yere hizli, DUZE YAKIN diyagonal acilma,
-      //   (3) yanlar DIKEY iner, dip DUZ/kare-U (sivri DEGIL, daire DEGIL).
-      // d7'nin balon damlasi da t3'un dairesi de bu yuzden yanlisti: tek bir Bezier
-      // yayi uc bolumu birden temsil edemiyor, hep cember cikiyor.
-      //   o.genislik        = en genis yer (mm, TAM genislik)
-      //   o.omuzOran/enGenisOran = en genis yere gelis orani (0..1, yol boyu)
-      //   o.ustGenislikOran = kama ucunun yari genisligi / w
-      //   o.dipDuzOran      = dipteki DUZ tabanin yari genisligi / w
-      //   o.dikeyOran       = en genis yerden sonra DIKEY inen kismin orani (0..1)
-      const [a, b] = pts, w = (o.genislik || 46) / 2, L = b.y - a.y;
-      const uw = w * (o.ustGenislikOran ?? 0.06);
-      const dw = w * (o.dipDuzOran ?? 0.45);
-      const enY = a.y + L * (o.enGenisOran ?? 0.42);       // yanlarin dikeye dondugu y
-      const dikY = enY + (b.y - enY) * (o.dikeyOran ?? 0.55); // dikey kismin bittigi y
-      const acilis = enY - a.y;
-      const kenar = (sg) => {
-        const X = sg * s;
-        // kamadan cikis: ilk kontrol noktasi kamaya YAKIN kalir (kama DAR bir yarik gibi
-        // yukselsin, yatay yayilmasin); ikinci kontrol en genis yerde dikey tegeti verir.
-        const kamaAc = o.kamaAcilim ?? 0.34;
-        return ` C ${f1(X * (uw + (w - uw) * kamaAc))} ${f1(a.y + acilis * 0.46)} ${f1(X * w)} ${f1(enY - acilis * 0.16)} ${f1(X * w)} ${f1(enY)}` +
-               ` L ${f1(X * w)} ${f1(dikY)}` +
-               ` C ${f1(X * w)} ${f1(dikY + (b.y - dikY) * 0.58)} ${f1(X * (dw + (w - dw) * 0.55))} ${f1(b.y)} ${f1(X * dw)} ${f1(b.y)}`;
-      };
-      const tersKenar = (sg) => {
-        const X = sg * s;
-        const kamaAc = o.kamaAcilim ?? 0.34;
-        return ` C ${f1(X * (dw + (w - dw) * 0.55))} ${f1(b.y)} ${f1(X * w)} ${f1(dikY + (b.y - dikY) * 0.58)} ${f1(X * w)} ${f1(dikY)}` +
-               ` L ${f1(X * w)} ${f1(enY)}` +
-               ` C ${f1(X * w)} ${f1(enY - acilis * 0.16)} ${f1(X * (uw + (w - uw) * kamaAc))} ${f1(a.y + acilis * 0.46)} ${f1(X * uw)} ${f1(a.y)}`;
-      };
-      const d = `M ${f1(s * uw)} ${f1(a.y)}` + kenar(1) + ` L ${f1(-s * dw)} ${f1(b.y)}` + tersKenar(-1) + ' Z';
-      return `<path d="${d}" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
+    case 'keyhole': { // ACIKLIK (keyhole / damla / kama) — OLCULMUS KONVANSIYON
+      // KAYNAK 1 (dolgu): etsy-01 sag figur V acikligi. Aciklik KAPALI bir sekildir ve
+      //   govdeden FARKLI, DAHA KOYU bir tonla doldurulur: ic RGB(224,207,172) vs
+      //   govde (253,244,230) -> luminans ~%15 daha koyu. Aciklik BEYAZ DEGILDIR.
+      //   Bu, acikligi 'beyaz uzerine beyaz' gorunmezliginden kurtaran tek kural.
+      // KAYNAK 2 (oran): etsy-01, V derinligi 114 px / govde tam genislik 206 px = 0.55.
+      // KAYNAK 3 (cizgi): etsy-01 y=500 -> dis kontur 3 px, ic dikis 2 px = 1.5:1.
+      //   Aciklik kenari IC DIKIS agirligindadir, dis kontur degil.
+      // BICIM: o.bicim = 'kama' (duz kenarli, ustte dar altta genis trapez — hedef elbise;
+      //   bant altindan cikip dekolteye acilan yarik) | 'damla' (klasik sisik keyhole).
+      const [a, b] = pts;
+      const w = (o.genislik || 46) / 2;
+      const L = b.y - a.y;
+      const bogaz = (o.bogazOran != null ? o.bogazOran : 0.30);
+      const dolgu = o.dolgu || '#e9e3da';
+      const kesim = `fill="${dolgu}" stroke="#000" stroke-width="${CIZ.disKonturMM * 0.62}" stroke-linejoin="round" stroke-linecap="round"`;
+      let d;
+      if (o.bicim === 'kama') {
+        // KAMA: ustte 2*w*bogaz genisliginde baslar, asagi dogru NEREDEYSE DUZ kenarlarla
+        // acilir, altta 2*w'ye ulasir; alt kenar hafif asagi kavisli (dekolte cizgisiyle
+        // ayni yonde). Kenarlar cok hafif disbukey — flat'te duz cetvel cizgisi olmaz.
+        const kav = (o.kenarKavis != null ? o.kenarKavis : 0.06) * w;
+        d = `M ${f1(s * w * bogaz)} ${f1(a.y)}` +
+          ` C ${f1(s * (w * bogaz + (w - w * bogaz) * 0.34 + kav))} ${f1(a.y + L * 0.34)}` +
+          ` ${f1(s * (w * bogaz + (w - w * bogaz) * 0.72 + kav))} ${f1(a.y + L * 0.72)}` +
+          ` ${f1(s * w)} ${f1(b.y)}` +
+          ` C ${f1(s * w * 0.45)} ${f1(b.y + L * 0.07)} ${f1(-s * w * 0.45)} ${f1(b.y + L * 0.07)} ${f1(-s * w)} ${f1(b.y)}` +
+          ` C ${f1(-s * (w * bogaz + (w - w * bogaz) * 0.72 + kav))} ${f1(a.y + L * 0.72)}` +
+          ` ${f1(-s * (w * bogaz + (w - w * bogaz) * 0.34 + kav))} ${f1(a.y + L * 0.34)}` +
+          ` ${f1(-s * w * bogaz)} ${f1(a.y)} Z`;
+      } else {
+        const enY = a.y + L * (o.enGenisOran || 0.46);
+        d = `M ${f1(s * w * bogaz)} ${f1(a.y)}` +
+          ` C ${f1(s * w * 0.72)} ${f1(a.y + L * 0.16)} ${f1(s * w)} ${f1(enY - L * 0.20)} ${f1(s * w)} ${f1(enY)}` +
+          ` C ${f1(s * w)} ${f1(enY + L * 0.30)} ${f1(s * w * 0.60)} ${f1(b.y - L * 0.08)} ${P(b)}` +
+          ` C ${f1(-s * w * 0.60)} ${f1(b.y - L * 0.08)} ${f1(-s * w)} ${f1(enY + L * 0.30)} ${f1(-s * w)} ${f1(enY)}` +
+          ` C ${f1(-s * w)} ${f1(enY - L * 0.20)} ${f1(-s * w * 0.72)} ${f1(a.y + L * 0.16)} ${f1(-s * w * bogaz)} ${f1(a.y)} Z`;
+      }
+      return `<path d="${d}" ${kesim}/>\n`;
     }
     case 'pili': { // ters pili: iki kat cizgisi, ustte dikise baglanir, altta etek ucuna iner
       const [ust, alt] = pts, w = (o.genislik || 26) / 2;
