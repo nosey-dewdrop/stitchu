@@ -132,7 +132,7 @@ sor ve ilerle sert eleştiriler al."*
 **Bağımlı/bağımsız değişken.** *"her turda bağımsız değişken bağımlı değişken
 kullanarak sorun düzelirken kök sorun bulunacak ve tamir edilecek."*
 
-**Denenenler yazılacak.** *"YAPILANLAR.md olarak orada bulunsun ki tekrar
+**Denenenler yazılacak.** *"TRIED.md olarak orada bulunsun ki tekrar
 denemesin."*
 
 **Araştırma bir kez.** *"araştırmanı da yap diğerleri nasıl yapıyor. sadece nasıl

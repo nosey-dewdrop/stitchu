@@ -38,7 +38,7 @@ const SET = 'yerel';                          // output/yerel/<no>/
 const SET_KOK = `${KOK}/output/${SET}`;
 // Jenerik taban topoloji: kolsuz/duz govde (9 op). Siluet okumasi bunun uzerine
 // etek ucu + klos + genislik hedeflerini yazar (bkz. siluet-kalip.mjs).
-const TABAN_TOPOLOJI = `${KOK}/law/1309-base-topology.json`;
+const TABAN_TOPOLOJI = `${KOK}/law/_frozen/1309-base-topology.json`;
 
 const IZINLI_UZANTI = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.gif': 'image/gif' };
 const TIP = { '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.html': 'text/html; charset=utf-8', '.txt': 'text/plain; charset=utf-8', '.css': 'text/css; charset=utf-8', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.ico': 'image/x-icon', '.md': 'text/plain; charset=utf-8' };

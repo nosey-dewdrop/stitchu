@@ -22,7 +22,7 @@ for (const no of nolar) {
   const sha = kaynak[1].split(' ')[1];
   const okuma = JSON.parse(readFileSync(`KOSU/onbellek/siluet-${sha}.json`, 'utf8'));
   const eski = existsSync(`KOSU/onbellek/${sha}.json`) ? JSON.parse(readFileSync(`KOSU/onbellek/${sha}.json`, 'utf8')) : {};
-  const taban = eski.tabanGraf || 'law/1309-base-graph.json';
+  const taban = eski.tabanGraf || 'law/_frozen/1309-base-graph.json';
   if (!existsSync(`${d}/ops-topoloji.json`)) copyFileSync(`${d}/ops.json`, `${d}/ops-topoloji.json`);
   const topo = JSON.parse(readFileSync(`${d}/ops-topoloji.json`, 'utf8'));
   const K = okuma.on.kontur, pt = (k) => noktaBeden(K[k], 'gercek36');
