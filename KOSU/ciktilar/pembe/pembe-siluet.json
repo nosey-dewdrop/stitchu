@@ -83,7 +83,7 @@
     ],
     "genislik": 126,
     "bicim": "kademe",
-    "bogazOran": 0.34,
+    "bogazOran": 0.42,
     "kademeOran": 0.36,
     "koseYaricap": 0.14
    },
@@ -144,9 +144,9 @@
       "neckBase+42"
      ]
     ],
-    "boy": 175,
-    "en": 8,
-    "ayrilma": 0.12
+    "boy": 168,
+    "en": 6,
+    "ayrilma": 0.08
    }
   ],
   "etekSarkma": 9
