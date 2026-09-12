@@ -279,17 +279,20 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
 
   // YAKA ACIKLIGI TENDIR, ZEMIN DEGIL (12 Eyl, olculdu). Satici flat'inde acikligin
   // dolgusu govdeden ~%15 KOYU: etsy-01 V ici RGB(224,207,172) / govde RGB(253,244,230).
-  // Beyaz uzerine beyaz cizilince aciklik GORUNMEZ — 5 tur boyunca kaybolmasinin sebebi buydu.
-  // Aciklik yolu: govde yakasinin kendisi (yakaOrta -> yakaOmuz, iki yarim) + omuz hatti.
+  // Beyaz uzerine beyaz cizilince aciklik GORUNMEZ.
+  // KIRPMA: dolgu, govde konturunun DISINA tasmamali (hakem olcumu: bandin ustune ve
+  // iki yanina ucgen sizintilar yapiyordu). Govde yolunun kendisi clipPath olur:
+  // dolgu ancak govdenin ic bosluguna duser.
   let svg = '';
   {
-    const ao = `M ${P(yakaOrtaSag)}` + yakaYolu(yakaOrtaSag, sag('yakaOmuz'), yb, true, 0) +
-      ` L ${P(sol('yakaOmuz'))}` + yakaTers(yakaOrtaSol, sol('yakaOmuz'), KS.yakaBicim || yb, true, 0) + ' Z';
-    // Ten dolgusu YALNIZ acikligi olan gorunumde. Arkada (kapali yaka) dolgu yok:
-    // dolgu, giysinin ALTINDAN ten gorunmesidir; kapali bir yakada gorunecek ten yoktur.
-    // Olcut: yaka derinligi boyun cukurunun belirgin altina iniyorsa aciklik vardir.
-    const acik = (yakaOrtaSag.y - lm('neckFront').y) > (CIZ.tenEsigiMM || 45);
-    if (acik) svg += `<path d="${ao}" fill="${CIZ.tenDolgu || '#e9e3da'}" stroke="none"/>\n`;
+    const acik = (yakaOrtaSag.y - lm('neckFront').y) > (CIZ.tenEsigiMM ?? 45);
+    if (acik) {
+      const ao = `M ${P(yakaOrtaSag)}` + yakaYolu(yakaOrtaSag, sag('yakaOmuz'), yb, true, 0) +
+        ` L ${P(sol('yakaOmuz'))}` + yakaTers(yakaOrtaSol, sol('yakaOmuz'), KS.yakaBicim || yb, true, 0) + ' Z';
+      const kid = 'ten-' + ad;
+      svg += `<clipPath id="${kid}"><path d="${ao}"/></clipPath>\n`;
+      svg += `<path d="${ao}" fill="${CIZ.tenDolgu ?? '#e9e3da'}" stroke="none" clip-path="url(#${kid})"/>\n`;
+    }
   }
   svg += `<path d="${d}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
 
