@@ -185,3 +185,27 @@ Görsel: `defter-58.png`
 **AÇIK:**
 - yaka fotoğraftakinden hâlâ dar; fotoğrafta omuzlara doğru daha geniş kare
 - gölge çok hafif
+
+## Tur 59 — bel yukarı, kol uzadı, yaka üstte daraldı
+
+Görsel: `defter-59.png`
+
+**ÖLÇÜM (fotoğraftan, piksel):**
+omuz y=115, etek y=687 → gövde 572 px
+En dar yer (bel) y=320 → **bel konumu = %36**
+Bizim `waist` landmark'ı: (414.4−62)/568.5 = **%62**
+→ **Bel 26 puan aşağıdaydı.** Silüetin en dar yeri yanlış yerdeydi, o yüzden
+"kadın gibi değil" görünüyordu: kum saatin beli kalçaya yakın çıkıyordu.
+
+**BAĞIMLI/BAĞIMSIZ:**
+`bel.y` ↑ → alt gövde uzar → kalça noktası da yukarı alınmalı (`waist..hip@0.45`)
+`yakaOmuz.x` ↓ (31.1→21.2) → dip genişliği düşer → `yakaBicim` dip oranı
+2.22→3.10 ile telafi (21.2×3.10 = 65.7mm, genişlik korundu)
+
+**Kesim:** bel `bustLine..waist@0.62`'ye taşındı, kol `underarm-10`'a uzatıldı
+(kolun üst yarısını örtüyor), yaka üstü 21.2mm'ye daraltıldı.
+
+**AÇIK:**
+- S34 yaka üst kısmı V gibi, fotoğrafta dikey yarık
+- S35 gövde tekrar tüpleşti (bel yukarı çıkınca alt kısım düzleşti)
+- S36 kol omuzda gövdeyle çakışıyor, dış hat kırık
