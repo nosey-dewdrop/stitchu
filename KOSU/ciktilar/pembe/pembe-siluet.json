@@ -14,24 +14,24 @@
  "on": {
   "yakaBicim": [
    [
-    1.23,
+    2.72,
     0.0
    ],
    [
-    1.23,
-    0.05
+    2.72,
+    0.1
    ],
    [
-    1.2,
-    0.16
+    2.72,
+    0.44
    ],
    [
-    1.14,
-    0.38
+    2.72,
+    0.58
    ],
    [
     1.06,
-    0.7
+    0.62
    ],
    [
     1.0,
@@ -44,8 +44,8 @@
     "neckFront+128"
    ],
    "yakaOmuz": [
-    "neckBase*0.76",
-    "neckBase+10"
+    "neckBase*0.34",
+    "neckBase+6"
    ],
    "askiUst": null,
    "askiDip": null,
@@ -121,11 +121,11 @@
       "neckFront-8"
      ]
     ],
-    "yukseklik": 12,
+    "yukseklik": 14,
     "acik": true,
     "aralik": 0,
-    "omuzDusme": 10,
-    "omuzOran": 0.76,
+    "omuzDusme": 6,
+    "omuzOran": 0.34,
     "daralma": 0.93,
     "omuzYukseklik": 0.4
    },
@@ -161,19 +161,19 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckFront+122"
-     ],
-     [
-      "neckBase*0.62",
       "neckFront+118"
      ],
      [
-      "neckBase*0.86",
-      "neckFront+80"
+      "neckBase*0.56",
+      "neckFront+112"
      ],
      [
-      "neckBase*0.76",
-      "neckBase+24"
+      "neckBase*0.80",
+      "neckFront+72"
+     ],
+     [
+      "neckBase*0.34",
+      "neckBase+18"
      ]
     ]
    },
