@@ -195,16 +195,16 @@
     "ayna": true,
     "noktalar": [
      [
-      "bustLine*0.46",
-      "bustLine+8"
+      "bustLine*0.44",
+      "bustLine+10"
      ],
      [
-      "bustLine*1.14",
-      "underarm+26"
+      "bustLine*0.98",
+      "underarm+30"
      ],
      [
-      "bustLine*1.14",
-      "underarm+42"
+      "bustLine*0.98",
+      "underarm+46"
      ]
     ]
    }

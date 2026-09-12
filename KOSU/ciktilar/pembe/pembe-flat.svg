@@ -32,8 +32,8 @@
 <path d="M 0.0 206.0 C -8.9 202.7 -41.6 204.3 -53.4 186.0 C -65.1 167.7 -67.8 122.0 -70.7 96.0 C -73.6 70.0 -70.7 41.0 -70.7 30.0" fill="none" stroke="#000" stroke-width="1.7" stroke-dasharray="5,3"/>
 <path d="M 0.0 577.5 C 13.1 577.0 54.4 575.8 78.5 574.5 C 102.5 573.2 133.4 570.3 144.3 569.5" fill="none" stroke="#000" stroke-width="1.7" stroke-dasharray="5,3"/>
 <path d="M 0.0 577.5 C -13.1 577.0 -54.4 575.8 -78.4 574.5 C -102.5 573.2 -133.4 570.3 -144.3 569.5" fill="none" stroke="#000" stroke-width="1.7" stroke-dasharray="5,3"/>
-<path d="M 152.1 224.3 L 61.4 221.3 L 152.1 240.3" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
-<path d="M -152.1 224.3 L -61.4 221.3 L -152.1 240.3" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
+<path d="M 130.7 228.3 L 58.7 223.3 L 130.7 244.3" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
+<path d="M -130.7 228.3 L -58.7 223.3 L -130.7 244.3" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
 </g>
 <text x="246.4" y="742.5" font-family="Helvetica, Arial, sans-serif" font-size="14" text-anchor="middle" fill="#666">ON</text>
 <g transform="translate(669.2 84.0)" data-gorunum="arka">

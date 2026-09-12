@@ -346,3 +346,31 @@ Parametreler: `bogazOran` (yarık genişliği), `kademeOran` (köşe yüksekliğ
 
 **AÇIK:** yarık kısa (yuvarlak köşe yuttu), gölge hafif, çizgiler ince —
 "chic ve comic" değil.
+
+## Tur 82-97 — çizgi ağırlığı, gölge, üst dikiş, pens
+
+Görseller: `defter-82.png`, `defter-83.png`, `defter-87.png`, `defter-89.png`,
+`defter-89-kiyas.png`, `defter-91.png`, `defter-94.png`, `defter-97.png`
+
+**ÖLÇÜM — Buğra'nın satılan flat'i (`5 Inspirations.jpg`, LINEN figürü):**
+figür genişliği 246 px, dış kontur 3-4 px (%1.42), iç dikiş 2-3 px (iç/dış 0.70)
+**Bizde:** figür 259 px, dış kontur 3 px (%1.16), iç dikiş **1 px** (iç/dış 0.33)
+→ iç dikişler silik, flat "chic" görünmüyor.
+
+**Kanun düzeltildi:** `disKonturMM` 2.8→3.4, `icDikisMM` 1.4→2.2 (oran 0.65),
+`kesikliMM` 1.1→1.7, `kilcalMM` 0.7→1.1
+
+**Gölge:** opacity 0.50/0.40 → 0.72/0.58, koyultma 0.13 → 0.19
+
+**BUĞRA KIYASI (`kiyas-bugra.png`) — onda olan bizde olmayan:**
+1. Kesikli **üst dikiş** — yaka, pat, etek ucu, kol ağzı. *(Tur 43'te "flat'te
+   dikiş payı olmaz" diye kesiklileri silmiştim. Ayrım: dikiş payı = kalıp
+   çizgisi, YOK. Üst dikiş = görünen dikiş izi, VAR.)*
+2. **Pens okları** — göğse doğru
+3. Kumaş dokusu *(açık)*
+
+**Kesildi:** yaka ve etek ucu üst dikişi eklendi, pens eklendi ve yan dikişe
+mıklandı (önce havada bitiyordu, sonra kola taşıyordu).
+
+**MOTOR YASASI eklendi:** `kol.ic` koltukaltının içinde kalmalı — dışarı taşarsa
+kol ile gövde arasında beyaz kama açılıyor (ölçüm: ic 136.1 > koltukaltı 133.4).
