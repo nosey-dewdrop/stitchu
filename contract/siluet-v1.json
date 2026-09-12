@@ -83,14 +83,15 @@
   },
   "cizgi": {
     "_kaynak": "0-K.10.f",
-    "disKonturMM": 2.8,
-    "icDikisMM": 1.4,
-    "kesikliMM": 1.1,
+    "disKonturMM": 3.4,
+    "icDikisMM": 2.2,
+    "kesikliMM": 1.7,
     "kesikli": "5,3",
     "buzguTikMM": 9,
     "_yasa": "dis kontur ic dikisin en az 2 kati; etek ucu ve yan dikis hafif kavisli; flat'te dikis payi / centik / kat cizgisi yok; dolgu beyaz, golge yok. UC AGIRLIK (tur 26, iki hakem): dis kontur (2.4) > ic dikis (1.0) > buzgu/drape kilcali (0.55). Her ic cizginin IKI ucu da ya bir dikiste ya bir kenarda biter; boslukta biten cizgi yasak.",
-    "kilcalMM": 0.7,
-    "_olcum_2026-09-12": "disKontur/icDikis orani UC bagimsiz olcumde 1.5-2.0 cikti, kanundaki 4.0 hicbirinde: (1) etsy-01 y=500 [3,2,2,2]px=1.5 (2) etsy-09 dis 3px/ic 2px=1.5 (3) patterns_real/Locket Top '5 Inspirations.jpg' y=600/700/800 dis 3-4px/ic 1-2px=2.0. icDikisMM 0.7->1.4 (oran 2.0), kesikli 0.9->1.1, kilcal 0.55->0.7. Eski degerlerde ic dikisler 900px render'da 1px'e dusuyordu, satici flat'lerinde 2px."
+    "kilcalMM": 1.1,
+    "_olcum_2026-09-12": "disKontur/icDikis orani UC bagimsiz olcumde 1.5-2.0 cikti, kanundaki 4.0 hicbirinde: (1) etsy-01 y=500 [3,2,2,2]px=1.5 (2) etsy-09 dis 3px/ic 2px=1.5 (3) patterns_real/Locket Top '5 Inspirations.jpg' y=600/700/800 dis 3-4px/ic 1-2px=2.0. icDikisMM 0.7->1.4 (oran 2.0), kesikli 0.9->1.1, kilcal 0.55->0.7. Eski degerlerde ic dikisler 900px render'da 1px'e dusuyordu, satici flat'lerinde 2px.",
+    "_olcum_cizgi_2026-09-12b": "Bugra 'Locket Top' 5 Inspirations.jpg LINEN figuru: figur genisligi 246 px, dis kontur 3-4 px (%1.42), ic dikis 2-3 px (ic/dis 0.70). Bizim 900px render: figur 259 px, dis kontur 3 px (%1.16), ic dikis 1 px (ic/dis 0.33) -> ic dikisler SILIK, flat 'chic' gorunmuyor. disKontur 2.8->3.4, icDikis 1.4->2.2 (oran 0.65), kesikli 1.1->1.7, kilcal 0.7->1.1."
   },
   "yanlislama": {
     "_kaynak": "0-K.10 YANLISLAMA; kosucu KOSU/siluet-yanlisla.mjs",
