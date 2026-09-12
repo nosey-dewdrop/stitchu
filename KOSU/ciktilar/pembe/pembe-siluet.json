@@ -14,28 +14,28 @@
  "on": {
   "yakaBicim": [
    [
-    0.55,
+    1.42,
     0.0
    ],
    [
-    0.8,
-    0.0
+    1.86,
+    0.03
    ],
    [
-    0.95,
-    0.06
+    2.06,
+    0.18
+   ],
+   [
+    2.1,
+    0.38
+   ],
+   [
+    1.42,
+    0.58
    ],
    [
     1.02,
-    0.2
-   ],
-   [
-    0.96,
-    0.72
-   ],
-   [
-    0.8,
-    0.98
+    0.78
    ]
   ],
   "kontur": {
@@ -44,8 +44,8 @@
     "neckFront+130"
    ],
    "yakaOmuz": [
-    "neckBase*0.89",
-    "neckBase+16"
+    "neckBase*0.42",
+    "neckBase+6"
    ],
    "askiUst": null,
    "askiDip": null,
@@ -58,19 +58,19 @@
     "underarm"
    ],
    "gogus": [
-    "bustLine*1.03",
+    "bustLine*1.04",
     "bustLine"
    ],
    "bel": [
-    "waist*1.19",
+    "waist*1.02",
     "waist"
    ],
    "kalca": [
-    "hip*0.98",
+    "hip*0.78",
     "hip"
    ],
    "etekYan": [
-    "hip*0.96",
+    "hip*0.80",
     "hip+42"
    ],
    "etekOrta": [
@@ -99,15 +99,15 @@
     "catmull": true,
     "noktalar": [
      [
-      "bustApex*1.05",
-      "underarm+10"
+      "bustApex*1.02",
+      "underarm+12"
      ],
      [
-      "waist*0.74",
+      "waist*0.72",
       "waist"
      ],
      [
-      "hip*0.80",
+      "hip*0.70",
       "hip+42"
      ]
     ]
@@ -124,8 +124,8 @@
     "yukseklik": 12,
     "acik": true,
     "aralik": 0,
-    "omuzDusme": 16,
-    "omuzOran": 0.89,
+    "omuzDusme": 6,
+    "omuzOran": 0.42,
     "daralma": 0.93,
     "omuzYukseklik": 0.4
    },
@@ -187,11 +187,11 @@
       "hip+29"
      ],
      [
-      "hip*0.50",
+      "hip*0.42",
       "hip+26"
      ],
      [
-      "hip*0.93",
+      "hip*0.76",
       "hip+20"
      ]
     ]
@@ -200,15 +200,15 @@
  },
  "arka": {
   "koken": "turetildi",
-  "yakaBicim": "duz",
+  "yakaBicim": "yuvarlak",
   "kontur": {
    "yakaOrta": [
     "nape*0",
-    "nape"
+    "nape+6"
    ],
    "yakaOmuz": [
-    "neckBase*1.00",
-    "neckBase"
+    "neckBase*0.92",
+    "neckBase+4"
    ],
    "askiUst": null,
    "askiDip": null,
@@ -221,35 +221,35 @@
     "underarm"
    ],
    "gogus": [
-    "bustLine*1.02",
+    "bustLine*1.04",
     "bustLine"
    ],
    "bel": [
-    "waist*1.12",
+    "waist*1.02",
     "waist"
    ],
    "kalca": [
-    "hip*1.05",
+    "hip*0.78",
     "hip"
    ],
    "etekYan": [
-    "hip*1.06",
-    "hip..knee@0.32"
+    "hip*0.80",
+    "hip+42"
    ],
    "etekOrta": [
     "hip*0",
-    "hip..knee@0.32"
+    "hip+42"
    ]
   },
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.05",
-    "underarm-15"
+    "shoulderTip*1.18",
+    "underarm-58"
    ],
    "ic": [
-    "underarm*0.98",
-    "underarm+15"
+    "underarm*0.99",
+    "underarm-30"
    ],
    "bant": false,
    "buzgu": false,
@@ -262,7 +262,7 @@
     "noktalar": [
      [
       "neckBase*0",
-      "neckBase+20"
+      "nape+10"
      ],
      [
       "waist*0",
@@ -276,16 +276,35 @@
     "catmull": true,
     "noktalar": [
      [
-      "bustApex*1.05",
-      "underarm+10"
+      "bustApex*1.02",
+      "underarm+12"
      ],
      [
-      "waist*0.70",
+      "waist*0.72",
       "waist"
      ],
      [
-      "hip*0.85",
-      "hip..knee@0.30"
+      "hip*0.78",
+      "hip+42"
+     ]
+    ]
+   },
+   {
+    "tip": "kesikli",
+    "ayna": true,
+    "catmull": true,
+    "noktalar": [
+     [
+      "hip*0",
+      "hip+29"
+     ],
+     [
+      "hip*0.42",
+      "hip+26"
+     ],
+     [
+      "hip*0.76",
+      "hip+20"
      ]
     ]
    }
