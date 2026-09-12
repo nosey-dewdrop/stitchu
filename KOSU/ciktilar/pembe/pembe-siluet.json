@@ -56,7 +56,7 @@
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.10",
+    "shoulderTip*1.00",
     "underarm-2"
    ],
    "ic": [
@@ -81,7 +81,7 @@
       "neckBase+196"
      ]
     ],
-    "genislik": 126,
+    "genislik": 118,
     "bicim": "kademe",
     "bogazOran": 0.28,
     "kademeOran": 0.42,
@@ -112,8 +112,8 @@
     "noktalar": [],
     "yukseklik": 30,
     "aralik": 0,
-    "boyunOran": 0.6,
-    "genisOran": 0.5,
+    "boyunOran": 0.52,
+    "genisOran": 0.42,
     "altY": 84
    },
    {
@@ -151,16 +151,16 @@
       "neckBase+206"
      ],
      [
-      "bustLine*0.40",
+      "bustLine*0.34",
       "neckBase+186"
      ],
      [
-      "bustLine*0.53",
-      "neckBase+96"
+      "bustLine*0.42",
+      "neckBase+110"
      ],
      [
-      "bustLine*0.53",
-      "neckBase+30"
+      "bustLine*0.40",
+      "neckBase+62"
      ]
     ]
    },
@@ -250,7 +250,7 @@
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.10",
+    "shoulderTip*1.00",
     "underarm-2"
    ],
    "ic": [
