@@ -41,16 +41,16 @@
     "waist"
    ],
    "kalca": [
-    "hip*0.97",
-    "waist..hip@0.58"
+    "hip*0.95",
+    "waist..hip@0.52"
    ],
    "etekYan": [
-    "hip*1.06",
-    "hip+1"
+    "hip*1.00",
+    "hip-38"
    ],
    "etekOrta": [
     "hip*0",
-    "hip+1"
+    "hip-38"
    ]
   },
   "kol": {
@@ -78,14 +78,14 @@
      ],
      [
       "neckFront*0",
-      "neckBase+176"
+      "neckBase+196"
      ]
     ],
     "genislik": 126,
     "bicim": "kademe",
-    "bogazOran": 0.42,
-    "kademeOran": 0.36,
-    "koseYaricap": 0.14
+    "bogazOran": 0.4,
+    "kademeOran": 0.26,
+    "koseYaricap": 0.26
    },
    {
     "tip": "dikis",
@@ -93,16 +93,16 @@
     "catmull": true,
     "noktalar": [
      [
-      "bustLine*0.58",
-      "underarm+6"
+      "bustLine*0.52",
+      "underarm+4"
      ],
      [
-      "waist*0.52",
+      "waist*0.44",
       "waist"
      ],
      [
-      "hip*0.64",
-      "hip+1"
+      "hip*0.62",
+      "hip-38"
      ]
     ]
    },
@@ -182,16 +182,16 @@
     "waist"
    ],
    "kalca": [
-    "hip*0.97",
-    "waist..hip@0.58"
+    "hip*0.95",
+    "waist..hip@0.52"
    ],
    "etekYan": [
-    "hip*1.06",
-    "hip+1"
+    "hip*1.00",
+    "hip-38"
    ],
    "etekOrta": [
     "hip*0",
-    "hip+1"
+    "hip-38"
    ]
   },
   "kol": {
@@ -229,16 +229,16 @@
     "catmull": true,
     "noktalar": [
      [
-      "bustLine*0.58",
-      "underarm+6"
+      "bustLine*0.52",
+      "underarm+4"
      ],
      [
-      "waist*0.52",
+      "waist*0.44",
       "waist"
      ],
      [
-      "hip*0.64",
-      "hip+1"
+      "hip*0.62",
+      "hip-38"
      ]
     ]
    }
