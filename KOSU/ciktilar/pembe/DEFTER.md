@@ -438,3 +438,52 @@ yan dikişten etek ucuna teğet uyumsuzdu, iki alt köşede kırık oluşuyordu
 
 **REGRESYON:** `giris-3/5` (kolsuz, roba, pili) yeniden koşuldu — sıfır kırmızı,
 gölge ve doku orada da doğru çalışıyor. Motor düzeltmeleri diğer okumaları bozmadı.
+
+---
+
+# ÖZET — bu koşuda motorda kesilen kökler
+
+JSON parametresi değil, **motor kodu** değişti. Her biri ölçümle bulundu.
+
+| # | kök | ne oluyordu | nasıl bulundu |
+|---|---|---|---|
+| 1 | `gogusAyri >= 30` | Göğüs, koltukaltına 30mm'den yakınsa yan dikişten **tamamen atılıyordu**. croquis'te fark 15mm → göğüs **her zaman** atılıyor, gövdenin en geniş yeri (149.4 vs 114.7) çizimden çıkıyordu. "Kum saati yok"un kök sebebi. | kod okuması |
+| 2 | kol evi parametre sırası | Sol yarımda koltukaltı `ou`'ya, omuz `ka`'ya geçiyordu. Fonksiyon asimetrik (0.42/0.78) olduğu için eğri başka bir eğri oluyordu → gövde ile kol **7.6mm** ayrışıyordu. Omuzdaki beyaz çizgi buydu. | SVG koordinat ölçümü |
+| 3 | gövde dolgusu sabit `#fff` | Kumaş rengi motora **hiç girmiyordu**. Elbise pembe, flat beyaz. | Damla'nın gözü |
+| 4 | `o.X \|\| N` deseni (24 yer) | JS'te `0 \|\| 3 = 3`. Okuma "sıfır" derse motor sessizce varsayılanı koyuyordu. `aralik: 0` yazan bant 3mm yarık alıyordu. | hakem "yarık kapanmadı" dedi, kodu aradım |
+| 5 | yelpaze kuralı | **Her** açıklık dibini yuvarlak yapıyordu; kare dekolte çizilemiyordu. HEDEF md.9 ihlali (sabit kural). | JSON 5 tur değiştirdim, şekil değişmedi |
+| 6 | `OMUZ_ASMA_SINIRI = 1.0` | Açıklık `yakaOmuz`'u aşamıyordu — ama o **boyun kenarı**, omuz ucu değil. Yanlış referans. | omuz bandı ölçümü |
+| 7 | `yakaYolu` 3n zinciri | 6 kontrol noktası verilince **son nokta hiç kullanılmıyordu**, sonda düz çizgi çekiliyordu. Kademe (dar yarık → geniş dekolte) bu yüzden çizilemiyordu. | 5 tur JSON denedim, sonra kodu okudum |
+| 8 | gölge | Kenarın tamamına eşit kalınlıkta → giysiyi çevreleyen sert bant. | Damla: "gölgeler kötü" |
+| 9 | gövde konturu `yakaOmuz`'dan başlıyordu | Boyun dibi ile açıklık arası **boş alandı**; bant orada çiziliyor ama kumaş olmadığı için görünmüyordu. **4 tur kovalandı.** | bant y[0,49], gövde y=26 ölçümü |
+| 10 | `bag` `fill="none"` | Kurdele içi boş, zemin görünüyordu. | renk ölçümü |
+| 11 | etek ucu teğeti | Yan dikişten etek ucuna geçiş uyumsuz, iki alt köşede kırık. | regresyon örneği `giris-3/5` |
+
+## Eklenen primitifler (sabit menü değil, parametreli)
+
+- **`yakaBandi`** — boyun halkasını saran şerit, kendi üst dikişiyle
+- **`keyhole` / `bicim: 'kademe'`** — üstte dar yarık → keskin köşe → geniş kare
+  dekolte. Üç sayı: `bogazOran`, `kademeOran`, `koseYaricap`. Sınırsız biçim.
+- **köşe noktası** (`yakaYolu`) — ard arda iki kontrol noktası aynı y'de ve x
+  farkı büyükse orada köşe var. Kare/V/U ayrı "tip" değil, geometriden doğuyor.
+- **kumaş rengi + dokuma izi + tek yönlü gölge**
+
+## Ölçümle düzeltilen kanunlar
+
+| kanun | eskiden | ölçüm | şimdi |
+|---|---|---|---|
+| `disKonturMM / icDikisMM` | 4.0 | etsy-01 1.5, etsy-09 1.5, Buğra 2.0 | **1.55** (3.4 / 2.2) |
+| ten dolgusu | yok | etsy-01 V içi gövdeden %15 koyu | `#e9e3da` |
+
+## Kendi hatalarım (defterde kalsın)
+
+1. **Beş kez "oran hedefte, flat yanlış"** oldu: bel nip'i, açıklık genişliği,
+   omuz bandı, trapez, gövde dolgunluğu. Oran *ne kadar* olduğunu söylüyor,
+   *nerede* olduğunu söylemiyor.
+2. **Kirli piksel ölçümüne dayanıp landmark taşıdım** (tur 59): fotoğrafta bel
+   %36'da göründü, ama o ölçüm kolların kestiği yerdi. Üç turluk regresyon.
+3. **JSON'da beş tur dönüp şekil değiştirmedi** — kök motordaydı. Ders: şekil
+   sorunu üç yerden gelebilir (JSON oranları / motor kuralları / Bezier
+   geometrisi); üçünü elemeden parametre oynatmak tur yakıyor.
+4. **İddia edip ölçmedim** (tur 53): "prenses dikişleri bağlandı" dedim, hakem
+   ölçtü, boşluk 10px'ten 15px'e büyümüştü.
