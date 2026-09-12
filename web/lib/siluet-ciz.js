@@ -300,12 +300,29 @@ function yakaYolu(orta, omuz, bicim, sag = true, kisalt = 0, genislikTavan = nul
   if (pts.length === 1) return ` Q ${P(pts[0])} ${P(m)}`;
   if (pts.length === 2) return ` C ${P(pts[0])} ${P(pts[1])} ${P(m)}`;
   // 3n nokta: ardisik kubik zinciri; son hedef m
+  // KOSE NOKTASI (12 Eyl): 6 nokta verildiginde zincir iki kubik kurup sonda
+  // ` L m` cekiyordu — yani SON kontrol noktasi hic kullanilmiyordu ve yaka
+  // omuza DUZ bir cizgiyle gidiyordu. Kademe (dar yarik -> genis dekolte) bu
+  // yuzden cizilemiyordu: her kubik kendi icinde yumusak, aralarinda kirilma yok.
+  // COZUM: ard arda gelen iki kontrol noktasi AYNI y'de ve x'leri arasindaki fark
+  // buyukse (> %40) orada bir KOSE vardir; zincir orada kesilir ve ` L ` ile
+  // keskin donus yapilir. Boylece "dar yarik + kare dekolte" tek yolda cizilir.
   let d = '';
-  for (let i = 0; i + 2 < pts.length; i += 3) d += ` C ${P(pts[i])} ${P(pts[i + 1])} ${P(pts[i + 2])}`;
-  const kalan = pts.length % 3;
-  if (kalan === 2) d += ` C ${P(pts[pts.length - 2])} ${P(pts[pts.length - 1])} ${P(m)}`;
-  else if (kalan === 1) d += ` Q ${P(pts[pts.length - 1])} ${P(m)}`;
-  else d += ` L ${P(m)}`;
+  let i = 0;
+  while (i < pts.length) {
+    // kose arayisi: pts[i] ile pts[i+1] arasi keskin donus mu?
+    const kose = (i + 1 < pts.length) &&
+      Math.abs(pts[i + 1].y - pts[i].y) < Math.abs(m.y - o.y) * 0.06 &&
+      Math.abs(Math.abs(pts[i + 1].x) - Math.abs(pts[i].x)) > Math.abs(m.x) * 0.40;
+    if (kose) { d += ` L ${P(pts[i])} L ${P(pts[i + 1])}`; i += 2; continue; }
+    if (i + 2 < pts.length) { d += ` C ${P(pts[i])} ${P(pts[i + 1])} ${P(pts[i + 2])}`; i += 3; continue; }
+    const kalan = pts.length - i;
+    if (kalan === 2) d += ` C ${P(pts[i])} ${P(pts[i + 1])} ${P(m)}`;
+    else if (kalan === 1) d += ` Q ${P(pts[i])} ${P(m)}`;
+    else d += ` L ${P(m)}`;
+    return d;
+  }
+  d += ` L ${P(m)}`;
   return d;
 }
 
