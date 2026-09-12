@@ -238,7 +238,17 @@ function yakaYolu(orta, omuz, bicim, sag = true, kisalt = 0, genislikTavan = nul
   // SINIR: aciklik yaka-omuz noktasini asamaz. (genislikTavan sadece DIP
   // yelpazesinin dayanagi olarak kullanilir; ustteki kontrol noktalari boyun
   // noktasiyla sinirli kalir, yoksa aciklik omuzdan tasar ve giysi dusuk gorunur.)
-  const OMUZ_ASMA_SINIRI = 1.0;
+  // DUZELTME (12 Eyl, ikinci tur): sinir yanlis referansa bagliydi. Oranlar
+  // yakaOmuz.x'in kati; tavan 1.0 olunca aciklik yakaOmuz'u HIC asamiyor ve
+  // her zaman dar bir yarik cikiyor. Ama yakaOmuz BOYUN kenaridir, omuz ucu degil.
+  // Gercek yasa: aciklik OMUZ UCUNU (shoulderTip) asamaz — arasindaki omuz bandi
+  // korunur. Olcum (etsy-08 kare yaka): aciklik yari 118 px / omuz ucu 162.9 px = 0.72.
+  // Tavan = 0.80 x shoulderTip.x / yakaOmuz.x  -> aciklik genisleyebilir ama
+  // omuz bandini yemez.
+  const _st = LM['landmark.shoulderTip'];
+  const OMUZ_ASMA_SINIRI = (_st && Math.abs(m.x) > 1)
+    ? Math.max(1.0, (0.80 * _st.x) / Math.abs(m.x))
+    : 1.0;
   kn = kn.map(([kx, ky]) => [Math.max(-OMUZ_ASMA_SINIRI, Math.min(OMUZ_ASMA_SINIRI, kx)), ky]);
 
   // (2) DIP YUVARLAKTIR. Bir Bezier'in ilk iki kontrol noktasi AYNI x'te ise
