@@ -272,13 +272,21 @@ function yakaYolu(orta, omuz, bicim, sag = true, kisalt = 0, genislikTavan = nul
     void 0;
   }
 
-  const dipler = kn.filter(([, ky]) => ky < 0.15).length;
-  if (dipler >= 2) {
+  // DIP BICIMI OKUMANIN KARARIDIR, SABIT KURAL DEGIL (12 Eyl, ikinci tur).
+  // Yelpaze kurali her aciklik dibini YUVARLAK yapiyordu; kare/U dekolte
+  // cizilemiyordu (HEDEF md.9: sabit menu/limit koymak ihlaldir).
+  // Yasa yalnizca sunu korur: dip noktalari hem AYNI x'te hem de x=0'a yapisik
+  // olamaz (o zaman egri orta noktadan dik cikar ve sivri V uretir).
+  // Dipte en az bir nokta merkeze yakin (<=0.45) ise dip YUVARLAK okunur ve
+  // yelpazeye dagilir; hepsi disarida ise dip DUZ birakilir (kare dekolte).
+  const dipNoktalar = kn.filter(([, ky]) => ky < 0.15);
+  const dipler = dipNoktalar.length;
+  const dipYuvarlak = dipler >= 2 && dipNoktalar.some(([kx]) => Math.abs(kx) <= 0.45);
+  if (dipYuvarlak) {
     const enGenis = Math.max(...kn.map(([kx]) => Math.abs(kx)));
     let n = 0;
     kn = kn.map(([kx, ky]) => {
       if (ky >= 0.15) return [kx, ky];
-      // yelpaze: 0.30 -> 0.72 arasi, dipten yukari dogru acilir
       const t = dipler > 1 ? n / (dipler - 1) : 0; n++;
       return [Math.sign(kx || 1) * enGenis * (0.30 + 0.42 * t), ky];
     });

@@ -84,3 +84,30 @@ gerçek kısa kol, kare dekolte dibi, dikiş payı çizgileri kaldırıldı.
 - kol omuzda biraz kısa
 - fiyonk/bağ/bant hâlâ `#fff` (giysiden kesilir, kumaş renginde olmalı)
 - gölge çok hafif, satıcı flat'lerindeki kadar belirgin değil
+
+## Tur 53 — fiyonk kumaş rengine geçti, yaka derinleşti
+
+Görsel: `defter-53.png`
+
+**BAĞIMLI/BAĞIMSIZ ANALİZİ (kesimden ÖNCE yapıldı):**
+
+*Yaka derinliği artırılacak* → bağımlı olanlar tarandı:
+- ten dolgusu eşiği (45mm): zaten aşılıyor, etkilenmez ✓
+- fiyonk/bağ yeri: bandın üstünde, yakaOrta'ya bağlı değil ✓
+- üst dikiş: zaten kaldırılmıştı ✓
+→ **derinlik tek başına değiştirilebilir, güvenli.** Kesildi.
+
+*Kol omuzda kısa görünüyor* → ölçüm: `kol.dis.x`=179.5, `omuzUc.x`=144.9.
+Fark 34.6mm — kol **yatay** uzuyor, dikey değil. Yani `dis.y`'yi değil `dis.x`'i
+düşürmek gerek. `shoulderTip*1.14` → `*1.08`.
+
+**Kesilen:**
+| sorun | kök | kesim |
+|---|---|---|
+| fiyonk/bant/bebeYaka beyaz | `ogeCiz` sabit `fill="#fff"` — kumaş rengi öğelere hiç geçmiyordu | `ogeCiz(o,pts,s,K,KUMAS)` — giysiden kesilen öğe giysinin rengindedir. Fermuar dişi ve düğme beyaz kalır (aksesuar) |
+| yaka sığ | derinlik/gövde boyu = 0.267 hedefi tutmuyordu | `yakaOrta` `neckFront+137` (gövde boyu 620.5 × 0.267 = 165.7mm) |
+
+**AÇIK — sıradaki turun işi:**
+- S19 kurdele uçları (`bag`) hâlâ beyaz
+- S20 yaka dibi hâlâ fotoğraftakinden yukarıda
+- S21 kol/gövde birleşimi omuzda sivri

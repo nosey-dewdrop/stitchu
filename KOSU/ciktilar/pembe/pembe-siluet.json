@@ -41,7 +41,7 @@
   "kontur": {
    "yakaOrta": [
     "neckFront*0",
-    "neckFront+120"
+    "neckFront+137"
    ],
    "yakaOmuz": [
     "neckBase*0.66",
@@ -81,8 +81,8 @@
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.14",
-    "underarm-18"
+    "shoulderTip*1.08",
+    "underarm-30"
    ],
    "ic": [
     "bustLine*0.90",
@@ -202,8 +202,8 @@
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.14",
-    "underarm-18"
+    "shoulderTip*1.08",
+    "underarm-30"
    ],
    "ic": [
     "bustLine*0.90",
