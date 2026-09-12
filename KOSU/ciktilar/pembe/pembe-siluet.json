@@ -126,7 +126,7 @@
       "neckFront+6"
      ]
     ],
-    "boy": 32,
+    "boy": 46,
     "kuyruk": 0
    },
    {
@@ -138,9 +138,9 @@
       "neckFront+16"
      ]
     ],
-    "boy": 210,
-    "en": 7,
-    "ayrilma": 0.05
+    "boy": 225,
+    "en": 9,
+    "ayrilma": 0.1
    },
    {
     "tip": "keyhole",
