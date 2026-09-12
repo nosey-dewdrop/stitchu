@@ -273,7 +273,21 @@ function gorunumCiz(g, ad, kirmizi, oturma) {
   if (Math.abs(yakaOrtaSol.x - yakaOrtaSag.x) > 0.01 || Math.abs(yakaOrtaSol.y - yakaOrtaSag.y) > 0.01) d += ` L ${P(yakaOrtaSag)}`;
   d += ' Z';
 
-  let svg = `<path d="${d}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
+  // YAKA ACIKLIGI TENDIR, ZEMIN DEGIL (12 Eyl, olculdu). Satici flat'inde acikligin
+  // dolgusu govdeden ~%15 KOYU: etsy-01 V ici RGB(224,207,172) / govde RGB(253,244,230).
+  // Beyaz uzerine beyaz cizilince aciklik GORUNMEZ — 5 tur boyunca kaybolmasinin sebebi buydu.
+  // Aciklik yolu: govde yakasinin kendisi (yakaOrta -> yakaOmuz, iki yarim) + omuz hatti.
+  let svg = '';
+  {
+    const ao = `M ${P(yakaOrtaSag)}` + yakaYolu(yakaOrtaSag, sag('yakaOmuz'), yb, true, 0) +
+      ` L ${P(sol('yakaOmuz'))}` + yakaTers(yakaOrtaSol, sol('yakaOmuz'), KS.yakaBicim || yb, true, 0) + ' Z';
+    // Ten dolgusu YALNIZ acikligi olan gorunumde. Arkada (kapali yaka) dolgu yok:
+    // dolgu, giysinin ALTINDAN ten gorunmesidir; kapali bir yakada gorunecek ten yoktur.
+    // Olcut: yaka derinligi boyun cukurunun belirgin altina iniyorsa aciklik vardir.
+    const acik = (yakaOrtaSag.y - lm('neckFront').y) > (CIZ.tenEsigiMM || 45);
+    if (acik) svg += `<path d="${ao}" fill="${CIZ.tenDolgu || '#e9e3da'}" stroke="none"/>\n`;
+  }
+  svg += `<path d="${d}" fill="#fff" stroke="#000" stroke-width="${CIZ.disKonturMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
 
   // KOL (kapak / puf / duz) — govdenin ustune, beyaz dolgu
   const kolCiz = (kol, ou, ka, s) => {

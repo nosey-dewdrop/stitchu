@@ -14,16 +14,28 @@
  "on": {
   "yakaBicim": [
    [
-    1.0,
+    0.55,
     0.0
    ],
    [
-    1.0,
-    0.3
+    0.8,
+    0.0
    ],
    [
-    1.0,
-    1.0
+    0.95,
+    0.06
+   ],
+   [
+    1.02,
+    0.2
+   ],
+   [
+    0.96,
+    0.72
+   ],
+   [
+    0.8,
+    0.98
    ]
   ],
   "kontur": {
@@ -50,20 +62,20 @@
     "bustLine"
    ],
    "bel": [
-    "waist*1.12",
+    "waist*1.19",
     "waist"
    ],
    "kalca": [
-    "hip*1.00",
+    "hip*0.98",
     "hip"
    ],
    "etekYan": [
-    "hip*1.00",
-    "hip..knee@0.16"
+    "hip*0.96",
+    "hip..knee@0.08"
    ],
    "etekOrta": [
     "hip*0",
-    "hip..knee@0.16"
+    "hip..knee@0.08"
    ]
   },
   "kol": {
@@ -91,12 +103,12 @@
       "underarm+10"
      ],
      [
-      "waist*0.70",
+      "waist*0.74",
       "waist"
      ],
      [
-      "hip*0.82",
-      "hip..knee@0.16-8"
+      "hip*0.80",
+      "hip..knee@0.08"
      ]
     ]
    },
@@ -109,9 +121,9 @@
       "neckFront-8"
      ]
     ],
-    "yukseklik": 22,
+    "yukseklik": 12,
     "acik": true,
-    "aralik": 3,
+    "aralik": 0,
     "omuzDusme": 16,
     "omuzOran": 0.89,
     "daralma": 0.93,
@@ -143,40 +155,25 @@
     "ayrilma": 0.1
    },
    {
-    "tip": "keyhole",
-    "ayna": false,
-    "noktalar": [
-     [
-      "neckFront*0",
-      "neckFront+14"
-     ],
-     [
-      "neckFront*0",
-      "neckFront+112"
-     ]
-    ],
-    "genislik": 34,
-    "bicim": "kama",
-    "ustOran": 0.3,
-    "enGenisOran": 0.55,
-    "dipOran": 0.92
-   },
-   {
     "tip": "kesikli",
     "ayna": true,
     "catmull": true,
     "noktalar": [
      [
       "neckFront*0",
+      "neckFront+122"
+     ],
+     [
+      "neckBase*0.62",
       "neckFront+118"
      ],
      [
-      "neckBase*0.80",
-      "neckFront+62"
+      "neckBase*0.86",
+      "neckFront+80"
      ],
      [
-      "neckBase*0.84",
-      "neckBase+22"
+      "neckBase*0.76",
+      "neckBase+24"
      ]
     ]
    },
@@ -187,15 +184,15 @@
     "noktalar": [
      [
       "hip*0",
-      "hip..knee@0.16-13"
+      "hip..knee@0.08-13"
      ],
      [
-      "hip*0.52",
-      "hip..knee@0.16-16"
+      "hip*0.50",
+      "hip..knee@0.08-16"
      ],
      [
-      "hip*0.97",
-      "hip..knee@0.16-22"
+      "hip*0.93",
+      "hip..knee@0.08-22"
      ]
     ]
    }
