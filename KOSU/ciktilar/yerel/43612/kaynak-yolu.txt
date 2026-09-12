@@ -1,8 +1,0 @@
-KOSU/ciktilar/yerel/43612/girdi.jpg
-sha256 97bd652fde359dc40339852e8da7cb9acf1fd8ac4cfabbe69da556e87d9da1fb
-gorunum on
-arka.koken turetildi
-yukleyen KOSU/servis.mjs (yerel kopru)
-okuyan siluet-v1: claude-sonnet-5 via 'claude -p' alt sureci (arkaUc=claude-p), 2026-09-12
-cizim flat = KOSU/siluet-ciz.mjs (okuma KOSU/onbellek/siluet-97bd652fde35….json; motor flat'e girmez)
-kalip = ops-topoloji.json (9 op) + siluetten etek ucu/klos -> ops.json (9 op) + hedefler.json (2) -> grafuygula/grafciz gercek36

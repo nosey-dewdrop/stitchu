@@ -1,3 +1,10 @@
+_cop/
+dresses/
+referans/
+motor/build/
+node_modules/
+.DS_Store
+__pycache__/
 # H0 girdi masasi: telifli referans fotograflar + aday flatler. ASLA commit edilmez.
 GIRDI/
 

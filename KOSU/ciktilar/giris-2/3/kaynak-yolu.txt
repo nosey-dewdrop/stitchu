@@ -1,7 +1,0 @@
-GIRDI/hedef-fotograflar-2/dior-hc-fw26-elbise.jpg
-sha256 3f2043b8432dab515752ada521c120595e64c7c9e238fc532ad2ac01a6031567
-gorunum on
-okuyan isci-A4-tur6 (llmCagri 0)
-arka.koken turetildi
-cizim taban+ops (9 primitif emir; KOSU/ciktilar/graf-ilk/graf.json + ops.json -> grafuygula/grafciz --ops)
-hedef 0 siluet orani -> grafuygula/grafciz --hedef hedefler.json (bolluk mm, sinir kirpmasi notes'ta)
