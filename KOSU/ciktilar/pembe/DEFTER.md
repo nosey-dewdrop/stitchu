@@ -291,3 +291,31 @@ giysiyi çevreleyen sert bant. Gerçek flat'te gölge tek yönlüdür.
 
 **KESİM:** linearGradient maskesi (üst %0 → alt %100), ışık sol üstten gelir,
 koyuluk sağ ve alt kenarda toplanır.
+
+## Tur 68-74 — açıklık daraldı, gövde doldu; BANT dört tur kovalandı
+
+Görseller: `defter-68.png`, `defter-72.png`
+
+**Kesilenler:**
+| sorun | ölçüm | kesim |
+|---|---|---|
+| açıklık gövdenin %68'i | foto ~%48 | dip oranı 2.85 → 2.01 |
+| gövde fazla dar | göğüs 142.7 | 149.4, koltukaltı 129.4, bel 125.6 (%16) |
+| gölge sert bant | kenarın tamamına eşit | linearGradient maskesi, tek yönlü |
+
+**BANT — dört tur, çözülmedi:**
+Ölçümle takip: bant x[0,29.7] y[26,46] — **doğru yerde**, açıklık x±73.9'un içinde.
+Ama görünmüyor. Denenen:
+1. Bandı boyun dibine bağla → gövdenin üstünde boş alanda kaldı
+2. Açıklığın üst kenarına oturt → yine üstte
+3. Genişlet (omuzOran 1.02) → **görünür oldu** ama gövdenin üstünde havada
+4. Motorda `K.yakaOmuz`'a bağla, aşağı doğru kalınlık ver → tekrar kayboldu
+
+**Teşhis:** Bant `yakaOmuz`'dan yukarı çıkıyor ve orada gövde YOK — açıklığın
+üstü boş alan. Fotoğrafta bant **boynu sarar**, yani croquis'te boyun dibi
+halkası ile açıklığın üst köşesi arasında bir şerittir. O bölge şu an
+gövdenin dışında kalıyor çünkü `yakaOmuz.y = 26`, `neckBase.y = 0` — arada
+26mm var ama gövde konturu oradan geçmiyor.
+
+**Sıradaki turun kökü:** gövde konturu boyun dibinden mi başlamalı, yoksa
+bant ayrı bir parça olarak boyun halkasını mı çizmeli? İkisi ayrı karar.

@@ -118,14 +118,14 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckFront-8"
+      "neckBase+30"
      ]
     ],
-    "yukseklik": 14,
+    "yukseklik": 22,
     "acik": true,
     "aralik": 0,
-    "omuzDusme": 26,
-    "omuzOran": 0.52,
+    "omuzDusme": 30,
+    "omuzOran": 1.02,
     "daralma": 0.93,
     "omuzYukseklik": 0.4
    },
@@ -135,7 +135,7 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckBase+20"
+      "neckBase+34"
      ]
     ],
     "boy": 46,
@@ -147,7 +147,7 @@
     "noktalar": [
      [
       "neckFront*0",
-      "neckBase+26"
+      "neckBase+42"
      ]
     ],
     "boy": 225,

@@ -862,11 +862,21 @@ function ogeCiz(o, pts, s, K, KUMAS) {
       // KURAL: bant SABIT KALINLIKLI bir serittir. Alt kenar govdenin boyun halkasi,
       // ust kenar ayni egrinin NORMAL yonunde h kadar otelenmisi. (Iki kenari ayri ayri
       // egri olarak kurmak, CF'de ikisini birlestirip yanlarda ayirinca 'boynuz' uretiyordu.)
+      // BANT ACIKLIGIN UST KENARINA OTURUR (12 Eyl kok duzeltme). Once CF alt ucu
+      // (pts[0].y) ve omuz ucu (omuzDusme) AYRI AYRI veriliyordu; ikisi tutmayinca
+      // bant giysinin ustunde bosukta duruyordu ve gorunmuyordu (uc tur JSON ile
+      // cozulemedi). Artik varsayilan olarak K.yakaOmuz'a baglanir: bandin dis ucu
+      // acikligin ust kosesidir, CF ucu de ayni yukseklikte.
       const nb = lm('neckBase'), nf = lm('neckFront');
-      const cfAlt = pts[0] ? pts[0].y : nf.y;
-      const yariGen = Math.abs(nb.x) * ((o.omuzOran ?? 0.50));
+      const yo = K && K.yakaOmuz ? K.yakaOmuz : null;
+      const yariGen = (o.omuzOran != null) ? Math.abs(nb.x) * o.omuzOran
+        : (yo ? Math.abs(yo.x) : Math.abs(nb.x) * 0.50);
       const h = o.yukseklik != null ? o.yukseklik : yariGen * 0.38;
-      const omuzAlt = nb.y + ((o.omuzDusme ?? 2));
+      const cfAlt = pts[0] ? pts[0].y : (yo ? yo.y + h : nf.y);
+      // Bant YUKARI degil ASAGI dogru kalinlik kazanir: ust kenari acikligin
+      // ust kosesinde, alt kenari acikligin ICINDE. Yukari cikarsa giysinin
+      // disinda, bos alanda kalir ve gorunmez (uc tur bunu kovaladi).
+      const omuzAlt = (o.omuzDusme != null) ? nb.y + o.omuzDusme : (yo ? yo.y + h : nb.y + 2);
       // aralik=0 GECERLI bir degerdir (bant CF'de kapali). `|| 3` sifiri yutuyordu:
       // JS'te 0 falsy, bu yuzden 'aralik: 0' yazan okuma sessizce 3 mm yarik aliyordu.
       const ay = o.acik ? (o.aralik != null ? o.aralik : 3) : 0;
