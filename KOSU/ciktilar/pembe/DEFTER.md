@@ -209,3 +209,26 @@ Bizim `waist` landmark'ı: (414.4−62)/568.5 = **%62**
 - S34 yaka üst kısmı V gibi, fotoğrafta dikey yarık
 - S35 gövde tekrar tüpleşti (bel yukarı çıkınca alt kısım düzleşti)
 - S36 kol omuzda gövdeyle çakışıyor, dış hat kırık
+
+## Tur 60-61 — bel geri, yaka genişletme denemesi geri alındı
+
+Görsel: `defter-59.png` (tur 59), tur 61 kaydedilmedi (regresyon)
+
+**TEŞHİS — ölçüm ile görüntü ÜÇÜNCÜ kez çeliştil:**
+| ölçüm | değer | hedef | görüntü |
+|---|---|---|---|
+| omuz bandı | 79.1 mm | ~48 mm | yaka DAR görünüyordu |
+| bel daralması | %18.0 | %16-18 ✓ | gövde TÜP görünüyordu |
+
+Sayılara güvenip yakayı genişlettim (dip 65.8→96.9mm) → **omuz bandı yendi,
+elbise askılı gibi oldu.** Geri alındı.
+
+**KÖK:** Tur 59'da fotoğraf ölçümüne dayanıp beli %36'ya taşımıştım. O ölçüm
+**kollarla kirliydi** (y=320'de 106px okundu, kolun kestiği yer). Gerçek bel
+göğüs ile kalça ortasındadır — `waist` landmark'ı zaten doğru yerdeydi.
+Bel yukarı çıkınca orta gövde düzleşti ve "tüp" hissi doğdu; sayı %18 diyordu
+ama nip yanlış yerdeydi.
+
+**DERS (üçüncü kez):** Oran hedefte olması flat'in doğru olduğunu göstermiyor.
+Oran *ne kadar* olduğunu söyler, *nerede* olduğunu söylemez. Kirli piksel
+ölçümüne dayanıp landmark taşımak, üç turluk regresyon üretti.
