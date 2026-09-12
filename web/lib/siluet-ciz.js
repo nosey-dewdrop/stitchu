@@ -897,7 +897,28 @@ function ogeCiz(o, pts, s, K, KUMAS) {
       const dolgu = o.dolgu || '#e9e3da';
       const kesim = `fill="${dolgu}" stroke="#000" stroke-width="${CIZ.disKonturMM * 0.62}" stroke-linejoin="round" stroke-linecap="round"`;
       let d;
-      if (o.bicim === 'kama') {
+      if (o.bicim === 'kademe') {
+        // KADEME (12 Eyl, fotograftan): ustte DAR DIKEY yarik, belirli bir yukseklikte
+        // KESKIN KOSE, sonra GENIS kare dekolte, duz taban. Kama'dan farki: kenar
+        // duz egimle acilmaz, iki kademede kirilir. Fotograftaki yapinin ta kendisi.
+        const yarikW = w * bogaz;                       // ust yarik yari genisligi
+        const kY = a.y + L * ((o.kademeOran ?? 0.42));  // kose yuksekligi
+        const r = (o.koseYaricap ?? 0.06) * w;          // kose yumusatma
+        d = `M ${f1(s * yarikW)} ${f1(a.y)}` +
+          ` L ${f1(s * yarikW)} ${f1(kY - r)}` +                       // DIKEY yarik
+          ` Q ${f1(s * yarikW)} ${f1(kY)} ${f1(s * (yarikW + r))} ${f1(kY)}` +  // kose
+          ` L ${f1(s * (w - r))} ${f1(kY)}` +                          // YATAY acilim
+          ` Q ${f1(s * w)} ${f1(kY)} ${f1(s * w)} ${f1(kY + r)}` +      // kose
+          ` L ${f1(s * w)} ${f1(b.y - r)}` +                            // DIKEY yan
+          ` Q ${f1(s * w)} ${f1(b.y)} ${f1(s * (w - r))} ${f1(b.y)}` +  // dip kose
+          ` L ${f1(-s * (w - r))} ${f1(b.y)}` +                         // DUZ taban
+          ` Q ${f1(-s * w)} ${f1(b.y)} ${f1(-s * w)} ${f1(b.y - r)}` +
+          ` L ${f1(-s * w)} ${f1(kY + r)}` +
+          ` Q ${f1(-s * w)} ${f1(kY)} ${f1(-s * (w - r))} ${f1(kY)}` +
+          ` L ${f1(-s * (yarikW + r))} ${f1(kY)}` +
+          ` Q ${f1(-s * yarikW)} ${f1(kY)} ${f1(-s * yarikW)} ${f1(kY - r)}` +
+          ` L ${f1(-s * yarikW)} ${f1(a.y)} Z`;
+      } else if (o.bicim === 'kama') {
         // KAMA: ustte 2*w*bogaz genisliginde baslar, asagi dogru NEREDEYSE DUZ kenarlarla
         // acilir, altta 2*w'ye ulasir; alt kenar hafif asagi kavisli (dekolte cizgisiyle
         // ayni yonde). Kenarlar cok hafif disbukey — flat'te duz cetvel cizgisi olmaz.
