@@ -470,6 +470,38 @@ function ogeCiz(o, pts, s, K) {
     case 'cepKapagi': { const [a, b] = pts; const h = o.yukseklik || 40, ph = o.cepBoyu || 120;
       const cep = `<path d="M ${f1(a.x + s * 3)} ${f1(a.y + h * 0.4)} L ${f1(a.x + s * 3)} ${f1(a.y + ph)} Q ${f1((a.x + b.x) / 2)} ${f1(a.y + ph + 12)} ${f1(b.x - s * 3)} ${f1(b.y + ph)} L ${f1(b.x - s * 3)} ${f1(b.y + h * 0.4)}" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"/>\n`;
       return cep + `<path d="M ${P(a)} L ${P(b)} L ${f1(b.x)} ${f1(b.y + h * 0.7)} Q ${f1((a.x + b.x) / 2)} ${f1(b.y + h * 1.15)} ${f1(a.x)} ${f1(a.y + h * 0.7)} Z" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"/>\n<path d="M ${f1(a.x + s * 3)} ${f1(a.y + 4)} L ${f1(b.x - s * 3)} ${f1(b.y + 4)}" ${kesik}/>\n`; }
+    case 'yakaBandi': { // BANT / DIK YAKA: boyun dibini saran serit (stand / tie collar).
+      // OLCUM (croquis36): omuz cizgisi y=0 (neckBase), boyun cukuru y=38.9 (neckFront).
+      // Bir bant yaka FLAT'te omuz cizgisinin USTUNE TASMAZ: serit boyun dibi halkasinin
+      // uzerine oturur ve halkanin ICINE dogru daralir. (d5/d6'da -22.9 mm tasti = hataydi.)
+      //   alt kenar = govdenin yaka cizgisi: CF'de pts[0].y, omuzda neckBase.
+      //   ust kenar = ayni halka, h kadar YUKARI ama omuzda y=0'i gecemez (kirpilir).
+      const nb = lm('neckBase'), nf = lm('neckFront');
+      const h = o.yukseklik || 26;
+      const cfAlt = pts[0] ? pts[0].y : nf.y;
+      const omuzOran = o.omuzOran || 0.96;
+      const altO = { x: s * Math.abs(nb.x) * omuzOran, y: nb.y + (o.omuzDusme || 4) };
+      // ust kenar omuz ucu: h kadar yukari AMA y=0'in altinda kal (tasma yasak)
+      const ustOy = Math.max(altO.y - h * 0.55, 1.5);
+      const ustO = { x: altO.x * 0.88, y: ustOy };
+      const ay = o.acik ? (o.aralik || 4) : 0;
+      const aC = { x: s * ay, y: cfAlt }, uC = { x: s * (ay + 1), y: cfAlt - h };
+      const kav = (a, b) => ` C ${f1(a.x + (b.x - a.x) * 0.52)} ${f1(a.y - (a.y - b.y) * 0.04)} ${f1(a.x + (b.x - a.x) * 0.88)} ${f1(b.y + (a.y - b.y) * 0.34)} ${P(b)}`;
+      const kavT = (a, b) => ` C ${f1(b.x + (a.x - b.x) * 0.88)} ${f1(a.y + (b.y - a.y) * 0.34)} ${f1(b.x + (a.x - b.x) * 0.52)} ${f1(b.y - (b.y - a.y) * 0.04)} ${P(b)}`;
+      return `<path d="M ${P(aC)}${kav(aC, altO)} L ${P(ustO)}${kavT(ustO, uC)} Z" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
+    }
+    case 'keyhole': { // DAMLA/ANAHTAR DELIGI ACIKLIK: kapali delik, govde uzerinde.
+      // pts[0] = acikligin ust ucu (bandin altina yaslanir), pts[1] = alt ucu (sivri).
+      // o.genislik = en genis yeri (mm). Damla: ustte dar, ortada genis, altta sivri.
+      const [a, b] = pts, w = (o.genislik || 46) / 2, L = b.y - a.y;
+      const enY = a.y + L * (o.enGenisOran || 0.46);
+      const d = `M ${P(a)}` +
+        ` C ${f1(s * w * 0.55)} ${f1(a.y + L * 0.10)} ${f1(s * w)} ${f1(enY - L * 0.14)} ${f1(s * w)} ${f1(enY)}` +
+        ` C ${f1(s * w)} ${f1(enY + L * 0.26)} ${f1(s * w * 0.52)} ${f1(b.y - L * 0.10)} ${P(b)}` +
+        ` C ${f1(-s * w * 0.52)} ${f1(b.y - L * 0.10)} ${f1(-s * w)} ${f1(enY + L * 0.26)} ${f1(-s * w)} ${f1(enY)}` +
+        ` C ${f1(-s * w)} ${f1(enY - L * 0.14)} ${f1(-s * w * 0.55)} ${f1(a.y + L * 0.10)} ${P(a)} Z`;
+      return `<path d="${d}" fill="#fff" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
+    }
     case 'pili': { // ters pili: iki kat cizgisi, ustte dikise baglanir, altta etek ucuna iner
       const [ust, alt] = pts, w = (o.genislik || 26) / 2;
       return `<path d="M ${f1(ust.x - w)} ${f1(ust.y)} L ${f1(alt.x - w)} ${f1(alt.y)} M ${f1(ust.x + w)} ${f1(ust.y)} L ${f1(alt.x + w)} ${f1(alt.y)} M ${f1(ust.x)} ${f1(ust.y)} L ${f1(alt.x)} ${f1(alt.y)}" ${ince}/>\n`; }
