@@ -66,16 +66,16 @@
     "waist"
    ],
    "kalca": [
-    "hip*1.10",
-    "hip"
+    "hip*1.02",
+    "waist..hip@0.55"
    ],
    "etekYan": [
     "hip*1.16",
-    "hip+42"
+    "hip+1"
    ],
    "etekOrta": [
     "hip*0",
-    "hip+42"
+    "hip+1"
    ]
   },
   "kol": {
@@ -108,7 +108,7 @@
      ],
      [
       "hip*0.96",
-      "hip+42"
+      "hip+1"
      ]
     ]
    },
@@ -184,15 +184,15 @@
     "noktalar": [
      [
       "hip*0",
-      "hip+29"
+      "hip-12"
      ],
      [
       "hip*0.60",
-      "hip+26"
+      "hip-15"
      ],
      [
       "hip*1.10",
-      "hip+20"
+      "hip-21"
      ]
     ]
    }
@@ -229,16 +229,16 @@
     "waist"
    ],
    "kalca": [
-    "hip*1.10",
-    "hip"
+    "hip*1.02",
+    "waist..hip@0.55"
    ],
    "etekYan": [
     "hip*1.16",
-    "hip+42"
+    "hip+1"
    ],
    "etekOrta": [
     "hip*0",
-    "hip+42"
+    "hip+1"
    ]
   },
   "kol": {
@@ -285,7 +285,7 @@
      ],
      [
       "hip*0.96",
-      "hip+42"
+      "hip+1"
      ]
     ]
    },
@@ -296,15 +296,15 @@
     "noktalar": [
      [
       "hip*0",
-      "hip+29"
+      "hip-12"
      ],
      [
       "hip*0.60",
-      "hip+26"
+      "hip-15"
      ],
      [
       "hip*1.10",
-      "hip+20"
+      "hip-21"
      ]
     ]
    }
