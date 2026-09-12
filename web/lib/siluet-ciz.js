@@ -879,7 +879,10 @@ function ogeCiz(o, pts, s, K, KUMAS) {
       const nb = lm('neckBase'), nf = lm('neckFront');
       const yo = (K && K.yakaOmuz) ? K.yakaOmuz : { x: Math.abs(nb.x) * 0.5, y: nb.y + 20 };
       // UST kenar: boyun dibi halkasi
-      const ustO = { x: s * Math.abs(nb.x) * (o.boyunOran ?? 1.0), y: nb.y };
+      // BOYNUZ DUZELTMESI (12 Eyl): ust kenar boyun dibinde (y=0), alt kenar altY'de;
+      // ikisi omuzda birlesince SIVRI UC olusuyordu. Ust kenarin dis ucu alta dogru
+      // cekilir ki serit omuzda duz kessin.
+      const ustO = { x: s * Math.abs(nb.x) * (o.boyunOran ?? 1.0), y: nb.y + (o.ucDusme ?? 10) };
       const ustC = { x: s * (o.aralik ?? 0), y: nf.y };
       // ALT kenar: acikligin ust kenari (h kadar asagi, ama en fazla acikligin ustu)
       const h = o.yukseklik ?? 18;

@@ -374,3 +374,30 @@ mıklandı (önce havada bitiyordu, sonra kola taşıyordu).
 
 **MOTOR YASASI eklendi:** `kol.ic` koltukaltının içinde kalmalı — dışarı taşarsa
 kol ile gövde arasında beyaz kama açılıyor (ölçüm: ic 136.1 > koltukaltı 133.4).
+
+## Tur 98-106 — hakem ölçümüyle silüet düzeltmesi, bant göründü
+
+Görseller: `defter-98.png`, `defter-99.png`, `defter-104.png`,
+`defter-104-kiyas.png`, `defter-106.png`
+
+**KÖR HAKEM ÖLÇÜMÜ (tur 94 üzerinden) — en ağır üç madde:**
+| oran | hedef | ölçülen | sapma |
+|---|---|---|---|
+| gövde boyu/göğüs | 2.235 | 1.667 | **−%25** (tunik, mini değil) |
+| etek ucu/göğüs | 1.113 | 0.886 | **−%20** (etek göğüsten DAR, ters silüet) |
+| kol boyu/gövde | 0.195 | 0.342 | **+%75** |
+
+**Kesim:** etek ucu `hip-38` → `hip+124` (gövde 529→692mm), etek genişliği
+`hip*1.00` → `hip*1.098` (172.3mm), kol `underarm-8` → `underarm-2`.
+
+**Diğer kesimler:**
+- kumaş dokusu eklendi (SVG pattern, çapraz dokuma izi) — Buğra'nın flat'i
+  keten dokusunu gösteriyor, bizde düz renkti
+- açıklık yuvarlatılmış dikdörtgenden **keyhole+kare**ye: `koseYaricap` 0.26→0.07
+- **BANT GÖRÜNDÜ.** Kök: bant doğru yerdeydi (x±55, y 0-49) ama gövdeyle aynı
+  renkti ve kendi dikişi yoktu. Kesim: (a) motora `altY` eklendi, bant açıklığın
+  üst kenarına değiyor; (b) bandın kendi kesikli üst dikişi çizildi — satıcı
+  flat'inde her ayrı parçanın kendi dikiş izi var
+- bant uçlarındaki **sivri boynuz**: üst kenar y=0'da, alt kenar altY'de,
+  omuzda birleşince sivri uç oluşuyordu → `ucDusme` ile üst uç aşağı çekildi
+- kol omuz ucunu 28mm aşıyordu → `shoulderTip*1.00`
