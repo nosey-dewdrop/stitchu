@@ -37,27 +37,27 @@
     "bustLine"
    ],
    "bel": [
-    "waist*1.22",
+    "waist*1.170",
     "waist"
    ],
    "kalca": [
-    "hip*1.04",
+    "hip*0.94",
     "waist..hip@0.72"
    ],
    "etekYan": [
-    "hip*1.098",
-    "hip+31"
+    "hip*1.097",
+    "hip+39"
    ],
    "etekOrta": [
     "hip*0",
-    "hip+31"
+    "hip+39"
    ]
   },
   "kol": {
    "tip": "duz",
    "dis": [
     "shoulderTip*1.00",
-    "underarm-34"
+    "underarm-18"
    ],
    "ic": [
     "bustLine*0.94",
@@ -78,10 +78,10 @@
      ],
      [
       "neckFront*0",
-      "neckBase+196"
+      "neckBase+180"
      ]
     ],
-    "genislik": 132,
+    "genislik": 153,
     "bicim": "kademe",
     "bogazOran": 0.28,
     "kademeOran": 0.42,
@@ -94,15 +94,15 @@
     "noktalar": [
      [
       "bustLine*0.52",
-      "underarm+4"
+      "underarm+6"
      ],
      [
-      "waist*0.44",
+      "waist*0.50",
       "waist"
      ],
      [
-      "hip*0.72",
-      "hip+31"
+      "hip*0.74",
+      "hip+39"
      ]
     ]
    },
@@ -171,15 +171,15 @@
     "noktalar": [
      [
       "hip*0",
-      "hip+17"
+      "hip+25"
      ],
      [
       "hip*0.55",
-      "hip+14"
+      "hip+22"
      ],
      [
       "hip*1.02",
-      "hip+9"
+      "hip+17"
      ]
     ]
    },
@@ -208,11 +208,11 @@
     "noktalar": [
      [
       "shoulderTip*0.97",
-      "underarm-42"
+      "underarm-10"
      ],
      [
       "bustLine*0.91",
-      "underarm-12"
+      "underarm+18"
      ]
     ]
    }
@@ -246,27 +246,27 @@
     "bustLine"
    ],
    "bel": [
-    "waist*1.22",
+    "waist*1.170",
     "waist"
    ],
    "kalca": [
-    "hip*1.04",
+    "hip*0.94",
     "waist..hip@0.72"
    ],
    "etekYan": [
-    "hip*1.098",
-    "hip+31"
+    "hip*1.097",
+    "hip+39"
    ],
    "etekOrta": [
     "hip*0",
-    "hip+31"
+    "hip+39"
    ]
   },
   "kol": {
    "tip": "duz",
    "dis": [
     "shoulderTip*1.00",
-    "underarm-34"
+    "underarm-18"
    ],
    "ic": [
     "bustLine*0.94",
@@ -298,15 +298,15 @@
     "noktalar": [
      [
       "bustLine*0.52",
-      "underarm+4"
+      "underarm+6"
      ],
      [
-      "waist*0.44",
+      "waist*0.50",
       "waist"
      ],
      [
-      "hip*0.72",
-      "hip+31"
+      "hip*0.74",
+      "hip+39"
      ]
     ]
    },
@@ -317,15 +317,15 @@
     "noktalar": [
      [
       "hip*0",
-      "hip+17"
+      "hip+25"
      ],
      [
       "hip*0.55",
-      "hip+14"
+      "hip+22"
      ],
      [
       "hip*1.02",
-      "hip+9"
+      "hip+17"
      ]
     ]
    },
@@ -336,11 +336,11 @@
     "noktalar": [
      [
       "shoulderTip*0.97",
-      "underarm-42"
+      "underarm-10"
      ],
      [
       "bustLine*0.91",
-      "underarm-12"
+      "underarm+18"
      ]
     ]
    }

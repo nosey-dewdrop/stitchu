@@ -1,0 +1,224 @@
+{
+ "semaSurumu": "siluet-v1",
+ "girdiYolu": "KOSU/ciktilar/yerel/45836/girdi.jpg",
+ "sha256": "97bd652fde359dc40339852e8da7cb9acf1fd8ac4cfabbe69da556e87d9da1fb",
+ "okuyan": "claude-sonnet-5 via 'claude -p' alt sureci (arkaUc=claude-p), 2026-09-12",
+ "uretenScript": "KOSU/siluet-oku.mjs",
+ "ilan": "yuksek dik yakali, boyundan bele kapamali, omuz baslari belirgin sisirilmis uzun kollu, bilekte dar mansetli, belden dikisle daralan ve dizaltina genisleyerek inen bir elbise",
+ "gorulen": "fotograf (on)",
+ "kaynakGorunum": "fotograf",
+ "oturma": {
+  "gogus": false,
+  "bel": true
+ },
+ "on": {
+  "yakaBicim": "duz",
+  "aski": null,
+  "kontur": {
+   "yakaOrta": [
+    "neckFront*0",
+    "neckFront-28"
+   ],
+   "yakaOmuz": [
+    "neckBase*1.02",
+    "neckBase-22"
+   ],
+   "askiUst": null,
+   "askiDip": null,
+   "omuzUc": [
+    "shoulderTip*0.92",
+    "shoulderTip+8"
+   ],
+   "koltukalti": [
+    "bustLine*1.02",
+    "underarm"
+   ],
+   "gogus": [
+    "bustLine*1.00",
+    "bustLine"
+   ],
+   "bel": [
+    "waist*1.10",
+    "waist"
+   ],
+   "kalca": [
+    "hip*1.12",
+    "hip"
+   ],
+   "etekYan": [
+    "hip*1.38",
+    "hip..knee@1.0+50"
+   ],
+   "etekOrta": [
+    "hip*0",
+    "hip..knee@1.0+50"
+   ]
+  },
+  "kol": {
+   "tip": "puf",
+   "dis": [
+    "wrist*0.60",
+    "wrist"
+   ],
+   "ic": [
+    "wrist*0.42",
+    "wrist"
+   ],
+   "bant": true,
+   "buzgu": true,
+   "sisme": 55
+  },
+  "ogeler": [
+   {
+    "tip": "dikis",
+    "ayna": true,
+    "noktalar": [
+     [
+      "waist*0",
+      "waist"
+     ],
+     [
+      "waist*1.10",
+      "waist"
+     ]
+    ]
+   },
+   {
+    "tip": "pat",
+    "ayna": false,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "neckFront-5"
+     ],
+     [
+      "waist*0",
+      "waist"
+     ]
+    ],
+    "genislik": 25
+   },
+   {
+    "tip": "dugme",
+    "ayna": false,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "neckFront+15"
+     ],
+     [
+      "waist*0",
+      "waist"
+     ]
+    ],
+    "adet": 4,
+    "cap": 10
+   },
+   {
+    "tip": "dikis",
+    "ayna": true,
+    "noktalar": [
+     [
+      "wrist*0.42",
+      "wrist-15"
+     ],
+     [
+      "wrist*0.60",
+      "wrist-15"
+     ]
+    ]
+   }
+  ]
+ },
+ "arka": {
+  "koken": "turetildi",
+  "yakaBicim": "duz",
+  "kontur": {
+   "yakaOrta": [
+    "nape*0",
+    "nape-15"
+   ],
+   "yakaOmuz": [
+    "neckBase*1.02",
+    "neckBase-22"
+   ],
+   "askiUst": null,
+   "askiDip": null,
+   "omuzUc": [
+    "shoulderTip*0.92",
+    "shoulderTip+8"
+   ],
+   "koltukalti": [
+    "bustLine*1.02",
+    "underarm"
+   ],
+   "gogus": [
+    "bustLine*0.98",
+    "bustLine"
+   ],
+   "bel": [
+    "waist*1.10",
+    "waist"
+   ],
+   "kalca": [
+    "hip*1.12",
+    "hip"
+   ],
+   "etekYan": [
+    "hip*1.38",
+    "hip..knee@1.0+50"
+   ],
+   "etekOrta": [
+    "hip*0",
+    "hip..knee@1.0+50"
+   ]
+  },
+  "kol": {
+   "tip": "puf",
+   "dis": [
+    "wrist*0.60",
+    "wrist"
+   ],
+   "ic": [
+    "wrist*0.42",
+    "wrist"
+   ],
+   "bant": true,
+   "buzgu": true,
+   "sisme": 55
+  },
+  "ogeler": [
+   {
+    "tip": "dikis",
+    "ayna": true,
+    "noktalar": [
+     [
+      "waist*0",
+      "waist"
+     ],
+     [
+      "waist*1.10",
+      "waist"
+     ]
+    ]
+   },
+   {
+    "tip": "dikis",
+    "ayna": false,
+    "noktalar": [
+     [
+      "nape*0",
+      "nape-15"
+     ],
+     [
+      "waist*0",
+      "waist"
+     ]
+    ]
+   }
+  ]
+ },
+ "eksik": [
+  "arka gorunmuyor"
+ ]
+}
