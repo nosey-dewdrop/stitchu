@@ -29,11 +29,11 @@
     "neckBase+62"
    ],
    "koltukalti": [
-    "bustLine*0.97",
+    "bustLine*1.00",
     "underarm"
    ],
    "gogus": [
-    "bustLine*1.12",
+    "bustLine*1.16",
     "bustLine"
    ],
    "bel": [
@@ -56,12 +56,12 @@
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.06",
-    "underarm-10"
+    "shoulderTip*1.12",
+    "underarm-8"
    ],
    "ic": [
-    "bustLine*1.01",
-    "underarm+22"
+    "bustLine*0.94",
+    "underarm+20"
    ],
    "bant": false,
    "buzgu": false,
@@ -83,8 +83,8 @@
     ],
     "genislik": 126,
     "bicim": "kademe",
-    "bogazOran": 0.4,
-    "kademeOran": 0.26,
+    "bogazOran": 0.46,
+    "kademeOran": 0.22,
     "koseYaricap": 0.26
    },
    {
@@ -170,11 +170,11 @@
     "neckBase+62"
    ],
    "koltukalti": [
-    "bustLine*0.97",
+    "bustLine*1.00",
     "underarm"
    ],
    "gogus": [
-    "bustLine*1.12",
+    "bustLine*1.16",
     "bustLine"
    ],
    "bel": [
@@ -197,12 +197,12 @@
   "kol": {
    "tip": "duz",
    "dis": [
-    "shoulderTip*1.06",
-    "underarm-10"
+    "shoulderTip*1.12",
+    "underarm-8"
    ],
    "ic": [
-    "bustLine*1.01",
-    "underarm+22"
+    "bustLine*0.94",
+    "underarm+20"
    ],
    "bant": false,
    "buzgu": false,

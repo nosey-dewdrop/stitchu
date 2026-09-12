@@ -596,6 +596,10 @@ function gorunumCiz(g, ad, kirmizi, oturma, okumaRenk) {
   const kolCiz = (kol, ou, ka, s) => {
     if (!kol) return '';
     const dis = nokta(kol.dis), ic = nokta(kol.ic);
+    // YASA (12 Eyl, olculdu): kolun IC noktasi koltukaltinin ICINDE kalmali.
+    // Disari tasarsa kol ile govde arasinda beyaz bir kama acilir ve kol kopuk
+    // gorunur (olcum: ic 136.1 > koltukalti 133.4 -> gorunur bosluk).
+    if (Math.abs(ic.x) > Math.abs(ka.x)) ic.x = Math.sign(ic.x || 1) * Math.abs(ka.x) * 0.96;
     dis.x *= s; ic.x *= s;
     const sis = (kol.sisme || 0) * s;
     let kd = `M ${P(ou)}`;
