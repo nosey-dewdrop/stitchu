@@ -160,6 +160,44 @@
     "ustOran": 0.3,
     "enGenisOran": 0.55,
     "dipOran": 0.92
+   },
+   {
+    "tip": "kesikli",
+    "ayna": true,
+    "catmull": true,
+    "noktalar": [
+     [
+      "neckFront*0",
+      "neckFront+120"
+     ],
+     [
+      "neckBase*1.22",
+      "neckFront+70"
+     ],
+     [
+      "neckBase*1.26",
+      "neckBase+24"
+     ]
+    ]
+   },
+   {
+    "tip": "kesikli",
+    "ayna": true,
+    "catmull": true,
+    "noktalar": [
+     [
+      "hip*0",
+      "hip..knee@0.30-13"
+     ],
+     [
+      "hip*0.55",
+      "hip..knee@0.30-16"
+     ],
+     [
+      "hip*0.97",
+      "hip..knee@0.30-22"
+     ]
+    ]
    }
   ]
  },
