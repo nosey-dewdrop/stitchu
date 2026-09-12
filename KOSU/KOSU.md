@@ -13,8 +13,8 @@
 > 2. Sadece onu yap. Brief'i yeniden yorumlama.
 > 3. Bitince tabloda **KAPANDI** yap, yanına tek satır ölçülmüş sonuç yaz,
 >    commit + push.
-> 4. **Durma — sıradaki açık maddeye geç.** İş akacak; Damla router değildir,
->    faz arası soru ona sorulmaz, tarafsız ajana sorulur.
+> 4. **DUR.** Sıradaki maddeye geçme. Faz içinde çıkan soru Damla'ya
+>    sorulmaz, tarafsız ajana sorulur.
 >
 > Takılırsan: madde AÇIK kalır, altına tek satır neye takıldığın yazılır,
 > commit atılır. Uydurma çözüm, "yaklaşık çalışıyor", sessiz varsayılan yasak.
