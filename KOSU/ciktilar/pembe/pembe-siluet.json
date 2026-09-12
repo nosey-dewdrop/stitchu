@@ -200,6 +200,21 @@
       "underarm+46"
      ]
     ]
+   },
+   {
+    "tip": "kesikli",
+    "ayna": true,
+    "catmull": false,
+    "noktalar": [
+     [
+      "shoulderTip*0.97",
+      "underarm-10"
+     ],
+     [
+      "bustLine*0.91",
+      "underarm+18"
+     ]
+    ]
    }
   ],
   "etekSarkma": 9
@@ -311,6 +326,21 @@
      [
       "hip*1.02",
       "hip+102"
+     ]
+    ]
+   },
+   {
+    "tip": "kesikli",
+    "ayna": true,
+    "catmull": false,
+    "noktalar": [
+     [
+      "shoulderTip*0.97",
+      "underarm-10"
+     ],
+     [
+      "bustLine*0.91",
+      "underarm+18"
      ]
     ]
    }
