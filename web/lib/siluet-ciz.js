@@ -855,54 +855,30 @@ function ogeCiz(o, pts, s, K, KUMAS) {
     case 'cepKapagi': { const [a, b] = pts; const h = (o.yukseklik ?? 40), ph = (o.cepBoyu ?? 120);
       const cep = `<path d="M ${f1(a.x + s * 3)} ${f1(a.y + h * 0.4)} L ${f1(a.x + s * 3)} ${f1(a.y + ph)} Q ${f1((a.x + b.x) / 2)} ${f1(a.y + ph + 12)} ${f1(b.x - s * 3)} ${f1(b.y + ph)} L ${f1(b.x - s * 3)} ${f1(b.y + h * 0.4)}" fill="${KM}" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"/>\n`;
       return cep + `<path d="M ${P(a)} L ${P(b)} L ${f1(b.x)} ${f1(b.y + h * 0.7)} Q ${f1((a.x + b.x) / 2)} ${f1(b.y + h * 1.15)} ${f1(a.x)} ${f1(a.y + h * 0.7)} Z" fill="${KM}" stroke="#000" stroke-width="${CIZ.icDikisMM}" stroke-linecap="round" stroke-linejoin="round"/>\n<path d="M ${f1(a.x + s * 3)} ${f1(a.y + 4)} L ${f1(b.x - s * 3)} ${f1(b.y + 4)}" ${kesik}/>\n`; }
-    case 'yakaBandi': { // BANT YAKA (stand / tie collar) — OLCULMUS KONVANSIYON
-      // KAYNAK: flat-01 (flats-clean) on figur, bant seridi.
-      //   ust kenar tepe y=35, alt dikis y=58  -> serit kalinligi h = 23 px
-      //   serit tam genislik 225-104 = 121 px  -> h/W = 0.19 ; h/(W/2) = 0.38
-      // KURAL: bant SABIT KALINLIKLI bir serittir. Alt kenar govdenin boyun halkasi,
-      // ust kenar ayni egrinin NORMAL yonunde h kadar otelenmisi. (Iki kenari ayri ayri
-      // egri olarak kurmak, CF'de ikisini birlestirip yanlarda ayirinca 'boynuz' uretiyordu.)
-      // BANT ACIKLIGIN UST KENARINA OTURUR (12 Eyl kok duzeltme). Once CF alt ucu
-      // (pts[0].y) ve omuz ucu (omuzDusme) AYRI AYRI veriliyordu; ikisi tutmayinca
-      // bant giysinin ustunde bosukta duruyordu ve gorunmuyordu (uc tur JSON ile
-      // cozulemedi). Artik varsayilan olarak K.yakaOmuz'a baglanir: bandin dis ucu
-      // acikligin ust kosesidir, CF ucu de ayni yukseklikte.
+    case 'yakaBandi': { // BANT / BAGLAMALI YAKA — BOYUN HALKASINI SARAN SERIT.
+      // KOK DUZELTME (12 Eyl, dort tur kovalandiktan sonra): bant `yakaOmuz`'dan
+      // YUKARI cikiyordu ve orada govde YOKTU (aciklik ustu bos alan), bu yuzden
+      // pembe serit pembe zemin uzerinde gorunmuyordu.
+      // DOGRU GEOMETRI: bant, BOYUN DIBI halkasi (neckBase -> neckFront) ile
+      // acikligin UST KOSESI arasindaki seritdir. Yani:
+      //   ust kenar  = boyun dibi halkasi (omuzda neckBase, CF'de neckFront)
+      //   alt kenar  = acikligin ust kenari (omuzda yakaOmuz, CF'de yakaOmuz.y)
+      // Serit bu ikisinin ARASINI doldurur; ten dolgusunun UZERINE dusr ve
+      // kumas renginde oldugu icin acikca gorunur.
       const nb = lm('neckBase'), nf = lm('neckFront');
-      const yo = K && K.yakaOmuz ? K.yakaOmuz : null;
-      const yariGen = (o.omuzOran != null) ? Math.abs(nb.x) * o.omuzOran
-        : (yo ? Math.abs(yo.x) : Math.abs(nb.x) * 0.50);
-      const h = o.yukseklik != null ? o.yukseklik : yariGen * 0.38;
-      const cfAlt = pts[0] ? pts[0].y : (yo ? yo.y + h : nf.y);
-      // Bant YUKARI degil ASAGI dogru kalinlik kazanir: ust kenari acikligin
-      // ust kosesinde, alt kenari acikligin ICINDE. Yukari cikarsa giysinin
-      // disinda, bos alanda kalir ve gorunmez (uc tur bunu kovaladi).
-      const omuzAlt = (o.omuzDusme != null) ? nb.y + o.omuzDusme : (yo ? yo.y + h : nb.y + 2);
-      // aralik=0 GECERLI bir degerdir (bant CF'de kapali). `|| 3` sifiri yutuyordu:
-      // JS'te 0 falsy, bu yuzden 'aralik: 0' yazan okuma sessizce 3 mm yarik aliyordu.
-      const ay = o.acik ? (o.aralik != null ? o.aralik : 3) : 0;
-      // alt kenari orneklenmis nokta dizisi olarak kur (kuadratik yay), sonra normal boyunca otele
-      const A = { x: ay, y: cfAlt }, B = { x: yariGen, y: omuzAlt };
-      const C = { x: ay + (yariGen - ay) * 0.62, y: cfAlt - (cfAlt - omuzAlt) * 0.18 }; // kontrol: asagi kabarik
-      const N = 14, alt = [], ust = [];
-      for (let i = 0; i <= N; i++) {
-        const t = i / N, u = 1 - t;
-        const x = u * u * A.x + 2 * u * t * C.x + t * t * B.x;
-        const y = u * u * A.y + 2 * u * t * C.y + t * t * B.y;
-        // teget -> normal (yukari bakan)
-        let dx = 2 * u * (C.x - A.x) + 2 * t * (B.x - C.x);
-        let dy = 2 * u * (C.y - A.y) + 2 * t * (B.y - C.y);
-        const L = Math.hypot(dx, dy) || 1;
-        let nx = dy / L, ny = -dx / L;            // sol normal
-        if (ny > 0) { nx = -nx; ny = -ny; }        // her zaman YUKARI (-y) baksin
-        alt.push({ x: s * x, y });
-        ust.push({ x: s * (x + nx * h), y: y + ny * h });
-      }
-      let dpath = 'M ' + P(alt[0]);
-      for (let i = 1; i < alt.length; i++) dpath += ' L ' + P(alt[i]);
-      dpath += ' L ' + P(ust[ust.length - 1]);
-      for (let i = ust.length - 2; i >= 0; i--) dpath += ' L ' + P(ust[i]);
-      dpath += ' Z';
-      return `<path d="${dpath}" fill="${KM}" stroke="#000" stroke-width="${CIZ.disKonturMM * 0.62}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
+      const yo = (K && K.yakaOmuz) ? K.yakaOmuz : { x: Math.abs(nb.x) * 0.5, y: nb.y + 20 };
+      // UST kenar: boyun dibi halkasi
+      const ustO = { x: s * Math.abs(nb.x) * (o.boyunOran ?? 1.0), y: nb.y };
+      const ustC = { x: s * (o.aralik ?? 0), y: nf.y };
+      // ALT kenar: acikligin ust kenari (h kadar asagi, ama en fazla acikligin ustu)
+      const h = o.yukseklik ?? 18;
+      const altO = { x: s * Math.abs(yo.x) * (o.genisOran ?? 1.0), y: Math.max(ustO.y + h * 0.5, yo.y) };
+      const altC = { x: s * (o.aralik ?? 0), y: Math.max(ustC.y + h * 0.4, yo.y) };
+      const kav = (a, b, ic) => ` C ${f1(a.x + (b.x - a.x) * 0.46)} ${f1(a.y - (a.y - b.y) * (ic ? 0.10 : 0.04))} ${f1(a.x + (b.x - a.x) * 0.84)} ${f1(b.y + (a.y - b.y) * 0.30)} ${P(b)}`;
+      const d = `M ${P(ustC)}` + kav(ustC, ustO, false) +
+                ` L ${P(altO)}` +
+                ` C ${f1(altO.x * 0.84)} ${f1(altC.y + (altO.y - altC.y) * 0.30)} ${f1(altO.x * 0.46)} ${f1(altC.y - (altC.y - altO.y) * 0.04)} ${P(altC)} Z`;
+      return `<path d="${d}" fill="${KM}" stroke="#000" stroke-width="${CIZ.disKonturMM * 0.62}" stroke-linejoin="round" stroke-linecap="round"/>\n`;
     }
     case 'keyhole': { // ACIKLIK (keyhole / damla / kama) — OLCULMUS KONVANSIYON
       // KAYNAK 1 (dolgu): etsy-01 sag figur V acikligi. Aciklik KAPALI bir sekildir ve
